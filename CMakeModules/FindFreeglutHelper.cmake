@@ -1,3 +1,4 @@
+# Copyright
 
 # Freeglut header forces implicit linking with freeglut.lib by
 # default. If you have built freeglut as static, add the

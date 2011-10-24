@@ -1,4 +1,4 @@
-// C
+// Copyright
 
 #include <platformFreeglut.h>
 #include <stdlib.h>

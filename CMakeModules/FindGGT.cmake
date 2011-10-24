@@ -1,21 +1,23 @@
-# Finds GMTL
+# Copyright
+
+# Finds GGT
 # This script defines the following:
-#  GMTL_FOUND (if false or zero, the GMTL headers were not found)
-#  GMTL_INCLUDE_DIR
+#  GGT_FOUND (if false or zero, the GGT headers were not found)
+#  GGT_INCLUDE_DIR
 #
-# The GMTL_DIR environment variable can be set to
+# The GGT_DIR environment variable can be set to
 # the parent directory of gmtl/AABox.h
 
 
 # Based on FindFreetype.cmake
 # Created by Eric Wing.
 # Modifications by Alexander Neundorf.
-# GMTL Modifications by Paul Martz.
+# GGT Modifications by Paul Martz.
 
-FIND_PATH( GMTL_INCLUDE_DIR gmtl/AABox.h 
+FIND_PATH( GGT_INCLUDE_DIR gmtl/Xforms.h
   HINTS
-    $ENV{GMTL_DIR}
-    ${GMTL_DIR}
+    $ENV{GGT_DIR}
+    ${GGT_DIR}
   PATHS
     /usr/local/X11R6/include
     /usr/local/X11/include
@@ -27,7 +29,10 @@ FIND_PATH( GMTL_INCLUDE_DIR gmtl/AABox.h
 
 
 # handle the QUIETLY and REQUIRED arguments and set
-# GMTL_FOUND to TRUE as appropriate
+# GGT_FOUND to TRUE as appropriate
 INCLUDE( FindPackageHandleStandardArgs )
-FIND_PACKAGE_HANDLE_STANDARD_ARGS( GMTL DEFAULT_MSG GMTL_INCLUDE_DIR )
+FIND_PACKAGE_HANDLE_STANDARD_ARGS( GGT DEFAULT_MSG GGT_INCLUDE_DIR )
 
+MARK_AS_ADVANCED(
+    Ggt_INCLUDE_DIR
+)

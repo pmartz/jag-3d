@@ -1,3 +1,5 @@
+# Copyright
+
 # - try to find glut library and include files
 #  Freeglut_INCLUDE_DIR, where to find GL/glut.h, etc.
 #  Freeglut_LIBRARIES, the libraries to link against

@@ -1,4 +1,4 @@
-// Copyright 2010 Skew Matrix Software. All rights reserved.
+// Copyright
 
 #include <iostream>
 #include <vector>

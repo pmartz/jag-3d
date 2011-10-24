@@ -42,10 +42,13 @@ find_package( OpenGL REQUIRED )
 
 
 include( FindFreeglutHelper )
+include( FindGGTHelper )
 
 FreeglutMenuSetup()
+GgtMenuSetup()
 
 FreeglutFinder()
+GgtFinder()
 
 
 option( BUILD_SHARED_LIBS "Set to ON to build JAG3D for dynamic linking. Use OFF for static." ON )
