@@ -61,7 +61,7 @@ endif()
 include( CMakeMacros )
 
 
-add_subdirectory( src/jagDraw )
+# add_subdirectory( src/jagDraw )
 
 
 option( JAG3D_BUILD_TESTS "Enable to build test code" ON )
