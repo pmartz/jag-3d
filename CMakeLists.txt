@@ -2,8 +2,8 @@ cmake_minimum_required( VERSION 2.8 )
 project( Jag3D )
 
 
-# Please keep in sync with Version.h
-set( JAD-3D_VERSION 0.00.00 )
+# Please keep in sync with include/jagBase/Version.h
+set( JAG3D_VERSION 0.00.00 )
 
 set( CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/CMakeModules;${CMAKE_MODULE_PATH}" )
 
@@ -61,7 +61,8 @@ endif()
 include( CMakeMacros )
 
 
-# add_subdirectory( src/jagDraw )
+add_subdirectory( src/jagBase )
+#add_subdirectory( src/jagDraw )
 
 
 option( JAG3D_BUILD_TESTS "Enable to build test code" ON )

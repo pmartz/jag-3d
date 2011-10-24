@@ -9,6 +9,7 @@
 #include <GL/glxew.h>
 #endif
 
+#include <jagBase/Version.h>
 #include <platformFreeglut.h>
 #include <string>
 #include <iostream>
@@ -57,6 +58,8 @@ void keyboard(unsigned char key, int x, int y)
 
 void init()
 {
+    cout << jagBase::getVersionString() << endl;
+
 #ifdef GLEW_MX
     glewContextInit(glewGetContext());
 #ifdef _WIN32
