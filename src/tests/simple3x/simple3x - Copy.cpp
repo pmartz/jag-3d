@@ -1,8 +1,8 @@
-// TECHSOUP_COPYRIGHT_INFO_HERE
+// Copyright
 
 #include <stdlib.h>
 #include <GL/glew.h>
-#include <utilities/platform_glut.h>
+#include <platformFreeglut.h>
 #include <string>
 #include <iostream>
 #include <utilities/glutil.h>

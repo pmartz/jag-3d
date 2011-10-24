@@ -6,10 +6,12 @@ set( _demoIncludes
 
 set( _requiredDependencyIncludes
     ${GGT_INCLUDE_DIR}
-    ${OPENGL_INCLUDE_DIR}    
+    ${GLEW_INCLUDE_DIR}
+    ${OPENGL_INCLUDE_DIR}
 )
 
 set( _requiredDependencyLibraries
+    ${GLEW_LIBRARIES}
     ${OPENGL_gl_LIBRARY}
 )
 
@@ -28,8 +30,6 @@ endmacro()
 
 
 macro( _addExecutable _category _exeName )
-    message( STATUS "In _addExecutable ${_exeName}" )
-
     add_executable( ${_exeName} ${ARGN} )
 
     include_directories(
@@ -43,7 +43,6 @@ macro( _addExecutable _category _exeName )
     target_link_libraries( ${_exeName}
         ${_requiredDependencyLibraries}
     )
-
     _exeInstall( ${_category} ${_exeName} )
 
     set_target_properties( ${_exeName} PROPERTIES PROJECT_LABEL "${_category} ${_exeName}" )
@@ -53,7 +52,6 @@ macro( _addFreeglutExecutable _category _exeName )
     if( NOT Freeglut_FOUND )
         return()
     endif()
-    message( STATUS "In _addFreeglutExecutable ${_exeName}" )
 
     add_executable( ${_exeName} ${ARGN} )
 

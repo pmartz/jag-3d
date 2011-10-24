@@ -36,19 +36,21 @@ if( WIN32 AND MSVC )
 endif()
 
 
-include( CMakeMacros )
 
 find_package( OpenGL REQUIRED )
 
-
 include( FindFreeglutHelper )
 include( FindGGTHelper )
+include( FindGLEWHelper )
 
 FreeglutMenuSetup()
 GgtMenuSetup()
+GLEWMenuSetup()
 
 FreeglutFinder()
 GgtFinder()
+GLEWFinder()
+
 
 
 option( BUILD_SHARED_LIBS "Set to ON to build JAG3D for dynamic linking. Use OFF for static." ON )
@@ -56,6 +58,10 @@ if( NOT BUILD_SHARED_LIBS )
     add_definitions( -DJAG3D_STATIC )
 endif()
 
+include( CMakeMacros )
+
+
+add_subdirectory( src/jagDraw )
 
 
 option( JAG3D_BUILD_TESTS "Enable to build test code" ON )
@@ -80,8 +86,6 @@ if( JAG3D_INSTALL_DATA )
     add_subdirectory( data )
 endif()
 
-
-add_subdirectory( src/jagDraw )
 
 
 #
