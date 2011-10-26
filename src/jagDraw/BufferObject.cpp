@@ -1,30 +1,32 @@
+// Copyright
+
+#include <jagDraw/BufferObject.h>
+#include <jagBase/PlatformOpenGL.h>
 #include <stdio.h>
-#include <Chaskii/Draw/BufferObject.h>
 
-namespace iiDraw {
 
-BufferObject::BufferObject( BufferObject::Target target ):
-    DrawableAttribute( DrawableAttribute::BufferObject_t ),
-    m_target(target),
-    m_gfxInited(false),
-    m_usage( DynamicDraw )
+namespace jagDraw {
+
+
+BufferObject::BufferObject( BufferObject::Target target )
+  : _target( target ),
+    _gfxInited( false ),
+    _usage( DynamicDraw )
 {}
 
-BufferObject::BufferObject( BufferObject::Target target, iiMem::Buffer_ptr b, Usage usage ):
-    DrawableAttribute( DrawableAttribute::BufferObject_t ),
-    m_target(target),
-    m_gfxInited(false),
-    m_usage(usage),
-    m_buffer(b)
+BufferObject::BufferObject( BufferObject::Target target, jagBase::BufferPtr b, Usage usage )
+  : _target( target ),
+    _gfxInited( false ),
+    _usage( usage ),
+    _buffer( b )
 {}
 
-BufferObject::BufferObject( const BufferObject &b ):
-    DrawableAttribute( DrawableAttribute::BufferObject_t ),
-    m_target(b.m_target),
-    m_gfxInited(b.m_gfxInited),
-    m_usage(b.m_usage),
-    m_buffer(b.m_buffer),
-    m_id(b.m_id)
+BufferObject::BufferObject( const BufferObject& b )
+  : _target( b._target ),
+    _gfxInited( b._gfxInited ),
+    _usage( b._usage ),
+    _buffer( b._buffer ),
+    _id( b._id )
 {}
 
 
@@ -32,103 +34,89 @@ BufferObject::~BufferObject()
 {
 }
 
-void BufferObject::setBuffer( iiMem::Buffer_ptr b ) 
+void BufferObject::setBuffer( jagBase::BufferPtr b ) 
 { 
-    m_buffer = b;
+    _buffer = b;
 }
 
-iiMem::Buffer_ptr BufferObject::getBuffer() 
+jagBase::BufferPtr BufferObject::getBuffer() 
 { 
-    return m_buffer; 
+    return( _buffer );
 }
 
 void BufferObject::setUsage( BufferObject::Usage usage ) 
 { 
-    m_usage = usage; 
+    _usage = usage; 
 }
 
 BufferObject::Usage BufferObject::getUsage() 
-{ 
-    return m_usage; 
+{
+    return( _usage );
 }
 
-void BufferObject::apply( DrawContext &ctx )
+void BufferObject::apply()
 {
-    if( !m_gfxInited &&  !p_gfxInit() )
+    if( !_gfxInited && !p_gfxInit() )
         return;
 
-    stats();
+//    stats();
 
-    glBindBuffer( m_target, m_id );
+    glBindBuffer( _target, _id );
 }
 
-void BufferObject::gfxInit( DrawContext &ctx )
+void BufferObject::gfxInit()
 {
-    if( !m_gfxInited )
+    if( !_gfxInited )
         p_gfxInit();
 }
 
-void BufferObject::subData( GLsizeiptr offset, GLsizeiptr size, const GLvoid *data )
+void BufferObject::subData( GLsizeiptr offset, GLsizeiptr size, const GLvoid* data )
 {
-#ifdef GL_EXT_direct_state_access
-    glNamedBufferSubDataEXT( m_id, offset, size, data );
-#else
-    glBindBuffer( m_target, m_id );
-    glBufferSubData( m_target, offset, size, data );
-#endif
+    glBindBuffer( _target, _id );
+    glBufferSubData( _target, offset, size, data );
 }
 
-GLbyte *BufferObject::map( BufferObject::Access access )
+GLbyte* BufferObject::map( BufferObject::Access access )
 {
-    if( !m_gfxInited )
+    if( !_gfxInited )
         p_gfxInit();
 
-#ifdef GL_EXT_direct_state_access
-    return (GLbyte *)glMapNamedBufferEXT( m_id, access );
-#else
-    glBindBuffer( m_target, m_id );
-    GLbyte *addr = (GLbyte *)glMapBuffer( m_target, access );
-    glBindBuffer(m_target, 0 );
-    return addr;
-#endif
+    glBindBuffer( _target, _id );
+    GLbyte* addr = (GLbyte*)( glMapBuffer( _target, access ) );
+    glBindBuffer( _target, 0 );
+    return( addr );
 }
 
 void BufferObject::unmap()
 {
-    if( !m_gfxInited )
+    if( !_gfxInited )
         p_gfxInit();
 
-#ifdef GL_EXT_direct_state_access
-    glUnmapNamedBufferEXT( m_id );
-#else
-    glBindBuffer( m_target, m_id );
-    glUnmapBuffer( m_target );
-    glBindBuffer(m_target, 0 );
-#endif
+    glBindBuffer( _target, _id );
+    glUnmapBuffer( _target );
+    glBindBuffer( _target, 0 );
 }
 
 
 bool BufferObject::p_gfxInit()
 {
-    if( m_gfxInited == true )
-        return m_gfxInited;
+    if( _gfxInited == true )
+        return( _gfxInited );
 
-    if( m_buffer.get() == NULL )
-        return m_gfxInited;
+    if( _buffer.get() == NULL )
+        return( _gfxInited );
 
-    glGenBuffers( 1, &m_id );
+    glGenBuffers( 1, &_id );
 
-#ifdef GL_EXT_direct_state_access
-    glNamedBufferDataEXT( m_id, m_buffer->getSize(), m_buffer->data(), m_usage );
-#else
-    glBindBuffer( m_target, m_id );
-    glBufferData( m_target, m_buffer->getSize(), m_buffer->data(), m_usage );
-    glBindBuffer( m_target, 0 );
-#endif
+    glBindBuffer( _target, _id );
+    glBufferData( _target, _buffer->getSize(), _buffer->data(), _usage );
+    glBindBuffer( _target, 0 );
 
-    m_buffer_size = m_buffer->getSize();
+    _bufferSize = _buffer->getSize();
 
-    return (m_gfxInited = true);
+    return( _gfxInited = true );
 }
 
+
+// jagDraw
 }

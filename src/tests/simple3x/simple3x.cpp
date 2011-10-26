@@ -1,15 +1,8 @@
 // Copyright
 
-#define GLEW_MX
-
-#include <GL/glew.h>
-#if defined(_WIN32)
-#include <GL/wglew.h>
-#elif !defined(__APPLE__) || defined(GLEW_APPLE_GLX)
-#include <GL/glxew.h>
-#endif
-
+#include <jagBase/PlatformOpenGL.h>
 #include <jagBase/Version.h>
+#include <jagDraw/BufferObject.h>
 #include <platformFreeglut.h>
 #include <string>
 #include <iostream>
@@ -17,25 +10,15 @@
 
 using namespace std;
 
-// Globals
-#ifdef GLEW_MX
-GLEWContext _glewctx;
-#define glewGetContext() (&_glewctx)
-#ifdef _WIN32
-WGLEWContext _wglewctx;
-#define wglewGetContext() (&_wglewctx)
-#elif !defined(__APPLE__) || defined(GLEW_APPLE_GLX)
-GLXEWContext _glxewctx;
-#define glxewGetContext() (&_glxewctx)
-#endif
-#endif
 
-
+// GLobal
+jagDraw::BufferObjectPtr bop;
 
 
 void display(void)
 {
     glClear( GL_COLOR_BUFFER_BIT );
+    bop->apply();
     glFlush ();
 }
 
@@ -80,6 +63,16 @@ void init()
     cout << string( "GL_SHADING_LANGUAGE_VERSION: " ) << string( (char*)(glGetString( GL_SHADING_LANGUAGE_VERSION )) ) << endl;
 
     glClearColor( 0.5f, 0.5f, 0.5f, 0.f );
+
+    float verts[] = {
+        -1., -1., 0.,
+        1., -1., 0.,
+        -1., 1., 0.,
+        1., 1., 0. };
+    jagBase::BufferPtr bp = static_cast< jagBase::BufferPtr >(
+        new jagBase::Buffer( sizeof( verts ), (void*)verts ) );
+    bop = static_cast< jagDraw::BufferObjectPtr >(
+        new jagDraw::BufferObject( jagDraw::BufferObject::ArrayBuffer, bp, jagDraw::BufferObject::StaticDraw ) );
 }
 
 int main (int argc, char** argv)

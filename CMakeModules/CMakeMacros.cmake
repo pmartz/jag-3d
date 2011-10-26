@@ -18,10 +18,37 @@ set( _requiredDependencyLibraries
     ${OPENGL_gl_LIBRARY}
 )
 set( _projectLibraries
+    jagDraw
     jagBase
 )
 
 
+# Given an input token _tokenIn, return all the elements
+# in ARGN preceding _tokenIn in _list0out, and all the elements
+# following _tokenIn in _list1out. If _tokenIn is not present in _listIn,
+# _list0out will be identical to ARGN, and _list1out will be empty.
+#
+macro( _splitList _tokenIn _list0out _list1out )
+    set( ${_list0out} )
+    set( ${_list1out} )
+    set( tokenFound 0 )
+
+    foreach( element ${ARGN} )
+        if( tokenFound )
+            list( APPEND ${_list1out} ${element} )
+        else()
+            if( ${element} STREQUAL ${_tokenIn} )
+                set( tokenFound 1 )
+            else()
+                list( APPEND ${_list0out} ${element} )
+            endif()
+        endif()
+    endforeach()
+endmacro()
+
+
+# Support installing non-app executables into the share/jag3d/bin directory.
+#
 macro( _exeInstall _category _exeName )
     if( _category STREQUAL "App" )
         set( _installDir bin )
@@ -92,13 +119,16 @@ macro( _addLibrary _libName )
         ${_requiredDependencyIncludes}
     )
 
+    _splitList( JAG_LIBRARIES sources libs ${ARGN} )
+
     if( BUILD_SHARED_LIBS )
-        add_library( ${_libName} SHARED ${ARGN} )
+        add_library( ${_libName} SHARED ${sources} )
     else()
-        add_library( ${_libName} ${ARGN} )
+        add_library( ${_libName} ${sources} )
     endif()
 
     target_link_libraries( ${_libName}
+        ${libs}
         ${_requiredDependencyLibraries}
     )
 

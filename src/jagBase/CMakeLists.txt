@@ -8,6 +8,10 @@ endif()
 set( HEADER_PATH ${PROJECT_SOURCE_DIR}/include/${_libName} )
 set( _jagBaseHeaderFiles
     ${HEADER_PATH}/Export.h
+    ${HEADER_PATH}/Buffer.h
+    ${HEADER_PATH}/PlatformGLEW.h
+    ${HEADER_PATH}/PlatformOpenGL.h
+    ${HEADER_PATH}/ptr.h
     ${HEADER_PATH}/Version.h
 )
 

@@ -38,20 +38,26 @@ endif()
 
 
 find_package( OpenGL REQUIRED )
+find_package( boost )
 
 include( FindFreeglutHelper )
 include( FindGGTHelper )
 include( FindGLEWHelper )
 
 FreeglutMenuSetup()
-GgtMenuSetup()
+GGTMenuSetup()
 GLEWMenuSetup()
 
 FreeglutFinder()
-GgtFinder()
+GGTFinder()
 GLEWFinder()
 
 
+
+option( JAG3D_USE_BOOST_POINTERS "If set, and Boost is found, JAG uses Boost shared pointers instead of TR1" OFF )
+if( JAG3D_USE_BOOST_POINTERS AND BOOST_FOUND )
+    add_definitions( -DJAG3D_USE_BOOST_POINTERS )
+endif()
 
 option( BUILD_SHARED_LIBS "Set to ON to build JAG3D for dynamic linking. Use OFF for static." ON )
 if( NOT BUILD_SHARED_LIBS )
@@ -62,7 +68,7 @@ include( CMakeMacros )
 
 
 add_subdirectory( src/jagBase )
-#add_subdirectory( src/jagDraw )
+add_subdirectory( src/jagDraw )
 
 
 option( JAG3D_BUILD_TESTS "Enable to build test code" ON )

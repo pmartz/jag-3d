@@ -10,96 +10,96 @@ macro( unFindGgt )
 endmacro( unFindGgt )
 
 
-macro( GgtMenuSetup )
+macro( GGTMenuSetup )
     # What type of Ggt should we look for? This is a combo box
     # supporting three types of Ggt installations:
     #  * Default installation (in which the stock FindGgt.cmake script does all the work)
-    #  * Alternate Install Location (user must set the GgtInstallLocation variable)
-    #  * Source And Build Tree (user must supply both the GgtSourceRoot and GgtBuildRoot variables)
-    set( GgtInstallType "Default Installation" CACHE STRING "Type of Ggt install: 'Default Installation', 'Alternate Install Location', or 'Source And Build Tree'." )
-    set_property( CACHE GgtInstallType PROPERTY STRINGS "Default Installation" "Alternate Install Location" "Source And Build Tree" )
+    #  * Alternate Install Location (user must set the GGTInstallLocation variable)
+    #  * Source And Build Tree (user must supply both the GGTSourceRoot and GGTBuildRoot variables)
+    set( GGTInstallType "Default Installation" CACHE STRING "Type of Ggt install: 'Default Installation', 'Alternate Install Location', or 'Source And Build Tree'." )
+    set_property( CACHE GGTInstallType PROPERTY STRINGS "Default Installation" "Alternate Install Location" "Source And Build Tree" )
 
     # We need to detect when the user changes the Ggt install type
     # or any of the related directory variables, so that we'll know
     # to call unFindGgt() and force the stock Ggt script to search
     # again. To do this, we save the last set value of these variables
     # in the CMake cache as internal (hidden) variables.
-    if( NOT DEFINED _lastGgtInstallType )
-        set( _lastGgtInstallType "empty" CACHE INTERNAL "" )
+    if( NOT DEFINED _lastGGTInstallType )
+        set( _lastGGTInstallType "empty" CACHE INTERNAL "" )
     endif()
-    if( NOT DEFINED _lastGgtInstallLocation )
-        set( _lastGgtInstallLocation "empty" CACHE INTERNAL "" )
+    if( NOT DEFINED _lastGGTInstallLocation )
+        set( _lastGGTInstallLocation "empty" CACHE INTERNAL "" )
     endif()
-    if( NOT DEFINED _lastGgtSourceRoot )
-        set( _lastGgtSourceRoot "empty" CACHE INTERNAL "" )
+    if( NOT DEFINED _lastGGTSourceRoot )
+        set( _lastGGTSourceRoot "empty" CACHE INTERNAL "" )
     endif()
-    if( NOT DEFINED _lastGgtBuildRoot )
-        set( _lastGgtBuildRoot "empty" CACHE INTERNAL "" )
+    if( NOT DEFINED _lastGGTBuildRoot )
+        set( _lastGGTBuildRoot "empty" CACHE INTERNAL "" )
     endif()
 
-    if( NOT DEFINED GgtInstallLocation )
-        set( GgtInstallLocation "Please specify" )
+    if( NOT DEFINED GGTInstallLocation )
+        set( GGTInstallLocation "Please specify" )
     endif()
-    if( NOT DEFINED GgtSourceRoot )
-        set( GgtSourceRoot "Please specify" )
+    if( NOT DEFINED GGTSourceRoot )
+        set( GGTSourceRoot "Please specify" )
     endif()
-    if( NOT DEFINED GgtBuildRoot )
-        set( GgtBuildRoot "Please specify" )
+    if( NOT DEFINED GGTBuildRoot )
+        set( GGTBuildRoot "Please specify" )
     endif()
 endmacro()
 
 
 
-macro( GgtFinder )
+macro( GGTFinder )
     # If the user has changed the Ggt install type combo box
     # (or it's a clean cache), then set or unset our related
     # Ggt directory search variables.
-    if( NOT ( ${GgtInstallType} STREQUAL ${_lastGgtInstallType} ) )
-    #    message( STATUS "NOT ( ${GgtInstallType} STREQUAL ${_lastGgtInstallType} )" )
+    if( NOT ( ${GGTInstallType} STREQUAL ${_lastGGTInstallType} ) )
+    #    message( STATUS "NOT ( ${GGTInstallType} STREQUAL ${_lastGGTInstallType} )" )
 
-        if( GgtInstallType STREQUAL "Default Installation" )
+        if( GGTInstallType STREQUAL "Default Installation" )
             # Remove our helper variables and tell the stock script to search again.
-            unset( GgtInstallLocation CACHE )
-            unset( GgtSourceRoot CACHE )
-            unset( GgtBuildRoot CACHE )
-        elseif( GgtInstallType STREQUAL "Alternate Install Location" )
-            # Enable just the GgtInstallLocation helper variable.
-            set( GgtInstallLocation "Please specify" CACHE PATH "Root directory where Ggt is installed" )
-            unset( GgtSourceRoot CACHE )
-            unset( GgtBuildRoot CACHE )
-        elseif( GgtInstallType STREQUAL "Source And Build Tree" )
-            # Enable the GgtSourceRoot and GgtBuildRoot helper variables.
-            unset( GgtInstallLocation CACHE )
-            set( GgtSourceRoot "Please specify" CACHE PATH "Root directory of Ggt source tree" )
-            set( GgtBuildRoot "Please specify" CACHE PATH "Root directory of Ggt build tree" )
+            unset( GGTInstallLocation CACHE )
+            unset( GGTSourceRoot CACHE )
+            unset( GGTBuildRoot CACHE )
+        elseif( GGTInstallType STREQUAL "Alternate Install Location" )
+            # Enable just the GGTInstallLocation helper variable.
+            set( GGTInstallLocation "Please specify" CACHE PATH "Root directory where Ggt is installed" )
+            unset( GGTSourceRoot CACHE )
+            unset( GGTBuildRoot CACHE )
+        elseif( GGTInstallType STREQUAL "Source And Build Tree" )
+            # Enable the GGTSourceRoot and GGTBuildRoot helper variables.
+            unset( GGTInstallLocation CACHE )
+            set( GGTSourceRoot "Please specify" CACHE PATH "Root directory of Ggt source tree" )
+            set( GGTBuildRoot "Please specify" CACHE PATH "Root directory of Ggt build tree" )
         endif()
     endif()
 
     # Look for conditions that require us to find Ggt again.
     set( _needToFindGgt FALSE )
-    if( GgtInstallType STREQUAL "Default Installation" )
-        if( NOT ( ${GgtInstallType} STREQUAL ${_lastGgtInstallType} ) )
+    if( GGTInstallType STREQUAL "Default Installation" )
+        if( NOT ( ${GGTInstallType} STREQUAL ${_lastGGTInstallType} ) )
     #        message( STATUS "Need to find: case A" )
             set( _needToFindGgt TRUE )
         endif()
-    elseif( GgtInstallType STREQUAL "Alternate Install Location" )
-        if( NOT ( "${GgtInstallLocation}" STREQUAL "${_lastGgtInstallLocation}" ) )
+    elseif( GGTInstallType STREQUAL "Alternate Install Location" )
+        if( NOT ( "${GGTInstallLocation}" STREQUAL "${_lastGGTInstallLocation}" ) )
     #        message( STATUS "Need to find: case B" )
             set( _needToFindGgt TRUE )
         endif()
-    elseif( GgtInstallType STREQUAL "Source And Build Tree" )
-        if( ( NOT ( "${GgtSourceRoot}" STREQUAL "${_lastGgtSourceRoot}" ) ) OR
-            ( NOT ( "${GgtBuildRoot}" STREQUAL "${_lastGgtBuildRoot}" ) ) )
+    elseif( GGTInstallType STREQUAL "Source And Build Tree" )
+        if( ( NOT ( "${GGTSourceRoot}" STREQUAL "${_lastGGTSourceRoot}" ) ) OR
+            ( NOT ( "${GGTBuildRoot}" STREQUAL "${_lastGGTBuildRoot}" ) ) )
     #        message( STATUS "Need to find: cade C" )
             set( _needToFindGgt TRUE )
         endif()
     endif()
     if( _needToFindGgt )
         unFindGgt()
-        set( _lastGgtInstallType ${GgtInstallType} CACHE INTERNAL "" FORCE )
-        set( _lastGgtInstallLocation ${GgtInstallLocation} CACHE INTERNAL "" FORCE )
-        set( _lastGgtSourceRoot ${GgtSourceRoot} CACHE INTERNAL "" FORCE )
-        set( _lastGgtBuildRoot ${GgtBuildRoot} CACHE INTERNAL "" FORCE )
+        set( _lastGGTInstallType ${GGTInstallType} CACHE INTERNAL "" FORCE )
+        set( _lastGGTInstallLocation ${GGTInstallLocation} CACHE INTERNAL "" FORCE )
+        set( _lastGGTSourceRoot ${GGTSourceRoot} CACHE INTERNAL "" FORCE )
+        set( _lastGGTBuildRoot ${GGTBuildRoot} CACHE INTERNAL "" FORCE )
     endif()
 
 
@@ -109,15 +109,15 @@ macro( GgtFinder )
     set( CMAKE_LIBRARY_PATH_SAVE ${CMAKE_LIBRARY_PATH} )
 
     set( CMAKE_PREFIX_PATH
-        ${GgtInstallLocation}
-        ${GgtSourceRoot}
-        ${GgtBuildRoot} )
+        ${GGTInstallLocation}
+        ${GGTSourceRoot}
+        ${GGTBuildRoot} )
     set( CMAKE_LIBRARY_PATH
-        ${GgtInstallLocation}
-        ${GgtBuildRoot} )
+        ${GGTInstallLocation}
+        ${GGTBuildRoot} )
 
 
-    find_package( GGT )
+    find_package( GGT REQUIRED )
 
 
     # Restore internal variables
