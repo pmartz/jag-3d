@@ -44,7 +44,7 @@ void init()
     cout << jagBase::getVersionString() << endl;
 
 #ifdef GLEW_MX
-    glewContextInit(glewGetContext());
+    glewContextInit( glewGetContext() );
 #ifdef _WIN32
     wglewContextInit(wglewGetContext());
 #elif !defined(__APPLE__) || defined(GLEW_APPLE_GLX)

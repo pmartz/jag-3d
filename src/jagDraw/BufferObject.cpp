@@ -1,7 +1,7 @@
 // Copyright
 
-#include <jagDraw/BufferObject.h>
 #include <jagBase/PlatformOpenGL.h>
+#include <jagDraw/BufferObject.h>
 #include <stdio.h>
 
 

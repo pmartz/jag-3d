@@ -20,7 +20,15 @@ set( _jagBaseSourceFiles
     Version.cpp
 )
 
+unset( _jagBaseGLEWSourceFiles )
+if( GLEW_FOUND )
+    set( _jagBaseGLEWSourceFiles
+        GLEW.cpp
+    )
+endif()
+
 _addLibrary( ${_libName}
     ${_jagBaseHeaderFiles}
     ${_jagBaseSourceFiles}
+    ${_jagBaseGLEWSourceFiles}
 )
