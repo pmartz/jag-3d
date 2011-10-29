@@ -12,6 +12,7 @@ set( _jagBaseHeaderFiles
     ${HEADER_PATH}/PlatformGLEW.h
     ${HEADER_PATH}/PlatformOpenGL.h
     ${HEADER_PATH}/ptr.h
+    ${HEADER_PATH}/types.h
     ${HEADER_PATH}/Version.h
 )
 

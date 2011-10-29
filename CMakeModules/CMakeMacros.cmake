@@ -9,6 +9,9 @@ set( _requiredDependencyIncludes
     ${GLEW_INCLUDE_DIR}
     ${OPENGL_INCLUDE_DIR}
 )
+set( _optionalDependencyIncludes
+    ${Boost_INCLUDE_DIR}
+)
 set( _projectIncludes
     ${PROJECT_SOURCE_DIR}/include
 )
@@ -69,6 +72,7 @@ macro( _addExecutable _category _exeName )
         ${_projectIncludes}
         ${_demoIncludes}
         ${_requiredDependencyIncludes}
+        ${_optionalDependencyIncludes}
     )
 
     if( WIN32 )
@@ -95,6 +99,7 @@ macro( _addFreeglutExecutable _category _exeName )
         ${Freeglut_INCLUDE_DIR}
         ${_demoIncludes}
         ${_requiredDependencyIncludes}
+        ${_optionalDependencyIncludes}
     )
 
     if( WIN32 )
@@ -117,6 +122,7 @@ macro( _addLibrary _libName )
     include_directories(
         ${_projectIncludes}
         ${_requiredDependencyIncludes}
+        ${_optionalDependencyIncludes}
     )
 
     _splitList( JAG_LIBRARIES sources libs ${ARGN} )

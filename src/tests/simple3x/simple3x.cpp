@@ -69,11 +69,12 @@ void init()
         1., -1., 0.,
         -1., 1., 0.,
         1., 1., 0. };
-    jagBase::BufferPtr bp = static_cast< jagBase::BufferPtr >(
-        new jagBase::Buffer( sizeof( verts ), (void*)verts ) );
-    bop = static_cast< jagDraw::BufferObjectPtr >(
-        new jagDraw::BufferObject( jagDraw::BufferObject::ArrayBuffer, bp, jagDraw::BufferObject::StaticDraw ) );
+    jagBase::BufferPtr bp( new jagBase::Buffer( sizeof( verts ), (void*)verts ) );
+    bop = jagDraw::BufferObjectPtr( new jagDraw::BufferObject( jagDraw::BufferObject::ArrayBuffer, bp, jagDraw::BufferObject::StaticDraw ) );
 }
+
+
+
 
 int main (int argc, char** argv)
 {

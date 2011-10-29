@@ -5,6 +5,7 @@
 
 
 #include <jagBase/ptr.h>
+#include <jagBase/types.h>
 
 #include <string.h> // for memset
 #include <assert.h>
@@ -20,29 +21,29 @@ class Buffer
 {
 public:
     Buffer()
-      : _size( 0 )
-    {}
+      : _size( 0 ),
+        _buffer( NULL )
+    {
+    }
 
     Buffer( size_t size )
-      : _size( size ) 
+      : _size( size ) ,
+        _buffer( size==0 ? NULL : new unsigned char[ size ] )
     {
-        if( _size == 0 )
-            _buffer = 0L;
-        else
-            _buffer = new unsigned char[ _size ];
     }
 
     Buffer( size_t size, void *ptr )
-      : _size( size )
+      : _size( size ),
+        _buffer( size==0 ? NULL : new unsigned char[ size ] )
     {
-        _buffer = new unsigned char[ _size ];
         copy( ptr );
     }
 
     Buffer( const Buffer& b ):
         _size( b._size ),
         _buffer( b._buffer )
-    {}
+    {
+    }
 
     ~Buffer()
     {
@@ -51,7 +52,7 @@ public:
     void setSize( size_t size )
     {
         _size = size;
-        _buffer = new unsigned char[ _size ];
+        _buffer.reset( new unsigned char[ _size ] );
     }
 
     size_t size() { return( _size ); }
@@ -79,7 +80,7 @@ public:
 private:
     size_t _size;
 
-    jagBase::ptr< unsigned char >::shared_array_ptr _buffer;
+    jagBase::UCharArray _buffer;
 };
 
 typedef jagBase::ptr< jagBase::Buffer >::shared_ptr BufferPtr;

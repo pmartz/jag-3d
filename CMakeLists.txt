@@ -38,7 +38,7 @@ endif()
 
 
 find_package( OpenGL REQUIRED )
-find_package( boost )
+find_package( Boost )
 
 include( FindFreeglutHelper )
 include( FindGGTHelper )
@@ -55,7 +55,7 @@ GLEWFinder()
 
 
 option( JAG3D_USE_BOOST_POINTERS "If set, and Boost is found, JAG uses Boost shared pointers instead of TR1" OFF )
-if( JAG3D_USE_BOOST_POINTERS AND BOOST_FOUND )
+if( JAG3D_USE_BOOST_POINTERS AND Boost_FOUND )
     add_definitions( -DJAG3D_USE_BOOST_POINTERS )
 endif()
 

@@ -5,7 +5,8 @@
 
 
 #ifdef JAG3D_USE_BOOST_POINTERS
-#  include <boost/shared_ptr>
+#  include <boost/smart_ptr/shared_ptr.hpp>
+#  include <boost/smart_ptr/shared_array.hpp>
 #else
 #  ifdef WIN32
 #    include <memory>
@@ -26,7 +27,7 @@ struct ptr
 {
 #ifdef JAG3D_USE_BOOST_POINTERS
     typedef boost::shared_ptr< T > shared_ptr;
-    typedef boost::shared_array< T > shared_array;
+    typedef boost::shared_array< T > shared_array_ptr;
 #else
     typedef std::tr1::shared_ptr< T > shared_ptr;
     struct shared_array_ptr : public shared_ptr
