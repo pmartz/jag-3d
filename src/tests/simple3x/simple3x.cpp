@@ -3,6 +3,7 @@
 #include <jagBase/PlatformOpenGL.h>
 #include <jagBase/Version.h>
 #include <jagDraw/BufferObject.h>
+#include <jagDraw/Shader.h>
 #include <platformFreeglut.h>
 #include <string>
 #include <iostream>
@@ -64,13 +65,26 @@ void init()
 
     glClearColor( 0.5f, 0.5f, 0.5f, 0.f );
 
-    float verts[] = {
-        -1., -1., 0.,
-        1., -1., 0.,
-        -1., 1., 0.,
-        1., 1., 0. };
-    jagBase::BufferPtr bp( new jagBase::Buffer( sizeof( verts ), (void*)verts ) );
-    bop = jagDraw::BufferObjectPtr( new jagDraw::BufferObject( jagDraw::BufferObject::ArrayBuffer, bp, jagDraw::BufferObject::StaticDraw ) );
+    {
+        float verts[] = {
+            -1., -1., 0.,
+            1., -1., 0.,
+            -1., 1., 0.,
+            1., 1., 0. };
+        jagBase::BufferPtr bp( new jagBase::Buffer( sizeof( verts ), (void*)verts ) );
+        bop = jagDraw::BufferObjectPtr( new jagDraw::BufferObject( jagDraw::BufferObject::ArrayBuffer, bp, jagDraw::BufferObject::StaticDraw ) );
+    }
+
+    {
+        const char* shaderSource =
+            "#version 130 \n" \
+            "attribute vec3 vertIn; \n" \
+            "void main() { \n" \
+            "    gl_Position = vertIn; \n" \
+            "}";
+        jagDraw::ShaderPtr sp( new jagDraw::Shader( GL_VERTEX_SHADER ) );
+        sp->addSourceString( std::string( shaderSource ) );
+    }
 }
 
 

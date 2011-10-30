@@ -1,42 +1,53 @@
-#ifndef SHADER_DEF
-#define SHADER_DEF
+// Copyright
+
+#ifndef __JAGDRAW_SHADER_H__
+#define __JAGDRAW_SHADER_H__ 1
+
 
 #include <vector>
 #include <string>
 
-#include <Chaskii/OpenGL.h>
-#include <Chaskii/Mem/ptr.h>
+#include <jagDraw/Export.h>
+#include <jagBase/PlatformOpenGL.h>
+#include <jagBase/ptr.h>
+#include <string>
 
-namespace iiDraw {
 
-class Shader 
+namespace jagDraw {
+
+
+class JAGDRAW_EXPORT Shader 
 {
-    public:
-        Shader( GLenum type );
-        ~Shader();
+public:
+    Shader( GLenum type );
+    ~Shader();
 
-        void addSourceFile( const std::string &filename );
+    void addSourceFile( const std::string& fileName );
 
-        void addSourceString( const std::string &source );
+    void addSourceString( const std::string& source );
 
-        GLuint getHandle();
+    GLuint getHandle();
 
-        void printInfoLog();
+    void printInfoLog();
 
-    private:
-        bool m_initialized;
-        GLenum m_type;
-        std::vector<std::string>m_sourceList;
-        GLuint m_handle;
+private:
+    void p_init();
+    bool _initialized;
 
-        void p_init();
-        std::string p_loadSource( const std::string &filename );
+    std::string p_loadSource( const std::string& fileName );
+
+    GLenum _type;
+    std::vector< std::string > _sourceList;
+    GLuint _handle;
 };
 
-typedef iiMem::ptr<Shader>::shared_ptr Shader_ptr;
-typedef std::vector<Shader_ptr> ShaderList;
-//typedef iiMem::ptr<Shader>::shared_array_ptr Shader_array_ptr;
+typedef jagBase::ptr< jagDraw::Shader >::shared_ptr ShaderPtr;
+typedef std::vector< ShaderPtr > ShaderList;
 
+
+// jagDraw
 }
 
+
+// __JAGDRAW_SHADER_H__
 #endif

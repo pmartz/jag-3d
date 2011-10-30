@@ -12,7 +12,7 @@ set( _jagDrawHeaderFiles
 #    ${HEADER_PATH}/Drawable.h
 #    ${HEADER_PATH}/DrawableAttribute.h
 #    ${HEADER_PATH}/DrawContext.h
-#    ${HEADER_PATH}/Shader.h
+    ${HEADER_PATH}/Shader.h
 #    ${HEADER_PATH}/ShaderProgram.h
 #    ${HEADER_PATH}/Texture.h
 #    ${HEADER_PATH}/Transform.h
@@ -23,7 +23,7 @@ set( _jagDrawHeaderFiles
 
 set( _jagDrawSourceFiles
     BufferObject.cpp
-#    Shader.cpp
+    Shader.cpp
 #    ShaderProgram.cpp
 #    stats.cpp
 #    UniformValue.cpp

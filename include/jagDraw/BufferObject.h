@@ -1,7 +1,7 @@
 // Copyright
 
-#ifndef __JAG3D_DRAW_BUFFER_OBJECT_H__
-#define __JAG3D_DRAW_BUFFER_OBJECT_H__ 1
+#ifndef __JAGDRAW_BUFFER_OBJECT_H__
+#define __JAGDRAW_BUFFER_OBJECT_H__ 1
 
 #include <vector>
 
@@ -134,5 +134,5 @@ typedef std::vector< BufferObjectPtr > BufferObjectList;
 }
 
 
-// __JAG3D_DRAW_BUFFER_OBJECT_H__
+// __JAGDRAW_BUFFER_OBJECT_H__
 #endif
