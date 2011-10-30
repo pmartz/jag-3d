@@ -13,10 +13,10 @@ set( _jagDrawHeaderFiles
 #    ${HEADER_PATH}/DrawableAttribute.h
 #    ${HEADER_PATH}/DrawContext.h
     ${HEADER_PATH}/Shader.h
-#    ${HEADER_PATH}/ShaderProgram.h
+    ${HEADER_PATH}/ShaderProgram.h
 #    ${HEADER_PATH}/Texture.h
 #    ${HEADER_PATH}/Transform.h
-#    ${HEADER_PATH}/UniformValue.h
+    ${HEADER_PATH}/UniformValue.h
 #    ${HEADER_PATH}/VertexAttribute.h
 #    ${HEADER_PATH}/VertexIterator.h
 )
@@ -24,9 +24,9 @@ set( _jagDrawHeaderFiles
 set( _jagDrawSourceFiles
     BufferObject.cpp
     Shader.cpp
-#    ShaderProgram.cpp
+    ShaderProgram.cpp
 #    stats.cpp
-#    UniformValue.cpp
+    UniformValue.cpp
 )
 
 _addLibrary( ${_libName}

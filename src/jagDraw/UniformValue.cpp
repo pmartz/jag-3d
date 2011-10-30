@@ -1,8 +1,13 @@
-#include <string.h>
-#include <Chaskii/OpenGL.h>
-#include <Chaskii/Draw/UniformValue.h>
+// Copyright
 
-namespace iiDraw {
+#include <jagDraw/UniformValue.h>
+#include <jagBase/PlatformOpenGL.h>
+
+#include <string>
+
+
+namespace jagDraw {
+
 
 UniformValue::UniformValue()
 {
@@ -47,6 +52,7 @@ UniformValue::UniformValue( GLint i )
     m_val.i = i;
 }
 
+/*
 UniformValue::UniformValue( iiMath::vec2i v2i )
 {
     m_type = GL_INT_VEC2;
@@ -102,6 +108,7 @@ UniformValue::UniformValue( iiMath::matrix4f mat4f )
     m_type = GL_FLOAT_MAT4;
     memcpy( m_val.mat4f, mat4f.getData(), sizeof(m_val.mat4f) );
 }
+*/
 
 void UniformValue::apply(GLint loc, bool transpose) const
 {
@@ -134,4 +141,5 @@ void UniformValue::apply(GLint loc, bool transpose) const
 }
 
 
+// jagDraw
 }

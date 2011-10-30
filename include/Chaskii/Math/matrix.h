@@ -31,6 +31,16 @@ typedef gmtl::Matrix33f matrix3f;
 typedef gmtl::Matrix33d matrix3d;
 typedef matrix3d matrix3;
 
+/*
+In gmtl/Generate.h
+
+   inline Matrix<T, 4,4>& setPerspective( Matrix<T, 4, 4>& result,
+
+   inline Matrix<T, 4,4>& setFrustum( Matrix<T, 4, 4>& result,
+                                                   T left, T top, T right,
+                                                   T bottom, T nr, T fr )
+*/
+
 template <typename T>
 inline gmtl::Matrix<T,4,4> Frustum( T l, T r, T b, T t, T n, T f )
 {

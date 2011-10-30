@@ -3,13 +3,13 @@
 #ifndef __JAGDRAW_BUFFER_OBJECT_H__
 #define __JAGDRAW_BUFFER_OBJECT_H__ 1
 
-#include <vector>
-
 #include <jagDraw/Export.h>
 #include <jagBase/PlatformOpenGL.h>
 #include <jagBase/ptr.h>
 #include <jagBase/Buffer.h>
 //#include <Chaskii/Draw/DrawableAttribute.h>
+
+#include <vector>
 
 
 namespace jagDraw {

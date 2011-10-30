@@ -1,8 +1,11 @@
+// Copyright
+
+#include <jagDraw/ShaderProgram.h>
 #include <stdio.h>
 #include <iostream>
-#include <Chaskii/Draw/ShaderProgram.h>
 
-namespace iiDraw {
+
+namespace jagDraw {
 
 
 #ifndef USE_GLEW
@@ -51,7 +54,7 @@ ShaderProgram::~ShaderProgram()
         glDeleteProgram( m_handle );
 }
 
-void ShaderProgram::attachShader( Shader_ptr shader )
+void ShaderProgram::attachShader( ShaderPtr shader )
 {
     m_shaders.push_back( shader );
 }
@@ -147,7 +150,7 @@ bool ShaderProgram::link()
     if( !m_initialized )
         p_init();
 
-    for( std::vector< Shader_ptr >::iterator s = m_shaders.begin(); s != m_shaders.end(); s++ )
+    for( std::vector< ShaderPtr >::iterator s = m_shaders.begin(); s != m_shaders.end(); s++ )
     {
         GLint shader = (*s)->getHandle();
         if( shader != 0 )
@@ -268,11 +271,11 @@ bool ShaderProgram::p_findLocationTypePair( const std::string &name, ShaderProgr
 void ShaderProgram::fromSourceFiles( const std::string &vertexShaderFile,
                               const std::string &fragmentShaderFile )
 {
-    iiDraw::Shader_ptr vshader(new iiDraw::Shader(GL_VERTEX_SHADER ));
+    jagDraw::ShaderPtr vshader(new jagDraw::Shader(GL_VERTEX_SHADER ));
     vshader->addSourceFile( vertexShaderFile );
     attachShader( vshader );
 
-    iiDraw::Shader_ptr fshader(new iiDraw::Shader(GL_FRAGMENT_SHADER ));
+    jagDraw::ShaderPtr fshader(new jagDraw::Shader(GL_FRAGMENT_SHADER ));
     fshader->addSourceFile( fragmentShaderFile );
     attachShader( fshader );
 }
@@ -280,11 +283,11 @@ void ShaderProgram::fromSourceFiles( const std::string &vertexShaderFile,
 void ShaderProgram::fromSourceStrings( const std::string &vertexShaderString,
                                const std::string &fragmentShaderString )
 {
-    iiDraw::Shader_ptr vshader(new iiDraw::Shader(GL_VERTEX_SHADER ));
+    jagDraw::ShaderPtr vshader(new jagDraw::Shader(GL_VERTEX_SHADER ));
     vshader->addSourceString( vertexShaderString );
     attachShader( vshader );
 
-    iiDraw::Shader_ptr fshader(new iiDraw::Shader(GL_FRAGMENT_SHADER ));
+    jagDraw::ShaderPtr fshader(new jagDraw::Shader(GL_FRAGMENT_SHADER ));
     fshader->addSourceString( fragmentShaderString );
     attachShader( fshader );
 
@@ -294,7 +297,7 @@ void ShaderProgram::fromSourceFileList( const SourceList &l )
 {
     for( SourceList::const_iterator p = l.begin(); p != l.end(); p++ )
     {
-        iiDraw::Shader_ptr shader(new iiDraw::Shader( p->first ));
+        jagDraw::ShaderPtr shader(new jagDraw::Shader( p->first ));
         shader->addSourceFile( p->second );
         attachShader( shader );
     }
@@ -304,11 +307,12 @@ void ShaderProgram::fromSourceStringList( const SourceList &l )
 {
     for( SourceList::const_iterator p = l.begin(); p != l.end(); p++ )
     {
-        iiDraw::Shader_ptr shader(new iiDraw::Shader( p->first ));
+        jagDraw::ShaderPtr shader(new jagDraw::Shader( p->first ));
         shader->addSourceString( p->second );
         attachShader( shader );
     }
 }
 
 
+// jagDraw
 }
