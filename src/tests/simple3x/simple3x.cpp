@@ -117,7 +117,7 @@ int main (int argc, char** argv)
 {
     glutInit(&argc, argv);
     glutInitDisplayMode( GLUT_SINGLE | GLUT_RGB );
-    //glutInitContextVersion( 3, 0 );
+    glutInitContextVersion( 3, 3 );
     //glutInitContextFlags( GLUT_FORWARD_COMPATIBLE );
 
     glutInitWindowSize( 300, 300 ); 
