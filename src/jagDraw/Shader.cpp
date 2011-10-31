@@ -1,6 +1,6 @@
 /*************** <auto-copyright.pl BEGIN do not edit this line> **************
 *
-* jag-3d is (C) Copyright 2011-2012 by Kenneth Mark Bryden and Paul Martz
+* jag3d is (C) Copyright 2011-2012 by Kenneth Mark Bryden and Paul Martz
 *
 * This library is free software; you can redistribute it and/or
 * modify it under the terms of the GNU Lesser General Public
@@ -136,7 +136,7 @@ std::string Shader::p_loadSource( const std::string& fileName )
     }
 
     in.seekg( 0, std::ios::end );
-    unsigned long size = in.tellg();
+    unsigned long size = (unsigned long)( in.tellg() );
     in.seekg( 0, std::ios::beg );
     char *buff = new char[size + 1];
     in.read( buff, size );

@@ -28,6 +28,13 @@ endforeach()
 
 
 if( WIN32 AND MSVC )
+    # Disable warnings
+    # Use foreach in case we want to disable more than 1 warning in the future.
+    foreach( warning 4251 )
+        set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd${warning}" )
+    endforeach()
+
+    # Enable MP, unless specified otherwise
     option( JAG3D_WIN32_USE_MP "Build with multiple processes (/MP option; VS 2005 and above)." ON )
     mark_as_advanced( JAG3D_WIN32_USE_MP )
     if( JAG3D_WIN32_USE_MP )
