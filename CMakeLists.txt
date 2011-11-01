@@ -50,14 +50,17 @@ find_package( Boost )
 include( FindFreeglutHelper )
 include( FindGGTHelper )
 include( FindGLEWHelper )
+include( FindPOCOHelper )
 
 FreeglutMenuSetup()
 GGTMenuSetup()
 GLEWMenuSetup()
+POCOMenuSetup()
 
 FreeglutFinder()
 GGTFinder()
 GLEWFinder()
+POCOFinder()
 
 
 
