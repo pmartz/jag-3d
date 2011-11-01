@@ -22,7 +22,7 @@
 #define __JAGDRAW_BUFFER_OBJECT_H__ 1
 
 #include <jagDraw/Export.h>
-#include <jagBase/PlatformOpenGL.h>
+#include <jagDraw/PlatformOpenGL.h>
 #include <jagBase/ptr.h>
 #include <jagBase/Buffer.h>
 //#include <Chaskii/Draw/DrawableAttribute.h>

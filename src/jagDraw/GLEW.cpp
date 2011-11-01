@@ -18,7 +18,7 @@
 *
 *************** <auto-copyright.pl END do not edit this line> ***************/
 
-#include <jagBase/PlatformGLEW.h>
+#include <jagDraw/PlatformGLEW.h>
 
 
 // TBD

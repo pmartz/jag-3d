@@ -12,6 +12,8 @@ set( _jagDrawHeaderFiles
 #    ${HEADER_PATH}/Drawable.h
 #    ${HEADER_PATH}/DrawableAttribute.h
 #    ${HEADER_PATH}/DrawContext.h
+    ${HEADER_PATH}/PlatformGLEW.h
+    ${HEADER_PATH}/PlatformOpenGL.h
     ${HEADER_PATH}/Shader.h
     ${HEADER_PATH}/ShaderProgram.h
 #    ${HEADER_PATH}/Texture.h
@@ -29,9 +31,17 @@ set( _jagDrawSourceFiles
     UniformValue.cpp
 )
 
+unset( _jagDrawGLEWSourceFiles )
+if( GLEW_FOUND )
+    set( _jagDrawGLEWSourceFiles
+        GLEW.cpp
+    )
+endif()
+
 _addLibrary( ${_libName}
     ${_jagDrawHeaderFiles}
     ${_jagDrawSourceFiles}
+    ${_jagDrawGLEWSourceFiles}
     JAG_LIBRARIES
         jagBase
 )

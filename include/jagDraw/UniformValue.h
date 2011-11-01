@@ -23,7 +23,7 @@
 
 
 #include <jagDraw/Export.h>
-#include <jagBase/PlatformOpenGL.h>
+#include <jagDraw/PlatformOpenGL.h>
 //#include <Chaskii/Math/vec.h>
 //#include <Chaskii/Math/matrix.h>
 

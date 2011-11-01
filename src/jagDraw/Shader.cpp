@@ -19,7 +19,7 @@
 *************** <auto-copyright.pl END do not edit this line> ***************/
 
 #include <jagDraw/Shader.h>
-#include <jagBase/PlatformOpenGL.h>
+#include <jagDraw/PlatformOpenGL.h>
 #include <iostream>
 #include <fstream>
 

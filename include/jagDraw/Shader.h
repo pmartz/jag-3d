@@ -26,7 +26,7 @@
 #include <string>
 
 #include <jagDraw/Export.h>
-#include <jagBase/PlatformOpenGL.h>
+#include <jagDraw/PlatformOpenGL.h>
 #include <jagBase/ptr.h>
 #include <string>
 

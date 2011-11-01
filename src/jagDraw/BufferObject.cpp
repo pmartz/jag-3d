@@ -18,7 +18,7 @@
 *
 *************** <auto-copyright.pl END do not edit this line> ***************/
 
-#include <jagBase/PlatformOpenGL.h>
+#include <jagDraw/PlatformOpenGL.h>
 #include <jagDraw/BufferObject.h>
 #include <stdio.h>
 

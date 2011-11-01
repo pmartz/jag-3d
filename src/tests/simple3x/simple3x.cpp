@@ -18,11 +18,11 @@
 *
 *************** <auto-copyright.pl END do not edit this line> ***************/
 
-#include <jagBase/PlatformOpenGL.h>
-#include <jagBase/Version.h>
+#include <jagDraw/PlatformOpenGL.h>
 #include <jagDraw/BufferObject.h>
 #include <jagDraw/Shader.h>
 #include <jagDraw/ShaderProgram.h>
+#include <jagBase/Version.h>
 #include <platformFreeglut.h>
 #include <string>
 #include <iostream>
