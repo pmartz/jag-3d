@@ -22,6 +22,7 @@
 #include <jagDraw/BufferObject.h>
 #include <jagDraw/Shader.h>
 #include <jagDraw/ShaderProgram.h>
+#include <jagDraw/Error.h>
 #include <jagBase/Version.h>
 #include <platformFreeglut.h>
 #include <string>
@@ -49,6 +50,8 @@ void display(void)
     glDrawArrays( GL_TRIANGLE_STRIP, 0, 4 );
 
     glFlush ();
+
+    JAG_ERROR_CHECK( "simple3x display()" );
 }
 
 

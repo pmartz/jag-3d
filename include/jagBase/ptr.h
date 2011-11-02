@@ -37,7 +37,7 @@
 namespace jagBase {
 
 
-/** \class ptr PlatformPtr.h <jagBase/PlatformPtr.h>
+/** \class ptr ptr.h <jagBase/ptr.h>
 \brief Defines the \c ptr template struct, supporting either Boost or TR1.
 */
 template <typename T>
