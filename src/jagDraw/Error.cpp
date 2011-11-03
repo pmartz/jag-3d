@@ -66,9 +66,12 @@ void fboErrorCheck( const std::string& msg )
     if( errorEnum == GL_FRAMEBUFFER_COMPLETE )
         return;
 
-    Poco::Logger& logger = Poco::Logger::get( "jag3d.jagDraw.GLError" );
-    if( !( logger.error() ) )
-        return;
+    Poco::Logger* logger = Poco::Logger::has( "jag3d.jagDraw.GLError" );
+    if( logger == NULL )
+    {
+        logger = &( Poco::Logger::create( "jag3d.jagDraw.GLError",
+                (Poco::Channel*)( jagBase::Log::instance()->getConsole() ), Poco::Message::PRIO_ERROR ) );
+    }
 
     std::string enumStr( "Unknown" );
     switch( errorEnum ) {
@@ -82,7 +85,7 @@ void fboErrorCheck( const std::string& msg )
 
     std::ostringstream ostr;
     ostr << "OpenGL FBO error " << enumStr << ": " << msg;
-    logger.log( Poco::Message( "", ostr.str(), Poco::Message::PRIO_ERROR ) );
+    logger->error( ostr.str() );
 }
 
 
