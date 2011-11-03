@@ -20,7 +20,7 @@
 
 #include <jagDraw/PlatformOpenGL.h>
 #include <jagDraw/BufferObject.h>
-#include <stdio.h>
+#include <jagDraw/Error.h>
 
 
 namespace jagDraw {
@@ -131,6 +131,8 @@ bool BufferObject::p_gfxInit()
     glBindBuffer( _target, 0 );
 
     _bufferSize = _buffer->getSize();
+
+    JAG_ERROR_CHECK( "BufferObject::p_gfxInit()" );
 
     return( _gfxInited = true );
 }

@@ -18,30 +18,35 @@
 *
 *************** <auto-copyright.pl END do not edit this line> ***************/
 
-#ifndef __JAGBASE_PLATFORM_GLEW_H__
-#define __JAGBASE_PLATFORM_GLEW_H__ 1
-
-#include <jagDraw/Export.h>
-
-
-#define GLEW_MX
-
-#include <GL/glew.h>
-
-#if defined( _WIN32 )
-#  include <GL/wglew.h>
-#elif !defined(__APPLE__) || defined(GLEW_APPLE_GLX)
-#  include <GL/glxew.h>
-#endif
+#include <jagBase/Log.h>
+#include <Poco/PatternFormatter.h>
+#include <Poco/FormattingChannel.h>
+#include <Poco/ConsoleChannel.h>
+#include <Poco/FileChannel.h>
 
 
-JAGDRAW_EXPORT GLEWContext* glewGetContext();
+namespace jagBase {
 
-#ifdef _WIN32
-    JAGDRAW_EXPORT WGLEWContext* wglewGetContext();
-#elif !defined(__APPLE__) || defined(GLEW_APPLE_GLX)
-    GLXEWContext* glxewGetContext();
-#endif
 
-// __JAGBASE_PLATFORM_GLEW_H__
-#endif
+Log* Log::_instance( NULL );
+
+
+Log::Log()
+  : _console( NULL ),
+    _file( NULL )
+{
+    _console = new Poco::FormattingChannel( new Poco::PatternFormatter("%s: %p: %t") );
+	_console->setChannel( new Poco::ConsoleChannel );
+	_console->open();
+
+    _file = new Poco::FormattingChannel( new Poco::PatternFormatter("%Y-%m-%d %H:%M:%S.%c %N[%P]:%s:%q:%t") );
+    _file->setChannel( new Poco::FileChannel( "jag3d.log" ) );
+    _file->open();
+}
+Log::~Log()
+{
+}
+
+
+// jagBase
+}

@@ -1,3 +1,23 @@
+#*************** <auto-copyright.pl BEGIN do not edit this line> **************
+#
+# jag3d is (C) Copyright 2011-2012 by Kenneth Mark Bryden and Paul Martz
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License version 2.1 as published by the Free Software Foundation.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Library General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the
+# Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+# Boston, MA 02111-1307, USA.
+#
+#************** <auto-copyright.pl END do not edit this line> ***************
+
 cmake_minimum_required( VERSION 2.8 )
 project( Jag3D )
 
@@ -63,6 +83,11 @@ GLEWFinder()
 POCOFinder()
 
 
+
+option( JAG3D_DISABLE_ALL_ERROR_CHECKS "If set, JAG disables all internal OpenGL error checking" OFF )
+if( JAG3D_DISABLE_ALL_ERROR_CHECKS )
+    add_definitions( -DJAG3D_DISABLE_ALL_ERROR_CHECKS )
+endif()
 
 option( JAG3D_USE_BOOST_POINTERS "If set, and Boost is found, JAG uses Boost shared pointers instead of TR1" OFF )
 if( JAG3D_USE_BOOST_POINTERS AND Boost_FOUND )

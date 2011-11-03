@@ -87,6 +87,8 @@ void init()
     glewInit();
 #endif
 
+    JAG_ERROR_CHECK( "simple3x init()" );
+
 
     // Display information on the type of vontext we created.
     cout << string( "GL_VENDOR: " ) << string( (char*)(glGetString( GL_VENDOR )) ) << endl;;

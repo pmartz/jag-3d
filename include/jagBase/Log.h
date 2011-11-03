@@ -18,30 +18,58 @@
 *
 *************** <auto-copyright.pl END do not edit this line> ***************/
 
-#ifndef __JAGBASE_PLATFORM_GLEW_H__
-#define __JAGBASE_PLATFORM_GLEW_H__ 1
-
-#include <jagDraw/Export.h>
+#ifndef __JAGBASE_LOG_H__
+#define __JAGBASE_LOG_H__ 1
 
 
-#define GLEW_MX
-
-#include <GL/glew.h>
-
-#if defined( _WIN32 )
-#  include <GL/wglew.h>
-#elif !defined(__APPLE__) || defined(GLEW_APPLE_GLX)
-#  include <GL/glxew.h>
-#endif
+#include <jagBase/Export.h>
+#include <stdlib.h>
 
 
-JAGDRAW_EXPORT GLEWContext* glewGetContext();
+namespace Poco {
+    class FormattingChannel;
+}
 
-#ifdef _WIN32
-    JAGDRAW_EXPORT WGLEWContext* wglewGetContext();
-#elif !defined(__APPLE__) || defined(GLEW_APPLE_GLX)
-    GLXEWContext* glxewGetContext();
-#endif
 
-// __JAGBASE_PLATFORM_GLEW_H__
+namespace jagBase
+{
+
+
+class JAGBASE_EXPORT Log
+{
+public:
+    static Log* instance()
+    {
+        if( _instance == NULL )
+        {
+            _instance = new Log;
+        }
+        return( _instance );
+    }
+
+    Poco::FormattingChannel* getConsole()
+    {
+        return( _console );
+    }
+    Poco::FormattingChannel* getFile()
+    {
+        return( _file );
+    }
+
+protected:
+    Log();
+    ~Log();
+
+    static Log* _instance;;
+
+    Poco::FormattingChannel* _console;
+    Poco::FormattingChannel* _file;
+};
+
+
+// jagBase
+}
+
+
+// __JAGBASE_LOG_H__
 #endif

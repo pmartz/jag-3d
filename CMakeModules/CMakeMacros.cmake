@@ -1,4 +1,22 @@
-# Copyright
+#*************** <auto-copyright.pl BEGIN do not edit this line> **************
+#
+# jag3d is (C) Copyright 2011-2012 by Kenneth Mark Bryden and Paul Martz
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License version 2.1 as published by the Free Software Foundation.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Library General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the
+# Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+# Boston, MA 02111-1307, USA.
+#
+#************** <auto-copyright.pl END do not edit this line> ***************
 
 set( _demoIncludes
     ${PROJECT_SOURCE_DIR}/include/demoSupport
@@ -11,6 +29,7 @@ set( _requiredDependencyIncludes
 )
 set( _optionalDependencyIncludes
     ${Boost_INCLUDE_DIR}
+    ${POCO_INCLUDE_DIR}
 )
 set( _projectIncludes
     ${PROJECT_SOURCE_DIR}/include
@@ -19,6 +38,9 @@ set( _projectIncludes
 set( _requiredDependencyLibraries
     ${GLEW_LIBRARIES}
     ${OPENGL_gl_LIBRARY}
+)
+set( _optionalDependencyLibraries
+    ${POCO_LIBRARIES}
 )
 set( _projectLibraries
     jagDraw
@@ -81,6 +103,7 @@ macro( _addExecutable _category _exeName )
     target_link_libraries( ${_exeName}
         ${_projectLibraries}
         ${_requiredDependencyLibraries}
+        ${_optionalDependencyLibraries}
     )
     _exeInstall( ${_category} ${_exeName} )
 
@@ -109,6 +132,7 @@ macro( _addFreeglutExecutable _category _exeName )
         ${Freeglut_LIBRARIES}
         ${_projectLibraries}
         ${_requiredDependencyLibraries}
+        ${_optionalDependencyLibraries}
     )
     
     _exeInstall( ${_category} ${_exeName} )
@@ -136,6 +160,7 @@ macro( _addLibrary _libName )
     target_link_libraries( ${_libName}
         ${libs}
         ${_requiredDependencyLibraries}
+        ${_optionalDependencyLibraries}
     )
 
     set_target_properties( ${_libName} PROPERTIES VERSION ${JAG3D_VERSION} )

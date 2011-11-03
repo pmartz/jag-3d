@@ -93,17 +93,28 @@ endforeach()
 list( APPEND _requestedComponents "PocoFoundation" )
 list( REMOVE_DUPLICATES _requestedComponents )
 
+if( POCO_STATIC )
+    set( _pocoStaticSuffix "md" )
+endif()
+set( _pocoDebugSuffix "d" )
+
 # Find each library.
 set( POCO_LIBRARIES )
 foreach( lib ${_requestedComponents} )
     find_library( POCO_${lib}_LIBRARY
-        NAMES ${lib}
+        NAMES ${lib}${_pocoStaticSuffix}
         PATH_SUFFIXES lib
     )
     if( NOT POCO_${lib}_LIBRARY )
         message( WARNING "Could not find Poco component library ${lib}" )
     endif()
-    list( APPEND POCO_LIBRARIES ${POCO_${lib}_LIBRARY} )
+    list( APPEND POCO_LIBRARIES "optimized" ${POCO_${lib}_LIBRARY} )
+
+    find_library( POCO_${lib}_LIBRARY_DEBUG
+        NAMES ${lib}${_pocoStaticSuffix}${_pocoDebugSuffix}
+        PATH_SUFFIXES lib
+    )
+    list( APPEND POCO_LIBRARIES "debug" ${POCO_${lib}_LIBRARY_DEBUG} )
 endforeach()
 
 

@@ -20,8 +20,11 @@
 
 #include <jagDraw/Error.h>
 #include <jagDraw/PlatformOpenGL.h>
+#include <jagBase/Log.h>
+#include <Poco/Logger.h>
+#include <Poco/Message.h>
 #include <string>
-#include <iostream>
+#include <sstream>
 
 
 
@@ -35,6 +38,13 @@ void errorCheck( const std::string& msg )
     if( errorEnum == GL_NO_ERROR )
         return;
 
+    Poco::Logger* logger = Poco::Logger::has( "jag3d.jagDraw.GLError" );
+    if( logger == NULL )
+    {
+        logger = &( Poco::Logger::create( "jag3d.jagDraw.GLError",
+                (Poco::Channel*)( jagBase::Log::instance()->getConsole() ), Poco::Message::PRIO_ERROR ) );
+    }
+
     std::string enumStr( "Unknown" );
     switch( errorEnum ) {
     case GL_INVALID_ENUM: enumStr = std::string( "GL_INVALID_ENUM" ); break;
@@ -43,7 +53,10 @@ void errorCheck( const std::string& msg )
     case GL_OUT_OF_MEMORY: enumStr = std::string( "GL_OUT_OF_MEMORY" ); break;
     case GL_INVALID_FRAMEBUFFER_OPERATION: enumStr = std::string( "GL_INVALID_FRAMEBUFFER_OPERATION" ); break;
     }
-    std::cerr << "OpenGL error " << enumStr << ": " << msg << std::endl;
+
+    std::ostringstream ostr;
+    ostr << enumStr << ": " << msg;
+    logger->error( ostr.str() );
 }
 
 
@@ -51,6 +64,10 @@ void fboErrorCheck( const std::string& msg )
 {
     const GLenum errorEnum( glCheckFramebufferStatus( GL_DRAW_FRAMEBUFFER ) );
     if( errorEnum == GL_FRAMEBUFFER_COMPLETE )
+        return;
+
+    Poco::Logger& logger = Poco::Logger::get( "jag3d.jagDraw.GLError" );
+    if( !( logger.error() ) )
         return;
 
     std::string enumStr( "Unknown" );
@@ -62,7 +79,10 @@ void fboErrorCheck( const std::string& msg )
     case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_EXT: enumStr = std::string( "GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER" ); break;
     case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT: enumStr = std::string( "GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS" ); break;
     }
-    std::cerr << "OpenGL FBO error " << enumStr << ": " << msg << std::endl;
+
+    std::ostringstream ostr;
+    ostr << "OpenGL FBO error " << enumStr << ": " << msg;
+    logger.log( Poco::Message( "", ostr.str(), Poco::Message::PRIO_ERROR ) );
 }
 
 
