@@ -74,12 +74,20 @@ if( POCO_INCLUDE_DIR )
         file( READ "${_versionFile}" _versionContents )
         string( REGEX REPLACE ".*#define POCO_VERSION[ \t]+0x([0-9A-Za-z]+).*"
             "\\1" _versionHex ${_versionContents} )
+        # _versionHex is a single string with the hex version extracted directly
+        # from the file, with no "0x" prefix. So, we have something like:
+        # "01040a02" (which would be Poco version 1.4.10p2)
+        
         string( REGEX MATCHALL "[0-9A-Za-z][0-9A-Za-z]" _versionsHex ${_versionHex} )
+        # _versionsHex (note plural) is a list of four 2-hex-character strings,
+        # something like "01:04:0a:02". New we just need to convert each list
+        # element from hex to decimal.
         
         foreach( _verNum ${_versionsHex} )
             _hexByteToDec( ${_verNum} _dec )
             set( POCO_VERSION "${POCO_VERSION}.${_dec}" )
         endforeach()
+        # This gives us a preceding ".", so we strip that with this next line:
         string( SUBSTRING ${POCO_VERSION} 1 -1 POCO_VERSION )
     endif()
 endif()
@@ -93,16 +101,40 @@ endforeach()
 list( APPEND _requestedComponents "PocoFoundation" )
 list( REMOVE_DUPLICATES _requestedComponents )
 
-if( POCO_STATIC )
-    set( _pocoStaticSuffix "md" )
+# Determine the library suffix on Windows.
+# This is all taken pretty much from Poco/Foundation.h
+if( WIN32 )
+    if( POCO_STATIC )
+        string( FIND ${CMAKE_CXX_FLAGS_RELEASE} "/MD" _crtPos )
+        if( _crtPos GREATER -1 )
+            set( _crtSuffix "md" )
+        else()
+            # Assume "/MT"
+            set( _crtSuffix "mt" )
+        endif()
+        
+        string( FIND ${CMAKE_CXX_FLAGS_DEBUG} "/MDd" _crtPos )
+        if( _crtPos GREATER -1 )
+            set( _crtDebugSuffix "mdd" )
+        else()
+            # Assume "/MTd"
+            set( _crtDebugSuffix "mtd" )
+        endif()
+    else()
+        set( _crtSuffix "" )
+        set( _crtDebugSuffix "d" )
+    endif()
+else()
+    # Not Windows. Apparently Poco doesn't add a library suffix on other platforms.
+    set( _crtSuffix "" )
+    set( _crtDebugSuffix "" )
 endif()
-set( _pocoDebugSuffix "d" )
 
 # Find each library.
 set( POCO_LIBRARIES )
 foreach( lib ${_requestedComponents} )
     find_library( POCO_${lib}_LIBRARY
-        NAMES ${lib}${_pocoStaticSuffix}
+        NAMES ${lib}${_crtSuffix}
         PATH_SUFFIXES lib
     )
     if( NOT POCO_${lib}_LIBRARY )
@@ -111,7 +143,7 @@ foreach( lib ${_requestedComponents} )
     list( APPEND POCO_LIBRARIES "optimized" ${POCO_${lib}_LIBRARY} )
 
     find_library( POCO_${lib}_LIBRARY_DEBUG
-        NAMES ${lib}${_pocoStaticSuffix}${_pocoDebugSuffix}
+        NAMES ${lib}${_crtDebugSuffix}
         PATH_SUFFIXES lib
     )
     list( APPEND POCO_LIBRARIES "debug" ${POCO_${lib}_LIBRARY_DEBUG} )
