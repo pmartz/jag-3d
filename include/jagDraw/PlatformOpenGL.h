@@ -22,10 +22,8 @@
 #define __JAGDRAW_PLATFORM_OPENGL_H__ 1
 
 
-// For now, everyone has to use GLEW. Until we have a better solution.
-#define USE_GLEW 1
 
-#if defined( USE_GLEW )
+#if defined( JAG3D_USE_GLEW )
 #  include <jagDraw/PlatformGLEW.h>
 #elif defined( WIN32 )
 #ifndef WIN32_LEAN_AND_MEAN

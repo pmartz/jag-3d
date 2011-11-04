@@ -53,8 +53,12 @@ set( _jagDrawSourceFiles
     UniformValue.cpp
 )
 
+unset( _jagDrawGLEWHeaderFiles )
 unset( _jagDrawGLEWSourceFiles )
 if( GLEW_FOUND )
+    set( _jagDrawGLEWHeaderFiles
+        ${HEADER_PATH}/PlatformGLEW.h
+    )
     set( _jagDrawGLEWSourceFiles
         GLEW.cpp
     )
@@ -62,6 +66,7 @@ endif()
 
 _addLibrary( ${_libName}
     ${_jagDrawHeaderFiles}
+    ${_jagDrawGLEWHeaderFiles}
     ${_jagDrawSourceFiles}
     ${_jagDrawGLEWSourceFiles}
     JAG_LIBRARIES

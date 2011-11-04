@@ -22,25 +22,34 @@ set( _demoIncludes
     ${PROJECT_SOURCE_DIR}/include/demoSupport
 )
 
+set( _optionalDependencyIncludes )
+set( _optionalDependencyLibraries )
+if( BOOST_FOUND )
+    list( APPEND _optionalDependencyIncludes
+        ${Boost_INCLUDE_DIR}
+    )
+endif()
+if( GLEW_FOUND )
+    list( APPEND _optionalDependencyIncludes
+        ${GLEW_INCLUDE_DIR}
+    )
+    list( APPEND _optionalDependencyLibraries
+        ${GLEW_LIBRARIES}
+    )
+endif()
+
 set( _requiredDependencyIncludes
-    ${GGT_INCLUDE_DIR}
-    ${GLEW_INCLUDE_DIR}
-    ${OPENGL_INCLUDE_DIR}
-)
-set( _optionalDependencyIncludes
-    ${Boost_INCLUDE_DIR}
     ${POCO_INCLUDE_DIR}
+    ${GGT_INCLUDE_DIR}
+    ${OPENGL_INCLUDE_DIR}
 )
 set( _projectIncludes
     ${PROJECT_SOURCE_DIR}/include
 )
 
 set( _requiredDependencyLibraries
-    ${GLEW_LIBRARIES}
-    ${OPENGL_gl_LIBRARY}
-)
-set( _optionalDependencyLibraries
     ${POCO_LIBRARIES}
+    ${OPENGL_gl_LIBRARY}
 )
 set( _projectLibraries
     jagDraw
@@ -93,8 +102,8 @@ macro( _addExecutable _category _exeName )
     include_directories(
         ${_projectIncludes}
         ${_demoIncludes}
-        ${_requiredDependencyIncludes}
         ${_optionalDependencyIncludes}
+        ${_requiredDependencyIncludes}
     )
 
     if( WIN32 )
@@ -102,8 +111,8 @@ macro( _addExecutable _category _exeName )
     endif()
     target_link_libraries( ${_exeName}
         ${_projectLibraries}
-        ${_requiredDependencyLibraries}
         ${_optionalDependencyLibraries}
+        ${_requiredDependencyLibraries}
     )
     _exeInstall( ${_category} ${_exeName} )
 
@@ -121,8 +130,8 @@ macro( _addFreeglutExecutable _category _exeName )
         ${_projectIncludes}
         ${Freeglut_INCLUDE_DIR}
         ${_demoIncludes}
-        ${_requiredDependencyIncludes}
         ${_optionalDependencyIncludes}
+        ${_requiredDependencyIncludes}
     )
 
     if( WIN32 )
@@ -131,8 +140,8 @@ macro( _addFreeglutExecutable _category _exeName )
     target_link_libraries( ${_exeName}
         ${Freeglut_LIBRARIES}
         ${_projectLibraries}
-        ${_requiredDependencyLibraries}
         ${_optionalDependencyLibraries}
+        ${_requiredDependencyLibraries}
     )
     
     _exeInstall( ${_category} ${_exeName} )
@@ -145,8 +154,8 @@ endmacro()
 macro( _addLibrary _libName )
     include_directories(
         ${_projectIncludes}
-        ${_requiredDependencyIncludes}
         ${_optionalDependencyIncludes}
+        ${_requiredDependencyIncludes}
     )
 
     _splitList( JAG_LIBRARIES sources libs ${ARGN} )
@@ -159,8 +168,8 @@ macro( _addLibrary _libName )
 
     target_link_libraries( ${_libName}
         ${libs}
-        ${_requiredDependencyLibraries}
         ${_optionalDependencyLibraries}
+        ${_requiredDependencyLibraries}
     )
 
     set_target_properties( ${_libName} PROPERTIES VERSION ${JAG3D_VERSION} )

@@ -84,6 +84,10 @@ POCOFinder()
 
 
 
+if( GLEW_FOUND )
+    add_definitions( -DJAG3D_USE_GLEW )
+endif()
+
 option( JAG3D_DISABLE_ALL_ERROR_CHECKS "If set, JAG disables all internal OpenGL error checking" OFF )
 if( JAG3D_DISABLE_ALL_ERROR_CHECKS )
     add_definitions( -DJAG3D_DISABLE_ALL_ERROR_CHECKS )

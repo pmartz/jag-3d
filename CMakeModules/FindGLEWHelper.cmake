@@ -145,7 +145,7 @@ macro( GLEWFinder )
         ${GLEWBuildRoot} )
 
 
-    find_package( GLEW REQUIRED )
+    find_package( GLEW )
 
 
     # Restore internal variables

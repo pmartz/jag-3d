@@ -75,6 +75,8 @@ void init()
 {
     cout << jagBase::getVersionString() << endl;
 
+#ifdef __glew_h__
+    // TBD Probably need to move this type of stuff into an init function in jagDraw.
 #ifdef GLEW_MX
     glewContextInit( glewGetContext() );
 #ifdef _WIN32
@@ -85,6 +87,7 @@ void init()
 
 #else
     glewInit();
+#endif
 #endif
 
     JAG_ERROR_CHECK( "simple3x init()" );

@@ -19,23 +19,13 @@
 *************** <auto-copyright.pl END do not edit this line> ***************/
 
 #include <jagDraw/ShaderProgram.h>
+#include <jagDraw/PlatformOpenGL.h>
 #include <stdio.h>
 #include <iostream>
 
 
 namespace jagDraw {
 
-
-#ifndef USE_GLEW
-
-#include <GL/glx.h>
-void glProgramParameteri( GLuint program, GLenum pname, GLint value )
-{
-    static void (*_glProgramParameteri)(GLuint, GLenum, GLint) = 
-            (void (*)(GLuint,GLenum,GLint))glXGetProcAddress( (GLubyte *)"glProgramParameteriARB");
-    _glProgramParameteri( program, pname, value );
-}
-#endif
 
 
 void ShaderProgram::printInfoLog()
