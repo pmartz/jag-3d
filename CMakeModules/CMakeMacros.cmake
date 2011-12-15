@@ -24,7 +24,7 @@ set( _demoIncludes
 
 set( _optionalDependencyIncludes )
 set( _optionalDependencyLibraries )
-if( BOOST_FOUND )
+if( Boost_FOUND )
     list( APPEND _optionalDependencyIncludes
         ${Boost_INCLUDE_DIR}
     )
