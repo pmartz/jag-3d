@@ -85,9 +85,9 @@ POCOFinder()
 
 
 
-#if( QT_FOUND )
-#    include( ${QT_USE_FILE} )
-#endif()
+if( QT_FOUND )
+    include( ${QT_USE_FILE} )
+endif()
 
 if( GLEW_FOUND )
     add_definitions( -DJAG3D_USE_GLEW )

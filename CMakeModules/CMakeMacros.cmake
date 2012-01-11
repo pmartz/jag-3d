@@ -162,10 +162,7 @@ macro( _addQtExecutable _category _exeName )
 
     include_directories(
         ${_projectIncludes}
-        ${QT_INCLUDE_DIR}
         ${QT_QTOPENGL_INCLUDE_DIR}
-        ${QT_QTGUI_INCLUDE_DIR}
-        ${QT_QTCORE_INCLUDE_DIR}
         ${_optionalDependencyIncludes}
         ${_requiredDependencyIncludes}
     )
@@ -174,10 +171,8 @@ macro( _addQtExecutable _category _exeName )
         set( RELATIVE_LIB_PATH ../../../lib/ )
     endif()
     target_link_libraries( ${_localExeName}
-#        ${QT_LIBRARIES}
         ${QT_QTOPENGL_LIBRARY}
-        ${QT_QTGUI_LIBRARY}
-        ${QT_QTCORE_LIBRARY}
+        ${QT_LIBRARIES}
         ${_projectLibraries}
         ${_optionalDependencyLibraries}
         ${_requiredDependencyLibraries}
