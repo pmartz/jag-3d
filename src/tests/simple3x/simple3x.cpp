@@ -18,13 +18,14 @@
 *
 *************** <auto-copyright.pl END do not edit this line> ***************/
 
+#include <DemoInterface.h>
+
 #include <jagDraw/PlatformOpenGL.h>
 #include <jagDraw/BufferObject.h>
 #include <jagDraw/Shader.h>
 #include <jagDraw/ShaderProgram.h>
 #include <jagDraw/Error.h>
-#include <jagBase/Version.h>
-#include <platformFreeglut.h>
+
 #include <string>
 #include <iostream>
 #include <stdlib.h>
@@ -32,67 +33,29 @@
 using namespace std;
 
 
-// GLobal
-jagDraw::BufferObjectPtr bop;
-jagDraw::ShaderProgramPtr spp;
-
-
-void display(void)
+class Simple3xDemo : public DemoInterface
 {
-    glClear( GL_COLOR_BUFFER_BIT );
+public:
+    Simple3xDemo() {}
+    virtual ~Simple3xDemo() {}
 
-    spp->apply();
+    virtual bool init();
+    virtual bool frame();
+    virtual bool shutdown() { return( true ); }
 
-    bop->apply();
-    glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 0, (const void*)0 );
-    glEnableVertexAttribArray( 0 );
+protected:
+    jagDraw::BufferObjectPtr _bop;
+    jagDraw::ShaderProgramPtr _spp;
+};
 
-    glDrawArrays( GL_TRIANGLE_STRIP, 0, 4 );
 
-    glFlush ();
-
-    JAG_ERROR_CHECK( "simple3x display()" );
+DemoInterface* DemoInterface::create()
+{
+    return( new Simple3xDemo );
 }
 
-
-void reshape (int w, int h)
+bool Simple3xDemo::init()
 {
-    glViewport( 0, 0, w, h );
-}
-
-void keyboard(unsigned char key, int x, int y)
-{
-    switch (key)
-    {
-        case 27:
-        case 'q':
-            exit( 0 );
-        break;
-    }
-}
-
-void init()
-{
-    cout << jagBase::getVersionString() << endl;
-
-#ifdef __glew_h__
-    // TBD Probably need to move this type of stuff into an init function in jagDraw.
-#ifdef GLEW_MX
-    glewContextInit( glewGetContext() );
-#ifdef _WIN32
-    wglewContextInit(wglewGetContext());
-#elif !defined(__APPLE__) || defined(GLEW_APPLE_GLX)
-    glxewContextInit(glxewGetContext());
-#endif
-
-#else
-    glewInit();
-#endif
-#endif
-
-    JAG_ERROR_CHECK( "simple3x init()" );
-
-
     // Display information on the type of vontext we created.
     cout << string( "GL_VENDOR: " ) << string( (char*)(glGetString( GL_VENDOR )) ) << endl;;
     cout << string( "GL_RENDERER: " ) << string( (char*)(glGetString( GL_RENDERER )) ) << endl;
@@ -109,7 +72,7 @@ void init()
             -.5, 1., z,
             1., 1., z };
         jagBase::BufferPtr bp( new jagBase::Buffer( sizeof( verts ), (void*)verts ) );
-        bop = jagDraw::BufferObjectPtr( new jagDraw::BufferObject( jagDraw::BufferObject::ArrayBuffer, bp, jagDraw::BufferObject::StaticDraw ) );
+        _bop = jagDraw::BufferObjectPtr( new jagDraw::BufferObject( jagDraw::BufferObject::ArrayBuffer, bp, jagDraw::BufferObject::StaticDraw ) );
     }
 
     {
@@ -130,32 +93,29 @@ void init()
         jagDraw::ShaderPtr fs( new jagDraw::Shader( GL_FRAGMENT_SHADER ) );
         fs->addSourceString( std::string( fShaderSource ) );
 
-        spp = jagDraw::ShaderProgramPtr( new jagDraw::ShaderProgram );
-        spp->attachShader( vs );
-        spp->attachShader( fs );
+        _spp = jagDraw::ShaderProgramPtr( new jagDraw::ShaderProgram );
+        _spp->attachShader( vs );
+        _spp->attachShader( fs );
     }
+
+    return( true );
 }
 
-
-
-
-int main (int argc, char** argv)
+bool Simple3xDemo::frame()
 {
-    glutInit(&argc, argv);
-    glutInitDisplayMode( GLUT_SINGLE | GLUT_RGB );
-    glutInitContextVersion( 3, 3 );
-    //glutInitContextFlags( GLUT_FORWARD_COMPATIBLE );
+    glClear( GL_COLOR_BUFFER_BIT );
 
-    glutInitWindowSize( 300, 300 ); 
-    glutCreateWindow( "Hello OpenGL 3.x" );
+    _spp->apply();
 
-    init();
+    _bop->apply();
+    glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 0, (const void*)0 );
+    glEnableVertexAttribArray( 0 );
 
-    glutDisplayFunc( display ); 
-    glutReshapeFunc( reshape );
-    glutKeyboardFunc( keyboard );
+    glDrawArrays( GL_TRIANGLE_STRIP, 0, 4 );
 
-    glutMainLoop();
+    glFlush ();
 
-    return( 0 );
+    JAG_ERROR_CHECK( "simple3x display()" );
+
+    return( true );
 }

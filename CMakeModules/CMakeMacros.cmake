@@ -124,7 +124,10 @@ macro( _addFreeglutExecutable _category _exeName )
         return()
     endif()
 
-    add_executable( ${_exeName} ${ARGN} )
+    add_executable( ${_exeName}
+        ${PROJECT_SOURCE_DIR}/src/demoSupport/FreeglutSupport.cpp
+        ${ARGN}
+    )
 
     include_directories(
         ${_projectIncludes}
