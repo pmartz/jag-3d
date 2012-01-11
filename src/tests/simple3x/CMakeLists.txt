@@ -1,3 +1,3 @@
-_addFreeglutExecutable( Test simple3x
+_addExecutable( Test simple3x
     simple3x.cpp
 )

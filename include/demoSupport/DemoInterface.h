@@ -18,8 +18,8 @@
 *
 *************** <auto-copyright.pl END do not edit this line> ***************/
 
-#ifndef __JAG_DEMO_INTERFACE_H__
-#define __JAG_DEMO_INTERFACE_H__ 1
+#ifndef __JAG3D_DEMO_SUPPORT_DEMO_INTERFACE_H__
+#define __JAG3D_DEMO_SUPPORT_DEMO_INTERFACE_H__ 1
 
 
 /** \class DemoInterface DemoInterface.h DemoInterface.h
@@ -40,5 +40,5 @@ public:
 };
 
 
-// __JAG_DEMO_INTERFACE_H__
+// __JAG3D_DEMO_SUPPORT_DEMO_INTERFACE_H__
 #endif

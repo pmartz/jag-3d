@@ -18,9 +18,6 @@
 #
 #************** <auto-copyright.pl END do not edit this line> ***************
 
-set( _demoIncludes
-    ${PROJECT_SOURCE_DIR}/include/demoSupport
-)
 
 set( _optionalDependencyIncludes )
 set( _optionalDependencyLibraries )
@@ -96,12 +93,11 @@ macro( _exeInstall _category _exeName )
 endmacro()
 
 
-macro( _addExecutable _category _exeName )
+macro( _addNonWindowedExecutable _category _exeName )
     add_executable( ${_exeName} ${ARGN} )
 
     include_directories(
         ${_projectIncludes}
-        ${_demoIncludes}
         ${_optionalDependencyIncludes}
         ${_requiredDependencyIncludes}
     )
@@ -114,25 +110,23 @@ macro( _addExecutable _category _exeName )
         ${_optionalDependencyLibraries}
         ${_requiredDependencyLibraries}
     )
+
     _exeInstall( ${_category} ${_exeName} )
 
     set_target_properties( ${_exeName} PROPERTIES PROJECT_LABEL "${_category} ${_exeName}" )
 endmacro()
 
 macro( _addFreeglutExecutable _category _exeName )
-    if( NOT Freeglut_FOUND )
-        return()
-    endif()
+    set( _localExeName "${_exeName}-freeglut" )
 
-    add_executable( ${_exeName}
-        ${PROJECT_SOURCE_DIR}/src/demoSupport/FreeglutSupport.cpp
+    add_executable( ${_localExeName}
+        ${PROJECT_SOURCE_DIR}/src/demoSupport/freeglutSupport.cpp
         ${ARGN}
     )
 
     include_directories(
         ${_projectIncludes}
         ${Freeglut_INCLUDE_DIR}
-        ${_demoIncludes}
         ${_optionalDependencyIncludes}
         ${_requiredDependencyIncludes}
     )
@@ -140,16 +134,67 @@ macro( _addFreeglutExecutable _category _exeName )
     if( WIN32 )
         set( RELATIVE_LIB_PATH ../../../lib/ )
     endif()
-    target_link_libraries( ${_exeName}
+    target_link_libraries( ${_localExeName}
         ${Freeglut_LIBRARIES}
         ${_projectLibraries}
         ${_optionalDependencyLibraries}
         ${_requiredDependencyLibraries}
     )
     
-    _exeInstall( ${_category} ${_exeName} )
+    _exeInstall( ${_category} ${_localExeName} )
 
-    set_target_properties( ${_exeName} PROPERTIES PROJECT_LABEL "${_category} ${_exeName}" )
+    set_target_properties( ${_localExeName} PROPERTIES PROJECT_LABEL "${_category} ${_localExeName}" )
+endmacro()
+
+macro( _addQtExecutable _category _exeName )
+    set( _localExeName "${_exeName}-qt" )
+
+    QT4_WRAP_CPP( _mocFiles
+        ${PROJECT_SOURCE_DIR}/include/demoSupport/qtGlWidget.h
+        OPTIONS "-f"
+    )
+
+    add_executable( ${_localExeName}
+        ${PROJECT_SOURCE_DIR}/src/demoSupport/qtSupport.cpp
+        ${_mocFiles}
+        ${ARGN}
+    )
+
+    include_directories(
+        ${_projectIncludes}
+        ${QT_INCLUDE_DIR}
+        ${QT_QTOPENGL_INCLUDE_DIR}
+        ${QT_QTGUI_INCLUDE_DIR}
+        ${QT_QTCORE_INCLUDE_DIR}
+        ${_optionalDependencyIncludes}
+        ${_requiredDependencyIncludes}
+    )
+
+    if( WIN32 )
+        set( RELATIVE_LIB_PATH ../../../lib/ )
+    endif()
+    target_link_libraries( ${_localExeName}
+#        ${QT_LIBRARIES}
+        ${QT_QTOPENGL_LIBRARY}
+        ${QT_QTGUI_LIBRARY}
+        ${QT_QTCORE_LIBRARY}
+        ${_projectLibraries}
+        ${_optionalDependencyLibraries}
+        ${_requiredDependencyLibraries}
+    )
+    
+    _exeInstall( ${_category} ${_localExeName} )
+
+    set_target_properties( ${_localExeName} PROPERTIES PROJECT_LABEL "${_category} ${_localExeName}" )
+endmacro()
+
+macro( _addExecutable _category _exeName )
+    if( Freeglut_FOUND )
+        _addFreeglutExecutable( ${_category} ${_exeName} ${ARGN} )
+    endif()
+    if( QT4_FOUND )
+        _addQtExecutable( ${_category} ${_exeName} ${ARGN} )
+    endif()
 endmacro()
 
 

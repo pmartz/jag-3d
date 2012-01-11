@@ -66,6 +66,7 @@ endif()
 
 find_package( OpenGL REQUIRED )
 find_package( Boost )
+find_package( Qt 4.8.0 COMPONENTS QtCore QtGui QtOpenGL )
 
 include( FindFreeglutHelper )
 include( FindGGTHelper )
@@ -83,6 +84,10 @@ GLEWFinder()
 POCOFinder()
 
 
+
+#if( QT_FOUND )
+#    include( ${QT_USE_FILE} )
+#endif()
 
 if( GLEW_FOUND )
     add_definitions( -DJAG3D_USE_GLEW )

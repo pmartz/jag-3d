@@ -20,10 +20,14 @@
 
 #include <demoSupport/DemoInterface.h>
 #include <jagDraw/PlatformOpenGL.h>
-#include <demoSupport/platformFreeglut.h>
-
 #include <jagDraw/Error.h>
 #include <jagBase/Version.h>
+
+#include <demoSupport/qtGlWidget.h>
+#include <QApplication>
+#include <QGLFormat>
+#include <QCoreApplication>
+#include <QKeyEvent>
 
 #include <string>
 #include <iostream>
@@ -35,7 +39,12 @@ using namespace std;
 DemoInterface* di( NULL );
 
 
-void init()
+GLWidget::GLWidget( const QGLFormat& format, QWidget* parent )
+    : QGLWidget( format, parent )
+{
+}
+
+void GLWidget::initializeGL()
 {
     cout << jagBase::getVersionString() << endl;
 
@@ -61,48 +70,44 @@ void init()
     di->init();
 }
 
-void display()
+void GLWidget::paintGL()
 {
     di->frame();
 }
 
-void reshape (int w, int h)
+void GLWidget::resizeGL( int w, int h )
 {
     glViewport( 0, 0, w, h );
 }
 
-void keyboard(unsigned char key, int x, int y)
+void GLWidget::keyPressEvent( QKeyEvent* e )
 {
-    switch (key)
+    switch ( e->key() )
     {
-    case 27:
+    case Qt::Key_Escape:
     case 'q':
         di->shutdown();
         delete di;
-        exit( 0 );
+        QCoreApplication::instance()->quit();
         break;
+
+    default:
+        QGLWidget::keyPressEvent( e );
     }
 }
 
 
 
-int main (int argc, char** argv)
+int main( int argc, char* argv[] )
 {
-    glutInit(&argc, argv);
-    glutInitDisplayMode( GLUT_SINGLE | GLUT_RGB );
-    glutInitContextVersion( 3, 3 );
-    glutInitContextFlags( GLUT_FORWARD_COMPATIBLE );
+    QApplication app( argc, argv );
 
-    glutInitWindowSize( 300, 300 ); 
-    glutCreateWindow( argv[ 0 ] );
+    QGLFormat glFormat( QGL::DoubleBuffer | QGL::Rgba );
+    glFormat.setVersion( 3, 1 );
+    glFormat.setProfile( QGLFormat::CoreProfile );
 
-    init();
+    GLWidget widget( glFormat );
+    widget.show();
 
-    glutDisplayFunc( display ); 
-    glutReshapeFunc( reshape );
-    glutKeyboardFunc( keyboard );
-
-    glutMainLoop();
-
-    return( 0 );
+    return( app.exec() );
 }

@@ -1,3 +1,3 @@
-_addExecutable( Test simplegmtl
+_addNonWindowedExecutable( Test simplegmtl
     simplegmtl.cpp
 )
