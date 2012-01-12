@@ -64,6 +64,7 @@ void init()
 void display()
 {
     di->frame();
+    glutSwapBuffers();
 }
 
 void reshape (int w, int h)
@@ -88,10 +89,21 @@ void keyboard(unsigned char key, int x, int y)
 
 int main (int argc, char** argv)
 {
-    glutInit(&argc, argv);
-    glutInitDisplayMode( GLUT_SINGLE | GLUT_RGB );
-    glutInitContextVersion( 3, 3 );
-    glutInitContextFlags( GLUT_FORWARD_COMPATIBLE );
+    int idx;
+    bool no3( false );
+    for( idx=1; idx<argc; idx++ )
+    {
+        no3 = string( argv[ idx ] ) == string( "--no3" );
+        if( no3 ) break;
+    }
+
+    glutInit( &argc, argv );
+    glutInitDisplayMode( GLUT_DOUBLE | GLUT_RGBA );
+    if( !no3 )
+    {
+        glutInitContextVersion( 3, 3 );
+        glutInitContextProfile( GLUT_CORE_PROFILE );
+    }
 
     glutInitWindowSize( 300, 300 ); 
     glutCreateWindow( argv[ 0 ] );

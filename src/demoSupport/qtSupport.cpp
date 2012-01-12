@@ -100,11 +100,22 @@ void GLWidget::keyPressEvent( QKeyEvent* e )
 
 int main( int argc, char* argv[] )
 {
+    int idx;
+    bool no3( false );
+    for( idx=1; idx<argc; idx++ )
+    {
+        no3 = string( argv[ idx ] ) == string( "--no3" );
+        if( no3 ) break;
+    }
+
     QApplication app( argc, argv );
 
     QGLFormat glFormat( QGL::DoubleBuffer | QGL::Rgba );
-    glFormat.setVersion( 3, 1 );
-    glFormat.setProfile( QGLFormat::CoreProfile );
+    if( !no3 )
+    {
+        glFormat.setVersion( 3, 1 );
+        glFormat.setProfile( QGLFormat::CoreProfile );
+    }
 
     GLWidget widget( glFormat );
     widget.show();
