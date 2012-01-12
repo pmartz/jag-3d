@@ -21,7 +21,6 @@
 #include <demoSupport/DemoInterface.h>
 #include <jagDraw/PlatformOpenGL.h>
 #include <jagDraw/Error.h>
-#include <jagBase/Version.h>
 
 #include <demoSupport/qtGlWidget.h>
 #include <QApplication>
@@ -29,9 +28,6 @@
 #include <QCoreApplication>
 #include <QKeyEvent>
 
-#include <string>
-#include <iostream>
-#include <stdlib.h>
 
 using namespace std;
 
@@ -46,8 +42,6 @@ GLWidget::GLWidget( const QGLFormat& format, QWidget* parent )
 
 void GLWidget::initializeGL()
 {
-    cout << jagBase::getVersionString() << endl;
-
 #ifdef __glew_h__
     // TBD Probably need to move this type of stuff into an init function in jagDraw.
 #ifdef GLEW_MX
@@ -63,7 +57,7 @@ void GLWidget::initializeGL()
 #endif
 #endif
 
-    JAG_ERROR_CHECK( "simple3x init()" );
+    JAG_ERROR_CHECK( "qtSupport init()" );
 
 
     di = DemoInterface::create();

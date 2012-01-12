@@ -23,11 +23,7 @@
 #include <demoSupport/platformFreeglut.h>
 
 #include <jagDraw/Error.h>
-#include <jagBase/Version.h>
 
-#include <string>
-#include <iostream>
-#include <stdlib.h>
 
 using namespace std;
 
@@ -37,8 +33,6 @@ DemoInterface* di( NULL );
 
 void init()
 {
-    cout << jagBase::getVersionString() << endl;
-
 #ifdef __glew_h__
     // TBD Probably need to move this type of stuff into an init function in jagDraw.
 #ifdef GLEW_MX
@@ -54,7 +48,7 @@ void init()
 #endif
 #endif
 
-    JAG_ERROR_CHECK( "simple3x init()" );
+    JAG_ERROR_CHECK( "freeglutSupport init()" );
 
 
     di = DemoInterface::create();

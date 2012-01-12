@@ -75,13 +75,19 @@ void fboErrorCheck( const std::string& msg )
 
     std::string enumStr( "Unknown" );
     switch( errorEnum ) {
-    case GL_FRAMEBUFFER_UNSUPPORTED_EXT: enumStr = std::string( "GL_FRAMEBUFFER_UNSUPPORTED" ); break;
-    case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_EXT: enumStr = std::string( "GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT" ); break;
-    case GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE_EXT: enumStr = std::string( "GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE" ); break;
-    case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_EXT: enumStr = std::string( "GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT" ); break;
-    case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_EXT: enumStr = std::string( "GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER" ); break;
-    case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT: enumStr = std::string( "GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS" ); break;
+    case GL_FRAMEBUFFER_UNSUPPORTED: enumStr = std::string( "GL_FRAMEBUFFER_UNSUPPORTED" ); break;
+    case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT: enumStr = std::string( "GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT" ); break;
+    case GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE: enumStr = std::string( "GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE" ); break;
+    case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT: enumStr = std::string( "GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT" ); break;
+    case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER: enumStr = std::string( "GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER" ); break;
     }
+
+#if( defined( JAG3D_USE_GLEW ) && defined( GLEW_EXT_framebuffer_object ) )
+    // Check for an outdated error code. This might be useful for early JAG
+    // development on GL2 systems.
+    if( errorEnum == GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT )
+        enumStr = std::string( "GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT" );
+#endif
 
     std::ostringstream ostr;
     ostr << "OpenGL FBO error " << enumStr << ": " << msg;

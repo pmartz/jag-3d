@@ -25,10 +25,14 @@
 #include <jagDraw/Shader.h>
 #include <jagDraw/ShaderProgram.h>
 #include <jagDraw/Error.h>
+#include <jagBase/Version.h>
+#include <jagBase/Log.h>
+#include <Poco/Logger.h>
+#include <Poco/Message.h>
+#include <Poco/Format.h>
 
 #include <string>
-#include <iostream>
-#include <stdlib.h>
+
 
 using namespace std;
 
@@ -44,6 +48,8 @@ public:
     virtual bool shutdown() { return( true ); }
 
 protected:
+    Poco::Logger* _logger;
+
     jagDraw::BufferObjectPtr _bop;
     jagDraw::ShaderProgramPtr _spp;
 };
@@ -56,39 +62,51 @@ DemoInterface* DemoInterface::create()
 
 bool Simple3xDemo::init()
 {
-    // Display information on the type of vontext we created.
-    cout << string( "GL_VENDOR: " ) << string( (char*)(glGetString( GL_VENDOR )) ) << endl;;
-    cout << string( "GL_RENDERER: " ) << string( (char*)(glGetString( GL_RENDERER )) ) << endl;
-    cout << string( "GL_VERSION: " ) << string( (char*)(glGetString( GL_VERSION )) ) << endl;
-    cout << string( "GL_SHADING_LANGUAGE_VERSION: " ) << string( (char*)(glGetString( GL_SHADING_LANGUAGE_VERSION )) ) << endl;
+    _logger = Poco::Logger::has( "jag3d.demo" );
+    if( _logger == NULL )
+    {
+        _logger = &( Poco::Logger::create( "jag3d.demo",
+                (Poco::Channel*)( jagBase::Log::instance()->getConsole() ), Poco::Message::PRIO_INFORMATION ) );
+    }
 
-    glClearColor( 0.5f, 0.5f, 0.5f, 0.f );
+    _logger->information( jagBase::getVersionString() );
+
+    // Display information on the type of vontext we created.
+    _logger->information( Poco::format( "GL_VENDOR: %s", string( (char*)(glGetString( GL_VENDOR )) ) ) );
+    _logger->information( Poco::format( "GL_RENDERER: %s", string( (char*)(glGetString( GL_RENDERER )) ) ) );
+    _logger->information( Poco::format( "GL_VERSION: %s", string( (char*)(glGetString( GL_VERSION )) ) ) );
+    _logger->information( Poco::format( "GL_SHADING_LANGUAGE_VERSION: %s", string( (char*)(glGetString( GL_SHADING_LANGUAGE_VERSION )) ) ) );
+
+    glClearColor( 0.4f, 0.4f, 0.4f, 0.f );
 
     {
         float z = .5;
         float verts[] = {
-            -1., -1., z,
-            .5, -1., z,
-            -.5, 1., z,
-            1., 1., z };
+            -.9f, -.9f, z,
+            .4f, -.9f, z,
+            -.4f, 0.f, z,
+            .9f, 0.f, z,
+            -.9f, .9f, z,
+            .4f, .9f, z };
         jagBase::BufferPtr bp( new jagBase::Buffer( sizeof( verts ), (void*)verts ) );
         _bop = jagDraw::BufferObjectPtr( new jagDraw::BufferObject( jagDraw::BufferObject::ArrayBuffer, bp, jagDraw::BufferObject::StaticDraw ) );
     }
 
     {
         const char* vShaderSource =
-            "#version 120 \n" \
-            "in vec3 vertex; \n" \
-            "void main() { \n" \
-            "    gl_Position = vec4( vertex, 1. ); \n" \
+            "#version 130 \n"
+            "in vec3 vertex; \n"
+            "void main() { \n"
+            "    gl_Position = vec4( vertex, 1. ); \n"
             "}";
         jagDraw::ShaderPtr vs( new jagDraw::Shader( GL_VERTEX_SHADER ) );
         vs->addSourceString( std::string( vShaderSource ) );
 
         const char* fShaderSource =
-            "#version 120 \n" \
-            "void main() { \n" \
-            "    gl_FragData[ 0 ] = vec4( 0., 1., 1., 0. ); \n" \
+            "#version 130 \n"
+            "out vec4 colorOut; \n"
+            "void main() { \n"
+            "    colorOut = vec4( 0., .8, .8, 0. ); \n"
             "}";
         jagDraw::ShaderPtr fs( new jagDraw::Shader( GL_FRAGMENT_SHADER ) );
         fs->addSourceString( std::string( fShaderSource ) );
@@ -111,7 +129,7 @@ bool Simple3xDemo::frame()
     glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 0, (const void*)0 );
     glEnableVertexAttribArray( 0 );
 
-    glDrawArrays( GL_TRIANGLE_STRIP, 0, 4 );
+    glDrawArrays( GL_TRIANGLE_STRIP, 0, 6 );
 
     glFlush ();
 
