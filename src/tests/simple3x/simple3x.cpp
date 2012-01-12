@@ -29,7 +29,6 @@
 #include <jagBase/Log.h>
 #include <Poco/Logger.h>
 #include <Poco/Message.h>
-#include <Poco/Format.h>
 
 #include <string>
 
@@ -71,11 +70,24 @@ bool Simple3xDemo::init()
 
     _logger->information( jagBase::getVersionString() );
 
+
     // Display information on the type of vontext we created.
-    _logger->information( Poco::format( "GL_VENDOR: %s", string( (char*)(glGetString( GL_VENDOR )) ) ) );
-    _logger->information( Poco::format( "GL_RENDERER: %s", string( (char*)(glGetString( GL_RENDERER )) ) ) );
-    _logger->information( Poco::format( "GL_VERSION: %s", string( (char*)(glGetString( GL_VERSION )) ) ) );
-    _logger->information( Poco::format( "GL_SHADING_LANGUAGE_VERSION: %s", string( (char*)(glGetString( GL_SHADING_LANGUAGE_VERSION )) ) ) );
+    string msg( "GL_VENDOR: " );
+    msg.append( (char*)(glGetString( GL_VENDOR )) );
+    _logger->information( msg );
+
+    msg = string( "GL_RENDERER: " );
+    msg.append( (char*)(glGetString( GL_RENDERER )) );
+    _logger->information( msg );
+
+    msg = string( "GL_VERSION: " );
+    msg.append( (char*)(glGetString( GL_VERSION )) );
+    _logger->information( msg );
+
+    msg = string( "GL_SHADING_LANGUAGE_VERSION: " );
+    msg.append( (char*)(glGetString( GL_SHADING_LANGUAGE_VERSION )) );
+    _logger->information( msg );
+
 
     glClearColor( 0.4f, 0.4f, 0.4f, 0.f );
 
