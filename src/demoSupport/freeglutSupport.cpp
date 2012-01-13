@@ -19,7 +19,6 @@
 *************** <auto-copyright.pl END do not edit this line> ***************/
 
 #include <demoSupport/DemoInterface.h>
-#include <jagDraw/Error.h>
 #include <jagDraw/init.h>
 
 #include <demoSupport/platformFreeglut.h>
@@ -39,7 +38,6 @@ DemoInterface* di( NULL );
 void init()
 {
     jagDraw::init();
-    JAG_ERROR_CHECK( "freeglutSupport init()" );
 
     di->init();
 }
@@ -68,14 +66,13 @@ void keyboard(unsigned char key, int x, int y)
     }
 }
 
-#include <iostream>
 
 int main (int argc, char** argv)
 {
     bpo::options_description desc( "Options" );
     // Add freeglut test/demo options
     desc.add_options()
-        ( "version", bpo::value< double >(), "OpenGL context version." );
+        ( "version", bpo::value< double >(), "OpenGL context version. Default: 3.1." );
 
     // Create test/demo-specific DemoInterface, and allow it to
     // add test/demo-specific options.
@@ -88,9 +85,9 @@ int main (int argc, char** argv)
     double version( 3.1 );
     if( vm.count( "version" ) > 0 )
         version = vm[ "version" ].as< double >();
-    float versionMajor, versionMinor;
-    modff( version, &versionMajor );
-    versionMinor = (float)( version * 10. - (double)versionMajor * 10. );
+    double versionMajor;
+    modf( version, &versionMajor );
+    float versionMinor = (float)( version * 10. - versionMajor * 10. );
 
 
 

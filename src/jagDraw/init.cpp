@@ -20,6 +20,7 @@
 
 #include <jagDraw/init.h>
 #include <jagDraw/PlatformOpenGL.h>
+#include <jagDraw/Error.h>
 
 
 namespace jagDraw
@@ -44,6 +45,8 @@ bool init()
 # endif
 
 #endif
+
+    JAG_ERROR_CHECK( "jagDraw::init()" );
 
     return( true );
 }
