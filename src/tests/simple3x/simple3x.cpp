@@ -20,11 +20,7 @@
 
 #include <demoSupport/DemoInterface.h>
 
-#include <jagDraw/PlatformOpenGL.h>
-#include <jagDraw/BufferObject.h>
-#include <jagDraw/Shader.h>
-#include <jagDraw/ShaderProgram.h>
-#include <jagDraw/Error.h>
+#include <jagDraw/common.h>
 #include <jagBase/Version.h>
 #include <jagBase/Log.h>
 #include <Poco/Logger.h>

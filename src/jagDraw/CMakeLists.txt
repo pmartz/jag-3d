@@ -29,10 +29,12 @@ set( HEADER_PATH ${PROJECT_SOURCE_DIR}/include/${_libName} )
 set( _jagDrawHeaderFiles
     ${HEADER_PATH}/Export.h
     ${HEADER_PATH}/BufferObject.h
+    ${HEADER_PATH}/common.h
 #    ${HEADER_PATH}/Drawable.h
 #    ${HEADER_PATH}/DrawableAttribute.h
 #    ${HEADER_PATH}/DrawContext.h
     ${HEADER_PATH}/Error.h
+    ${HEADER_PATH}/init.h
     ${HEADER_PATH}/PlatformGLEW.h
     ${HEADER_PATH}/PlatformOpenGL.h
     ${HEADER_PATH}/Shader.h
@@ -47,6 +49,7 @@ set( _jagDrawHeaderFiles
 set( _jagDrawSourceFiles
     BufferObject.cpp
     Error.cpp
+    init.cpp
     Shader.cpp
     ShaderProgram.cpp
 #    stats.cpp

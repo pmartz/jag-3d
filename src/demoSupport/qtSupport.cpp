@@ -19,8 +19,8 @@
 *************** <auto-copyright.pl END do not edit this line> ***************/
 
 #include <demoSupport/DemoInterface.h>
-#include <jagDraw/PlatformOpenGL.h>
 #include <jagDraw/Error.h>
+#include <jagDraw/init.h>
 
 #include <demoSupport/qtGlWidget.h>
 #include <QApplication>
@@ -49,21 +49,7 @@ GLWidget::GLWidget( const QGLFormat& format, QWidget* parent )
 
 void GLWidget::initializeGL()
 {
-#ifdef __glew_h__
-    // TBD Probably need to move this type of stuff into an init function in jagDraw.
-#ifdef GLEW_MX
-    glewContextInit( glewGetContext() );
-#ifdef _WIN32
-    wglewContextInit(wglewGetContext());
-#elif !defined(__APPLE__) || defined(GLEW_APPLE_GLX)
-    glxewContextInit(glxewGetContext());
-#endif
-
-#else
-    glewInit();
-#endif
-#endif
-
+    jagDraw::init();
     JAG_ERROR_CHECK( "qtSupport init()" );
 
     di->init();

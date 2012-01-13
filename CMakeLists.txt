@@ -65,7 +65,7 @@ endif()
 
 
 find_package( OpenGL REQUIRED )
-find_package( Boost 1.44.0 COMPONENTS program_options )
+find_package( Boost 1.44.0 REQUIRED program_options )
 find_package( Qt 4.8.0 COMPONENTS QtCore QtGui QtOpenGL )
 
 include( FindFreeglutHelper )
