@@ -27,49 +27,45 @@
 namespace jagDraw {
 
 
-Shader::Shader( GLenum type ):
-    _initialized( false ),
-    _type( type )
+Shader::Shader( GLenum type )
+  : _type( type )
 {
 }
 
 Shader::~Shader()
 {
-    if( _ids[ 0 ] != 0 )
-        // TBD need to get context ID, probably as a param?
-        glDeleteShader( _ids[ 0 ] );
+    // TBD Handle object deletion
+//    if( _ids[ 0 ] != 0 )
+//        glDeleteShader( _ids[ 0 ] );
 }
 
 void Shader::addSourceFile( const std::string& fileName )
 {
-    if( _initialized )
-        return ;
-
-    const std::string src = p_loadSource( fileName );
+    const std::string src = loadSource( fileName );
     if( !src.empty() )
         addSourceString( src );
 }
 
 void Shader::addSourceString( const std::string& source )
 {
-    if( _initialized )
-        return;
-
     _sourceList.push_back( source );
 }
 
 GLuint Shader::getId()
 {
-    if( !_initialized )
-        p_init();
+    const unsigned int contextID( 0 );
 
-    // TBD need to get context ID, probably as a param?
+    if( _ids._data.size() < contextID+1 )
+        internalInit( contextID );
+
     return( _ids[ 0 ] );
 }
 
 
 void Shader::printInfoLog()
 {
+    const unsigned int contextID( 0 );
+
     GLsizei bufLen = 0;
 #if !defined( __APPLE__ ) && !defined(USE_GLES2)
     std::string typeStr = _type == GL_VERTEX_SHADER ? "Vertex Shader" :
@@ -80,15 +76,15 @@ void Shader::printInfoLog()
                           _type == GL_FRAGMENT_SHADER ? "Fragment Shader" :"" ;
 
 #endif
-    // TBD need to get context ID, probably as a param?
-    glGetShaderiv( _ids[ 0 ], GL_INFO_LOG_LENGTH, &bufLen );
+
+    glGetShaderiv( _ids[ contextID ], GL_INFO_LOG_LENGTH, &bufLen );
     if( bufLen > 1 )
     {
         std::cerr << "\n==========  " << typeStr << " Information Log ============= " << std::endl;
         GLsizei strLen = 0;        // strlen GL actually wrote to buffer
         char* infoLog = new char[bufLen];
-        // TBD need to get context ID, probably as a param?
-        glGetShaderInfoLog( _ids[ 0 ], bufLen, &strLen, infoLog );
+
+        glGetShaderInfoLog( _ids[ contextID ], bufLen, &strLen, infoLog );
         if( strLen > 0 )
             std::cerr << infoLog << std::endl;
         std::cerr << "==================================================\n" << std::endl;
@@ -96,11 +92,9 @@ void Shader::printInfoLog()
     }
 }
 
-void Shader::p_init()
+void Shader::internalInit( const unsigned int contextID )
 {
-    if( _initialized )
-        return;
-    _initialized = true;
+    _ids._data.resize( contextID + 1 );
 
     std::vector< const char* > src;
     std::vector< GLint > length;
@@ -112,29 +106,24 @@ void Shader::p_init()
         src.push_back( s->c_str() );
     }
 
-    _ids._data.resize( 1 );
-    // TBD need to get context ID, probably as a param?
-    _ids[ 0 ] = glCreateShader( _type );
-    glShaderSource( _ids[ 0 ], src.size(), &src.front(), &length.front() );
+    _ids[ contextID ] = glCreateShader( _type );
+    glShaderSource( _ids[ contextID ], src.size(), &src.front(), &length.front() );
 
-    // TBD need to get context ID, probably as a param?
-    glCompileShader( _ids[ 0 ] );
+    glCompileShader( _ids[ contextID ] );
 
     GLint status;
-    // TBD need to get context ID, probably as a param?
-    glGetShaderiv( _ids[ 0 ], GL_COMPILE_STATUS, &status );
+    glGetShaderiv( _ids[ contextID ], GL_COMPILE_STATUS, &status );
     if( status != GL_TRUE )
     {
         printInfoLog();
-        // TBD need to get context ID, probably as a param?
-        glDeleteShader( _ids[ 0 ] );
-        _ids[ 0 ] = 0;
+        glDeleteShader( _ids[ contextID ] );
+        _ids[ contextID ] = 0;
     }
 
     _sourceList.clear();
 }
 
-std::string Shader::p_loadSource( const std::string& fileName )
+std::string Shader::loadSource( const std::string& fileName )
 {
     std::ifstream in( fileName.c_str() );
     if( !in )

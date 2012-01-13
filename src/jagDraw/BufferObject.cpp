@@ -47,6 +47,7 @@ BufferObject::BufferObject( const BufferObject& rhs )
 
 BufferObject::~BufferObject() 
 {
+    // TBD Handle object deletion
 }
 
 void BufferObject::setBuffer( jagBase::BufferPtr b ) 

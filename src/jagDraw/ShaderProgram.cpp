@@ -28,17 +28,18 @@ namespace jagDraw {
 
 
 
-// TBD need to get context ID, probably as a param?
 void ShaderProgram::printInfoLog()
 {
+    const unsigned int contextID( 0 );
+
     GLsizei bufLen = 0;       
-    glGetProgramiv( _ids[ 0 ], GL_INFO_LOG_LENGTH, &bufLen );
+    glGetProgramiv( _ids[ contextID ], GL_INFO_LOG_LENGTH, &bufLen );
     if( bufLen > 1 )
     {
         std::cerr << "\n==========  Shader Information Log ============= " << std::endl;
         GLsizei strLen = 0;        // strlen GL actually wrote to buffer
         char* infoLog = new char[bufLen];
-        glGetProgramInfoLog( _ids[ 0 ], bufLen, &strLen, infoLog );
+        glGetProgramInfoLog( _ids[ contextID ], bufLen, &strLen, infoLog );
         if( strLen > 0 )
             std::cerr << infoLog << std::endl;
         std::cerr << "==================================================\n" << std::endl;
@@ -58,9 +59,9 @@ ShaderProgram::ShaderProgram():
 
 ShaderProgram::~ShaderProgram()
 {
-    // TBD need to get context ID, probably as a param?
-    if( _ids[ 0 ] != 0 )
-        glDeleteProgram( _ids[ 0 ] );
+    // TBD Handle object deletion
+//    if( _ids[ 0 ] != 0 )
+//        glDeleteProgram( _ids[ 0 ] );
 }
 
 void ShaderProgram::attachShader( ShaderPtr shader )
@@ -70,21 +71,22 @@ void ShaderProgram::attachShader( ShaderPtr shader )
 
 void ShaderProgram::applyNone()
 {
-    glUseProgram(0);
+    glUseProgram( 0 );
 }
 
 //void ShaderProgram::apply( DrawContext &ctx )
 void ShaderProgram::apply( )
 {
+    const unsigned int contextID( 0 );
+
+    // TBD. Link status needs to be per-context.
     if( !m_linked )
         link();
 
-    // TBD need to get context ID, probably as a param?
-    if( _ids[ 0 ] == 0 )
+    if( _ids[ contextID ] == 0 )
         return;
 
-    // TBD need to get context ID, probably as a param?
-    glUseProgram( _ids[ 0 ] );
+    glUseProgram( _ids[ contextID ] );
 }
 
 GLuint ShaderProgram::getUniformLocation( const std::string &name )
@@ -112,26 +114,30 @@ void ShaderProgram::setUniformValue( const std::string &name, const UniformValue
 
 void ShaderProgram::bindAttribLocation( GLuint index, const std::string &name )
 {
-    if( !m_initialized )
-        p_init();
+    const unsigned int contextID( 0 );
 
-    // TBD need to get context ID, probably as a param?
-    glBindAttribLocation( _ids[ 0 ], index, name.c_str() );
+    if( _ids._data.size() < contextID+1 )
+        internalInit( contextID );
+
+    glBindAttribLocation( _ids[ contextID ], index, name.c_str() );
 }
 
 GLuint ShaderProgram::getAttribLocation( const std::string &name )
 {
-    if( !m_initialized )
-        p_init();
+    const unsigned int contextID( 0 );
 
-    // TBD need to get context ID, probably as a param?
-    return glGetAttribLocation( _ids[ 0 ], name.c_str() );
+    if( _ids._data.size() < contextID+1 )
+        internalInit( contextID );
+
+    return glGetAttribLocation( _ids[ contextID ], name.c_str() );
 }
 
 void ShaderProgram::setParameter( GLenum pname, GLint value )
 {
-    if( !m_initialized )
-        p_init();
+    const unsigned int contextID( 0 );
+
+    if( _ids._data.size() < contextID+1 )
+        internalInit( contextID );
 
 #if 0 // these are potentially not supported if not defined correctly.
 
@@ -142,32 +148,34 @@ void ShaderProgram::setParameter( GLenum pname, GLint value )
 
 #endif
 
-    // TBD need to get context ID, probably as a param?
-    glProgramParameteri( _ids[ 0 ], pname, value );
+    glProgramParameteri( _ids[ contextID ], pname, value );
 }
 
 void ShaderProgram::get( GLenum pname, GLint *params )
 {
-    // TBD need to get context ID, probably as a param?
-    glGetProgramiv( _ids[ 0 ], pname, params );
+    const unsigned int contextID( 0 );
+
+    glGetProgramiv( _ids[ contextID ], pname, params );
 }
 
 GLint ShaderProgram::getId()
 {
-    if( !m_initialized )
-        p_init();
+    const unsigned int contextID( 0 );
 
-    // TBD need to get context ID, probably as a param?
-    return( _ids[ 0 ] );
+    if( _ids._data.size() < contextID+1 )
+        internalInit( contextID );
+
+    return( _ids[ contextID ] );
 }
 
 bool ShaderProgram::link()
 {
-    if( !m_initialized )
-        p_init();
+    const unsigned int contextID( 0 );
 
-    // TBD need to get context ID, probably as a param?
-    GLuint id( _ids[ 0 ] );
+    if( _ids._data.size() < contextID+1 )
+        internalInit( contextID );
+
+    GLuint id( _ids[ contextID ] );
 
     for( std::vector< ShaderPtr >::iterator s = m_shaders.begin(); s != m_shaders.end(); s++ )
     {
@@ -184,8 +192,7 @@ bool ShaderProgram::link()
     {
         printInfoLog();
         glDeleteProgram( id );
-        // TBD need to get context ID, probably as a param?
-        _ids[ 0 ] = 0;
+        _ids[ contextID ] = 0;
     }
     m_linked = (status == GL_TRUE);
 
@@ -237,44 +244,46 @@ printf("......... %d: %s (%d)\n", i, name.c_str(), loc );
     return m_linked;
 }
 
-// TBD need to get context ID, probably as a param?
 bool ShaderProgram::validate()
 {
-    if( !m_initialized )
-        p_init();
+    const unsigned int contextID( 0 );
+
+    if( _ids._data.size() < contextID+1 )
+        internalInit( contextID );
 
     GLint status;
-    glValidateProgram( _ids[ 0 ] );
-    glGetProgramiv( _ids[ 0 ], GL_VALIDATE_STATUS, &status );
+    glValidateProgram( _ids[ contextID ] );
+    glGetProgramiv( _ids[ contextID ], GL_VALIDATE_STATUS, &status );
     if( status != GL_TRUE )
     {
         printInfoLog();
-        glDeleteProgram( _ids[ 0 ] );
-        _ids[ 0 ] = 0;
+        glDeleteProgram( _ids[ contextID ] );
+        _ids[ contextID ] = 0;
     }
-    return (status == GL_TRUE);
+    return( status == GL_TRUE );
 }
 
 
 void ShaderProgram::getActiveUniform( GLuint index, std::string &name, GLenum &type )
 {
+    const unsigned int contextID( 0 );
+
     char namebuff[256];
     GLsizei len;
     GLsizei isize = sizeof(namebuff);
     GLint osize;
-    // TBD need to get context ID, probably as a param?
-    glGetActiveUniform( _ids[ 0 ], index, isize, &len, &osize, &type, namebuff );
+    glGetActiveUniform( _ids[ contextID ], index, isize, &len, &osize, &type, namebuff );
     name = std::string(namebuff );
 }
 
 
-void ShaderProgram::p_init()
+void ShaderProgram::internalInit( const unsigned int contextID )
 {
     if( m_initialized )
         return;
 
-    _ids._data.resize( 1 );
-    _ids[ 0 ] = glCreateProgram();
+    _ids._data.resize( contextID + 1 );
+    _ids[ contextID ] = glCreateProgram();
 
     m_initialized = true;
 

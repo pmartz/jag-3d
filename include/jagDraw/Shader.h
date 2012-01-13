@@ -35,6 +35,9 @@
 namespace jagDraw {
 
 
+/** \class Shader Shader.h <jagDraw/Shader.h>
+\brief TBD.
+*/
 class JAGDRAW_EXPORT Shader 
 {
 public:
@@ -45,15 +48,16 @@ public:
 
     void addSourceString( const std::string& source );
 
+    // TBD need to get context ID, probably as a param?
     GLuint getId();
 
+    // TBD need to get context ID, probably as a param?
     void printInfoLog();
 
 private:
-    void p_init();
-    bool _initialized;
+    void internalInit( const unsigned int contextID );
 
-    std::string p_loadSource( const std::string& fileName );
+    std::string loadSource( const std::string& fileName );
 
     GLenum _type;
     std::vector< std::string > _sourceList;

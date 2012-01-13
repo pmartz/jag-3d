@@ -37,6 +37,9 @@
 namespace jagDraw {
 
 
+/** \class ShaderProgram ShaderProgram.h <jagDraw/ShaderProgram.h>
+\brief TBD.
+*/
 class JAGDRAW_EXPORT ShaderProgram //: public DrawableAttribute
 {
 public:
@@ -51,27 +54,38 @@ public:
 
     void attachShader( ShaderPtr shader );
 
+    // TBD need to get context ID, probably as a param?
     GLint getId();
+    // TBD need to get context ID, probably as a param?
     bool link();
+// TBD need to get context ID, probably as a param?
     bool validate();
 
-    //void apply( DrawContext &);
+    // TBD need to get context ID, probably as a param?
     void apply();
+    //void apply( DrawContext &);
+
     static void applyNone();
 
     void setUniformLocationNameString( UniformLocationName name, const std::string& string );
     GLuint getUniformLocation( const std::string& name );
     GLuint getUniformLocation( UniformLocationName name );
+    // TBD need to get context ID, probably as a param?
     void getActiveUniform( GLuint index, std::string& name, GLenum& type );
     void setUniformValue( UniformLocationName, const UniformValue& v );
     void setUniformValue( const std::string& uniformName, const UniformValue& v );
 
+    // TBD need to get context ID, probably as a param?
     void setParameter( GLenum pname, GLint value ); // Used for Geometry Shaders 
+    // TBD need to get context ID, probably as a param?
     void get( GLenum pname, GLint* params );
 
+    // TBD need to get context ID, probably as a param?
     void printInfoLog();
 
+    // TBD need to get context ID, probably as a param?
     void bindAttribLocation( GLuint index, const std::string& name );
+    // TBD need to get context ID, probably as a param?
     GLuint getAttribLocation( const std::string& name );
 
     // Convenience Function
@@ -115,7 +129,7 @@ private:
     std::map< UniformLocationName, GLint> m_nameToLocationMap;
     std::map< std::string,  UniformLocationName > m_stringToNameMap;
 
-    void p_init();
+    void internalInit( const unsigned int contextID );
 
     bool p_findLocationTypePair( const std::string &name, ShaderProgram::LocationTypePair &lp );
 
