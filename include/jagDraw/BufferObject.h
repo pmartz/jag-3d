@@ -40,32 +40,8 @@ namespace jagDraw {
 class JAGDRAW_EXPORT BufferObject /* : public DrawableAttribute */
 {
 public:
-    enum Target {
-        ArrayBuffer         = GL_ARRAY_BUFFER,
-        ElementArrayBuffer  = GL_ELEMENT_ARRAY_BUFFER,
-        PixelPackBuffer     = GL_PIXEL_PACK_BUFFER,
-        PixelUnpackBuffer   = GL_PIXEL_UNPACK_BUFFER
-    };
-    enum Usage {
-        StreamDraw = GL_STREAM_DRAW,
-        StreamRead = GL_STREAM_READ,
-        StreamCopy = GL_STREAM_COPY,
-        StaticDraw = GL_STATIC_DRAW,
-        StaticRead = GL_STATIC_READ,
-        StaticCopy = GL_STATIC_COPY,
-        DynamicDraw = GL_DYNAMIC_DRAW,
-        DynamicRead = GL_DYNAMIC_READ,
-        DynamicCopy = GL_DYNAMIC_COPY
-    };
-
-    enum Access {
-        ReadOnly = GL_READ_ONLY,
-        WriteOnly = GL_WRITE_ONLY,
-        ReadWrite = GL_READ_WRITE
-    };
-
-    BufferObject( Target );
-    BufferObject( Target, jagBase::BufferPtr b, Usage usage );
+    BufferObject( const GLenum target );
+    BufferObject( const GLenum target, const jagBase::BufferPtr b, const GLenum usage=GL_STATIC_DRAW );
     BufferObject( const BufferObject &rhs );
 
     virtual ~BufferObject();
@@ -74,10 +50,10 @@ public:
     jagBase::BufferPtr getBuffer() { return( _buffer ); }
     size_t getBufferSize();
 
-    Target getTarget() { return _target; }
+    GLenum getTarget() { return _target; }
 
-    void setUsage( const Usage usage );
-    Usage getUsage() { return( _usage ); }
+    void setUsage( const GLenum usage );
+    GLenum getUsage() { return( _usage ); }
 
     // TBD need to get context ID, probably as a param?
     virtual void apply();
@@ -87,15 +63,15 @@ public:
 
 
     // TBD need to get context ID, probably as a param?
-    GLbyte* map( Access access );
+    GLbyte* map( const GLenum access );
     // TBD need to get context ID, probably as a param?
     void unmap();
 
 protected:
     void internalInit( const unsigned int contextID );
 
-    Target _target;
-    Usage _usage;
+    GLenum _target;
+    GLenum _usage;
     jagBase::BufferPtr _buffer;
 
     PerContextGLuint _ids;
@@ -106,10 +82,10 @@ class JAGDRAW_EXPORT ArrayBuffer: public BufferObject
 {
 public:
     ArrayBuffer():
-        BufferObject( BufferObject::ArrayBuffer )
+        BufferObject( GL_ARRAY_BUFFER )
     {}
-    ArrayBuffer( jagBase::BufferPtr buffer, BufferObject::Usage usage ):
-        BufferObject( BufferObject::ArrayBuffer, buffer, usage )
+    ArrayBuffer( const jagBase::BufferPtr b, const GLenum usage=GL_STATIC_DRAW ):
+        BufferObject( GL_ARRAY_BUFFER, b, usage )
     {}
 };
 
@@ -117,10 +93,10 @@ class JAGDRAW_EXPORT ElementArrayBuffer: public BufferObject
 {
 public:
     ElementArrayBuffer():
-        BufferObject( BufferObject::ElementArrayBuffer )
+        BufferObject( GL_ELEMENT_ARRAY_BUFFER )
     {}
-    ElementArrayBuffer( jagBase::BufferPtr buffer, BufferObject::Usage usage ):
-        BufferObject( BufferObject::ElementArrayBuffer, buffer, usage )
+    ElementArrayBuffer( const jagBase::BufferPtr b, const GLenum usage=GL_STATIC_DRAW ):
+        BufferObject( GL_ELEMENT_ARRAY_BUFFER, b, usage )
     {}
 };
 
@@ -128,10 +104,10 @@ class JAGDRAW_EXPORT PixelPackBuffer: public BufferObject
 {
 public:
     PixelPackBuffer():
-        BufferObject( BufferObject::PixelPackBuffer )
+        BufferObject( GL_PIXEL_PACK_BUFFER )
     {}
-    PixelPackBuffer( jagBase::BufferPtr buffer, BufferObject::Usage usage ):
-        BufferObject( BufferObject::PixelPackBuffer, buffer, usage )
+    PixelPackBuffer( const jagBase::BufferPtr b, const GLenum usage=GL_STATIC_DRAW ):
+        BufferObject( GL_PIXEL_PACK_BUFFER, b, usage )
     {}
 };
 
@@ -139,10 +115,10 @@ class JAGDRAW_EXPORT PixelUnpackBuffer: public BufferObject
 {
 public:
     PixelUnpackBuffer():
-        BufferObject( BufferObject::PixelUnpackBuffer )
+        BufferObject( GL_PIXEL_UNPACK_BUFFER )
     {}
-    PixelUnpackBuffer( jagBase::BufferPtr buffer, BufferObject::Usage usage ):
-        BufferObject( BufferObject::PixelUnpackBuffer, buffer, usage )
+    PixelUnpackBuffer( const jagBase::BufferPtr b, const GLenum usage=GL_STATIC_DRAW ):
+        BufferObject( GL_PIXEL_UNPACK_BUFFER, b, usage )
     {}
 };
 

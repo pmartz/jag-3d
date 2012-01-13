@@ -26,12 +26,12 @@
 namespace jagDraw {
 
 
-BufferObject::BufferObject( BufferObject::Target target )
+BufferObject::BufferObject( const GLenum target )
   : _target( target ),
-    _usage( DynamicDraw )
+    _usage( GL_STATIC_DRAW )
 {}
 
-BufferObject::BufferObject( BufferObject::Target target, jagBase::BufferPtr b, Usage usage )
+BufferObject::BufferObject( const GLenum target, const jagBase::BufferPtr b, const GLenum usage )
   : _target( target ),
     _usage( usage ),
     _buffer( b )
@@ -59,7 +59,7 @@ size_t BufferObject::getBufferSize()
     return( ( _buffer != NULL ) ? _buffer->getSize() : 0 );
 }
 
-void BufferObject::setUsage( const BufferObject::Usage usage ) 
+void BufferObject::setUsage( const GLenum usage )
 { 
     _usage = usage; 
 }
@@ -85,7 +85,7 @@ void BufferObject::subData( GLsizeiptr offset, GLsizeiptr size, const GLvoid* da
     glBufferSubData( _target, offset, size, data );
 }
 
-GLbyte* BufferObject::map( BufferObject::Access access )
+GLbyte* BufferObject::map( const GLenum access )
 {
     const unsigned int contextID( 0 );
 
