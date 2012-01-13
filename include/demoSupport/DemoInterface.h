@@ -22,6 +22,9 @@
 #define __JAG3D_DEMO_SUPPORT_DEMO_INTERFACE_H__ 1
 
 
+#include <boost/program_options/options_description.hpp>
+
+
 /** \class DemoInterface DemoInterface.h DemoInterface.h
 \brief Facilitates building examples, tests, and demos with any
 windowing system API, e.g., freeglut, Qt, etc.
@@ -32,7 +35,7 @@ public:
     DemoInterface() {}
     virtual ~DemoInterface() {}
 
-    static DemoInterface* create();
+    static DemoInterface* create( boost::program_options::options_description& desc );
 
     virtual bool init() = 0;
     virtual bool frame() = 0;

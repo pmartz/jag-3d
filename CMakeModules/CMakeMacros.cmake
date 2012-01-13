@@ -21,11 +21,6 @@
 
 set( _optionalDependencyIncludes )
 set( _optionalDependencyLibraries )
-if( Boost_FOUND )
-    list( APPEND _optionalDependencyIncludes
-        ${Boost_INCLUDE_DIR}
-    )
-endif()
 if( GLEW_FOUND )
     list( APPEND _optionalDependencyIncludes
         ${GLEW_INCLUDE_DIR}
@@ -37,6 +32,7 @@ endif()
 
 set( _requiredDependencyIncludes
     ${POCO_INCLUDE_DIR}
+    ${Boost_INCLUDE_DIR}
     ${GGT_INCLUDE_DIR}
     ${OPENGL_INCLUDE_DIR}
 )
@@ -46,6 +42,7 @@ set( _projectIncludes
 
 set( _requiredDependencyLibraries
     ${POCO_LIBRARIES}
+    ${Boost_LIBRARIES}
     ${OPENGL_gl_LIBRARY}
 )
 set( _projectLibraries

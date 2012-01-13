@@ -29,11 +29,13 @@
 #include <jagBase/Log.h>
 #include <Poco/Logger.h>
 #include <Poco/Message.h>
+#include <boost/program_options/options_description.hpp>
 
 #include <string>
 
 
 using namespace std;
+namespace bpo = boost::program_options;
 
 
 class Simple3xDemo : public DemoInterface
@@ -54,7 +56,7 @@ protected:
 };
 
 
-DemoInterface* DemoInterface::create()
+DemoInterface* DemoInterface::create( bpo::options_description& desc )
 {
     return( new Simple3xDemo );
 }

@@ -65,7 +65,7 @@ endif()
 
 
 find_package( OpenGL REQUIRED )
-find_package( Boost )
+find_package( Boost 1.44.0 COMPONENTS program_options )
 find_package( Qt 4.8.0 COMPONENTS QtCore QtGui QtOpenGL )
 
 include( FindFreeglutHelper )
@@ -91,6 +91,11 @@ endif()
 
 if( GLEW_FOUND )
     add_definitions( -DJAG3D_USE_GLEW )
+endif()
+
+option( BOOST_ALL_DYN_LINK "If set, use Boost dynamic libraries (boost_*); otherwise static (libboost_*)." OFF )
+if( BOOST_ALL_DYN_LINK )
+    add_definitions( -DBOOST_ALL_DYN_LINK )
 endif()
 
 option( JAG3D_DISABLE_ALL_ERROR_CHECKS "If set, JAG disables all internal OpenGL error checking" OFF )

@@ -20,12 +20,17 @@
 
 #include <demoSupport/DemoInterface.h>
 #include <jagDraw/PlatformOpenGL.h>
+#include <jagDraw/Error.h>
+
 #include <demoSupport/platformFreeglut.h>
 
-#include <jagDraw/Error.h>
+#include <boost/program_options/options_description.hpp>
+#include <boost/program_options/variables_map.hpp>
+#include <boost/program_options/parsers.hpp>
 
 
 using namespace std;
+namespace bpo = boost::program_options;
 
 
 DemoInterface* di( NULL );
@@ -50,8 +55,6 @@ void init()
 
     JAG_ERROR_CHECK( "freeglutSupport init()" );
 
-
-    di = DemoInterface::create();
     di->init();
 }
 
@@ -79,24 +82,41 @@ void keyboard(unsigned char key, int x, int y)
     }
 }
 
-
+#include <iostream>
 
 int main (int argc, char** argv)
 {
-    int idx;
-    bool no3( false );
-    for( idx=1; idx<argc; idx++ )
-    {
-        no3 = string( argv[ idx ] ) == string( "--no3" );
-        if( no3 ) break;
-    }
+    bpo::options_description desc( "Options" );
+    // Add freeglut test/demo options
+    desc.add_options()
+        ( "version", bpo::value< double >(), "OpenGL context version." );
+
+    // Create test/demo-specific DemoInterface, and allow it to
+    // add test/demo-specific options.
+    di = DemoInterface::create( desc );
+
+    bpo::variables_map vm;
+    bpo::store( bpo::parse_command_line( argc, argv, desc ), vm );
+    bpo::notify( vm );
+
+    double version( 3.1 );
+    if( vm.count( "version" ) > 0 )
+        version = vm[ "version" ].as< double >();
+    float versionMajor, versionMinor;
+    modff( version, &versionMajor );
+    versionMinor = (float)( version * 10. - (double)versionMajor * 10. );
+
+
 
     glutInit( &argc, argv );
     glutInitDisplayMode( GLUT_DOUBLE | GLUT_RGBA );
-    if( !no3 )
+    if( version >= 3.0 )
     {
-        glutInitContextVersion( 3, 3 );
-        glutInitContextProfile( GLUT_CORE_PROFILE );
+        glutInitContextVersion( int( versionMajor ), int( versionMinor ) );
+        if( version >= 3.2 )
+            glutInitContextProfile( GLUT_CORE_PROFILE );
+        else
+            glutInitContextFlags( GLUT_FORWARD_COMPATIBLE );
     }
 
     glutInitWindowSize( 300, 300 ); 

@@ -28,8 +28,15 @@
 #include <QCoreApplication>
 #include <QKeyEvent>
 
+#include <boost/program_options/options_description.hpp>
+#include <boost/program_options/variables_map.hpp>
+#include <boost/program_options/parsers.hpp>
+
+#include <math.h>
+
 
 using namespace std;
+namespace bpo = boost::program_options;
 
 
 DemoInterface* di( NULL );
@@ -59,8 +66,6 @@ void GLWidget::initializeGL()
 
     JAG_ERROR_CHECK( "qtSupport init()" );
 
-
-    di = DemoInterface::create();
     di->init();
 }
 
@@ -94,21 +99,39 @@ void GLWidget::keyPressEvent( QKeyEvent* e )
 
 int main( int argc, char* argv[] )
 {
-    int idx;
-    bool no3( false );
-    for( idx=1; idx<argc; idx++ )
-    {
-        no3 = string( argv[ idx ] ) == string( "--no3" );
-        if( no3 ) break;
-    }
+    bpo::options_description desc( "Options" );
+    // Add qt test/demo options
+    desc.add_options()
+        ( "version", bpo::value< double  >(), "OpenGL context version." );
+
+    // Create test/demo-specific DemoInterface, and allow it to
+    // add test/demo-specific options.
+    di = DemoInterface::create( desc );
+
+    bpo::variables_map vm;
+    bpo::store( bpo::parse_command_line( argc, argv, desc ), vm );
+    bpo::notify( vm );
+
+    double version( 3.1 );
+    if( vm.count( "version" ) > 0 )
+        version = vm[ "version" ].as< double >();
+    float versionMajor, versionMinor;
+    modff( version, &versionMajor );
+    versionMinor = (float)( version * 10. - (double)versionMajor * 10. );
+
+
 
     QApplication app( argc, argv );
 
     QGLFormat glFormat( QGL::DoubleBuffer | QGL::Rgba );
-    if( !no3 )
+    if( version >= 3.0 )
     {
-        glFormat.setVersion( 3, 1 );
-        glFormat.setProfile( QGLFormat::CoreProfile );
+        glFormat.setVersion( int( versionMajor ), int( versionMinor ) );
+        if( version >= 3.2 )
+            glFormat.setProfile( QGLFormat::CoreProfile );
+        //else
+            // Qt doesn't appear to allow setting the forward compatible flag.
+            // Do nothing in this case.
     }
 
     GLWidget widget( glFormat );
