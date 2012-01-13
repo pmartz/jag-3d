@@ -18,56 +18,53 @@
 *
 *************** <auto-copyright.pl END do not edit this line> ***************/
 
-#ifndef __JAGDRAW_SHADER_H__
-#define __JAGDRAW_SHADER_H__ 1
+#ifndef __JAGDRAW_PER_CONTEXT_DATA_H__
+#define __JAGDRAW_PER_CONTEXT_DATA_H__ 1
 
 
-#include <vector>
-#include <string>
-
-#include <jagDraw/Export.h>
 #include <jagDraw/PlatformOpenGL.h>
-#include <jagDraw/PerContextData.h>
-#include <jagBase/ptr.h>
-#include <string>
+#include <vector>
 
 
 namespace jagDraw {
 
 
-class JAGDRAW_EXPORT Shader 
+/** \struct PerContextData PerContextData.h <jagDraw/PerContextData.h>
+*/
+template< class T >
+struct PerContextData
 {
-public:
-    Shader( GLenum type );
-    ~Shader();
+    PerContextData()
+    {
+    }
+    ~PerContextData()
+    {
+    }
 
-    void addSourceFile( const std::string& fileName );
+    PerContextData& operator=( const PerContextData& rhs )
+    {
+        _data = rhs._data;
+        return( *this );
+    }
 
-    void addSourceString( const std::string& source );
+    T& operator[]( unsigned int idx )
+    {
+        return( _data[ idx ] );
+    }
+    const T& operator[]( unsigned int idx ) const
+    {
+        return( _data[ idx ] );
+    }
 
-    GLuint getId();
-
-    void printInfoLog();
-
-private:
-    void p_init();
-    bool _initialized;
-
-    std::string p_loadSource( const std::string& fileName );
-
-    GLenum _type;
-    std::vector< std::string > _sourceList;
-
-    PerContextGLuint _ids;
+    std::vector< T > _data;
 };
 
-typedef jagBase::ptr< jagDraw::Shader >::shared_ptr ShaderPtr;
-typedef std::vector< ShaderPtr > ShaderList;
+typedef PerContextData< GLuint > PerContextGLuint;
 
 
 // jagDraw
 }
 
 
-// __JAGDRAW_SHADER_H__
+// __JAGDRAW_PER_CONTEXT_DATA_H__
 #endif

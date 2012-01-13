@@ -99,7 +99,7 @@ bool Simple3xDemo::init()
             -.9f, .9f, z,
             .4f, .9f, z };
         jagBase::BufferPtr bp( new jagBase::Buffer( sizeof( verts ), (void*)verts ) );
-        _bop = jagDraw::BufferObjectPtr( new jagDraw::BufferObject( jagDraw::BufferObject::ArrayBuffer, bp, jagDraw::BufferObject::StaticDraw ) );
+        _bop = jagDraw::BufferObjectPtr( new jagDraw::BufferObject( GL_ARRAY_BUFFER, bp, jagDraw::BufferObject::StaticDraw ) );
     }
 
     {

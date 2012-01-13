@@ -35,6 +35,7 @@ set( _jagDrawHeaderFiles
 #    ${HEADER_PATH}/DrawContext.h
     ${HEADER_PATH}/Error.h
     ${HEADER_PATH}/init.h
+    ${HEADER_PATH}/PerContextData.h
     ${HEADER_PATH}/PlatformGLEW.h
     ${HEADER_PATH}/PlatformOpenGL.h
     ${HEADER_PATH}/Shader.h

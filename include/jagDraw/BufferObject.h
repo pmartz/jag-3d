@@ -23,6 +23,7 @@
 
 #include <jagDraw/Export.h>
 #include <jagDraw/PlatformOpenGL.h>
+#include <jagDraw/PerContextData.h>
 #include <jagBase/ptr.h>
 #include <jagBase/Buffer.h>
 //#include <Chaskii/Draw/DrawableAttribute.h>
@@ -65,38 +66,39 @@ public:
 
     BufferObject( Target );
     BufferObject( Target, jagBase::BufferPtr b, Usage usage );
-    BufferObject( const BufferObject &b );
+    BufferObject( const BufferObject &rhs );
 
     virtual ~BufferObject();
 
     void setBuffer( jagBase::BufferPtr b );
-    jagBase::BufferPtr getBuffer();
-    size_t getBufferSize() { return _bufferSize; }
+    jagBase::BufferPtr getBuffer() { return( _buffer ); }
+    size_t getBufferSize();
 
     Target getTarget() { return _target; }
 
-    void setUsage( Usage usage );
-    Usage getUsage();
+    void setUsage( const Usage usage );
+    Usage getUsage() { return( _usage ); }
 
+    // TBD need to get context ID, probably as a param?
     virtual void apply();
-    virtual void gfxInit();
 
+    // TBD need to get context ID, probably as a param?
     void subData( GLsizeiptr offset, GLsizeiptr size, const GLvoid * );
 
 
-    GLbyte *map( Access access );
+    // TBD need to get context ID, probably as a param?
+    GLbyte* map( Access access );
+    // TBD need to get context ID, probably as a param?
     void unmap();
 
 protected:
-    bool p_gfxInit();
-    bool _gfxInited;
+    void internalInit( const unsigned int contextID );
 
     Target _target;
     Usage _usage;
     jagBase::BufferPtr _buffer;
 
-    GLuint _id;
-    size_t _bufferSize;
+    PerContextGLuint _ids;
 };
 
 

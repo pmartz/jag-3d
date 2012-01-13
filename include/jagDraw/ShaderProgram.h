@@ -26,6 +26,7 @@
 //#include <Chaskii/Draw/DrawContext.h>
 //#include <Chaskii/Draw/DrawableAttribute.h>
 #include <jagDraw/Shader.h>
+#include <jagDraw/PerContextData.h>
 #include <jagDraw/UniformValue.h>
 #include <jagBase/ptr.h>
 
@@ -95,7 +96,6 @@ public:
 private:
     bool m_initialized;
     bool m_linked;
-    GLuint _id;
 
     struct LocationTypePair {
         GLint loc;
@@ -118,6 +118,8 @@ private:
     void p_init();
 
     bool p_findLocationTypePair( const std::string &name, ShaderProgram::LocationTypePair &lp );
+
+    PerContextGLuint _ids;
 };
 
 typedef jagBase::ptr< ShaderProgram >::shared_ptr ShaderProgramPtr;

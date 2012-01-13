@@ -29,15 +29,15 @@ namespace jagDraw {
 
 Shader::Shader( GLenum type ):
     _initialized( false ),
-    _type( type ),
-    _id( 0 )
+    _type( type )
 {
 }
 
 Shader::~Shader()
 {
-    if( _id != 0 )
-        glDeleteShader( _id );
+    if( _ids[ 0 ] != 0 )
+        // TBD need to get context ID, probably as a param?
+        glDeleteShader( _ids[ 0 ] );
 }
 
 void Shader::addSourceFile( const std::string& fileName )
@@ -63,7 +63,8 @@ GLuint Shader::getId()
     if( !_initialized )
         p_init();
 
-    return( _id );
+    // TBD need to get context ID, probably as a param?
+    return( _ids[ 0 ] );
 }
 
 
@@ -79,13 +80,15 @@ void Shader::printInfoLog()
                           _type == GL_FRAGMENT_SHADER ? "Fragment Shader" :"" ;
 
 #endif
-    glGetShaderiv( _id, GL_INFO_LOG_LENGTH, &bufLen );
+    // TBD need to get context ID, probably as a param?
+    glGetShaderiv( _ids[ 0 ], GL_INFO_LOG_LENGTH, &bufLen );
     if( bufLen > 1 )
     {
         std::cerr << "\n==========  " << typeStr << " Information Log ============= " << std::endl;
         GLsizei strLen = 0;        // strlen GL actually wrote to buffer
         char* infoLog = new char[bufLen];
-        glGetShaderInfoLog( _id, bufLen, &strLen, infoLog );
+        // TBD need to get context ID, probably as a param?
+        glGetShaderInfoLog( _ids[ 0 ], bufLen, &strLen, infoLog );
         if( strLen > 0 )
             std::cerr << infoLog << std::endl;
         std::cerr << "==================================================\n" << std::endl;
@@ -109,18 +112,23 @@ void Shader::p_init()
         src.push_back( s->c_str() );
     }
 
-    _id = glCreateShader( _type );
-    glShaderSource( _id, src.size(), &src.front(), &length.front() );
+    _ids._data.resize( 1 );
+    // TBD need to get context ID, probably as a param?
+    _ids[ 0 ] = glCreateShader( _type );
+    glShaderSource( _ids[ 0 ], src.size(), &src.front(), &length.front() );
 
-    glCompileShader( _id );
+    // TBD need to get context ID, probably as a param?
+    glCompileShader( _ids[ 0 ] );
 
     GLint status;
-    glGetShaderiv( _id, GL_COMPILE_STATUS, &status );
+    // TBD need to get context ID, probably as a param?
+    glGetShaderiv( _ids[ 0 ], GL_COMPILE_STATUS, &status );
     if( status != GL_TRUE )
     {
         printInfoLog();
-        glDeleteShader( _id );
-        _id = 0;
+        // TBD need to get context ID, probably as a param?
+        glDeleteShader( _ids[ 0 ] );
+        _ids[ 0 ] = 0;
     }
 
     _sourceList.clear();

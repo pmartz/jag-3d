@@ -28,23 +28,20 @@ namespace jagDraw {
 
 BufferObject::BufferObject( BufferObject::Target target )
   : _target( target ),
-    _gfxInited( false ),
     _usage( DynamicDraw )
 {}
 
 BufferObject::BufferObject( BufferObject::Target target, jagBase::BufferPtr b, Usage usage )
   : _target( target ),
-    _gfxInited( false ),
     _usage( usage ),
     _buffer( b )
 {}
 
-BufferObject::BufferObject( const BufferObject& b )
-  : _target( b._target ),
-    _gfxInited( b._gfxInited ),
-    _usage( b._usage ),
-    _buffer( b._buffer ),
-    _id( b._id )
+BufferObject::BufferObject( const BufferObject& rhs )
+  : _target( rhs._target ),
+    _usage( rhs._usage ),
+    _buffer( rhs._buffer ),
+    _ids( rhs._ids )
 {}
 
 
@@ -57,49 +54,45 @@ void BufferObject::setBuffer( jagBase::BufferPtr b )
     _buffer = b;
 }
 
-jagBase::BufferPtr BufferObject::getBuffer() 
-{ 
-    return( _buffer );
+size_t BufferObject::getBufferSize()
+{
+    return( ( _buffer != NULL ) ? _buffer->getSize() : 0 );
 }
 
-void BufferObject::setUsage( BufferObject::Usage usage ) 
+void BufferObject::setUsage( const BufferObject::Usage usage ) 
 { 
     _usage = usage; 
 }
 
-BufferObject::Usage BufferObject::getUsage() 
-{
-    return( _usage );
-}
-
 void BufferObject::apply()
 {
-    if( !_gfxInited && !p_gfxInit() )
-        return;
+    const unsigned int contextID( 0 );
 
-//    stats();
+    if( _ids._data.size() < contextID+1 )
+        internalInit( contextID );
 
-    glBindBuffer( _target, _id );
-}
-
-void BufferObject::gfxInit()
-{
-    if( !_gfxInited )
-        p_gfxInit();
+    glBindBuffer( _target, _ids[ contextID ] );
 }
 
 void BufferObject::subData( GLsizeiptr offset, GLsizeiptr size, const GLvoid* data )
 {
-    glBindBuffer( _target, _id );
+    const unsigned int contextID( 0 );
+
+    if( _ids._data.size() < contextID+1 )
+        internalInit( contextID );
+
+    glBindBuffer( _target, _ids[ contextID ] );
     glBufferSubData( _target, offset, size, data );
 }
 
 GLbyte* BufferObject::map( BufferObject::Access access )
 {
-    if( !_gfxInited )
-        p_gfxInit();
+    const unsigned int contextID( 0 );
 
-    glBindBuffer( _target, _id );
+    if( _ids._data.size() < contextID+1 )
+        internalInit( contextID );
+
+    glBindBuffer( _target, _ids[ contextID ] );
     GLbyte* addr = (GLbyte*)( glMapBuffer( _target, access ) );
     glBindBuffer( _target, 0 );
     return( addr );
@@ -107,34 +100,27 @@ GLbyte* BufferObject::map( BufferObject::Access access )
 
 void BufferObject::unmap()
 {
-    if( !_gfxInited )
-        p_gfxInit();
+    const unsigned int contextID( 0 );
 
-    glBindBuffer( _target, _id );
+    if( _ids._data.size() < contextID+1 )
+        internalInit( contextID );
+
+    glBindBuffer( _target, _ids[ contextID ] );
     glUnmapBuffer( _target );
     glBindBuffer( _target, 0 );
 }
 
 
-bool BufferObject::p_gfxInit()
+void BufferObject::internalInit( const unsigned int contextID )
 {
-    if( _gfxInited == true )
-        return( _gfxInited );
+    _ids._data.resize( contextID + 1 );
+    glGenBuffers( 1, &( _ids[ contextID ] ) );
 
-    if( _buffer.get() == NULL )
-        return( _gfxInited );
-
-    glGenBuffers( 1, &_id );
-
-    glBindBuffer( _target, _id );
+    glBindBuffer( _target, _ids[ contextID ] );
     glBufferData( _target, _buffer->getSize(), _buffer->data(), _usage );
     glBindBuffer( _target, 0 );
 
-    _bufferSize = _buffer->getSize();
-
-    JAG_ERROR_CHECK( "BufferObject::p_gfxInit()" );
-
-    return( _gfxInited = true );
+    JAG_ERROR_CHECK( "BufferObject::p_internalInit()" );
 }
 
 
