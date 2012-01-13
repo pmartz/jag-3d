@@ -44,7 +44,7 @@ public:
 
     void addSourceString( const std::string& source );
 
-    GLuint getHandle();
+    GLuint getId();
 
     void printInfoLog();
 
@@ -56,7 +56,7 @@ private:
 
     GLenum _type;
     std::vector< std::string > _sourceList;
-    GLuint _handle;
+    GLuint _id;
 };
 
 typedef jagBase::ptr< jagDraw::Shader >::shared_ptr ShaderPtr;

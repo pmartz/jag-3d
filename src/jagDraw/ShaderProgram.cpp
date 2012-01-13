@@ -31,13 +31,13 @@ namespace jagDraw {
 void ShaderProgram::printInfoLog()
 {
     GLsizei bufLen = 0;       
-    glGetProgramiv(m_handle, GL_INFO_LOG_LENGTH, &bufLen );
+    glGetProgramiv(_id, GL_INFO_LOG_LENGTH, &bufLen );
     if( bufLen > 1 )
     {
         std::cerr << "\n==========  Shader Information Log ============= " << std::endl;
         GLsizei strLen = 0;        // strlen GL actually wrote to buffer
         char* infoLog = new char[bufLen];
-        glGetProgramInfoLog( m_handle, bufLen, &strLen, infoLog );
+        glGetProgramInfoLog( _id, bufLen, &strLen, infoLog );
         if( strLen > 0 )
             std::cerr << infoLog << std::endl;
         std::cerr << "==================================================\n" << std::endl;
@@ -49,7 +49,7 @@ ShaderProgram::ShaderProgram():
     //DrawableAttribute( ShaderProgram_t ),
     m_initialized(false),
     m_linked(false),
-    m_handle(0)
+    _id(0)
 {
     m_stringToNameMap["ii_ModelViewProjectionMatrix"] = ModelViewProjectionMatrix;
     m_stringToNameMap["ii_NormalMatrix"] = NormalMatrix;
@@ -58,8 +58,8 @@ ShaderProgram::ShaderProgram():
 
 ShaderProgram::~ShaderProgram()
 {
-    if( m_handle != 0 )
-        glDeleteProgram( m_handle );
+    if( _id != 0 )
+        glDeleteProgram( _id );
 }
 
 void ShaderProgram::attachShader( ShaderPtr shader )
@@ -78,10 +78,10 @@ void ShaderProgram::apply( )
     if( !m_linked )
         link();
 
-    if( m_handle == 0 )
+    if( _id == 0 )
         return;
 
-    glUseProgram(m_handle);
+    glUseProgram(_id);
 }
 
 GLuint ShaderProgram::getUniformLocation( const std::string &name )
@@ -112,7 +112,7 @@ void ShaderProgram::bindAttribLocation( GLuint index, const std::string &name )
     if( !m_initialized )
         p_init();
 
-    glBindAttribLocation( m_handle, index, name.c_str() );
+    glBindAttribLocation( _id, index, name.c_str() );
 }
 
 GLuint ShaderProgram::getAttribLocation( const std::string &name )
@@ -120,7 +120,7 @@ GLuint ShaderProgram::getAttribLocation( const std::string &name )
     if( !m_initialized )
         p_init();
 
-    return glGetAttribLocation( m_handle, name.c_str() );
+    return glGetAttribLocation( _id, name.c_str() );
 }
 
 void ShaderProgram::setParameter( GLenum pname, GLint value )
@@ -137,20 +137,20 @@ void ShaderProgram::setParameter( GLenum pname, GLint value )
 
 #endif
 
-    glProgramParameteri(m_handle, pname, value );
+    glProgramParameteri(_id, pname, value );
 }
 
 void ShaderProgram::get( GLenum pname, GLint *params )
 {
-    glGetProgramiv( m_handle, pname, params );
+    glGetProgramiv( _id, pname, params );
 }
 
-GLint ShaderProgram::getHandle()
+GLint ShaderProgram::getId()
 {
     if( !m_initialized )
         p_init();
 
-    return m_handle;
+    return _id;
 }
 
 bool ShaderProgram::link()
@@ -160,35 +160,35 @@ bool ShaderProgram::link()
 
     for( std::vector< ShaderPtr >::iterator s = m_shaders.begin(); s != m_shaders.end(); s++ )
     {
-        GLint shader = (*s)->getHandle();
+        GLint shader = (*s)->getId();
         if( shader != 0 )
-            glAttachShader( m_handle, shader );
+            glAttachShader( _id, shader );
     }
     m_shaders.clear();
 
     GLint status;
-    glLinkProgram(m_handle);
-    glGetProgramiv( m_handle, GL_LINK_STATUS, &status );
+    glLinkProgram(_id);
+    glGetProgramiv( _id, GL_LINK_STATUS, &status );
     if( status != GL_TRUE )
     {
         printInfoLog();
-        glDeleteProgram( m_handle );
-        m_handle = 0;
+        glDeleteProgram( _id );
+        _id = 0;
     }
     m_linked = (status == GL_TRUE);
 
     if( m_linked == true )
     {
         GLint n;
-        glUseProgram(m_handle);
-        glGetProgramiv( m_handle, GL_ACTIVE_UNIFORMS, &n );
+        glUseProgram(_id);
+        glGetProgramiv( _id, GL_ACTIVE_UNIFORMS, &n );
 printf("Active Uniforms:\n" );
         for( GLint i = 0; i < n; i++ )
         {
             GLenum type;
             std::string string;
             getActiveUniform( i, string, type );
-            GLint location = glGetUniformLocation( m_handle, string.c_str() );
+            GLint location = glGetUniformLocation( _id, string.c_str() );
 printf("......... %d: %s (%d)\n", i, string.c_str(), location );
             m_nameToLocationTypeMap[string] = LocationTypePair( location, type );
 
@@ -200,7 +200,7 @@ printf("......... %d: %s (%d)\n", i, string.c_str(), location );
             }
         }
 
-        glGetProgramiv( m_handle, GL_ACTIVE_ATTRIBUTES, &n );
+        glGetProgramiv( _id, GL_ACTIVE_ATTRIBUTES, &n );
 printf("\nActive Attributes: (%d)\n", n );
         for( GLint i = 0; i < n; i++ )
         {
@@ -212,11 +212,11 @@ printf("\nActive Attributes: (%d)\n", n );
             GLsizei isize = sizeof(namebuff);
             GLint osize;
             //getActiveAttrib( i, name, type );
-            glGetActiveAttrib(  m_handle, i, isize, &len, &osize, &type, namebuff );
+            glGetActiveAttrib(  _id, i, isize, &len, &osize, &type, namebuff );
             name = std::string(namebuff );
-            GLint loc = glGetAttribLocation( m_handle, name.c_str() );
+            GLint loc = glGetAttribLocation( _id, name.c_str() );
 printf("......... %d: %s (%d)\n", i, name.c_str(), loc );
-            GLint location = glGetUniformLocation( m_handle, name.c_str() );
+            GLint location = glGetUniformLocation( _id, name.c_str() );
             m_nameToLocationTypeMap[name] = LocationTypePair( location, type );
         }
         glUseProgram(0);
@@ -231,13 +231,13 @@ bool ShaderProgram::validate()
         p_init();
 
     GLint status;
-    glValidateProgram(m_handle);
-    glGetProgramiv( m_handle, GL_VALIDATE_STATUS, &status );
+    glValidateProgram(_id);
+    glGetProgramiv( _id, GL_VALIDATE_STATUS, &status );
     if( status != GL_TRUE )
     {
         printInfoLog();
-        glDeleteProgram( m_handle );
-        m_handle = 0;
+        glDeleteProgram( _id );
+        _id = 0;
     }
     return (status == GL_TRUE);
 }
@@ -249,7 +249,7 @@ void ShaderProgram::getActiveUniform( GLuint index, std::string &name, GLenum &t
     GLsizei len;
     GLsizei isize = sizeof(namebuff);
     GLint osize;
-    glGetActiveUniform( m_handle, index, isize, &len, &osize, &type, namebuff );
+    glGetActiveUniform( _id, index, isize, &len, &osize, &type, namebuff );
     name = std::string(namebuff );
 }
 
@@ -259,7 +259,7 @@ void ShaderProgram::p_init()
     if( m_initialized )
         return;
 
-    m_handle = glCreateProgram();
+    _id = glCreateProgram();
 
     m_initialized = true;
 

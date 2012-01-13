@@ -50,7 +50,7 @@ public:
 
     void attachShader( ShaderPtr shader );
 
-    GLint getHandle();
+    GLint getId();
     bool link();
     bool validate();
 
@@ -95,7 +95,7 @@ public:
 private:
     bool m_initialized;
     bool m_linked;
-    GLuint m_handle;
+    GLuint _id;
 
     struct LocationTypePair {
         GLint loc;

@@ -30,14 +30,14 @@ namespace jagDraw {
 Shader::Shader( GLenum type ):
     _initialized( false ),
     _type( type ),
-    _handle( 0 )
+    _id( 0 )
 {
 }
 
 Shader::~Shader()
 {
-    if( _handle != 0 )
-        glDeleteShader( _handle );
+    if( _id != 0 )
+        glDeleteShader( _id );
 }
 
 void Shader::addSourceFile( const std::string& fileName )
@@ -58,12 +58,12 @@ void Shader::addSourceString( const std::string& source )
     _sourceList.push_back( source );
 }
 
-GLuint Shader::getHandle()
+GLuint Shader::getId()
 {
     if( !_initialized )
         p_init();
 
-    return( _handle );
+    return( _id );
 }
 
 
@@ -79,13 +79,13 @@ void Shader::printInfoLog()
                           _type == GL_FRAGMENT_SHADER ? "Fragment Shader" :"" ;
 
 #endif
-    glGetShaderiv( _handle, GL_INFO_LOG_LENGTH, &bufLen );
+    glGetShaderiv( _id, GL_INFO_LOG_LENGTH, &bufLen );
     if( bufLen > 1 )
     {
         std::cerr << "\n==========  " << typeStr << " Information Log ============= " << std::endl;
         GLsizei strLen = 0;        // strlen GL actually wrote to buffer
         char* infoLog = new char[bufLen];
-        glGetShaderInfoLog( _handle, bufLen, &strLen, infoLog );
+        glGetShaderInfoLog( _id, bufLen, &strLen, infoLog );
         if( strLen > 0 )
             std::cerr << infoLog << std::endl;
         std::cerr << "==================================================\n" << std::endl;
@@ -109,18 +109,18 @@ void Shader::p_init()
         src.push_back( s->c_str() );
     }
 
-    _handle = glCreateShader( _type );
-    glShaderSource( _handle, src.size(), &src.front(), &length.front() );
+    _id = glCreateShader( _type );
+    glShaderSource( _id, src.size(), &src.front(), &length.front() );
 
-    glCompileShader( _handle );
+    glCompileShader( _id );
 
     GLint status;
-    glGetShaderiv( _handle, GL_COMPILE_STATUS, &status );
+    glGetShaderiv( _id, GL_COMPILE_STATUS, &status );
     if( status != GL_TRUE )
     {
         printInfoLog();
-        glDeleteShader( _handle );
-        _handle = 0;
+        glDeleteShader( _id );
+        _id = 0;
     }
 
     _sourceList.clear();

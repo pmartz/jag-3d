@@ -95,7 +95,7 @@ protected:
     Usage _usage;
     jagBase::BufferPtr _buffer;
 
-    GLenum _id;
+    GLuint _id;
     size_t _bufferSize;
 };
 
