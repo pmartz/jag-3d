@@ -18,24 +18,17 @@
 *
 *************** <auto-copyright.pl END do not edit this line> ***************/
 
-#ifndef __JAGDRAW_INIT_H__
-#define __JAGDRAW_INIT_H__ 1
+#ifndef __JAGDRAW_DRAW_COMMON_H__
+#define __JAGDRAW_DRAW_COMMON_H__ 1
 
 
-#include <jagDraw/Export.h>
+#include <jagDraw/PlatformOpenGL.h>
+#include <jagDraw/BufferObject.h>
+#include <jagDraw/Shader.h>
+#include <jagDraw/ShaderProgram.h>
+#include <jagDraw/Error.h>
+#include <jagDraw/ContextSupport.h>
 
 
-
-namespace jagDraw
-{
-
-
-JAGDRAW_EXPORT bool init();
-
-
-// jagDraw
-}
-
-
-// __JAGDRAW_INIT_H__
+// __JAGDRAW_DRAW_COMMON_H__
 #endif

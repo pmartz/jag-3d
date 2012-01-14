@@ -19,7 +19,7 @@
 *************** <auto-copyright.pl END do not edit this line> ***************/
 
 #include <demoSupport/DemoInterface.h>
-#include <jagDraw/init.h>
+#include <jagDraw/ContextSupport.h>
 
 #include <demoSupport/qtGlWidget.h>
 #include <QApplication>
@@ -48,7 +48,13 @@ GLWidget::GLWidget( const QGLFormat& format, QWidget* parent )
 
 void GLWidget::initializeGL()
 {
-    jagDraw::init();
+    jagDraw::ContextSupport* cs( jagDraw::ContextSupport::instance() );
+
+    const jagDraw::platformContextID pCtxId = (void*)( context() );
+    jagDraw::jagDrawContextID contextID = cs->registerContext( pCtxId );
+
+    cs->setActiveContext( contextID );
+    cs->initContext();
 
     di->init();
 }

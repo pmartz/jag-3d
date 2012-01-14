@@ -29,14 +29,13 @@ set( HEADER_PATH ${PROJECT_SOURCE_DIR}/include/${_libName} )
 set( _jagDrawHeaderFiles
     ${HEADER_PATH}/Export.h
     ${HEADER_PATH}/BufferObject.h
-    ${HEADER_PATH}/common.h
+    ${HEADER_PATH}/ContextSupport.h
 #    ${HEADER_PATH}/Drawable.h
 #    ${HEADER_PATH}/DrawableAttribute.h
 #    ${HEADER_PATH}/DrawContext.h
+    ${HEADER_PATH}/DrawCommon.h
     ${HEADER_PATH}/Error.h
-    ${HEADER_PATH}/init.h
     ${HEADER_PATH}/PerContextData.h
-    ${HEADER_PATH}/PlatformGLEW.h
     ${HEADER_PATH}/PlatformOpenGL.h
     ${HEADER_PATH}/Shader.h
     ${HEADER_PATH}/ShaderProgram.h
@@ -49,8 +48,8 @@ set( _jagDrawHeaderFiles
 
 set( _jagDrawSourceFiles
     BufferObject.cpp
+    ContextSupport.cpp
     Error.cpp
-    init.cpp
     Shader.cpp
     ShaderProgram.cpp
 #    stats.cpp
@@ -62,9 +61,10 @@ unset( _jagDrawGLEWSourceFiles )
 if( GLEW_FOUND )
     set( _jagDrawGLEWHeaderFiles
         ${HEADER_PATH}/PlatformGLEW.h
+        ${HEADER_PATH}/ContextSupportGLEW.h
     )
     set( _jagDrawGLEWSourceFiles
-        GLEW.cpp
+        ContextSupportGLEW.cpp
     )
 endif()
 

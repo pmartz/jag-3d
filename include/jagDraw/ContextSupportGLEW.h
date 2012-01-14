@@ -18,17 +18,38 @@
 *
 *************** <auto-copyright.pl END do not edit this line> ***************/
 
-#ifndef __JAGDRAW_COMMON_H__
-#define __JAGDRAW_COMMON_H__ 1
+#ifndef __JAGDRAW_CONTEXT_SUPPORT_GLEW_H__
+#define __JAGDRAW_CONTEXT_SUPPORT_GLEW_H__ 1
 
 
-#include <jagDraw/PlatformOpenGL.h>
-#include <jagDraw/BufferObject.h>
-#include <jagDraw/Shader.h>
-#include <jagDraw/ShaderProgram.h>
-#include <jagDraw/Error.h>
-#include <jagDraw/init.h>
+#include <jagDraw/Export.h>
+#include <jagDraw/ContextSupport.h>
 
 
-// __JAGDRAW_COMMON_H__
+
+namespace jagDraw
+{
+
+
+/**
+*/
+class JAGDRAW_EXPORT ContextSupportGLEW : public ContextSupport
+{
+public:
+    ContextSupportGLEW();
+
+    /**
+    */
+    virtual bool initContext();
+
+protected:
+    virtual ~ContextSupportGLEW();
+};
+
+
+// jagDraw
+}
+
+
+// __JAGDRAW_CONTEXT_SUPPORT_GLEW_H__
 #endif

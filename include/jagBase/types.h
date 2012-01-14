@@ -27,6 +27,8 @@
 namespace jagBase {
 
 
+typedef jagBase::ptr< unsigned int >::shared_ptr UIntPtr;
+
 typedef jagBase::ptr< unsigned char >::shared_array_ptr UCharArray;
 
 

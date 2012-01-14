@@ -20,7 +20,7 @@
 
 #include <demoSupport/DemoInterface.h>
 
-#include <jagDraw/common.h>
+#include <jagDraw/DrawCommon.h>
 #include <jagBase/Version.h>
 #include <jagBase/Log.h>
 #include <Poco/Logger.h>

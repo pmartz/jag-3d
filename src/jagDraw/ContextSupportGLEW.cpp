@@ -18,12 +18,11 @@
 *
 *************** <auto-copyright.pl END do not edit this line> ***************/
 
+#include <jagDraw/ContextSupportGLEW.h>
+#include <jagDraw/PlatformOpenGL.h>
 #include <jagDraw/PlatformGLEW.h>
+#include <jagDraw/Error.h>
 
-
-// TBD
-// Eventually, need to properly support multiple threads / contexts.
-// For now, assume just one.
 
 
 static GLEWContext s_glewCtx;
@@ -58,3 +57,40 @@ GLXEWContext* glxewGetContext()
 
 #endif
 
+
+
+namespace jagDraw {
+
+
+ContextSupportGLEW::ContextSupportGLEW()
+{
+}
+ContextSupportGLEW::~ContextSupportGLEW()
+{
+}
+
+bool ContextSupportGLEW::initContext()
+{
+    ContextSupport::initContext();
+
+# ifdef GLEW_MX
+    glewContextInit( glewGetContext() );
+
+#  ifdef _WIN32
+    wglewContextInit( wglewGetContext() );
+#  elif !defined(__APPLE__) || defined(GLEW_APPLE_GLX)
+    glxewContextInit( glxewGetContext() );
+#  endif
+
+# else
+    glewInit();
+# endif
+
+    JAG_ERROR_CHECK( "jagDraw::init()" );
+
+    return( true );
+}
+
+
+// jagDraw
+}

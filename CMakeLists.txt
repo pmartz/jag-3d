@@ -64,14 +64,21 @@ endif()
 
 
 
-find_package( OpenGL REQUIRED )
-find_package( Boost 1.44.0 REQUIRED program_options )
-find_package( Qt 4.8.0 COMPONENTS QtCore QtGui QtOpenGL )
+#
+# Dependencies
 
-include( FindFreeglutHelper )
+#   Required dependencies:
+find_package( OpenGL REQUIRED )
+find_package( Boost 1.44.0 REQUIRED thread program_options )
 include( FindGGTHelper )
-include( FindGLEWHelper )
 include( FindPOCOHelper )
+
+#   Required for Windows only:
+include( FindGLEWHelper )
+
+#   At least one windowing API is required for demos/tests/examples:
+find_package( Qt 4.8.0 COMPONENTS QtCore QtGui QtOpenGL )
+include( FindFreeglutHelper )
 
 FreeglutMenuSetup()
 GGTMenuSetup()
@@ -103,7 +110,7 @@ if( JAG3D_DISABLE_ALL_ERROR_CHECKS )
     add_definitions( -DJAG3D_DISABLE_ALL_ERROR_CHECKS )
 endif()
 
-option( JAG3D_USE_BOOST_POINTERS "If set, and Boost is found, JAG uses Boost shared pointers instead of TR1" OFF )
+option( JAG3D_USE_BOOST_POINTERS "If set, JAG uses Boost shared pointers instead of TR1" OFF )
 if( JAG3D_USE_BOOST_POINTERS AND Boost_FOUND )
     add_definitions( -DJAG3D_USE_BOOST_POINTERS )
 endif()

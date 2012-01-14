@@ -19,7 +19,7 @@
 *************** <auto-copyright.pl END do not edit this line> ***************/
 
 #include <demoSupport/DemoInterface.h>
-#include <jagDraw/init.h>
+#include <jagDraw/ContextSupport.h>
 
 #include <demoSupport/platformFreeglut.h>
 
@@ -37,7 +37,14 @@ DemoInterface* di( NULL );
 
 void init()
 {
-    jagDraw::init();
+    jagDraw::ContextSupport* cs( jagDraw::ContextSupport::instance() );
+
+    int glutContext = glutGet( GLUT_RENDERING_CONTEXT );
+    const jagDraw::platformContextID pCtxId = (void*)( glutContext );
+    jagDraw::jagDrawContextID contextID = cs->registerContext( pCtxId );
+
+    cs->setActiveContext( contextID );
+    cs->initContext();
 
     di->init();
 }
