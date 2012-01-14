@@ -24,7 +24,6 @@
 #include <Poco/Logger.h>
 #include <Poco/Message.h>
 #include <string>
-#include <sstream>
 
 
 
@@ -54,9 +53,9 @@ void errorCheck( const std::string& msg )
     case GL_INVALID_FRAMEBUFFER_OPERATION: enumStr = std::string( "GL_INVALID_FRAMEBUFFER_OPERATION" ); break;
     }
 
-    std::ostringstream ostr;
-    ostr << enumStr << ": " << msg;
-    logger->error( ostr.str() );
+    enumStr.append( ": " );
+    enumStr.append( msg );
+    logger->error( enumStr );
 }
 
 
@@ -89,9 +88,10 @@ void fboErrorCheck( const std::string& msg )
         enumStr = std::string( "GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT" );
 #endif
 
-    std::ostringstream ostr;
-    ostr << "OpenGL FBO error " << enumStr << ": " << msg;
-    logger->error( ostr.str() );
+    std::string outMsg( "OpenGL FBO error " );
+    outMsg.append( enumStr );
+    outMsg.append( msg );
+    logger->error( outMsg );
 }
 
 
