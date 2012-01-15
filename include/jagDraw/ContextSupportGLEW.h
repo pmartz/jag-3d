@@ -24,6 +24,7 @@
 
 #include <jagDraw/Export.h>
 #include <jagDraw/ContextSupport.h>
+#include <jagDraw/PlatformOpenGL.h>
 
 
 
@@ -40,10 +41,34 @@ public:
 
     /**
     */
+    virtual jagDrawContextID registerContext( const platformContextID pCtxId );
+
+    /**
+    */
+    virtual bool setActiveContext( const jagDrawContextID contextID );
+
+    /**
+    */
     virtual bool initContext();
 
 protected:
     virtual ~ContextSupportGLEW();
+
+#ifdef GLEW_MX
+
+    typedef struct {
+        GLEWContext* _glewCtx;
+#  ifdef _WIN32
+        WGLEWContext* _wglCtx;
+#  elif !defined(__APPLE__) || defined(GLEW_APPLE_GLX)
+        GLXEWContext* _glxCtx;
+#  endif
+    } GLEWContextHandles;
+
+    typedef PerContextData< GLEWContextHandles > GLEWContextMap;
+    GLEWContextMap _glewContexts;
+
+#endif
 };
 
 

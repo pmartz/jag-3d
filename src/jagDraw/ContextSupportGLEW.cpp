@@ -23,37 +23,38 @@
 #include <jagDraw/PlatformGLEW.h>
 #include <jagDraw/Error.h>
 
+#include <boost/thread/tss.hpp>
 
 
-static GLEWContext s_glewCtx;
+#ifdef GLEW_MX
+
+boost::thread_specific_ptr< GLEWContext > s_glewCtx;
 
 GLEWContext* glewGetContext()
 {
-    return( &s_glewCtx );
+    return( s_glewCtx.get() );
 }
 
 
-#ifdef _WIN32
+#  ifdef _WIN32
 
-
-static WGLEWContext s_wglewCtx;
+boost::thread_specific_ptr< WGLEWContext > s_wglCtx;
 
 WGLEWContext* wglewGetContext()
 {
-    return( &s_wglewCtx );
+    return( s_wglCtx.get() );
 }
 
+#  elif !defined(__APPLE__) || defined(GLEW_APPLE_GLX)
 
-#elif !defined(__APPLE__) || defined(GLEW_APPLE_GLX)
-
-
-static GLXEWContext s_glxewCtx;
+boost::thread_specific_ptr< GLXEWContext > s_glxCtx;
 
 GLXEWContext* glxewGetContext()
 {
-    return( &s_glxewCtx );
+    return( s_glxCtx.get() );
 }
 
+#  endif
 
 #endif
 
@@ -69,11 +70,67 @@ ContextSupportGLEW::~ContextSupportGLEW()
 {
 }
 
+jagDrawContextID ContextSupportGLEW::registerContext( const platformContextID pCtxId )
+{
+    jagDrawContextID contextID = ContextSupport::registerContext( pCtxId );
+
+#ifdef GLEW_MX
+
+    // TBD trace msg
+
+    const unsigned int idAsSize = static_cast< unsigned int >( contextID );
+    if( idAsSize < _glewContexts._data.size() )
+        return( contextID );
+
+    _glewContexts._data.resize( idAsSize + 1 );
+    GLEWContextHandles& ctxs = _glewContexts._data[ idAsSize ];
+
+    ctxs._glewCtx = new GLEWContext;
+#  ifdef _WIN32
+    ctxs._wglCtx = new WGLEWContext;
+#  elif !defined(__APPLE__) || defined(GLEW_APPLE_GLX)
+    ctxs._glxCtx = new GLXEWContext;
+#  endif
+
+#endif
+
+    return( contextID );
+}
+
+bool ContextSupportGLEW::setActiveContext( const jagDrawContextID contextID )
+{
+    bool result = ContextSupport::setActiveContext( contextID );
+    if( !result )
+        return( result );
+
+#ifdef GLEW_MX
+
+    // TBD trace msg
+
+    const unsigned int idAsSize = static_cast< unsigned int >( contextID );
+    GLEWContextHandles& ctxs = _glewContexts._data[ idAsSize ];
+
+    s_glewCtx.reset( ctxs._glewCtx );
+
+#  ifdef _WIN32
+    s_wglCtx.reset( ctxs._wglCtx );
+#  elif !defined(__APPLE__) || defined(GLEW_APPLE_GLX)
+    s_glxCtx.reset( ctxs._glxCtx );
+#  endif
+
+#endif
+
+    return( result );
+}
+
 bool ContextSupportGLEW::initContext()
 {
-    ContextSupport::initContext();
+    bool result = ContextSupport::initContext();
+    if( !result )
+        return( result );
 
-# ifdef GLEW_MX
+#ifdef GLEW_MX
+
     glewContextInit( glewGetContext() );
 
 #  ifdef _WIN32
@@ -82,13 +139,15 @@ bool ContextSupportGLEW::initContext()
     glxewContextInit( glxewGetContext() );
 #  endif
 
-# else
+#else
+
     glewInit();
-# endif
+
+#endif
 
     JAG_ERROR_CHECK( "jagDraw::init()" );
 
-    return( true );
+    return( result );
 }
 
 

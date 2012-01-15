@@ -78,18 +78,19 @@ jagDrawContextID ContextSupport::registerContext( const platformContextID pCtxId
 
     jagDrawContextID contextID;
 
-    if( _contexts.find( pCtxId ) != _contexts.end() )
+    if( isRegistered( pCtxId ) )
     {
         string msg( "registerContext: Context already registered: " );
         msg.append( idStr );
-        _logger->error( msg );
+        _logger->warning( msg );
 
-        contextID = _contexts[ pCtxId ];
+        contextID = getJagContextID( pCtxId );
     }
     else
     {
-        contextID = static_cast< jagDrawContextID >( _contexts.size() );
-        _contexts[ pCtxId ] = contextID;
+        contextID = static_cast< jagDrawContextID >( _contexts._data.size() );
+        _contexts._data.resize( contextID + 1 );
+        _contexts[ contextID ] = pCtxId;
     }
 
     return( contextID );
@@ -103,8 +104,8 @@ bool ContextSupport::setActiveContext( const jagDrawContextID contextID )
     infoMsg.append( idStr );
     _logger->information( infoMsg );
 
-    ContextMap::size_type idAsSize = static_cast< ContextMap::size_type >( contextID );
-    if( idAsSize >= _contexts.size() )
+    unsigned int idAsSize = static_cast< unsigned int >( contextID );
+    if( idAsSize >= _contexts._data.size() )
     {
         string msg( "setActiveContext: Invalid contextID: " );
         msg.append( idStr );
@@ -127,11 +128,9 @@ bool ContextSupport::initContext()
 
 platformContextID ContextSupport::getPlatformContextID( const jagDrawContextID contextID ) const
 {
-    BOOST_FOREACH( ContextPair pair, _contexts )
-    {
-        if( pair.second == contextID )
-            return( pair.first );
-    }
+    unsigned int idAsSize = static_cast< unsigned int >( contextID );
+    if( idAsSize < _contexts._data.size() )
+        return( _contexts[ idAsSize ] );
 
     string msg( "getPlatformContextID: Unknown jagDraw contextID: " );
     msg.append( asString( contextID ) );
@@ -142,21 +141,19 @@ platformContextID ContextSupport::getPlatformContextID( const jagDrawContextID c
 
 jagDrawContextID ContextSupport::getJagContextID( const platformContextID pCtxId ) const
 {
-    jagDrawContextID contextID( 0 );
-
-    ContextMap::const_iterator itr = _contexts.find( pCtxId );
-    if( itr == _contexts.end() )
+    unsigned int idx( 0 );
+    BOOST_FOREACH( platformContextID value, _contexts._data )
     {
-        string msg( "getJagContextID: Unknown platform contextID: " );
-        msg.append( asString( pCtxId ) );
-        _logger->error( msg );
-    }
-    else
-    {
-        contextID = itr->second;
+        if( value == pCtxId )
+            return( static_cast< jagDrawContextID >( idx ) );
+        idx++;
     }
 
-    return( contextID );
+    string msg( "getJagContextID: Unknown platform contextID: " );
+    msg.append( asString( pCtxId ) );
+    _logger->error( msg );
+
+    return( static_cast< jagDrawContextID >( 0 ) );
 }
 
 
@@ -181,6 +178,16 @@ std::string ContextSupport::asString( const jagDrawContextID contextID )
     else
         Poco::format( idStr, "%016x", contextID );
     return( idStr );
+}
+
+bool ContextSupport::isRegistered( const platformContextID pCtxId ) const
+{
+    BOOST_FOREACH( platformContextID value, _contexts._data )
+    {
+        if( value == pCtxId )
+            return( true );
+    }
+    return( false );
 }
 
 
