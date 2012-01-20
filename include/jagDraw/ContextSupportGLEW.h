@@ -32,14 +32,24 @@ namespace jagDraw
 {
 
 
-/**
+/** \class ContextSupportGLEW ContextSupportGLEW.h <jagDraw/ContextSupportGLEW.h>
+
+Still to-do:
+\li Make GLEW_MX truly optional. This will require a change to the
+CMakeModules/FindGLEW.cmake script to look for all variants of the GLEW library
+and accept an option (from the CMake GUI) for which one to use, then also add
+the GLEW_MX cpp definition as-needed automatically (instead of hardcoding it, as
+is currently done in include/jagDraw/PlatformGLEW.h).
+\li glewGetContext(), wglewGetContext(), and glxewGetContext() should be CPP
+macros instead of functions. They are used in the GLEW_MX case, and currently
+incur a function call per-OpenGL command; this is an unacceptable cost.
 */
 class JAGDRAW_EXPORT ContextSupportGLEW : public ContextSupport
 {
 public:
     ContextSupportGLEW();
 
-    /**
+    /** Create the GLEWContext needed by GLEW_MX
     */
     virtual jagDrawContextID registerContext( const platformContextID pCtxId );
 

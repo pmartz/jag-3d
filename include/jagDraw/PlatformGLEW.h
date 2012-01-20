@@ -24,7 +24,11 @@
 #include <jagDraw/Export.h>
 
 
+// TBD This should be set automatically if the user has the MX variant
+// of GLEW available and has explicitly asked for it in the xmake-gui.
+// This work is not yet implemented.
 #define GLEW_MX
+
 
 #include <GL/glew.h>
 
@@ -35,13 +39,17 @@
 #endif
 
 
+// TBD Ideally, the three functions below should be #define macros rather
+// than functions, to eliminate the per-OpenGL command function call
+// overhead. This work is not yet implemented.
 JAGDRAW_EXPORT GLEWContext* glewGetContext();
-
 #ifdef _WIN32
     JAGDRAW_EXPORT WGLEWContext* wglewGetContext();
 #elif !defined(__APPLE__) || defined(GLEW_APPLE_GLX)
     GLXEWContext* glxewGetContext();
 #endif
+
+
 
 // __JAGBASE_PLATFORM_GLEW_H__
 #endif

@@ -39,7 +39,12 @@ typedef unsigned int jagDrawContextID;
 typedef void* platformContextID;
 
 
-/**
+/** \class ContextSupport ContextSupport.h <jagDraw/ContextSupport.h>
+
+Still to-do:
+\li initContext() should not be necessary. ContextSupport can easily keep a std::set
+of JAG contextIDs that have been passed as parameters to setActiveContext() and
+thereby know when a context is being made active/current for the first time.
 */
 class JAGDRAW_EXPORT ContextSupport
 {
@@ -89,7 +94,8 @@ public:
     */
     jagDrawContextID ContextSupport::getJagContextID( const platformContextID pCtxId ) const;
 
-    /**
+    /** Returns true if \c pCtxId was previously passed as a parameter to
+    registerContext().
     */
     bool isRegistered( const platformContextID pCtxId ) const;
 
