@@ -92,7 +92,7 @@ public:
     /** \brief Return the jagDrawContextID associated with the given
     platform-specific context ID \c pCtxId.
     */
-    jagDrawContextID ContextSupport::getJagContextID( const platformContextID pCtxId ) const;
+    jagDrawContextID getJagContextID( const platformContextID pCtxId ) const;
 
     /** Returns true if \c pCtxId was previously passed as a parameter to
     registerContext().
