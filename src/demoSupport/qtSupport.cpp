@@ -125,6 +125,7 @@ int main( int argc, char* argv[] )
     }
 
     GLWidget widget( glFormat );
+    widget.resize( 300, 300 );
     widget.show();
 
     return( app.exec() );
