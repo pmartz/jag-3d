@@ -18,8 +18,8 @@
 *
 *************** <auto-copyright.pl END do not edit this line> ***************/
 
-#ifndef __JAGDRAW_UNIFORM_VALUE_H__
-#define __JAGDRAW_UNIFORM_VALUE_H__ 1
+#ifndef __JAGDRAW_UNIFOR_value_H__
+#define __JAGDRAW_UNIFOR_value_H__ 1
 
 
 #include <jagDraw/Export.h>
@@ -31,13 +31,15 @@
 namespace jagDraw {
 
 
+/** \class UniformValue UniformValue.h <jagDraw\UniformValue.h>
+*/
 class JAGDRAW_EXPORT UniformValue 
 {
 public:
     UniformValue();
     UniformValue( const UniformValue &v );
 
-    UniformValue( GLint i );
+    UniformValue( const GLint i );
     /*
     UniformValue( iiMath::vec2i v2i );
     UniformValue( iiMath::vec3i v3i );
@@ -52,12 +54,16 @@ public:
     UniformValue( iiMath::matrix4f mat4f );
     */
 
-    void apply(GLint loc, bool transpose=false) const;
+    void apply( const GLint loc ) const;
+    void apply() const;
 
-    GLenum getType() { return m_type; }
+    GLenum getType() { return _type; }
+
+    void setTranspose( const bool transpose=true ) { _transpose = transpose; }
+    bool getTranspose() const { return( _transpose ); }
 
 //private:
-    GLenum m_type;
+    GLenum _type;
     union {
         GLint   i;
         GLint   v2i[2]; 
@@ -71,7 +77,9 @@ public:
 
         GLfloat mat3f[3][3];
         GLfloat mat4f[4][4];
-    } m_val;
+    } _value;
+
+    bool _transpose;
 };
 
 
@@ -79,5 +87,5 @@ public:
 }
 
 
-// __JAGDRAW_UNIFORM_VALUE_H__
+// __JAGDRAW_UNIFOR_value_H__
 #endif

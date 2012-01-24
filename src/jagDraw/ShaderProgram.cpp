@@ -74,8 +74,8 @@ void ShaderProgram::applyNone()
     glUseProgram( 0 );
 }
 
-//void ShaderProgram::apply( DrawContext &ctx )
-void ShaderProgram::apply( )
+//void ShaderProgram::use( DrawContext &ctx )
+void ShaderProgram::use()
 {
     const unsigned int contextID( 0 );
 

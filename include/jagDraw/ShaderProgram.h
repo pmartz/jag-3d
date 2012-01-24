@@ -62,8 +62,8 @@ public:
     bool validate();
 
     // TBD need to get context ID, probably as a param?
-    void apply();
-    //void apply( DrawContext &);
+    void use();
+    //void use( DrawContext &);
 
     static void applyNone();
 

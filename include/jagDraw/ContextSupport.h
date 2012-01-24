@@ -45,6 +45,9 @@ Still to-do:
 \li initContext() should not be necessary. ContextSupport can easily keep a std::set
 of JAG contextIDs that have been passed as parameters to setActiveContext() and
 thereby know when a context is being made active/current for the first time.
+\li multicontext test program, using modified versions of qtSupport.cpp and
+freeglutSupport.cpp that use multiple threads to open multiple windows and
+render concurrently.
 */
 class JAGDRAW_EXPORT ContextSupport
 {

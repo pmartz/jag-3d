@@ -133,9 +133,9 @@ bool Simple3xDemo::frame()
 {
     glClear( GL_COLOR_BUFFER_BIT );
 
-    _spp->apply();
+    _spp->use();
 
-    _bop->apply();
+    _bop->bind();
     glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 0, (const void*)0 );
     glEnableVertexAttribArray( 0 );
 

@@ -65,7 +65,7 @@ void BufferObject::setUsage( const GLenum usage )
     _usage = usage; 
 }
 
-void BufferObject::apply()
+void BufferObject::bind()
 {
     const unsigned int contextID( 0 );
 
@@ -84,6 +84,9 @@ void BufferObject::subData( GLsizeiptr offset, GLsizeiptr size, const GLvoid* da
 
     glBindBuffer( _target, _ids[ contextID ] );
     glBufferSubData( _target, offset, size, data );
+
+    // Issue: Copy new data into _buffer?
+    // No. _buffer is managed by the calling code that provided it to us.
 }
 
 GLbyte* BufferObject::map( const GLenum access )

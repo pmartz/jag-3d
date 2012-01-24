@@ -56,7 +56,7 @@ public:
     GLenum getUsage() { return( _usage ); }
 
     // TBD need to get context ID, probably as a param?
-    virtual void apply();
+    virtual void bind();
 
     // TBD need to get context ID, probably as a param?
     void subData( GLsizeiptr offset, GLsizeiptr size, const GLvoid * );
