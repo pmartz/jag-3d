@@ -171,12 +171,7 @@ std::string ContextSupport::asString( const platformContextID pCtxId )
 std::string ContextSupport::asString( const jagDrawContextID contextID )
 {
     string idStr;
-    // There must be a better way to format the pCtxId. But it's a platform-specific
-    // value. For now we just assume the size if either 4 or 8 bytes.
-    if( sizeof( jagDrawContextID ) == 4 )
-        Poco::format( idStr, "%08x", contextID );
-    else
-        Poco::format( idStr, "%016x", contextID );
+    Poco::format( idStr, "%016x", contextID );
     return( idStr );
 }
 
