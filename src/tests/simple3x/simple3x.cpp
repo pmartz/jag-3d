@@ -26,6 +26,7 @@
 #include <Poco/Logger.h>
 #include <Poco/Message.h>
 #include <boost/program_options/options_description.hpp>
+#include <gmtl/gmtl.h>
 
 #include <string>
 
@@ -90,15 +91,16 @@ bool Simple3xDemo::init()
     glClearColor( 0.4f, 0.4f, 0.4f, 0.f );
 
     {
-        float z = .5;
-        float verts[] = {
-            -.9f, -.9f, z,
-            .4f, -.9f, z,
-            -.4f, 0.f, z,
-            .9f, 0.f, z,
-            -.9f, .9f, z,
-            .4f, .9f, z };
-        jagBase::BufferPtr bp( new jagBase::Buffer( sizeof( verts ), (void*)verts ) );
+        float z = .5f;
+        typedef std::vector< gmtl::Point3f > Point3fArray;
+        Point3fArray p3fa;
+        p3fa.push_back( gmtl::Point3f( -.9f, -.9f, z ) );
+        p3fa.push_back( gmtl::Point3f( .4f, -.9f, z ) );
+        p3fa.push_back( gmtl::Point3f( -.4f, 0.f, z ) );
+        p3fa.push_back( gmtl::Point3f( .9f, 0.f, z ) );
+        p3fa.push_back( gmtl::Point3f( -.9f, .9f, z ) );
+        p3fa.push_back( gmtl::Point3f( .4f, .9f, z ) );
+        jagBase::BufferPtr bp( new jagBase::Buffer( p3fa.size() * sizeof( gmtl::Point3f ), (void*)&p3fa[0] ) );
         _bop = jagDraw::BufferObjectPtr( new jagDraw::BufferObject( GL_ARRAY_BUFFER, bp ) );
     }
 
