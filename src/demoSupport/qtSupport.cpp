@@ -50,7 +50,7 @@ void GLWidget::initializeGL()
 {
     jagDraw::ContextSupport* cs( jagDraw::ContextSupport::instance() );
 
-    const jagDraw::platformContextID pCtxId = (void*)( context() );
+    const jagDraw::platformContextID pCtxId = reinterpret_cast< GLint >( context() );
     jagDraw::jagDrawContextID contextID = cs->registerContext( pCtxId );
 
     cs->setActiveContext( contextID );

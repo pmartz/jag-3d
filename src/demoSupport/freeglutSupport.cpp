@@ -40,7 +40,7 @@ void init()
     jagDraw::ContextSupport* cs( jagDraw::ContextSupport::instance() );
 
     int glutContext = glutGet( GLUT_RENDERING_CONTEXT );
-    const jagDraw::platformContextID pCtxId = (void*)( glutContext );
+    const jagDraw::platformContextID pCtxId = static_cast< GLuint >( glutContext );
     jagDraw::jagDrawContextID contextID = cs->registerContext( pCtxId );
 
     cs->setActiveContext( contextID );
