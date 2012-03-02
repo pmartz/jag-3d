@@ -56,23 +56,41 @@ set( _jagDrawSourceFiles
     UniformValue.cpp
 )
 
-unset( _jagDrawGLEWHeaderFiles )
-unset( _jagDrawGLEWSourceFiles )
-if( GLEW_FOUND )
-    set( _jagDrawGLEWHeaderFiles
-        ${HEADER_PATH}/PlatformGLEW.h
-        ${HEADER_PATH}/ContextSupportGLEW.h
+# Using gl3w instead of GLEW for Windows GL3/4 support. See top-level
+# CMakeLists.txt for info.
+# unset( _jagDrawGLEWHeaderFiles )
+# unset( _jagDrawGLEWSourceFiles )
+# if( GLEW_FOUND )
+#     set( _jagDrawGLEWHeaderFiles
+#         ${HEADER_PATH}/PlatformGLEW.h
+#         ${HEADER_PATH}/ContextSupportGLEW.h
+#     )
+#     set( _jagDrawGLEWSourceFiles
+#         ContextSupportGLEW.cpp
+#     )
+# endif()
+
+unset( _jagDrawGl3wHeaderFiles )
+unset( _jagDrawGl3wSourceFiles )
+if( JAG3D_USE_GL3W )
+    set( _jagDrawGl3wHeaderFiles
+        ${HEADER_PATH}/GL3/gl3.h
+        ${HEADER_PATH}/GL3/gl3w.h
+        ${HEADER_PATH}/ContextSupportGl3w.h
     )
-    set( _jagDrawGLEWSourceFiles
-        ContextSupportGLEW.cpp
+    set( _jagDrawGl3wSourceFiles
+        gl3w.c
+        ContextSupportGl3w.cpp
     )
 endif()
 
 _addLibrary( ${_libName}
     ${_jagDrawHeaderFiles}
     ${_jagDrawGLEWHeaderFiles}
+    ${_jagDrawGl3wHeaderFiles}
     ${_jagDrawSourceFiles}
     ${_jagDrawGLEWSourceFiles}
+    ${_jagDrawGl3wSourceFiles}
     JAG_LIBRARIES
         jagBase
 )

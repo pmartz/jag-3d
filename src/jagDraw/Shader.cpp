@@ -69,7 +69,7 @@ void Shader::printInfoLog()
     GLsizei bufLen = 0;
 #if !defined( __APPLE__ ) && !defined(USE_GLES2)
     std::string typeStr = _type == GL_VERTEX_SHADER ? "Vertex Shader" :
-                          _type == GL_GEOMETRY_SHADER_EXT ? "Geometry Shader" :
+                          _type == GL_GEOMETRY_SHADER ? "Geometry Shader" :
                           _type == GL_FRAGMENT_SHADER ? "Fragment Shader" :"" ;
 #else
     std::string typeStr = _type == GL_VERTEX_SHADER ? "Vertex Shader" :

@@ -18,32 +18,42 @@
 *
 *************** <auto-copyright.pl END do not edit this line> ***************/
 
-#ifndef __JAGDRAW_PLATFORM_OPENGL_H__
-#define __JAGDRAW_PLATFORM_OPENGL_H__ 1
+#ifndef __JAGDRAW_CONTEXT_SUPPORT_GL3W_H__
+#define __JAGDRAW_CONTEXT_SUPPORT_GL3W_H__ 1
+
+
+#include <jagDraw/Export.h>
+#include <jagDraw/ContextSupport.h>
+#include <jagDraw/PlatformOpenGL.h>
 
 
 
-#if defined( JAG3D_USE_GLEW )
-#  include <jagDraw/PlatformGLEW.h>
-#elif defined( JAG3D_USE_GL3W )
-#  include <jagDraw/GL3/gl3w.h>
-#else
-#  ifndef GL_GLEXT_PROTOTYPES
-#    define GL_GLEXT_PROTOTYPES
-#  endif
-#  if defined( __APPLE__)
-#    include<OpenGL/OpenGL.h>
-#  elif defined( USE_EGL )
-#    include <EGL/egl.h>
-#    include <EGL/eglext.h>
-#    include <GLES2/gl2.h>
-#    include <GLES2/gl2ext.h>
-#  else
-#    include <GL/gl.h>
-#    include <GL/glext.h>
-#  endif
-#endif
+namespace jagDraw
+{
 
 
-// __JAGDRAW_PLATFORM_OPENGL_H__
+/** \class ContextSupportGl3w ContextSupportGl3w.h <jagDraw/ContextSupportGl3w.h>
+
+Overrides initContext to initialize the gl3w function pointers.
+*/
+class JAGDRAW_EXPORT ContextSupportGl3w : public ContextSupport
+{
+public:
+    ContextSupportGl3w();
+
+    /** \brief 
+    \details 
+    */
+    virtual bool initContext();
+
+protected:
+    virtual ~ContextSupportGl3w();
+};
+
+
+// jagDraw
+}
+
+
+// __JAGDRAW_CONTEXT_SUPPORT_GL3W_H__
 #endif

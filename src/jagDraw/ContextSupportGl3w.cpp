@@ -18,32 +18,35 @@
 *
 *************** <auto-copyright.pl END do not edit this line> ***************/
 
-#ifndef __JAGDRAW_PLATFORM_OPENGL_H__
-#define __JAGDRAW_PLATFORM_OPENGL_H__ 1
+#include <jagDraw/ContextSupportGl3w.h>
+#include <jagDraw/PlatformOpenGL.h>
+#include <jagDraw/Error.h>
 
 
-
-#if defined( JAG3D_USE_GLEW )
-#  include <jagDraw/PlatformGLEW.h>
-#elif defined( JAG3D_USE_GL3W )
-#  include <jagDraw/GL3/gl3w.h>
-#else
-#  ifndef GL_GLEXT_PROTOTYPES
-#    define GL_GLEXT_PROTOTYPES
-#  endif
-#  if defined( __APPLE__)
-#    include<OpenGL/OpenGL.h>
-#  elif defined( USE_EGL )
-#    include <EGL/egl.h>
-#    include <EGL/eglext.h>
-#    include <GLES2/gl2.h>
-#    include <GLES2/gl2ext.h>
-#  else
-#    include <GL/gl.h>
-#    include <GL/glext.h>
-#  endif
-#endif
+namespace jagDraw {
 
 
-// __JAGDRAW_PLATFORM_OPENGL_H__
-#endif
+ContextSupportGl3w::ContextSupportGl3w()
+{
+}
+ContextSupportGl3w::~ContextSupportGl3w()
+{
+}
+
+bool ContextSupportGl3w::initContext()
+{
+    if( !( ContextSupport::initContext() ) )
+        return( false );
+
+    int result = gl3wInit();
+    // if( result == 1 )
+    //     display an error.
+
+    JAG_ERROR_CHECK( "ContextSupportGl3w::initContext()" );
+
+    return( result == 0 );
+}
+
+
+// jagDraw
+}

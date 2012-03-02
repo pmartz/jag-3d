@@ -20,6 +20,7 @@
 
 #include <jagDraw/ContextSupport.h>
 #include <jagDraw/ContextSupportGLEW.h>
+#include <jagDraw/ContextSupportGl3w.h>
 
 #include <jagBase/Log.h>
 #include <Poco/Logger.h>
@@ -45,6 +46,8 @@ ContextSupport* ContextSupport::instance()
     {
 #ifdef JAG3D_USE_GLEW
         s_instance = new ContextSupportGLEW;
+#elif defined( JAG3D_USE_GL3W )
+        s_instance = new ContextSupportGl3w;
 #else
         s_instance = new ContextSupport;
 #endif

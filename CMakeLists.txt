@@ -74,7 +74,14 @@ include( FindGGTHelper )
 include( FindPOCOHelper )
 
 #   Required for Windows only:
-include( FindGLEWHelper )
+#include( FindGLEWHelper )
+# NO. Currently using gl3w (https://github.com/skaslev/gl3w/wiki/)
+# to work around GLEW's lack of GL3/4 support. gl3w source is
+# embedded in include/jagDraw and src/jagDraw; no external
+# dependency requirement.
+#
+# gl3w usage is an option that default to ON for Windows and OFF
+# for other platforms.
 
 #   At least one windowing API is required for demos/tests/examples:
 find_package( Qt 4.8.0 COMPONENTS QtCore QtGui QtOpenGL )
@@ -82,12 +89,12 @@ include( FindFreeglutHelper )
 
 FreeglutMenuSetup()
 GGTMenuSetup()
-GLEWMenuSetup()
+# GLEWMenuSetup()
 POCOMenuSetup()
 
 FreeglutFinder()
 GGTFinder()
-GLEWFinder()
+# GLEWFinder()
 POCOFinder()
 
 
@@ -96,13 +103,22 @@ if( QT_FOUND )
     include( ${QT_USE_FILE} )
 endif()
 
-if( GLEW_FOUND )
-    add_definitions( -DJAG3D_USE_GLEW )
-endif()
+# if( GLEW_FOUND )
+#     add_definitions( -DJAG3D_USE_GLEW )
+# endif()
 
 option( BOOST_ALL_DYN_LINK "If set, use Boost dynamic libraries (boost_*); otherwise static (libboost_*)." OFF )
 if( BOOST_ALL_DYN_LINK )
     add_definitions( -DBOOST_ALL_DYN_LINK )
+endif()
+
+if( WIN32 )
+    option( JAG3D_USE_GL3W "If set, use gl3w (GL3/4 replacement for GLEW). Otherwise, assume native GL3/4 support." ON )
+else()
+    option( JAG3D_USE_GL3W "If set, use gl3w (GL3/4 replacement for GLEW). Otherwise, assume native GL3/4 support." OFF )
+endif()
+if( JAG3D_USE_GL3W )
+    add_definitions( -DJAG3D_USE_GL3W )
 endif()
 
 option( JAG3D_DISABLE_ALL_ERROR_CHECKS "If set, JAG disables all internal OpenGL error checking" OFF )
