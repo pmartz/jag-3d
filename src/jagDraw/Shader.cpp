@@ -102,12 +102,12 @@ void Shader::internalInit( const unsigned int contextID )
     {
         //1. Scan for any built-in variables
         //   a. If OpenGL 3.1 replace deprecated 'gl_' variables with equivalent 'ii_' variables
-        length.push_back( s->size() );
+        length.push_back( (GLint)( s->size() ) );
         src.push_back( s->c_str() );
     }
 
     _ids[ contextID ] = glCreateShader( _type );
-    glShaderSource( _ids[ contextID ], src.size(), &src.front(), &length.front() );
+    glShaderSource( _ids[ contextID ], (GLsizei)( src.size() ), &src.front(), &length.front() );
 
     glCompileShader( _ids[ contextID ] );
 

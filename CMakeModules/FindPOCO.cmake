@@ -135,6 +135,7 @@ set( POCO_LIBRARIES )
 foreach( lib ${_requestedComponents} )
     find_library( POCO_${lib}_LIBRARY
         NAMES ${lib}${_crtSuffix}
+            Poco${lib}${_crtSuffix}
         PATH_SUFFIXES lib
     )
     if( NOT POCO_${lib}_LIBRARY )
@@ -144,6 +145,7 @@ foreach( lib ${_requestedComponents} )
 
     find_library( POCO_${lib}_LIBRARY_DEBUG
         NAMES ${lib}${_crtDebugSuffix}
+            Poco${lib}${_crtDebugSuffix}
         PATH_SUFFIXES lib
     )
     list( APPEND POCO_LIBRARIES "debug" ${POCO_${lib}_LIBRARY_DEBUG} )
