@@ -18,18 +18,47 @@
 *
 *************** <auto-copyright.pl END do not edit this line> ***************/
 
-#ifndef __JAGDRAW_DRAW_COMMON_H__
-#define __JAGDRAW_DRAW_COMMON_H__ 1
-
-
 #include <jagDraw/PlatformOpenGL.h>
-#include <jagDraw/BufferObject.h>
 #include <jagDraw/VertexArrayObject.h>
-#include <jagDraw/Shader.h>
-#include <jagDraw/ShaderProgram.h>
 #include <jagDraw/Error.h>
-#include <jagDraw/ContextSupport.h>
 
 
-// __JAGDRAW_DRAW_COMMON_H__
-#endif
+namespace jagDraw {
+
+
+VertexArrayObject::VertexArrayObject()
+{}
+
+VertexArrayObject::VertexArrayObject( const VertexArrayObject& rhs )
+  : _ids( rhs._ids )
+{}
+
+
+VertexArrayObject::~VertexArrayObject() 
+{
+    // TBD Handle object deletion
+}
+
+
+void VertexArrayObject::bind()
+{
+    const unsigned int contextID( 0 );
+
+    if( _ids._data.size() < contextID+1 )
+        internalInit( contextID );
+
+    glBindVertexArray( _ids[ contextID ] );
+}
+
+
+void VertexArrayObject::internalInit( const unsigned int contextID )
+{
+    _ids._data.resize( contextID + 1 );
+    glGenVertexArrays( 1, &( _ids[ contextID ] ) );
+
+    JAG_ERROR_CHECK( "VertexArrayObject::internalInit()" );
+}
+
+
+// jagDraw
+}

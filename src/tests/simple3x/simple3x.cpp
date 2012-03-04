@@ -70,7 +70,7 @@ bool Simple3xDemo::init()
     _logger->information( jagBase::getVersionString() );
 
 
-    // Display information on the type of vontext we created.
+    // Display information on the type of context we created.
     string msg( "GL_VENDOR: " );
     msg.append( (char*)(glGetString( GL_VENDOR )) );
     _logger->information( msg );

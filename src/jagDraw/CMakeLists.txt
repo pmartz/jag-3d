@@ -42,6 +42,7 @@ set( _jagDrawHeaderFiles
 #    ${HEADER_PATH}/Texture.h
 #    ${HEADER_PATH}/Transform.h
     ${HEADER_PATH}/UniformValue.h
+    ${HEADER_PATH}/VertexArrayObject.h
 #    ${HEADER_PATH}/VertexAttribute.h
 #    ${HEADER_PATH}/VertexIterator.h
 )
@@ -54,6 +55,7 @@ set( _jagDrawSourceFiles
     ShaderProgram.cpp
 #    stats.cpp
     UniformValue.cpp
+    VertexArrayObject.cpp
 )
 
 # Using gl3w instead of GLEW for Windows GL3/4 support. See top-level

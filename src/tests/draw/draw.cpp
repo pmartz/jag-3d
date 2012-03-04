@@ -45,7 +45,6 @@ public:
     virtual bool frame();
     virtual bool shutdown()
     {
-        glDeleteVertexArrays( 1, &_vaoID );
         return( true );
     }
 
@@ -57,8 +56,8 @@ protected:
     jagDraw::BufferObjectPtr _ibop;
     jagDraw::BufferObjectPtr _ibop2;
     jagDraw::ShaderProgramPtr _spp;
+    jagDraw::VertexArrayObjectPtr _vaop;
 
-    GLuint _vaoID;
     bool _first;
 };
 
@@ -80,7 +79,7 @@ bool Simple3xDemo::init()
     _logger->information( jagBase::getVersionString() );
 
 
-    // Display information on the type of vontext we created.
+    // Display information on the type of context we created.
     string msg = string( "GL_VERSION: " );
     msg.append( (char*)(glGetString( GL_VERSION )) );
     _logger->information( msg );
@@ -88,7 +87,7 @@ bool Simple3xDemo::init()
 
     glClearColor( 0.f, 0.f, 0.f, 0.f );
 
-    glGenVertexArrays( 1, &_vaoID );
+    _vaop = jagDraw::VertexArrayObjectPtr( new jagDraw::VertexArrayObject );
 
     const float z = .5f;
     typedef std::vector< gmtl::Point3f > Point3fArray;
@@ -205,7 +204,7 @@ bool Simple3xDemo::frame()
     glDrawArrays( GL_TRIANGLE_STRIP, 0, 6 );
 
 
-    glBindVertexArray( _vaoID );
+    _vaop->bind();
     if( _first )
     {
         _first = false;
