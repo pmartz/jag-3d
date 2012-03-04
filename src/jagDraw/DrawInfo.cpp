@@ -18,19 +18,17 @@
 *
 *************** <auto-copyright.pl END do not edit this line> ***************/
 
-#ifndef __JAGDRAW_DRAW_COMMON_H__
-#define __JAGDRAW_DRAW_COMMON_H__ 1
-
-
-#include <jagDraw/PlatformOpenGL.h>
 #include <jagDraw/DrawInfo.h>
-#include <jagDraw/BufferObject.h>
-#include <jagDraw/VertexArrayObject.h>
-#include <jagDraw/Shader.h>
-#include <jagDraw/ShaderProgram.h>
-#include <jagDraw/Error.h>
-#include <jagDraw/ContextSupport.h>
 
 
-// __JAGDRAW_DRAW_COMMON_H__
-#endif
+namespace jagDraw {
+
+
+DrawInfo::DrawInfo()
+    : _id( 0 )
+{
+}
+
+
+// jagDraw
+}

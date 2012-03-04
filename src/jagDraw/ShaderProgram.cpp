@@ -20,6 +20,7 @@
 
 #include <jagDraw/ShaderProgram.h>
 #include <jagDraw/PlatformOpenGL.h>
+#include <jagDraw/DrawInfo.h>
 #include <stdio.h>
 #include <iostream>
 
@@ -75,9 +76,9 @@ void ShaderProgram::applyNone()
 }
 
 //void ShaderProgram::use( DrawContext &ctx )
-void ShaderProgram::use()
+void ShaderProgram::use( const DrawInfo& drawInfo )
 {
-    const unsigned int contextID( 0 );
+    const unsigned int contextID( drawInfo._id );
 
     // TBD. Link status needs to be per-context.
     if( !m_linked )

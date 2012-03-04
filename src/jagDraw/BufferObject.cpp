@@ -20,6 +20,7 @@
 
 #include <jagDraw/PlatformOpenGL.h>
 #include <jagDraw/BufferObject.h>
+#include <jagDraw/DrawInfo.h>
 #include <jagDraw/Error.h>
 
 
@@ -65,9 +66,9 @@ void BufferObject::setUsage( const GLenum usage )
     _usage = usage; 
 }
 
-void BufferObject::bind()
+void BufferObject::bind( const DrawInfo& drawInfo )
 {
-    const unsigned int contextID( 0 );
+    const unsigned int contextID( drawInfo._id );
 
     if( _ids._data.size() < contextID+1 )
         internalInit( contextID );

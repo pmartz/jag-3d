@@ -135,9 +135,12 @@ bool Simple3xDemo::frame()
 {
     glClear( GL_COLOR_BUFFER_BIT );
 
-    _spp->use();
+    jagDraw::DrawInfo drawInfo;
+    drawInfo._id = 0;
 
-    _bop->bind();
+    _spp->use( drawInfo );
+
+    _bop->bind( drawInfo );
     glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 0, (const void*)0 );
     glEnableVertexAttribArray( 0 );
 

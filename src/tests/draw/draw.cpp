@@ -182,12 +182,15 @@ bool Simple3xDemo::frame()
 {
     glClear( GL_COLOR_BUFFER_BIT );
 
-    _spp->use();
+    jagDraw::DrawInfo drawInfo;
+    drawInfo._id = 0;
 
-    _vbop->bind();
+    _spp->use( drawInfo );
+
+    _vbop->bind( drawInfo );
     glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 0, (const void*)0 );
     glEnableVertexAttribArray( 0 );
-    _cbop->bind();
+    _cbop->bind( drawInfo );
     glVertexAttribPointer( 1, 3, GL_FLOAT, GL_FALSE, 0, (const void*)0 );
     glEnableVertexAttribArray( 1 );
 
@@ -195,7 +198,7 @@ bool Simple3xDemo::frame()
 
 
     const GLsizei stride = sizeof( GLfloat ) * 3 * 2;
-    _ibop->bind();
+    _ibop->bind( drawInfo );
     glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, stride, (const void*)0 );
     glEnableVertexAttribArray( 0 );
     glVertexAttribPointer( 1, 3, GL_FLOAT, GL_FALSE, stride, (const void*)( sizeof( GLfloat ) * 3 ) );
@@ -204,12 +207,12 @@ bool Simple3xDemo::frame()
     glDrawArrays( GL_TRIANGLE_STRIP, 0, 6 );
 
 
-    _vaop->bind();
+    _vaop->bind( drawInfo );
     if( _first )
     {
         _first = false;
 
-        _ibop2->bind();
+        _ibop2->bind( drawInfo );
         glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, stride, (const void*)0 );
         glEnableVertexAttribArray( 0 );
         glVertexAttribPointer( 1, 3, GL_FLOAT, GL_FALSE, stride, (const void*)( sizeof( GLfloat ) * 3 ) );

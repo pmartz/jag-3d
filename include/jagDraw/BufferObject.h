@@ -34,6 +34,9 @@
 namespace jagDraw {
 
 
+struct DrawInfo;
+
+
 /** \class BufferObject BufferObject.h <jagDraw/BufferObject.h>
 \brief A context-safe wrapper for OpenGL buffer objects.
 */
@@ -56,7 +59,7 @@ public:
     GLenum getUsage() { return( _usage ); }
 
     // TBD need to get context ID, probably as a param?
-    virtual void bind();
+    virtual void bind( const DrawInfo& drawInfo );
 
     // TBD need to get context ID, probably as a param?
     void subData( GLsizeiptr offset, GLsizeiptr size, const GLvoid * );

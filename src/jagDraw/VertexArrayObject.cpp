@@ -20,6 +20,7 @@
 
 #include <jagDraw/PlatformOpenGL.h>
 #include <jagDraw/VertexArrayObject.h>
+#include <jagDraw/DrawInfo.h>
 #include <jagDraw/Error.h>
 
 
@@ -40,9 +41,9 @@ VertexArrayObject::~VertexArrayObject()
 }
 
 
-void VertexArrayObject::bind()
+void VertexArrayObject::bind( const DrawInfo& drawInfo )
 {
-    const unsigned int contextID( 0 );
+    const unsigned int contextID( drawInfo._id );
 
     if( _ids._data.size() < contextID+1 )
         internalInit( contextID );

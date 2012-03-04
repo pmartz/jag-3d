@@ -37,6 +37,9 @@
 namespace jagDraw {
 
 
+struct DrawInfo;
+
+
 /** \class ShaderProgram ShaderProgram.h <jagDraw/ShaderProgram.h>
 \brief TBD.
 */
@@ -62,7 +65,7 @@ public:
     bool validate();
 
     // TBD need to get context ID, probably as a param?
-    void use();
+    void use( const DrawInfo& drawInfo );
     //void use( DrawContext &);
 
     static void applyNone();

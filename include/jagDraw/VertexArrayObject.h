@@ -32,6 +32,9 @@
 namespace jagDraw {
 
 
+struct DrawInfo;
+
+
 /** \class VertexArrayObject VertexArrayObject.h <jagDraw/VertexArrayObject.h>
 \brief A context-safe wrapper for OpenGL vertex array objects.
 */
@@ -44,7 +47,7 @@ public:
     virtual ~VertexArrayObject();
 
     // TBD need to get context ID, probably as a param?
-    virtual void bind();
+    virtual void bind( const DrawInfo& drawInfo );
 
 protected:
     void internalInit( const unsigned int contextID );
