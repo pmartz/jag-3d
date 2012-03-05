@@ -54,7 +54,20 @@ public:
         DrawRangeElementsBaseVertexType,
         DrawElementsInstancedBaseVertexType,
         DrawElementsIndirectType,
-        MultiDrawElementsBaseVertexType
+        MultiDrawElementsBaseVertexType,
+
+        // Add future draw commands here when JAG moves to follow future
+        // spec releases.
+
+        // User defined types:
+        UserDefined0,
+        UserDefined1,
+        UserDefined2,
+        UserDefined3,
+        UserDefined4,
+        UserDefined5,
+        UserDefined6,
+        UserDefined7
     };
 
     DrawCommand( DrawCommandType drawCommandType, GLenum mode )
@@ -72,11 +85,15 @@ protected:
     DrawCommandType _drawCommandType;
     GLenum _mode;
 
+    // TBD I really do not like having all this crap in the base class.
+    // Possibly have multiple base classes employing multiple inheritance
+    // to access such member variables.
     GLint _first;
     GLsizei _count;
     GLsizei _primcount;
     GLenum _type;
     GLvoid* _offset;
+    GLuint _start, _end;
     GLvoid* _indirect;
     jagBase::GLintArray _firstArray;
     jagBase::GLsizeiArray _countArray;
@@ -86,6 +103,7 @@ protected:
 };
 
 typedef jagBase::ptr< jagDraw::DrawCommand >::shared_ptr DrawCommandPtr;
+typedef std::vector< DrawCommandPtr > DrawCommandList;
 
 
 /** \class DrawArrays DrawCommand.h <jagDraw/DrawCommand.h>
@@ -150,7 +168,7 @@ public:
 
     virtual void operator()( DrawInfo& )
     {
-        // TBD Do we need explicit support for DRAW_INDIRECT_BUFFER bundings?
+        // TBD Do we need explicit support for GL_DRAW_INDIRECT_BUFFER bundings?
         glDrawArraysIndirect( _mode, _indirect );
     }
 };
@@ -188,7 +206,7 @@ typedef jagBase::ptr< jagDraw::MultiDrawArrays >::shared_ptr MultiDrawArraysPtr;
 \details
 
 Note the fourth parameter is \c offset rather than the spec name \c indices.
-The intended use is with an element buffer object. If used without an element
+The intended use is with GL_ELEMENT_ARRAY_BUFFER. If used without an element
 buffer object, be aware that DrawElements does not store \c offset in a
 smart pointer. */
 class DrawElements : public DrawCommand
@@ -216,7 +234,7 @@ typedef jagBase::ptr< jagDraw::DrawElements >::shared_ptr DrawElementsPtr;
 \details
 
 Note the fourth parameter is \c offset rather than the spec name \c indices.
-The intended use is with an element buffer object. If used without an element
+The intended use is with GL_ELEMENT_ARRAY_BUFFER. If used without an element
 buffer object, be aware that DrawElements does not store \c offset in a
 smart pointer. */
 class DrawElementsInstanced : public DrawCommand
@@ -276,12 +294,12 @@ class DrawRangeElements : public DrawCommand
 public:
     DrawRangeElements( GLenum mode, GLuint start, GLuint end, GLsizei count, GLenum type,
             const GLvoid* offset )
-      : DrawCommand( DrawRangeElementsType, mode ),
-        _start( start ),
-        _end( end )
+      : DrawCommand( DrawRangeElementsType, mode )
     {
         _count = count;
         _type = type;
+        _start = start;
+        _end = end;
         _offset = const_cast< GLvoid* >( offset );
     }
 
@@ -289,9 +307,6 @@ public:
     {
         glDrawRangeElements( _mode, _start, _end, _count, _type, _offset );
     }
-
-protected:
-    GLuint _start, _end;
 };
 
 typedef jagBase::ptr< jagDraw::DrawRangeElements >::shared_ptr DrawRangeElementsPtr;
@@ -332,12 +347,12 @@ class DrawRangeElementsBaseVertex : public DrawCommand
 public:
     DrawRangeElementsBaseVertex( GLenum mode, GLuint start, GLuint end, GLsizei count, GLenum type,
             const GLvoid* offset, GLint basevertex )
-      : DrawCommand( DrawRangeElementsBaseVertexType, mode ),
-        _start( start ),
-        _end( end )
+      : DrawCommand( DrawRangeElementsBaseVertexType, mode )
     {
         _count = count;
         _type = type;
+        _start = start;
+        _end = end;
         _offset = const_cast< GLvoid* >( offset );
         _basevertex = basevertex;
     }
@@ -346,9 +361,6 @@ public:
     {
         glDrawRangeElementsBaseVertex( _mode, _start, _end, _count, _type, _offset, _basevertex );
     }
-
-protected:
-    GLuint _start, _end;
 };
 
 typedef jagBase::ptr< jagDraw::DrawRangeElementsBaseVertex >::shared_ptr DrawRangeElementsBaseVertexPtr;
@@ -431,29 +443,6 @@ public:
 };
 
 typedef jagBase::ptr< jagDraw::MultiDrawElementsBaseVertex >::shared_ptr MultiDrawElementsBaseVertexPtr;
-
-
-
-/** \class DrawCommandList DrawCommand.h <jagDraw/DrawCommand.h>
-\brief
-\details
-*/
-class DrawCommandList : public std::vector< DrawCommandPtr >
-{
-public:
-    DrawCommandList()
-    {}
-    virtual ~DrawCommandList()
-    {}
-
-    virtual void operator()( DrawInfo& drawInfo )
-    {
-        for( iterator p = begin(); p != end(); p++ )
-        {
-            (**p)( drawInfo );
-        }
-    }
-};
 
 
 // jagDraw

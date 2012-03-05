@@ -60,6 +60,9 @@ protected:
 
     jagDraw::DrawArraysPtr _drawArrays;
 
+    jagDraw::BufferObjectPtr _elbop;
+    jagDraw::DrawElementsPtr _drawElements;
+
     bool _first;
 };
 
@@ -151,6 +154,17 @@ bool Simple3xDemo::init()
 
     _drawArrays = jagDraw::DrawArraysPtr( new jagDraw::DrawArrays( GL_TRIANGLE_STRIP, 0, 6 ) );
 
+    typedef std::vector< GLubyte > GLubyteArray;
+    GLubyteArray elements;
+    {
+        unsigned int idx;
+        for( idx=0; idx<6; idx++ )
+            elements.push_back( idx );
+        jagBase::BufferPtr elbp( new jagBase::Buffer( elements.size() * sizeof( GLubyte ), (void*)&elements[0] ) );
+        _elbop = jagDraw::BufferObjectPtr( new jagDraw::BufferObject( GL_ELEMENT_ARRAY_BUFFER, elbp ) );
+    }
+    _drawElements = jagDraw::DrawElementsPtr( new jagDraw::DrawElements( GL_TRIANGLE_STRIP, elements.size(), GL_UNSIGNED_BYTE, 0 ) );
+
     {
         const char* vShaderSource =
             "#version 130 \n"
@@ -198,7 +212,8 @@ bool Simple3xDemo::frame()
     glVertexAttribPointer( 1, 3, GL_FLOAT, GL_FALSE, 0, (const void*)0 );
     glEnableVertexAttribArray( 1 );
 
-    (*_drawArrays)( drawInfo );
+    _elbop->bind( drawInfo );
+    (*_drawElements)( drawInfo );
 
 
     const GLsizei stride = sizeof( GLfloat ) * 3 * 2;
