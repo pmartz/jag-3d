@@ -32,7 +32,7 @@ set( _jagDrawHeaderFiles
     ${HEADER_PATH}/ContextSupport.h
 #    ${HEADER_PATH}/Drawable.h
 #    ${HEADER_PATH}/DrawableAttribute.h
-#    ${HEADER_PATH}/DrawContext.h
+    ${HEADER_PATH}/DrawCommand.h
     ${HEADER_PATH}/DrawInfo.h
     ${HEADER_PATH}/DrawCommon.h
     ${HEADER_PATH}/Error.h
@@ -45,7 +45,6 @@ set( _jagDrawHeaderFiles
     ${HEADER_PATH}/UniformValue.h
     ${HEADER_PATH}/VertexArrayObject.h
 #    ${HEADER_PATH}/VertexAttribute.h
-#    ${HEADER_PATH}/VertexIterator.h
 )
 
 set( _jagDrawSourceFiles

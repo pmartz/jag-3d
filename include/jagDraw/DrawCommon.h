@@ -26,6 +26,7 @@
 #include <jagDraw/DrawInfo.h>
 #include <jagDraw/BufferObject.h>
 #include <jagDraw/VertexArrayObject.h>
+#include <jagDraw/DrawCommand.h>
 #include <jagDraw/Shader.h>
 #include <jagDraw/ShaderProgram.h>
 #include <jagDraw/Error.h>
