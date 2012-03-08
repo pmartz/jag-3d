@@ -72,18 +72,54 @@ public:
 
     DrawCommand( DrawCommandType drawCommandType, GLenum mode )
       : _drawCommandType( drawCommandType ),
-        _mode( mode )
+        _mode( mode ),
+        _restartIndex( 0 ),
+        _restart( false )
     {}
     virtual ~DrawCommand() 
     {}
 
-
     DrawCommandType getType() { return _drawCommandType; }
-    virtual void operator()( DrawInfo& ) {}
+
+    /**
+    */
+    virtual void operator()( DrawInfo& )
+    {
+        if( _restart )
+            glPrimitiveRestartIndex( _restartIndex );
+    }
+
+    /**
+    See OpenGL spec section 2.8.1.
+    */
+    void setPrimitiveRestartIndex( GLuint index, bool enable=true )
+    {
+        _restartIndex = index;
+        _restart = enable;
+    }
+    GLuint getPrimitiveRestartIndex() const
+    {
+        return( _restartIndex );
+    }
+
+    /**
+    See OpenGL spec section 2.8.1.
+    */
+    void setPrimitiveRestart( bool enable )
+    {
+        _restart = enable;
+    }
+    bool getPrimitiveRestart() const
+    {
+        return( _restart );
+    }
 
 protected:
     DrawCommandType _drawCommandType;
     GLenum _mode;
+
+    GLuint _restartIndex;
+    bool _restart;
 
     // TBD I really do not like having all this crap in the base class.
     // Possibly have multiple base classes employing multiple inheritance
@@ -120,8 +156,9 @@ public:
         _count = count;
     }
 
-    virtual void operator()( DrawInfo& )
+    virtual void operator()( DrawInfo& drawInfo )
     {
+        DrawCommand::operator()( drawInfo );
         glDrawArrays( _mode, _first, _count );
     }
 };
@@ -144,8 +181,9 @@ public:
         _primcount = primcount;
     }
 
-    virtual void operator()( DrawInfo& )
+    virtual void operator()( DrawInfo& drawInfo )
     {
+        DrawCommand::operator()( drawInfo );
         glDrawArraysInstanced( _mode, _first, _count, _primcount );
     }
 };
@@ -166,8 +204,9 @@ public:
         _indirect = const_cast< GLvoid* >( indirect );
     }
 
-    virtual void operator()( DrawInfo& )
+    virtual void operator()( DrawInfo& drawInfo )
     {
+        DrawCommand::operator()( drawInfo );
         // TBD Do we need explicit support for GL_DRAW_INDIRECT_BUFFER bundings?
         glDrawArraysIndirect( _mode, _indirect );
     }
@@ -192,8 +231,9 @@ public:
         _primcount = primcount;
     }
 
-    virtual void operator()( DrawInfo& )
+    virtual void operator()( DrawInfo& drawInfo )
     {
+        DrawCommand::operator()( drawInfo );
         glMultiDrawArrays( _mode, _firstArray.get(), _countArray.get(), _primcount );
     }
 };
@@ -220,8 +260,9 @@ public:
         _offset = const_cast< GLvoid* >( offset );
     }
 
-    virtual void operator()( DrawInfo& )
+    virtual void operator()( DrawInfo& drawInfo )
     {
+        DrawCommand::operator()( drawInfo );
         glDrawElements( _mode, _count, _type, _offset );
     }
 };
@@ -250,8 +291,9 @@ public:
         _primcount = primcount;
     }
 
-    virtual void operator()( DrawInfo& )
+    virtual void operator()( DrawInfo& drawInfo )
     {
+        DrawCommand::operator()( drawInfo );
         glDrawElementsInstanced( _mode, _count, _type, _offset, _primcount );
     }
 };
@@ -276,8 +318,9 @@ public:
         _primcount = primcount;
     }
 
-    virtual void operator()( DrawInfo& )
+    virtual void operator()( DrawInfo& drawInfo )
     {
+        DrawCommand::operator()( drawInfo );
         glMultiDrawElements( _mode, _countArray.get(), _type, (const GLvoid**)( _indicesArray.get() ), _primcount );
     }
 };
@@ -303,8 +346,9 @@ public:
         _offset = const_cast< GLvoid* >( offset );
     }
 
-    virtual void operator()( DrawInfo& )
+    virtual void operator()( DrawInfo& drawInfo )
     {
+        DrawCommand::operator()( drawInfo );
         glDrawRangeElements( _mode, _start, _end, _count, _type, _offset );
     }
 };
@@ -329,8 +373,9 @@ public:
         _basevertex = basevertex;
     }
 
-    virtual void operator()( DrawInfo& )
+    virtual void operator()( DrawInfo& drawInfo )
     {
+        DrawCommand::operator()( drawInfo );
         glDrawElementsBaseVertex( _mode, _count, _type, _offset, _basevertex );
     }
 };
@@ -357,8 +402,9 @@ public:
         _basevertex = basevertex;
     }
 
-    virtual void operator()( DrawInfo& )
+    virtual void operator()( DrawInfo& drawInfo )
     {
+        DrawCommand::operator()( drawInfo );
         glDrawRangeElementsBaseVertex( _mode, _start, _end, _count, _type, _offset, _basevertex );
     }
 };
@@ -384,8 +430,9 @@ public:
         _basevertex = basevertex;
     }
 
-    virtual void operator()( DrawInfo& )
+    virtual void operator()( DrawInfo& drawInfo )
     {
+        DrawCommand::operator()( drawInfo );
         glDrawElementsInstancedBaseVertex( _mode, _count, _type, _offset, _primcount, _basevertex );
     }
 };
@@ -407,8 +454,9 @@ public:
         _indirect = const_cast< GLvoid* >( indirect );
     }
 
-    virtual void operator()( DrawInfo& )
+    virtual void operator()( DrawInfo& drawInfo )
     {
+        DrawCommand::operator()( drawInfo );
         glDrawElementsIndirect( _mode, _type, _indirect );
     }
 };
@@ -435,8 +483,9 @@ public:
         _basevertexArray = basevertex;
     }
 
-    virtual void operator()( DrawInfo& )
+    virtual void operator()( DrawInfo& drawInfo )
     {
+        DrawCommand::operator()( drawInfo );
         glMultiDrawElementsBaseVertex( _mode, _countArray.get(), _type, (const GLvoid**)( _indicesArray.get() ),
             _primcount, _basevertexArray.get() );
     }
