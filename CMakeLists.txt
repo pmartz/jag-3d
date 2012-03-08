@@ -169,7 +169,6 @@ endif()
 
 #
 # Doxygen
-#include( ${CMAKE_ROOT}/Modules/Documentation.cmake OPTIONAL )
 option( JAG3D_DOCUMENTATION "Enable to create build target for Doxygen documentation." OFF )
 mark_as_advanced( CLEAR JAG3D_DOCUMENTATION )
 if( JAG3D_DOCUMENTATION )
@@ -179,9 +178,9 @@ if( JAG3D_DOCUMENTATION )
         set( HAVE_DOT "YES" )
     endif( DOXYGEN_DOT_PATH )
 
-#    configure_file( ${PROJECT_SOURCE_DIR}/doc/doxyfile.cmake
-#        ${PROJECT_BINARY_DIR}/doc/doxyfile
-#    )
+    configure_file( ${PROJECT_SOURCE_DIR}/doc/doxyfile.cmake
+        ${PROJECT_BINARY_DIR}/doc/doxyfile
+    )
     add_custom_target( Documentation ${DOXYGEN_EXECUTABLE}
         ${PROJECT_BINARY_DIR}/doc/doxyfile
     )
