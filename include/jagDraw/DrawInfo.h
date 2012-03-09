@@ -23,6 +23,7 @@
 
 #include <jagDraw/Export.h>
 #include <jagDraw/ContextSupport.h>
+#include <jagDraw/ShaderProgram.h>
 
 
 namespace jagDraw {
@@ -37,6 +38,11 @@ struct JAGDRAW_EXPORT DrawInfo
     DrawInfo();
 
     jagDrawContextID _id;
+
+    /** \brief Pointer to shader program currently in use.
+    \details Required by VertexArray to query the \c index
+    parameter for a generic vertex attribute. */
+    ShaderProgramPtr _shader;
 };
 
 

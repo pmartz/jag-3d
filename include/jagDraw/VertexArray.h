@@ -18,51 +18,31 @@
 *
 *************** <auto-copyright.pl END do not edit this line> ***************/
 
-#ifndef __JAGDRAW_VERTEX_ARRAY_OBJECT_H__
-#define __JAGDRAW_VERTEX_ARRAY_OBJECT_H__ 1
+#ifndef __JAGDRAW_VERTEX_ARRAY_H__
+#define __JAGDRAW_VERTEX_ARRAY_H__ 1
 
 #include <jagDraw/Export.h>
 #include <jagDraw/PlatformOpenGL.h>
-#include <jagDraw/PerContextData.h>
-#include <jagBase/ptr.h>
-
-#include <vector>
 
 
 namespace jagDraw {
 
 
-struct DrawInfo;
-
-
-/** \class VertexArrayObject VertexArrayObject.h <jagDraw/VertexArrayObject.h>
-\brief A context-safe wrapper for OpenGL vertex array objects.
-\details \gl{section 2.10}.
+/** \class VertexArray VertexArray.h <jagDraw/VertexArray.h>
+\brief
+\details \gl{section 2.8}.
 */
-class JAGDRAW_EXPORT VertexArrayObject /* : public DrawableAttribute */
+class JAGDRAW_EXPORT VertexArray
 {
-public:
-    VertexArrayObject();
-    VertexArrayObject( const VertexArrayObject& rhs );
-
-    virtual ~VertexArrayObject();
-
-    // TBD need to get context ID, probably as a param?
-    virtual void bind( const DrawInfo& drawInfo );
-
-protected:
-    void internalInit( const unsigned int contextID );
-
-    PerContextGLuint _ids;
 };
 
-typedef jagBase::ptr< jagDraw::VertexArrayObject >::shared_ptr VertexArrayObjectPtr;
-typedef std::vector< VertexArrayObjectPtr > VertexArrayObjectList;
+typedef jagBase::ptr< jagDraw::VertexArray >::shared_ptr VertexArrayPtr;
+typedef std::vector< VertexArrayPtr > VertexArrayList;
 
 
 // jagDraw
 }
 
 
-// __JAGDRAW_VERTEX_ARRAY_OBJECT_H__
+// __JAGDRAW_VERTEX_ARRAY_H__
 #endif

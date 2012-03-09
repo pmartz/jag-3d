@@ -39,6 +39,7 @@ struct DrawInfo;
 
 /** \class BufferObject BufferObject.h <jagDraw/BufferObject.h>
 \brief A context-safe wrapper for OpenGL buffer objects.
+\details \gl{section 2.9}.
 */
 class JAGDRAW_EXPORT BufferObject /* : public DrawableAttribute */
 {

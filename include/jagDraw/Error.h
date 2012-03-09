@@ -32,18 +32,39 @@ namespace jagDraw
 {
 
 
+/** \defgroup Error Error utilities */
+/*@{*/
+
 #ifdef JAG3D_DISABLE_ALL_ERROR_CHECKS
 #  define JAG_ERROR_CHECK(msg)
 #  define JAG_FBO_ERROR_CHECK(msg)
 #else
+    /** \brief Error macro.
+    \details By default, this macro calls errorCheck().
+    If JAG3D_DISABLE_ALL_ERROR_CHECKS is defined, this macro is a no-op.
+    */
 #  define JAG_ERROR_CHECK(msg) jagDraw::errorCheck( msg );
+    /** \brief FBO status macro.
+    \details By default, this macro calls fboErrorCheck().
+    If JAG3D_DISABLE_ALL_ERROR_CHECKS is defined, this macro is a no-op.
+    */
 #  define JAG_FBO_ERROR_CHECK(msg) jagDraw::fboErrorCheck( msg );
 #endif
 
 
+/** \brief Check for an OpenGL error using glGetError().
+\details Use JAG_ERROR_CHECK instead, which can be disabled at
+compile time with JAG3D_DISABLE_ALL_ERROR_CHECKS.
+*/
 JAGDRAW_EXPORT void errorCheck( const std::string& msg );
 
+/** \brief Check the FBO status using glCheckFramebufferStatus().
+\details Use JAG_FBO_ERROR_CHECK instead, which can be disabled at
+compile time with JAG3D_DISABLE_ALL_ERROR_CHECKS.
+*/
 JAGDRAW_EXPORT void fboErrorCheck( const std::string& msg );
+
+/*@}*/
 
 
 // jagDraw

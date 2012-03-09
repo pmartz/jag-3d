@@ -34,7 +34,7 @@ MULTILINE_CPP_IS_BRIEF = NO
 INHERIT_DOCS           = YES
 SEPARATE_MEMBER_PAGES  = NO
 TAB_SIZE               = 8
-ALIASES                = 
+ALIASES                = gl{1}="\note See OpenGL specification \1"
 OPTIMIZE_OUTPUT_FOR_C  = NO
 OPTIMIZE_OUTPUT_JAVA   = NO
 OPTIMIZE_FOR_FORTRAN   = NO
@@ -101,9 +101,10 @@ WARN_LOGFILE           =
 # configuration options related to the input files
 #---------------------------------------------------------------------------
 INPUT                  = "${PROJECT_SOURCE_DIR}/include/jagBase" \
-                         "${PROJECT_SOURCE_DIR}/include/jagDraw"
+                         "${PROJECT_SOURCE_DIR}/include/jagDraw" \
+                         "${PROJECT_SOURCE_DIR}/doc"
 INPUT_ENCODING         = UTF-8
-FILE_PATTERNS          = *.h
+FILE_PATTERNS          = *.h *.txt
 RECURSIVE              = YES
 EXCLUDE                = */.svn
 EXCLUDE_SYMLINKS       = NO

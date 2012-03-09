@@ -1,0 +1,23 @@
+/**
+
+\mainpage Jag3D: A 3D Rendering Toolkit
+
+\section jagBase
+
+This section is TBD.
+\li \ref Version "Version Utilities"
+
+\section jagDraw
+
+This module contains host-side data store and multi-context support
+for many OpenGL commands. This is the only module that executes
+OpenGL commands.
+\li \ref Error "OpenGL Errors"
+\li \link jagDraw::VertexArray Vertex Arrays \endlink
+\li \link jagDraw::DrawCommand Primitive Restart \endlink
+
+\section jagSG
+
+This section is TBD.
+
+*/

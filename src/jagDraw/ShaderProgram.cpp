@@ -70,13 +70,7 @@ void ShaderProgram::attachShader( ShaderPtr shader )
     m_shaders.push_back( shader );
 }
 
-void ShaderProgram::applyNone()
-{
-    glUseProgram( 0 );
-}
-
-//void ShaderProgram::use( DrawContext &ctx )
-void ShaderProgram::use( const DrawInfo& drawInfo )
+void ShaderProgram::use( DrawInfo& drawInfo )
 {
     const unsigned int contextID( drawInfo._id );
 
@@ -88,6 +82,7 @@ void ShaderProgram::use( const DrawInfo& drawInfo )
         return;
 
     glUseProgram( _ids[ contextID ] );
+    //drawInfo._shader = ShaderProgramPtr( this );
 }
 
 GLuint ShaderProgram::getUniformLocation( const std::string &name )

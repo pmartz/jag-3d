@@ -36,7 +36,14 @@ struct DrawInfo;
 
 /** \class DrawCommand DrawCommand.h <jagDraw/DrawCommand.h>
 \brief
-\details
+\details \gl{section 2.8.3}.
+
+To implement a new type of draw command:
+\li Add a new value to DrawCommandType (or use one of the existing UserDefined*
+values).
+\li Derive a class from DrawCommand.
+\li Override the operator() member function. The new operator() should call into
+the base class for proper primitive restart support.
 */
 class DrawCommand //: public DrawableAttribute
 {
@@ -90,7 +97,7 @@ public:
     }
 
     /**
-    See OpenGL spec section 2.8.1.
+    \gl{section 2.8.1}.
     */
     void setPrimitiveRestartIndex( GLuint index, bool enable=true )
     {
@@ -103,7 +110,7 @@ public:
     }
 
     /**
-    See OpenGL spec section 2.8.1.
+    \gl{section 2.8.1}.
     */
     void setPrimitiveRestart( bool enable )
     {

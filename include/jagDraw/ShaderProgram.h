@@ -65,10 +65,7 @@ public:
     bool validate();
 
     // TBD need to get context ID, probably as a param?
-    void use( const DrawInfo& drawInfo );
-    //void use( DrawContext &);
-
-    static void applyNone();
+    void use( DrawInfo& drawInfo );
 
     void setUniformLocationNameString( UniformLocationName name, const std::string& string );
     GLuint getUniformLocation( const std::string& name );
