@@ -25,6 +25,7 @@
 #ifdef JAG3D_USE_BOOST_POINTERS
 #  include <boost/smart_ptr/shared_ptr.hpp>
 #  include <boost/smart_ptr/shared_array.hpp>
+#  include <boost/smart_ptr/enable_shared_from_this.hpp>
 #else
 #  ifdef WIN32
 #    include <memory>
@@ -37,6 +38,13 @@
 namespace jagBase {
 
 
+#ifdef JAG3D_USE_BOOST_POINTERS
+#  define SHARED_FROM_THIS(_t) boost::enable_shared_from_this<_t>
+#else
+#  define SHARED_FROM_THIS(_t) std::tr1::enable_shared_from_this<_t>
+#endif
+
+    
 /** \class ptr ptr.h <jagBase/ptr.h>
 \brief Defines the \c ptr template struct, supporting either Boost or TR1.
 */
