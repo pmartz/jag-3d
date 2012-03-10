@@ -96,7 +96,7 @@ void ShaderProgram::use( DrawInfo& drawInfo )
     // Record the currently used program in DrawInfo.
     // Downstream vertex attribs and uniforms will query
     // this for location values.
-    drawInfo._shader = shared_from_this();
+    drawInfo._program = shared_from_this();
 }
 
 GLuint ShaderProgram::getUniformLocation( const std::string &name )
@@ -193,7 +193,8 @@ bool ShaderProgram::link( unsigned int contextID )
         if( shader != 0 )
             glAttachShader( id, shader );
     }
-    _shaders.clear();
+    // TBD Leftover from Chaskii. Seems incorrect to clear. Commenting this out.
+    //_shaders.clear();
 
     GLint status;
     glLinkProgram( id );

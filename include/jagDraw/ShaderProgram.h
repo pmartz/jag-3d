@@ -47,6 +47,8 @@ struct DrawInfo;
 class JAGDRAW_EXPORT ShaderProgram : public SHARED_FROM_THIS(ShaderProgram)
 {
 public:
+    // TBD seems out of place. Not sure why these matrices need special
+    // treatment at the jagDraw level.
     enum UniformLocationName
     { 
         ModelViewProjectionMatrix,
@@ -71,16 +73,34 @@ public:
     */
     void use( DrawInfo& drawInfo );
 
-    /** \brief
-    \details
-    */
+    /** \brief Get the OpenGL program object ID for the specified \c contextID.
+    \details If an ID hasn't already been created for \c contextID, getID() calls
+    glCreateProgram() to generate the ID. */
     GLint getId( unsigned int contextID );
 
-    /** \brief
-    \details \gl{section 2.11.2}.
-    */
+    /** \brief Link the program.
+    \details This function performs the following tasks:
+    \li If the program doesn't have a program object ID for \c contextID, it creates one.
+    \li It calls glBindAttribLocation() for all vertex attribs whose locations were specified using setExplicitAttribLocation().
+    \li It calls glAttachShader() for all \link Shader "Shaders" \endlink attached using attachShader().
+    \li It calls glLinkProgram(), then queries GL_LINK_STATUS.
+    If the link was unsuccessful, link() calls printInfoLog(), deletes the program object
+    with a call to glDeleteProgram, and returns false.
+
+    Otherwise, link() populates the _uniformLocations and _vertexAttribLocations maps with
+    all active uniforms and vertex attribs, to allow fast look up of locations keyed by
+    HashValue values of the uniform and vertex attrib names.
+    \gl{section 2.11.2}. */
     bool link( unsigned int contextID );
+
+    /** \brief Convenience wrapper around glValidateProgram().
+    \details This function calls glValidateProgram, then queries
+    GL_VALIDATE_STATUS.
+    \returns The result of the GL_VALIDATE_STATUS query, converted to bool.
+    */
     bool validate( unsigned int contextID );
+
+
 
     void setUniformLocationNameString( UniformLocationName name, const std::string& string );
     GLuint getUniformLocation( const std::string& name );
@@ -98,7 +118,21 @@ public:
     // TBD need to get context ID, probably as a param?
     void printInfoLog();
 
+
+
+    /** \brief Support for glBindAttribLocation().
+    \details Locations are stored in a map indexed by name. See the
+    member variable _explicitVertexAttribLocations.
+    The link() function calls glBindAttribLocation() on all members
+    of \c _explicitVertexAttribLocations.
+    \gl{section 2.11.3}.
+    */
     void setExplicitAttribLocation( GLuint index, const std::string& name );
+    /** \brief Retrieve an explicitly set vertex attrib location value.
+    \details See also 
+    getVertexAttribLocation( const HashValue& h ) const and
+    getVertexAttribLocation( const std::string& s ) const.
+    */
     GLuint getExplicitAttribLocation( const std::string& name ) const;
 
     // Convenience Function
@@ -124,9 +158,23 @@ public:
     typedef std::size_t HashValue;
     static HashValue createHash( const std::string& name );
 
+    /** \brief Fast access to uniform location.
+    \details Uses HashValue \c h as a map key to access the location index.
+    \returns -1 if \c h is not in the map. Otherwise, returns the location.
+    */
     GLint getUniformLocation( const HashValue& h ) const;
+    /** \brief Slow access to uniform location.
+    \details Creates a HashValue from the string \c s, then calls
+    getUniformLocation( const HashValue& h ) const. */
     GLint getUniformLocation( const std::string& s ) const;
+    /** \brief Fast access to vertex attrib location.
+    \details Uses HashValue \c h as a map key to access the location index.
+    \returns -1 if \c h is not in the map. Otherwise, returns the location.
+    */
     GLint getVertexAttribLocation( const HashValue& h ) const;
+    /** \brief Slow access to vertex attrib location.
+    \details Creates a HashValue from the string \c s, then calls
+    getVertexAttribLocation( const HashValue& h ) const. */
     GLint getVertexAttribLocation( const std::string& s ) const;
 
 private:

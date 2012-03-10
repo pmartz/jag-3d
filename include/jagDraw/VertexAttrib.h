@@ -52,7 +52,7 @@ public:
 
     virtual void operator()( jagDraw::DrawInfo& drawInfo )
     {
-        GLint index( drawInfo._shader->getVertexAttribLocation( _indexHash ) );
+        GLint index( drawInfo._program->getVertexAttribLocation( _indexHash ) );
         if( index != -1 )
         {
             glEnableVertexAttribArray( index );
@@ -89,7 +89,7 @@ public:
 
     virtual void operator()( jagDraw::DrawInfo& drawInfo )
     {
-        GLint index( drawInfo._shader->getVertexAttribLocation( _indexHash ) );
+        GLint index( drawInfo._program->getVertexAttribLocation( _indexHash ) );
         if( index != -1 )
         {
             glEnableVertexAttribArray( index );

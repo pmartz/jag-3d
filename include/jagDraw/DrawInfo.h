@@ -39,10 +39,10 @@ struct JAGDRAW_EXPORT DrawInfo
 
     jagDrawContextID _id;
 
-    /** \brief Pointer to shader program currently in use.
-    \details Required by VertexArray to query the \c index
+    /** \brief Pointer to program currently in use.
+    \details Required by VertexAttrib to query the \c index
     parameter for a generic vertex attribute. */
-    ShaderProgramPtr _shader;
+    ShaderProgramPtr _program;
 };
 
 
