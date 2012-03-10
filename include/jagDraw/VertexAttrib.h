@@ -62,7 +62,7 @@ public:
 
 protected:
     std::string _name;
-    std::size_t _indexHash;
+    ShaderProgram::HashValue _indexHash;
     GLint  _size;
     GLenum _type;
     GLsizei _stride;

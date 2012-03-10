@@ -24,6 +24,7 @@
 #include <stdio.h>
 #include <iostream>
 
+#include <boost/foreach.hpp>
 #include <boost/functional/hash.hpp>
 
 
@@ -34,15 +35,16 @@ namespace jagDraw {
 void ShaderProgram::printInfoLog()
 {
     const unsigned int contextID( 0 );
+    const GLuint id( _ids[ contextID ].first );
 
     GLsizei bufLen = 0;       
-    glGetProgramiv( _ids[ contextID ], GL_INFO_LOG_LENGTH, &bufLen );
+    glGetProgramiv( id, GL_INFO_LOG_LENGTH, &bufLen );
     if( bufLen > 1 )
     {
         std::cerr << "\n==========  Shader Information Log ============= " << std::endl;
         GLsizei strLen = 0;        // strlen GL actually wrote to buffer
         char* infoLog = new char[bufLen];
-        glGetProgramInfoLog( _ids[ contextID ], bufLen, &strLen, infoLog );
+        glGetProgramInfoLog( id, bufLen, &strLen, infoLog );
         if( strLen > 0 )
             std::cerr << infoLog << std::endl;
         std::cerr << "==================================================\n" << std::endl;
@@ -50,10 +52,8 @@ void ShaderProgram::printInfoLog()
     }
 }
 
-ShaderProgram::ShaderProgram():
-    //DrawableAttribute( ShaderProgram_t ),
-    m_initialized(false),
-    m_linked(false)
+ShaderProgram::ShaderProgram()
+    //: DrawableAttribute( ShaderProgram_t )
 {
     m_stringToNameMap["ii_ModelViewProjectionMatrix"] = ModelViewProjectionMatrix;
     m_stringToNameMap["ii_NormalMatrix"] = NormalMatrix;
@@ -69,21 +69,33 @@ ShaderProgram::~ShaderProgram()
 
 void ShaderProgram::attachShader( ShaderPtr shader )
 {
-    m_shaders.push_back( shader );
+    _shaders.push_back( shader );
 }
 
 void ShaderProgram::use( DrawInfo& drawInfo )
 {
     const unsigned int contextID( drawInfo._id );
 
-    // TBD. Link status needs to be per-context.
-    if( !m_linked )
-        link();
+    bool needLink( true );
+    if( _ids._data.size() >= contextID+1 )
+    {
+        needLink = !( _ids[ contextID ].second );
+    }
+    if( needLink )
+    {
+        if( !( link( contextID ) ) )
+            return;
+    }
 
-    if( _ids[ contextID ] == 0 )
+    const GLuint id = _ids[ contextID ].first;
+    if( id == 0 )
         return;
 
-    glUseProgram( _ids[ contextID ] );
+    glUseProgram( id );
+
+    // Record the currently used program in DrawInfo.
+    // Downstream vertex attribs and uniforms will query
+    // this for location values.
     drawInfo._shader = shared_from_this();
 }
 
@@ -110,24 +122,16 @@ void ShaderProgram::setUniformValue( const std::string &name, const UniformValue
 }
 
 
-void ShaderProgram::bindAttribLocation( GLuint index, const std::string &name )
+void ShaderProgram::setExplicitAttribLocation( GLuint index, const std::string& name )
 {
-    const unsigned int contextID( 0 );
-
-    if( _ids._data.size() < contextID+1 )
-        internalInit( contextID );
-
-    glBindAttribLocation( _ids[ contextID ], index, name.c_str() );
+    _explicitVertexAttribLocations[ name ] = index;
 }
 
-GLuint ShaderProgram::getAttribLocation( const std::string &name )
+GLuint ShaderProgram::getExplicitAttribLocation( const std::string& name ) const
 {
-    const unsigned int contextID( 0 );
-
-    if( _ids._data.size() < contextID+1 )
-        internalInit( contextID );
-
-    return glGetAttribLocation( _ids[ contextID ], name.c_str() );
+    ExplicitLocationMap::const_iterator it(
+        _explicitVertexAttribLocations.find( name ) );
+    return( ( it != _explicitVertexAttribLocations.end() ) ? it->second : -1 );
 }
 
 void ShaderProgram::setParameter( GLenum pname, GLint value )
@@ -136,6 +140,7 @@ void ShaderProgram::setParameter( GLenum pname, GLint value )
 
     if( _ids._data.size() < contextID+1 )
         internalInit( contextID );
+    const GLuint id( _ids[ contextID ].first );
 
 #if 0 // these are potentially not supported if not defined correctly.
 
@@ -146,42 +151,49 @@ void ShaderProgram::setParameter( GLenum pname, GLint value )
 
 #endif
 
-    glProgramParameteri( _ids[ contextID ], pname, value );
+    glProgramParameteri( id, pname, value );
 }
 
 void ShaderProgram::get( GLenum pname, GLint *params )
 {
     const unsigned int contextID( 0 );
+    const GLuint id( _ids[ contextID ].first );
 
-    glGetProgramiv( _ids[ contextID ], pname, params );
+    glGetProgramiv( id, pname, params );
 }
 
-GLint ShaderProgram::getId()
+GLint ShaderProgram::getId( unsigned int contextID )
 {
-    const unsigned int contextID( 0 );
+    if( _ids._data.size() < contextID+1 )
+        internalInit( contextID );
+    return( _ids[ contextID ].first );
+}
 
+bool ShaderProgram::link( unsigned int contextID )
+{
     if( _ids._data.size() < contextID+1 )
         internalInit( contextID );
 
-    return( _ids[ contextID ] );
-}
+    // idLink.first is OpenGL program ID.
+    // idLink.second is link status: true after successful linked.
+    IDLinkPair& idLink( _ids[ contextID ] );
+    const GLuint id( idLink.first );
 
-bool ShaderProgram::link()
-{
-    const unsigned int contextID( 0 );
-
-    if( _ids._data.size() < contextID+1 )
-        internalInit( contextID );
-
-    GLuint id( _ids[ contextID ] );
-
-    for( std::vector< ShaderPtr >::iterator s = m_shaders.begin(); s != m_shaders.end(); s++ )
+    // Loop over explicitly specified vertex attrib locations and
+    // set them in this program object.
+    BOOST_FOREACH( const ExplicitLocationMap::value_type& it, _explicitVertexAttribLocations )
     {
-        GLint shader = (*s)->getId();
+        glBindAttribLocation( id, it.second, it.first.c_str() );
+    }
+    
+    // Attach all shaders to this program object.
+    BOOST_FOREACH( const ShaderList::value_type& s, _shaders )
+    {
+        GLint shader = s->getId();
         if( shader != 0 )
             glAttachShader( id, shader );
     }
-    m_shaders.clear();
+    _shaders.clear();
 
     GLint status;
     glLinkProgram( id );
@@ -190,11 +202,12 @@ bool ShaderProgram::link()
     {
         printInfoLog();
         glDeleteProgram( id );
-        _ids[ contextID ] = 0;
+        idLink.first = 0;
+        idLink.second = false;
+        return( false );
     }
-    m_linked = (status == GL_TRUE);
 
-    if( m_linked == true )
+    idLink.second = true;
     {
         GLint n;
         glUseProgram( id );
@@ -241,24 +254,24 @@ printf("......... %s (loc: %d)\n", name.c_str(), loc );
         glUseProgram( 0 );
     }
 
-    return m_linked;
+    return( true );
 }
 
-bool ShaderProgram::validate()
+bool ShaderProgram::validate( unsigned int contextID )
 {
-    const unsigned int contextID( 0 );
-
     if( _ids._data.size() < contextID+1 )
         internalInit( contextID );
+    const GLuint id( _ids[ contextID ].first );
 
     GLint status;
-    glValidateProgram( _ids[ contextID ] );
-    glGetProgramiv( _ids[ contextID ], GL_VALIDATE_STATUS, &status );
+    glValidateProgram( id );
+    glGetProgramiv( id, GL_VALIDATE_STATUS, &status );
     if( status != GL_TRUE )
     {
         printInfoLog();
-        glDeleteProgram( _ids[ contextID ] );
-        _ids[ contextID ] = 0;
+        glDeleteProgram( id );
+        _ids[ contextID ].first = 0;
+        // TBD also set second (link status) to false?
     }
     return( status == GL_TRUE );
 }
@@ -267,26 +280,22 @@ bool ShaderProgram::validate()
 void ShaderProgram::getActiveUniform( GLuint index, std::string &name, GLenum &type )
 {
     const unsigned int contextID( 0 );
+    const GLuint id( _ids[ contextID ].first );
 
     char namebuff[256];
     GLsizei len;
     GLsizei isize = sizeof(namebuff);
     GLint osize;
-    glGetActiveUniform( _ids[ contextID ], index, isize, &len, &osize, &type, namebuff );
+    glGetActiveUniform( id, index, isize, &len, &osize, &type, namebuff );
     name = std::string(namebuff );
 }
 
 
 void ShaderProgram::internalInit( const unsigned int contextID )
 {
-    if( m_initialized )
-        return;
-
     _ids._data.resize( contextID + 1 );
-    _ids[ contextID ] = glCreateProgram();
-
-    m_initialized = true;
-
+    _ids[ contextID ].first = glCreateProgram();
+    _ids[ contextID ].second = false;
 }
 
 void ShaderProgram::fromSourceFiles( const std::string &vertexShaderFile,
@@ -335,13 +344,13 @@ void ShaderProgram::fromSourceStringList( const SourceList &l )
 }
 
 
-std::size_t ShaderProgram::createHash( const std::string& name )
+ShaderProgram::HashValue ShaderProgram::createHash( const std::string& name )
 {
     boost::hash< std::string > h;
     return( h( name ) );
 }
 
-GLint ShaderProgram::getUniformLocation( std::size_t h ) const
+GLint ShaderProgram::getUniformLocation( const HashValue& h ) const
 {
     LocationMap::const_iterator it( _uniformLocations.find( h ) );
     if( it != _uniformLocations.end() )
@@ -349,13 +358,21 @@ GLint ShaderProgram::getUniformLocation( std::size_t h ) const
     else
         return( -1 );
 }
-GLint ShaderProgram::getVertexAttribLocation( std::size_t h ) const
+GLint ShaderProgram::getUniformLocation( const std::string& s ) const
+{
+    return( getVertexAttribLocation( createHash( s ) ) );
+}
+GLint ShaderProgram::getVertexAttribLocation( const HashValue& h ) const
 {
     LocationMap::const_iterator it( _vertexAttribLocations.find( h ) );
     if( it != _vertexAttribLocations.end() )
         return( it->second );
     else
         return( -1 );
+}
+GLint ShaderProgram::getVertexAttribLocation( const std::string& s ) const
+{
+    return( getVertexAttribLocation( createHash( s ) ) );
 }
 
 

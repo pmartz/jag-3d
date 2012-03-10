@@ -41,7 +41,8 @@ struct DrawInfo;
 
 
 /** \class ShaderProgram ShaderProgram.h <jagDraw/ShaderProgram.h>
-\brief TBD.
+\brief
+\details \gl{section 2.11.2}.
 */
 class JAGDRAW_EXPORT ShaderProgram : public SHARED_FROM_THIS(ShaderProgram)
 {
@@ -55,17 +56,31 @@ public:
     ShaderProgram();
     ~ShaderProgram();
 
+    /** \brief Attach a shader to this program.
+    \details This function adds \c shader to the \c _shaders list.
+    The link() member function calls glAttachShader() for each
+    shader in \c _shaders.
+    \gl{section 2.11.2}.
+    */
     void attachShader( ShaderPtr shader );
 
-    // TBD need to get context ID, probably as a param?
-    GLint getId();
-    // TBD need to get context ID, probably as a param?
-    bool link();
-// TBD need to get context ID, probably as a param?
-    bool validate();
-
-    // TBD need to get context ID, probably as a param?
+    /** \brief Make this program the current program.
+    \details Implicitly calls link() if necessary for this context,
+    then calls glUseProgram().
+    \gl{section 2.11.2}.
+    */
     void use( DrawInfo& drawInfo );
+
+    /** \brief
+    \details
+    */
+    GLint getId( unsigned int contextID );
+
+    /** \brief
+    \details \gl{section 2.11.2}.
+    */
+    bool link( unsigned int contextID );
+    bool validate( unsigned int contextID );
 
     void setUniformLocationNameString( UniformLocationName name, const std::string& string );
     GLuint getUniformLocation( const std::string& name );
@@ -83,10 +98,8 @@ public:
     // TBD need to get context ID, probably as a param?
     void printInfoLog();
 
-    // TBD need to get context ID, probably as a param?
-    void bindAttribLocation( GLuint index, const std::string& name );
-    // TBD need to get context ID, probably as a param?
-    GLuint getAttribLocation( const std::string& name );
+    void setExplicitAttribLocation( GLuint index, const std::string& name );
+    GLuint getExplicitAttribLocation( const std::string& name ) const;
 
     // Convenience Function
     void fromSourceFiles( const std::string& vertexShaderFile,
@@ -108,15 +121,15 @@ public:
     void fromSourceStringList( const SourceList & );
 
 
-    static std::size_t createHash( const std::string& name );
+    typedef std::size_t HashValue;
+    static HashValue createHash( const std::string& name );
 
-    GLint getUniformLocation( std::size_t h ) const;
-    GLint getVertexAttribLocation( std::size_t h ) const;
+    GLint getUniformLocation( const HashValue& h ) const;
+    GLint getUniformLocation( const std::string& s ) const;
+    GLint getVertexAttribLocation( const HashValue& h ) const;
+    GLint getVertexAttribLocation( const std::string& s ) const;
 
 private:
-    bool m_initialized;
-    bool m_linked;
-
     struct LocationTypePair {
         GLint loc;
         GLenum type;
@@ -129,7 +142,7 @@ private:
         LocationTypePair( GLint l, GLenum t ): loc(l), type(t) {}
     };
 
-    ShaderList m_shaders;
+    ShaderList _shaders;
     std::map<std::string, LocationTypePair> m_nameToLocationTypeMap;
 
     std::map< UniformLocationName, GLint> m_nameToLocationMap;
@@ -138,13 +151,16 @@ private:
     void internalInit( const unsigned int contextID );
 
 
-    // TBD Needs to be PerContextData< std::pair< GLuint, bool > >
-    // to track link status per context.
-    PerContextGLuint _ids;
+    typedef std::pair< GLuint, bool > IDLinkPair;
+    typedef PerContextData< IDLinkPair > PerContextIDLink;
+    PerContextIDLink _ids;
 
-    typedef std::map< std::size_t, GLint > LocationMap;
+    typedef std::map< HashValue, GLint > LocationMap;
     LocationMap _uniformLocations;
     LocationMap _vertexAttribLocations;
+
+    typedef std::map< std::string, GLint > ExplicitLocationMap;
+    ExplicitLocationMap _explicitVertexAttribLocations;
 };
 
 typedef jagBase::ptr< ShaderProgram >::shared_ptr ShaderProgramPtr;
