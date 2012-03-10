@@ -25,6 +25,7 @@
 #include <jagDraw/PlatformOpenGL.h>
 #include <jagDraw/DrawInfo.h>
 #include <jagDraw/BufferObject.h>
+#include <jagDraw/VertexAttrib.h>
 #include <jagDraw/VertexArrayObject.h>
 #include <jagDraw/DrawCommand.h>
 #include <jagDraw/Shader.h>

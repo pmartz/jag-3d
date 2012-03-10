@@ -56,6 +56,8 @@ protected:
     jagDraw::BufferObjectPtr _ibop;
     jagDraw::BufferObjectPtr _ibop2;
     jagDraw::ShaderProgramPtr _spp;
+    jagDraw::VertexAttribPtr _verts, _color;
+    jagDraw::VertexAttribPtr _iVerts, _iColor;
     jagDraw::VertexArrayObjectPtr _vaop;
 
     jagDraw::DrawArraysPtr _drawArrays;
@@ -116,6 +118,11 @@ bool Simple3xDemo::init()
         c3fa.push_back( gmtl::Point3f( 1.f, 0.f, 1.f ) );
         jagBase::BufferPtr cbp( new jagBase::Buffer( c3fa.size() * sizeof( gmtl::Point3f ), (void*)&c3fa[0] ) );
         _cbop = jagDraw::BufferObjectPtr( new jagDraw::BufferObject( GL_ARRAY_BUFFER, cbp ) );
+
+        _verts = jagDraw::VertexAttribPtr( new jagDraw::VertexAttrib(
+            "vertex", 3, GL_FLOAT, GL_FALSE, 0, 0 ) );
+        _color = jagDraw::VertexAttribPtr( new jagDraw::VertexAttrib(
+            "color", 3, GL_FLOAT, GL_FALSE, 0, 0 ) );
     }
     {
         Point3fArray i3fa;
@@ -133,6 +140,12 @@ bool Simple3xDemo::init()
             i3fa.push_back( gmtl::Point3f( 1.f, 0.f, 1.f ) );
         jagBase::BufferPtr ibp( new jagBase::Buffer( i3fa.size() * sizeof( gmtl::Point3f ), (void*)&i3fa[0] ) );
         _ibop = jagDraw::BufferObjectPtr( new jagDraw::BufferObject( GL_ARRAY_BUFFER, ibp ) );
+
+        const GLsizei stride = sizeof( GLfloat ) * 3 * 2;
+        _iVerts = jagDraw::VertexAttribPtr( new jagDraw::VertexAttrib(
+            "vertex", 3, GL_FLOAT, GL_FALSE, stride, 0 ) );
+        _iColor = jagDraw::VertexAttribPtr( new jagDraw::VertexAttrib(
+            "color", 3, GL_FLOAT, GL_FALSE, stride, sizeof( GLfloat ) * 3 ) );
     }
     {
         Point3fArray i3fa;
@@ -200,44 +213,58 @@ bool Simple3xDemo::frame()
 {
     glClear( GL_COLOR_BUFFER_BIT );
 
+    // drawInfo stores the contextID (used by many Jag objects to
+    // look up their object ID), and the current ShaderProgram
+    // (used by vertex attribs and uniforms to look up their locations).
     jagDraw::DrawInfo drawInfo;
     drawInfo._id = 0;
 
+    // glUseProgram for our ShaderProgram.
     _spp->use( drawInfo );
 
+    // Bind the GL_ARRAY_BUFFER for vertices
     _vbop->bind( drawInfo );
-    glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 0, (const void*)0 );
-    glEnableVertexAttribArray( 0 );
+    // Enable and specify the "vertex" vertex attrib.
+    (*_verts)( drawInfo );
+    // Bind the GL_ARRAY_BUFFER for color
     _cbop->bind( drawInfo );
-    glVertexAttribPointer( 1, 3, GL_FLOAT, GL_FALSE, 0, (const void*)0 );
-    glEnableVertexAttribArray( 1 );
+    // Enable and specify the "color" vertex attrib.
+    (*_color)( drawInfo );
 
+    // Bind the GL_ELEMENT_BUFFER
     _elbop->bind( drawInfo );
+    // Draw the triangle strip on the left.
     (*_drawElements)( drawInfo );
 
 
-    const GLsizei stride = sizeof( GLfloat ) * 3 * 2;
+    // Bind the GL_ARRAY_BUFFER for interleaved vertices and colors.
     _ibop->bind( drawInfo );
-    glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, stride, (const void*)0 );
-    glEnableVertexAttribArray( 0 );
-    glVertexAttribPointer( 1, 3, GL_FLOAT, GL_FALSE, stride, (const void*)( sizeof( GLfloat ) * 3 ) );
-    glEnableVertexAttribArray( 1 );
+    // Enable and specify the "vertex" vertex attrib.
+    (*_iVerts)( drawInfo );
+    // Enable and specify the "color" vertex attrib.
+    (*_iColor)( drawInfo );
 
+    // Draw the triangle strip in the middle.
     (*_drawArrays)( drawInfo );
 
 
+    // Bind the vertex array object.
     _vaop->bind( drawInfo );
     if( _first )
     {
         _first = false;
 
+        // Bind the GL_ARRAY_BUFFER for interleaved vertices and colors
+        // (different from _ibop dur to vertex positions).
         _ibop2->bind( drawInfo );
-        glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, stride, (const void*)0 );
-        glEnableVertexAttribArray( 0 );
-        glVertexAttribPointer( 1, 3, GL_FLOAT, GL_FALSE, stride, (const void*)( sizeof( GLfloat ) * 3 ) );
-        glEnableVertexAttribArray( 1 );
+        // Enable and specify the "vertex" vertex attrib.
+        (*_iVerts)( drawInfo );
+        // Enable and specify the "color" vertex attrib.
+        (*_iColor)( drawInfo );
     }
+    // Draw the triangle strip on the right.
     (*_drawArrays)( drawInfo );
+    // Unbind vertex array object for non-VAO rendering in next frame.
     glBindVertexArray( 0 );
 
 

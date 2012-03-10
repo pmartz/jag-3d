@@ -24,6 +24,8 @@
 #include <stdio.h>
 #include <iostream>
 
+#include <boost/functional/hash.hpp>
+
 
 namespace jagDraw {
 
@@ -82,7 +84,7 @@ void ShaderProgram::use( DrawInfo& drawInfo )
         return;
 
     glUseProgram( _ids[ contextID ] );
-    //drawInfo._shader = ShaderProgramPtr( this );
+    drawInfo._shader = shared_from_this();
 }
 
 GLuint ShaderProgram::getUniformLocation( const std::string &name )
@@ -197,15 +199,16 @@ bool ShaderProgram::link()
         GLint n;
         glUseProgram( id );
         glGetProgramiv( id, GL_ACTIVE_UNIFORMS, &n );
-printf("Active Uniforms:\n" );
+printf("Active Uniforms: (%d)\n", n );
         for( GLint i = 0; i < n; i++ )
         {
             GLenum type;
             std::string string;
             getActiveUniform( i, string, type );
             GLint location = glGetUniformLocation( id, string.c_str() );
-printf("......... %d: %s (%d)\n", i, string.c_str(), location );
+printf("......... %s (loc: %d)\n", string.c_str(), location );
             m_nameToLocationTypeMap[string] = LocationTypePair( location, type );
+            _uniformLocations[ createHash( string ) ] = location;
 
             std::map< std::string,  UniformLocationName >::iterator p = m_stringToNameMap.find( string ); 
             if( p != m_stringToNameMap.end() )
@@ -216,7 +219,7 @@ printf("......... %d: %s (%d)\n", i, string.c_str(), location );
         }
 
         glGetProgramiv( id, GL_ACTIVE_ATTRIBUTES, &n );
-printf("\nActive Attributes: (%d)\n", n );
+printf("Active Attributes: (%d)\n", n );
         for( GLint i = 0; i < n; i++ )
         {
             GLenum type;
@@ -230,9 +233,10 @@ printf("\nActive Attributes: (%d)\n", n );
             glGetActiveAttrib( id, i, isize, &len, &osize, &type, namebuff );
             name = std::string(namebuff );
             GLint loc = glGetAttribLocation( id, name.c_str() );
-printf("......... %d: %s (%d)\n", i, name.c_str(), loc );
+printf("......... %s (loc: %d)\n", name.c_str(), loc );
             GLint location = glGetUniformLocation( id, name.c_str() );
             m_nameToLocationTypeMap[name] = LocationTypePair( location, type );
+            _vertexAttribLocations[ createHash( name ) ] = loc;
         }
         glUseProgram( 0 );
     }
@@ -285,17 +289,6 @@ void ShaderProgram::internalInit( const unsigned int contextID )
 
 }
 
-bool ShaderProgram::p_findLocationTypePair( const std::string &name, ShaderProgram::LocationTypePair &lp )
-{
-    std::map<std::string, LocationTypePair>::iterator f = m_nameToLocationTypeMap.find(name);
-
-    if( f == m_nameToLocationTypeMap.end() )
-        return false;
-
-    lp = f->second;
-    return true;
-}
-
 void ShaderProgram::fromSourceFiles( const std::string &vertexShaderFile,
                               const std::string &fragmentShaderFile )
 {
@@ -339,6 +332,30 @@ void ShaderProgram::fromSourceStringList( const SourceList &l )
         shader->addSourceString( p->second );
         attachShader( shader );
     }
+}
+
+
+std::size_t ShaderProgram::createHash( const std::string& name )
+{
+    boost::hash< std::string > h;
+    return( h( name ) );
+}
+
+GLint ShaderProgram::getUniformLocation( std::size_t h ) const
+{
+    LocationMap::const_iterator it( _uniformLocations.find( h ) );
+    if( it != _uniformLocations.end() )
+        return( it->second );
+    else
+        return( -1 );
+}
+GLint ShaderProgram::getVertexAttribLocation( std::size_t h ) const
+{
+    LocationMap::const_iterator it( _vertexAttribLocations.find( h ) );
+    if( it != _vertexAttribLocations.end() )
+        return( it->second );
+    else
+        return( -1 );
 }
 
 

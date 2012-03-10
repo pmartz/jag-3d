@@ -44,7 +44,7 @@ set( _jagDrawHeaderFiles
 #    ${HEADER_PATH}/Transform.h
     ${HEADER_PATH}/UniformValue.h
     ${HEADER_PATH}/VertexArrayObject.h
-#    ${HEADER_PATH}/VertexAttribute.h
+    ${HEADER_PATH}/VertexAttrib.h
 )
 
 set( _jagDrawSourceFiles

@@ -13,8 +13,10 @@ This module contains host-side data store and multi-context support
 for many OpenGL commands. This is the only module that executes
 OpenGL commands.
 \li \ref Error "OpenGL Errors"
-\li \link jagDraw::VertexArray Vertex Arrays \endlink
-\li \link jagDraw::DrawCommand Primitive Restart \endlink
+\li \link jagDraw::VertexAttrib Vertex Arrays and Attributes \endlink
+\li \link jagDraw::VertexArrayObject Vertex Array Objects \endlink
+\li \link jagDraw::DrawCommand Drawing commands \endlink
+\li \link jagDraw::BufferObject Buffer Objects \endlink
 
 \section jagSG
 

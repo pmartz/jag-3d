@@ -44,7 +44,15 @@ struct DrawInfo;
 class JAGDRAW_EXPORT BufferObject /* : public DrawableAttribute */
 {
 public:
+    /**
+    \glparam{target,table 2.8}
+    */
     BufferObject( const GLenum target );
+    /**
+    \glparam{target,table 2.8}
+    \param b BufferPtr
+    \glparam{usage,section 2.9.2}
+    */
     BufferObject( const GLenum target, const jagBase::BufferPtr b, const GLenum usage=GL_STATIC_DRAW );
     BufferObject( const BufferObject &rhs );
 

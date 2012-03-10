@@ -43,7 +43,7 @@ struct DrawInfo;
 /** \class ShaderProgram ShaderProgram.h <jagDraw/ShaderProgram.h>
 \brief TBD.
 */
-class JAGDRAW_EXPORT ShaderProgram //: public DrawableAttribute
+class JAGDRAW_EXPORT ShaderProgram : public SHARED_FROM_THIS(ShaderProgram)
 {
 public:
     enum UniformLocationName
@@ -107,6 +107,12 @@ public:
     void fromSourceFileList( const SourceList & );
     void fromSourceStringList( const SourceList & );
 
+
+    static std::size_t createHash( const std::string& name );
+
+    GLint getUniformLocation( std::size_t h ) const;
+    GLint getVertexAttribLocation( std::size_t h ) const;
+
 private:
     bool m_initialized;
     bool m_linked;
@@ -131,9 +137,14 @@ private:
 
     void internalInit( const unsigned int contextID );
 
-    bool p_findLocationTypePair( const std::string &name, ShaderProgram::LocationTypePair &lp );
 
+    // TBD Needs to be PerContextData< std::pair< GLuint, bool > >
+    // to track link status per context.
     PerContextGLuint _ids;
+
+    typedef std::map< std::size_t, GLint > LocationMap;
+    LocationMap _uniformLocations;
+    LocationMap _vertexAttribLocations;
 };
 
 typedef jagBase::ptr< ShaderProgram >::shared_ptr ShaderProgramPtr;

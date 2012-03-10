@@ -92,8 +92,17 @@ public:
     */
     virtual void operator()( DrawInfo& )
     {
+        // TBD This is not particularly efficient, always issuing at least a
+        // glEnable/glDisable call. Need a better way to support this feature.
         if( _restart )
+        {
+            glEnable( GL_PRIMITIVE_RESTART );
             glPrimitiveRestartIndex( _restartIndex );
+        }
+        else
+        {
+            glDisable( GL_PRIMITIVE_RESTART );
+        }
     }
 
     /**
