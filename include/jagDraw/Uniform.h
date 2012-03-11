@@ -18,34 +18,43 @@
 *
 *************** <auto-copyright.pl END do not edit this line> ***************/
 
-#ifndef __JAGDRAW_UNIFOR_value_H__
-#define __JAGDRAW_UNIFOR_value_H__ 1
+#ifndef __JAGDRAW_UNIFOR_H__
+#define __JAGDRAW_UNIFOR_H__ 1
 
 
 #include <jagDraw/Export.h>
 #include <jagDraw/PlatformOpenGL.h>
-//#include <Chaskii/Math/vec.h>
-//#include <Chaskii/Math/matrix.h>
+#include <jagDraw/ShaderProgram.h>
+#include <jagBase/ptr.h>
+
+#include <vector>
+#include <string>
 
 
 namespace jagDraw {
 
 
-/** \class UniformValue UniformValue.h <jagDraw\UniformValue.h>
+struct DrawInfo;
+
+
+/** \class Uniform Uniform.h <jagDraw\Uniform.h>
+\brief
+\details \gl{section 2.11.4}
 */
-class JAGDRAW_EXPORT UniformValue 
+class JAGDRAW_EXPORT Uniform : public SHARED_FROM_THIS(Uniform)
 {
 public:
-    UniformValue();
-    UniformValue( const UniformValue &v );
+    Uniform( const std::string& name );
+    Uniform( const Uniform& u );
 
-    UniformValue( const GLint i );
+    Uniform( const std::string& name, const bool b );
+    Uniform( const std::string& name, const GLint i );
+    Uniform( const std::string& name, const GLfloat f );
     /*
     UniformValue( iiMath::vec2i v2i );
     UniformValue( iiMath::vec3i v3i );
     UniformValue( iiMath::vec4i v4i );
 
-    UniformValue( GLfloat f );
     UniformValue( iiMath::vec2f v2f );
     UniformValue( iiMath::vec3f v3f );
     UniformValue( iiMath::vec4f v4f );
@@ -54,17 +63,25 @@ public:
     UniformValue( iiMath::matrix4f mat4f );
     */
 
-    void apply( const GLint loc ) const;
-    void apply() const;
+    void operator()( DrawInfo& drawInfo, const GLint loc ) const;
+    void operator()( DrawInfo& drawInfo ) const;
 
     GLenum getType() { return _type; }
 
     void setTranspose( const bool transpose=true ) { _transpose = transpose; }
     bool getTranspose() const { return( _transpose ); }
 
-//private:
+protected:
+    void internalInit( const std::string& name );
+
+    std::string _name;
+    ShaderProgram::HashValue _indexHash;
+
     GLenum _type;
+
     union {
+        bool    b;
+
         GLint   i;
         GLint   v2i[2]; 
         GLint   v3i[3]; 
@@ -82,10 +99,13 @@ public:
     bool _transpose;
 };
 
+typedef jagBase::ptr< jagDraw::Uniform >::shared_ptr UniformPtr;
+typedef std::vector< UniformPtr > UniformList;
+
 
 // jagDraw
 }
 
 
-// __JAGDRAW_UNIFOR_value_H__
+// __JAGDRAW_UNIFOR_H__
 #endif

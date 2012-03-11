@@ -107,20 +107,6 @@ GLuint ShaderProgram::getUniformLocation( const std::string &name )
     return -1;
 }
 
-void ShaderProgram::setUniformValue( UniformLocationName name, const UniformValue &value )
-{
-    GLint loc = m_nameToLocationMap[name];
-    if( loc != -1 )
-        value.apply( loc );
-}
-
-void ShaderProgram::setUniformValue( const std::string &name, const UniformValue &value )
-{
-    GLint loc = getUniformLocation(name);
-    if( loc != -1 )
-        value.apply(loc);
-}
-
 
 void ShaderProgram::setExplicitAttribLocation( GLuint index, const std::string& name )
 {
@@ -193,8 +179,10 @@ bool ShaderProgram::link( unsigned int contextID )
         if( shader != 0 )
             glAttachShader( id, shader );
     }
-    // TBD Leftover from Chaskii. Seems incorrect to clear. Commenting this out.
-    //_shaders.clear();
+    // We no longer need the list of attached shaders. Clear the list and remove
+    // references to those shaders (which will likely cause them to be deleted,
+    // thereby reclaiming memory, unless the app still holds a reference).
+    _shaders.clear();
 
     GLint status;
     glLinkProgram( id );

@@ -42,7 +42,7 @@ set( _jagDrawHeaderFiles
     ${HEADER_PATH}/ShaderProgram.h
 #    ${HEADER_PATH}/Texture.h
 #    ${HEADER_PATH}/Transform.h
-    ${HEADER_PATH}/UniformValue.h
+    ${HEADER_PATH}/Uniform.h
     ${HEADER_PATH}/VertexArrayObject.h
     ${HEADER_PATH}/VertexAttrib.h
 )
@@ -55,7 +55,7 @@ set( _jagDrawSourceFiles
     Shader.cpp
     ShaderProgram.cpp
 #    stats.cpp
-    UniformValue.cpp
+    Uniform.cpp
     VertexArrayObject.cpp
 )
 

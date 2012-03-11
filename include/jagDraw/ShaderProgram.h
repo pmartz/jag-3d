@@ -27,7 +27,6 @@
 //#include <Chaskii/Draw/DrawableAttribute.h>
 #include <jagDraw/Shader.h>
 #include <jagDraw/PerContextData.h>
-#include <jagDraw/UniformValue.h>
 #include <jagBase/ptr.h>
 
 #include <map>
@@ -82,7 +81,7 @@ public:
     \details This function performs the following tasks:
     \li If the program doesn't have a program object ID for \c contextID, it creates one.
     \li It calls glBindAttribLocation() for all vertex attribs whose locations were specified using setExplicitAttribLocation().
-    \li It calls glAttachShader() for all \link Shader "Shaders" \endlink attached using attachShader().
+    \li It calls glAttachShader() for all \link Shader Shaders \endlink attached using attachShader(), then clears the list of attached shaders (to remove references to them).
     \li It calls glLinkProgram(), then queries GL_LINK_STATUS.
     If the link was unsuccessful, link() calls printInfoLog(), deletes the program object
     with a call to glDeleteProgram, and returns false.
@@ -107,8 +106,6 @@ public:
     GLuint getUniformLocation( UniformLocationName name );
     // TBD need to get context ID, probably as a param?
     void getActiveUniform( GLuint index, std::string& name, GLenum& type );
-    void setUniformValue( UniformLocationName, const UniformValue& v );
-    void setUniformValue( const std::string& uniformName, const UniformValue& v );
 
     // TBD need to get context ID, probably as a param?
     void setParameter( GLenum pname, GLint value ); // Used for Geometry Shaders 

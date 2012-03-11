@@ -52,12 +52,15 @@ public:
 
     virtual void operator()( jagDraw::DrawInfo& drawInfo )
     {
+        // TBD need an "explicit" mode where the location is set by the app
+        // (because it uses glBindAttribLocation). This would avoid the table lookup.
         GLint index( drawInfo._program->getVertexAttribLocation( _indexHash ) );
-        if( index != -1 )
-        {
-            glEnableVertexAttribArray( index );
-            glVertexAttribIPointer( index, _size, _type, _stride, (GLvoid *)(_offset ) );
-        }
+
+        // Note that we do NOT check for index == -1. Inactive vertex attribs
+        // are not centerline usage. OpenGL will ignore these calls if
+        // index == -1, so we avoid an extra conditional by not checking.
+        glEnableVertexAttribArray( index );
+        glVertexAttribIPointer( index, _size, _type, _stride, (GLvoid *)(_offset ) );
     }
 
 protected:
@@ -89,12 +92,15 @@ public:
 
     virtual void operator()( jagDraw::DrawInfo& drawInfo )
     {
+        // TBD need an "explicit" mode where the location is set by the app
+        // (because it uses glBindAttribLocation). This would avoid the table lookup.
         GLint index( drawInfo._program->getVertexAttribLocation( _indexHash ) );
-        if( index != -1 )
-        {
-            glEnableVertexAttribArray( index );
-            glVertexAttribPointer( index, _size, _type, _normalized, _stride, (GLvoid *)(_offset ) );
-        }
+
+        // Note that we do NOT check for index == -1. Inactive vertex attribs
+        // are not centerline usage. OpenGL will ignore these calls if
+        // index == -1, so we avoid an extra conditional by not checking.
+        glEnableVertexAttribArray( index );
+        glVertexAttribPointer( index, _size, _type, _normalized, _stride, (GLvoid *)(_offset ) );
     }
 
 protected:

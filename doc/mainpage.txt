@@ -17,6 +17,8 @@ OpenGL commands.
 \li \link jagDraw::VertexArrayObject Vertex Array Objects \endlink
 \li \link jagDraw::DrawCommand Drawing commands \endlink
 \li \link jagDraw::BufferObject Buffer Objects \endlink
+\li \link jagDraw::Shader Shader Objects \endlink
+\li \link hagDraw::ShaderProgram Program Objects \endlink
 
 \section jagSG
 
