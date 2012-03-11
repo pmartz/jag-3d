@@ -19,6 +19,7 @@ OpenGL commands.
 \li \link jagDraw::BufferObject Buffer Objects \endlink
 \li \link jagDraw::Shader Shader Objects \endlink
 \li \link hagDraw::ShaderProgram Program Objects \endlink
+\li \link hagDraw::Uniform Uniform Variables \endlink
 
 \section jagSG
 

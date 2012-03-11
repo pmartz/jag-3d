@@ -149,6 +149,10 @@ Uniform::Uniform( iiMath::matrix4f mat4f )
 
 void Uniform::operator()( DrawInfo& drawInfo, const GLint loc ) const
 {
+    // This should NOT be necessary, as we should only be here if this
+    // uniform is already in the drawInfo._uniformMap.
+    //drawInfo._uniformMap[ _indexHash ] = shared_from_this();
+
     switch( _type )
     {
         case GL_BOOL:       glUniform1i( loc, (GLint)( _value.b ) ); break;
@@ -181,8 +185,19 @@ void Uniform::operator()( DrawInfo& drawInfo, const GLint loc ) const
 
 void Uniform::operator()( DrawInfo& drawInfo ) const
 {
-    GLint index( drawInfo._program->getVertexAttribLocation( _indexHash ) );
-    operator()( drawInfo, index );
+    // Add this uniform to the pool of potentially active uniforms
+    // for the current frame and draw thread.
+    drawInfo._uniformMap[ _indexHash ] = shared_from_this();
+
+    // TBD ShaderProgram::use() will need to iterate over that list...
+
+    // Uniform::operator() could execute before ShaderProgram::use(),
+    // so only look up uniform location if a ShaderProgram is available.
+    if( drawInfo._program != NULL )
+    {
+        GLint index( drawInfo._program->getUniformLocation( _indexHash ) );
+        operator()( drawInfo, index );
+    }
 }
 
 

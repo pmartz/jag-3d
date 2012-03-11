@@ -67,9 +67,15 @@ public:
 
     /** \brief Make this program the current program.
     \details Implicitly calls link() if necessary for this context,
-    then calls glUseProgram().
-    \gl{section 2.11.2}.
-    */
+    then calls glUseProgram(). Also records itself in drawInfo._program
+    for later location queries by vertex attribs and uniforms.
+
+    This function also iterates over its list of active uniforms and
+    looks for a matching uniform in drawInfo._uniformMap. If a match is
+    found, this function sets the matching uniform's value in OpenGL state.
+    This allows uniforms to be specified in the draw list prior to shader
+    programs.
+    \gl{section 2.11.2}. */
     void use( DrawInfo& drawInfo );
 
     /** \brief Get the OpenGL program object ID for the specified \c contextID.
@@ -99,13 +105,17 @@ public:
     */
     bool validate( unsigned int contextID );
 
+    /** \brief
+    \details
+    */
+    void getActiveUniform( const GLuint id, const GLuint index, std::string& name, GLenum& type );
+
+    /** \brief
+    \details
+    */
+    void getActiveAttrib( const GLuint id, const GLuint index, std::string& name, GLenum& type );
 
 
-    void setUniformLocationNameString( UniformLocationName name, const std::string& string );
-    GLuint getUniformLocation( const std::string& name );
-    GLuint getUniformLocation( UniformLocationName name );
-    // TBD need to get context ID, probably as a param?
-    void getActiveUniform( GLuint index, std::string& name, GLenum& type );
 
     // TBD need to get context ID, probably as a param?
     void setParameter( GLenum pname, GLint value ); // Used for Geometry Shaders 
@@ -175,26 +185,9 @@ public:
     GLint getVertexAttribLocation( const std::string& s ) const;
 
 private:
-    struct LocationTypePair {
-        GLint loc;
-        GLenum type;
-
-        LocationTypePair() {}
-        LocationTypePair( const LocationTypePair &l):
-            loc(l.loc),
-            type(l.type) {}
-
-        LocationTypePair( GLint l, GLenum t ): loc(l), type(t) {}
-    };
-
-    ShaderList _shaders;
-    std::map<std::string, LocationTypePair> m_nameToLocationTypeMap;
-
-    std::map< UniformLocationName, GLint> m_nameToLocationMap;
-    std::map< std::string,  UniformLocationName > m_stringToNameMap;
-
     void internalInit( const unsigned int contextID );
 
+    ShaderList _shaders;
 
     typedef std::pair< GLuint, bool > IDLinkPair;
     typedef PerContextData< IDLinkPair > PerContextIDLink;

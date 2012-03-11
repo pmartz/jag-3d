@@ -52,6 +52,11 @@ public:
 
     virtual void operator()( jagDraw::DrawInfo& drawInfo )
     {
+        // ShaderProgram::use() must be called prior to VertexAttrib::operator().
+        // Note this is different from Uniform::operator(). This means we can simply
+        // look up the vertex attrib hash index without bothering to check for
+        // ( drawInfo._program != NULL ) first.
+
         // TBD need an "explicit" mode where the location is set by the app
         // (because it uses glBindAttribLocation). This would avoid the table lookup.
         GLint index( drawInfo._program->getVertexAttribLocation( _indexHash ) );

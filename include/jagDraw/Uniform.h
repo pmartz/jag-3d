@@ -47,9 +47,9 @@ public:
     Uniform( const std::string& name );
     Uniform( const Uniform& u );
 
-    Uniform( const std::string& name, const bool b );
-    Uniform( const std::string& name, const GLint i );
-    Uniform( const std::string& name, const GLfloat f );
+    explicit Uniform( const std::string& name, const bool b );
+    explicit Uniform( const std::string& name, const GLint i );
+    explicit Uniform( const std::string& name, const GLfloat f );
     /*
     UniformValue( iiMath::vec2i v2i );
     UniformValue( iiMath::vec3i v3i );
@@ -63,7 +63,15 @@ public:
     UniformValue( iiMath::matrix4f mat4f );
     */
 
+    /** \brief TBD
+    \details TBD
+    Does not add this uniform to drawInfo._uniformMap.
+    \gl{section 2.11.4} */
     void operator()( DrawInfo& drawInfo, const GLint loc ) const;
+    /** \brief TBD
+    \details TBD
+    Adds this uniform to drawInfo._uniformMap.
+    \gl{section 2.11.4} */
     void operator()( DrawInfo& drawInfo ) const;
 
     GLenum getType() { return _type; }
@@ -100,6 +108,7 @@ protected:
 };
 
 typedef jagBase::ptr< jagDraw::Uniform >::shared_ptr UniformPtr;
+typedef jagBase::ptr< const jagDraw::Uniform >::shared_ptr ConstUniformPtr;
 typedef std::vector< UniformPtr > UniformList;
 
 

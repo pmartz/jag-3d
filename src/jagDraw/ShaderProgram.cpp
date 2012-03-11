@@ -55,9 +55,6 @@ void ShaderProgram::printInfoLog()
 ShaderProgram::ShaderProgram()
     //: DrawableAttribute( ShaderProgram_t )
 {
-    m_stringToNameMap["ii_ModelViewProjectionMatrix"] = ModelViewProjectionMatrix;
-    m_stringToNameMap["ii_NormalMatrix"] = NormalMatrix;
-    m_nameToLocationMap[ModelViewProjectionMatrix] = -1;
 }
 
 ShaderProgram::~ShaderProgram()
@@ -97,14 +94,16 @@ void ShaderProgram::use( DrawInfo& drawInfo )
     // Downstream vertex attribs and uniforms will query
     // this for location values.
     drawInfo._program = shared_from_this();
-}
 
-GLuint ShaderProgram::getUniformLocation( const std::string &name )
-{
-    std::map<std::string, LocationTypePair>::iterator f =  m_nameToLocationTypeMap.find( name );
-    if( f != m_nameToLocationTypeMap.end() )
-        return f->second.loc;
-    return -1;
+    // Iterate over active uniforms. If an active uniform matches a uniform
+    // in the drawInfo._uniformMap, set its value in GL state.
+    BOOST_FOREACH( const LocationMap::value_type& it, _uniformLocations )
+    {
+        const HashValue& hash( it.first );
+        DrawInfo::UniformMap::iterator uIt( drawInfo._uniformMap.find( hash ) );
+        if( uIt != drawInfo._uniformMap.end() )
+            (*( uIt->second ))( drawInfo, it.second );
+    }
 }
 
 
@@ -205,19 +204,11 @@ printf("Active Uniforms: (%d)\n", n );
         for( GLint i = 0; i < n; i++ )
         {
             GLenum type;
-            std::string string;
-            getActiveUniform( i, string, type );
-            GLint location = glGetUniformLocation( id, string.c_str() );
-printf("......... %s (loc: %d)\n", string.c_str(), location );
-            m_nameToLocationTypeMap[string] = LocationTypePair( location, type );
-            _uniformLocations[ createHash( string ) ] = location;
-
-            std::map< std::string,  UniformLocationName >::iterator p = m_stringToNameMap.find( string ); 
-            if( p != m_stringToNameMap.end() )
-            {
-                UniformLocationName name = p->second;
-                m_nameToLocationMap[name] = location;
-            }
+            std::string uniformName;
+            getActiveUniform( id, i, uniformName, type );
+            GLint location = glGetUniformLocation( id, uniformName.c_str() );
+printf("......... %s (loc: %d)\n", uniformName.c_str(), location );
+            _uniformLocations[ createHash( uniformName ) ] = location;
         }
 
         glGetProgramiv( id, GL_ACTIVE_ATTRIBUTES, &n );
@@ -225,20 +216,11 @@ printf("Active Attributes: (%d)\n", n );
         for( GLint i = 0; i < n; i++ )
         {
             GLenum type;
-            std::string name;
-
-            char namebuff[256];
-            GLsizei len;
-            GLsizei isize = sizeof(namebuff);
-            GLint osize;
-            //getActiveAttrib( i, name, type );
-            glGetActiveAttrib( id, i, isize, &len, &osize, &type, namebuff );
-            name = std::string(namebuff );
-            GLint loc = glGetAttribLocation( id, name.c_str() );
-printf("......... %s (loc: %d)\n", name.c_str(), loc );
-            GLint location = glGetUniformLocation( id, name.c_str() );
-            m_nameToLocationTypeMap[name] = LocationTypePair( location, type );
-            _vertexAttribLocations[ createHash( name ) ] = loc;
+            std::string attribName;
+            getActiveAttrib( id, i, attribName, type );
+            GLint location = glGetAttribLocation( id, attribName.c_str() );
+printf("......... %s (loc: %d)\n", attribName.c_str(), location );
+            _vertexAttribLocations[ createHash( attribName ) ] = location;
         }
         glUseProgram( 0 );
     }
@@ -266,17 +248,23 @@ bool ShaderProgram::validate( unsigned int contextID )
 }
 
 
-void ShaderProgram::getActiveUniform( GLuint index, std::string &name, GLenum &type )
+void ShaderProgram::getActiveUniform( const GLuint id, const GLuint index, std::string& name, GLenum& type )
 {
-    const unsigned int contextID( 0 );
-    const GLuint id( _ids[ contextID ].first );
-
-    char namebuff[256];
+    char namebuff[ 256 ];
     GLsizei len;
-    GLsizei isize = sizeof(namebuff);
+    GLsizei isize = sizeof( namebuff );
     GLint osize;
     glGetActiveUniform( id, index, isize, &len, &osize, &type, namebuff );
-    name = std::string(namebuff );
+    name = std::string( namebuff );
+}
+void ShaderProgram::getActiveAttrib( const GLuint id, const GLuint index, std::string& name, GLenum& type )
+{
+    char namebuff[ 256 ];
+    GLsizei len;
+    GLsizei isize = sizeof( namebuff );
+    GLint osize;
+    glGetActiveAttrib( id, index, isize, &len, &osize, &type, namebuff );
+    name = std::string( namebuff );
 }
 
 
