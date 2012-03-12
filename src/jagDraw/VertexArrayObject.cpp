@@ -68,9 +68,7 @@ void VertexArrayObject::operator()( DrawInfo& drawInfo )
 
 void VertexArrayObject::addVertexArrayCommand( VertexArrayCommandPtr vacp )
 {
-    const unsigned int size( _commands.size() );
-    _commands.resize( size + 1 );
-    _commands[ size ] = vacp;
+    _commands.push_back( vacp );
 
     BOOST_FOREACH( IDStatusPair& idStatus, _ids._data )
     {
