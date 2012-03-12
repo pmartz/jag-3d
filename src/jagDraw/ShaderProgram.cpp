@@ -248,6 +248,10 @@ bool ShaderProgram::validate( unsigned int contextID )
 }
 
 
+unsigned int ShaderProgram::getNumActiveUniforms( const GLuint id ) const
+{
+    return( _uniformLocations.size() );
+}
 void ShaderProgram::getActiveUniform( const GLuint id, const GLuint index, std::string& name, GLenum& type )
 {
     char namebuff[ 256 ];
@@ -256,6 +260,10 @@ void ShaderProgram::getActiveUniform( const GLuint id, const GLuint index, std::
     GLint osize;
     glGetActiveUniform( id, index, isize, &len, &osize, &type, namebuff );
     name = std::string( namebuff );
+}
+unsigned int ShaderProgram::getNumActiveAttribs( const GLuint id ) const
+{
+    return( _vertexAttribLocations.size() );
 }
 void ShaderProgram::getActiveAttrib( const GLuint id, const GLuint index, std::string& name, GLenum& type )
 {

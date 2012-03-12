@@ -32,22 +32,23 @@
 namespace jagDraw {
 
 
-/** \class VertexAttribI VertexAttrib.h <jagDraw/VertexAttrib.h>
+/** \class VertexAttrib VertexAttrib.h <jagDraw/VertexAttrib.h>
 \brief
 \details \gl{section 2.8}.
 */
-class /*JAGDRAW_EXPORT*/ VertexAttribI
+class /*JAGDRAW_EXPORT*/ VertexAttrib
 {
 public:
-    VertexAttribI( const std::string& name, GLint size, GLenum type, GLsizei stride, GLuint offset )
+    VertexAttrib( const std::string& name, GLint size, GLenum type, GLboolean normalized, GLsizei stride, GLuint offset )
       : _name( name ),
         _indexHash( ShaderProgram::createHash( name ) ),
         _size( size ),
         _type( type ),
+        _normalized( normalized ),
         _stride( stride ),
         _offset( offset )
     {}
-    virtual ~VertexAttribI()
+    virtual ~VertexAttrib()
     {}
 
     virtual void operator()( jagDraw::DrawInfo& drawInfo )
@@ -65,7 +66,7 @@ public:
         // are not centerline usage. OpenGL will ignore these calls if
         // index == -1, so we avoid an extra conditional by not checking.
         glEnableVertexAttribArray( index );
-        glVertexAttribIPointer( index, _size, _type, _stride, (GLvoid *)(_offset ) );
+        glVertexAttribPointer( index, _size, _type, _normalized, _stride, (GLvoid *)(_offset ) );
     }
 
 protected:
@@ -73,26 +74,26 @@ protected:
     ShaderProgram::HashValue _indexHash;
     GLint  _size;
     GLenum _type;
+    GLboolean _normalized;
     GLsizei _stride;
     GLuint _offset;
 };
 
-typedef jagBase::ptr< jagDraw::VertexAttribI >::shared_ptr VertexAttribIPtr;
-typedef std::vector< VertexAttribIPtr > VertexAttribIList;
+typedef jagBase::ptr< jagDraw::VertexAttrib >::shared_ptr VertexAttribPtr;
+typedef std::vector< VertexAttribPtr > VertexAttribList;
 
 
-/** \class VertexAttrib VertexAttrib.h <jagDraw/VertexAttrib.h>
+/** \class VertexAttribI VertexAttrib.h <jagDraw/VertexAttrib.h>
 \brief
 \details \gl{section 2.8}.
 */
-class /*JAGDRAW_EXPORT*/ VertexAttrib : public VertexAttribI
+class /*JAGDRAW_EXPORT*/ VertexAttribI : public VertexAttrib
 {
 public:
-    VertexAttrib( const std::string& name, GLint size, GLenum type, GLboolean normalized, GLsizei stride, GLuint offset )
-      : VertexAttribI( name, size, type, stride, offset ),
-        _normalized( normalized )
+    VertexAttribI( const std::string& name, GLint size, GLenum type, GLsizei stride, GLuint offset )
+      : VertexAttrib( name, size, type, false, stride, offset )
     {}
-    virtual ~VertexAttrib()
+    virtual ~VertexAttribI()
     {}
 
     virtual void operator()( jagDraw::DrawInfo& drawInfo )
@@ -105,15 +106,12 @@ public:
         // are not centerline usage. OpenGL will ignore these calls if
         // index == -1, so we avoid an extra conditional by not checking.
         glEnableVertexAttribArray( index );
-        glVertexAttribPointer( index, _size, _type, _normalized, _stride, (GLvoid *)(_offset ) );
+        glVertexAttribIPointer( index, _size, _type, _stride, (GLvoid *)(_offset ) );
     }
-
-protected:
-    GLboolean _normalized;
 };
 
-typedef jagBase::ptr< jagDraw::VertexAttrib >::shared_ptr VertexAttribPtr;
-typedef std::vector< VertexAttribPtr > VertexAttribList;
+typedef jagBase::ptr< jagDraw::VertexAttribI >::shared_ptr VertexAttribIPtr;
+typedef std::vector< VertexAttribIPtr > VertexAttribIList;
 
 
 // jagDraw
