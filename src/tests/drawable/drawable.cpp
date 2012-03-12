@@ -53,15 +53,7 @@ protected:
 
     jagDraw::DrawableList _drawableList;
 
-    jagDraw::BufferObjectPtr _ibop;
-    jagDraw::BufferObjectPtr _ibop2;
     jagDraw::ShaderProgramPtr _spp, _spp2;
-    jagDraw::VertexAttribPtr _iVerts, _iColor;
-    jagDraw::VertexArrayObjectPtr _vaop;
-
-    jagDraw::DrawArraysPtr _drawArrays;
-
-    jagDraw::DrawElementsPtr _drawElements;
 
     jagDraw::UniformPtr _swizzleOff, _swizzleOn, _scale;
 };
@@ -92,9 +84,11 @@ bool DrawableDemo::init()
 
     glClearColor( 0.f, 0.f, 0.f, 0.f );
 
-    jagDraw::DrawablePtr drawable0( new jagDraw::Drawable() );
+    jagDraw::DrawablePtr drawable( new jagDraw::Drawable() );
     const float z = .5f;
     typedef std::vector< gmtl::Point3f > Point3fArray;
+
+    // Define first drawable: tri strip on the left.
     {
         Point3fArray v3fa;
         v3fa.push_back( gmtl::Point3f( -.9f, -.9f, z ) );
@@ -105,11 +99,11 @@ bool DrawableDemo::init()
         v3fa.push_back( gmtl::Point3f( -.6f, .9f, z ) );
         jagBase::BufferPtr vbp( new jagBase::Buffer( v3fa.size() * sizeof( gmtl::Point3f ), (void*)&v3fa[0] ) );
         jagDraw::BufferObjectPtr vbop( new jagDraw::BufferObject( GL_ARRAY_BUFFER, vbp ) );
-        drawable0->addVertexArrayCommand( vbop );
+        drawable->addVertexArrayCommand( vbop, jagDraw::Drawable::Vertex );
 
         jagDraw::VertexAttribPtr verts( new jagDraw::VertexAttrib(
             "vertex", 3, GL_FLOAT, GL_FALSE, 0, 0 ) );
-        drawable0->addVertexArrayCommand( verts );
+        drawable->addVertexArrayCommand( verts, jagDraw::Drawable::Vertex );
 
         Point3fArray c3fa;
         c3fa.push_back( gmtl::Point3f( 1.f, 0.f, 0.f ) );
@@ -120,28 +114,39 @@ bool DrawableDemo::init()
         c3fa.push_back( gmtl::Point3f( 1.f, 0.f, 1.f ) );
         jagBase::BufferPtr cbp( new jagBase::Buffer( c3fa.size() * sizeof( gmtl::Point3f ), (void*)&c3fa[0] ) );
         jagDraw::BufferObjectPtr cbop( new jagDraw::BufferObject( GL_ARRAY_BUFFER, cbp ) );
-        drawable0->addVertexArrayCommand( cbop );
+        drawable->addVertexArrayCommand( cbop );
 
         jagDraw::VertexAttribPtr color( new jagDraw::VertexAttrib(
             "color", 3, GL_FLOAT, GL_FALSE, 0, 0 ) );
-        drawable0->addVertexArrayCommand( color );
+        drawable->addVertexArrayCommand( color );
 
         typedef std::vector< GLubyte > GLubyteArray;
         GLubyteArray elements;
-        {
-            unsigned int idx;
-            for( idx=0; idx<6; idx++ )
-                elements.push_back( idx );
-            jagBase::BufferPtr elbp( new jagBase::Buffer( elements.size() * sizeof( GLubyte ), (void*)&elements[0] ) );
-            jagDraw::BufferObjectPtr elbop( new jagDraw::BufferObject( GL_ELEMENT_ARRAY_BUFFER, elbp ) );
-            drawable0->addVertexArrayCommand( elbop );
-        }
-        jagDraw::DrawElementsPtr drawElements( new jagDraw::DrawElements( GL_TRIANGLE_STRIP, elements.size(), GL_UNSIGNED_BYTE, 0 ) );
-        drawable0->addDrawCommand( drawElements );
+        unsigned int idx;
+        for( idx=0; idx<6; idx++ )
+            elements.push_back( idx );
+        jagBase::BufferPtr elbp( new jagBase::Buffer( elements.size() * sizeof( GLubyte ), (void*)&elements[0] ) );
+        jagDraw::BufferObjectPtr elbop( new jagDraw::BufferObject( GL_ELEMENT_ARRAY_BUFFER, elbp ) );
+        drawable->addVertexArrayCommand( elbop );
 
-        _drawableList.push_back( drawable0 );
+        jagDraw::DrawElementsPtr drawElements( new jagDraw::DrawElements( GL_TRIANGLE_STRIP, elements.size(), GL_UNSIGNED_BYTE, 0 ) );
+        drawable->addDrawCommand( drawElements );
+
+        _drawableList.push_back( drawable );
     }
+
+    // Define elements shared by second and third drawables.
+    const GLsizei stride = sizeof( GLfloat ) * 3 * 2;
+    jagDraw::VertexAttribPtr iVerts( new jagDraw::VertexAttrib(
+        "vertex", 3, GL_FLOAT, GL_FALSE, stride, 0 ) );
+    jagDraw::VertexAttribPtr iColor( new jagDraw::VertexAttrib(
+        "color", 3, GL_FLOAT, GL_FALSE, stride, sizeof( GLfloat ) * 3 ) );
+    jagDraw::DrawArraysPtr drawArrays( new jagDraw::DrawArrays( GL_TRIANGLE_STRIP, 0, 6 ) );
+
+    // Define second drawable (middle)
     {
+        drawable = jagDraw::DrawablePtr( new jagDraw::Drawable() );
+
         Point3fArray i3fa;
         i3fa.push_back( gmtl::Point3f( -.3f, -.9f, z ) );
             i3fa.push_back( gmtl::Point3f( 1.f, 0.f, 0.f ) );
@@ -156,15 +161,21 @@ bool DrawableDemo::init()
         i3fa.push_back( gmtl::Point3f( 0.f, .9f, z ) );
             i3fa.push_back( gmtl::Point3f( 1.f, 0.f, 1.f ) );
         jagBase::BufferPtr ibp( new jagBase::Buffer( i3fa.size() * sizeof( gmtl::Point3f ), (void*)&i3fa[0] ) );
-        _ibop = jagDraw::BufferObjectPtr( new jagDraw::BufferObject( GL_ARRAY_BUFFER, ibp ) );
+        jagDraw::BufferObjectPtr ibop( new jagDraw::BufferObject( GL_ARRAY_BUFFER, ibp ) );
+        drawable->addVertexArrayCommand( ibop, jagDraw::Drawable::Vertex );
 
-        const GLsizei stride = sizeof( GLfloat ) * 3 * 2;
-        _iVerts = jagDraw::VertexAttribPtr( new jagDraw::VertexAttrib(
-            "vertex", 3, GL_FLOAT, GL_FALSE, stride, 0 ) );
-        _iColor = jagDraw::VertexAttribPtr( new jagDraw::VertexAttrib(
-            "color", 3, GL_FLOAT, GL_FALSE, stride, sizeof( GLfloat ) * 3 ) );
+        drawable->addVertexArrayCommand( iVerts, jagDraw::Drawable::Vertex );
+        drawable->addVertexArrayCommand( iColor );
+
+        drawable->addDrawCommand( drawArrays );
+
+        _drawableList.push_back( drawable );
     }
+
+    // Define third drawable (on the right)
     {
+        drawable = jagDraw::DrawablePtr( new jagDraw::Drawable() );
+
         Point3fArray i3fa;
         i3fa.push_back( gmtl::Point3f( .3f, -.9f, z ) );
             i3fa.push_back( gmtl::Point3f( 1.f, 0.f, 0.f ) );
@@ -179,21 +190,23 @@ bool DrawableDemo::init()
         i3fa.push_back( gmtl::Point3f( .6f, .9f, z ) );
             i3fa.push_back( gmtl::Point3f( 1.f, 0.f, 1.f ) );
         jagBase::BufferPtr ibp( new jagBase::Buffer( i3fa.size() * sizeof( gmtl::Point3f ), (void*)&i3fa[0] ) );
-        _ibop2 = jagDraw::BufferObjectPtr( new jagDraw::BufferObject( GL_ARRAY_BUFFER, ibp ) );
-    }
+        jagDraw::BufferObjectPtr ibop2( new jagDraw::BufferObject( GL_ARRAY_BUFFER, ibp ) );
 
-    _vaop = jagDraw::VertexArrayObjectPtr( new jagDraw::VertexArrayObject );
-    {
+        jagDraw::VertexArrayObjectPtr vaop( new jagDraw::VertexArrayObject );
         // Bind the GL_ARRAY_BUFFER for interleaved vertices and colors
         // (different from _ibop dur to vertex positions).
-        _vaop->addVertexArrayCommand( _ibop2 );
+        vaop->addVertexArrayCommand( ibop2 );
         // Enable and specify the "vertex" vertex attrib.
-        _vaop->addVertexArrayCommand( _iVerts );
+        vaop->addVertexArrayCommand( iVerts );
         // Enable and specify the "color" vertex attrib.
-        _vaop->addVertexArrayCommand( _iColor );
-    }
+        vaop->addVertexArrayCommand( iColor );
 
-    _drawArrays = jagDraw::DrawArraysPtr( new jagDraw::DrawArrays( GL_TRIANGLE_STRIP, 0, 6 ) );
+        drawable->addVertexArrayCommand( vaop );
+
+        drawable->addDrawCommand( drawArrays );
+
+        _drawableList.push_back( drawable );
+    }
 
 
     const char* vShaderSource =
@@ -274,15 +287,7 @@ bool DrawableDemo::frame()
     // Enable color swizzle in the program using a uniform.
     (*_swizzleOn)( drawInfo );
 
-    // Bind the GL_ARRAY_BUFFER for interleaved vertices and colors.
-    (*_ibop)( drawInfo );
-    // Enable and specify the "vertex" vertex attrib.
-    (*_iVerts)( drawInfo );
-    // Enable and specify the "color" vertex attrib.
-    (*_iColor)( drawInfo );
-
-    // Draw the triangle strip in the middle.
-    (*_drawArrays)( drawInfo );
+    (*(_drawableList[ 1 ]))( drawInfo );
 
 
     // glUseProgram for our second ShaderProgram.
@@ -291,11 +296,7 @@ bool DrawableDemo::frame()
     // Set the color scaling in the program using a uniform.
     (*_scale)( drawInfo );
 
-    // Bind the vertex array object.
-    (*_vaop)( drawInfo );
-    // Draw the triangle strip on the right.
-    (*_drawArrays)( drawInfo );
-    // Unbind vertex array object for non-VAO rendering in next frame.
+    (*(_drawableList[ 2 ]))( drawInfo );
     glBindVertexArray( 0 );
 
 
