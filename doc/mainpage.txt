@@ -12,14 +12,19 @@ This section is TBD.
 This module contains host-side data store and multi-context support
 for many OpenGL commands. This is the only module that executes
 OpenGL commands.
+
+Direct OpenGL support:
 \li \ref Error "OpenGL Errors"
-\li \link jagDraw::VertexAttrib Vertex Arrays and Attributes \endlink
+\li \link jagDraw::VertexAttrib Generic Vertex Attributes \endlink
 \li \link jagDraw::VertexArrayObject Vertex Array Objects \endlink
 \li \link jagDraw::DrawCommand Drawing commands \endlink
 \li \link jagDraw::BufferObject Buffer Objects \endlink
 \li \link jagDraw::Shader Shader Objects \endlink
-\li \link hagDraw::ShaderProgram Program Objects \endlink
-\li \link hagDraw::Uniform Uniform Variables \endlink
+\li \link jagDraw::ShaderProgram Program Objects \endlink
+\li \link jagDraw::Uniform Uniform Variables \endlink
+
+Higher level constructs:
+\li \link jagDraw::Drawable Drawable Objects \endlink
 
 \section jagSG
 

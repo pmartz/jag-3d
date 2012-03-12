@@ -30,7 +30,7 @@ set( _jagDrawHeaderFiles
     ${HEADER_PATH}/Export.h
     ${HEADER_PATH}/BufferObject.h
     ${HEADER_PATH}/ContextSupport.h
-#    ${HEADER_PATH}/Drawable.h
+    ${HEADER_PATH}/Drawable.h
     ${HEADER_PATH}/DrawCommand.h
     ${HEADER_PATH}/DrawInfo.h
     ${HEADER_PATH}/DrawCommon.h
@@ -49,6 +49,7 @@ set( _jagDrawHeaderFiles
 set( _jagDrawSourceFiles
     BufferObject.cpp
     ContextSupport.cpp
+    Drawable.cpp
     DrawInfo.cpp
     Error.cpp
     Shader.cpp

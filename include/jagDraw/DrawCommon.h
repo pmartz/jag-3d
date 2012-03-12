@@ -28,6 +28,7 @@
 #include <jagDraw/VertexAttrib.h>
 #include <jagDraw/VertexArrayObject.h>
 #include <jagDraw/DrawCommand.h>
+#include <jagDraw/Drawable.h>
 #include <jagDraw/Shader.h>
 #include <jagDraw/ShaderProgram.h>
 #include <jagDraw/Uniform.h>

@@ -1,146 +1,105 @@
-#ifndef DRAWABLE_DEF
-#define DRAWABLE_DEF
+/*************** <auto-copyright.pl BEGIN do not edit this line> **************
+*
+* jag3d is (C) Copyright 2011-2012 by Kenneth Mark Bryden and Paul Martz
+*
+* This library is free software; you can redistribute it and/or
+* modify it under the terms of the GNU Lesser General Public
+* License version 2.1 as published by the Free Software Foundation.
+*
+* This library is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+* Library General Public License for more details.
+*
+* You should have received a copy of the GNU Lesser General Public
+* License along with this library; if not, write to the
+* Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+* Boston, MA 02111-1307, USA.
+*
+*************** <auto-copyright.pl END do not edit this line> ***************/
+
+#ifndef __JAGDRAW_DRAWABLE_H__
+#define __JAGDRAW_DRAWABLE_H__ 1
+
+#include <jagDraw/Export.h>
+#include <jagDraw/VertexArrayCommand.h>
+#include <jagDraw/DrawCommand.h>
+#include <jagBase/ptr.h>
 
 #include <vector>
-#include <algorithm>
-#include <Chaskii/Mem/ptr.h>
 
-#include <Chaskii/Draw/DrawableAttribute.h>
-#include <Chaskii/Draw/VertexAttribute.h>
-#include <Chaskii/Draw/VertexIterator.h>
 
-namespace iiDraw {
+namespace jagDraw {
 
-class Drawable
+
+struct DrawInfo;
+
+
+/** \class Drawable Drawable.h <jagDraw/Drawable.h>
+\brief
+\details
+*/
+class JAGDRAW_EXPORT Drawable
 {
-    public:
-        Drawable() {}
+public:
+    Drawable();
+    ~Drawable();
+    
 
-        void addAttribute( const DrawableAttribute_ptr &a )
-        {
-            if( a->getDrawableAttributeType() == DrawableAttribute::VertexAttribute_t )
-            {
-                addVertexAttribute( std::tr1::dynamic_pointer_cast<VertexAttribute>(a) );
-            }
-            else if( a->getDrawableAttributeType() == DrawableAttribute::VertexIterator_t ) 
-            { 
-                addVertexIterator( std::tr1::dynamic_pointer_cast<VertexIterator>(a) );
-            }
-            else
-            {
-                m_attributes[a->getDrawableAttributeType()] = a;
-            }
-            //m_attributes.push_back( a );
-            //m_needsSort = true;
-        }
-
-        void addVertexAttribute( const VertexAttribute_ptr &va )
-        {
-            m_vertexAttributes.push_back( va );
-        }
-
-        void addVertexIterator( const VertexIterator_ptr &vi )
-        {
-            m_vertexIterators.push_back( vi );
-        }
-
-        static bool mycompare( DrawableAttribute_ptr a,  DrawableAttribute_ptr b )
-        {
-            return a->getDrawableAttributeType() < b->getDrawableAttributeType();
-        }
-
-        void applyDrawableAttributes( DrawContext &ctx )
-        {
-            for( std::map<DrawableAttribute::DrawableAttributeType, DrawableAttribute_ptr>::const_iterator p = m_attributes.begin(); 
-                    p != m_attributes.end(); p++ )
-            {
-                p->second->apply( ctx );
-            }
-        }
-
-        void applyVertexData( DrawContext &ctx )
-        {
-            for( VertexAttributeList::iterator p = m_vertexAttributes.begin(); 
-                    p != m_vertexAttributes.end(); p++ )
-            {
-                (*p)->apply( ctx );
-            }
-            for( VertexIteratorList::iterator p = m_vertexIterators.begin(); 
-                    p != m_vertexIterators.end(); p++ )
-            {
-                (*p)->apply( ctx );
-            }
-        }
+    /** \brief TBD
+    \details TBD
+    */
+    virtual void operator()( DrawInfo& drawInfo );
 
 
-        virtual void apply( DrawContext &ctx )
-        {
-            applyDrawableAttributes(ctx);
-            applyVertexData(ctx);
-        }
+    /** \brief TBD
+    \details TBD
+    */
+    typedef enum {
+        Unspecified,
+        Vertex,
+        Normal,
+        TexCoord
+    } UsageHint;
 
-        virtual void gfxInit( DrawContext &ctx )
-        {
-            for( std::map<DrawableAttribute::DrawableAttributeType, DrawableAttribute_ptr>::const_iterator p = m_attributes.begin(); 
-                    p != m_attributes.end(); p++ )
-            {
-                p->second->gfxInit( ctx );
-            }
-        }
+    /** \brief TBD
+    \details TBD
+    */
+    void addVertexArrayCommand( VertexArrayCommandPtr vacp, const UsageHint& usageHint=Unspecified );
 
-        DrawableAttributeList &getDrawableAttributeList() 
-        { 
-            return m_attributes; 
-        }
+    /** \brief TBD
+    \details TBD
+    */
+    VertexArrayCommandList& getVertexArrayCommandList();
+    /** \overload */
+    const VertexArrayCommandList& getVertexArrayCommandList() const;
 
-        const DrawableAttributeList &getDrawableAttributeList()  const
-        { 
-            return m_attributes; 
-        }
-        
-#if 0
-        bool containsDrawableAttribute( DrawableAttribute::DrawableAttributeType t ) const
-        {
-            DrawableAttributeList::const_iterator p = m_attributes.find(t);
-            return p != m_attributes.end();
-        }
+    /** \brief TBD
+    \details TBD
+    */
+    void addDrawCommand( DrawCommandPtr dcp );
 
-        const DrawableAttribute &getDrawableAttribute( DrawableAttribute::DrawableAttributeType t )
-        {
-            DrawableAttributeList::const_iterator p = m_attributes.find(t);
-            if( p != m_attributes.end() )
-                return p->second;
+    /** \brief TBD
+    \details TBD
+    */
+    DrawCommandList& getDrawCommandList();
+    /** \overload */
+    const DrawCommandList& getDrawCommandList() const;
 
-            return DrawableAttribute();
-        }
+protected:
+    VertexArrayCommandList _vertexArrayCommands;
+    VertexArrayCommandList _vertexCommands;
 
-        bool operator != ( const Drawable &rhs ) 
-        {
-            const DrawableAttributeList &m = rhs.getDrawableAttributeList();
-            for( DrawableAttributeList::const_iterator p =  m_attributes.begin();
-                    p != m_attributes.end(); p++ )
-            {
-                if( rhs.contains( p->first ) )
-                {
-                    if( p->second != m[p->first] )
-                        return true;
-                }
-            }
-            return false;
-        }
-#endif
-
-
-    private:
-        DrawableAttributeList m_attributes;
-        VertexAttributeList m_vertexAttributes;
-        VertexIteratorList m_vertexIterators;
-
+    DrawCommandList _drawCommands;
 };
 
-typedef iiMem::ptr<Drawable>::shared_ptr Drawable_ptr;
-typedef iiMem::ptr<Drawable>::shared_array_ptr Drawable_array_ptr;
+typedef jagBase::ptr< jagDraw::Drawable >::shared_ptr DrawablePtr;
+typedef std::vector< DrawablePtr > DrawableList;
 
+
+// jagDraw
 }
 
+
+// __JAGDRAW_DRAWABLE_H__
 #endif

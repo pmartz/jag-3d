@@ -23,8 +23,6 @@
 
 
 #include <jagDraw/Export.h>
-//#include <Chaskii/Draw/DrawContext.h>
-//#include <Chaskii/Draw/DrawableAttribute.h>
 #include <jagDraw/Shader.h>
 #include <jagDraw/PerContextData.h>
 #include <jagBase/ptr.h>
