@@ -161,7 +161,7 @@ bool ShaderProgram::link( unsigned int contextID )
 
     // idLink.first is OpenGL program ID.
     // idLink.second is link status: true after successful linked.
-    IDLinkPair& idLink( _ids[ contextID ] );
+    IDStatusPair& idLink( _ids[ contextID ] );
     const GLuint id( idLink.first );
 
     // Loop over explicitly specified vertex attrib locations and

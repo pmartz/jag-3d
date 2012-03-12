@@ -187,10 +187,10 @@ bool Simple3xDemo::frame()
 
     _spp->use( drawInfo );
 
-    _vbop->bind( drawInfo );
+    (*_vbop)( drawInfo );
     glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 0, (const void*)0 );
     glEnableVertexAttribArray( 0 );
-    _cbop->bind( drawInfo );
+    (*_cbop)( drawInfo );
     glVertexAttribPointer( 1, 3, GL_FLOAT, GL_FALSE, 0, (const void*)0 );
     glEnableVertexAttribArray( 1 );
 
@@ -198,7 +198,7 @@ bool Simple3xDemo::frame()
 
 
     const GLsizei stride = sizeof( GLfloat ) * 3 * 2;
-    _ibop->bind( drawInfo );
+    (*_ibop)( drawInfo );
     glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, stride, (const void*)0 );
     glEnableVertexAttribArray( 0 );
     glVertexAttribPointer( 1, 3, GL_FLOAT, GL_FALSE, stride, (const void*)( sizeof( GLfloat ) * 3 ) );
@@ -207,12 +207,16 @@ bool Simple3xDemo::frame()
     glDrawArrays( GL_TRIANGLE_STRIP, 0, 6 );
 
 
-    _vaop->bind( drawInfo );
+    // This is an app-managed vertex array object. The VertexArrayObject
+    // class actually supports adding BufferObject and VertexArrrib instances,
+    // which VAO manages internall, so that code like the following is nor
+    // necessary. See the drawcommand example.
+    (*_vaop)( drawInfo );
     if( _first )
     {
         _first = false;
 
-        _ibop2->bind( drawInfo );
+        (*_ibop2)( drawInfo );
         glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, stride, (const void*)0 );
         glEnableVertexAttribArray( 0 );
         glVertexAttribPointer( 1, 3, GL_FLOAT, GL_FALSE, stride, (const void*)( sizeof( GLfloat ) * 3 ) );

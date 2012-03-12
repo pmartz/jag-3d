@@ -23,15 +23,19 @@
 #include <jagDraw/DrawInfo.h>
 #include <jagDraw/Error.h>
 
+#include <boost/foreach.hpp>
+
 
 namespace jagDraw {
 
 
 VertexArrayObject::VertexArrayObject()
+  : VertexArrayCommand( VertexArrayCommand::VertexArrayObjectType )
 {}
 
 VertexArrayObject::VertexArrayObject( const VertexArrayObject& rhs )
-  : _ids( rhs._ids )
+  : VertexArrayCommand( rhs ),
+    _ids( rhs._ids )
 {}
 
 
@@ -41,21 +45,55 @@ VertexArrayObject::~VertexArrayObject()
 }
 
 
-void VertexArrayObject::bind( const DrawInfo& drawInfo )
+void VertexArrayObject::operator()( DrawInfo& drawInfo )
 {
     const unsigned int contextID( drawInfo._id );
 
     if( _ids._data.size() < contextID+1 )
         internalInit( contextID );
+    IDStatusPair& idStatus = _ids[ contextID ];
 
-    glBindVertexArray( _ids[ contextID ] );
+    glBindVertexArray( idStatus.first );
+
+    if( !( idStatus.second ) )
+    {
+        BOOST_FOREACH( VertexArrayCommandPtr& vac, _commands )
+        {
+            (*vac)( drawInfo );
+        }
+        idStatus.second = true;
+    }
+}
+
+
+void VertexArrayObject::addVertexArrayCommand( VertexArrayCommandPtr vacp )
+{
+    const unsigned int size( _commands.size() );
+    _commands.resize( size + 1 );
+    _commands[ size ] = vacp;
+
+    BOOST_FOREACH( IDStatusPair& idStatus, _ids._data )
+    {
+        idStatus.second = false;
+    }
+}
+VertexArrayCommandList& VertexArrayObject::getVertexArrayCommandList()
+{
+    return( _commands );
+}
+const VertexArrayCommandList& VertexArrayObject::getVertexArrayCommandList() const
+{
+    return( _commands );
 }
 
 
 void VertexArrayObject::internalInit( const unsigned int contextID )
 {
     _ids._data.resize( contextID + 1 );
-    glGenVertexArrays( 1, &( _ids[ contextID ] ) );
+    IDStatusPair& idStatus = _ids[ contextID ];
+
+    glGenVertexArrays( 1, &( idStatus.first ) );
+    idStatus.second = false;
 
     JAG_ERROR_CHECK( "VertexArrayObject::internalInit()" );
 }

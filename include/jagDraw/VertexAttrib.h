@@ -23,6 +23,7 @@
 
 #include <jagDraw/Export.h>
 #include <jagDraw/PlatformOpenGL.h>
+#include <jagDraw/VertexArrayCommand.h>
 #include <jagDraw/ShaderProgram.h>
 #include <jagBase/ptr.h>
 
@@ -32,15 +33,19 @@
 namespace jagDraw {
 
 
+struct DrawInfo;
+
+
 /** \class VertexAttrib VertexAttrib.h <jagDraw/VertexAttrib.h>
 \brief
 \details \gl{section 2.8}.
 */
-class /*JAGDRAW_EXPORT*/ VertexAttrib
+class /*JAGDRAW_EXPORT*/ VertexAttrib : public VertexArrayCommand
 {
 public:
     VertexAttrib( const std::string& name, GLint size, GLenum type, GLboolean normalized, GLsizei stride, GLuint offset )
-      : _name( name ),
+      : VertexArrayCommand( VertexArrayCommand::VertexAttribType ),
+        _name( name ),
         _indexHash( ShaderProgram::createHash( name ) ),
         _size( size ),
         _type( type ),
@@ -51,7 +56,7 @@ public:
     virtual ~VertexAttrib()
     {}
 
-    virtual void operator()( jagDraw::DrawInfo& drawInfo )
+    virtual void operator()( DrawInfo& drawInfo )
     {
         // ShaderProgram::use() must be called prior to VertexAttrib::operator().
         // Note this is different from Uniform::operator(). This means we can simply

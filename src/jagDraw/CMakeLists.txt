@@ -31,7 +31,6 @@ set( _jagDrawHeaderFiles
     ${HEADER_PATH}/BufferObject.h
     ${HEADER_PATH}/ContextSupport.h
 #    ${HEADER_PATH}/Drawable.h
-#    ${HEADER_PATH}/DrawableAttribute.h
     ${HEADER_PATH}/DrawCommand.h
     ${HEADER_PATH}/DrawInfo.h
     ${HEADER_PATH}/DrawCommon.h
@@ -41,8 +40,8 @@ set( _jagDrawHeaderFiles
     ${HEADER_PATH}/Shader.h
     ${HEADER_PATH}/ShaderProgram.h
 #    ${HEADER_PATH}/Texture.h
-#    ${HEADER_PATH}/Transform.h
     ${HEADER_PATH}/Uniform.h
+    ${HEADER_PATH}/VertexArrayCommand.h
     ${HEADER_PATH}/VertexArrayObject.h
     ${HEADER_PATH}/VertexAttrib.h
 )
@@ -54,7 +53,6 @@ set( _jagDrawSourceFiles
     Error.cpp
     Shader.cpp
     ShaderProgram.cpp
-#    stats.cpp
     Uniform.cpp
     VertexArrayObject.cpp
 )

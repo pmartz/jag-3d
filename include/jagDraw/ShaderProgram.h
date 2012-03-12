@@ -197,9 +197,7 @@ private:
 
     ShaderList _shaders;
 
-    typedef std::pair< GLuint, bool > IDLinkPair;
-    typedef PerContextData< IDLinkPair > PerContextIDLink;
-    PerContextIDLink _ids;
+    PerContextIDStatus _ids;
 
     typedef std::map< HashValue, GLint > LocationMap;
     LocationMap _uniformLocations;

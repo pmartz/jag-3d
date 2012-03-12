@@ -38,7 +38,7 @@ namespace bpo = boost::program_options;
 class Simple3xDemo : public DemoInterface
 {
 public:
-    Simple3xDemo() : _first( true ) {}
+    Simple3xDemo() {}
     virtual ~Simple3xDemo() {}
 
     virtual bool init();
@@ -64,8 +64,6 @@ protected:
 
     jagDraw::BufferObjectPtr _elbop;
     jagDraw::DrawElementsPtr _drawElements;
-
-    bool _first;
 };
 
 
@@ -93,8 +91,6 @@ bool Simple3xDemo::init()
 
 
     glClearColor( 0.f, 0.f, 0.f, 0.f );
-
-    _vaop = jagDraw::VertexArrayObjectPtr( new jagDraw::VertexArrayObject );
 
     const float z = .5f;
     typedef std::vector< gmtl::Point3f > Point3fArray;
@@ -165,6 +161,17 @@ bool Simple3xDemo::init()
         _ibop2 = jagDraw::BufferObjectPtr( new jagDraw::BufferObject( GL_ARRAY_BUFFER, ibp ) );
     }
 
+    _vaop = jagDraw::VertexArrayObjectPtr( new jagDraw::VertexArrayObject );
+    {
+        // Bind the GL_ARRAY_BUFFER for interleaved vertices and colors
+        // (different from _ibop dur to vertex positions).
+        _vaop->addVertexArrayCommand( _ibop2 );
+        // Enable and specify the "vertex" vertex attrib.
+        _vaop->addVertexArrayCommand( _iVerts );
+        // Enable and specify the "color" vertex attrib.
+        _vaop->addVertexArrayCommand( _iColor );
+    }
+
     _drawArrays = jagDraw::DrawArraysPtr( new jagDraw::DrawArrays( GL_TRIANGLE_STRIP, 0, 6 ) );
 
     typedef std::vector< GLubyte > GLubyteArray;
@@ -223,22 +230,22 @@ bool Simple3xDemo::frame()
     _spp->use( drawInfo );
 
     // Bind the GL_ARRAY_BUFFER for vertices
-    _vbop->bind( drawInfo );
+    (*_vbop)( drawInfo );
     // Enable and specify the "vertex" vertex attrib.
     (*_verts)( drawInfo );
     // Bind the GL_ARRAY_BUFFER for color
-    _cbop->bind( drawInfo );
+    (*_cbop)( drawInfo );
     // Enable and specify the "color" vertex attrib.
     (*_color)( drawInfo );
 
     // Bind the GL_ELEMENT_BUFFER
-    _elbop->bind( drawInfo );
+    (*_elbop)( drawInfo );
     // Draw the triangle strip on the left.
     (*_drawElements)( drawInfo );
 
 
     // Bind the GL_ARRAY_BUFFER for interleaved vertices and colors.
-    _ibop->bind( drawInfo );
+    (*_ibop)( drawInfo );
     // Enable and specify the "vertex" vertex attrib.
     (*_iVerts)( drawInfo );
     // Enable and specify the "color" vertex attrib.
@@ -249,19 +256,7 @@ bool Simple3xDemo::frame()
 
 
     // Bind the vertex array object.
-    _vaop->bind( drawInfo );
-    if( _first )
-    {
-        _first = false;
-
-        // Bind the GL_ARRAY_BUFFER for interleaved vertices and colors
-        // (different from _ibop dur to vertex positions).
-        _ibop2->bind( drawInfo );
-        // Enable and specify the "vertex" vertex attrib.
-        (*_iVerts)( drawInfo );
-        // Enable and specify the "color" vertex attrib.
-        (*_iColor)( drawInfo );
-    }
+    (*_vaop)( drawInfo );
     // Draw the triangle strip on the right.
     (*_drawArrays)( drawInfo );
     // Unbind vertex array object for non-VAO rendering in next frame.

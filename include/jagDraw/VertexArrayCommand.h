@@ -18,56 +18,58 @@
 *
 *************** <auto-copyright.pl END do not edit this line> ***************/
 
-#ifndef __JAGDRAW_PER_CONTEXT_DATA_H__
-#define __JAGDRAW_PER_CONTEXT_DATA_H__ 1
+#ifndef __JAGDRAW_VERTEX_ARRAY_COMMAND_H__
+#define __JAGDRAW_VERTEX_ARRAY_COMMAND_H__ 1
 
+#include <jagDraw/Export.h>
+#include <jagBase/ptr.h>
 
-#include <jagDraw/PlatformOpenGL.h>
 #include <vector>
 
 
 namespace jagDraw {
 
 
-/** \struct PerContextData PerContextData.h <jagDraw/PerContextData.h>
+struct DrawInfo;
+
+
+/** \class VertexArrayCommand VertexArrayCommand.h <jagDraw/VertexArrayCommand.h>
+\brief
+\details
 */
-template< class T >
-struct PerContextData
+class /*JAGDRAW_EXPORT*/ VertexArrayCommand
 {
-    PerContextData()
-    {
-    }
-    ~PerContextData()
-    {
-    }
+public:
+    typedef enum {
+        BufferObjectType,
+        VertexAttribType,
+        VertexArrayObjectType
+    } Type;
 
-    PerContextData& operator=( const PerContextData& rhs )
-    {
-        _data = rhs._data;
-        return( *this );
-    }
+    VertexArrayCommand( const Type type )
+      : _type( type )
+    {}
+    VertexArrayCommand( const VertexArrayCommand& rhs )
+      : _type( rhs._type )
+    {}
+    ~VertexArrayCommand()
+    {}
 
-    T& operator[]( unsigned int idx )
-    {
-        return( _data[ idx ] );
-    }
-    const T& operator[]( unsigned int idx ) const
-    {
-        return( _data[ idx ] );
-    }
+    Type getType() const { return( _type ); }
 
-    std::vector< T > _data;
+    virtual void operator()( DrawInfo& drawInfo ) = 0;
+
+protected:
+    Type _type;
 };
 
-typedef PerContextData< GLuint > PerContextGLuint;
-
-typedef std::pair< GLuint, bool > IDStatusPair;
-typedef PerContextData< IDStatusPair > PerContextIDStatus;
+typedef jagBase::ptr< jagDraw::VertexArrayCommand >::shared_ptr VertexArrayCommandPtr;
+typedef std::vector< VertexArrayCommandPtr > VertexArrayCommandList;
 
 
 // jagDraw
 }
 
 
-// __JAGDRAW_PER_CONTEXT_DATA_H__
+// __JAGDRAW_VERTEX_ARRAY_COMMAND_H__
 #endif

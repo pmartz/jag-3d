@@ -23,6 +23,7 @@
 
 #include <jagDraw/Export.h>
 #include <jagDraw/PlatformOpenGL.h>
+#include <jagDraw/VertexArrayCommand.h>
 #include <jagDraw/PerContextData.h>
 #include <jagBase/ptr.h>
 
@@ -39,7 +40,7 @@ struct DrawInfo;
 \brief A context-safe wrapper for OpenGL vertex array objects.
 \details \gl{section 2.10}.
 */
-class JAGDRAW_EXPORT VertexArrayObject /* : public DrawableAttribute */
+class JAGDRAW_EXPORT VertexArrayObject : public VertexArrayCommand
 {
 public:
     VertexArrayObject();
@@ -47,13 +48,18 @@ public:
 
     virtual ~VertexArrayObject();
 
-    // TBD need to get context ID, probably as a param?
-    virtual void bind( const DrawInfo& drawInfo );
+    virtual void operator()( DrawInfo& drawInfo );
+
+    void addVertexArrayCommand( VertexArrayCommandPtr vacp );
+    VertexArrayCommandList& getVertexArrayCommandList();
+    const VertexArrayCommandList& getVertexArrayCommandList() const;
 
 protected:
     void internalInit( const unsigned int contextID );
 
-    PerContextGLuint _ids;
+    PerContextIDStatus _ids;
+
+    VertexArrayCommandList _commands;
 };
 
 typedef jagBase::ptr< jagDraw::VertexArrayObject >::shared_ptr VertexArrayObjectPtr;

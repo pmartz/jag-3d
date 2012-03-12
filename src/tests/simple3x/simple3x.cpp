@@ -140,7 +140,7 @@ bool Simple3xDemo::frame()
 
     _spp->use( drawInfo );
 
-    _bop->bind( drawInfo );
+    (*_bop)( drawInfo );
     glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 0, (const void*)0 );
     glEnableVertexAttribArray( 0 );
 

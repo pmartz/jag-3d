@@ -28,18 +28,21 @@ namespace jagDraw {
 
 
 BufferObject::BufferObject( const GLenum target )
-  : _target( target ),
+  : VertexArrayCommand( VertexArrayCommand::BufferObjectType ),
+    _target( target ),
     _usage( GL_STATIC_DRAW )
 {}
 
 BufferObject::BufferObject( const GLenum target, const jagBase::BufferPtr b, const GLenum usage )
-  : _target( target ),
+  : VertexArrayCommand( VertexArrayCommand::BufferObjectType ),
+    _target( target ),
     _usage( usage ),
     _buffer( b )
 {}
 
 BufferObject::BufferObject( const BufferObject& rhs )
-  : _target( rhs._target ),
+  : VertexArrayCommand( rhs ),
+    _target( rhs._target ),
     _usage( rhs._usage ),
     _buffer( rhs._buffer ),
     _ids( rhs._ids )
@@ -66,7 +69,7 @@ void BufferObject::setUsage( const GLenum usage )
     _usage = usage; 
 }
 
-void BufferObject::bind( const DrawInfo& drawInfo )
+void BufferObject::operator()( DrawInfo& drawInfo )
 {
     const unsigned int contextID( drawInfo._id );
 

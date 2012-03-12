@@ -23,10 +23,10 @@
 
 #include <jagDraw/Export.h>
 #include <jagDraw/PlatformOpenGL.h>
+#include <jagDraw/VertexArrayCommand.h>
 #include <jagDraw/PerContextData.h>
 #include <jagBase/ptr.h>
 #include <jagBase/Buffer.h>
-//#include <Chaskii/Draw/DrawableAttribute.h>
 
 #include <vector>
 
@@ -41,7 +41,7 @@ struct DrawInfo;
 \brief A context-safe wrapper for OpenGL buffer objects.
 \details \gl{section 2.9}.
 */
-class JAGDRAW_EXPORT BufferObject /* : public DrawableAttribute */
+class JAGDRAW_EXPORT BufferObject : public VertexArrayCommand
 {
 public:
     /**
@@ -54,7 +54,7 @@ public:
     \glparam{usage,section 2.9.2}
     */
     BufferObject( const GLenum target, const jagBase::BufferPtr b, const GLenum usage=GL_STATIC_DRAW );
-    BufferObject( const BufferObject &rhs );
+    BufferObject( const BufferObject& rhs );
 
     virtual ~BufferObject();
 
@@ -67,8 +67,7 @@ public:
     void setUsage( const GLenum usage );
     GLenum getUsage() { return( _usage ); }
 
-    // TBD need to get context ID, probably as a param?
-    virtual void bind( const DrawInfo& drawInfo );
+    virtual void operator()( DrawInfo& drawInfo );
 
     // TBD need to get context ID, probably as a param?
     void subData( GLsizeiptr offset, GLsizeiptr size, const GLvoid * );
