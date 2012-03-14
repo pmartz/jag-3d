@@ -51,13 +51,13 @@ void Drawable::operator()( DrawInfo& drawInfo )
     JAG_ERROR_CHECK( "BufferObject::Drawable::operator()" );
 }
 
-void Drawable::addVertexArrayCommand( VertexArrayCommandPtr vacp, const UsageHint& usageHint )
+void Drawable::addVertexArrayCommand( VertexArrayCommandPtr vacp, const VertexArrayCommand::UsageHint& usageHint )
 {
     _vertexArrayCommands.push_back( vacp );
 
-    if( usageHint == Vertex )
+    if( usageHint == VertexArrayCommand::Vertex )
     {
-        _vertexCommands.push_back( vacp );
+        _vertices.push_back( vacp );
     }
 }
 

@@ -66,13 +66,18 @@ void VertexArrayObject::operator()( DrawInfo& drawInfo )
 }
 
 
-void VertexArrayObject::addVertexArrayCommand( VertexArrayCommandPtr vacp )
+void VertexArrayObject::addVertexArrayCommand( VertexArrayCommandPtr vacp, const VertexArrayCommand::UsageHint& usage )
 {
     _commands.push_back( vacp );
 
     BOOST_FOREACH( IDStatusPair& idStatus, _ids._data )
     {
         idStatus.second = false;
+    }
+
+    if( usage == VertexArrayCommand::Vertex )
+    {
+        _vertices.push_back( vacp );
     }
 }
 VertexArrayCommandList& VertexArrayObject::getVertexArrayCommandList()

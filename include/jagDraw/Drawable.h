@@ -52,20 +52,10 @@ public:
     virtual void operator()( DrawInfo& drawInfo );
 
 
-    /** \brief TBD
-    \details TBD
-    */
-    typedef enum {
-        Unspecified,
-        Vertex,
-        Normal,
-        TexCoord
-    } UsageHint;
-
-    /** \brief TBD
-    \details TBD
-    */
-    void addVertexArrayCommand( VertexArrayCommandPtr vacp, const UsageHint& usageHint=Unspecified );
+    /** \brief Add a vertex array command, such as a buffer object, vertex array object, or vertex attribute.
+    \details All vertex array commands are executed by the Drawale in order, and prior to
+    issuing any of the draw commands (see addDrawCommand()). */
+    void addVertexArrayCommand( VertexArrayCommandPtr vacp, const VertexArrayCommand::UsageHint& usageHint=VertexArrayCommand::Unspecified );
 
     /** \brief TBD
     \details TBD
@@ -87,10 +77,13 @@ public:
     const DrawCommandList& getDrawCommandList() const;
 
 protected:
+    // TBD state(?) commands
     VertexArrayCommandList _vertexArrayCommands;
-    VertexArrayCommandList _vertexCommands;
-
     DrawCommandList _drawCommands;
+
+    /** Stores the vertex array object, buffer object, and vertex attribute
+    that contain and specify vertex data (tagged with usage "Vertex"). */
+    VertexArrayCommandList _vertices;
 };
 
 typedef jagBase::ptr< jagDraw::Drawable >::shared_ptr DrawablePtr;

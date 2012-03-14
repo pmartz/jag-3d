@@ -40,11 +40,24 @@ struct DrawInfo;
 class /*JAGDRAW_EXPORT*/ VertexArrayCommand
 {
 public:
+    /** \brief TBD
+    \details TBD
+    */
     typedef enum {
         BufferObjectType,
         VertexAttribType,
         VertexArrayObjectType
     } Type;
+
+    /** \brief TBD
+    \details TBD
+    */
+    typedef enum {
+        Unspecified,
+        Vertex,
+        Normal,
+        TexCoord
+    } UsageHint;
 
     VertexArrayCommand( const Type type )
       : _type( type )

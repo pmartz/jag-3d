@@ -50,7 +50,7 @@ public:
 
     virtual void operator()( DrawInfo& drawInfo );
 
-    void addVertexArrayCommand( VertexArrayCommandPtr vacp );
+    void addVertexArrayCommand( VertexArrayCommandPtr vacp, const VertexArrayCommand::UsageHint& usage=VertexArrayCommand::Unspecified );
     VertexArrayCommandList& getVertexArrayCommandList();
     const VertexArrayCommandList& getVertexArrayCommandList() const;
 
@@ -60,6 +60,10 @@ protected:
     PerContextIDStatus _ids;
 
     VertexArrayCommandList _commands;
+
+    /** Stores the buffer object and vertex attribute that contain
+    and specify vertex data (tagged with usage "Vertex"). */
+    VertexArrayCommandList _vertices;
 };
 
 typedef jagBase::ptr< jagDraw::VertexArrayObject >::shared_ptr VertexArrayObjectPtr;

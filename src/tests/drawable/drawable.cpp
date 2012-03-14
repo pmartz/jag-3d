@@ -99,11 +99,11 @@ bool DrawableDemo::init()
         v3fa.push_back( gmtl::Point3f( -.6f, .9f, z ) );
         jagBase::BufferPtr vbp( new jagBase::Buffer( v3fa.size() * sizeof( gmtl::Point3f ), (void*)&v3fa[0] ) );
         jagDraw::BufferObjectPtr vbop( new jagDraw::BufferObject( GL_ARRAY_BUFFER, vbp ) );
-        drawable->addVertexArrayCommand( vbop, jagDraw::Drawable::Vertex );
+        drawable->addVertexArrayCommand( vbop, jagDraw::VertexArrayCommand::Vertex );
 
         jagDraw::VertexAttribPtr verts( new jagDraw::VertexAttrib(
             "vertex", 3, GL_FLOAT, GL_FALSE, 0, 0 ) );
-        drawable->addVertexArrayCommand( verts, jagDraw::Drawable::Vertex );
+        drawable->addVertexArrayCommand( verts, jagDraw::VertexArrayCommand::Vertex );
 
         Point3fArray c3fa;
         c3fa.push_back( gmtl::Point3f( 1.f, 0.f, 0.f ) );
@@ -162,9 +162,9 @@ bool DrawableDemo::init()
             i3fa.push_back( gmtl::Point3f( 1.f, 0.f, 1.f ) );
         jagBase::BufferPtr ibp( new jagBase::Buffer( i3fa.size() * sizeof( gmtl::Point3f ), (void*)&i3fa[0] ) );
         jagDraw::BufferObjectPtr ibop( new jagDraw::BufferObject( GL_ARRAY_BUFFER, ibp ) );
-        drawable->addVertexArrayCommand( ibop, jagDraw::Drawable::Vertex );
+        drawable->addVertexArrayCommand( ibop, jagDraw::VertexArrayCommand::Vertex );
 
-        drawable->addVertexArrayCommand( iVerts, jagDraw::Drawable::Vertex );
+        drawable->addVertexArrayCommand( iVerts, jagDraw::VertexArrayCommand::Vertex );
         drawable->addVertexArrayCommand( iColor );
 
         drawable->addDrawCommand( drawArrays );
@@ -195,9 +195,9 @@ bool DrawableDemo::init()
         jagDraw::VertexArrayObjectPtr vaop( new jagDraw::VertexArrayObject );
         // Bind the GL_ARRAY_BUFFER for interleaved vertices and colors
         // (different from _ibop dur to vertex positions).
-        vaop->addVertexArrayCommand( ibop2 );
+        vaop->addVertexArrayCommand( ibop2, jagDraw::VertexArrayCommand::Vertex );
         // Enable and specify the "vertex" vertex attrib.
-        vaop->addVertexArrayCommand( iVerts );
+        vaop->addVertexArrayCommand( iVerts, jagDraw::VertexArrayCommand::Vertex );
         // Enable and specify the "color" vertex attrib.
         vaop->addVertexArrayCommand( iColor );
 
