@@ -201,9 +201,13 @@ bool DrawableDemo::init()
         // Enable and specify the "color" vertex attrib.
         vaop->addVertexArrayCommand( iColor );
 
+        // A DrawCommand to unbind the VAO after we're done drawing.
+        jagDraw::VertexArrayObjectUnbindPtr vaoUnbind( new jagDraw::VertexArrayObjectUnbind() );
+
         drawable->addVertexArrayCommand( vaop );
 
         drawable->addDrawCommand( drawArrays );
+        drawable->addDrawCommand( vaoUnbind );
 
         _drawableList.push_back( drawable );
     }
@@ -297,7 +301,6 @@ bool DrawableDemo::frame()
     (*_scale)( drawInfo );
 
     (*(_drawableList[ 2 ]))( drawInfo );
-    glBindVertexArray( 0 );
 
 
     glFlush ();

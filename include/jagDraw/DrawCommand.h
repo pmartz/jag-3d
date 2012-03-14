@@ -42,8 +42,7 @@ To implement a new type of draw command:
 \li Add a new value to DrawCommandType (or use one of the existing UserDefined*
 values).
 \li Derive a class from DrawCommand.
-\li Override the operator() member function. The new operator() should call into
-the base class for proper primitive restart support.
+\li Override and define the pure virtual operator() member function.
 */
 class DrawCommand //: public DrawableAttribute
 {
@@ -63,10 +62,13 @@ public:
         DrawElementsIndirectType,
         MultiDrawElementsBaseVertexType,
 
-        // Add future draw commands here when JAG moves to follow future
-        // spec releases.
+        // Commands that are added to Drawable list of DrawCommands, but
+        // don't actually do any drawing, just set up work, state changes, etc.
+        PrimitiveRestartEnableType,
+        PrimitiveRestartDisableType,
+        VertexArrayObjectUnbindType,
 
-        // User defined types:
+        // User defined types, future use, etc.
         UserDefined0,
         UserDefined1,
         UserDefined2,
@@ -77,11 +79,9 @@ public:
         UserDefined7
     };
 
-    DrawCommand( DrawCommandType drawCommandType, GLenum mode )
+    DrawCommand( DrawCommandType drawCommandType, GLenum mode=GL_POINTS )
       : _drawCommandType( drawCommandType ),
-        _mode( mode ),
-        _restartIndex( 0 ),
-        _restart( false )
+        _mode( mode )
     {}
     virtual ~DrawCommand() 
     {}
@@ -90,52 +90,11 @@ public:
 
     /**
     */
-    virtual void operator()( DrawInfo& )
-    {
-        // TBD This is not particularly efficient, always issuing at least a
-        // glEnable/glDisable call. Need a better way to support this feature.
-        if( _restart )
-        {
-            glEnable( GL_PRIMITIVE_RESTART );
-            glPrimitiveRestartIndex( _restartIndex );
-        }
-        else
-        {
-            glDisable( GL_PRIMITIVE_RESTART );
-        }
-    }
-
-    /**
-    \gl{section 2.8.1}.
-    */
-    void setPrimitiveRestartIndex( GLuint index, bool enable=true )
-    {
-        _restartIndex = index;
-        _restart = enable;
-    }
-    GLuint getPrimitiveRestartIndex() const
-    {
-        return( _restartIndex );
-    }
-
-    /**
-    \gl{section 2.8.1}.
-    */
-    void setPrimitiveRestart( bool enable )
-    {
-        _restart = enable;
-    }
-    bool getPrimitiveRestart() const
-    {
-        return( _restart );
-    }
+    virtual void operator()( DrawInfo& ) = 0;
 
 protected:
     DrawCommandType _drawCommandType;
     GLenum _mode;
-
-    GLuint _restartIndex;
-    bool _restart;
 
     // TBD I really do not like having all this crap in the base class.
     // Possibly have multiple base classes employing multiple inheritance
@@ -174,7 +133,6 @@ public:
 
     virtual void operator()( DrawInfo& drawInfo )
     {
-        DrawCommand::operator()( drawInfo );
         glDrawArrays( _mode, _first, _count );
     }
 };
@@ -199,7 +157,6 @@ public:
 
     virtual void operator()( DrawInfo& drawInfo )
     {
-        DrawCommand::operator()( drawInfo );
         glDrawArraysInstanced( _mode, _first, _count, _primcount );
     }
 };
@@ -222,8 +179,8 @@ public:
 
     virtual void operator()( DrawInfo& drawInfo )
     {
-        DrawCommand::operator()( drawInfo );
-        // TBD Do we need explicit support for GL_DRAW_INDIRECT_BUFFER bundings?
+        // TBD Do we need explicit support for GL_DRAW_INDIRECT_BUFFER bindings?
+        // Possible support that with a generic DrawCommand.
         glDrawArraysIndirect( _mode, _indirect );
     }
 };
@@ -249,7 +206,6 @@ public:
 
     virtual void operator()( DrawInfo& drawInfo )
     {
-        DrawCommand::operator()( drawInfo );
         glMultiDrawArrays( _mode, _firstArray.get(), _countArray.get(), _primcount );
     }
 };
@@ -278,7 +234,6 @@ public:
 
     virtual void operator()( DrawInfo& drawInfo )
     {
-        DrawCommand::operator()( drawInfo );
         glDrawElements( _mode, _count, _type, _offset );
     }
 };
@@ -309,7 +264,6 @@ public:
 
     virtual void operator()( DrawInfo& drawInfo )
     {
-        DrawCommand::operator()( drawInfo );
         glDrawElementsInstanced( _mode, _count, _type, _offset, _primcount );
     }
 };
@@ -336,7 +290,6 @@ public:
 
     virtual void operator()( DrawInfo& drawInfo )
     {
-        DrawCommand::operator()( drawInfo );
         glMultiDrawElements( _mode, _countArray.get(), _type, (const GLvoid**)( _indicesArray.get() ), _primcount );
     }
 };
@@ -364,7 +317,6 @@ public:
 
     virtual void operator()( DrawInfo& drawInfo )
     {
-        DrawCommand::operator()( drawInfo );
         glDrawRangeElements( _mode, _start, _end, _count, _type, _offset );
     }
 };
@@ -391,7 +343,6 @@ public:
 
     virtual void operator()( DrawInfo& drawInfo )
     {
-        DrawCommand::operator()( drawInfo );
         glDrawElementsBaseVertex( _mode, _count, _type, _offset, _basevertex );
     }
 };
@@ -420,7 +371,6 @@ public:
 
     virtual void operator()( DrawInfo& drawInfo )
     {
-        DrawCommand::operator()( drawInfo );
         glDrawRangeElementsBaseVertex( _mode, _start, _end, _count, _type, _offset, _basevertex );
     }
 };
@@ -448,7 +398,6 @@ public:
 
     virtual void operator()( DrawInfo& drawInfo )
     {
-        DrawCommand::operator()( drawInfo );
         glDrawElementsInstancedBaseVertex( _mode, _count, _type, _offset, _primcount, _basevertex );
     }
 };
@@ -472,7 +421,6 @@ public:
 
     virtual void operator()( DrawInfo& drawInfo )
     {
-        DrawCommand::operator()( drawInfo );
         glDrawElementsIndirect( _mode, _type, _indirect );
     }
 };
@@ -501,13 +449,93 @@ public:
 
     virtual void operator()( DrawInfo& drawInfo )
     {
-        DrawCommand::operator()( drawInfo );
         glMultiDrawElementsBaseVertex( _mode, _countArray.get(), _type, (const GLvoid**)( _indicesArray.get() ),
             _primcount, _basevertexArray.get() );
     }
 };
 
 typedef jagBase::ptr< jagDraw::MultiDrawElementsBaseVertex >::shared_ptr MultiDrawElementsBaseVertexPtr;
+
+
+/** \class PrimitiveRestartEnable DrawCommand.h <jagDraw/DrawCommand.h>
+\brief
+\details
+\gl{section 2.8.1}.
+*/
+class PrimitiveRestartEnable : public DrawCommand
+{
+public:
+    PrimitiveRestartEnable( GLuint index=0 )
+      : DrawCommand( PrimitiveRestartEnableType ),
+        _index( index )
+    { 
+    }
+
+    virtual void operator()( DrawInfo& )
+    {
+        glEnable( GL_PRIMITIVE_RESTART );
+        glPrimitiveRestartIndex( _index );
+    }
+
+    void setRestartIndex( GLuint index )
+    {
+        _index = index;
+    }
+    GLuint getRestartIndex() const
+    {
+        return( _index );
+    }
+
+protected:
+    GLuint _index;
+};
+
+typedef jagBase::ptr< PrimitiveRestartEnable >::shared_ptr PrimitiveRestartEnablePtr;
+
+
+/** \class PrimitiveRestartDisable DrawCommand.h <jagDraw/DrawCommand.h>
+\brief
+\details
+\gl{section 2.8.1}.
+*/
+class PrimitiveRestartDisable : public DrawCommand
+{
+public:
+    PrimitiveRestartDisable()
+      : DrawCommand( PrimitiveRestartDisableType )
+    { 
+    }
+
+    virtual void operator()( DrawInfo& )
+    {
+        glDisable( GL_PRIMITIVE_RESTART );
+    }
+};
+
+typedef jagBase::ptr< PrimitiveRestartDisable >::shared_ptr PrimitiveRestartDisablePtr;
+
+
+/** \class VertexArrayObjectUnbind DrawCommand.h <jagDraw/DrawCommand.h>
+\brief Binds the default vertex array object buffer.
+\details If client code attaches a VertexArrayObject vertex array command to
+a Drawable, then the client code can attach an instance of the
+VertexArrayObjectUnbind DrawCommand to bind the default vertex array object.
+*/
+class VertexArrayObjectUnbind : public DrawCommand
+{
+public:
+    VertexArrayObjectUnbind()
+      : DrawCommand( VertexArrayObjectUnbindType )
+    { 
+    }
+
+    virtual void operator()( DrawInfo& )
+    {
+        glBindVertexArray( 0 );
+    }
+};
+
+typedef jagBase::ptr< VertexArrayObjectUnbind >::shared_ptr VertexArrayObjectUnbindPtr;
 
 
 // jagDraw
