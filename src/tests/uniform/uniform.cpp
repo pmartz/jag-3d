@@ -257,7 +257,7 @@ bool Simple3xDemo::frame()
     (*_swizzleOff)( drawInfo );
 
     // glUseProgram for our first ShaderProgram.
-    _spp->use( drawInfo );
+    (*_spp)( drawInfo );
 
     // Bind the GL_ARRAY_BUFFER for vertices
     (*_vbop)( drawInfo );
@@ -289,7 +289,7 @@ bool Simple3xDemo::frame()
 
 
     // glUseProgram for our second ShaderProgram.
-    _spp2->use( drawInfo );
+    (*_spp2)( drawInfo );
 
     // Set the color scaling in the program using a uniform.
     (*_scale)( drawInfo );

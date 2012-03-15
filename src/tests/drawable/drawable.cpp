@@ -28,6 +28,8 @@
 #include <boost/program_options/options_description.hpp>
 #include <gmtl/gmtl.h>
 
+#include <boost/foreach.hpp>
+
 #include <string>
 
 
@@ -52,10 +54,6 @@ protected:
     Poco::Logger* _logger;
 
     jagDraw::DrawableList _drawableList;
-
-    jagDraw::ShaderProgramPtr _spp, _spp2;
-
-    jagDraw::UniformPtr _swizzleOff, _swizzleOn, _scale;
 };
 
 
@@ -84,12 +82,73 @@ bool DrawableDemo::init()
 
     glClearColor( 0.f, 0.f, 0.f, 0.f );
 
+    
+
+    const char* vShaderSource =
+        "#version 130 \n"
+        "uniform bool swizzle; \n"
+        "in vec3 vertex; \n"
+        "in vec3 color; \n"
+        "out vec3 cOut; \n"
+        "void main() { \n"
+        "    gl_Position = vec4( vertex, 1. ); \n"
+        "    if( swizzle ) \n"
+        "        cOut = color.bgr; \n"
+        "    else \n"
+        "        cOut = color; \n"
+        "}";
+    jagDraw::ShaderPtr vs( new jagDraw::Shader( GL_VERTEX_SHADER ) );
+    vs->addSourceString( std::string( vShaderSource ) );
+
+    jagDraw::ShaderProgramPtr spp;
+    {
+        const char* fShaderSource =
+            "#version 130 \n"
+            "in vec3 cOut; \n"
+            "out vec4 colorOut; \n"
+            "void main() { \n"
+            "    colorOut = vec4( cOut, 1. ); \n"
+            "}";
+        jagDraw::ShaderPtr fs( new jagDraw::Shader( GL_FRAGMENT_SHADER ) );
+        fs->addSourceString( std::string( fShaderSource ) );
+
+        spp = jagDraw::ShaderProgramPtr( new jagDraw::ShaderProgram );
+        spp->attachShader( vs );
+        spp->attachShader( fs );
+    }
+
+    jagDraw::ShaderProgramPtr spp2;
+    {
+        const char* fShaderSource =
+            "#version 130 \n"
+            "uniform float scale; \n"
+            "in vec3 cOut; \n"
+            "out vec4 colorOut; \n"
+            "void main() { \n"
+            "    colorOut = vec4( cOut * scale, 1. ); \n"
+            "}";
+        jagDraw::ShaderPtr fs( new jagDraw::Shader( GL_FRAGMENT_SHADER ) );
+        fs->addSourceString( std::string( fShaderSource ) );
+
+        spp2 = jagDraw::ShaderProgramPtr( new jagDraw::ShaderProgram );
+        spp2->attachShader( vs );
+        spp2->attachShader( fs );
+    }
+
+    jagDraw::UniformPtr swizzleOff( new jagDraw::Uniform( "swizzle", false ) );
+    jagDraw::UniformPtr swizzleOn( new jagDraw::Uniform( "swizzle", true ) );
+    jagDraw::UniformPtr scale( new jagDraw::Uniform( "scale", 0.75f ) );
+
+
     jagDraw::DrawablePtr drawable( new jagDraw::Drawable() );
     const float z = .5f;
     typedef std::vector< gmtl::Point3f > Point3fArray;
 
     // Define first drawable: tri strip on the left.
     {
+        drawable->addDrawablePrep( spp );
+        drawable->addDrawablePrep( swizzleOff );
+
         Point3fArray v3fa;
         v3fa.push_back( gmtl::Point3f( -.9f, -.9f, z ) );
         v3fa.push_back( gmtl::Point3f( -.6f, -.9f, z ) );
@@ -147,6 +206,8 @@ bool DrawableDemo::init()
     {
         drawable = jagDraw::DrawablePtr( new jagDraw::Drawable() );
 
+        drawable->addDrawablePrep( swizzleOn );
+
         Point3fArray i3fa;
         i3fa.push_back( gmtl::Point3f( -.3f, -.9f, z ) );
             i3fa.push_back( gmtl::Point3f( 1.f, 0.f, 0.f ) );
@@ -175,6 +236,9 @@ bool DrawableDemo::init()
     // Define third drawable (on the right)
     {
         drawable = jagDraw::DrawablePtr( new jagDraw::Drawable() );
+
+        drawable->addDrawablePrep( spp2 );
+        drawable->addDrawablePrep( scale );
 
         Point3fArray i3fa;
         i3fa.push_back( gmtl::Point3f( .3f, -.9f, z ) );
@@ -212,60 +276,6 @@ bool DrawableDemo::init()
         _drawableList.push_back( drawable );
     }
 
-
-    const char* vShaderSource =
-        "#version 130 \n"
-        "uniform bool swizzle; \n"
-        "in vec3 vertex; \n"
-        "in vec3 color; \n"
-        "out vec3 cOut; \n"
-        "void main() { \n"
-        "    gl_Position = vec4( vertex, 1. ); \n"
-        "    if( swizzle ) \n"
-        "        cOut = color.bgr; \n"
-        "    else \n"
-        "        cOut = color; \n"
-        "}";
-    jagDraw::ShaderPtr vs( new jagDraw::Shader( GL_VERTEX_SHADER ) );
-    vs->addSourceString( std::string( vShaderSource ) );
-
-    {
-        const char* fShaderSource =
-            "#version 130 \n"
-            "in vec3 cOut; \n"
-            "out vec4 colorOut; \n"
-            "void main() { \n"
-            "    colorOut = vec4( cOut, 1. ); \n"
-            "}";
-        jagDraw::ShaderPtr fs( new jagDraw::Shader( GL_FRAGMENT_SHADER ) );
-        fs->addSourceString( std::string( fShaderSource ) );
-
-        _spp = jagDraw::ShaderProgramPtr( new jagDraw::ShaderProgram );
-        _spp->attachShader( vs );
-        _spp->attachShader( fs );
-    }
-
-    {
-        const char* fShaderSource =
-            "#version 130 \n"
-            "uniform float scale; \n"
-            "in vec3 cOut; \n"
-            "out vec4 colorOut; \n"
-            "void main() { \n"
-            "    colorOut = vec4( cOut * scale, 1. ); \n"
-            "}";
-        jagDraw::ShaderPtr fs( new jagDraw::Shader( GL_FRAGMENT_SHADER ) );
-        fs->addSourceString( std::string( fShaderSource ) );
-
-        _spp2 = jagDraw::ShaderProgramPtr( new jagDraw::ShaderProgram );
-        _spp2->attachShader( vs );
-        _spp2->attachShader( fs );
-    }
-
-    _swizzleOff = jagDraw::UniformPtr( new jagDraw::Uniform( "swizzle", false ) );
-    _swizzleOn = jagDraw::UniformPtr( new jagDraw::Uniform( "swizzle", true ) );
-    _scale = jagDraw::UniformPtr( new jagDraw::Uniform( "scale", 0.75f ) );
-
     return( true );
 }
 
@@ -279,32 +289,13 @@ bool DrawableDemo::frame()
     jagDraw::DrawInfo drawInfo;
     drawInfo._id = 0;
 
-    // Disable color swizzle in the program using a uniform.
-    (*_swizzleOff)( drawInfo );
-
-    // glUseProgram for our first ShaderProgram.
-    _spp->use( drawInfo );
-
-    (*(_drawableList[ 0 ]))( drawInfo );
-
-
-    // Enable color swizzle in the program using a uniform.
-    (*_swizzleOn)( drawInfo );
-
-    (*(_drawableList[ 1 ]))( drawInfo );
-
-
-    // glUseProgram for our second ShaderProgram.
-    _spp2->use( drawInfo );
-
-    // Set the color scaling in the program using a uniform.
-    (*_scale)( drawInfo );
-
-    (*(_drawableList[ 2 ]))( drawInfo );
-
-
+    // Render all Drawables.
+    BOOST_FOREACH( jagDraw::DrawablePtr dp, _drawableList )
+    {
+        (*(dp))( drawInfo );
+    }
+    
     glFlush ();
-
     JAG_ERROR_CHECK( "Drawable display()" );
 
     return( true );

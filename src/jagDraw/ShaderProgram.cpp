@@ -69,7 +69,7 @@ void ShaderProgram::attachShader( ShaderPtr shader )
     _shaders.push_back( shader );
 }
 
-void ShaderProgram::use( DrawInfo& drawInfo )
+void ShaderProgram::operator()( DrawInfo& drawInfo )
 {
     const unsigned int contextID( drawInfo._id );
 

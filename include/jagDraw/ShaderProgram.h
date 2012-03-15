@@ -23,6 +23,7 @@
 
 
 #include <jagDraw/Export.h>
+#include <jagDraw/DrawablePrep.h>
 #include <jagDraw/Shader.h>
 #include <jagDraw/PerContextData.h>
 #include <jagBase/ptr.h>
@@ -41,7 +42,7 @@ struct DrawInfo;
 \brief
 \details \gl{section 2.11.2}.
 */
-class JAGDRAW_EXPORT ShaderProgram : public SHARED_FROM_THIS(ShaderProgram)
+class JAGDRAW_EXPORT ShaderProgram : public DrawablePrep, public SHARED_FROM_THIS(ShaderProgram)
 {
 public:
     // TBD seems out of place. Not sure why these matrices need special
@@ -74,7 +75,7 @@ public:
     This allows uniforms to be specified in the draw list prior to shader
     programs.
     \gl{section 2.11.2}. */
-    void use( DrawInfo& drawInfo );
+    virtual void operator()( DrawInfo& drawInfo );
 
     /** \brief Get the OpenGL program object ID for the specified \c contextID.
     \details If an ID hasn't already been created for \c contextID, getID() calls

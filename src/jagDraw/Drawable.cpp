@@ -39,16 +39,36 @@ Drawable::~Drawable()
 
 void Drawable::operator()( DrawInfo& drawInfo )
 {
+    BOOST_FOREACH( DrawablePrepPtr dpp, _drawablePrep )
+    {
+        (*dpp)( drawInfo );
+    }
+
     BOOST_FOREACH( VertexArrayCommandPtr vacp, _vertexArrayCommands )
     {
         (*vacp)( drawInfo );
     }
+
     BOOST_FOREACH( DrawCommandPtr dcp, _drawCommands )
     {
         (*dcp)( drawInfo );
     }
 
     JAG_ERROR_CHECK( "BufferObject::Drawable::operator()" );
+}
+
+void Drawable::addDrawablePrep( DrawablePrepPtr dpp )
+{
+    _drawablePrep.push_back( dpp );
+}
+
+DrawablePrepList& Drawable::getDrawablePrepList()
+{
+    return( _drawablePrep );
+}
+const DrawablePrepList& Drawable::getDrawablePrepList() const
+{
+    return( _drawablePrep );
 }
 
 void Drawable::addVertexArrayCommand( VertexArrayCommandPtr vacp, const VertexArrayCommand::UsageHint& usageHint )

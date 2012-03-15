@@ -185,7 +185,7 @@ bool Simple3xDemo::frame()
     jagDraw::DrawInfo drawInfo;
     drawInfo._id = 0;
 
-    _spp->use( drawInfo );
+    (*_spp)( drawInfo );
 
     (*_vbop)( drawInfo );
     glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 0, (const void*)0 );

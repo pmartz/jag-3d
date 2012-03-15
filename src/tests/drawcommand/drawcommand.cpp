@@ -227,7 +227,7 @@ bool Simple3xDemo::frame()
     drawInfo._id = 0;
 
     // glUseProgram for our ShaderProgram.
-    _spp->use( drawInfo );
+    (*_spp)( drawInfo );
 
     // Bind the GL_ARRAY_BUFFER for vertices
     (*_vbop)( drawInfo );

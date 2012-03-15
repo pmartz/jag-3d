@@ -22,6 +22,7 @@
 #define __JAGDRAW_DRAWABLE_H__ 1
 
 #include <jagDraw/Export.h>
+#include <jagDraw/DrawablePrep.h>
 #include <jagDraw/VertexArrayCommand.h>
 #include <jagDraw/DrawCommand.h>
 #include <jagBase/ptr.h>
@@ -52,6 +53,19 @@ public:
     virtual void operator()( DrawInfo& drawInfo );
 
 
+    /** \brief Add a drawable prep command, such as a uniform or a shader program.
+    \details All drawable prep commands are executed by the Drawale in order, and prior to
+    issuing any of the vertex array commands (see addVertexArrayCommand()). */
+    void addDrawablePrep( DrawablePrepPtr dpp );
+
+    /** \brief TBD
+    \details TBD
+    */
+    DrawablePrepList& getDrawablePrepList();
+    /** \overload */
+    const DrawablePrepList& getDrawablePrepList() const;
+
+
     /** \brief Add a vertex array command, such as a buffer object, vertex array object, or vertex attribute.
     \details All vertex array commands are executed by the Drawale in order, and prior to
     issuing any of the draw commands (see addDrawCommand()). */
@@ -77,7 +91,7 @@ public:
     const DrawCommandList& getDrawCommandList() const;
 
 protected:
-    // TBD state(?) commands
+    DrawablePrepList _drawablePrep;
     VertexArrayCommandList _vertexArrayCommands;
     DrawCommandList _drawCommands;
 

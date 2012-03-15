@@ -183,15 +183,13 @@ void Uniform::operator()( DrawInfo& drawInfo, const GLint loc ) const
     }
 }
 
-void Uniform::operator()( DrawInfo& drawInfo ) const
+void Uniform::operator()( DrawInfo& drawInfo )
 {
     // Add this uniform to the pool of potentially active uniforms
     // for the current frame and draw thread.
     drawInfo._uniformMap[ _indexHash ] = shared_from_this();
 
-    // TBD ShaderProgram::use() will need to iterate over that list...
-
-    // Uniform::operator() could execute before ShaderProgram::use(),
+    // Uniform::operator() could execute before ShaderProgram::operator(),
     // so only look up uniform location if a ShaderProgram is available.
     if( drawInfo._program != NULL )
     {

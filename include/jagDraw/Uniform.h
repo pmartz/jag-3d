@@ -41,7 +41,7 @@ struct DrawInfo;
 \brief
 \details \gl{section 2.11.4}
 */
-class JAGDRAW_EXPORT Uniform : public SHARED_FROM_THIS(Uniform)
+class JAGDRAW_EXPORT Uniform : public DrawablePrep, public SHARED_FROM_THIS(Uniform)
 {
 public:
     Uniform( const std::string& name );
@@ -72,7 +72,7 @@ public:
     \details TBD
     Adds this uniform to drawInfo._uniformMap.
     \gl{section 2.11.4} */
-    void operator()( DrawInfo& drawInfo ) const;
+    virtual void operator()( DrawInfo& drawInfo );
 
     GLenum getType() { return _type; }
 
