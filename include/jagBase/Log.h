@@ -40,11 +40,11 @@ class JAGBASE_EXPORT Log
 public:
     static Log* instance()
     {
-        if( _instance == NULL )
+        if( s_instance == NULL )
         {
-            _instance = new Log;
+            s_instance = new Log;
         }
-        return( _instance );
+        return( s_instance );
     }
 
     Poco::FormattingChannel* getConsole()
@@ -60,7 +60,7 @@ protected:
     Log();
     ~Log();
 
-    static Log* _instance;;
+    static Log* s_instance;;
 
     Poco::FormattingChannel* _console;
     Poco::FormattingChannel* _file;

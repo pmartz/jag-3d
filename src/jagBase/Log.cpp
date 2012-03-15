@@ -28,7 +28,7 @@
 namespace jagBase {
 
 
-Log* Log::_instance( NULL );
+Log* Log::s_instance( NULL );
 
 
 Log::Log()

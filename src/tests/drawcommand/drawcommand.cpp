@@ -35,11 +35,11 @@ using namespace std;
 namespace bpo = boost::program_options;
 
 
-class Simple3xDemo : public DemoInterface
+class DrawCommandDemo : public DemoInterface
 {
 public:
-    Simple3xDemo() {}
-    virtual ~Simple3xDemo() {}
+    DrawCommandDemo() {}
+    virtual ~DrawCommandDemo() {}
 
     virtual bool init();
     virtual bool frame();
@@ -69,15 +69,15 @@ protected:
 
 DemoInterface* DemoInterface::create( bpo::options_description& desc )
 {
-    return( new Simple3xDemo );
+    return( new DrawCommandDemo );
 }
 
-bool Simple3xDemo::init()
+bool DrawCommandDemo::init()
 {
-    _logger = Poco::Logger::has( "jag3d.demo" );
+    _logger = Poco::Logger::has( "jag3d.demo.drawcommand" );
     if( _logger == NULL )
     {
-        _logger = &( Poco::Logger::create( "jag3d.demo",
+        _logger = &( Poco::Logger::create( "jag3d.demo.drawcommand",
                 (Poco::Channel*)( jagBase::Log::instance()->getConsole() ), Poco::Message::PRIO_INFORMATION ) );
     }
 
@@ -216,7 +216,7 @@ bool Simple3xDemo::init()
     return( true );
 }
 
-bool Simple3xDemo::frame()
+bool DrawCommandDemo::frame()
 {
     glClear( GL_COLOR_BUFFER_BIT );
 

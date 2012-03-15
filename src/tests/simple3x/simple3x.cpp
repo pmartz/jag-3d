@@ -60,10 +60,10 @@ DemoInterface* DemoInterface::create( bpo::options_description& desc )
 
 bool Simple3xDemo::init()
 {
-    _logger = Poco::Logger::has( "jag3d.demo" );
+    _logger = Poco::Logger::has( "jag3d.demo.simple3x" );
     if( _logger == NULL )
     {
-        _logger = &( Poco::Logger::create( "jag3d.demo",
+        _logger = &( Poco::Logger::create( "jag3d.demo.simple3x",
                 (Poco::Channel*)( jagBase::Log::instance()->getConsole() ), Poco::Message::PRIO_INFORMATION ) );
     }
 

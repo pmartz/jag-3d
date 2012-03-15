@@ -64,10 +64,10 @@ DemoInterface* DemoInterface::create( bpo::options_description& desc )
 
 bool DrawableDemo::init()
 {
-    _logger = Poco::Logger::has( "jag3d.demo" );
+    _logger = Poco::Logger::has( "jag3d.demo.drawable" );
     if( _logger == NULL )
     {
-        _logger = &( Poco::Logger::create( "jag3d.demo",
+        _logger = &( Poco::Logger::create( "jag3d.demo.drawable",
                 (Poco::Channel*)( jagBase::Log::instance()->getConsole() ), Poco::Message::PRIO_INFORMATION ) );
     }
 
@@ -276,6 +276,8 @@ bool DrawableDemo::init()
         _drawableList.push_back( drawable );
     }
 
+    JAG_ERROR_CHECK( "DrawableDemo init()" );
+
     return( true );
 }
 
@@ -296,7 +298,7 @@ bool DrawableDemo::frame()
     }
     
     glFlush ();
-    JAG_ERROR_CHECK( "Drawable display()" );
+    JAG_ERROR_CHECK( "DrawableDemo display()" );
 
     return( true );
 }
