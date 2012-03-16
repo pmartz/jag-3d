@@ -85,7 +85,7 @@ SHOW_DIRECTORIES       = NO
 SHOW_FILES             = YES
 SHOW_NAMESPACES        = YES
 FILE_VERSION_FILTER    = 
-LAYOUT_FILE            = 
+LAYOUT_FILE            = "${PROJECT_SOURCE_DIR}/doc/DoxygenLayout.xml"
 
 #---------------------------------------------------------------------------
 # configuration options related to warning and progress messages
