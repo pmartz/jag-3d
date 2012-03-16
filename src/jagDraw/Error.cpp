@@ -21,8 +21,7 @@
 #include <jagDraw/Error.h>
 #include <jagDraw/PlatformOpenGL.h>
 #include <jagBase/Log.h>
-#include <Poco/Logger.h>
-#include <Poco/Message.h>
+#include <jagBase/LogMacros.h>
 #include <string>
 
 
@@ -34,15 +33,11 @@ namespace jagDraw
 void errorCheck( const std::string& msg )
 {
     const GLenum errorEnum = glGetError();
+
+#ifndef JAG3D_DISABLE_LOGGING
+
     if( errorEnum == GL_NO_ERROR )
         return;
-
-    Poco::Logger* logger = Poco::Logger::has( "jag3d.jagDraw.GLError" );
-    if( logger == NULL )
-    {
-        logger = &( Poco::Logger::create( "jag3d.jagDraw.GLError",
-                (Poco::Channel*)( jagBase::Log::instance()->getConsole() ), Poco::Message::PRIO_ERROR ) );
-    }
 
     std::string enumStr( "Unknown" );
     switch( errorEnum ) {
@@ -55,22 +50,20 @@ void errorCheck( const std::string& msg )
 
     enumStr.append( ": " );
     enumStr.append( msg );
-    logger->error( enumStr );
+    JAG3D_ERROR_STATIC( "jag3d.jagDraw.GLError", enumStr );
+
+#endif
 }
 
 
 void fboErrorCheck( const std::string& msg )
 {
     const GLenum errorEnum( glCheckFramebufferStatus( GL_DRAW_FRAMEBUFFER ) );
+
+#ifndef JAG3D_DISABLE_LOGGING
+
     if( errorEnum == GL_FRAMEBUFFER_COMPLETE )
         return;
-
-    Poco::Logger* logger = Poco::Logger::has( "jag3d.jagDraw.GLError" );
-    if( logger == NULL )
-    {
-        logger = &( Poco::Logger::create( "jag3d.jagDraw.GLError",
-                (Poco::Channel*)( jagBase::Log::instance()->getConsole() ), Poco::Message::PRIO_ERROR ) );
-    }
 
     std::string enumStr( "Unknown" );
     switch( errorEnum ) {
@@ -91,7 +84,9 @@ void fboErrorCheck( const std::string& msg )
     std::string outMsg( "OpenGL FBO error " );
     outMsg.append( enumStr );
     outMsg.append( msg );
-    logger->error( outMsg );
+    JAG3D_ERROR_STATIC( "jag3d.jagDraw.GLError", outMsg );
+
+#endif
 }
 
 

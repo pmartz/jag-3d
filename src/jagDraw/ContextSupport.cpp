@@ -23,8 +23,7 @@
 #include <jagDraw/ContextSupportGl3w.h>
 
 #include <jagBase/Log.h>
-#include <Poco/Logger.h>
-#include <Poco/Message.h>
+#include <jagBase/LogMacros.h>
 #include <Poco/NumberFormatter.h>
 #include <Poco/Format.h>
 #include <boost/foreach.hpp>
@@ -56,13 +55,8 @@ ContextSupport* ContextSupport::instance()
 }
 
 ContextSupport::ContextSupport()
+  : jagBase::LogBase( "jag3d.jagDraw.ctx" )
 {
-    _logger = Poco::Logger::has( "jag3d.jagDraw.Ctx" );
-    if( _logger == NULL )
-    {
-        _logger = &( Poco::Logger::create( "jag3d.jagDraw.Ctx",
-                (Poco::Channel*)( jagBase::Log::instance()->getConsole() ), Poco::Message::PRIO_TRACE ) );
-    }
 }
 ContextSupport::~ContextSupport()
 {
@@ -75,17 +69,23 @@ jagDrawContextID ContextSupport::registerContext( const platformContextID pCtxId
 
     const string idStr = asString( pCtxId );
 
-    string infoMsg( "registerContext: " );
-    infoMsg.append( idStr );
-    _logger->information( infoMsg );
+    if( JAG3D_LOG_INFO )
+    {
+        string infoMsg( "registerContext: " );
+        infoMsg.append( idStr );
+        JAG3D_INFO( infoMsg );
+    }
 
     jagDrawContextID contextID;
 
     if( isRegistered( pCtxId ) )
     {
-        string msg( "registerContext: Context already registered: " );
-        msg.append( idStr );
-        _logger->warning( msg );
+        if( JAG3D_LOG_WARNING )
+        {
+            string msg( "registerContext: Context already registered: " );
+            msg.append( idStr );
+            JAG3D_WARNING( msg );
+        }
 
         contextID = getJagContextID( pCtxId );
     }
@@ -103,16 +103,22 @@ bool ContextSupport::setActiveContext( const jagDrawContextID contextID )
 {
     const string idStr = asString( contextID );
 
-    string infoMsg( "setActiveContext: " );
-    infoMsg.append( idStr );
-    _logger->information( infoMsg );
+    if( JAG3D_LOG_INFO )
+    {
+        string infoMsg( "setActiveContext: " );
+        infoMsg.append( idStr );
+        JAG3D_INFO( infoMsg );
+    }
 
     unsigned int idAsSize = static_cast< unsigned int >( contextID );
     if( idAsSize >= _contexts._data.size() )
     {
-        string msg( "setActiveContext: Invalid contextID: " );
-        msg.append( idStr );
-        _logger->error( msg );
+        if( JAG3D_LOG_ERROR )
+        {
+            string msg( "setActiveContext: Invalid contextID: " );
+            msg.append( idStr );
+            JAG3D_ERROR( msg );
+        }
 
         return( false );
     }
@@ -124,7 +130,7 @@ bool ContextSupport::setActiveContext( const jagDrawContextID contextID )
 
 bool ContextSupport::initContext()
 {
-    _logger->information( string( "initContext" ) );
+    JAG3D_TRACE( string( "initContext" ) );
 
     return( true );
 }
@@ -135,9 +141,12 @@ platformContextID ContextSupport::getPlatformContextID( const jagDrawContextID c
     if( idAsSize < _contexts._data.size() )
         return( _contexts[ idAsSize ] );
 
-    string msg( "getPlatformContextID: Unknown jagDraw contextID: " );
-    msg.append( asString( contextID ) );
-    _logger->error( msg );
+    if( JAG3D_LOG_ERROR )
+    {
+        string msg( "getPlatformContextID: Unknown jagDraw contextID: " );
+        msg.append( asString( contextID ) );
+        JAG3D_ERROR( msg );
+    }
 
     return( NULL );
 }
@@ -152,9 +161,12 @@ jagDrawContextID ContextSupport::getJagContextID( const platformContextID pCtxId
         idx++;
     }
 
-    string msg( "getJagContextID: Unknown platform contextID: " );
-    msg.append( asString( pCtxId ) );
-    _logger->error( msg );
+    if( JAG3D_LOG_ERROR )
+    {
+        string msg( "getJagContextID: Unknown platform contextID: " );
+        msg.append( asString( pCtxId ) );
+        JAG3D_ERROR( msg );
+    }
 
     return( static_cast< jagDrawContextID >( 0 ) );
 }

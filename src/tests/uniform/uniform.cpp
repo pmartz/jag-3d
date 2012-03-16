@@ -23,7 +23,7 @@
 #include <jagDraw/DrawCommon.h>
 #include <jagBase/Version.h>
 #include <jagBase/Log.h>
-#include <Poco/Logger.h>
+#include <jagBase/LogMacros.h>
 #include <Poco/Message.h>
 #include <boost/program_options/options_description.hpp>
 #include <gmtl/gmtl.h>
@@ -38,9 +38,12 @@ namespace bpo = boost::program_options;
 class UniformDemo : public DemoInterface
 {
 public:
-    UniformDemo() {}
+    UniformDemo()
+      : DemoInterface( "jag3d.demo.uniform" )
+    {}
     virtual ~UniformDemo() {}
 
+    virtual bool startup();
     virtual bool init();
     virtual bool frame();
     virtual bool shutdown()
@@ -49,8 +52,6 @@ public:
     }
 
 protected:
-    Poco::Logger* _logger;
-
     jagDraw::BufferObjectPtr _vbop;
     jagDraw::BufferObjectPtr _cbop;
     jagDraw::BufferObjectPtr _ibop;
@@ -74,22 +75,21 @@ DemoInterface* DemoInterface::create( bpo::options_description& desc )
     return( new UniformDemo );
 }
 
+bool UniformDemo::startup()
+{
+    jagBase::Log::instance()->setPriority( 10, jagBase::Log::Console );
+    return( true );
+}
+
 bool UniformDemo::init()
 {
-    _logger = Poco::Logger::has( "jag3d.demo.uniform" );
-    if( _logger == NULL )
-    {
-        _logger = &( Poco::Logger::create( "jag3d.demo.uniform",
-                (Poco::Channel*)( jagBase::Log::instance()->getConsole() ), Poco::Message::PRIO_INFORMATION ) );
-    }
-
-    _logger->information( jagBase::getVersionString() );
+    JAG3D_INFO_STATIC( _logName, jagBase::getVersionString() );
 
 
     // Display information on the type of context we created.
     string msg = string( "GL_VERSION: " );
     msg.append( (char*)(glGetString( GL_VERSION )) );
-    _logger->information( msg );
+    JAG3D_INFO_STATIC( _logName, msg );
 
 
     glClearColor( 0.f, 0.f, 0.f, 0.f );

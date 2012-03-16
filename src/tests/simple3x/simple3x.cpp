@@ -23,7 +23,7 @@
 #include <jagDraw/DrawCommon.h>
 #include <jagBase/Version.h>
 #include <jagBase/Log.h>
-#include <Poco/Logger.h>
+#include <jagBase/LogMacros.h>
 #include <Poco/Message.h>
 #include <boost/program_options/options_description.hpp>
 #include <gmtl/gmtl.h>
@@ -38,16 +38,17 @@ namespace bpo = boost::program_options;
 class Simple3xDemo : public DemoInterface
 {
 public:
-    Simple3xDemo() {}
+    Simple3xDemo()
+      : DemoInterface( "jag3d.demo.simple3x" )
+    {}
     virtual ~Simple3xDemo() {}
 
+    virtual bool startup();
     virtual bool init();
     virtual bool frame();
     virtual bool shutdown() { return( true ); }
 
 protected:
-    Poco::Logger* _logger;
-
     jagDraw::BufferObjectPtr _bop;
     jagDraw::ShaderProgramPtr _spp;
 };
@@ -58,34 +59,38 @@ DemoInterface* DemoInterface::create( bpo::options_description& desc )
     return( new Simple3xDemo );
 }
 
+bool Simple3xDemo::startup()
+{
+    jagBase::Log::instance()->setPriority( 10, jagBase::Log::Console );
+    return( true );
+}
+
 bool Simple3xDemo::init()
 {
-    _logger = Poco::Logger::has( "jag3d.demo.simple3x" );
-    if( _logger == NULL )
-    {
-        _logger = &( Poco::Logger::create( "jag3d.demo.simple3x",
-                (Poco::Channel*)( jagBase::Log::instance()->getConsole() ), Poco::Message::PRIO_INFORMATION ) );
-    }
-
-    _logger->information( jagBase::getVersionString() );
+    JAG3D_INFO_STATIC( _logName, jagBase::getVersionString() );
 
 
     // Display information on the type of context we created.
     string msg( "GL_VENDOR: " );
     msg.append( (char*)(glGetString( GL_VENDOR )) );
-    _logger->information( msg );
+    JAG3D_INFO_STATIC( _logName, msg );
 
     msg = string( "GL_RENDERER: " );
     msg.append( (char*)(glGetString( GL_RENDERER )) );
-    _logger->information( msg );
+    JAG3D_INFO_STATIC( _logName, msg );
 
     msg = string( "GL_VERSION: " );
     msg.append( (char*)(glGetString( GL_VERSION )) );
-    _logger->information( msg );
+    JAG3D_INFO_STATIC( _logName, msg );
 
     msg = string( "GL_SHADING_LANGUAGE_VERSION: " );
     msg.append( (char*)(glGetString( GL_SHADING_LANGUAGE_VERSION )) );
-    _logger->information( msg );
+    JAG3D_INFO_STATIC( _logName, msg );
+
+
+    JAG3D_ERROR_STATIC( _logName, "Test error logging. Should produce GL_INVALID_ENUM." );
+    glEnable( GL_FALSE );
+    JAG_ERROR_CHECK( "Simple3xDemo::init()" );
 
 
     glClearColor( 0.4f, 0.4f, 0.4f, 0.f );

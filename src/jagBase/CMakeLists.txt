@@ -30,6 +30,8 @@ set( _jagBaseHeaderFiles
     ${HEADER_PATH}/Export.h
     ${HEADER_PATH}/Buffer.h
     ${HEADER_PATH}/Log.h
+    ${HEADER_PATH}/LogBase.h
+    ${HEADER_PATH}/LogMacros.h
     ${HEADER_PATH}/ptr.h
     ${HEADER_PATH}/types.h
     ${HEADER_PATH}/Version.h

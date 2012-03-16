@@ -18,40 +18,53 @@
 *
 *************** <auto-copyright.pl END do not edit this line> ***************/
 
-#ifndef __JAG3D_DEMO_SUPPORT_DEMO_INTERFACE_H__
-#define __JAG3D_DEMO_SUPPORT_DEMO_INTERFACE_H__ 1
+#ifndef __JAGBASE_LOG_BASE_H__
+#define __JAGBASE_LOG_BASE_H__ 1
 
 
-#include <boost/program_options/options_description.hpp>
+#include <Poco/Logger.h>
+#include <Poco/LogStream.h>
+#include <Poco/NullChannel.h>
+#include <jagBase/ptr.h>
 
 
-/** \class DemoInterface DemoInterface.h DemoInterface.h
-\brief Facilitates building examples, tests, and demos with any
-windowing system API, e.g., freeglut, Qt, etc.
+namespace jagBase
+{
+
+
+typedef jagBase::ptr< Poco::LogStream >::shared_ptr PocoLogStreamPtr;
+
+
+/** \class LogBase LogBase.h <jagBase/LogBase.h>
+\brief
+\details
 */
-class DemoInterface
+class LogBase
 {
 public:
-    DemoInterface( const std::string& logName )
-      : _logName( logName )
-    {}
-    virtual ~DemoInterface() {}
+    LogBase( const std::string& loggerName )
+#ifdef JAG3D_DISABLE_LOGGING
+      : _logger( Poco::Logger::get( "" ) ), // Must init a reference, even if we're not using it.
+        _logStream( NULL )
+    {
+        _logger.setChannel( Poco::NullChannel() );
+#else
+      : _logger( Poco::Logger::get( loggerName ) ),
+        _logStream( PocoLogStreamPtr( new Poco::LogStream( _logger ) ) )
+    {
+#endif
+    }
 
-    static DemoInterface* create( boost::program_options::options_description& desc );
+    ~LogBase() {}
 
-    /** Called before any contexts are created. */
-    virtual bool startup() = 0;
-    /** Called after a context has been created. */
-    virtual bool init() = 0;
-    /** Called to render a frame. */
-    virtual bool frame() = 0;
-    /** Called prior to exit. */
-    virtual bool shutdown() = 0;
-
-protected:
-    std::string _logName;
+    Poco::Logger& _logger;
+    PocoLogStreamPtr _logStream;
 };
 
 
-// __JAG3D_DEMO_SUPPORT_DEMO_INTERFACE_H__
+// jagBase
+}
+
+
+// __JAGBASE_LOG_BASE_H__
 #endif
