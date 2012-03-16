@@ -20,6 +20,7 @@
 
 #include <jagDraw/PlatformOpenGL.h>
 #include <jagDraw/Drawable.h>
+#include <jagBase/LogMacros.h>
 #include <jagDraw/DrawInfo.h>
 #include <jagDraw/Error.h>
 
@@ -30,6 +31,7 @@ namespace jagDraw {
 
 
 Drawable::Drawable()
+  : jagBase::LogBase( "jag3d.jagDraw.drawable" )
 {
 }
 Drawable::~Drawable()
@@ -54,8 +56,14 @@ void Drawable::operator()( DrawInfo& drawInfo )
         (*dcp)( drawInfo );
     }
 
-    JAG_ERROR_CHECK( "BufferObject::Drawable::operator()" );
+    JAG_ERROR_CHECK( "Drawable::operator()" );
 }
+
+void Drawable::getBound()
+{
+    JAG3D_NOTICE( "Drawable::getBound() is currently not implemented." );
+}
+
 
 void Drawable::addDrawablePrep( DrawablePrepPtr dpp )
 {

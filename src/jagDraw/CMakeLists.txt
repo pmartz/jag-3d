@@ -31,6 +31,7 @@ set( _jagDrawHeaderFiles
     ${HEADER_PATH}/BufferObject.h
     ${HEADER_PATH}/ContextSupport.h
     ${HEADER_PATH}/Drawable.h
+    ${HEADER_PATH}/DrawablePrep.h
     ${HEADER_PATH}/DrawCommand.h
     ${HEADER_PATH}/DrawInfo.h
     ${HEADER_PATH}/DrawCommon.h

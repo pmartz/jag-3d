@@ -28,7 +28,7 @@
 namespace jagBase {
 
 
-/** \defgroup Version Version utilities */
+/** \defgroup Version Version Utilities */
 /*@{*/
 
 // Please keep in sync with top-level CMakeLists.txt JAG3D_VERSION variable.
