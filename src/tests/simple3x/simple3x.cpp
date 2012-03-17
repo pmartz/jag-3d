@@ -39,7 +39,7 @@ class Simple3xDemo : public DemoInterface
 {
 public:
     Simple3xDemo()
-      : DemoInterface( "jag3d.demo.simple3x" )
+      : DemoInterface( "jag.demo.simple3x" )
     {}
     virtual ~Simple3xDemo() {}
 
@@ -61,7 +61,7 @@ DemoInterface* DemoInterface::create( bpo::options_description& desc )
 
 bool Simple3xDemo::startup()
 {
-    jagBase::Log::instance()->setPriority( 10, jagBase::Log::Console );
+    jagBase::Log::instance()->setPriority( jagBase::Log::PrioTrace, jagBase::Log::Console );
     return( true );
 }
 

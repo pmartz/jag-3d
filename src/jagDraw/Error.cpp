@@ -50,7 +50,7 @@ void errorCheck( const std::string& msg )
 
     enumStr.append( ": " );
     enumStr.append( msg );
-    JAG3D_ERROR_STATIC( "jag3d.jagDraw.GLError", enumStr );
+    JAG3D_ERROR_STATIC( "jag.draw.glerror", enumStr );
 
 #endif
 }
@@ -84,7 +84,7 @@ void fboErrorCheck( const std::string& msg )
     std::string outMsg( "OpenGL FBO error " );
     outMsg.append( enumStr );
     outMsg.append( msg );
-    JAG3D_ERROR_STATIC( "jag3d.jagDraw.GLError", outMsg );
+    JAG3D_ERROR_STATIC( "jag.draw.glerror", outMsg );
 
 #endif
 }

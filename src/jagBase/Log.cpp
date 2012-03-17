@@ -51,7 +51,7 @@ void Log::setLogFileName( const std::string& logFileName )
 {
     if( _file != NULL )
     {
-        JAG3D_WARNING_STATIC( "jag3d.jagBase.Log", "Can't change log file name. Log file is already open." );
+        JAG3D_WARNING_STATIC( "jag.base.log", "Can't change log file name. Log file is already open." );
         return;
     }
     _logFileName = logFileName;
@@ -70,7 +70,7 @@ void Log::setPriority( int prio, const DestinationType dest, const std::string& 
     {
         if( _console == NULL )
         {
-            _console = new Poco::FormattingChannel( new Poco::PatternFormatter("%s: %p: %t") );
+            _console = new Poco::FormattingChannel( new Poco::PatternFormatter("%s: %t") );
 	        _console->setChannel( new Poco::ConsoleChannel );
 	        _console->open();
         }

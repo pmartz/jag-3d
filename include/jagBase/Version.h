@@ -57,8 +57,9 @@ Use this in version-specific code, for example:
         JAG3D_SUB_VERSION )
 
 /** \brief Run-time access to the Jag3D version number
-\details This function automatically logs the version string to
-the Logger named "jag3d.jagBase.version" at priority "info".
+\details When called for the first time, this function automatically
+logs the version string to the Logger named "jag.base.version" at
+priority "info".
 \returns JAG3D_VERSION, the Jad3D version number as an integer.
 \see JAG3D_VERSION
 */

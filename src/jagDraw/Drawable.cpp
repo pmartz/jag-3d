@@ -31,7 +31,7 @@ namespace jagDraw {
 
 
 Drawable::Drawable()
-  : jagBase::LogBase( "jag3d.jagDraw.drawable" )
+  : jagBase::LogBase( "jag.draw.drawable" )
 {
 }
 Drawable::~Drawable()

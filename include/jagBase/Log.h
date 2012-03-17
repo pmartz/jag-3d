@@ -23,6 +23,7 @@
 
 
 #include <jagBase/Export.h>
+#include <Poco/Message.h>
 #include <string>
 
 
@@ -67,11 +68,23 @@ public:
     LogBase that uses LogFile as a destination.) */
     void setLogFileName( const std::string& logFileName );
 
+    typedef enum {
+        PrioSilent = 0,
+        PrioFatal = Poco::Message::PRIO_FATAL,
+        PrioCritical = Poco::Message::PRIO_CRITICAL,
+        PrioError = Poco::Message::PRIO_ERROR,
+        PrioWarning = Poco::Message::PRIO_WARNING,
+        PrioNotice = Poco::Message::PRIO_NOTICE,
+        PrioInfo = Poco::Message::PRIO_INFORMATION,
+        PrioDebug = Poco::Message::PRIO_DEBUG,
+        PrioTrace = Poco::Message::PRIO_TRACE
+    };
+
     /** \brief TBD
     \details TBD
     \param prio Logging verbosity. 0 is silent, 8 is verbose. These values
     map directly to the Poco logging priorities in Poco/Message.h. */
-    void setPriority( int prio, const std::string& logName="jag3d" );
+    void setPriority( int prio, const std::string& logName="jag" );
 
     /** \brief TBD
     \details TBD
@@ -85,7 +98,7 @@ public:
     \details TBD
     \param prio Logging verbosity. 0 is silent, 8 is verbose. These values
     map directly to the Poco logging priorities in Poco/Message.h. */
-    void setPriority( int prio, const DestinationType dest, const std::string& logName="jag3d" );
+    void setPriority( int prio, const DestinationType dest, const std::string& logName="jag" );
 
 protected:
     Log();

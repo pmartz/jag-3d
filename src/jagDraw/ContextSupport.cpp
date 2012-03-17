@@ -55,7 +55,7 @@ ContextSupport* ContextSupport::instance()
 }
 
 ContextSupport::ContextSupport()
-  : jagBase::LogBase( "jag3d.jagDraw.ctx" )
+  : jagBase::LogBase( "jag.draw.ctx" )
 {
 }
 ContextSupport::~ContextSupport()

@@ -45,9 +45,9 @@ std::string getVersionString()
             JAG3D_SUB_VERSION << " (" <<
             getVersionNumber() << ").";
         s_jag3d_version = oStr.str();
-    }
 
-    JAG3D_INFO_STATIC( "jag3d.jagBase.version", s_jag3d_version );
+        JAG3D_INFO_STATIC( "jag.base.version", s_jag3d_version );
+    }
 
     return( s_jag3d_version );
 }

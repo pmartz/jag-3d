@@ -39,7 +39,7 @@ class UniformDemo : public DemoInterface
 {
 public:
     UniformDemo()
-      : DemoInterface( "jag3d.demo.uniform" )
+      : DemoInterface( "jag.demo.uniform" )
     {}
     virtual ~UniformDemo() {}
 
@@ -77,7 +77,7 @@ DemoInterface* DemoInterface::create( bpo::options_description& desc )
 
 bool UniformDemo::startup()
 {
-    jagBase::Log::instance()->setPriority( 10, jagBase::Log::Console );
+    jagBase::Log::instance()->setPriority( jagBase::Log::PrioTrace, jagBase::Log::Console );
     return( true );
 }
 

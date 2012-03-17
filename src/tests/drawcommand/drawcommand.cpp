@@ -39,7 +39,7 @@ class DrawCommandDemo : public DemoInterface
 {
 public:
     DrawCommandDemo()
-      : DemoInterface( "jag3d.demo.drawcommand" )
+      : DemoInterface( "jag.demo.drawcommand" )
     {}
     virtual ~DrawCommandDemo() {}
 
@@ -75,7 +75,7 @@ DemoInterface* DemoInterface::create( bpo::options_description& desc )
 
 bool DrawCommandDemo::startup()
 {
-    jagBase::Log::instance()->setPriority( 10, jagBase::Log::Console );
+    jagBase::Log::instance()->setPriority( jagBase::Log::PrioTrace, jagBase::Log::Console );
     return( true );
 }
 

@@ -54,7 +54,7 @@ void ShaderProgram::printInfoLog()
 }
 
 ShaderProgram::ShaderProgram()
-  : jagBase::LogBase( "jag3d.jagDraw.ShaderProgram" )
+  : jagBase::LogBase( "jag.draw.program" )
 {
 }
 
@@ -211,7 +211,8 @@ bool ShaderProgram::link( unsigned int contextID )
         {
             Poco::LogStream& ls( (*_logStream).information() );
             ls << "Active Uniforms (" << n << "):" << std::endl;
-            ls << "        hashcode  loc  name" << std::endl;
+            if( n > 0 )
+                ls << "        hashcode  loc  name" << std::endl;
         }
         for( GLint i = 0; i < n; i++ )
         {
@@ -238,7 +239,8 @@ bool ShaderProgram::link( unsigned int contextID )
         {
             Poco::LogStream& ls( (*_logStream).information() );
             ls << "Active Attributes (" << n << "):" << std::endl;
-            ls << "        hashcode  loc  name" << std::endl;
+            if( n > 0 )
+                ls << "        hashcode  loc  name" << std::endl;
         }
         for( GLint i = 0; i < n; i++ )
         {

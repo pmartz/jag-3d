@@ -36,22 +36,23 @@ Jag's modules and classes are arranged in a heirarchy to allow message destinati
 or log file) and verbosity on a per-module and per-class basis. The heirarchy is arranged
 as follows:
 <ul>
-  <li>jag3d
+  <li>jag
   <ul>
-    <li>jagBase
+    <li>base (the jagBase module)
     <ul>
-      <li>Log
-      <li>version
+      <li>\link jagBase::Log log \endlink
+      <li>\ref jagBaseVersion "version"
     </ul>
-    <li>jagDraw
+    <li>draw (the jagDraw module)
     <ul>
-      <li>ctx
-      <li>Drawable
-      <li>GLError
+      <li>\link jagDraw::ContextSupport ctx \endlink
+      <li>\link jagDraw::Drawable drawable \endlink
+      <li>\ref jagDrawError "glerror"
+      <li>\link jagDraw::ShaderProgram program \endlink
     </ul>
-    <li>jagSG
-    <li>jagUtil
-    <li>demo
+    <li>sg (the jagSG module)
+    <li>util (the jagUtil module)
+    <li>demo (demos, tests, examples)
     <ul>
       <li>various demos and tests
     </ul>
@@ -59,7 +60,7 @@ as follows:
 </ul>
 
 Heirachy levels are separated by a period, so the name for the jagDraw::Drawable Poco::Logger is
-\c jag3d.jagDraw.Drawable.
+\c jag.draw.drawable.
 
 Priority level match those used by Poco and are defined as follows:
 \li 0 - Silent (no message logging)
@@ -75,24 +76,24 @@ Priority level match those used by Poco and are defined as follows:
 Set a Poco::Logger's priority and destination (console or log file) using the jagBase::Log class.
 \code
     // Set the global priority to 3 (error and above) and destination to Console.
-    // There is an implicit 3rd parameter of "jag3d".
+    // There is an implicit 3rd parameter of "jag".
     jagBase::Log::instance()->setPriority( 3, jagBase::Log::Console );
 
     // Set the jagDraw module to priority 3 (error and above)
-    jagBase::Log::instance()->setPriority( 4, "jag3d.jagDraw" );
+    jagBase::Log::instance()->setPriority( 4, "jag.draw" );
 
     // Send any OpenGL errors to the log file.
-    jagBase::Log::instance()->setPriority( 3, jagBase::Log::LogFile, "jag3d.jagDraw.GLError" );
+    jagBase::Log::instance()->setPriority( 3, jagBase::Log::LogFile, "jag.draw.error" );
 
     // Turn on debugging for jagDraw context handling.
-    jagBase::Log::instance()->setPriority( 8, "jag3d.jagDraw.ctx" );
+    jagBase::Log::instance()->setPriority( 8, "jag.draw.ctx" );
 \endcode
 
 Poco Logger priority and destination inherit down the heirarchy. Your application should
 set specific priority and destinations (as in the code above) at init time, before
 Jag class constructors obtain references to subordinate Loggers.
 
-By default, the root Logger ("jag3d") is configured with priority 0 (silent) and
+By default, the root Logger ("jag") is configured with priority 0 (silent) and
 destination jagBase::Log::Console.
 
 The default log file name is "jag3d.log" and Jag writes it to the current directory.
