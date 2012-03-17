@@ -28,7 +28,7 @@
 namespace jagBase {
 
 
-/** \defgroup Version Version Utilities */
+/** \defgroup jagBaseVersion Version Utilities */
 /*@{*/
 
 // Please keep in sync with top-level CMakeLists.txt JAG3D_VERSION variable.
@@ -57,8 +57,9 @@ Use this in version-specific code, for example:
         JAG3D_SUB_VERSION )
 
 /** \brief Run-time access to the Jag3D version number
-
-Returns JAG3D_VERSION, the Jad3D version number as an integer
+\details This function automatically logs the version string to
+the Logger named "jag3d.jagBase.version" at priority "info".
+\returns JAG3D_VERSION, the Jad3D version number as an integer.
 \see JAG3D_VERSION
 */
 unsigned int JAGBASE_EXPORT getVersionNumber();
@@ -77,6 +78,7 @@ std::string JAGBASE_EXPORT getVersionString();
 
 // namespace jagBase
 }
+
 
 // __JAGBASE_VERSION_H__
 #endif

@@ -78,7 +78,8 @@ bool DrawDemo::startup()
 
 bool DrawDemo::init()
 {
-    JAG3D_INFO_STATIC( _logName, jagBase::getVersionString() );
+    // Auto-log the version string.
+    jagBase::getVersionString();
 
 
     // Display information on the type of context we created.

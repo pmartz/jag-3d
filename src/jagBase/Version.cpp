@@ -19,6 +19,7 @@
 *************** <auto-copyright.pl END do not edit this line> ***************/
 
 #include <jagBase/Version.h>
+#include <jagBase/LogMacros.h>
 #include <string>
 #include <sstream>
 
@@ -45,6 +46,9 @@ std::string getVersionString()
             getVersionNumber() << ").";
         s_jag3d_version = oStr.str();
     }
+
+    JAG3D_INFO_STATIC( "jag3d.jagBase.version", s_jag3d_version );
+
     return( s_jag3d_version );
 }
 
