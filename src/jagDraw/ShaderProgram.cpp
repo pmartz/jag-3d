@@ -21,6 +21,7 @@
 #include <jagDraw/ShaderProgram.h>
 #include <jagDraw/PlatformOpenGL.h>
 #include <jagDraw/DrawInfo.h>
+#include <jagBase/LogMacros.h>
 #include <stdio.h>
 #include <iostream>
 
@@ -53,7 +54,7 @@ void ShaderProgram::printInfoLog()
 }
 
 ShaderProgram::ShaderProgram()
-    //: DrawableAttribute( ShaderProgram_t )
+  : jagBase::LogBase( "jag3d.jagDraw.ShaderProgram" )
 {
 }
 
@@ -156,6 +157,12 @@ GLint ShaderProgram::getId( unsigned int contextID )
 
 bool ShaderProgram::link( unsigned int contextID )
 {
+    JAG3D_TRACE( "ShaderProgram::link" );
+    if( JAG3D_LOG_DEBUG )
+    {
+        (*_logStream).debug() << "  contextID: " << contextID << std::endl;
+    }
+
     if( _ids._data.size() < contextID+1 )
         internalInit( contextID );
 
@@ -200,26 +207,56 @@ bool ShaderProgram::link( unsigned int contextID )
         GLint n;
         glUseProgram( id );
         glGetProgramiv( id, GL_ACTIVE_UNIFORMS, &n );
-printf("Active Uniforms: (%d)\n", n );
+        if( JAG3D_LOG_INFO )
+        {
+            Poco::LogStream& ls( (*_logStream).information() );
+            ls << "Active Uniforms (" << n << "):" << std::endl;
+            ls << "        hashcode  loc  name" << std::endl;
+        }
         for( GLint i = 0; i < n; i++ )
         {
             GLenum type;
             std::string uniformName;
             getActiveUniform( id, i, uniformName, type );
             GLint location = glGetUniformLocation( id, uniformName.c_str() );
-printf("......... %s (loc: %d)\n", uniformName.c_str(), location );
-            _uniformLocations[ createHash( uniformName ) ] = location;
+            const HashValue hash( createHash( uniformName ) );
+            if( JAG3D_LOG_INFO )
+            {
+                Poco::LogStream& ls( (*_logStream).information() );
+                ls.width( 16 );
+                ls << std::hex << std::right << hash << "  ";
+                ls.width( 5 );
+                ls << std::dec << std::left << location;
+                ls.width( 0 );
+                ls << uniformName << std::endl;
+            }
+            _uniformLocations[ hash ] = location;
         }
 
         glGetProgramiv( id, GL_ACTIVE_ATTRIBUTES, &n );
-printf("Active Attributes: (%d)\n", n );
+        if( JAG3D_LOG_INFO )
+        {
+            Poco::LogStream& ls( (*_logStream).information() );
+            ls << "Active Attributes (" << n << "):" << std::endl;
+            ls << "        hashcode  loc  name" << std::endl;
+        }
         for( GLint i = 0; i < n; i++ )
         {
             GLenum type;
             std::string attribName;
             getActiveAttrib( id, i, attribName, type );
             GLint location = glGetAttribLocation( id, attribName.c_str() );
-printf("......... %s (loc: %d)\n", attribName.c_str(), location );
+            const HashValue hash( createHash( attribName ) );
+            if( JAG3D_LOG_INFO )
+            {
+                Poco::LogStream& ls( (*_logStream).information() );
+                ls.width( 16 );
+                ls << std::hex << std::right << hash << "  ";
+                ls.width( 5 );
+                ls << std::dec << std::left << location;
+                ls.width( 0 );
+                ls << attribName << std::endl;
+            }
             _vertexAttribLocations[ createHash( attribName ) ] = location;
         }
         glUseProgram( 0 );

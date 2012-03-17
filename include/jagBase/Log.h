@@ -40,8 +40,12 @@ namespace jagBase
 
 
 /** \class Log Log.h <jagBase/Log.h>
-\brief
-\details
+\brief Interface for setting message logging parameters.
+\details Log is a singleton.
+This class provides a single interface for managing message logging.
+It maintains pointers to the console and log file channels, allows specifying
+a log file name, and allows specifying Logger priority and channel destinations.
+Under the hood, it provides uniform message formatting for all Jag Loggers.
 */
 class JAGBASE_EXPORT Log
 {
@@ -55,17 +59,12 @@ public:
         return( s_instance );
     }
 
-    // TBD remove
-    Poco::FormattingChannel* getConsole()
-    {
-        return( _console );
-    }
-    // TBD remove
-    Poco::FormattingChannel* getFile()
-    {
-        return( _file );
-    }
 
+    /** \brief Sets the default log file name.
+    \details By default, the default log file name is "jag3d.log". Change it by calling
+    this function at init time prior to invocation of any other interaction with Jag.
+    (Specifically, setLogFileName() must be called before creating a class derived from
+    LogBase that uses LogFile as a destination.) */
     void setLogFileName( const std::string& logFileName );
 
     /** \brief TBD
@@ -92,10 +91,12 @@ protected:
     Log();
     ~Log();
 
+    // TBD Need singleton manager to cleanup/delete singletons.
     static Log* s_instance;;
 
     std::string _logFileName;
 
+    // TBD should these be smart pointers?
     Poco::FormattingChannel* _console;
     Poco::FormattingChannel* _file;
 };

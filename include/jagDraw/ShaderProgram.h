@@ -24,6 +24,7 @@
 
 #include <jagDraw/Export.h>
 #include <jagDraw/DrawablePrep.h>
+#include <jagBase/LogBase.h>
 #include <jagDraw/Shader.h>
 #include <jagDraw/PerContextData.h>
 #include <jagBase/ptr.h>
@@ -42,7 +43,9 @@ struct DrawInfo;
 \brief
 \details \gl{section 2.11.2}.
 */
-class JAGDRAW_EXPORT ShaderProgram : public DrawablePrep, public SHARED_FROM_THIS(ShaderProgram)
+class JAGDRAW_EXPORT ShaderProgram : public DrawablePrep,
+            public SHARED_FROM_THIS(ShaderProgram),
+            public jagBase::LogBase
 {
 public:
     // TBD seems out of place. Not sure why these matrices need special
