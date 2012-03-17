@@ -35,6 +35,10 @@ namespace jagBase
 typedef jagBase::ptr< Poco::LogStream >::shared_ptr PocoLogStreamPtr;
 
 
+/** \addtogroup jagBaseLogging Message Logging Utilities */
+/*@{*/
+
+
 /** \class LogBase LogBase.h <jagBase/LogBase.h>
 \brief
 \details
@@ -44,7 +48,7 @@ class LogBase
 public:
     LogBase( const std::string& loggerName )
 #ifdef JAG3D_DISABLE_LOGGING
-      : _logger( Poco::Logger::get( "" ) ), // Must init a reference, even if we're not using it.
+      : _logger( Poco::Logger::get( "jag3d" ) ), // Must init a reference, even if we're not using it.
         _logStream( NULL )
     {
         _logger.setChannel( Poco::NullChannel() );
@@ -60,6 +64,8 @@ public:
     Poco::Logger& _logger;
     PocoLogStreamPtr _logStream;
 };
+
+/*@}*/
 
 
 // jagBase

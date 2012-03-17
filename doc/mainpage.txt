@@ -4,8 +4,8 @@
 
 \section jagBase
 
-This section is TBD.
-\li \ref Version "Version Utilities"
+\li \ref jagBaseVersion "Version Utilities"
+\li \ref jagBaseLogging "Message Logging Utilities"
 
 \section jagDraw
 
@@ -14,7 +14,7 @@ for many OpenGL commands. This is the only module that executes
 OpenGL commands.
 
 Direct OpenGL support:
-\li \ref Error "OpenGL Errors"
+\li \ref jagDrawError "OpenGL Errors"
 \li \link jagDraw::VertexAttrib Generic Vertex Attributes \endlink
 \li \link jagDraw::VertexArrayObject Vertex Array Objects \endlink
 \li \link jagDraw::DrawCommand Drawing commands \endlink

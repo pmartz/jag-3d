@@ -32,7 +32,7 @@ namespace jagDraw
 {
 
 
-/** \defgroup Error Error utilities */
+/** \defgroup jagDrawError Error Utilities */
 /*@{*/
 
 #ifdef JAG3D_DISABLE_ALL_ERROR_CHECKS
@@ -53,14 +53,14 @@ namespace jagDraw
 
 
 /** \brief Check for an OpenGL error using glGetError().
-\details Use JAG_ERROR_CHECK instead, which can be disabled at
-compile time with JAG3D_DISABLE_ALL_ERROR_CHECKS.
+\details Use JAG_ERROR_CHECK instead, which supports compile time
+error check elimination with JAG3D_DISABLE_ALL_ERROR_CHECKS.
 */
 JAGDRAW_EXPORT void errorCheck( const std::string& msg );
 
 /** \brief Check the FBO status using glCheckFramebufferStatus().
-\details Use JAG_FBO_ERROR_CHECK instead, which can be disabled at
-compile time with JAG3D_DISABLE_ALL_ERROR_CHECKS.
+\details Use JAG_FBO_ERROR_CHECK instead, which supports compile time
+error check elimination with JAG3D_DISABLE_ALL_ERROR_CHECKS.
 */
 JAGDRAW_EXPORT void fboErrorCheck( const std::string& msg );
 

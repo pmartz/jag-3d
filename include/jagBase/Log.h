@@ -35,6 +35,14 @@ namespace jagBase
 {
 
 
+/** \addtogroup jagBaseLogging Message Logging Utilities */
+/*@{*/
+
+
+/** \class Log Log.h <jagBase/Log.h>
+\brief
+\details
+*/
 class JAGBASE_EXPORT Log
 {
 public:
@@ -91,6 +99,8 @@ protected:
     Poco::FormattingChannel* _console;
     Poco::FormattingChannel* _file;
 };
+
+/*@}*/
 
 
 // jagBase

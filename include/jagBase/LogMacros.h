@@ -26,6 +26,62 @@
 #include <Poco/LogStream.h>
 
 
+/** \addtogroup jagBaseLogging Message Logging Utilities
+\details Jag's message logging system is based on
+<a href="http://pocoproject.org/slides/110-Logging.pdf" target=null>Poco</a>
+and is modeled after
+<a href="http://www.vesuite.org/" target=null>VE-Suite's</a> message logging system.
+
+Jag's modules and classes are arranged in a heirarchy to allow message destination (console
+or log file) and verbosity on a per-module and per-class basis. The heirarchy is arranged
+as follows:
+<ul>
+  <li>jag3d
+  <ul>
+    <li>jagBase
+    <ul>
+      <li>Log
+      <li>version
+    </ul>
+    <li>jagDraw
+    <ul>
+      <li>ctx
+      <li>Drawable
+      <li>GLError
+    </ul>
+    <li>jagSG
+    <li>jagUtil
+    <li>demo
+    <ul>
+      <li>various demos and tests
+    </ul>
+  </ul>
+</ul>
+*/
+/*@{*/
+
+
+/** \def __JAG3D_LOG
+\brief Shared internal logging macro.
+\details Internal macro for efficient message logging for classes derived
+from jagBase::LogBase. (Assumes member or local variables \c _logger and \c _logStream.)
+
+This function is a no-op if JAG3D_DISABLE_LOGGING is defined. The definition of
+JAG3D_DISABLE_LOGGING is controlled using CMake.
+\param prio Message priority based on Poco/Message.h.
+\param msg Written to the \c _logStream if the \c _logger's priority is <= \c prio.
+*/
+/** \def __JAG3D_LOG_STATIC
+\brief Shared internal logging macro.
+\details Internal macro for message logging within static functions or classes
+not derived from jagBase::LogBase.
+
+This function is a no-op if JAG3D_DISABLE_LOGGING is defined. The definition of
+JAG3D_DISABLE_LOGGING is controlled using CMake.
+\param prio Message priority based on Poco/Message.h.
+\param name Poco::Logger name.
+\param msg Written to named Logger if the Logger's priority is <= \c prio.
+*/
 #ifdef JAG3D_DISABLE_LOGGING
 #  define __JAG3D_LOG( prio, msg )
 #  define __JAG3D_LOG_STATIC( prio, name, msg )
@@ -45,6 +101,44 @@
 #endif
 
 
+/** \def JAG3D_LOG_FATAL
+\brief Boolean for quick abort of log message construction.
+\details Constructing anything other than a trivial log message is typically an expensive
+operation involving string concatenation, std::ostringstream writes, and other string
+manipulation. Use this macro to check the Poco::Logger priority and avoid log message
+construction when the log level would prevent display of the message.
+
+If JAG3D_DISABLE_LOGGING is defined, JAG3D_LOG_FATAL is a runtime constane \c false. An optimizing
+compiler will recognize and eliminate log message construction as dead code. For example:
+\code
+    if( JAG3D_LOG_FATAL )
+    {
+        // Log message construction
+        JAG3D_FATAL( msg );
+    }
+\endcode
+becomes this:
+\code
+    if( false )
+    {
+        // Dead code block, optimized away at compile time.
+    }
+\endcode
+*/
+/** \def JAG3D_LOG_CRITICAL
+\see JAG3D_LOG_FATAL */
+/** \def JAG3D_LOG_ERROR
+\see JAG3D_LOG_FATAL */
+/** \def JAG3D_LOG_WARNING
+\see JAG3D_LOG_FATAL */
+/** \def JAG3D_LOG_NOTICE
+\see JAG3D_LOG_FATAL */
+/** \def JAG3D_LOG_INFO
+\see JAG3D_LOG_FATAL */
+/** \def JAG3D_LOG_DEBUG
+\see JAG3D_LOG_FATAL */
+/** \def JAG3D_LOG_TRACE
+\see JAG3D_LOG_FATAL */
 #ifdef JAG3D_DISABLE_LOGGING
 
 #  define JAG3D_LOG_FATAL     false
@@ -58,6 +152,9 @@
 
 #else
 
+/** \def __JAG3D_LOG_PRIO_CHECK
+\brief Internal Boolean macro for checking \c _logger member variable logging priority.
+*/
 #  define __JAG3D_LOG_PRIO_CHECK( __prio )    ( _logger.__prio() )
 
 #  define JAG3D_LOG_FATAL     __JAG3D_LOG_PRIO_CHECK( fatal )
@@ -71,6 +168,26 @@
 
 #endif
 
+
+/** \def JAG3D_FATAL
+\brief Efficient message logging macros.
+\details Efficient message logging for classes derived from jagBase::LogBase.
+(Assumes member or local variables \c _logger and \c _logStream.)
+*/
+/** \def JAG3D_CRITICAL
+\see JAG3D_FATAL */
+/** \def JAG3D_ERROR
+\see JAG3D_FATAL */
+/** \def JAG3D_WARNING
+\see JAG3D_FATAL */
+/** \def JAG3D_NOTICE
+\see JAG3D_FATAL */
+/** \def JAG3D_INFO
+\see JAG3D_FATAL */
+/** \def JAG3D_DEBUG
+\see JAG3D_FATAL */
+/** \def JAG3D_TRACE
+\see JAG3D_FATAL */
 #define JAG3D_FATAL( __msg )     __JAG3D_LOG( fatal, __msg )
 #define JAG3D_CRITICAL( __msg )  __JAG3D_LOG( critical, __msg )
 #define JAG3D_ERROR( __msg )     __JAG3D_LOG( error, __msg )
@@ -80,6 +197,26 @@
 #define JAG3D_DEBUG( __msg )     __JAG3D_LOG( debug, __msg )
 #define JAG3D_TRACE( __msg )     __JAG3D_LOG( trace, __msg )
 
+/** \def JAG3D_FATAL_STATIC
+\brief Message logging macros.
+\details Message logging for static functions or classes not derived from jagBase::LogBase.
+These macros obtain a Logger from Poco's global map and construct a Poco::LogStream
+on the fly. */
+/** \def JAG3D_CRITICAL_STATIC
+\see JAG3D_FATAL_STATIC */
+/** \def JAG3D_ERROR_STATIC
+\see JAG3D_FATAL_STATIC */
+/** \def JAG3D_WARNING_STATIC
+\see JAG3D_FATAL_STATIC */
+/** \def JAG3D_NOTICE_STATIC
+\see JAG3D_FATAL_STATIC */
+/** \def JAG3D_INFO_STATIC
+\see JAG3D_FATAL_STATIC */
+/** \def JAG3D_DEBUG_STATIC
+\see JAG3D_FATAL_STATIC */
+/** \def JAG3D_TRACE_STATIC
+\see JAG3D_FATAL_STATIC */
+
 #define JAG3D_FATAL_STATIC( __name, __msg )     __JAG3D_LOG_STATIC( fatal, __name, __msg )
 #define JAG3D_CRITICAL_STATIC( __name, __msg )  __JAG3D_LOG_STATIC( critical, __name, __msg )
 #define JAG3D_ERROR_STATIC( __name, __msg )     __JAG3D_LOG_STATIC( error, __name, __msg )
@@ -88,6 +225,8 @@
 #define JAG3D_INFO_STATIC( __name, __msg )      __JAG3D_LOG_STATIC( information, __name, __msg )
 #define JAG3D_DEBUG_STATIC( __name, __msg )     __JAG3D_LOG_STATIC( debug, __name, __msg )
 #define JAG3D_TRACE_STATIC( __name, __msg )     __JAG3D_LOG_STATIC( trace, __name, __msg )
+
+/*@}*/
 
 
 // __JAGBASE_LOG_MACROS_H__
