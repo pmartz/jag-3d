@@ -45,13 +45,13 @@ void ShaderProgram::printInfoLog( const GLuint id )
     glGetProgramiv( id, GL_INFO_LOG_LENGTH, &bufLen );
     if( bufLen > 1 )
     {
-        ls << "BEGIN Program info log:" << std::endl;
+        ls << "----- BEGIN Program info log:" << std::endl;
         GLsizei strLen = 0;        // strlen GL actually wrote to buffer
         char* infoLog = new char[bufLen];
         glGetProgramInfoLog( id, bufLen, &strLen, infoLog );
         if( strLen > 0 )
             ls << infoLog << std::endl;
-        ls << "END Program info log." << std::endl;
+        ls << "----- END Program info log." << std::endl;
         delete [] infoLog;
     }
 }
@@ -75,29 +75,33 @@ void ShaderProgram::attachShader( ShaderPtr shader )
 
 void ShaderProgram::operator()( DrawInfo& drawInfo )
 {
-    const unsigned int contextID( drawInfo._id );
+    // Record the currently used program in DrawInfo.
+    // Downstream vertex attribs and uniforms will query
+    // this for location values.
+    drawInfo._program = shared_from_this();
+
+    const unsigned int contextID( ( unsigned int)( drawInfo._id ) );
 
     bool needLink( true );
     if( _ids._data.size() >= contextID+1 )
     {
         needLink = !( _ids[ contextID ].second );
     }
+    bool linkStatus( true );
     if( needLink )
     {
-        if( !( link( contextID ) ) )
-            return;
+        linkStatus = link( contextID );
     }
 
     const GLuint id = _ids[ contextID ].first;
-    if( id == 0 )
+
+    if( ( id == 0 ) || !linkStatus )
+    {
+        JAG3D_WARNING( "Program ID==0 or link failed." );
         return;
+    }
 
     glUseProgram( id );
-
-    // Record the currently used program in DrawInfo.
-    // Downstream vertex attribs and uniforms will query
-    // this for location values.
-    drawInfo._program = shared_from_this();
 
     // Iterate over active uniforms. If an active uniform matches a uniform
     // in the drawInfo._uniformMap, set its value in GL state.
@@ -151,7 +155,7 @@ void ShaderProgram::get( GLenum pname, GLint *params )
     glGetProgramiv( id, pname, params );
 }
 
-GLint ShaderProgram::getId( unsigned int contextID )
+GLint ShaderProgram::getId( const unsigned int contextID )
 {
     if( _ids._data.size() < contextID+1 )
         internalInit( contextID );
@@ -178,27 +182,35 @@ bool ShaderProgram::link( unsigned int contextID )
 
     // Loop over explicitly specified vertex attrib locations and
     // set them in this program object.
-    JAG3D_TRACE( "  ShaderProgram::link: Binding attributes." );
+    JAG3D_TRACE( "  link(): Binding explicit attribute locations." );
     BOOST_FOREACH( const ExplicitLocationMap::value_type& it, _explicitVertexAttribLocations )
     {
         glBindAttribLocation( id, it.second, it.first.c_str() );
     }
     
     // Attach all shaders to this program object.
-    JAG3D_TRACE( "  ShaderProgram::link: Attaching shaders." );
-    BOOST_FOREACH( const ShaderList::value_type& s, _shaders )
+    bool abortLink( false );
+    JAG3D_TRACE( "  link(): Attaching shaders." );
+    BOOST_FOREACH( const ShaderList::value_type& shader, _shaders )
     {
-        GLint shaderID = s->getId();
-        if( shaderID != 0 ) {
+        GLint shaderID = shader->getId( contextID );
+        abortLink = abortLink || ( shaderID == 0 );
+        if( !abortLink ) {
             glAttachShader( id, shaderID );
         }
+    }
+    if( abortLink )
+    {
+        // At least one attached shader failed to compile.
+        JAG3D_WARNING( "  link(): Aborting because at least one shader failed init." );
+        return( false );
     }
     // We no longer need the list of attached shaders. Clear the list and remove
     // references to those shaders (which will likely cause them to be deleted,
     // thereby reclaiming memory, unless the app still holds a reference).
     _shaders.clear();
 
-    JAG3D_TRACE( "  ShaderProgram::link: Calling glLinkProgram()." );
+    JAG3D_TRACE( "  link(): Calling glLinkProgram()." );
     GLint status;
     glLinkProgram( id );
     glGetProgramiv( id, GL_LINK_STATUS, &status );

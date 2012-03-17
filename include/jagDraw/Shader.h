@@ -26,6 +26,7 @@
 #include <jagDraw/PlatformOpenGL.h>
 #include <jagBase/LogBase.h>
 #include <jagDraw/PerContextData.h>
+#include <jagBase/types.h>
 #include <jagBase/ptr.h>
 #include <string>
 #include <vector>
@@ -47,19 +48,21 @@ public:
 
     void addSourceString( const std::string& source );
 
-    // TBD need to get context ID, probably as a param?
-    GLuint getId();
+    GLuint getId( const unsigned int contextID );
 
-    // TBD need to get context ID, probably as a param?
-    void printInfoLog( const GLuint id );
-
-private:
+protected:
     void internalInit( const unsigned int contextID );
+
+    void printInfoLog( const GLuint id );
 
     std::string loadSource( const std::string& fileName );
 
+    std::string getFullSource() const;
+
+    static std::string getTypeAsString( GLenum type );
+
     GLenum _type;
-    std::vector< std::string > _sourceList;
+    jagBase::StringList _sourceList;
 
     PerContextGLuint _ids;
 };

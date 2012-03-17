@@ -24,6 +24,7 @@
 
 #include <jagBase/ptr.h>
 #include <vector>
+#include <string>
 
 
 namespace jagBase {
@@ -37,6 +38,7 @@ typedef jagBase::ptr< GLint >::shared_array_ptr GLintArray;
 typedef jagBase::ptr< GLsizei >::shared_array_ptr GLsizeiArray;
 typedef jagBase::ptr< GLvoid* >::shared_array_ptr GLvoidPtrArray;
 
+typedef std::vector< std::string > StringList;
 
 // jagBase
 }

@@ -83,7 +83,7 @@ public:
     /** \brief Get the OpenGL program object ID for the specified \c contextID.
     \details If an ID hasn't already been created for \c contextID, getID() calls
     glCreateProgram() to generate the ID. */
-    GLint getId( unsigned int contextID );
+    GLint getId( const unsigned int contextID );
 
     /** \brief Link the program.
     \details This function performs the following tasks:

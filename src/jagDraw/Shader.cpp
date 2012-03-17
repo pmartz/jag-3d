@@ -21,6 +21,7 @@
 #include <jagDraw/Shader.h>
 #include <jagDraw/PlatformOpenGL.h>
 #include <jagBase/LogMacros.h>
+#include <boost/foreach.hpp>
 #include <iostream>
 #include <fstream>
 
@@ -53,14 +54,12 @@ void Shader::addSourceString( const std::string& source )
     _sourceList.push_back( source );
 }
 
-GLuint Shader::getId()
+GLuint Shader::getId( const unsigned int contextID )
 {
-    const unsigned int contextID( 0 );
-
     if( _ids._data.size() < contextID+1 )
         internalInit( contextID );
 
-    return( _ids[ 0 ] );
+    return( _ids[ contextID ] );
 }
 
 
@@ -73,46 +72,46 @@ void Shader::printInfoLog( const GLuint id )
     ls << "Error: Shader object ID: " << id << "." << std::endl;
 
     GLsizei bufLen = 0;
-#if !defined( __APPLE__ ) && !defined(USE_GLES2)
-    std::string typeStr = _type == GL_VERTEX_SHADER ? "Vertex Shader" :
-                          _type == GL_GEOMETRY_SHADER ? "Geometry Shader" :
-                          _type == GL_FRAGMENT_SHADER ? "Fragment Shader" :"" ;
-#else
-    std::string typeStr = _type == GL_VERTEX_SHADER ? "Vertex Shader" :
-                          _type == GL_FRAGMENT_SHADER ? "Fragment Shader" :"" ;
-
-#endif
+    const std::string typeStr = getTypeAsString( _type );
 
     glGetShaderiv( id, GL_INFO_LOG_LENGTH, &bufLen );
     if( bufLen > 1 )
     {
-        ls << "BEGIN Shader info log:" << std::endl;
+        ls << "----- BEGIN " << typeStr << " info log:" << std::endl;
         GLsizei strLen = 0;        // strlen GL actually wrote to buffer
         char* infoLog = new char[bufLen];
         glGetShaderInfoLog( id, bufLen, &strLen, infoLog );
         if( strLen > 0 )
             ls << infoLog << std::endl;
-        ls << "END Shader info log." << std::endl;
+        ls << "----- END " << typeStr << " info log." << std::endl;
         delete [] infoLog;
     }
+
+    ls << "----- BEGIN " << typeStr << " source dump:" << std::endl;
+    ls << getFullSource() << std::endl;
+    ls << "----- END " << typeStr << " source dump." << std::endl;
 }
 
 void Shader::internalInit( const unsigned int contextID )
 {
-    _ids._data.resize( contextID + 1 );
-
     std::vector< const char* > src;
     std::vector< GLint > length;
-    for( std::vector< std::string >::iterator  s = _sourceList.begin(); s != _sourceList.end(); s++ )
+    BOOST_FOREACH( jagBase::StringList::value_type& srcStr, _sourceList )
     {
         //1. Scan for any built-in variables
         //   a. If OpenGL 3.1 replace deprecated 'gl_' variables with equivalent 'ii_' variables
-        length.push_back( (GLint)( s->size() ) );
-        src.push_back( s->c_str() );
+        length.push_back( (GLint)( srcStr.size() ) );
+        src.push_back( srcStr.c_str() );
     }
 
+    _ids._data.resize( contextID + 1 );
     _ids[ contextID ] = glCreateShader( _type );
     const GLuint id( _ids[ contextID ] );
+    if( JAG3D_LOG_TRACE )
+    {
+        _logStream->trace() << std::string( "Compiling source for shader ID: " )
+            << id << std::string( ", contextID: " ) << contextID << "." << std::endl;
+    }
 
     glShaderSource( id, (GLsizei)( src.size() ), &src.front(), &length.front() );
 
@@ -159,6 +158,29 @@ std::string Shader::loadSource( const std::string& fileName )
     delete[] buff;
 
     return str;
+}
+
+std::string Shader::getFullSource() const
+{
+    std::string fullSource;
+    BOOST_FOREACH( const jagBase::StringList::value_type& srcStr, _sourceList )
+    {
+        fullSource += srcStr;
+    }
+    return( fullSource );
+}
+
+std::string Shader::getTypeAsString( GLenum type )
+{
+#if !defined( __APPLE__ ) && !defined(USE_GLES2)
+    std::string typeStr = type == GL_VERTEX_SHADER ? "GL_VERTEX_SHADER" :
+                          type == GL_GEOMETRY_SHADER ? "GL_GEOMETRY_SHADER" :
+                          type == GL_FRAGMENT_SHADER ? "GL_FRAGMENT_SHADER" : "";
+#else
+    std::string typeStr = type == GL_VERTEX_SHADER ? "GL_VERTEX_SHADER" :
+                          type == GL_FRAGMENT_SHADER ? "GL_FRAGMENT_SHADER" : "";
+#endif
+    return( typeStr );
 }
 
 
