@@ -49,8 +49,9 @@ endforeach()
 
 if( WIN32 AND MSVC )
     # Disable warnings
-    # Use foreach in case we want to disable more than 1 warning in the future.
-    foreach( warning 4251 )
+    # C4251: <membervar> : class <classX> needs to have dll-interface to be used by clients of class <classY>
+    # C4275: non dll-interface class <classX> used as base for dll-interface class <classY>
+    foreach( warning 4251 4275 )
         set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd${warning}" )
     endforeach()
 
