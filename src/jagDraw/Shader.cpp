@@ -20,6 +20,7 @@
 
 #include <jagDraw/Shader.h>
 #include <jagDraw/PlatformOpenGL.h>
+#include <jagBase/LogMacros.h>
 #include <iostream>
 #include <fstream>
 
@@ -28,7 +29,8 @@ namespace jagDraw {
 
 
 Shader::Shader( GLenum type )
-  : _type( type )
+  : jagBase::LogBase( "jag.draw.shader" ),
+    _type( type )
 {
 }
 
@@ -62,9 +64,13 @@ GLuint Shader::getId()
 }
 
 
-void Shader::printInfoLog()
+void Shader::printInfoLog( const GLuint id )
 {
-    const unsigned int contextID( 0 );
+    if( !JAG3D_LOG_ERROR )
+        return;
+
+    Poco::LogStream& ls( _logStream->error() );
+    ls << "Error: Shader object ID: " << id << "." << std::endl;
 
     GLsizei bufLen = 0;
 #if !defined( __APPLE__ ) && !defined(USE_GLES2)
@@ -77,17 +83,16 @@ void Shader::printInfoLog()
 
 #endif
 
-    glGetShaderiv( _ids[ contextID ], GL_INFO_LOG_LENGTH, &bufLen );
+    glGetShaderiv( id, GL_INFO_LOG_LENGTH, &bufLen );
     if( bufLen > 1 )
     {
-        std::cerr << "\n==========  " << typeStr << " Information Log ============= " << std::endl;
+        ls << "BEGIN Shader info log:" << std::endl;
         GLsizei strLen = 0;        // strlen GL actually wrote to buffer
         char* infoLog = new char[bufLen];
-
-        glGetShaderInfoLog( _ids[ contextID ], bufLen, &strLen, infoLog );
+        glGetShaderInfoLog( id, bufLen, &strLen, infoLog );
         if( strLen > 0 )
-            std::cerr << infoLog << std::endl;
-        std::cerr << "==================================================\n" << std::endl;
+            ls << infoLog << std::endl;
+        ls << "END Shader info log." << std::endl;
         delete [] infoLog;
     }
 }
@@ -107,15 +112,17 @@ void Shader::internalInit( const unsigned int contextID )
     }
 
     _ids[ contextID ] = glCreateShader( _type );
-    glShaderSource( _ids[ contextID ], (GLsizei)( src.size() ), &src.front(), &length.front() );
+    const GLuint id( _ids[ contextID ] );
 
-    glCompileShader( _ids[ contextID ] );
+    glShaderSource( id, (GLsizei)( src.size() ), &src.front(), &length.front() );
+
+    glCompileShader( id );
 
     GLint status;
-    glGetShaderiv( _ids[ contextID ], GL_COMPILE_STATUS, &status );
+    glGetShaderiv( id, GL_COMPILE_STATUS, &status );
     if( status != GL_TRUE )
     {
-        printInfoLog();
+        printInfoLog( id );
         glDeleteShader( _ids[ contextID ] );
         _ids[ contextID ] = 0;
     }
@@ -125,10 +132,19 @@ void Shader::internalInit( const unsigned int contextID )
 
 std::string Shader::loadSource( const std::string& fileName )
 {
-    std::ifstream in( fileName.c_str() );
-    if( !in )
+    if( JAG3D_LOG_TRACE )
     {
-        std::cerr << "Shader::p_loadSource() - unable to load file \"" << fileName << "\"." << std::endl;
+        std::string msg( std::string( "loadSource(): \"" )
+            + fileName + std::string( "\"." ) );
+        JAG3D_TRACE( msg );
+    }
+
+    std::ifstream in( fileName.c_str() );
+    if( in.bad() )
+    {
+        std::string msg( std::string( "loadSource(): unable to load file \"" )
+            + fileName + std::string( "\"." ) );
+        JAG3D_ERROR( msg );
         return( std::string() );
     }
 

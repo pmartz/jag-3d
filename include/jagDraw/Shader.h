@@ -22,14 +22,13 @@
 #define __JAGDRAW_SHADER_H__ 1
 
 
-#include <vector>
-#include <string>
-
 #include <jagDraw/Export.h>
 #include <jagDraw/PlatformOpenGL.h>
+#include <jagBase/LogBase.h>
 #include <jagDraw/PerContextData.h>
 #include <jagBase/ptr.h>
 #include <string>
+#include <vector>
 
 
 namespace jagDraw {
@@ -38,7 +37,7 @@ namespace jagDraw {
 /** \class Shader Shader.h <jagDraw/Shader.h>
 \brief TBD.
 */
-class JAGDRAW_EXPORT Shader 
+class JAGDRAW_EXPORT Shader : public jagBase::LogBase
 {
 public:
     Shader( GLenum type );
@@ -52,7 +51,7 @@ public:
     GLuint getId();
 
     // TBD need to get context ID, probably as a param?
-    void printInfoLog();
+    void printInfoLog( const GLuint id );
 
 private:
     void internalInit( const unsigned int contextID );

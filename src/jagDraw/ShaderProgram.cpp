@@ -33,22 +33,25 @@ namespace jagDraw {
 
 
 
-void ShaderProgram::printInfoLog()
+void ShaderProgram::printInfoLog( const GLuint id )
 {
-    const unsigned int contextID( 0 );
-    const GLuint id( _ids[ contextID ].first );
+    if( !JAG3D_LOG_ERROR )
+        return;
 
-    GLsizei bufLen = 0;       
+    Poco::LogStream& ls( _logStream->error() );
+    ls << "Error: Program object ID: " << id << "." << std::endl;
+
+    GLsizei bufLen = 0;
     glGetProgramiv( id, GL_INFO_LOG_LENGTH, &bufLen );
     if( bufLen > 1 )
     {
-        std::cerr << "\n==========  Shader Information Log ============= " << std::endl;
+        ls << "BEGIN Program info log:" << std::endl;
         GLsizei strLen = 0;        // strlen GL actually wrote to buffer
         char* infoLog = new char[bufLen];
         glGetProgramInfoLog( id, bufLen, &strLen, infoLog );
         if( strLen > 0 )
-            std::cerr << infoLog << std::endl;
-        std::cerr << "==================================================\n" << std::endl;
+            ls << infoLog << std::endl;
+        ls << "END Program info log." << std::endl;
         delete [] infoLog;
     }
 }
@@ -158,10 +161,6 @@ GLint ShaderProgram::getId( unsigned int contextID )
 bool ShaderProgram::link( unsigned int contextID )
 {
     JAG3D_TRACE( "ShaderProgram::link" );
-    if( JAG3D_LOG_DEBUG )
-    {
-        (*_logStream).debug() << "  contextID: " << contextID << std::endl;
-    }
 
     if( _ids._data.size() < contextID+1 )
         internalInit( contextID );
@@ -171,31 +170,41 @@ bool ShaderProgram::link( unsigned int contextID )
     IDStatusPair& idLink( _ids[ contextID ] );
     const GLuint id( idLink.first );
 
+    if( JAG3D_LOG_DEBUG )
+    {
+        _logStream->debug() << "  ShaderProgram: contextID: " << contextID <<
+            ", object ID: " << id << std::endl;
+    }
+
     // Loop over explicitly specified vertex attrib locations and
     // set them in this program object.
+    JAG3D_TRACE( "  ShaderProgram::link: Binding attributes." );
     BOOST_FOREACH( const ExplicitLocationMap::value_type& it, _explicitVertexAttribLocations )
     {
         glBindAttribLocation( id, it.second, it.first.c_str() );
     }
     
     // Attach all shaders to this program object.
+    JAG3D_TRACE( "  ShaderProgram::link: Attaching shaders." );
     BOOST_FOREACH( const ShaderList::value_type& s, _shaders )
     {
-        GLint shader = s->getId();
-        if( shader != 0 )
-            glAttachShader( id, shader );
+        GLint shaderID = s->getId();
+        if( shaderID != 0 ) {
+            glAttachShader( id, shaderID );
+        }
     }
     // We no longer need the list of attached shaders. Clear the list and remove
     // references to those shaders (which will likely cause them to be deleted,
     // thereby reclaiming memory, unless the app still holds a reference).
     _shaders.clear();
 
+    JAG3D_TRACE( "  ShaderProgram::link: Calling glLinkProgram()." );
     GLint status;
     glLinkProgram( id );
     glGetProgramiv( id, GL_LINK_STATUS, &status );
     if( status != GL_TRUE )
     {
-        printInfoLog();
+        printInfoLog( id );
         glDeleteProgram( id );
         idLink.first = 0;
         idLink.second = false;
@@ -209,7 +218,7 @@ bool ShaderProgram::link( unsigned int contextID )
         glGetProgramiv( id, GL_ACTIVE_UNIFORMS, &n );
         if( JAG3D_LOG_INFO )
         {
-            Poco::LogStream& ls( (*_logStream).information() );
+            Poco::LogStream& ls( _logStream->information() );
             ls << "Active Uniforms (" << n << "):" << std::endl;
             if( n > 0 )
                 ls << "        hashcode  loc  name" << std::endl;
@@ -223,7 +232,7 @@ bool ShaderProgram::link( unsigned int contextID )
             const HashValue hash( createHash( uniformName ) );
             if( JAG3D_LOG_INFO )
             {
-                Poco::LogStream& ls( (*_logStream).information() );
+                Poco::LogStream& ls( _logStream->information() );
                 ls.width( 16 );
                 ls << std::hex << std::right << hash << "  ";
                 ls.width( 5 );
@@ -237,7 +246,7 @@ bool ShaderProgram::link( unsigned int contextID )
         glGetProgramiv( id, GL_ACTIVE_ATTRIBUTES, &n );
         if( JAG3D_LOG_INFO )
         {
-            Poco::LogStream& ls( (*_logStream).information() );
+            Poco::LogStream& ls( _logStream->information() );
             ls << "Active Attributes (" << n << "):" << std::endl;
             if( n > 0 )
                 ls << "        hashcode  loc  name" << std::endl;
@@ -251,7 +260,7 @@ bool ShaderProgram::link( unsigned int contextID )
             const HashValue hash( createHash( attribName ) );
             if( JAG3D_LOG_INFO )
             {
-                Poco::LogStream& ls( (*_logStream).information() );
+                Poco::LogStream& ls( _logStream->information() );
                 ls.width( 16 );
                 ls << std::hex << std::right << hash << "  ";
                 ls.width( 5 );
@@ -278,7 +287,7 @@ bool ShaderProgram::validate( unsigned int contextID )
     glGetProgramiv( id, GL_VALIDATE_STATUS, &status );
     if( status != GL_TRUE )
     {
-        printInfoLog();
+        printInfoLog( id );
         glDeleteProgram( id );
         _ids[ contextID ].first = 0;
         // TBD also set second (link status) to false?

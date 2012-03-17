@@ -132,8 +132,7 @@ public:
     // TBD need to get context ID, probably as a param?
     void get( GLenum pname, GLint* params );
 
-    // TBD need to get context ID, probably as a param?
-    void printInfoLog();
+    void printInfoLog( const GLuint id );
 
 
 

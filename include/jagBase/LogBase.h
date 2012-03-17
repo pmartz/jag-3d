@@ -51,7 +51,9 @@ class LogBase
 {
 public:
     LogBase( const std::string& loggerName )
-#ifndef JAG3D_DISABLE_LOGGING
+#ifdef JAG3D_DISABLE_LOGGING
+        _logStream( PocoLogStreamPtr( NULL ) )
+#else
       : _logger( Poco::Logger::get( loggerName ) ),
         _logStream( PocoLogStreamPtr( new Poco::LogStream( _logger ) ) )
 #endif
@@ -61,8 +63,8 @@ public:
 
 #ifndef JAG3D_DISABLE_LOGGING
     Poco::Logger& _logger;
-    PocoLogStreamPtr _logStream;
 #endif
+    PocoLogStreamPtr _logStream;
 };
 
 /*@}*/
