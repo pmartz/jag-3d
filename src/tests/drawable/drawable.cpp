@@ -71,9 +71,10 @@ bool DrawableDemo::startup()
 
 bool DrawableDemo::init()
 {
+    glClearColor( 0.f, 0.f, 0.f, 0.f );
+
     // Auto-log the version string.
     jagBase::getVersionString();
-
 
     // Display information on the type of context we created.
     string msg = string( "GL_VERSION: " );
@@ -81,8 +82,9 @@ bool DrawableDemo::init()
     JAG3D_INFO_STATIC( _logName, msg );
 
 
-    glClearColor( 0.f, 0.f, 0.f, 0.f );
-
+    if( !( _drawableList.empty() ) )
+        // Already initialized.
+        return( true );
     
 
     const char* vShaderSource =

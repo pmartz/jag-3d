@@ -67,9 +67,10 @@ bool Simple3xDemo::startup()
 
 bool Simple3xDemo::init()
 {
+    glClearColor( 0.4f, 0.4f, 0.4f, 0.f );
+
     // Auto-log the version string.
     jagBase::getVersionString();
-
 
     // Display information on the type of context we created.
     string msg( "GL_VENDOR: " );
@@ -88,13 +89,15 @@ bool Simple3xDemo::init()
     msg.append( (char*)(glGetString( GL_SHADING_LANGUAGE_VERSION )) );
     JAG3D_INFO_STATIC( _logName, msg );
 
+    if( _bop != NULL )
+        // Already initialized.
+        return( true );
+
 
     JAG3D_ERROR_STATIC( _logName, "Test error logging. Should produce GL_INVALID_ENUM." );
     glEnable( GL_FALSE );
     JAG_ERROR_CHECK( "Simple3xDemo::init()" );
 
-
-    glClearColor( 0.4f, 0.4f, 0.4f, 0.f );
 
     {
         float z = .5f;

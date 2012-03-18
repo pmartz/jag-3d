@@ -83,17 +83,20 @@ bool UniformDemo::startup()
 
 bool UniformDemo::init()
 {
+    glClearColor( 0.f, 0.f, 0.f, 0.f );
+
     // Auto-log the version string.
     jagBase::getVersionString();
-
 
     // Display information on the type of context we created.
     string msg = string( "GL_VERSION: " );
     msg.append( (char*)(glGetString( GL_VERSION )) );
     JAG3D_INFO_STATIC( _logName, msg );
 
+    if( _vbop != NULL )
+        // Already initialized.
+        return( true );
 
-    glClearColor( 0.f, 0.f, 0.f, 0.f );
 
     const float z = .5f;
     typedef std::vector< gmtl::Point3f > Point3fArray;
