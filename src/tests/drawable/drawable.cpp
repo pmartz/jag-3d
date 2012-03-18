@@ -290,7 +290,7 @@ bool DrawableDemo::frame()
     // look up their object ID), and the current ShaderProgram
     // (used by vertex attribs and uniforms to look up their locations).
     jagDraw::DrawInfo drawInfo;
-    drawInfo._id = 0;
+    drawInfo._id = jagDraw::ContextSupport::instance()->getActiveContext();
 
     // Render all Drawables.
     BOOST_FOREACH( jagDraw::DrawablePtr dp, _drawableList )

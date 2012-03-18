@@ -225,7 +225,7 @@ bool DrawCommandDemo::frame()
     // look up their object ID), and the current ShaderProgram
     // (used by vertex attribs and uniforms to look up their locations).
     jagDraw::DrawInfo drawInfo;
-    drawInfo._id = 0;
+    drawInfo._id = jagDraw::ContextSupport::instance()->getActiveContext();
 
     // glUseProgram for our ShaderProgram.
     (*_spp)( drawInfo );

@@ -252,7 +252,7 @@ bool UniformDemo::frame()
     // look up their object ID), and the current ShaderProgram
     // (used by vertex attribs and uniforms to look up their locations).
     jagDraw::DrawInfo drawInfo;
-    drawInfo._id = 0;
+    drawInfo._id = jagDraw::ContextSupport::instance()->getActiveContext();
 
     // Disable color swizzle in the program using a uniform.
     (*_swizzleOff)( drawInfo );

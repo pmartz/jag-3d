@@ -186,7 +186,7 @@ bool DrawDemo::frame()
     glClear( GL_COLOR_BUFFER_BIT );
 
     jagDraw::DrawInfo drawInfo;
-    drawInfo._id = 0;
+    drawInfo._id = jagDraw::ContextSupport::instance()->getActiveContext();
 
     (*_spp)( drawInfo );
 
