@@ -125,8 +125,6 @@ void Shader::internalInit( const unsigned int contextID )
         glDeleteShader( _ids[ contextID ] );
         _ids[ contextID ] = 0;
     }
-
-    _sourceList.clear();
 }
 
 std::string Shader::loadSource( const std::string& fileName )

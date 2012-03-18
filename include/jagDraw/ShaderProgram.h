@@ -45,7 +45,7 @@ struct DrawInfo;
 */
 class JAGDRAW_EXPORT ShaderProgram : public DrawablePrep,
             public SHARED_FROM_THIS(ShaderProgram),
-            public jagBase::LogBase
+            protected jagBase::LogBase
 {
 public:
     // TBD seems out of place. Not sure why these matrices need special

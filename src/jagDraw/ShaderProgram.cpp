@@ -205,10 +205,6 @@ bool ShaderProgram::link( unsigned int contextID )
         JAG3D_WARNING( "  link(): Aborting because at least one shader failed init." );
         return( false );
     }
-    // We no longer need the list of attached shaders. Clear the list and remove
-    // references to those shaders (which will likely cause them to be deleted,
-    // thereby reclaiming memory, unless the app still holds a reference).
-    _shaders.clear();
 
     JAG3D_TRACE( "  link(): Calling glLinkProgram()." );
     GLint status;

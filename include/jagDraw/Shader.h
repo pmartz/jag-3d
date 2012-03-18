@@ -38,7 +38,7 @@ namespace jagDraw {
 /** \class Shader Shader.h <jagDraw/Shader.h>
 \brief TBD.
 */
-class JAGDRAW_EXPORT Shader : public jagBase::LogBase
+class JAGDRAW_EXPORT Shader : protected jagBase::LogBase
 {
 public:
     Shader( GLenum type );
