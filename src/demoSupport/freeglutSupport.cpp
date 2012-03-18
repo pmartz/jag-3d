@@ -27,6 +27,8 @@
 #include <boost/program_options/variables_map.hpp>
 #include <boost/program_options/parsers.hpp>
 
+#include <iostream>
+
 
 using namespace std;
 namespace bpo = boost::program_options;
@@ -38,9 +40,7 @@ DemoInterface* di( NULL );
 void init()
 {
     jagDraw::ContextSupport* cs( jagDraw::ContextSupport::instance() );
-
-    int glutContext = glutGet( GLUT_RENDERING_CONTEXT );
-    const jagDraw::platformContextID pCtxId = static_cast< GLuint >( glutContext );
+    const jagDraw::platformContextID pCtxId = static_cast< GLuint >( glutGetWindow() );
     jagDraw::jagDrawContextID contextID = cs->registerContext( pCtxId );
 
     cs->setActiveContext( contextID );
@@ -51,6 +51,11 @@ void init()
 
 void display()
 {
+    jagDraw::ContextSupport* cs( jagDraw::ContextSupport::instance() );
+    const jagDraw::platformContextID pCtxId = static_cast< GLuint >( glutGetWindow() );
+    jagDraw::jagDrawContextID contextID = cs->getJagContextID( pCtxId );
+
+    cs->setActiveContext( contextID );
     di->frame();
     glutSwapBuffers();
 }
@@ -80,6 +85,8 @@ int main (int argc, char** argv)
     // Add freeglut test/demo options
     desc.add_options()
         ( "version", bpo::value< double >(), "OpenGL context version. Default: 3.1." );
+    desc.add_options()
+        ( "nwin", bpo::value< int >(), "Number of windows. Default: 1." );
 
     // Create test/demo-specific DemoInterface, and allow it to
     // add test/demo-specific options.
@@ -97,6 +104,9 @@ int main (int argc, char** argv)
     modf( version, &versionMajor );
     float versionMinor = (float)( version * 10. - versionMajor * 10. );
 
+    int nwin( 1 );
+    if( vm.count( "nwin" ) > 0 )
+        nwin = vm[ "nwin" ].as< int >();
 
 
     glutInit( &argc, argv );
@@ -104,20 +114,23 @@ int main (int argc, char** argv)
     if( version >= 3.0 )
     {
         glutInitContextVersion( int( versionMajor ), int( versionMinor ) );
+        if( version >= 3.1 )
+            glutInitContextFlags( GLUT_FORWARD_COMPATIBLE );
         if( version >= 3.2 )
             glutInitContextProfile( GLUT_CORE_PROFILE );
-        else
-            glutInitContextFlags( GLUT_FORWARD_COMPATIBLE );
     }
 
-    glutInitWindowSize( 300, 300 ); 
-    glutCreateWindow( argv[ 0 ] );
+    glutInitWindowSize( 300, 300 );
+    glutSetOption( GLUT_RENDERING_CONTEXT, GLUT_CREATE_NEW_CONTEXT );
+    while( nwin-- )
+    {
+        glutCreateWindow( argv[ 0 ] );
+        init();
 
-    init();
-
-    glutDisplayFunc( display ); 
-    glutReshapeFunc( reshape );
-    glutKeyboardFunc( keyboard );
+        glutDisplayFunc( display ); 
+        glutReshapeFunc( reshape );
+        glutKeyboardFunc( keyboard );
+    }
 
     glutMainLoop();
 

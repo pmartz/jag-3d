@@ -30,6 +30,7 @@
 #include <boost/program_options/options_description.hpp>
 #include <boost/program_options/variables_map.hpp>
 #include <boost/program_options/parsers.hpp>
+#include <boost/foreach.hpp>
 
 #include <math.h>
 
@@ -49,7 +50,6 @@ GLWidget::GLWidget( const QGLFormat& format, QWidget* parent )
 void GLWidget::initializeGL()
 {
     jagDraw::ContextSupport* cs( jagDraw::ContextSupport::instance() );
-
     const jagDraw::platformContextID pCtxId = reinterpret_cast< GLint >( context() );
     jagDraw::jagDrawContextID contextID = cs->registerContext( pCtxId );
 
@@ -61,6 +61,11 @@ void GLWidget::initializeGL()
 
 void GLWidget::paintGL()
 {
+    jagDraw::ContextSupport* cs( jagDraw::ContextSupport::instance() );
+    const jagDraw::platformContextID pCtxId = reinterpret_cast< GLint >( context() );
+    jagDraw::jagDrawContextID contextID = cs->getJagContextID( pCtxId );
+
+    cs->setActiveContext( contextID );
     di->frame();
 }
 
@@ -93,6 +98,8 @@ int main( int argc, char* argv[] )
     // Add qt test/demo options
     desc.add_options()
         ( "version", bpo::value< double  >(), "OpenGL context version. Default: 3.1." );
+    desc.add_options()
+        ( "nwin", bpo::value< int >(), "Number of windows. Default: 1." );
 
     // Create test/demo-specific DemoInterface, and allow it to
     // add test/demo-specific options.
@@ -110,6 +117,9 @@ int main( int argc, char* argv[] )
     modf( version, &versionMajor );
     float versionMinor = (float)( version * 10. - versionMajor * 10. );
 
+    int nwin( 1 );
+    if( vm.count( "nwin" ) > 0 )
+        nwin = vm[ "nwin" ].as< int >();
 
 
     QApplication app( argc, argv );
@@ -118,16 +128,24 @@ int main( int argc, char* argv[] )
     if( version >= 3.0 )
     {
         glFormat.setVersion( int( versionMajor ), int( versionMinor ) );
-        if( version >= 3.2 )
-            glFormat.setProfile( QGLFormat::CoreProfile );
-        //else
+        //if( version >= 3.1 )
             // Qt doesn't appear to allow setting the forward compatible flag.
             // Do nothing in this case.
+        if( version >= 3.2 )
+            glFormat.setProfile( QGLFormat::CoreProfile );
     }
 
-    GLWidget widget( glFormat );
-    widget.resize( 300, 300 );
-    widget.show();
+    std::vector< GLWidget* > _widgetList;
+    while( nwin-- )
+    {
+        GLWidget* w = new GLWidget( glFormat );
+        _widgetList.push_back( w );
+        w->resize( 300, 300 );
+        w->show();
+    }
 
     return( app.exec() );
+
+    BOOST_FOREACH( std::vector< GLWidget* >::value_type w, _widgetList )
+        delete w;
 }
