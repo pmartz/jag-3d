@@ -45,6 +45,7 @@ as follows:
     </ul>
     <li>draw (the jagDraw module)
     <ul>
+      <li>\link jagDraw::BufferObject bufobj \endlink
       <li>\link jagDraw::ContextSupport ctx \endlink
       <li>\link jagDraw::Drawable drawable \endlink
       <li>\ref jagDrawError "glerror"

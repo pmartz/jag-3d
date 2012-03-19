@@ -22,6 +22,7 @@
 #include <jagDraw/BufferObject.h>
 #include <jagDraw/DrawInfo.h>
 #include <jagDraw/Error.h>
+#include <jagBase/LogMacros.h>
 
 
 namespace jagDraw {
@@ -29,12 +30,14 @@ namespace jagDraw {
 
 BufferObject::BufferObject( const GLenum target )
   : VertexArrayCommand( VertexArrayCommand::BufferObjectType ),
+    jagBase::LogBase( "jag.draw.bufobj" ),
     _target( target ),
     _usage( GL_STATIC_DRAW )
 {}
 
 BufferObject::BufferObject( const GLenum target, const jagBase::BufferPtr b, const GLenum usage )
   : VertexArrayCommand( VertexArrayCommand::BufferObjectType ),
+    jagBase::LogBase( "jag.draw.bufobj" ),
     _target( target ),
     _usage( usage ),
     _buffer( b )
@@ -42,6 +45,7 @@ BufferObject::BufferObject( const GLenum target, const jagBase::BufferPtr b, con
 
 BufferObject::BufferObject( const BufferObject& rhs )
   : VertexArrayCommand( rhs ),
+    jagBase::LogBase( "jag.draw.bufobj" ),
     _target( rhs._target ),
     _usage( rhs._usage ),
     _buffer( rhs._buffer ),
@@ -52,6 +56,23 @@ BufferObject::BufferObject( const BufferObject& rhs )
 BufferObject::~BufferObject() 
 {
     // TBD Handle object deletion
+}
+
+GLint BufferObject::getId( const unsigned int contextID )
+{
+    if( _ids._data.size() < contextID+1 )
+    {
+        while( _ids._data.size() < contextID+1 )
+        {
+            _ids._data.push_back( 0 );
+        }
+        if( _ids[ contextID ] == 0 )
+        {
+            internalInit( contextID );
+        }
+    }
+
+    return( _ids[ contextID ] );
 }
 
 void BufferObject::setBuffer( jagBase::BufferPtr b ) 
@@ -71,22 +92,17 @@ void BufferObject::setUsage( const GLenum usage )
 
 void BufferObject::operator()( DrawInfo& drawInfo )
 {
-    const unsigned int contextID( drawInfo._id );
-
-    if( _ids._data.size() < contextID+1 )
-        internalInit( contextID );
-
-    glBindBuffer( _target, _ids[ contextID ] );
+    const GLuint id( getId( drawInfo._id ) );
+    glBindBuffer( _target, id );
 }
 
 void BufferObject::subData( GLsizeiptr offset, GLsizeiptr size, const GLvoid* data )
 {
     const unsigned int contextID( 0 );
 
-    if( _ids._data.size() < contextID+1 )
-        internalInit( contextID );
+    const GLuint id( getId( contextID ) );
 
-    glBindBuffer( _target, _ids[ contextID ] );
+    glBindBuffer( _target, id );
     glBufferSubData( _target, offset, size, data );
 
     // Issue: Copy new data into _buffer?
@@ -97,10 +113,9 @@ GLbyte* BufferObject::map( const GLenum access )
 {
     const unsigned int contextID( 0 );
 
-    if( _ids._data.size() < contextID+1 )
-        internalInit( contextID );
+    const GLuint id( getId( contextID ) );
 
-    glBindBuffer( _target, _ids[ contextID ] );
+    glBindBuffer( _target, id );
     GLbyte* addr = (GLbyte*)( glMapBuffer( _target, access ) );
     glBindBuffer( _target, 0 );
     return( addr );
@@ -110,10 +125,9 @@ void BufferObject::unmap()
 {
     const unsigned int contextID( 0 );
 
-    if( _ids._data.size() < contextID+1 )
-        internalInit( contextID );
+    const GLuint id( getId( contextID ) );
 
-    glBindBuffer( _target, _ids[ contextID ] );
+    glBindBuffer( _target, id );
     glUnmapBuffer( _target );
     glBindBuffer( _target, 0 );
 }
@@ -121,14 +135,17 @@ void BufferObject::unmap()
 
 void BufferObject::internalInit( const unsigned int contextID )
 {
-    _ids._data.resize( contextID + 1 );
     glGenBuffers( 1, &( _ids[ contextID ] ) );
+    const GLuint id( _ids[ contextID ] );
+    JAG3D_ERROR_CHECK( "BufferObject::internalInit() glGenBuffers()" );
+    if( id == 0 )
+        JAG3D_ERROR( "glGenBuffers() generated buffer ID 0." );
 
-    glBindBuffer( _target, _ids[ contextID ] );
+    glBindBuffer( _target, id );
     glBufferData( _target, _buffer->getSize(), _buffer->data(), _usage );
     glBindBuffer( _target, 0 );
 
-    JAG3D_ERROR_CHECK( "BufferObject::internalInit()" );
+    JAG3D_ERROR_CHECK( "BufferObject::internalInit() glBufferData()" );
 }
 
 

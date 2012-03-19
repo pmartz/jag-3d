@@ -23,6 +23,7 @@
 
 #include <jagDraw/Export.h>
 #include <jagDraw/PlatformOpenGL.h>
+#include <jagBase/LogBase.h>
 #include <jagDraw/VertexArrayCommand.h>
 #include <jagDraw/PerContextData.h>
 #include <jagBase/ptr.h>
@@ -41,7 +42,8 @@ struct DrawInfo;
 \brief A context-safe wrapper for OpenGL buffer objects.
 \details \gl{section 2.9}.
 */
-class JAGDRAW_EXPORT BufferObject : public VertexArrayCommand
+class JAGDRAW_EXPORT BufferObject : public VertexArrayCommand,
+            public jagBase::LogBase
 {
 public:
     /**
@@ -57,6 +59,8 @@ public:
     BufferObject( const BufferObject& rhs );
 
     virtual ~BufferObject();
+
+    GLint getId( const unsigned int contextID );
 
     void setBuffer( jagBase::BufferPtr b );
     jagBase::BufferPtr getBuffer() { return( _buffer ); }
