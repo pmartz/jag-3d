@@ -82,6 +82,25 @@ void ShaderProgram::operator()( DrawInfo& drawInfo )
 
     const unsigned int contextID( ( unsigned int)( drawInfo._id ) );
 
+#if 1
+    const GLuint id( getId( contextID ) );
+
+    if( !( _ids[ contextID ].second ) || ( id == 0 ) )
+    {
+        if( id == 0 )
+        {
+            JAG3D_ERROR( "Program ID==0." );
+            return;
+        }
+        if( !( link( contextID ) ) )
+        {
+            JAG3D_ERROR( "Program link failed." );
+            return;
+        }
+    }
+
+#else
+
     bool needLink( true );
     if( _ids._data.size() >= contextID+1 )
     {
@@ -100,6 +119,8 @@ void ShaderProgram::operator()( DrawInfo& drawInfo )
         JAG3D_WARNING( "Program ID==0 or link failed." );
         return;
     }
+
+#endif
 
     glUseProgram( id );
 
@@ -130,10 +151,7 @@ GLuint ShaderProgram::getExplicitAttribLocation( const std::string& name ) const
 void ShaderProgram::setParameter( GLenum pname, GLint value )
 {
     const unsigned int contextID( 0 );
-
-    if( _ids._data.size() < contextID+1 )
-        internalInit( contextID );
-    const GLuint id( _ids[ contextID ].first );
+    const GLuint id( getId( contextID ) );
 
 #if 0 // these are potentially not supported if not defined correctly.
 
@@ -157,8 +175,15 @@ void ShaderProgram::get( GLenum pname, GLint *params )
 
 GLint ShaderProgram::getId( const unsigned int contextID )
 {
-    if( _ids._data.size() < contextID+1 )
+    while( _ids._data.size() < contextID+1 )
+    {
+        _ids._data.push_back( jagDraw::IDStatusPair( 0, false ) );
+    }
+    if( _ids[ contextID ].first == 0 )
+    {
         internalInit( contextID );
+    }
+
     return( _ids[ contextID ].first );
 }
 
@@ -166,8 +191,11 @@ bool ShaderProgram::link( unsigned int contextID )
 {
     JAG3D_TRACE( "ShaderProgram::link" );
 
-    if( _ids._data.size() < contextID+1 )
-        internalInit( contextID );
+    if( JAG3D_LOG_DEBUG && ( _ids._data.size() < contextID+1 ) )
+    {
+        JAG3D_DEBUG( "link(): _ids._data too small." );
+        return( false );
+    }
 
     // idLink.first is OpenGL program ID.
     // idLink.second is link status: true after successful linked.
@@ -286,9 +314,7 @@ bool ShaderProgram::link( unsigned int contextID )
 
 bool ShaderProgram::validate( unsigned int contextID )
 {
-    if( _ids._data.size() < contextID+1 )
-        internalInit( contextID );
-    const GLuint id( _ids[ contextID ].first );
+    const GLuint id( getId( contextID ) );
 
     GLint status;
     glValidateProgram( id );
@@ -334,7 +360,6 @@ void ShaderProgram::getActiveAttrib( const GLuint id, const GLuint index, std::s
 
 void ShaderProgram::internalInit( const unsigned int contextID )
 {
-    _ids._data.resize( contextID + 1 );
     _ids[ contextID ].first = glCreateProgram();
     _ids[ contextID ].second = false;
 }

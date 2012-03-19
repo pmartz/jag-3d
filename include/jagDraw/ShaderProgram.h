@@ -81,7 +81,7 @@ public:
     virtual void operator()( DrawInfo& drawInfo );
 
     /** \brief Get the OpenGL program object ID for the specified \c contextID.
-    \details If an ID hasn't already been created for \c contextID, getID() calls
+    \details If an ID hasn't already been created for \c contextID, getId() calls
     glCreateProgram() to generate the ID. */
     GLint getId( const unsigned int contextID );
 
