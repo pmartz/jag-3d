@@ -279,7 +279,7 @@ bool DrawableDemo::init()
         _drawableList.push_back( drawable );
     }
 
-    JAG_ERROR_CHECK( "DrawableDemo init()" );
+    JAG3D_ERROR_CHECK( "DrawableDemo init()" );
 
     return( true );
 }
@@ -301,7 +301,7 @@ bool DrawableDemo::frame()
     }
     
     glFlush ();
-    JAG_ERROR_CHECK( "DrawableDemo display()" );
+    JAG3D_ERROR_CHECK( "DrawableDemo display()" );
 
     return( true );
 }

@@ -234,7 +234,7 @@ bool DrawDemo::frame()
 
     glFlush ();
 
-    JAG_ERROR_CHECK( "simple3x display()" );
+    JAG3D_ERROR_CHECK( "simple3x display()" );
 
     return( true );
 }

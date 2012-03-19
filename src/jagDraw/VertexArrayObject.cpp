@@ -98,7 +98,7 @@ void VertexArrayObject::internalInit( const unsigned int contextID )
     glGenVertexArrays( 1, &( idStatus.first ) );
     idStatus.second = false;
 
-    JAG_ERROR_CHECK( "VertexArrayObject::internalInit()" );
+    JAG3D_ERROR_CHECK( "VertexArrayObject::internalInit()" );
 }
 
 

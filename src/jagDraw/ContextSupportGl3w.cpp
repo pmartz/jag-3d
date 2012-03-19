@@ -42,7 +42,7 @@ bool ContextSupportGl3w::initContext()
     // if( result == 1 )
     //     display an error.
 
-    JAG_ERROR_CHECK( "ContextSupportGl3w::initContext()" );
+    JAG3D_ERROR_CHECK( "ContextSupportGl3w::initContext()" );
 
     return( result == 0 );
 }

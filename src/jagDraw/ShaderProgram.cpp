@@ -341,7 +341,7 @@ void ShaderProgram::getActiveAttrib( const GLuint id, const GLuint index, std::s
 void ShaderProgram::internalInit( const unsigned int contextID )
 {
     GLuint id( glCreateProgram() );
-    JAG_ERROR_CHECK( "ShaderProgram::internalInit()" );
+    JAG3D_ERROR_CHECK( "ShaderProgram::internalInit()" );
     if( id == 0 )
         JAG3D_ERROR( "glCreateProgram() returned program ID 0." );
 

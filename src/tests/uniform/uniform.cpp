@@ -308,7 +308,7 @@ bool UniformDemo::frame()
 
     glFlush ();
 
-    JAG_ERROR_CHECK( "uniform display()" );
+    JAG3D_ERROR_CHECK( "uniform display()" );
 
     return( true );
 }

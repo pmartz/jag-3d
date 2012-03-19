@@ -56,7 +56,7 @@ void Drawable::operator()( DrawInfo& drawInfo )
         (*dcp)( drawInfo );
     }
 
-    JAG_ERROR_CHECK( "Drawable::operator()" );
+    JAG3D_ERROR_CHECK( "Drawable::operator()" );
 }
 
 void Drawable::getBound()

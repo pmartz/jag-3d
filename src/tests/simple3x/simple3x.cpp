@@ -96,7 +96,7 @@ bool Simple3xDemo::init()
 
     JAG3D_ERROR_STATIC( _logName, "Test error logging. Should produce GL_INVALID_ENUM." );
     glEnable( GL_FALSE );
-    JAG_ERROR_CHECK( "Simple3xDemo::init()" );
+    JAG3D_ERROR_CHECK( "Simple3xDemo::init()" );
 
 
     {
@@ -157,7 +157,7 @@ bool Simple3xDemo::frame()
 
     glFlush ();
 
-    JAG_ERROR_CHECK( "simple3x display()" );
+    JAG3D_ERROR_CHECK( "simple3x display()" );
 
     return( true );
 }
