@@ -48,6 +48,9 @@ public:
 
     void addSourceString( const std::string& source );
 
+    /** \brief Get the OpenGL shader object ID for the specified \c contextID.
+    \details If an ID hasn't already been created for \c contextID, getId() calls
+    glCreateShader() to generate the ID and compiles all attached shader source strings. */
     GLuint getId( const unsigned int contextID );
 
 protected:

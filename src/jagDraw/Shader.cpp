@@ -22,6 +22,7 @@
 #include <jagDraw/PlatformOpenGL.h>
 #include <jagBase/LogMacros.h>
 #include <boost/foreach.hpp>
+#include <jagDraw/error.h>
 #include <iostream>
 #include <fstream>
 
@@ -57,7 +58,16 @@ void Shader::addSourceString( const std::string& source )
 GLuint Shader::getId( const unsigned int contextID )
 {
     if( _ids._data.size() < contextID+1 )
-        internalInit( contextID );
+    {
+        while( _ids._data.size() < contextID+1 )
+        {
+            _ids._data.push_back( 0 );
+        }
+        if( _ids[ contextID ] == 0 )
+        {
+            internalInit( contextID );
+        }
+    }
 
     return( _ids[ contextID ] );
 }
@@ -104,9 +114,12 @@ void Shader::internalInit( const unsigned int contextID )
         src.push_back( srcStr.c_str() );
     }
 
-    _ids._data.resize( contextID + 1 );
-    _ids[ contextID ] = glCreateShader( _type );
-    const GLuint id( _ids[ contextID ] );
+    const GLuint id( glCreateShader( _type ) );
+    JAG3D_ERROR_CHECK( "Shader::internalInit()" );
+    if( id == 0 )
+        JAG3D_ERROR( "glCreateShader() returned shader ID 0." );
+    _ids[ contextID ] = id;
+
     if( JAG3D_LOG_TRACE )
     {
         _logStream->trace() << std::string( "Compiling source for shader ID: " )
