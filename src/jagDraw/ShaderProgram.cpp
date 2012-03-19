@@ -22,6 +22,7 @@
 #include <jagDraw/PlatformOpenGL.h>
 #include <jagDraw/DrawInfo.h>
 #include <jagBase/LogMacros.h>
+#include <jagDraw/error.h>
 #include <stdio.h>
 #include <iostream>
 
@@ -80,15 +81,14 @@ void ShaderProgram::operator()( DrawInfo& drawInfo )
     // this for location values.
     drawInfo._program = shared_from_this();
 
-    const unsigned int contextID( ( unsigned int)( drawInfo._id ) );
-
-#if 1
+    const unsigned int contextID( ( unsigned int )( drawInfo._id ) );
     const GLuint id( getId( contextID ) );
 
-    if( !( _ids[ contextID ].second ) || ( id == 0 ) )
+    if( !( _ids[ contextID ].second ) )
     {
         if( id == 0 )
         {
+            // This is out of the ordinary. getId() should have called glCreateProgram().
             JAG3D_ERROR( "Program ID==0." );
             return;
         }
@@ -98,29 +98,6 @@ void ShaderProgram::operator()( DrawInfo& drawInfo )
             return;
         }
     }
-
-#else
-
-    bool needLink( true );
-    if( _ids._data.size() >= contextID+1 )
-    {
-        needLink = !( _ids[ contextID ].second );
-    }
-    bool linkStatus( true );
-    if( needLink )
-    {
-        linkStatus = link( contextID );
-    }
-
-    const GLuint id = _ids[ contextID ].first;
-
-    if( ( id == 0 ) || !linkStatus )
-    {
-        JAG3D_WARNING( "Program ID==0 or link failed." );
-        return;
-    }
-
-#endif
 
     glUseProgram( id );
 
@@ -175,13 +152,16 @@ void ShaderProgram::get( GLenum pname, GLint *params )
 
 GLint ShaderProgram::getId( const unsigned int contextID )
 {
-    while( _ids._data.size() < contextID+1 )
+    if( _ids._data.size() < contextID+1 )
     {
-        _ids._data.push_back( jagDraw::IDStatusPair( 0, false ) );
-    }
-    if( _ids[ contextID ].first == 0 )
-    {
-        internalInit( contextID );
+        while( _ids._data.size() < contextID+1 )
+        {
+            _ids._data.push_back( jagDraw::IDStatusPair( 0, false ) );
+        }
+        if( _ids[ contextID ].first == 0 )
+        {
+            internalInit( contextID );
+        }
     }
 
     return( _ids[ contextID ].first );
@@ -360,7 +340,12 @@ void ShaderProgram::getActiveAttrib( const GLuint id, const GLuint index, std::s
 
 void ShaderProgram::internalInit( const unsigned int contextID )
 {
-    _ids[ contextID ].first = glCreateProgram();
+    GLuint id( glCreateProgram() );
+    JAG_ERROR_CHECK( "ShaderProgram::internalInit()" );
+    if( id == 0 )
+        JAG3D_ERROR( "glCreateProgram() returned program ID 0." );
+
+    _ids[ contextID ].first = id;
     _ids[ contextID ].second = false;
 }
 
