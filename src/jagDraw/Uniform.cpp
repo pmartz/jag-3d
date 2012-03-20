@@ -33,7 +33,6 @@ Uniform::Uniform( const std::string& name )
 {
     internalInit( name );
 }
-
 Uniform::Uniform( const Uniform& u )
   : _name( u._name ),
     _indexHash( u._indexHash ),
@@ -92,6 +91,74 @@ Uniform::Uniform( const std::string& name, const GLfloat f )
     internalInit( name );
     _type = GL_FLOAT;
     _value.f = f;
+}
+
+Uniform::Uniform( const std::string& name, const gmtl::Point2f& p )
+{
+    internalInit( name );
+    _type = GL_FLOAT_VEC2;
+    _value.p2f[0] = p[0];
+    _value.p2f[1] = p[1];
+}
+
+Uniform::Uniform( const std::string& name, const gmtl::Vec3f& p )
+{
+    internalInit( name );
+    _type = GL_FLOAT_VEC3;
+    _value.p3f[0] = p[0];
+    _value.p3f[1] = p[1];
+    _value.p3f[2] = p[2];
+}
+Uniform::Uniform( const std::string& name, const gmtl::Point3f& p )
+{
+    internalInit( name );
+    _type = GL_FLOAT_VEC3;
+    _value.p3f[0] = p[0];
+    _value.p3f[1] = p[1];
+    _value.p3f[2] = p[2];
+}
+
+Uniform::Uniform( const std::string& name, const gmtl::Point4f& p )
+{
+    internalInit( name );
+    _type = GL_FLOAT_VEC4;
+    _value.p4f[0] = p[0];
+    _value.p4f[1] = p[1];
+    _value.p4f[2] = p[2];
+    _value.p4f[3] = p[3];
+}
+
+Uniform::Uniform( const std::string& name, const gmtl::Matrix33f& m )
+{
+    internalInit( name );
+    _type = GL_FLOAT_MAT3;
+    
+    unsigned int idx( 0 ), r, c;
+    for( r=0; r<3; r++ )
+        for( c=0; c<3; c++ )
+            _value.mat3f[ idx++ ] = m( r, c );
+    /*
+    const float* f( m.getData() );
+    unsigned int idx;
+    for( idx=0; idx<9; idx++ )
+        _value.mat3f[ idx ] = f[ idx ];
+        */
+}
+Uniform::Uniform( const std::string& name, const gmtl::Matrix44f& m )
+{
+    internalInit( name );
+    _type = GL_FLOAT_MAT4;
+
+    unsigned int idx( 0 ), r, c;
+    for( r=0; r<4; r++ )
+        for( c=0; c<4; c++ )
+            _value.mat3f[ idx++ ] = m( r, c );
+    /*
+    const float* f( m.getData() );
+    unsigned int idx;
+    for( idx=0; idx<16; idx++ )
+        _value.mat3f[ idx ] = f[ idx ];
+        */
 }
 
 /*
@@ -163,9 +230,9 @@ void Uniform::operator()( DrawInfo& drawInfo, const GLint loc ) const
         case GL_INT_VEC4:   glUniform4iv( loc, 1, _value.v4i );   break;
 
         case GL_FLOAT:      glUniform1f( loc, _value.f );         break;
-        case GL_FLOAT_VEC2: glUniform2fv( loc, 1, _value.v2f );   break;
-        case GL_FLOAT_VEC3: glUniform3fv( loc, 1, _value.v3f );   break;
-        case GL_FLOAT_VEC4: glUniform4fv( loc, 1, _value.v4f );   break;
+        case GL_FLOAT_VEC2: glUniform2fv( loc, 1, _value.p2f );   break;
+        case GL_FLOAT_VEC3: glUniform3fv( loc, 1, _value.p3f );   break;
+        case GL_FLOAT_VEC4: glUniform4fv( loc, 1, _value.p4f );   break;
 
         case GL_FLOAT_MAT2:     break; // unsupported
         case GL_FLOAT_MAT2x3:   break; // unsupported
@@ -175,8 +242,8 @@ void Uniform::operator()( DrawInfo& drawInfo, const GLint loc ) const
         case GL_FLOAT_MAT4x2:   break; // unsupported
         case GL_FLOAT_MAT4x3:   break; // unsupported
 
-        case GL_FLOAT_MAT3: glUniformMatrix3fv( loc, 1, _transpose ? GL_TRUE : GL_FALSE, &_value.mat3f[0][0] ); break;
-        case GL_FLOAT_MAT4: glUniformMatrix4fv( loc, 1, _transpose ? GL_TRUE : GL_FALSE, &_value.mat4f[0][0] ); break;
+        case GL_FLOAT_MAT3: glUniformMatrix3fv( loc, 1, _transpose ? GL_TRUE : GL_FALSE, _value.mat3f ); break;
+        case GL_FLOAT_MAT4: glUniformMatrix4fv( loc, 1, _transpose ? GL_TRUE : GL_FALSE, _value.mat4f ); break;
 
         default:
             break;

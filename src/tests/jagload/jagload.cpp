@@ -35,6 +35,10 @@
 #include <osgDB/ReadFile>
 
 #include <string>
+#include <sstream>
+
+#include <osg/Matrix>
+#include <osg/io_utils>
 
 
 using namespace std;
@@ -58,7 +62,13 @@ public:
     }
 
 protected:
+    static gmtl::Matrix44f computeProjection( float aspect );
+    static void makeViewMatrices( gmtl::Matrix44f& view, gmtl::Matrix33f& normal );
+
     jagDraw::DrawableList _drawList;
+
+    gmtl::Matrix44f _proj;
+    jagDraw::UniformPtr _viewProjUniform;
 };
 
 
@@ -69,7 +79,7 @@ DemoInterface* DemoInterface::create( bpo::options_description& desc )
 
 bool JagLoadDemo::startup()
 {
-    jagBase::Log::instance()->setPriority( jagBase::Log::PrioTrace, jagBase::Log::Console );
+    jagBase::Log::instance()->setPriority( jagBase::Log::PrioNotice, jagBase::Log::Console );
 
     std::string fileName( "teapot.osg" );
     JAG3D_NOTICE_STATIC( "jag.demo.jagload", fileName );
@@ -91,7 +101,72 @@ bool JagLoadDemo::startup()
     Osg2Jag osg2JagConverter;
     root->accept( osg2JagConverter );
     _drawList = osg2JagConverter.getJagDrawableList();
+    if( _drawList.size() == 0 )
+    {
+        JAG3D_FATAL_STATIC( "jag.demo.jagload", "No Drawables from OSG conversion." );
+        return( false );
+    }
 
+    jagDraw::DrawablePtr firstDrawable( _drawList[ 0 ] );
+
+    const char* vShaderSource =
+        "#version 140 \n"
+        " \n"
+        "uniform mat4 viewProjectionMatrix; \n"
+        "uniform mat3 normalMatrix; \n"
+        "uniform vec3 ecLightDir; \n"
+        " \n"
+        "in vec4 vertex; \n"
+        "in vec3 normal; \n"
+        "out vec4 color; \n"
+        " \n"
+        "void main() \n"
+        "{ \n"
+        "    vec3 ecNormal = normalize( normalMatrix * normal ); \n"
+        "    float diffuse = max( dot( ecLightDir, ecNormal ), 0. ); \n"
+        "    color = vec4( vec3( diffuse ), 1. ); \n"
+        " \n"
+        "    gl_Position = viewProjectionMatrix * vertex; \n"
+        "} \n";
+    jagDraw::ShaderPtr vs( new jagDraw::Shader( GL_VERTEX_SHADER ) );
+    vs->addSourceString( std::string( vShaderSource ) );
+
+    const char* fShaderSource =
+        "#version 140 \n"
+        " \n"
+        "in vec4 color; \n"
+        "out vec4 fragData; \n"
+        " \n"
+        "void main() \n"
+        "{ \n"
+        "    fragData = color; \n"
+        "} \n";
+    jagDraw::ShaderPtr fs( new jagDraw::Shader( GL_FRAGMENT_SHADER ) );
+    fs->addSourceString( std::string( fShaderSource ) );
+
+    jagDraw::ShaderProgramPtr spp;
+    spp = jagDraw::ShaderProgramPtr( new jagDraw::ShaderProgram );
+    spp->attachShader( vs );
+    spp->attachShader( fs );
+
+    firstDrawable->addDrawablePrep( spp );
+
+    gmtl::Vec3f lightVec( 0.5, .7, 1. );
+    gmtl::normalize( lightVec );
+    firstDrawable->addDrawablePrep( jagDraw::UniformPtr(
+        new jagDraw::Uniform( "ecLightDir", lightVec ) ) );
+
+    _proj = computeProjection( 1. );
+    gmtl::Matrix44f viewMat;
+    gmtl::Matrix33f normalMat;
+    makeViewMatrices( viewMat, normalMat );
+    const gmtl::Matrix44f viewProj( _proj * viewMat );
+    _viewProjUniform = jagDraw::UniformPtr(
+        new jagDraw::Uniform( "viewProjectionMatrix", viewProj ) );
+    firstDrawable->addDrawablePrep( _viewProjUniform );
+
+    firstDrawable->addDrawablePrep( jagDraw::UniformPtr( new jagDraw::Uniform(
+        "normalMatrix", normalMat ) ) );
 
     return( true );
 }
@@ -99,6 +174,8 @@ bool JagLoadDemo::startup()
 bool JagLoadDemo::init()
 {
     glClearColor( 0.f, 0.f, 0.f, 0.f );
+
+    glEnable( GL_DEPTH_TEST );
 
     // Auto-log the version string.
     jagBase::getVersionString();
@@ -113,7 +190,7 @@ bool JagLoadDemo::init()
 
 bool JagLoadDemo::frame()
 {
-    glClear( GL_COLOR_BUFFER_BIT );
+    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
     // drawInfo stores the contextID (used by many Jag objects to
     // look up their object ID), and the current ShaderProgram
@@ -133,4 +210,28 @@ bool JagLoadDemo::frame()
     JAG3D_ERROR_CHECK( "uniform display()" );
 
     return( true );
+}
+
+gmtl::Matrix44f JagLoadDemo::computeProjection( float aspect )
+{
+    gmtl::Matrix44f proj;
+    gmtl::setPerspective< float >( proj, 30., aspect, 1., 10. );
+    return( proj );
+}
+
+void JagLoadDemo::makeViewMatrices( gmtl::Matrix44f& view, gmtl::Matrix33f& normal )
+{
+    osg::Matrix m( osg::Matrix::lookAt( osg::Vec3( 0., -4.5, 2. ),
+        osg::Vec3( 0., 0., 0. ), osg::Vec3( 0., 0., 1. ) ) );
+
+    gmtl::Matrix44f v;
+    unsigned int r, c;
+    for( r=0; r<4; r++ )
+        for( c=0; c<4; c++ )
+            v( r, c ) = m( c, r );
+    view = v;
+
+    normal( 0, 0 ) = v( 0, 0 );  normal( 0, 1 ) = v( 0, 1 );  normal( 0, 2 ) = v( 0, 2 );
+    normal( 1, 0 ) = v( 1, 0 );  normal( 1, 1 ) = v( 1, 1 );  normal( 1, 2 ) = v( 1, 2 );
+    normal( 2, 0 ) = v( 2, 0 );  normal( 2, 1 ) = v( 2, 1 );  normal( 2, 2 ) = v( 2, 2 );
 }

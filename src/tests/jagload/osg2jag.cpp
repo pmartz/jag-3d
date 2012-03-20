@@ -41,12 +41,12 @@ Osg2Jag::~Osg2Jag()
 
 void Osg2Jag::apply( osg::Node& node )
 {
-    JAG3D_NOTICE_STATIC( "jag.demo.jagload", "Node" );
+    JAG3D_TRACE_STATIC( "jag.demo.jagload", "Node" );
     traverse( node );
 }
 void Osg2Jag::apply( osg::Geode& node )
 {
-    JAG3D_NOTICE_STATIC( "jag.demo.jagload", "Geode" );
+    JAG3D_TRACE_STATIC( "jag.demo.jagload", "Geode" );
 
     unsigned int idx;
     for( idx=0; idx<node.getNumDrawables(); idx++ )
@@ -60,7 +60,7 @@ void Osg2Jag::apply( osg::Geode& node )
 
 void Osg2Jag::apply( osg::Geometry* geom )
 {
-    JAG3D_NOTICE_STATIC( "jag.demo.jagload", "Geometry" );
+    JAG3D_TRACE_STATIC( "jag.demo.jagload", "Geometry" );
 
     jagDraw::DrawablePtr draw( jagDraw::DrawablePtr( new jagDraw::Drawable ) );
     _jagDrawables.push_back( draw );
@@ -102,7 +102,7 @@ void Osg2Jag::apply( osg::Geometry* geom )
             jagDraw::DrawArraysPtr drawcom( new jagDraw::DrawArrays(
                 da->getMode(), da->getFirst(), da->getCount() ) );
             draw->addDrawCommand( drawcom );
-            JAG3D_INFO_STATIC( "jag.demo.jagload", "DrawArrays" );
+            JAG3D_TRACE_STATIC( "jag.demo.jagload", "DrawArrays" );
             break;
         }
         default:

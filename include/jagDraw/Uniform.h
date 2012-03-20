@@ -26,6 +26,7 @@
 #include <jagDraw/PlatformOpenGL.h>
 #include <jagDraw/ShaderProgram.h>
 #include <jagBase/ptr.h>
+#include <gmtl/gmtl.h>
 
 #include <vector>
 #include <string>
@@ -50,17 +51,19 @@ public:
     explicit Uniform( const std::string& name, const bool b );
     explicit Uniform( const std::string& name, const GLint i );
     explicit Uniform( const std::string& name, const GLfloat f );
+
+    explicit Uniform( const std::string& name, const gmtl::Point2f& p );
+    explicit Uniform( const std::string& name, const gmtl::Vec3f& p );
+    explicit Uniform( const std::string& name, const gmtl::Point3f& p );
+    explicit Uniform( const std::string& name, const gmtl::Point4f& p );
+
+    explicit Uniform( const std::string& name, const gmtl::Matrix33f& m );
+    explicit Uniform( const std::string& name, const gmtl::Matrix44f& m );
+
     /*
     UniformValue( iiMath::vec2i v2i );
     UniformValue( iiMath::vec3i v3i );
     UniformValue( iiMath::vec4i v4i );
-
-    UniformValue( iiMath::vec2f v2f );
-    UniformValue( iiMath::vec3f v3f );
-    UniformValue( iiMath::vec4f v4f );
-
-    UniformValue( iiMath::matrix3f mat3f );
-    UniformValue( iiMath::matrix4f mat4f );
     */
 
     /** \brief TBD
@@ -96,12 +99,12 @@ protected:
         GLint   v4i[4]; 
 
         GLfloat f;
-        GLfloat v2f[2];
-        GLfloat v3f[3];
-        GLfloat v4f[4];
+        GLfloat p2f[2];
+        GLfloat p3f[3];
+        GLfloat p4f[4];
 
-        GLfloat mat3f[3][3];
-        GLfloat mat4f[4][4];
+        GLfloat mat3f[9];
+        GLfloat mat4f[16];
     } _value;
 
     bool _transpose;
