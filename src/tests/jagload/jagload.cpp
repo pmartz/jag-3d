@@ -45,7 +45,7 @@ class JagLoadDemo : public DemoInterface
 {
 public:
     JagLoadDemo()
-      : DemoInterface( "jag.demo.uniform" )
+      : DemoInterface( "jag.demo.jagload" )
     {}
     virtual ~JagLoadDemo() {}
 
@@ -58,7 +58,7 @@ public:
     }
 
 protected:
-    Osg2Jag osg2JagConverter;
+    jagDraw::DrawableList _drawList;
 };
 
 
@@ -88,7 +88,9 @@ bool JagLoadDemo::startup()
         return( false );
     }
 
+    Osg2Jag osg2JagConverter;
     root->accept( osg2JagConverter );
+    _drawList = osg2JagConverter.getJagDrawableList();
 
 
     return( true );
@@ -120,8 +122,7 @@ bool JagLoadDemo::frame()
     drawInfo._id = jagDraw::ContextSupport::instance()->getActiveContext();
 
     // Render all Drawables.
-    const jagDraw::DrawableList& drawables( osg2JagConverter.getJagDrawableList() );
-    BOOST_FOREACH( const jagDraw::DrawableList::value_type& dp, drawables )
+    BOOST_FOREACH( const jagDraw::DrawableList::value_type& dp, _drawList )
     {
         (*(dp))( drawInfo );
     }

@@ -23,6 +23,12 @@
 
 #include <osg/NodeVisitor>
 #include <jagDraw/Drawable.h>
+#include <jagBase/Buffer.h>
+
+namespace osg {
+    class Geometry;
+    class Array;
+}
 
 
 class Osg2Jag : public osg::NodeVisitor
@@ -34,7 +40,19 @@ public:
     virtual void apply( osg::Node& node );
     virtual void apply( osg::Geode& node );
 
-    const jagDraw::DrawableList& getJagDrawableList() const;
+    void Osg2Jag::apply( osg::Geometry* geom );
+
+    jagDraw::DrawableList getJagDrawableList();
+
+
+    struct ArrayInfo {
+        jagBase::BufferPtr _buffer;
+        GLenum _type;
+        unsigned int _numElements;
+        unsigned int _components;
+    };
+
+    ArrayInfo asJagArray( const osg::Array* arrayIn, const osg::Matrix& m );
 
 protected:
     jagDraw::DrawableList _jagDrawables;
