@@ -79,7 +79,7 @@ void keyboard(unsigned char key, int x, int y)
 }
 
 
-int main (int argc, char** argv)
+int main( int argc, char* argv[] )
 {
     bpo::options_description desc( "Options" );
     // Add freeglut test/demo options

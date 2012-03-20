@@ -118,9 +118,11 @@ endmacro()
 macro( _addFreeglutExecutable _category _exeName )
     set( _localExeName "${_exeName}-freeglut" )
 
+    _splitList( ADDITIONAL_LIBRARIES sources libs ${ARGN} )
+
     add_executable( ${_localExeName}
         ${PROJECT_SOURCE_DIR}/src/demoSupport/freeglutSupport.cpp
-        ${ARGN}
+        ${sources}
     )
 
     include_directories(
@@ -134,6 +136,7 @@ macro( _addFreeglutExecutable _category _exeName )
         set( RELATIVE_LIB_PATH ../../../lib/ )
     endif()
     target_link_libraries( ${_localExeName}
+        ${libs}
         ${Freeglut_LIBRARIES}
         ${_projectLibraries}
         ${_optionalDependencyLibraries}
@@ -153,10 +156,12 @@ macro( _addQtExecutable _category _exeName )
         OPTIONS "-f"
     )
 
+    _splitList( ADDITIONAL_LIBRARIES sources libs ${ARGN} )
+
     add_executable( ${_localExeName}
         ${PROJECT_SOURCE_DIR}/src/demoSupport/qtSupport.cpp
         ${_mocFiles}
-        ${ARGN}
+        ${sources}
     )
 
     include_directories(
@@ -170,6 +175,7 @@ macro( _addQtExecutable _category _exeName )
         set( RELATIVE_LIB_PATH ../../../lib/ )
     endif()
     target_link_libraries( ${_localExeName}
+        ${libs}
         ${QT_QTOPENGL_LIBRARY}
         ${QT_LIBRARIES}
         ${_projectLibraries}

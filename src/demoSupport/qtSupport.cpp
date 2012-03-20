@@ -92,7 +92,7 @@ void GLWidget::keyPressEvent( QKeyEvent* e )
 
 
 
-int main( int argc, char* argv[] )
+int main( int argc, char** argv )
 {
     bpo::options_description desc( "Options" );
     // Add qt test/demo options
