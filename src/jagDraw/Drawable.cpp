@@ -46,6 +46,15 @@ void Drawable::operator()( DrawInfo& drawInfo )
         (*dpp)( drawInfo );
     }
 
+    if( JAG3D_LOG_DEBUG )
+    {
+        if( drawInfo._program == NULL )
+        {
+            JAG3D_ERROR( "drawInfo::_program == NULL. Can't render without a ShaderProgram." );
+            return;
+        }
+    }
+
     BOOST_FOREACH( VertexArrayCommandPtr vacp, _vertexArrayCommands )
     {
         (*vacp)( drawInfo );
