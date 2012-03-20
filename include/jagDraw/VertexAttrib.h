@@ -23,6 +23,7 @@
 
 #include <jagDraw/Export.h>
 #include <jagDraw/PlatformOpenGL.h>
+#include <jagDraw/DrawInfo.h>
 #include <jagDraw/VertexArrayCommand.h>
 #include <jagDraw/ShaderProgram.h>
 #include <jagBase/ptr.h>
@@ -31,9 +32,6 @@
 
 
 namespace jagDraw {
-
-
-struct DrawInfo;
 
 
 /** \class VertexAttrib VertexAttrib.h <jagDraw/VertexAttrib.h>
