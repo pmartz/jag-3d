@@ -63,7 +63,7 @@ public:
 
 protected:
     static gmtl::Matrix44f computeProjection( float aspect );
-    static void makeViewMatrices( gmtl::Matrix44f& view, gmtl::Matrix33f& normal );
+    static void makeViewMatrices( gmtl::Matrix44f& view, gmtl::Matrix33f& normal, const osg::BoundingSphere& bs );
 
     jagDraw::DrawableList _drawList;
 
@@ -157,9 +157,10 @@ bool JagLoadDemo::startup()
         new jagDraw::Uniform( "ecLightDir", lightVec ) ) );
 
     _proj = computeProjection( 1. );
+
     gmtl::Matrix44f viewMat;
     gmtl::Matrix33f normalMat;
-    makeViewMatrices( viewMat, normalMat );
+    makeViewMatrices( viewMat, normalMat, osg2JagConverter.getBound() );
     const gmtl::Matrix44f viewProj( _proj * viewMat );
     _viewProjUniform = jagDraw::UniformPtr(
         new jagDraw::Uniform( "viewProjectionMatrix", viewProj ) );
@@ -219,10 +220,10 @@ gmtl::Matrix44f JagLoadDemo::computeProjection( float aspect )
     return( proj );
 }
 
-void JagLoadDemo::makeViewMatrices( gmtl::Matrix44f& view, gmtl::Matrix33f& normal )
+void JagLoadDemo::makeViewMatrices( gmtl::Matrix44f& view, gmtl::Matrix33f& normal, const osg::BoundingSphere& bs )
 {
-    osg::Matrix m( osg::Matrix::lookAt( osg::Vec3( 0., -4.5, 2. ),
-        osg::Vec3( 0., 0., 0. ), osg::Vec3( 0., 0., 1. ) ) );
+    osg::Matrix m( osg::Matrix::lookAt( osg::Vec3( 0., -4., 1.5 ) * bs.radius(),
+        bs.center(), osg::Vec3( 0., 0., 1. ) ) );
 
     gmtl::Matrix44f v;
     unsigned int r, c;

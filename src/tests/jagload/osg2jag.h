@@ -43,6 +43,7 @@ public:
     void Osg2Jag::apply( osg::Geometry* geom );
 
     jagDraw::DrawableList getJagDrawableList();
+    const osg::BoundingSphere& getBound() const { return( _bs ); }
 
 
     struct ArrayInfo {
@@ -56,6 +57,7 @@ public:
 
 protected:
     jagDraw::DrawableList _jagDrawables;
+    osg::BoundingSphere _bs;
 };
 
 

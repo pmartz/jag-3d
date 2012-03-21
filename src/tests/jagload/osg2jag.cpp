@@ -51,6 +51,7 @@ void Osg2Jag::apply( osg::Geode& node )
     unsigned int idx;
     for( idx=0; idx<node.getNumDrawables(); idx++ )
     {
+        _bs.expandBy( node.getDrawable( idx )->getBound() );
         if( node.getDrawable( idx )->asGeometry() != NULL )
             apply( node.getDrawable( idx )->asGeometry() );
     }
