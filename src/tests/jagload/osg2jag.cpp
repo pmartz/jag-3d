@@ -116,6 +116,33 @@ void Osg2Jag::apply( osg::Geometry* geom )
             draw->addDrawCommand( drawcom );
             break;
         }
+        case osg::PrimitiveSet::DrawArrayLengthsPrimitiveType:
+        {
+            JAG3D_TRACE_STATIC( "jag.demo.jagload", "DrawArrayLengths" );
+
+            const osg::DrawArrayLengths* dal( static_cast< const osg::DrawArrayLengths* >( ps ) );
+            const unsigned int size( dal->size() );
+
+            jagBase::GLsizeiArray first( new GLsizei[ size ] );
+            jagBase::GLsizeiArray count( new GLsizei[ size ] );
+            GLsizei* fp( first.get() );
+            GLsizei* cp( count.get() );
+
+            unsigned int idx;
+            for( idx=0; idx<size; idx++ )
+            {
+                if( idx==0 )
+                    fp[ idx ] = dal->getFirst();
+                else
+                    fp[ idx ] = fp[ idx-1 ] + cp[ idx-1 ];
+                cp[ idx ] = (*dal)[ idx ];
+            }
+
+            jagDraw::MultiDrawArraysPtr drawcom( new jagDraw::MultiDrawArrays(
+                dal->getMode(), first, count, size ) );
+            draw->addDrawCommand( drawcom );
+            break;
+        }
         case osg::PrimitiveSet::DrawElementsUBytePrimitiveType:
         {
             JAG3D_TRACE_STATIC( "jag.demo.jagload", "DrawElementsUByte" );

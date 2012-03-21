@@ -63,8 +63,8 @@ public:
     }
 
 protected:
-    static gmtl::Matrix44f computeProjection( float aspect );
-    static void makeViewMatrices( gmtl::Matrix44f& view, gmtl::Matrix33f& normal, const osg::BoundingSphere& bs );
+    gmtl::Matrix44f computeProjection( float aspect );
+    void makeViewMatrices( gmtl::Matrix44f& view, gmtl::Matrix33f& normal );
 
     jagDraw::DrawableList _drawList;
 
@@ -83,6 +83,10 @@ bool JagLoadDemo::startup()
 {
     jagBase::Log::instance()->setPriority( jagBase::Log::PrioTrace, jagBase::Log::Console );
 
+    //std::string fileName( "GRINDER_WHEEL.PRT.ive" );
+    //std::string fileName( "fountain.osg" );
+    //std::string fileName( "glider.osg" );
+    //std::string fileName( "cow.osg" );
     std::string fileName( "teapot.osg" );
     JAG3D_NOTICE_STATIC( "jag.demo.jagload", fileName );
 
@@ -163,7 +167,7 @@ bool JagLoadDemo::startup()
 
     gmtl::Matrix44f viewMat;
     gmtl::Matrix33f normalMat;
-    makeViewMatrices( viewMat, normalMat, _bs );
+    makeViewMatrices( viewMat, normalMat );
     const gmtl::Matrix44f viewProj( _proj * viewMat );
     _viewProjUniform = jagDraw::UniformPtr(
         new jagDraw::Uniform( "viewProjectionMatrix", viewProj ) );
@@ -222,7 +226,7 @@ void JagLoadDemo::reshape( const int w, const int h )
 
     gmtl::Matrix44f viewMat;
     gmtl::Matrix33f normalMat;
-    makeViewMatrices( viewMat, normalMat, _bs );
+    makeViewMatrices( viewMat, normalMat );
     const gmtl::Matrix44f viewProj( _proj * viewMat );
     _viewProjUniform->set( viewProj );
 }
@@ -230,14 +234,16 @@ void JagLoadDemo::reshape( const int w, const int h )
 gmtl::Matrix44f JagLoadDemo::computeProjection( float aspect )
 {
     gmtl::Matrix44f proj;
-    gmtl::setPerspective< float >( proj, 30., aspect, 1., 10. );
+    float zNear = 3.5 * _bs.radius();
+    float zFar = 5.75 * _bs.radius();
+    gmtl::setPerspective< float >( proj, 30., aspect, .1, 4000. );
     return( proj );
 }
 
-void JagLoadDemo::makeViewMatrices( gmtl::Matrix44f& view, gmtl::Matrix33f& normal, const osg::BoundingSphere& bs )
+void JagLoadDemo::makeViewMatrices( gmtl::Matrix44f& view, gmtl::Matrix33f& normal )
 {
-    osg::Matrix m( osg::Matrix::lookAt( bs.center() + ( osg::Vec3( 0., -4., 1.5 ) * bs.radius() ),
-        bs.center(), osg::Vec3( 0., 0., 1. ) ) );
+    osg::Matrix m( osg::Matrix::lookAt( _bs.center() + ( osg::Vec3( 0., -4., 1.5 ) * _bs.radius() ),
+        _bs.center(), osg::Vec3( 0., 0., 1. ) ) );
 
     gmtl::Matrix44f v;
     unsigned int r, c;
