@@ -79,7 +79,7 @@ DemoInterface* DemoInterface::create( bpo::options_description& desc )
 
 bool JagLoadDemo::startup()
 {
-    jagBase::Log::instance()->setPriority( jagBase::Log::PrioNotice, jagBase::Log::Console );
+    jagBase::Log::instance()->setPriority( jagBase::Log::PrioTrace, jagBase::Log::Console );
 
     std::string fileName( "teapot.osg" );
     JAG3D_NOTICE_STATIC( "jag.demo.jagload", fileName );
@@ -97,6 +97,7 @@ bool JagLoadDemo::startup()
         JAG3D_FATAL_STATIC( "jag.demo.jagload", msg );
         return( false );
     }
+    osg::BoundingSphere bs( root->getBound() );
 
     Osg2Jag osg2JagConverter;
     root->accept( osg2JagConverter );
@@ -160,7 +161,7 @@ bool JagLoadDemo::startup()
 
     gmtl::Matrix44f viewMat;
     gmtl::Matrix33f normalMat;
-    makeViewMatrices( viewMat, normalMat, osg2JagConverter.getBound() );
+    makeViewMatrices( viewMat, normalMat, bs );
     const gmtl::Matrix44f viewProj( _proj * viewMat );
     _viewProjUniform = jagDraw::UniformPtr(
         new jagDraw::Uniform( "viewProjectionMatrix", viewProj ) );
@@ -216,7 +217,7 @@ bool JagLoadDemo::frame()
 gmtl::Matrix44f JagLoadDemo::computeProjection( float aspect )
 {
     gmtl::Matrix44f proj;
-    gmtl::setPerspective< float >( proj, 60., aspect, 1., 10. );
+    gmtl::setPerspective< float >( proj, 30., aspect, 1., 10. );
     return( proj );
 }
 

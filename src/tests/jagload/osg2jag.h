@@ -45,7 +45,6 @@ public:
     void Osg2Jag::apply( osg::Geometry* geom );
 
     jagDraw::DrawableList getJagDrawableList();
-    const osg::BoundingSphere& getBound() const { return( _bs ); }
 
 
     struct ArrayInfo {
@@ -56,11 +55,13 @@ public:
     };
 
     ArrayInfo asJagArray( const osg::Array* arrayIn, const osg::Matrix& m );
+
+    ArrayInfo asJagArray( const osg::VectorGLubyte* arrayIn );
+    ArrayInfo asJagArray( const osg::VectorGLushort* arrayIn );
     ArrayInfo asJagArray( const osg::VectorGLuint* arrayIn );
 
 protected:
     jagDraw::DrawableList _jagDrawables;
-    osg::BoundingSphere _bs;
 };
 
 
