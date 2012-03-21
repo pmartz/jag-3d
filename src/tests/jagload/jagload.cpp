@@ -216,13 +216,13 @@ bool JagLoadDemo::frame()
 gmtl::Matrix44f JagLoadDemo::computeProjection( float aspect )
 {
     gmtl::Matrix44f proj;
-    gmtl::setPerspective< float >( proj, 30., aspect, 1., 10. );
+    gmtl::setPerspective< float >( proj, 60., aspect, 1., 10. );
     return( proj );
 }
 
 void JagLoadDemo::makeViewMatrices( gmtl::Matrix44f& view, gmtl::Matrix33f& normal, const osg::BoundingSphere& bs )
 {
-    osg::Matrix m( osg::Matrix::lookAt( osg::Vec3( 0., -4., 1.5 ) * bs.radius(),
+    osg::Matrix m( osg::Matrix::lookAt( bs.center() + ( osg::Vec3( 0., -4., 1.5 ) * bs.radius() ),
         bs.center(), osg::Vec3( 0., 0., 1. ) ) );
 
     gmtl::Matrix44f v;

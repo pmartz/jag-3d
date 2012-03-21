@@ -182,8 +182,7 @@ bool DrawableDemo::init()
             "color", 3, GL_FLOAT, GL_FALSE, 0, 0 ) );
         drawable->addVertexArrayCommand( color );
 
-        typedef std::vector< GLubyte > GLubyteArray;
-        GLubyteArray elements;
+        jagBase::GLubyteArray elements;
         unsigned int idx;
         for( idx=0; idx<6; idx++ )
             elements.push_back( idx );

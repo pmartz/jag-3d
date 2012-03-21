@@ -25,6 +25,8 @@
 #include <jagDraw/Drawable.h>
 #include <jagBase/Buffer.h>
 
+#include <osg/PrimitiveSet>
+
 namespace osg {
     class Geometry;
     class Array;
@@ -54,6 +56,7 @@ public:
     };
 
     ArrayInfo asJagArray( const osg::Array* arrayIn, const osg::Matrix& m );
+    ArrayInfo asJagArray( const osg::VectorGLuint* arrayIn );
 
 protected:
     jagDraw::DrawableList _jagDrawables;

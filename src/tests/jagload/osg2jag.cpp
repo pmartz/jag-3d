@@ -99,11 +99,30 @@ void Osg2Jag::apply( osg::Geometry* geom )
         {
         case osg::PrimitiveSet::DrawArraysPrimitiveType:
         {
+            JAG3D_TRACE_STATIC( "jag.demo.jagload", "DrawArrays" );
+
             const osg::DrawArrays* da( static_cast< const osg::DrawArrays* >( ps ) );
             jagDraw::DrawArraysPtr drawcom( new jagDraw::DrawArrays(
                 da->getMode(), da->getFirst(), da->getCount() ) );
             draw->addDrawCommand( drawcom );
-            JAG3D_TRACE_STATIC( "jag.demo.jagload", "DrawArrays" );
+            break;
+        }
+        case osg::PrimitiveSet::DrawElementsUBytePrimitiveType:
+        {
+            break;
+        }
+        case osg::PrimitiveSet::DrawElementsUIntPrimitiveType:
+        {
+            JAG3D_TRACE_STATIC( "jag.demo.jagload", "DrawElementsUInt" );
+
+            const osg::DrawElementsUInt* deui( static_cast< const osg::DrawElementsUInt* >( ps ) );
+            ArrayInfo info( asJagArray( deui ) );
+            jagDraw::BufferObjectPtr bop( new jagDraw::BufferObject( GL_ELEMENT_ARRAY_BUFFER, info._buffer ) );
+            draw->addVertexArrayCommand( bop, jagDraw::VertexArrayCommand::Vertex );
+
+            jagDraw::DrawElementsPtr drawcom( new jagDraw::DrawElements(
+                deui->getMode(), deui->getNumIndices(), GL_UNSIGNED_INT, NULL ) );
+            draw->addDrawCommand( drawcom );
             break;
         }
         default:
@@ -121,7 +140,7 @@ jagDraw::DrawableList Osg2Jag::getJagDrawableList()
 }
 
 
-Osg2Jag::ArrayInfo Osg2Jag::asJagArray( const osg::Array* arrayIn, const osg::Matrix& m )
+Osg2Jag::ArrayInfo Osg2Jag::asJagArray( const osg::Array* arrayIn, const osg::Matrix& m=osg::Matrix::identity() )
 {
     ArrayInfo info;
 
@@ -150,7 +169,7 @@ Osg2Jag::ArrayInfo Osg2Jag::asJagArray( const osg::Array* arrayIn, const osg::Ma
             p[ 2 ] = v[ 2 ];
         }
 
-        jagBase::BufferPtr bp( new jagBase::Buffer( size * sizeof( gmtl::Point3f ), (void*)&out[0] ) );
+        jagBase::BufferPtr bp( new jagBase::Buffer( size * sizeof( osg::Vec3 ), (void*)&out[0] ) );
         info._buffer = bp;
         break;
     }
@@ -165,5 +184,25 @@ Osg2Jag::ArrayInfo Osg2Jag::asJagArray( const osg::Array* arrayIn, const osg::Ma
     ostr << "Processed array of size " << info._numElements;
     JAG3D_INFO_STATIC( "jag.demo.jagload", std::string(ostr.str()) );
 
+    return( info );
+}
+
+Osg2Jag::ArrayInfo Osg2Jag::asJagArray( const osg::VectorGLuint* arrayIn )
+{
+    const unsigned int size( arrayIn->size() );
+
+    ArrayInfo info;
+    info._type = GL_UNSIGNED_INT;
+    info._numElements = size;
+    info._components = 1;
+
+    jagBase::GLuintArray out;
+    out.resize( size );
+    unsigned int idx;
+    for( idx=0; idx<size; idx++ )
+        out[ idx ] = (*arrayIn)[ idx ];
+
+    jagBase::BufferPtr bp( new jagBase::Buffer( size * sizeof( GLuint ), (void*)&out[0] ) );
+    info._buffer = bp;
     return( info );
 }
