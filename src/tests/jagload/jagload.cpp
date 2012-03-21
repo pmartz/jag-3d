@@ -84,7 +84,7 @@ bool JagLoadDemo::startup()
     jagBase::Log::instance()->setPriority( jagBase::Log::PrioNotice, jagBase::Log::Console );
 
     //std::string fileName( "GRINDER_WHEEL.PRT.ive" );
-    std::string fileName( "M55339.ASM.ive" );
+    //std::string fileName( "M55339.ASM.ive" );
     //std::string fileName( "USMC23_4019.ASM.ive" );
     //std::string fileName( "02-1100.ive" );
 
@@ -92,8 +92,8 @@ bool JagLoadDemo::startup()
     //std::string fileName( "glider.osg" );
     //std::string fileName( "cow.osg" );
     //std::string fileName( "dumptruck.osg" );
-    //std::string fileName( "teapot.osg" );
-    JAG3D_NOTICE_STATIC( "jag.demo.jagload", fileName );
+    std::string fileName( "teapot.osg" );
+    JAG3D_INFO_STATIC( "jag.demo.jagload", fileName );
 
     if( fileName.empty() )
     {
@@ -101,18 +101,20 @@ bool JagLoadDemo::startup()
         return( false );
     }
 
-    osg::ref_ptr< osg::Node> root = osgDB::readNodeFile( fileName );
-    if( !root.valid() )
     {
-        std::string msg( "Can't load \"" + fileName + "\"." );
-        JAG3D_FATAL_STATIC( "jag.demo.jagload", msg );
-        return( false );
-    }
-    _bs = root->getBound();
+        osg::ref_ptr< osg::Node> root = osgDB::readNodeFile( fileName );
+        if( !root.valid() )
+        {
+            std::string msg( "Can't load \"" + fileName + "\"." );
+            JAG3D_FATAL_STATIC( "jag.demo.jagload", msg );
+            return( false );
+        }
+        _bs = root->getBound();
 
-    Osg2Jag osg2JagConverter;
-    root->accept( osg2JagConverter );
-    _drawList = osg2JagConverter.getJagDrawableList();
+        Osg2Jag osg2JagConverter;
+        root->accept( osg2JagConverter );
+        _drawList = osg2JagConverter.getJagDrawableList();
+    }
     if( _drawList.size() == 0 )
     {
         JAG3D_FATAL_STATIC( "jag.demo.jagload", "No Drawables from OSG conversion." );
@@ -217,7 +219,6 @@ bool JagLoadDemo::frame()
         (*(dp))( drawInfo );
     }
 
-
     glFlush ();
 
     JAG3D_ERROR_CHECK( "uniform display()" );
@@ -248,7 +249,7 @@ gmtl::Matrix44f JagLoadDemo::computeProjection( float aspect )
 
 void JagLoadDemo::makeViewMatrices( gmtl::Matrix44f& view, gmtl::Matrix33f& normal )
 {
-    osg::Matrix m( osg::Matrix::lookAt( _bs.center() + ( osg::Vec3( 0., -4., 1.5 ) * _bs.radius() ),
+    osg::Matrix m( osg::Matrix::lookAt( _bs.center() + ( osg::Vec3( 0., -4.25, 0. ) * _bs.radius() ),
         _bs.center(), osg::Vec3( 0., 0., 1. ) ) );
 //    osg::Matrix m( osg::Matrix::lookAt( _bs.center() + ( osg::Vec3( -.5, -4., 0. ) * _bs.radius() ),
 //        _bs.center(), osg::Vec3( -1., 0., 0. ) ) );
