@@ -24,6 +24,7 @@
 
 #include <jagDraw/Export.h>
 #include <jagDraw/PlatformOpenGL.h>
+#include <jagDraw/BufferObject.h>
 #include <jagBase/types.h>
 
 
@@ -44,7 +45,7 @@ values).
 \li Derive a class from DrawCommand.
 \li Override and define the pure virtual operator() member function.
 */
-class DrawCommand //: public DrawableAttribute
+class DrawCommand
 {
 public:
     enum DrawCommandType{
@@ -99,29 +100,59 @@ protected:
     // TBD I really do not like having all this crap in the base class.
     // Possibly have multiple base classes employing multiple inheritance
     // to access such member variables.
-    GLint _first;
     GLsizei _count;
     GLsizei _primcount;
-    GLenum _type;
-    GLvoid* _offset;
-    GLuint _start, _end;
-    GLvoid* _indirect;
-    jagBase::GLintArray _firstArray;
-    jagBase::GLsizeiArray _countArray;
-    jagBase::GLvoidPtrArray _indicesArray;
-    GLint _basevertex;
-    jagBase::GLintArray _basevertexArray;
 };
 
 typedef jagBase::ptr< jagDraw::DrawCommand >::shared_ptr DrawCommandPtr;
 typedef std::vector< DrawCommandPtr > DrawCommandList;
 
 
+class DrawArraysBase
+{
+protected:
+    GLint _first;
+};
+
+class DrawElementsBase
+{
+protected:
+    GLenum _type;
+    GLvoid* _offset;
+};
+
+class BaseVertexBase
+{
+protected:
+    GLint _baseVertex;
+};
+
+class RangeBase
+{
+protected:
+    GLuint _start, _end;
+};
+
+class MultiArrayBase
+{
+protected:
+    jagBase::GLsizeiArray _countArray;
+    jagBase::GLvoidPtrArray _indicesArray;
+};
+
+class IndirectBase
+{
+protected:
+    GLvoid* _indirect;
+};
+
+
 /** \class DrawArrays DrawCommand.h <jagDraw/DrawCommand.h>
 \brief
 \details
 */
-class DrawArrays : public DrawCommand
+class DrawArrays : public DrawCommand,
+            public DrawArraysBase
 {
 public:
     DrawArrays( GLenum mode, GLint first, GLsizei count )
@@ -144,7 +175,8 @@ typedef jagBase::ptr< jagDraw::DrawArrays >::shared_ptr DrawArraysPtr;
 \brief
 \details
 */
-class DrawArraysInstanced : public DrawCommand
+class DrawArraysInstanced : public DrawCommand,
+            public DrawArraysBase
 {
 public:
     DrawArraysInstanced( GLenum mode, GLint first, GLsizei count, GLsizei primcount )
@@ -168,7 +200,8 @@ typedef jagBase::ptr< jagDraw::DrawArraysInstanced >::shared_ptr DrawArraysInsta
 \brief
 \details
 */
-class DrawArraysIndirect : public DrawCommand
+class DrawArraysIndirect : public DrawCommand,
+            public IndirectBase
 {
 public:
     DrawArraysIndirect( GLenum mode, const GLvoid* indirect )
@@ -192,14 +225,15 @@ typedef jagBase::ptr< jagDraw::DrawArraysIndirect >::shared_ptr DrawArraysIndire
 \brief
 \details
 */
-class MultiDrawArrays : public DrawCommand
+class MultiDrawArrays : public DrawCommand,
+            public MultiArrayBase
 {
 public:
     MultiDrawArrays( GLenum mode, const jagBase::GLintArray& first,
             const jagBase::GLsizeiArray& count, GLsizei primcount )
-      : DrawCommand( MultiDrawArraysType, mode )
+      : DrawCommand( MultiDrawArraysType, mode ),
+        _firstArray( first )
     {
-        _firstArray = first;
         _countArray = count;
         _primcount = primcount;
     }
@@ -208,6 +242,9 @@ public:
     {
         glMultiDrawArrays( _mode, _firstArray.get(), _countArray.get(), _primcount );
     }
+
+protected:
+    jagBase::GLintArray _firstArray;
 };
 
 typedef jagBase::ptr< jagDraw::MultiDrawArrays >::shared_ptr MultiDrawArraysPtr;
@@ -221,7 +258,8 @@ Note the fourth parameter is \c offset rather than the spec name \c indices.
 The intended use is with GL_ELEMENT_ARRAY_BUFFER. If used without an element
 buffer object, be aware that DrawElements does not store \c offset in a
 smart pointer. */
-class DrawElements : public DrawCommand
+class DrawElements : public DrawCommand,
+            public DrawElementsBase
 {
 public:
     DrawElements( GLenum mode, GLsizei count, GLenum type, const GLvoid* offset )
@@ -249,7 +287,8 @@ Note the fourth parameter is \c offset rather than the spec name \c indices.
 The intended use is with GL_ELEMENT_ARRAY_BUFFER. If used without an element
 buffer object, be aware that DrawElements does not store \c offset in a
 smart pointer. */
-class DrawElementsInstanced : public DrawCommand
+class DrawElementsInstanced : public DrawCommand,
+            public DrawElementsBase
 {
 public:
     DrawElementsInstanced( GLenum mode, GLsizei count, GLenum type,
@@ -275,7 +314,8 @@ typedef jagBase::ptr< jagDraw::DrawElementsInstanced >::shared_ptr DrawElementsI
 \brief
 \details
 */
-class MultiDrawElements : public DrawCommand
+class MultiDrawElements : public DrawCommand,
+            public DrawElementsBase, public MultiArrayBase
 {
 public:
     MultiDrawElements( GLenum mode, const jagBase::GLsizeiArray& count, GLenum type,
@@ -301,7 +341,8 @@ typedef jagBase::ptr< jagDraw::MultiDrawElements >::shared_ptr MultiDrawElements
 \brief
 \details
 */
-class DrawRangeElements : public DrawCommand
+class DrawRangeElements : public DrawCommand,
+            public DrawElementsBase, public RangeBase
 {
 public:
     DrawRangeElements( GLenum mode, GLuint start, GLuint end, GLsizei count, GLenum type,
@@ -328,22 +369,23 @@ typedef jagBase::ptr< jagDraw::DrawRangeElements >::shared_ptr DrawRangeElements
 \brief
 \details
 */
-class DrawElementsBaseVertex : public DrawCommand
+class DrawElementsBaseVertex : public DrawCommand,
+            public DrawElementsBase, public BaseVertexBase
 {
 public:
     DrawElementsBaseVertex( GLenum mode, GLsizei count, GLenum type,
-            const GLvoid* offset, GLint basevertex )
+            const GLvoid* offset, GLint baseVertex )
       : DrawCommand( DrawElementsBaseVertexType, mode )
     {
         _count = count;
         _type = type;
         _offset = const_cast< GLvoid* >( offset );
-        _basevertex = basevertex;
+        _baseVertex = baseVertex;
     }
 
     virtual void operator()( DrawInfo& drawInfo )
     {
-        glDrawElementsBaseVertex( _mode, _count, _type, _offset, _basevertex );
+        glDrawElementsBaseVertex( _mode, _count, _type, _offset, _baseVertex );
     }
 };
 
@@ -354,11 +396,12 @@ typedef jagBase::ptr< jagDraw::DrawElementsBaseVertex >::shared_ptr DrawElements
 \brief
 \details
 */
-class DrawRangeElementsBaseVertex : public DrawCommand
+class DrawRangeElementsBaseVertex : public DrawCommand,
+            public DrawElementsBase, public RangeBase, public BaseVertexBase
 {
 public:
     DrawRangeElementsBaseVertex( GLenum mode, GLuint start, GLuint end, GLsizei count, GLenum type,
-            const GLvoid* offset, GLint basevertex )
+            const GLvoid* offset, GLint baseVertex )
       : DrawCommand( DrawRangeElementsBaseVertexType, mode )
     {
         _count = count;
@@ -366,12 +409,12 @@ public:
         _start = start;
         _end = end;
         _offset = const_cast< GLvoid* >( offset );
-        _basevertex = basevertex;
+        _baseVertex = baseVertex;
     }
 
     virtual void operator()( DrawInfo& drawInfo )
     {
-        glDrawRangeElementsBaseVertex( _mode, _start, _end, _count, _type, _offset, _basevertex );
+        glDrawRangeElementsBaseVertex( _mode, _start, _end, _count, _type, _offset, _baseVertex );
     }
 };
 
@@ -382,23 +425,24 @@ typedef jagBase::ptr< jagDraw::DrawRangeElementsBaseVertex >::shared_ptr DrawRan
 \brief
 \details
 */
-class DrawElementsInstancedBaseVertex : public DrawCommand
+class DrawElementsInstancedBaseVertex : public DrawCommand,
+            public DrawElementsBase, public BaseVertexBase
 {
 public:
     DrawElementsInstancedBaseVertex( GLenum mode, GLsizei count, GLenum type,
-        const GLvoid* offset, GLsizei primcount, GLint basevertex )
+        const GLvoid* offset, GLsizei primcount, GLint baseVertex )
       : DrawCommand( DrawElementsInstancedBaseVertexType, mode )
     {
         _count = count;
         _type = type;
         _offset = const_cast< GLvoid* >( offset );
         _primcount = primcount;
-        _basevertex = basevertex;
+        _baseVertex = baseVertex;
     }
 
     virtual void operator()( DrawInfo& drawInfo )
     {
-        glDrawElementsInstancedBaseVertex( _mode, _count, _type, _offset, _primcount, _basevertex );
+        glDrawElementsInstancedBaseVertex( _mode, _count, _type, _offset, _primcount, _baseVertex );
     }
 };
 
@@ -409,7 +453,8 @@ typedef jagBase::ptr< jagDraw::DrawElementsInstancedBaseVertex >::shared_ptr Dra
 \brief
 \details
 */
-class DrawElementsIndirect : public DrawCommand
+class DrawElementsIndirect : public DrawCommand,
+            public DrawElementsBase, public IndirectBase
 {
 public:
     DrawElementsIndirect( GLenum mode, GLenum type, const GLvoid* indirect )
@@ -432,19 +477,20 @@ typedef jagBase::ptr< jagDraw::DrawElementsIndirect >::shared_ptr DrawElementsIn
 \brief
 \details
 */
-class MultiDrawElementsBaseVertex : public DrawCommand
+class MultiDrawElementsBaseVertex : public DrawCommand,
+            public DrawElementsBase, public MultiArrayBase
 {
 public:
     MultiDrawElementsBaseVertex( GLenum mode, const jagBase::GLsizeiArray& count, 
             GLenum type, const jagBase::GLvoidPtrArray& indices, GLsizei primcount,
             const jagBase::GLintArray& basevertex )
-      : DrawCommand( MultiDrawElementsBaseVertexType, mode )
+      : DrawCommand( MultiDrawElementsBaseVertexType, mode ),
+        _basevertexArray( basevertex )
     { 
         _countArray = count;
         _type = type;
         _indicesArray = indices;
         _primcount = primcount;
-        _basevertexArray = basevertex;
     }
 
     virtual void operator()( DrawInfo& drawInfo )
@@ -452,6 +498,9 @@ public:
         glMultiDrawElementsBaseVertex( _mode, _countArray.get(), _type, (const GLvoid**)( _indicesArray.get() ),
             _primcount, _basevertexArray.get() );
     }
+
+protected:
+    jagBase::GLintArray _basevertexArray;
 };
 
 typedef jagBase::ptr< jagDraw::MultiDrawElementsBaseVertex >::shared_ptr MultiDrawElementsBaseVertexPtr;
