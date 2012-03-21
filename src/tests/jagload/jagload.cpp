@@ -81,12 +81,13 @@ DemoInterface* DemoInterface::create( bpo::options_description& desc )
 
 bool JagLoadDemo::startup()
 {
-    jagBase::Log::instance()->setPriority( jagBase::Log::PrioTrace, jagBase::Log::Console );
+    jagBase::Log::instance()->setPriority( jagBase::Log::PrioNotice, jagBase::Log::Console );
 
     //std::string fileName( "GRINDER_WHEEL.PRT.ive" );
     //std::string fileName( "fountain.osg" );
     //std::string fileName( "glider.osg" );
     //std::string fileName( "cow.osg" );
+    //std::string fileName( "dumptruck.osg" );
     std::string fileName( "teapot.osg" );
     JAG3D_NOTICE_STATIC( "jag.demo.jagload", fileName );
 
@@ -236,7 +237,8 @@ gmtl::Matrix44f JagLoadDemo::computeProjection( float aspect )
     gmtl::Matrix44f proj;
     float zNear = 3.5 * _bs.radius();
     float zFar = 5.75 * _bs.radius();
-    gmtl::setPerspective< float >( proj, 30., aspect, .1, 4000. );
+    gmtl::setPerspective< float >( proj, 30., aspect, zNear, zFar );
+
     return( proj );
 }
 
