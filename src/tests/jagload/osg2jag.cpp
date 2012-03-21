@@ -150,10 +150,9 @@ void Osg2Jag::apply( osg::Geometry* geom )
             const osg::DrawElementsUByte* deub( static_cast< const osg::DrawElementsUByte* >( ps ) );
             ArrayInfo info( asJagArray( deub ) );
             jagDraw::BufferObjectPtr bop( new jagDraw::BufferObject( GL_ELEMENT_ARRAY_BUFFER, info._buffer ) );
-            draw->addVertexArrayCommand( bop, jagDraw::VertexArrayCommand::Vertex );
 
             jagDraw::DrawElementsPtr drawcom( new jagDraw::DrawElements(
-                deub->getMode(), info._numElements, GL_UNSIGNED_BYTE, NULL ) );
+                deub->getMode(), info._numElements, GL_UNSIGNED_BYTE, NULL, bop ) );
             draw->addDrawCommand( drawcom );
             break;
         }
@@ -164,10 +163,9 @@ void Osg2Jag::apply( osg::Geometry* geom )
             const osg::DrawElementsUShort* deus( static_cast< const osg::DrawElementsUShort* >( ps ) );
             ArrayInfo info( asJagArray( deus ) );
             jagDraw::BufferObjectPtr bop( new jagDraw::BufferObject( GL_ELEMENT_ARRAY_BUFFER, info._buffer ) );
-            draw->addVertexArrayCommand( bop, jagDraw::VertexArrayCommand::Vertex );
 
             jagDraw::DrawElementsPtr drawcom( new jagDraw::DrawElements(
-                deus->getMode(), info._numElements, GL_UNSIGNED_SHORT, NULL ) );
+                deus->getMode(), info._numElements, GL_UNSIGNED_SHORT, NULL, bop ) );
             draw->addDrawCommand( drawcom );
             break;
         }
@@ -178,10 +176,9 @@ void Osg2Jag::apply( osg::Geometry* geom )
             const osg::DrawElementsUInt* deui( static_cast< const osg::DrawElementsUInt* >( ps ) );
             ArrayInfo info( asJagArray( deui ) );
             jagDraw::BufferObjectPtr bop( new jagDraw::BufferObject( GL_ELEMENT_ARRAY_BUFFER, info._buffer ) );
-            draw->addVertexArrayCommand( bop, jagDraw::VertexArrayCommand::Vertex );
 
             jagDraw::DrawElementsPtr drawcom( new jagDraw::DrawElements(
-                deui->getMode(), info._numElements, GL_UNSIGNED_INT, NULL ) );
+                deui->getMode(), info._numElements, GL_UNSIGNED_INT, NULL, bop ) );
             draw->addDrawCommand( drawcom );
             break;
         }

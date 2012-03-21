@@ -84,11 +84,15 @@ bool JagLoadDemo::startup()
     jagBase::Log::instance()->setPriority( jagBase::Log::PrioNotice, jagBase::Log::Console );
 
     //std::string fileName( "GRINDER_WHEEL.PRT.ive" );
+    std::string fileName( "M55339.ASM.ive" );
+    //std::string fileName( "USMC23_4019.ASM.ive" );
+    //std::string fileName( "02-1100.ive" );
+
     //std::string fileName( "fountain.osg" );
     //std::string fileName( "glider.osg" );
     //std::string fileName( "cow.osg" );
     //std::string fileName( "dumptruck.osg" );
-    std::string fileName( "teapot.osg" );
+    //std::string fileName( "teapot.osg" );
     JAG3D_NOTICE_STATIC( "jag.demo.jagload", fileName );
 
     if( fileName.empty() )
@@ -246,6 +250,8 @@ void JagLoadDemo::makeViewMatrices( gmtl::Matrix44f& view, gmtl::Matrix33f& norm
 {
     osg::Matrix m( osg::Matrix::lookAt( _bs.center() + ( osg::Vec3( 0., -4., 1.5 ) * _bs.radius() ),
         _bs.center(), osg::Vec3( 0., 0., 1. ) ) );
+//    osg::Matrix m( osg::Matrix::lookAt( _bs.center() + ( osg::Vec3( -.5, -4., 0. ) * _bs.radius() ),
+//        _bs.center(), osg::Vec3( -1., 0., 0. ) ) );
 
     gmtl::Matrix44f v;
     unsigned int r, c;

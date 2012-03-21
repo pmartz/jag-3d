@@ -97,9 +97,6 @@ protected:
     DrawCommandType _drawCommandType;
     GLenum _mode;
 
-    // TBD I really do not like having all this crap in the base class.
-    // Possibly have multiple base classes employing multiple inheritance
-    // to access such member variables.
     GLsizei _count;
     GLsizei _primcount;
 };
@@ -119,6 +116,8 @@ class DrawElementsBase
 protected:
     GLenum _type;
     GLvoid* _offset;
+
+    jagDraw::BufferObjectPtr _elementBuffer;
 };
 
 class BaseVertexBase
@@ -269,9 +268,20 @@ public:
         _type = type;
         _offset = const_cast< GLvoid* >( offset );
     }
+    DrawElements( GLenum mode, GLsizei count, GLenum type,
+            const GLvoid* offset, jagDraw::BufferObjectPtr elementBuffer )
+      : DrawCommand( DrawElementsType, mode )
+    {
+        _count = count;
+        _type = type;
+        _offset = const_cast< GLvoid* >( offset );
+        _elementBuffer = elementBuffer;
+    }
 
     virtual void operator()( DrawInfo& drawInfo )
     {
+        if( _elementBuffer != NULL )
+            (*_elementBuffer)( drawInfo );
         glDrawElements( _mode, _count, _type, _offset );
     }
 };
