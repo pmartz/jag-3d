@@ -21,6 +21,7 @@
 #include <jagDraw/Uniform.h>
 #include <jagDraw/PlatformOpenGL.h>
 #include <jagDraw/DrawInfo.h>
+#include <jagBase/LogMacros.h>
 
 #include <string>
 
@@ -263,6 +264,26 @@ void Uniform::operator()( DrawInfo& drawInfo )
         GLint index( drawInfo._program->getUniformLocation( _indexHash ) );
         operator()( drawInfo, index );
     }
+}
+
+void Uniform::set( const gmtl::Matrix44f& m )
+{
+    if( _type != GL_FLOAT_MAT4 )
+    {
+        JAG3D_ERROR_STATIC( "jag.draw.uniform", "Type mismatch." );
+        return;
+    }
+
+    unsigned int idx( 0 ), r, c;
+    for( r=0; r<4; r++ )
+        for( c=0; c<4; c++ )
+            _value.mat3f[ idx++ ] = m( r, c );
+    /*
+    const float* f( m.getData() );
+    unsigned int idx;
+    for( idx=0; idx<16; idx++ )
+        _value.mat3f[ idx ] = f[ idx ];
+        */
 }
 
 

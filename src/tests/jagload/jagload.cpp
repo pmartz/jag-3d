@@ -56,6 +56,7 @@ public:
     virtual bool startup();
     virtual bool init();
     virtual bool frame();
+    virtual void reshape( const int w, const int h );
     virtual bool shutdown()
     {
         return( true );
@@ -69,6 +70,7 @@ protected:
 
     gmtl::Matrix44f _proj;
     jagDraw::UniformPtr _viewProjUniform;
+    osg::BoundingSphere _bs;
 };
 
 
@@ -97,7 +99,7 @@ bool JagLoadDemo::startup()
         JAG3D_FATAL_STATIC( "jag.demo.jagload", msg );
         return( false );
     }
-    osg::BoundingSphere bs( root->getBound() );
+    _bs = root->getBound();
 
     Osg2Jag osg2JagConverter;
     root->accept( osg2JagConverter );
@@ -161,7 +163,7 @@ bool JagLoadDemo::startup()
 
     gmtl::Matrix44f viewMat;
     gmtl::Matrix33f normalMat;
-    makeViewMatrices( viewMat, normalMat, bs );
+    makeViewMatrices( viewMat, normalMat, _bs );
     const gmtl::Matrix44f viewProj( _proj * viewMat );
     _viewProjUniform = jagDraw::UniformPtr(
         new jagDraw::Uniform( "viewProjectionMatrix", viewProj ) );
@@ -212,6 +214,17 @@ bool JagLoadDemo::frame()
     JAG3D_ERROR_CHECK( "uniform display()" );
 
     return( true );
+}
+
+void JagLoadDemo::reshape( const int w, const int h )
+{
+    _proj = computeProjection( (float)w/(float)h );
+
+    gmtl::Matrix44f viewMat;
+    gmtl::Matrix33f normalMat;
+    makeViewMatrices( viewMat, normalMat, _bs );
+    const gmtl::Matrix44f viewProj( _proj * viewMat );
+    _viewProjUniform->set( viewProj );
 }
 
 gmtl::Matrix44f JagLoadDemo::computeProjection( float aspect )

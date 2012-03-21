@@ -45,6 +45,8 @@ public:
     virtual bool init() = 0;
     /** Called to render a frame. */
     virtual bool frame() = 0;
+    /** Called on window resize. */
+    virtual void reshape( const int w, const int h ) {}
     /** Called prior to exit. */
     virtual bool shutdown() = 0;
 

@@ -72,6 +72,7 @@ void GLWidget::paintGL()
 void GLWidget::resizeGL( int w, int h )
 {
     glViewport( 0, 0, w, h );
+    di->reshape( w, h );
 }
 
 void GLWidget::keyPressEvent( QKeyEvent* e )

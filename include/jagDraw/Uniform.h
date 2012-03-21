@@ -79,6 +79,9 @@ public:
 
     GLenum getType() { return _type; }
 
+    // TBD need more setters, one for each type.
+    void set( const gmtl::Matrix44f& m );
+
     void setTranspose( const bool transpose=true ) { _transpose = transpose; }
     bool getTranspose() const { return( _transpose ); }
 

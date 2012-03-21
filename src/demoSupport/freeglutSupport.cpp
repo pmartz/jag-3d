@@ -63,6 +63,7 @@ void display()
 void reshape (int w, int h)
 {
     glViewport( 0, 0, w, h );
+    di->reshape( w, h );
 }
 
 void keyboard(unsigned char key, int x, int y)
