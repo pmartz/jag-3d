@@ -93,6 +93,10 @@ public:
     */
     virtual void operator()( DrawInfo& ) = 0;
 
+    /** \brief Tell the DrawCommand how many contexts to expect.
+    \details Invokes setMaxContexts() on any BufferObjects that the DrawCommand owns. */
+    virtual void setMaxContexts( const unsigned int numContexts ) {}
+
 protected:
     DrawCommandType _drawCommandType;
     GLenum _mode;
@@ -276,6 +280,12 @@ public:
         _type = type;
         _offset = const_cast< GLvoid* >( offset );
         _elementBuffer = elementBuffer;
+    }
+
+    virtual void setMaxContexts( const unsigned int numContexts )
+    {
+        if( _elementBuffer != NULL )
+            _elementBuffer->setMaxContexts( numContexts );
     }
 
     virtual void operator()( DrawInfo& drawInfo )

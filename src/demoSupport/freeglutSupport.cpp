@@ -92,8 +92,6 @@ int main( int argc, char* argv[] )
     // Create test/demo-specific DemoInterface, and allow it to
     // add test/demo-specific options.
     di = DemoInterface::create( desc );
-    if( !( di->startup() ) )
-        return( 1 );
 
     bpo::variables_map vm;
     bpo::store( bpo::parse_command_line( argc, argv, desc ), vm );
@@ -133,6 +131,9 @@ int main( int argc, char* argv[] )
         glutReshapeFunc( reshape );
         glutKeyboardFunc( keyboard );
     }
+
+    if( !( di->startup() ) )
+        return( 1 );
 
     glutMainLoop();
 

@@ -62,6 +62,10 @@ public:
 
     GLint getId( const unsigned int contextID );
 
+    /** \brief Tell the BufferObject how many contexts to expect.
+    \details Resizes the _ids variable */
+    void setMaxContexts( const unsigned int numContexts );
+
     void setBuffer( jagBase::BufferPtr b );
     jagBase::BufferPtr getBuffer() { return( _buffer ); }
     size_t getBufferSize();

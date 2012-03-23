@@ -92,6 +92,13 @@ public:
     void getBound();
 
 
+    /** \brief Tell the Drawable how many contexts to expect.
+    \details Drawable iterates over all other attached Jag objects and
+    passes \c numContexts to their setMaxContexts() member function.
+    */
+    void setMaxContexts( const unsigned int numContexts );
+
+
     /** \brief Add a drawable prep command, such as a uniform or a shader program.
     \details All drawable prep commands are executed by the Drawale in order, and prior to
     issuing any of the vertex array commands (see addVertexArrayCommand()). */

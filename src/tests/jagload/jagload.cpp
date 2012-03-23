@@ -81,7 +81,7 @@ DemoInterface* DemoInterface::create( bpo::options_description& desc )
 
 bool JagLoadDemo::startup()
 {
-    jagBase::Log::instance()->setPriority( jagBase::Log::PrioNotice, jagBase::Log::Console );
+    jagBase::Log::instance()->setPriority( jagBase::Log::PrioTrace, jagBase::Log::Console );
 
     //std::string fileName( "GRINDER_WHEEL.PRT.ive" );
     //std::string fileName( "M55339.ASM.ive" );
@@ -138,7 +138,7 @@ bool JagLoadDemo::startup()
         "{ \n"
         "    vec3 ecNormal = normalize( normalMatrix * normal ); \n"
         "    float diffuse = max( dot( ecLightDir, ecNormal ), 0. ); \n"
-        "    color = vec4( vec3( diffuse ), 1. ); \n"
+        "    color = vec4( vec3(diffuse), 1. ); \n"
         " \n"
         "    gl_Position = viewProjectionMatrix * vertex; \n"
         "} \n";
@@ -182,6 +182,15 @@ bool JagLoadDemo::startup()
 
     firstDrawable->addDrawablePrep( jagDraw::UniformPtr( new jagDraw::Uniform(
         "normalMatrix", normalMat ) ) );
+
+
+    // Tell all Jag objects how many contexts to expect.
+    const unsigned int numContexts( jagDraw::ContextSupport::instance()->getNumRegisteredContexts() );
+    BOOST_FOREACH( const jagDraw::DrawableList::value_type& dp, _drawList )
+    {
+        dp->setMaxContexts( numContexts );
+    }
+
 
     return( true );
 }
@@ -228,6 +237,9 @@ bool JagLoadDemo::frame()
 
 void JagLoadDemo::reshape( const int w, const int h )
 {
+    if( _viewProjUniform == NULL )
+        return;
+
     _proj = computeProjection( (float)w/(float)h );
 
     gmtl::Matrix44f viewMat;
@@ -242,6 +254,7 @@ gmtl::Matrix44f JagLoadDemo::computeProjection( float aspect )
     gmtl::Matrix44f proj;
     float zNear = 3.5 * _bs.radius();
     float zFar = 5.75 * _bs.radius();
+    std::cout << "near,far: " << zNear << ", " << zFar << std::endl;
     gmtl::setPerspective< float >( proj, 30., aspect, zNear, zFar );
 
     return( proj );
@@ -249,7 +262,7 @@ gmtl::Matrix44f JagLoadDemo::computeProjection( float aspect )
 
 void JagLoadDemo::makeViewMatrices( gmtl::Matrix44f& view, gmtl::Matrix33f& normal )
 {
-    osg::Matrix m( osg::Matrix::lookAt( _bs.center() + ( osg::Vec3( 0., -4.25, 0. ) * _bs.radius() ),
+    osg::Matrix m( osg::Matrix::lookAt( _bs.center() + ( osg::Vec3( 0., -4., 1.5 ) * _bs.radius() ),
         _bs.center(), osg::Vec3( 0., 0., 1. ) ) );
 //    osg::Matrix m( osg::Matrix::lookAt( _bs.center() + ( osg::Vec3( -.5, -4., 0. ) * _bs.radius() ),
 //        _bs.center(), osg::Vec3( -1., 0., 0. ) ) );

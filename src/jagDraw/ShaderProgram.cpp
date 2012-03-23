@@ -152,20 +152,27 @@ void ShaderProgram::get( GLenum pname, GLint *params )
 
 GLint ShaderProgram::getId( const unsigned int contextID )
 {
-    if( _ids._data.size() < contextID+1 )
+    if( _ids[ contextID ].first == 0 )
     {
-        while( _ids._data.size() < contextID+1 )
-        {
-            _ids._data.push_back( jagDraw::IDStatusPair( 0, false ) );
-        }
-        if( _ids[ contextID ].first == 0 )
-        {
-            internalInit( contextID );
-        }
+        internalInit( contextID );
     }
 
     return( _ids[ contextID ].first );
 }
+
+void ShaderProgram::setMaxContexts( const unsigned int numContexts )
+{
+    while( _ids._data.size() < numContexts )
+    {
+        _ids._data.push_back( jagDraw::IDStatusPair( 0, false ) );
+    }
+
+    BOOST_FOREACH( const ShaderList::value_type& shader, _shaders )
+    {
+        shader->setMaxContexts( numContexts );
+    }
+}
+
 
 bool ShaderProgram::link( unsigned int contextID )
 {

@@ -20,6 +20,10 @@
 
 #include <jagDraw/PlatformOpenGL.h>
 #include <jagDraw/Drawable.h>
+#include <jagDraw/ShaderProgram.h>
+#include <jagDraw/VertexArrayObject.h>
+#include <jagDraw/BufferObject.h>
+#include <jagDraw/DrawCommand.h>
 #include <jagBase/LogMacros.h>
 #include <jagDraw/DrawInfo.h>
 #include <jagDraw/Error.h>
@@ -71,6 +75,31 @@ void Drawable::operator()( DrawInfo& drawInfo )
 void Drawable::getBound()
 {
     JAG3D_NOTICE( "Drawable::getBound() is currently not implemented." );
+}
+
+void Drawable::setMaxContexts( const unsigned int numContexts )
+{
+    BOOST_FOREACH( DrawablePrepPtr dpp, _drawablePrep )
+    {
+        ShaderProgram* spp( dynamic_cast< ShaderProgram* >( dpp.get() ) );
+        if( spp != NULL )
+            spp->setMaxContexts( numContexts );
+    }
+
+    BOOST_FOREACH( VertexArrayCommandPtr vacp, _vertexArrayCommands )
+    {
+        BufferObject* bop( dynamic_cast< BufferObject* >( vacp.get() ) );
+        if( bop != NULL )
+            bop->setMaxContexts( numContexts );
+        VertexArrayObject* vaop( dynamic_cast< VertexArrayObject* >( vacp.get() ) );
+        if( vaop != NULL )
+            vaop->setMaxContexts( numContexts );
+    }
+
+    BOOST_FOREACH( DrawCommandPtr dcp, _drawCommands )
+    {
+        dcp->setMaxContexts( numContexts );
+    }
 }
 
 

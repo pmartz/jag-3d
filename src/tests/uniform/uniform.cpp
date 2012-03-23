@@ -225,6 +225,19 @@ bool UniformDemo::startup()
     _swizzleOn = jagDraw::UniformPtr( new jagDraw::Uniform( "swizzle", true ) );
     _scale = jagDraw::UniformPtr( new jagDraw::Uniform( "scale", 0.75f ) );
 
+
+    // Tell all Jag objects how many contexts to expect.
+    const unsigned int numContexts( jagDraw::ContextSupport::instance()->getNumRegisteredContexts() );
+    _vbop->setMaxContexts( numContexts );
+    _cbop->setMaxContexts( numContexts );
+    _ibop->setMaxContexts( numContexts );
+    _ibop2->setMaxContexts( numContexts );
+    _spp->setMaxContexts( numContexts );
+    _spp2->setMaxContexts( numContexts );
+    _vaop->setMaxContexts( numContexts );
+    _elbop->setMaxContexts( numContexts );
+
+
     return( true );
 }
 

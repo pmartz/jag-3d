@@ -105,8 +105,6 @@ int main( int argc, char** argv )
     // Create test/demo-specific DemoInterface, and allow it to
     // add test/demo-specific options.
     di = DemoInterface::create( desc );
-    if( !( di->startup() ) )
-        return( 1 );
 
     bpo::variables_map vm;
     bpo::store( bpo::parse_command_line( argc, argv, desc ), vm );
@@ -145,6 +143,8 @@ int main( int argc, char** argv )
         w->resize( 300, 300 );
         w->show();
     }
+    if( !( di->startup() ) )
+        return( 1 );
 
     return( app.exec() );
 

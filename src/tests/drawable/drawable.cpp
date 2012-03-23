@@ -258,6 +258,15 @@ bool DrawableDemo::startup()
         _drawableList.push_back( drawable );
     }
 
+
+    // Tell all Jag objects how many contexts to expect.
+    const unsigned int numContexts( jagDraw::ContextSupport::instance()->getNumRegisteredContexts() );
+    BOOST_FOREACH( const jagDraw::DrawableList::value_type& dp, _drawableList )
+    {
+        dp->setMaxContexts( numContexts );
+    }
+
+
     return( true );
 }
 

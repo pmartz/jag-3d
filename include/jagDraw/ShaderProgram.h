@@ -85,6 +85,12 @@ public:
     glCreateProgram() to generate the ID. */
     GLint getId( const unsigned int contextID );
 
+    /** \brief Tell the ShaderProgram how many contexts to expect.
+    \details Resizes the _ids variable, then iterates over all attached
+    Shader objects, invoking setMaxContexts on each.
+    */
+    void setMaxContexts( const unsigned int numContexts );
+
     /** \brief Link the program.
     \details This function performs the following tasks:
     \li If the program doesn't have a program object ID for \c contextID, it creates one.

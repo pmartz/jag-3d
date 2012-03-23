@@ -20,6 +20,7 @@
 
 #include <jagDraw/PlatformOpenGL.h>
 #include <jagDraw/VertexArrayObject.h>
+#include <jagDraw/BufferObject.h>
 #include <jagDraw/DrawInfo.h>
 #include <jagDraw/Error.h>
 
@@ -64,21 +65,28 @@ void VertexArrayObject::operator()( DrawInfo& drawInfo )
 
 GLint VertexArrayObject::getId( const unsigned int contextID )
 {
-    if( _ids._data.size() < contextID+1 )
+    if( _ids[ contextID ].first == 0 )
     {
-        while( _ids._data.size() < contextID+1 )
-        {
-            _ids._data.push_back( jagDraw::IDStatusPair( 0, false ) );
-        }
-        if( _ids[ contextID ].first == 0 )
-        {
-            internalInit( contextID );
-        }
+        internalInit( contextID );
     }
 
     return( _ids[ contextID ].first );
 }
 
+void VertexArrayObject::setMaxContexts( const unsigned int numContexts )
+{
+    while( _ids._data.size() < numContexts )
+    {
+        _ids._data.push_back( jagDraw::IDStatusPair( 0, false ) );
+    }
+
+    BOOST_FOREACH( VertexArrayCommandPtr& vac, _commands )
+    {
+        BufferObject* bop( dynamic_cast< BufferObject* >( vac.get() ) );
+        if( bop != NULL )
+            bop->setMaxContexts( numContexts );
+    }
+}
 
 void VertexArrayObject::addVertexArrayCommand( VertexArrayCommandPtr vacp, const VertexArrayCommand::UsageHint& usage )
 {

@@ -101,6 +101,13 @@ bool Simple3xDemo::startup()
         _spp->attachShader( fs );
     }
 
+
+    // Tell all Jag objects how many contexts to expect.
+    const unsigned int numContexts( jagDraw::ContextSupport::instance()->getNumRegisteredContexts() );
+    _bop->setMaxContexts( numContexts );
+    _spp->setMaxContexts( numContexts );
+
+
     return( true );
 }
 

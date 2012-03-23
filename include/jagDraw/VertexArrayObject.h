@@ -52,6 +52,12 @@ public:
 
     GLint getId( const unsigned int contextID );
 
+    /** \brief Tell the VertexArrayObject how many contexts to expect.
+    \details Resizes the _ids variable, then iterates over all attached
+    BufferObjects, invoking setMaxContexts on each.
+    */
+    void setMaxContexts( const unsigned int numContexts );
+
     void addVertexArrayCommand( VertexArrayCommandPtr vacp, const VertexArrayCommand::UsageHint& usage=VertexArrayCommand::Unspecified );
     VertexArrayCommandList& getVertexArrayCommandList();
     const VertexArrayCommandList& getVertexArrayCommandList() const;

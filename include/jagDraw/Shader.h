@@ -53,6 +53,10 @@ public:
     glCreateShader() to generate the ID and compiles all attached shader source strings. */
     GLuint getId( const unsigned int contextID );
 
+    /** \brief Tell the Shader how many contexts to expect.
+    \details Resizes the _ids variable */
+    void setMaxContexts( const unsigned int numContexts );
+
 protected:
     void internalInit( const unsigned int contextID );
 

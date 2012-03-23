@@ -162,6 +162,17 @@ bool DrawDemo::startup()
         _spp->attachShader( fs );
     }
 
+
+    // Tell all Jag objects how many contexts to expect.
+    const unsigned int numContexts( jagDraw::ContextSupport::instance()->getNumRegisteredContexts() );
+    _vbop->setMaxContexts( numContexts );
+    _cbop->setMaxContexts( numContexts );
+    _ibop->setMaxContexts( numContexts );
+    _ibop2->setMaxContexts( numContexts );
+    _spp->setMaxContexts( numContexts );
+    _vaop->setMaxContexts( numContexts );
+
+
     return( true );
 }
 
