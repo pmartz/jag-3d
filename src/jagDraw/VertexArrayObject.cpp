@@ -49,12 +49,9 @@ void VertexArrayObject::operator()( DrawInfo& drawInfo )
 {
     const unsigned int contextID( drawInfo._id );
 
-    if( _ids._data.size() < contextID+1 )
-        internalInit( contextID );
+    glBindVertexArray( getId( contextID ) );
+
     IDStatusPair& idStatus = _ids[ contextID ];
-
-    glBindVertexArray( idStatus.first );
-
     if( !( idStatus.second ) )
     {
         BOOST_FOREACH( VertexArrayCommandPtr& vac, _commands )
@@ -63,6 +60,23 @@ void VertexArrayObject::operator()( DrawInfo& drawInfo )
         }
         idStatus.second = true;
     }
+}
+
+GLint VertexArrayObject::getId( const unsigned int contextID )
+{
+    if( _ids._data.size() < contextID+1 )
+    {
+        while( _ids._data.size() < contextID+1 )
+        {
+            _ids._data.push_back( jagDraw::IDStatusPair( 0, false ) );
+        }
+        if( _ids[ contextID ].first == 0 )
+        {
+            internalInit( contextID );
+        }
+    }
+
+    return( _ids[ contextID ].first );
 }
 
 
@@ -92,7 +106,6 @@ const VertexArrayCommandList& VertexArrayObject::getVertexArrayCommandList() con
 
 void VertexArrayObject::internalInit( const unsigned int contextID )
 {
-    _ids._data.resize( contextID + 1 );
     IDStatusPair& idStatus = _ids[ contextID ];
 
     glGenVertexArrays( 1, &( idStatus.first ) );

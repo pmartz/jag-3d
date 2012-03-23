@@ -50,6 +50,8 @@ public:
 
     virtual void operator()( DrawInfo& drawInfo );
 
+    GLint getId( const unsigned int contextID );
+
     void addVertexArrayCommand( VertexArrayCommandPtr vacp, const VertexArrayCommand::UsageHint& usage=VertexArrayCommand::Unspecified );
     VertexArrayCommandList& getVertexArrayCommandList();
     const VertexArrayCommandList& getVertexArrayCommandList() const;
