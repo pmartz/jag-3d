@@ -66,26 +66,6 @@ DemoInterface* DemoInterface::create( bpo::options_description& desc )
 bool DrawableDemo::startup()
 {
     jagBase::Log::instance()->setPriority( jagBase::Log::PrioTrace, jagBase::Log::Console );
-    return( true );
-}
-
-bool DrawableDemo::init()
-{
-    glClearColor( 0.f, 0.f, 0.f, 0.f );
-
-    // Auto-log the version string.
-    jagBase::getVersionString();
-
-    // Display information on the type of context we created.
-    string msg = string( "GL_VERSION: " );
-    msg.append( (char*)(glGetString( GL_VERSION )) );
-    JAG3D_INFO_STATIC( _logName, msg );
-
-
-    if( !( _drawableList.empty() ) )
-        // Already initialized.
-        return( true );
-    
 
     const char* vShaderSource =
         "#version 130 \n"
@@ -278,8 +258,22 @@ bool DrawableDemo::init()
         _drawableList.push_back( drawable );
     }
 
-    JAG3D_ERROR_CHECK( "DrawableDemo init()" );
+    return( true );
+}
 
+bool DrawableDemo::init()
+{
+    glClearColor( 0.f, 0.f, 0.f, 0.f );
+
+    // Auto-log the version string.
+    jagBase::getVersionString();
+
+    // Display information on the type of context we created.
+    string msg = string( "GL_VERSION: " );
+    msg.append( (char*)(glGetString( GL_VERSION )) );
+    JAG3D_INFO_STATIC( _logName, msg );
+
+    JAG3D_ERROR_CHECK( "DrawableDemo init()" );
     return( true );
 }
 

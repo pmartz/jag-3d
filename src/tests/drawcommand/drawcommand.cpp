@@ -76,25 +76,6 @@ DemoInterface* DemoInterface::create( bpo::options_description& desc )
 bool DrawCommandDemo::startup()
 {
     jagBase::Log::instance()->setPriority( jagBase::Log::PrioTrace, jagBase::Log::Console );
-    return( true );
-}
-
-bool DrawCommandDemo::init()
-{
-    glClearColor( 0.f, 0.f, 0.f, 0.f );
-
-    // Auto-log the version string.
-    jagBase::getVersionString();
-
-    // Display information on the type of context we created.
-    string msg = string( "GL_VERSION: " );
-    msg.append( (char*)(glGetString( GL_VERSION )) );
-    JAG3D_INFO_STATIC( _logName, msg );
-
-    if( _vbop != NULL )
-        // Already initialized.
-        return( true );
-
 
     const float z = .5f;
     typedef std::vector< gmtl::Point3f > Point3fArray;
@@ -216,6 +197,21 @@ bool DrawCommandDemo::init()
         _spp->attachShader( vs );
         _spp->attachShader( fs );
     }
+
+    return( true );
+}
+
+bool DrawCommandDemo::init()
+{
+    glClearColor( 0.f, 0.f, 0.f, 0.f );
+
+    // Auto-log the version string.
+    jagBase::getVersionString();
+
+    // Display information on the type of context we created.
+    string msg = string( "GL_VERSION: " );
+    msg.append( (char*)(glGetString( GL_VERSION )) );
+    JAG3D_INFO_STATIC( _logName, msg );
 
     return( true );
 }

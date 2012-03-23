@@ -73,25 +73,6 @@ DemoInterface* DemoInterface::create( bpo::options_description& desc )
 bool DrawDemo::startup()
 {
     jagBase::Log::instance()->setPriority( jagBase::Log::PrioTrace, jagBase::Log::Console );
-    return( true );
-}
-
-bool DrawDemo::init()
-{
-    glClearColor( 0.f, 0.f, 0.f, 0.f );
-
-    // Auto-log the version string.
-    jagBase::getVersionString();
-
-    // Display information on the type of context we created.
-    string msg = string( "GL_VERSION: " );
-    msg.append( (char*)(glGetString( GL_VERSION )) );
-    JAG3D_INFO_STATIC( _logName, msg );
-
-    if( _vaop != NULL )
-        // Already initialized.
-        return( true );
-
 
     _vaop = jagDraw::VertexArrayObjectPtr( new jagDraw::VertexArrayObject );
 
@@ -180,6 +161,21 @@ bool DrawDemo::init()
         _spp->attachShader( vs );
         _spp->attachShader( fs );
     }
+
+    return( true );
+}
+
+bool DrawDemo::init()
+{
+    glClearColor( 0.f, 0.f, 0.f, 0.f );
+
+    // Auto-log the version string.
+    jagBase::getVersionString();
+
+    // Display information on the type of context we created.
+    string msg = string( "GL_VERSION: " );
+    msg.append( (char*)(glGetString( GL_VERSION )) );
+    JAG3D_INFO_STATIC( _logName, msg );
 
     return( true );
 }

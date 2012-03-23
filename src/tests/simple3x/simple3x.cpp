@@ -62,42 +62,6 @@ DemoInterface* DemoInterface::create( bpo::options_description& desc )
 bool Simple3xDemo::startup()
 {
     jagBase::Log::instance()->setPriority( jagBase::Log::PrioTrace, jagBase::Log::Console );
-    return( true );
-}
-
-bool Simple3xDemo::init()
-{
-    glClearColor( 0.4f, 0.4f, 0.4f, 0.f );
-
-    // Auto-log the version string.
-    jagBase::getVersionString();
-
-    // Display information on the type of context we created.
-    string msg( "GL_VENDOR: " );
-    msg.append( (char*)(glGetString( GL_VENDOR )) );
-    JAG3D_INFO_STATIC( _logName, msg );
-
-    msg = string( "GL_RENDERER: " );
-    msg.append( (char*)(glGetString( GL_RENDERER )) );
-    JAG3D_INFO_STATIC( _logName, msg );
-
-    msg = string( "GL_VERSION: " );
-    msg.append( (char*)(glGetString( GL_VERSION )) );
-    JAG3D_INFO_STATIC( _logName, msg );
-
-    msg = string( "GL_SHADING_LANGUAGE_VERSION: " );
-    msg.append( (char*)(glGetString( GL_SHADING_LANGUAGE_VERSION )) );
-    JAG3D_INFO_STATIC( _logName, msg );
-
-    if( _bop != NULL )
-        // Already initialized.
-        return( true );
-
-
-    JAG3D_ERROR_STATIC( _logName, "Test error logging. Should produce GL_INVALID_ENUM." );
-    glEnable( GL_FALSE );
-    JAG3D_ERROR_CHECK( "Simple3xDemo::init()" );
-
 
     {
         float z = .5f;
@@ -136,6 +100,38 @@ bool Simple3xDemo::init()
         _spp->attachShader( vs );
         _spp->attachShader( fs );
     }
+
+    return( true );
+}
+
+bool Simple3xDemo::init()
+{
+    glClearColor( 0.4f, 0.4f, 0.4f, 0.f );
+
+    // Auto-log the version string.
+    jagBase::getVersionString();
+
+    // Display information on the type of context we created.
+    string msg( "GL_VENDOR: " );
+    msg.append( (char*)(glGetString( GL_VENDOR )) );
+    JAG3D_INFO_STATIC( _logName, msg );
+
+    msg = string( "GL_RENDERER: " );
+    msg.append( (char*)(glGetString( GL_RENDERER )) );
+    JAG3D_INFO_STATIC( _logName, msg );
+
+    msg = string( "GL_VERSION: " );
+    msg.append( (char*)(glGetString( GL_VERSION )) );
+    JAG3D_INFO_STATIC( _logName, msg );
+
+    msg = string( "GL_SHADING_LANGUAGE_VERSION: " );
+    msg.append( (char*)(glGetString( GL_SHADING_LANGUAGE_VERSION )) );
+    JAG3D_INFO_STATIC( _logName, msg );
+
+
+    JAG3D_ERROR_STATIC( _logName, "Test error logging. Should produce GL_INVALID_ENUM." );
+    glEnable( GL_FALSE );
+    JAG3D_ERROR_CHECK( "Simple3xDemo::init()" );
 
     return( true );
 }
