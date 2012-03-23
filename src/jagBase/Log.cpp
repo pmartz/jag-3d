@@ -31,7 +31,13 @@
 namespace jagBase {
 
 
-Log* Log::s_instance( NULL );
+
+Log* Log::instance()
+{
+    // TBD Need singleton manager to cleanup/delete singletons.
+    static Log* s_instance = new Log;
+    return( s_instance );
+}
 
 
 Log::Log()

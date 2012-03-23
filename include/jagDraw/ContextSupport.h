@@ -53,6 +53,7 @@ class JAGDRAW_EXPORT ContextSupport : protected jagBase::LogBase
 public:
     static ContextSupport* instance();
 
+
     /** \brief Call this function after creating a new context.
     \details Call this for each new context your application creates, passing
     in the platform-specific context ID. JAG maintains a 1-to-1 mapping of
@@ -102,8 +103,6 @@ public:
     bool isRegistered( const platformContextID pCtxId ) const;
 
 protected:
-    static ContextSupport* s_instance;
-
     ContextSupport();
     virtual ~ContextSupport();
 

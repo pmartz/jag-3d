@@ -51,14 +51,7 @@ Under the hood, it provides uniform message formatting for all Jag Loggers.
 class JAGBASE_EXPORT Log
 {
 public:
-    static Log* instance()
-    {
-        if( s_instance == NULL )
-        {
-            s_instance = new Log;
-        }
-        return( s_instance );
-    }
+    static Log* instance();
 
 
     /** \brief Sets the default log file name.
@@ -103,9 +96,6 @@ public:
 protected:
     Log();
     ~Log();
-
-    // TBD Need singleton manager to cleanup/delete singletons.
-    static Log* s_instance;;
 
     std::string _logFileName;
 

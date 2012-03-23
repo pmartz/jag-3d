@@ -37,20 +37,16 @@ namespace jagDraw
 {
 
 
-ContextSupport* ContextSupport::s_instance( NULL );
-
 ContextSupport* ContextSupport::instance()
 {
-    if( s_instance == NULL )
-    {
+    static ContextSupport* s_instance =
 #ifdef JAG3D_USE_GLEW
-        s_instance = new ContextSupportGLEW;
+        new ContextSupportGLEW;
 #elif defined( JAG3D_USE_GL3W )
-        s_instance = new ContextSupportGl3w;
+        new ContextSupportGl3w;
 #else
-        s_instance = new ContextSupport;
+        new ContextSupport;
 #endif
-    }
     return( s_instance );
 }
 
