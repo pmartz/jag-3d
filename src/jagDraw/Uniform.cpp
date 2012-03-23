@@ -133,33 +133,13 @@ Uniform::Uniform( const std::string& name, const gmtl::Matrix33f& m )
 {
     internalInit( name );
     _type = GL_FLOAT_MAT3;
-    
-    unsigned int idx( 0 ), r, c;
-    for( r=0; r<3; r++ )
-        for( c=0; c<3; c++ )
-            _value.mat3f[ idx++ ] = m( r, c );
-    /*
-    const float* f( m.getData() );
-    unsigned int idx;
-    for( idx=0; idx<9; idx++ )
-        _value.mat3f[ idx ] = f[ idx ];
-        */
+    set( m );
 }
 Uniform::Uniform( const std::string& name, const gmtl::Matrix44f& m )
 {
     internalInit( name );
     _type = GL_FLOAT_MAT4;
-
-    unsigned int idx( 0 ), r, c;
-    for( r=0; r<4; r++ )
-        for( c=0; c<4; c++ )
-            _value.mat3f[ idx++ ] = m( r, c );
-    /*
-    const float* f( m.getData() );
-    unsigned int idx;
-    for( idx=0; idx<16; idx++ )
-        _value.mat3f[ idx ] = f[ idx ];
-        */
+    set( m );
 }
 
 /*
@@ -266,6 +246,26 @@ void Uniform::operator()( DrawInfo& drawInfo )
     }
 }
 
+void Uniform::set( const gmtl::Matrix33f& m )
+{
+    if( _type != GL_FLOAT_MAT3 )
+    {
+        JAG3D_ERROR_STATIC( "jag.draw.uniform", "Type mismatch." );
+        return;
+    }
+    
+    unsigned int idx( 0 ), r, c;
+    for( r=0; r<3; r++ )
+        for( c=0; c<3; c++ )
+            _value.mat3f[ idx++ ] = m( r, c );
+    /* Hm. Why doesn't this work? Seems to transpose the matrix.
+    const float* f( m.getData() );
+    unsigned int idx;
+    for( idx=0; idx<9; idx++ )
+        _value.mat3f[ idx ] = f[ idx ];
+        */
+}
+
 void Uniform::set( const gmtl::Matrix44f& m )
 {
     if( _type != GL_FLOAT_MAT4 )
@@ -277,8 +277,8 @@ void Uniform::set( const gmtl::Matrix44f& m )
     unsigned int idx( 0 ), r, c;
     for( r=0; r<4; r++ )
         for( c=0; c<4; c++ )
-            _value.mat3f[ idx++ ] = m( r, c );
-    /*
+            _value.mat4f[ idx++ ] = m( r, c );
+    /* Hm. Why doesn't this work? Seems to transpose the matrix.
     const float* f( m.getData() );
     unsigned int idx;
     for( idx=0; idx<16; idx++ )
