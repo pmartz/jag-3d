@@ -70,7 +70,7 @@ endif()
 
 #   Required dependencies:
 find_package( OpenGL REQUIRED )
-find_package( Boost 1.44.0 REQUIRED thread program_options )
+find_package( Boost 1.44.0 REQUIRED thread program_options date_time )
 include( FindGGTHelper )
 include( FindPOCOHelper )
 

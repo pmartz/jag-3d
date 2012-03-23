@@ -20,6 +20,7 @@
 
 #include <jagDraw/ContextSupportGl3w.h>
 #include <jagDraw/PlatformOpenGL.h>
+#include <jagBase/LogMacros.h>
 #include <jagDraw/Error.h>
 
 
@@ -38,10 +39,14 @@ bool ContextSupportGl3w::initContext()
     if( !( ContextSupport::initContext() ) )
         return( false );
 
-    int result = gl3wInit();
-    // if( result == 1 )
-    //     display an error.
+    int result;
+    {
+        boost::mutex::scoped_lock lock( _mutex );
+        result = gl3wInit();
+    }
 
+    if( result == 1 )
+        JAG3D_ERROR( "Error return from gl3wInit()" );
     JAG3D_ERROR_CHECK( "ContextSupportGl3w::initContext()" );
 
     return( result == 0 );

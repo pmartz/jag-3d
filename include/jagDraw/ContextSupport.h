@@ -26,6 +26,7 @@
 #include <jagDraw/PerContextData.h>
 #include <jagBase/LogBase.h>
 #include <boost/thread/tss.hpp>
+#include <boost/thread/mutex.hpp>
 #include <map>
 
 
@@ -113,6 +114,8 @@ protected:
 
     typedef PerContextData< platformContextID > ContextMap;
     ContextMap _contexts;
+
+    boost::mutex _mutex;
 };
 
 

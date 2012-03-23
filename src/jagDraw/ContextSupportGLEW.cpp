@@ -76,21 +76,25 @@ jagDrawContextID ContextSupportGLEW::registerContext( const platformContextID pC
 
 #ifdef GLEW_MX
 
-    // TBD trace msg
+    JAG3D_TRACE( "ContextSupportGLEW::registerContext()" );
 
     const unsigned int idAsSize = static_cast< unsigned int >( contextID );
     if( idAsSize < _glewContexts._data.size() )
         return( contextID );
 
-    _glewContexts._data.resize( idAsSize + 1 );
-    GLEWContextHandles& ctxs = _glewContexts._data[ idAsSize ];
+    {
+        boost::mutex::scoped_lock lock( _mutex );
 
-    ctxs._glewCtx = new GLEWContext;
+        _glewContexts._data.resize( idAsSize + 1 );
+        GLEWContextHandles& ctxs = _glewContexts._data[ idAsSize ];
+
+        ctxs._glewCtx = new GLEWContext;
 #  ifdef _WIN32
-    ctxs._wglCtx = new WGLEWContext;
+        ctxs._wglCtx = new WGLEWContext;
 #  elif !defined(__APPLE__) || defined(GLEW_APPLE_GLX)
-    ctxs._glxCtx = new GLXEWContext;
+        ctxs._glxCtx = new GLXEWContext;
 #  endif
+    }
 
 #endif
 

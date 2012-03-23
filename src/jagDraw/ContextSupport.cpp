@@ -39,6 +39,8 @@ namespace jagDraw
 
 ContextSupport* ContextSupport::instance()
 {
+    // TBD need to register with singleton manager, which doesn't exist yet.
+    // Note: Do registration in constructor.
     static ContextSupport* s_instance =
 #ifdef JAG3D_USE_GLEW
         new ContextSupportGLEW;
@@ -61,7 +63,7 @@ ContextSupport::~ContextSupport()
 
 jagDrawContextID ContextSupport::registerContext( const platformContextID pCtxId )
 {
-    // TBD Use boost exclusive lock here.
+    boost::mutex::scoped_lock lock( _mutex );
 
     const string idStr = asString( pCtxId );
 
@@ -97,12 +99,10 @@ jagDrawContextID ContextSupport::registerContext( const platformContextID pCtxId
 
 bool ContextSupport::setActiveContext( const jagDrawContextID contextID )
 {
-    const string idStr = asString( contextID );
-
     if( JAG3D_LOG_INFO )
     {
         string infoMsg( "setActiveContext: " );
-        infoMsg.append( idStr );
+        infoMsg.append( asString( contextID ) );
         JAG3D_INFO( infoMsg );
     }
 
@@ -112,10 +112,9 @@ bool ContextSupport::setActiveContext( const jagDrawContextID contextID )
         if( JAG3D_LOG_ERROR )
         {
             string msg( "setActiveContext: Invalid contextID: " );
-            msg.append( idStr );
+            msg.append( asString( contextID ) );
             JAG3D_ERROR( msg );
         }
-
         return( false );
     }
 
