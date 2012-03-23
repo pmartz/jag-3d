@@ -71,7 +71,7 @@ void Osg2Jag::apply( osg::Geometry* geom )
     jagDraw::DrawablePtr draw( jagDraw::DrawablePtr( new jagDraw::Drawable ) );
     _jagDrawables.push_back( draw );
 
-    unsigned int numVertices( geom->getVertexArray()->getNumElements() );
+    const unsigned int numVertices( geom->getVertexArray()->getNumElements() );
     {
         osg::Matrix m = osg::computeLocalToWorld( getNodePath() );
         ArrayInfo info( asJagArray( geom->getVertexArray(), m ) );
@@ -79,7 +79,7 @@ void Osg2Jag::apply( osg::Geometry* geom )
         draw->addVertexArrayCommand( bop, jagDraw::VertexArrayCommand::Vertex );
 
         jagDraw::VertexAttribPtr attrib( new jagDraw::VertexAttrib(
-            "vertex", info._components, info._type, GL_FALSE, 0, 0 ) );
+            "vertex", info._componentsPerElement, info._type, GL_FALSE, 0, 0 ) );
         draw->addVertexArrayCommand( attrib, jagDraw::VertexArrayCommand::Vertex );
     }
     if( ( geom->getNormalArray() != NULL ) &&
@@ -95,7 +95,7 @@ void Osg2Jag::apply( osg::Geometry* geom )
         draw->addVertexArrayCommand( bop, jagDraw::VertexArrayCommand::Normal );
 
         jagDraw::VertexAttribPtr attrib( new jagDraw::VertexAttrib(
-            "normal", info._components, info._type, GL_FALSE, 0, 0 ) );
+            "normal", info._componentsPerElement, info._type, GL_FALSE, 0, 0 ) );
         draw->addVertexArrayCommand( attrib, jagDraw::VertexArrayCommand::Normal );
     }
     // TBD tex coords
@@ -212,7 +212,7 @@ Osg2Jag::ArrayInfo Osg2Jag::asJagArray( const osg::Array* arrayIn, const osg::Ma
 
         info._type = GL_FLOAT;
         info._numElements = size;
-        info._components = 3;
+        info._componentsPerElement = 3;
 
         Point3fArray out;
         out.resize( size );
@@ -226,7 +226,7 @@ Osg2Jag::ArrayInfo Osg2Jag::asJagArray( const osg::Array* arrayIn, const osg::Ma
             p[ 2 ] = v[ 2 ];
         }
 
-        jagBase::BufferPtr bp( new jagBase::Buffer( size * sizeof( gmtl::Point3f ), (void*)&out[0] ) );
+        jagBase::BufferPtr bp( new jagBase::Buffer( size * sizeof( gmtl::Point3f ), (void*)&( out[0] ) ) );
         info._buffer = bp;
         break;
     }
@@ -251,7 +251,7 @@ Osg2Jag::ArrayInfo Osg2Jag::asJagArray( const osg::VectorGLubyte* arrayIn )
     ArrayInfo info;
     info._type = GL_UNSIGNED_BYTE;
     info._numElements = size;
-    info._components = 1;
+    info._componentsPerElement = 1;
 
     jagBase::GLubyteArray out;
     out.resize( size );
@@ -271,7 +271,7 @@ Osg2Jag::ArrayInfo Osg2Jag::asJagArray( const osg::VectorGLushort* arrayIn )
     ArrayInfo info;
     info._type = GL_UNSIGNED_SHORT;
     info._numElements = size;
-    info._components = 1;
+    info._componentsPerElement = 1;
 
     jagBase::GLushortArray out;
     out.resize( size );
@@ -291,7 +291,7 @@ Osg2Jag::ArrayInfo Osg2Jag::asJagArray( const osg::VectorGLuint* arrayIn )
     ArrayInfo info;
     info._type = GL_UNSIGNED_INT;
     info._numElements = size;
-    info._components = 1;
+    info._componentsPerElement = 1;
 
     jagBase::GLuintArray out;
     out.resize( size );

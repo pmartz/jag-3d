@@ -51,7 +51,7 @@ public:
         jagBase::BufferPtr _buffer;
         GLenum _type;
         unsigned int _numElements;
-        unsigned int _components;
+        unsigned int _componentsPerElement;
     };
 
     ArrayInfo asJagArray( const osg::Array* arrayIn, const osg::Matrix& m );
