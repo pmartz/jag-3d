@@ -254,7 +254,6 @@ gmtl::Matrix44f JagLoadDemo::computeProjection( float aspect )
     gmtl::Matrix44f proj;
     float zNear = 3.5 * _bs.radius();
     float zFar = 5.75 * _bs.radius();
-    std::cout << "near,far: " << zNear << ", " << zFar << std::endl;
     gmtl::setPerspective< float >( proj, 30., aspect, zNear, zFar );
 
     return( proj );

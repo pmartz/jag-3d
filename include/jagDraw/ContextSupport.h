@@ -66,7 +66,7 @@ public:
     virtual jagDrawContextID registerContext( const platformContextID pCtxId );
 
     /** \brief Return the number of registered contexts. */
-    unsigned int getNumRegisteredContexts() const { return( _contexts._data.size() ); }
+    unsigned int getNumRegisteredContexts() const { return( (unsigned int)( _contexts._data.size() ) ); }
 
     /** \brief Call this function after making a context current.
     \details Call this when a thread makes a context current or switches to
