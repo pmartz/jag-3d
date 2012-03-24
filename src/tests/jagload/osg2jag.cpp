@@ -123,9 +123,9 @@ void Osg2Jag::apply( osg::Geometry* geom )
             const osg::DrawArrayLengths* dal( static_cast< const osg::DrawArrayLengths* >( ps ) );
             const unsigned int size( dal->size() );
 
-            jagBase::GLsizeiArray first( new GLsizei[ size ] );
+            jagBase::GLintArray first( new GLint[ size ] );
             jagBase::GLsizeiArray count( new GLsizei[ size ] );
-            GLsizei* fp( first.get() );
+            GLint* fp( first.get() );
             GLsizei* cp( count.get() );
 
             unsigned int idx;
@@ -134,7 +134,7 @@ void Osg2Jag::apply( osg::Geometry* geom )
                 if( idx==0 )
                     fp[ idx ] = dal->getFirst();
                 else
-                    fp[ idx ] = fp[ idx-1 ] + cp[ idx-1 ];
+                    fp[ idx ] = fp[ idx-1 ] + (int)( cp[ idx-1 ] );
                 cp[ idx ] = (*dal)[ idx ];
             }
 
