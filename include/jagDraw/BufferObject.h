@@ -70,6 +70,7 @@ public:
     jagBase::BufferPtr getBuffer() { return( _buffer ); }
     size_t getBufferSize();
 
+    void setTarget( const GLenum target );
     GLenum getTarget() { return _target; }
 
     void setUsage( const GLenum usage );

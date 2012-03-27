@@ -86,6 +86,10 @@ size_t BufferObject::getBufferSize()
     return( ( _buffer != NULL ) ? _buffer->getSize() : 0 );
 }
 
+void BufferObject::setTarget( const GLenum target )
+{
+    _target = target;
+}
 void BufferObject::setUsage( const GLenum usage )
 { 
     _usage = usage; 
