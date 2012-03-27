@@ -23,6 +23,7 @@
 
 #include <jagDraw/Export.h>
 #include <jagDraw/PlatformOpenGL.h>
+#include <jagDraw/DrawablePrep.h>
 #include <jagDraw/VertexArrayCommand.h>
 #include <jagDraw/PerContextData.h>
 #include <jagBase/ptr.h>
@@ -40,7 +41,7 @@ struct DrawInfo;
 \brief A context-safe wrapper for OpenGL vertex array objects.
 \details \gl{section 2.10}.
 */
-class JAGDRAW_EXPORT VertexArrayObject : public VertexArrayCommand
+class JAGDRAW_EXPORT VertexArrayObject : public DrawablePrep
 {
 public:
     VertexArrayObject();

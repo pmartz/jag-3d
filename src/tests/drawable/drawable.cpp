@@ -164,7 +164,7 @@ bool DrawableDemo::startup()
             "color", 3, GL_FLOAT, GL_FALSE, 0, 0 ) );
         vaop->addVertexArrayCommand( color );
 
-        drawable->addVertexArrayCommand( vaop );
+        drawable->addDrawablePrep( vaop );
 
         jagBase::GLubyteArray elements;
         unsigned int idx;
@@ -212,7 +212,7 @@ bool DrawableDemo::startup()
         vaop->addVertexArrayCommand( ibop, jagDraw::VertexArrayCommand::Vertex );
         vaop->addVertexArrayCommand( iVerts, jagDraw::VertexArrayCommand::Vertex );
         vaop->addVertexArrayCommand( iColor );
-        drawable->addVertexArrayCommand( vaop );
+        drawable->addDrawablePrep( vaop );
 
         drawable->addDrawCommand( drawArrays );
 
@@ -251,7 +251,7 @@ bool DrawableDemo::startup()
         // Enable and specify the "color" vertex attrib.
         vaop->addVertexArrayCommand( iColor );
 
-        drawable->addVertexArrayCommand( vaop );
+        drawable->addDrawablePrep( vaop );
 
         drawable->addDrawCommand( drawArrays );
 

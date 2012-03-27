@@ -50,20 +50,6 @@ void Drawable::operator()( DrawInfo& drawInfo )
         (*dpp)( drawInfo );
     }
 
-    if( JAG3D_LOG_DEBUG )
-    {
-        if( drawInfo._program == NULL )
-        {
-            JAG3D_ERROR( "drawInfo::_program == NULL. Can't render without a Program." );
-            return;
-        }
-    }
-
-    BOOST_FOREACH( VertexArrayCommandPtr vacp, _vertexArrayCommands )
-    {
-        (*vacp)( drawInfo );
-    }
-
     BOOST_FOREACH( DrawCommandPtr dcp, _drawCommands )
     {
         (*dcp)( drawInfo );
@@ -84,14 +70,7 @@ void Drawable::setMaxContexts( const unsigned int numContexts )
         Program* prog( dynamic_cast< Program* >( dpp.get() ) );
         if( prog != NULL )
             prog->setMaxContexts( numContexts );
-    }
-
-    BOOST_FOREACH( VertexArrayCommandPtr vacp, _vertexArrayCommands )
-    {
-        BufferObject* bop( dynamic_cast< BufferObject* >( vacp.get() ) );
-        if( bop != NULL )
-            bop->setMaxContexts( numContexts );
-        VertexArrayObject* vaop( dynamic_cast< VertexArrayObject* >( vacp.get() ) );
+        VertexArrayObject* vaop( dynamic_cast< VertexArrayObject* >( dpp.get() ) );
         if( vaop != NULL )
             vaop->setMaxContexts( numContexts );
     }
@@ -107,6 +86,21 @@ void Drawable::addDrawablePrep( DrawablePrepPtr dpp )
 {
     _drawablePrep.push_back( dpp );
 }
+void Drawable::insertDrawablePrep( DrawablePrepPtr dpp, unsigned int pos )
+{
+    if( pos >= _drawablePrep.size() )
+    {
+        _drawablePrep.resize( pos+1 );
+    }
+    else
+    {
+        _drawablePrep.resize( _drawablePrep.size()+1 );
+        unsigned int idx;
+        for( idx = _drawablePrep.size()-1; idx>pos; idx-- )
+            _drawablePrep[ idx ] = _drawablePrep[ idx-1 ];
+    }
+    _drawablePrep[ pos ] = dpp;
+}
 
 DrawablePrepList& Drawable::getDrawablePrepList()
 {
@@ -117,24 +111,6 @@ const DrawablePrepList& Drawable::getDrawablePrepList() const
     return( _drawablePrep );
 }
 
-void Drawable::addVertexArrayCommand( VertexArrayCommandPtr vacp, const VertexArrayCommand::UsageHint& usageHint )
-{
-    _vertexArrayCommands.push_back( vacp );
-
-    if( usageHint == VertexArrayCommand::Vertex )
-    {
-        _vertices.push_back( vacp );
-    }
-}
-
-VertexArrayCommandList& Drawable::getVertexArrayCommandList()
-{
-    return( _vertexArrayCommands );
-}
-const VertexArrayCommandList& Drawable::getVertexArrayCommandList() const
-{
-    return( _vertexArrayCommands );
-}
 
 void Drawable::addDrawCommand( DrawCommandPtr dcp )
 {

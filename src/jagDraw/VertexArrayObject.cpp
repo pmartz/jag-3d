@@ -31,11 +31,11 @@ namespace jagDraw {
 
 
 VertexArrayObject::VertexArrayObject()
-  : VertexArrayCommand( VertexArrayCommand::VertexArrayObjectType )
+  : DrawablePrep()
 {}
 
 VertexArrayObject::VertexArrayObject( const VertexArrayObject& rhs )
-  : VertexArrayCommand( rhs ),
+  : DrawablePrep( rhs ),
     _ids( rhs._ids )
 {}
 

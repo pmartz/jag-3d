@@ -163,11 +163,11 @@ bool JagLoadDemo::startup()
     prog->attachShader( vs );
     prog->attachShader( fs );
 
-    firstDrawable->addDrawablePrep( prog );
+    firstDrawable->insertDrawablePrep( prog );
 
     gmtl::Vec3f lightVec( 0.5, .7, 1. );
     gmtl::normalize( lightVec );
-    firstDrawable->addDrawablePrep( jagDraw::UniformPtr(
+    firstDrawable->insertDrawablePrep( jagDraw::UniformPtr(
         new jagDraw::Uniform( "ecLightDir", lightVec ) ) );
 
     _proj = computeProjection( 1. );
@@ -178,9 +178,9 @@ bool JagLoadDemo::startup()
     const gmtl::Matrix44f viewProj( _proj * viewMat );
     _viewProjUniform = jagDraw::UniformPtr(
         new jagDraw::Uniform( "viewProjectionMatrix", viewProj ) );
-    firstDrawable->addDrawablePrep( _viewProjUniform );
+    firstDrawable->insertDrawablePrep( _viewProjUniform );
 
-    firstDrawable->addDrawablePrep( jagDraw::UniformPtr( new jagDraw::Uniform(
+    firstDrawable->insertDrawablePrep( jagDraw::UniformPtr( new jagDraw::Uniform(
         "normalMatrix", normalMat ) ) );
 
 

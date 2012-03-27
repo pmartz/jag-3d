@@ -45,8 +45,7 @@ public:
     */
     typedef enum {
         BufferObjectType,
-        VertexAttribType,
-        VertexArrayObjectType
+        VertexAttribType
     } Type;
 
     /** \brief TBD

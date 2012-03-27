@@ -103,6 +103,7 @@ public:
     \details All drawable prep commands are executed by the Drawale in order, and prior to
     issuing any of the vertex array commands (see addVertexArrayCommand()). */
     void addDrawablePrep( DrawablePrepPtr dpp );
+    void insertDrawablePrep( DrawablePrepPtr dpp, unsigned int pos=0 );
 
     /** \brief TBD
     \details TBD
@@ -111,18 +112,6 @@ public:
     /** \overload */
     const DrawablePrepList& getDrawablePrepList() const;
 
-
-    /** \brief Add a vertex array command, such as a buffer object, vertex array object, or vertex attribute.
-    \details All vertex array commands are executed by the Drawale in order, and prior to
-    issuing any of the draw commands (see addDrawCommand()). */
-    void addVertexArrayCommand( VertexArrayCommandPtr vacp, const VertexArrayCommand::UsageHint& usageHint=VertexArrayCommand::Unspecified );
-
-    /** \brief TBD
-    \details TBD
-    */
-    VertexArrayCommandList& getVertexArrayCommandList();
-    /** \overload */
-    const VertexArrayCommandList& getVertexArrayCommandList() const;
 
     /** \brief TBD
     \details TBD
@@ -138,12 +127,7 @@ public:
 
 protected:
     DrawablePrepList _drawablePrep;
-    VertexArrayCommandList _vertexArrayCommands;
     DrawCommandList _drawCommands;
-
-    /** Stores the vertex array object, buffer object, and vertex attribute
-    that contain and specify vertex data (tagged with usage "Vertex"). */
-    VertexArrayCommandList _vertices;
 };
 
 typedef jagBase::ptr< jagDraw::Drawable >::shared_ptr DrawablePtr;

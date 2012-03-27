@@ -103,7 +103,7 @@ void Osg2Jag::apply( osg::Geometry* geom )
     }
     // TBD tex coords
 
-    draw->addVertexArrayCommand( vaop );
+    draw->addDrawablePrep( vaop );
 
     unsigned int idx;
     for( idx=0; idx<geom->getNumPrimitiveSets(); idx++ )
