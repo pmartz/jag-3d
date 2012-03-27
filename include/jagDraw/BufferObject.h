@@ -96,7 +96,14 @@ protected:
     PerContextGLuint _ids;
 };
 
+typedef jagBase::ptr< jagDraw::BufferObject >::shared_ptr BufferObjectPtr;
+typedef std::vector< BufferObjectPtr > BufferObjectList;
 
+
+
+/**
+\details One class for each buffer bind target. See \gl{table 2.8}.
+*/
 class JAGDRAW_EXPORT ArrayBuffer: public BufferObject
 {
 public:
@@ -108,6 +115,51 @@ public:
     {}
 };
 
+/**
+\details One class for each buffer bind target. See \gl{table 2.8}.
+*/
+class JAGDRAW_EXPORT CopyReadBuffer : public BufferObject
+{
+public:
+    CopyReadBuffer():
+        BufferObject( GL_COPY_READ_BUFFER )
+    {}
+    CopyReadBuffer( const jagBase::BufferPtr b, const GLenum usage=GL_STATIC_DRAW ):
+        BufferObject( GL_COPY_READ_BUFFER, b, usage )
+    {}
+};
+
+/**
+\details One class for each buffer bind target. See \gl{table 2.8}.
+*/
+class JAGDRAW_EXPORT CopyWriteBuffer : public BufferObject
+{
+public:
+    CopyWriteBuffer():
+        BufferObject( GL_COPY_WRITE_BUFFER )
+    {}
+    CopyWriteBuffer( const jagBase::BufferPtr b, const GLenum usage=GL_STATIC_DRAW ):
+        BufferObject( GL_COPY_WRITE_BUFFER, b, usage )
+    {}
+};
+
+/**
+\details One class for each buffer bind target. See \gl{table 2.8}.
+*/
+class JAGDRAW_EXPORT DrawIndirectBuffer : public BufferObject
+{
+public:
+    DrawIndirectBuffer():
+        BufferObject( GL_DRAW_INDIRECT_BUFFER )
+    {}
+    DrawIndirectBuffer( const jagBase::BufferPtr b, const GLenum usage=GL_STATIC_DRAW ):
+        BufferObject( GL_DRAW_INDIRECT_BUFFER, b, usage )
+    {}
+};
+
+/**
+\details One class for each buffer bind target. See \gl{table 2.8}.
+*/
 class JAGDRAW_EXPORT ElementArrayBuffer: public BufferObject
 {
 public:
@@ -119,6 +171,9 @@ public:
     {}
 };
 
+/**
+\details One class for each buffer bind target. See \gl{table 2.8}.
+*/
 class JAGDRAW_EXPORT PixelPackBuffer: public BufferObject
 {
 public:
@@ -130,6 +185,9 @@ public:
     {}
 };
 
+/**
+\details One class for each buffer bind target. See \gl{table 2.8}.
+*/
 class JAGDRAW_EXPORT PixelUnpackBuffer: public BufferObject
 {
 public:
@@ -141,8 +199,47 @@ public:
     {}
 };
 
-typedef jagBase::ptr< jagDraw::BufferObject >::shared_ptr BufferObjectPtr;
-typedef std::vector< BufferObjectPtr > BufferObjectList;
+/**
+\details One class for each buffer bind target. See \gl{table 2.8}.
+*/
+class JAGDRAW_EXPORT TextureBuffer : public BufferObject
+{
+public:
+    TextureBuffer():
+        BufferObject( GL_TEXTURE_BUFFER )
+    {}
+    TextureBuffer( const jagBase::BufferPtr b, const GLenum usage=GL_STATIC_DRAW ):
+        BufferObject( GL_TEXTURE_BUFFER, b, usage )
+    {}
+};
+
+/**
+\details One class for each buffer bind target. See \gl{table 2.8}.
+*/
+class JAGDRAW_EXPORT TransformFeedbackBuffer : public BufferObject
+{
+public:
+    TransformFeedbackBuffer():
+        BufferObject( GL_TRANSFORM_FEEDBACK_BUFFER )
+    {}
+    TransformFeedbackBuffer( const jagBase::BufferPtr b, const GLenum usage=GL_STATIC_DRAW ):
+        BufferObject( GL_TRANSFORM_FEEDBACK_BUFFER, b, usage )
+    {}
+};
+
+/**
+\details One class for each buffer bind target. See \gl{table 2.8}.
+*/
+class JAGDRAW_EXPORT UniformBuffer : public BufferObject
+{
+public:
+    UniformBuffer():
+        BufferObject( GL_UNIFORM_BUFFER )
+    {}
+    UniformBuffer( const jagBase::BufferPtr b, const GLenum usage=GL_STATIC_DRAW ):
+        BufferObject( GL_UNIFORM_BUFFER, b, usage )
+    {}
+};
 
 
 // jagDraw
