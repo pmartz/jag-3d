@@ -49,7 +49,7 @@ as follows:
       <li>\link jagDraw::ContextSupport ctx \endlink
       <li>\link jagDraw::Drawable drawable \endlink
       <li>\ref jagDrawError "glerror"
-      <li>\link jagDraw::ShaderProgram program \endlink
+      <li>\link jagDraw::Program program \endlink
       <li>\link jagDraw::Shader shader \endlink
     </ul>
     <li>sg (the jagSG module)

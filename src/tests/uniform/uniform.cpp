@@ -56,7 +56,7 @@ protected:
     jagDraw::BufferObjectPtr _cbop;
     jagDraw::BufferObjectPtr _ibop;
     jagDraw::BufferObjectPtr _ibop2;
-    jagDraw::ShaderProgramPtr _spp, _spp2;
+    jagDraw::ShaderProgramPtr _prog, _prog2;
     jagDraw::VertexAttribPtr _verts, _color;
     jagDraw::VertexAttribPtr _iVerts, _iColor;
     jagDraw::VertexArrayObjectPtr _vaop;
@@ -199,9 +199,9 @@ bool UniformDemo::startup()
         jagDraw::ShaderPtr fs( new jagDraw::Shader( GL_FRAGMENT_SHADER ) );
         fs->addSourceString( std::string( fShaderSource ) );
 
-        _spp = jagDraw::ShaderProgramPtr( new jagDraw::ShaderProgram );
-        _spp->attachShader( vs );
-        _spp->attachShader( fs );
+        _prog = jagDraw::ShaderProgramPtr( new jagDraw::Program );
+        _prog->attachShader( vs );
+        _prog->attachShader( fs );
     }
 
     {
@@ -216,9 +216,9 @@ bool UniformDemo::startup()
         jagDraw::ShaderPtr fs( new jagDraw::Shader( GL_FRAGMENT_SHADER ) );
         fs->addSourceString( std::string( fShaderSource ) );
 
-        _spp2 = jagDraw::ShaderProgramPtr( new jagDraw::ShaderProgram );
-        _spp2->attachShader( vs );
-        _spp2->attachShader( fs );
+        _prog2 = jagDraw::ShaderProgramPtr( new jagDraw::Program );
+        _prog2->attachShader( vs );
+        _prog2->attachShader( fs );
     }
 
     _swizzleOff = jagDraw::UniformPtr( new jagDraw::Uniform( "swizzle", false ) );
@@ -232,8 +232,8 @@ bool UniformDemo::startup()
     _cbop->setMaxContexts( numContexts );
     _ibop->setMaxContexts( numContexts );
     _ibop2->setMaxContexts( numContexts );
-    _spp->setMaxContexts( numContexts );
-    _spp2->setMaxContexts( numContexts );
+    _prog->setMaxContexts( numContexts );
+    _prog2->setMaxContexts( numContexts );
     _vaop->setMaxContexts( numContexts );
     _elbop->setMaxContexts( numContexts );
 
@@ -261,7 +261,7 @@ bool UniformDemo::frame()
     glClear( GL_COLOR_BUFFER_BIT );
 
     // drawInfo stores the contextID (used by many Jag objects to
-    // look up their object ID), and the current ShaderProgram
+    // look up their object ID), and the current Program
     // (used by vertex attribs and uniforms to look up their locations).
     jagDraw::DrawInfo drawInfo;
     drawInfo._id = jagDraw::ContextSupport::instance()->getActiveContext();
@@ -269,8 +269,8 @@ bool UniformDemo::frame()
     // Disable color swizzle in the program using a uniform.
     (*_swizzleOff)( drawInfo );
 
-    // glUseProgram for our first ShaderProgram.
-    (*_spp)( drawInfo );
+    // glUseProgram for our first Program.
+    (*_prog)( drawInfo );
 
     // Bind the GL_ARRAY_BUFFER for vertices
     (*_vbop)( drawInfo );
@@ -301,8 +301,8 @@ bool UniformDemo::frame()
     (*_drawArrays)( drawInfo );
 
 
-    // glUseProgram for our second ShaderProgram.
-    (*_spp2)( drawInfo );
+    // glUseProgram for our second Program.
+    (*_prog2)( drawInfo );
 
     // Set the color scaling in the program using a uniform.
     (*_scale)( drawInfo );

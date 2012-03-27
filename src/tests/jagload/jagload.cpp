@@ -158,12 +158,12 @@ bool JagLoadDemo::startup()
     jagDraw::ShaderPtr fs( new jagDraw::Shader( GL_FRAGMENT_SHADER ) );
     fs->addSourceString( std::string( fShaderSource ) );
 
-    jagDraw::ShaderProgramPtr spp;
-    spp = jagDraw::ShaderProgramPtr( new jagDraw::ShaderProgram );
-    spp->attachShader( vs );
-    spp->attachShader( fs );
+    jagDraw::ShaderProgramPtr prog;
+    prog = jagDraw::ShaderProgramPtr( new jagDraw::Program );
+    prog->attachShader( vs );
+    prog->attachShader( fs );
 
-    firstDrawable->addDrawablePrep( spp );
+    firstDrawable->addDrawablePrep( prog );
 
     gmtl::Vec3f lightVec( 0.5, .7, 1. );
     gmtl::normalize( lightVec );
@@ -217,7 +217,7 @@ bool JagLoadDemo::frame()
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
     // drawInfo stores the contextID (used by many Jag objects to
-    // look up their object ID), and the current ShaderProgram
+    // look up their object ID), and the current Program
     // (used by vertex attribs and uniforms to look up their locations).
     jagDraw::DrawInfo drawInfo;
     drawInfo._id = jagDraw::ContextSupport::instance()->getActiveContext();

@@ -23,7 +23,7 @@
 
 #include <jagDraw/Export.h>
 #include <jagDraw/ContextSupport.h>
-#include <jagDraw/ShaderProgram.h>
+#include <jagDraw/Program.h>
 #include <jagDraw/Uniform.h>
 
 
@@ -46,10 +46,10 @@ struct JAGDRAW_EXPORT DrawInfo
     ShaderProgramPtr _program;
 
 
-    typedef std::map< ShaderProgram::HashValue, ConstUniformPtr > UniformMap;
+    typedef std::map< Program::HashValue, ConstUniformPtr > UniformMap;
 
     /** \brief List of active uniforms during draw.
-    \details When a new ShaderProgram is used, it iterates over its
+    \details When a new Program is used, it iterates over its
     active uniforms and attempts to find a hash key match in this map.
     If a match is found, the corresponding uniform value is specified.
     */

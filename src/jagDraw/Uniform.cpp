@@ -237,8 +237,8 @@ void Uniform::operator()( DrawInfo& drawInfo )
     // for the current frame and draw thread.
     drawInfo._uniformMap[ _indexHash ] = shared_from_this();
 
-    // Uniform::operator() could execute before ShaderProgram::operator(),
-    // so only look up uniform location if a ShaderProgram is available.
+    // Uniform::operator() could execute before Program::operator(),
+    // so only look up uniform location if a Program is available.
     if( drawInfo._program != NULL )
     {
         GLint index( drawInfo._program->getUniformLocation( _indexHash ) );
@@ -290,7 +290,7 @@ void Uniform::set( const gmtl::Matrix44f& m )
 void Uniform::internalInit( const std::string& name )
 {
     _name = name;
-    _indexHash = ShaderProgram::createHash( _name );
+    _indexHash = Program::createHash( _name );
 }
 
 

@@ -25,7 +25,7 @@
 #include <jagDraw/PlatformOpenGL.h>
 #include <jagDraw/DrawInfo.h>
 #include <jagDraw/VertexArrayCommand.h>
-#include <jagDraw/ShaderProgram.h>
+#include <jagDraw/Program.h>
 #include <jagBase/ptr.h>
 
 #include <vector>
@@ -44,7 +44,7 @@ public:
     VertexAttrib( const std::string& name, GLint size, GLenum type, GLboolean normalized, GLsizei stride, GLuint offset )
       : VertexArrayCommand( VertexArrayCommand::VertexAttribType ),
         _name( name ),
-        _indexHash( ShaderProgram::createHash( name ) ),
+        _indexHash( Program::createHash( name ) ),
         _size( size ),
         _type( type ),
         _normalized( normalized ),
@@ -56,7 +56,7 @@ public:
 
     virtual void operator()( DrawInfo& drawInfo )
     {
-        // ShaderProgram::use() must be called prior to VertexAttrib::operator().
+        // Program::use() must be called prior to VertexAttrib::operator().
         // Note this is different from Uniform::operator(). This means we can simply
         // look up the vertex attrib hash index without bothering to check for
         // ( drawInfo._program != NULL ) first.
@@ -74,7 +74,7 @@ public:
 
 protected:
     std::string _name;
-    ShaderProgram::HashValue _indexHash;
+    Program::HashValue _indexHash;
     GLint  _size;
     GLenum _type;
     GLboolean _normalized;

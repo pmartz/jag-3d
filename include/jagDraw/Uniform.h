@@ -24,7 +24,7 @@
 
 #include <jagDraw/Export.h>
 #include <jagDraw/PlatformOpenGL.h>
-#include <jagDraw/ShaderProgram.h>
+#include <jagDraw/Program.h>
 #include <jagBase/ptr.h>
 #include <gmtl/gmtl.h>
 
@@ -90,7 +90,7 @@ protected:
     void internalInit( const std::string& name );
 
     std::string _name;
-    ShaderProgram::HashValue _indexHash;
+    Program::HashValue _indexHash;
 
     GLenum _type;
 

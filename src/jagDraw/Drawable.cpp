@@ -20,7 +20,7 @@
 
 #include <jagDraw/PlatformOpenGL.h>
 #include <jagDraw/Drawable.h>
-#include <jagDraw/ShaderProgram.h>
+#include <jagDraw/Program.h>
 #include <jagDraw/VertexArrayObject.h>
 #include <jagDraw/BufferObject.h>
 #include <jagDraw/DrawCommand.h>
@@ -54,7 +54,7 @@ void Drawable::operator()( DrawInfo& drawInfo )
     {
         if( drawInfo._program == NULL )
         {
-            JAG3D_ERROR( "drawInfo::_program == NULL. Can't render without a ShaderProgram." );
+            JAG3D_ERROR( "drawInfo::_program == NULL. Can't render without a Program." );
             return;
         }
     }
@@ -81,9 +81,9 @@ void Drawable::setMaxContexts( const unsigned int numContexts )
 {
     BOOST_FOREACH( DrawablePrepPtr dpp, _drawablePrep )
     {
-        ShaderProgram* spp( dynamic_cast< ShaderProgram* >( dpp.get() ) );
-        if( spp != NULL )
-            spp->setMaxContexts( numContexts );
+        Program* prog( dynamic_cast< Program* >( dpp.get() ) );
+        if( prog != NULL )
+            prog->setMaxContexts( numContexts );
     }
 
     BOOST_FOREACH( VertexArrayCommandPtr vacp, _vertexArrayCommands )

@@ -30,7 +30,7 @@
 #include <jagDraw/DrawCommand.h>
 #include <jagDraw/Drawable.h>
 #include <jagDraw/Shader.h>
-#include <jagDraw/ShaderProgram.h>
+#include <jagDraw/Program.h>
 #include <jagDraw/Uniform.h>
 #include <jagDraw/Error.h>
 #include <jagDraw/ContextSupport.h>

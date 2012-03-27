@@ -83,7 +83,7 @@ bool DrawableDemo::startup()
     jagDraw::ShaderPtr vs( new jagDraw::Shader( GL_VERTEX_SHADER ) );
     vs->addSourceString( std::string( vShaderSource ) );
 
-    jagDraw::ShaderProgramPtr spp;
+    jagDraw::ShaderProgramPtr prog;
     {
         const char* fShaderSource =
             "#version 130 \n"
@@ -95,12 +95,12 @@ bool DrawableDemo::startup()
         jagDraw::ShaderPtr fs( new jagDraw::Shader( GL_FRAGMENT_SHADER ) );
         fs->addSourceString( std::string( fShaderSource ) );
 
-        spp = jagDraw::ShaderProgramPtr( new jagDraw::ShaderProgram );
-        spp->attachShader( vs );
-        spp->attachShader( fs );
+        prog = jagDraw::ShaderProgramPtr( new jagDraw::Program );
+        prog->attachShader( vs );
+        prog->attachShader( fs );
     }
 
-    jagDraw::ShaderProgramPtr spp2;
+    jagDraw::ShaderProgramPtr prog2;
     {
         const char* fShaderSource =
             "#version 130 \n"
@@ -113,9 +113,9 @@ bool DrawableDemo::startup()
         jagDraw::ShaderPtr fs( new jagDraw::Shader( GL_FRAGMENT_SHADER ) );
         fs->addSourceString( std::string( fShaderSource ) );
 
-        spp2 = jagDraw::ShaderProgramPtr( new jagDraw::ShaderProgram );
-        spp2->attachShader( vs );
-        spp2->attachShader( fs );
+        prog2 = jagDraw::ShaderProgramPtr( new jagDraw::Program );
+        prog2->attachShader( vs );
+        prog2->attachShader( fs );
     }
 
     jagDraw::UniformPtr swizzleOff( new jagDraw::Uniform( "swizzle", false ) );
@@ -129,7 +129,7 @@ bool DrawableDemo::startup()
 
     // Define first drawable: tri strip on the left.
     {
-        drawable->addDrawablePrep( spp );
+        drawable->addDrawablePrep( prog );
         drawable->addDrawablePrep( swizzleOff );
 
         Point3fArray v3fa;
@@ -219,7 +219,7 @@ bool DrawableDemo::startup()
     {
         drawable = jagDraw::DrawablePtr( new jagDraw::Drawable() );
 
-        drawable->addDrawablePrep( spp2 );
+        drawable->addDrawablePrep( prog2 );
         drawable->addDrawablePrep( scale );
 
         Point3fArray i3fa;
@@ -291,7 +291,7 @@ bool DrawableDemo::frame()
     glClear( GL_COLOR_BUFFER_BIT );
 
     // drawInfo stores the contextID (used by many Jag objects to
-    // look up their object ID), and the current ShaderProgram
+    // look up their object ID), and the current Program
     // (used by vertex attribs and uniforms to look up their locations).
     jagDraw::DrawInfo drawInfo;
     drawInfo._id = jagDraw::ContextSupport::instance()->getActiveContext();

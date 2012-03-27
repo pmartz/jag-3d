@@ -18,7 +18,7 @@
 *
 *************** <auto-copyright.pl END do not edit this line> ***************/
 
-#include <jagDraw/ShaderProgram.h>
+#include <jagDraw/Program.h>
 #include <jagDraw/PlatformOpenGL.h>
 #include <jagDraw/DrawInfo.h>
 #include <jagBase/LogMacros.h>
@@ -34,7 +34,7 @@ namespace jagDraw {
 
 
 
-void ShaderProgram::printInfoLog( const GLuint id )
+void Program::printInfoLog( const GLuint id )
 {
     if( !JAG3D_LOG_ERROR )
         return;
@@ -57,24 +57,24 @@ void ShaderProgram::printInfoLog( const GLuint id )
     }
 }
 
-ShaderProgram::ShaderProgram()
+Program::Program()
   : jagBase::LogBase( "jag.draw.program" )
 {
 }
 
-ShaderProgram::~ShaderProgram()
+Program::~Program()
 {
     // TBD Handle object deletion
 //    if( _ids[ 0 ] != 0 )
 //        glDeleteProgram( _ids[ 0 ] );
 }
 
-void ShaderProgram::attachShader( ShaderPtr shader )
+void Program::attachShader( ShaderPtr shader )
 {
     _shaders.push_back( shader );
 }
 
-void ShaderProgram::operator()( DrawInfo& drawInfo )
+void Program::operator()( DrawInfo& drawInfo )
 {
     // Record the currently used program in DrawInfo.
     // Downstream vertex attribs and uniforms will query
@@ -113,19 +113,19 @@ void ShaderProgram::operator()( DrawInfo& drawInfo )
 }
 
 
-void ShaderProgram::setExplicitAttribLocation( GLuint index, const std::string& name )
+void Program::setExplicitAttribLocation( GLuint index, const std::string& name )
 {
     _explicitVertexAttribLocations[ name ] = index;
 }
 
-GLuint ShaderProgram::getExplicitAttribLocation( const std::string& name ) const
+GLuint Program::getExplicitAttribLocation( const std::string& name ) const
 {
     ExplicitLocationMap::const_iterator it(
         _explicitVertexAttribLocations.find( name ) );
     return( ( it != _explicitVertexAttribLocations.end() ) ? it->second : -1 );
 }
 
-void ShaderProgram::setParameter( GLenum pname, GLint value )
+void Program::setParameter( GLenum pname, GLint value )
 {
     const unsigned int contextID( 0 );
     const GLuint id( getId( contextID ) );
@@ -142,7 +142,7 @@ void ShaderProgram::setParameter( GLenum pname, GLint value )
     glProgramParameteri( id, pname, value );
 }
 
-void ShaderProgram::get( GLenum pname, GLint *params )
+void Program::get( GLenum pname, GLint *params )
 {
     const unsigned int contextID( 0 );
     const GLuint id( _ids[ contextID ].first );
@@ -150,7 +150,7 @@ void ShaderProgram::get( GLenum pname, GLint *params )
     glGetProgramiv( id, pname, params );
 }
 
-GLint ShaderProgram::getId( const unsigned int contextID )
+GLint Program::getId( const unsigned int contextID )
 {
     if( _ids[ contextID ].first == 0 )
     {
@@ -160,7 +160,7 @@ GLint ShaderProgram::getId( const unsigned int contextID )
     return( _ids[ contextID ].first );
 }
 
-void ShaderProgram::setMaxContexts( const unsigned int numContexts )
+void Program::setMaxContexts( const unsigned int numContexts )
 {
     while( _ids._data.size() < numContexts )
     {
@@ -174,9 +174,9 @@ void ShaderProgram::setMaxContexts( const unsigned int numContexts )
 }
 
 
-bool ShaderProgram::link( unsigned int contextID )
+bool Program::link( unsigned int contextID )
 {
-    JAG3D_TRACE( "ShaderProgram::link" );
+    JAG3D_TRACE( "Program::link" );
 
     if( JAG3D_LOG_DEBUG && ( _ids._data.size() < contextID+1 ) )
     {
@@ -191,7 +191,7 @@ bool ShaderProgram::link( unsigned int contextID )
 
     if( JAG3D_LOG_DEBUG )
     {
-        _logStream->debug() << "  ShaderProgram: contextID: " << contextID <<
+        _logStream->debug() << "  Program: contextID: " << contextID <<
             ", object ID: " << id << std::endl;
     }
 
@@ -299,7 +299,7 @@ bool ShaderProgram::link( unsigned int contextID )
     return( true );
 }
 
-bool ShaderProgram::validate( unsigned int contextID )
+bool Program::validate( unsigned int contextID )
 {
     const GLuint id( getId( contextID ) );
 
@@ -317,11 +317,11 @@ bool ShaderProgram::validate( unsigned int contextID )
 }
 
 
-unsigned int ShaderProgram::getNumActiveUniforms( const GLuint id ) const
+unsigned int Program::getNumActiveUniforms( const GLuint id ) const
 {
     return( _uniformLocations.size() );
 }
-void ShaderProgram::getActiveUniform( const GLuint id, const GLuint index, std::string& name, GLenum& type )
+void Program::getActiveUniform( const GLuint id, const GLuint index, std::string& name, GLenum& type )
 {
     char namebuff[ 256 ];
     GLsizei len;
@@ -330,11 +330,11 @@ void ShaderProgram::getActiveUniform( const GLuint id, const GLuint index, std::
     glGetActiveUniform( id, index, isize, &len, &osize, &type, namebuff );
     name = std::string( namebuff );
 }
-unsigned int ShaderProgram::getNumActiveAttribs( const GLuint id ) const
+unsigned int Program::getNumActiveAttribs( const GLuint id ) const
 {
     return( _vertexAttribLocations.size() );
 }
-void ShaderProgram::getActiveAttrib( const GLuint id, const GLuint index, std::string& name, GLenum& type )
+void Program::getActiveAttrib( const GLuint id, const GLuint index, std::string& name, GLenum& type )
 {
     char namebuff[ 256 ];
     GLsizei len;
@@ -345,10 +345,10 @@ void ShaderProgram::getActiveAttrib( const GLuint id, const GLuint index, std::s
 }
 
 
-void ShaderProgram::internalInit( const unsigned int contextID )
+void Program::internalInit( const unsigned int contextID )
 {
     const GLuint id( glCreateProgram() );
-    JAG3D_ERROR_CHECK( "ShaderProgram::internalInit()" );
+    JAG3D_ERROR_CHECK( "Program::internalInit()" );
     if( id == 0 )
         JAG3D_ERROR( "glCreateProgram() returned program ID 0." );
 
@@ -356,7 +356,7 @@ void ShaderProgram::internalInit( const unsigned int contextID )
     _ids[ contextID ].second = false;
 }
 
-void ShaderProgram::fromSourceFiles( const std::string &vertexShaderFile,
+void Program::fromSourceFiles( const std::string &vertexShaderFile,
                               const std::string &fragmentShaderFile )
 {
     jagDraw::ShaderPtr vshader(new jagDraw::Shader(GL_VERTEX_SHADER ));
@@ -368,7 +368,7 @@ void ShaderProgram::fromSourceFiles( const std::string &vertexShaderFile,
     attachShader( fshader );
 }
 
-void ShaderProgram::fromSourceStrings( const std::string &vertexShaderString,
+void Program::fromSourceStrings( const std::string &vertexShaderString,
                                const std::string &fragmentShaderString )
 {
     jagDraw::ShaderPtr vshader(new jagDraw::Shader(GL_VERTEX_SHADER ));
@@ -381,7 +381,7 @@ void ShaderProgram::fromSourceStrings( const std::string &vertexShaderString,
 
 }
 
-void ShaderProgram::fromSourceFileList( const SourceList &l )
+void Program::fromSourceFileList( const SourceList &l )
 {
     for( SourceList::const_iterator p = l.begin(); p != l.end(); p++ )
     {
@@ -391,7 +391,7 @@ void ShaderProgram::fromSourceFileList( const SourceList &l )
     }
 }
 
-void ShaderProgram::fromSourceStringList( const SourceList &l )
+void Program::fromSourceStringList( const SourceList &l )
 {
     for( SourceList::const_iterator p = l.begin(); p != l.end(); p++ )
     {
@@ -402,13 +402,13 @@ void ShaderProgram::fromSourceStringList( const SourceList &l )
 }
 
 
-ShaderProgram::HashValue ShaderProgram::createHash( const std::string& name )
+Program::HashValue Program::createHash( const std::string& name )
 {
     boost::hash< std::string > h;
     return( h( name ) );
 }
 
-GLint ShaderProgram::getUniformLocation( const HashValue& h ) const
+GLint Program::getUniformLocation( const HashValue& h ) const
 {
     LocationMap::const_iterator it( _uniformLocations.find( h ) );
     if( it != _uniformLocations.end() )
@@ -416,11 +416,11 @@ GLint ShaderProgram::getUniformLocation( const HashValue& h ) const
     else
         return( -1 );
 }
-GLint ShaderProgram::getUniformLocation( const std::string& s ) const
+GLint Program::getUniformLocation( const std::string& s ) const
 {
     return( getVertexAttribLocation( createHash( s ) ) );
 }
-GLint ShaderProgram::getVertexAttribLocation( const HashValue& h ) const
+GLint Program::getVertexAttribLocation( const HashValue& h ) const
 {
     LocationMap::const_iterator it( _vertexAttribLocations.find( h ) );
     if( it != _vertexAttribLocations.end() )
@@ -428,7 +428,7 @@ GLint ShaderProgram::getVertexAttribLocation( const HashValue& h ) const
     else
         return( -1 );
 }
-GLint ShaderProgram::getVertexAttribLocation( const std::string& s ) const
+GLint Program::getVertexAttribLocation( const std::string& s ) const
 {
     return( getVertexAttribLocation( createHash( s ) ) );
 }

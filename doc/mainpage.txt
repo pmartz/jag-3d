@@ -20,7 +20,7 @@ Direct OpenGL support:
 \li \link jagDraw::DrawCommand Drawing commands \endlink
 \li \link jagDraw::BufferObject Buffer Objects \endlink
 \li \link jagDraw::Shader Shader Objects \endlink
-\li \link jagDraw::ShaderProgram Program Objects \endlink
+\li \link jagDraw::Program Program Objects \endlink
 \li \link jagDraw::Uniform Uniform Variables \endlink
 
 Higher level constructs:

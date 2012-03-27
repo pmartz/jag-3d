@@ -58,7 +58,7 @@ protected:
     jagDraw::BufferObjectPtr _cbop;
     jagDraw::BufferObjectPtr _ibop;
     jagDraw::BufferObjectPtr _ibop2;
-    jagDraw::ShaderProgramPtr _spp;
+    jagDraw::ShaderProgramPtr _prog;
     jagDraw::VertexArrayObjectPtr _vaop;
 
     bool _first;
@@ -157,9 +157,9 @@ bool DrawDemo::startup()
         jagDraw::ShaderPtr fs( new jagDraw::Shader( GL_FRAGMENT_SHADER ) );
         fs->addSourceString( std::string( fShaderSource ) );
 
-        _spp = jagDraw::ShaderProgramPtr( new jagDraw::ShaderProgram );
-        _spp->attachShader( vs );
-        _spp->attachShader( fs );
+        _prog = jagDraw::ShaderProgramPtr( new jagDraw::Program );
+        _prog->attachShader( vs );
+        _prog->attachShader( fs );
     }
 
 
@@ -169,7 +169,7 @@ bool DrawDemo::startup()
     _cbop->setMaxContexts( numContexts );
     _ibop->setMaxContexts( numContexts );
     _ibop2->setMaxContexts( numContexts );
-    _spp->setMaxContexts( numContexts );
+    _prog->setMaxContexts( numContexts );
     _vaop->setMaxContexts( numContexts );
 
 
@@ -198,7 +198,7 @@ bool DrawDemo::frame()
     jagDraw::DrawInfo drawInfo;
     drawInfo._id = jagDraw::ContextSupport::instance()->getActiveContext();
 
-    (*_spp)( drawInfo );
+    (*_prog)( drawInfo );
 
     (*_vbop)( drawInfo );
     glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 0, (const void*)0 );

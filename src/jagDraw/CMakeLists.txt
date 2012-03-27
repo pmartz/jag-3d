@@ -38,8 +38,8 @@ set( _jagDrawHeaderFiles
     ${HEADER_PATH}/Error.h
     ${HEADER_PATH}/PerContextData.h
     ${HEADER_PATH}/PlatformOpenGL.h
+    ${HEADER_PATH}/Program.h
     ${HEADER_PATH}/Shader.h
-    ${HEADER_PATH}/ShaderProgram.h
 #    ${HEADER_PATH}/Texture.h
     ${HEADER_PATH}/Uniform.h
     ${HEADER_PATH}/VertexArrayCommand.h
@@ -53,8 +53,8 @@ set( _jagDrawSourceFiles
     Drawable.cpp
     DrawInfo.cpp
     Error.cpp
+    Program.cpp
     Shader.cpp
-    ShaderProgram.cpp
     Uniform.cpp
     VertexArrayObject.cpp
 )

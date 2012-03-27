@@ -40,7 +40,7 @@ struct DrawInfo;
 /** \class Drawable Drawable.h <jagDraw/Drawable.h>
 \brief A grouping of objects for rendering geometry.
 \details Drawable stores three separate lists of jag objects:
-\li DrawablePrep objects. These are objects like ShaderProgram, Uniform, Texture, etc.
+\li DrawablePrep objects. These are objects like Program, Uniform, Texture, etc.
 \li VertexArrayCommand objects. These are things like BufferObject, VertexAttrib, and VertexArrayObject.
 \li DrawCommand objects. These are commands for rendering, such as glDrawArrays, glDrawElements, and others.
 

@@ -50,7 +50,7 @@ public:
 
 protected:
     jagDraw::BufferObjectPtr _bop;
-    jagDraw::ShaderProgramPtr _spp;
+    jagDraw::ShaderProgramPtr _prog;
 };
 
 
@@ -96,16 +96,16 @@ bool Simple3xDemo::startup()
         jagDraw::ShaderPtr fs( new jagDraw::Shader( GL_FRAGMENT_SHADER ) );
         fs->addSourceString( std::string( fShaderSource ) );
 
-        _spp = jagDraw::ShaderProgramPtr( new jagDraw::ShaderProgram );
-        _spp->attachShader( vs );
-        _spp->attachShader( fs );
+        _prog = jagDraw::ShaderProgramPtr( new jagDraw::Program );
+        _prog->attachShader( vs );
+        _prog->attachShader( fs );
     }
 
 
     // Tell all Jag objects how many contexts to expect.
     const unsigned int numContexts( jagDraw::ContextSupport::instance()->getNumRegisteredContexts() );
     _bop->setMaxContexts( numContexts );
-    _spp->setMaxContexts( numContexts );
+    _prog->setMaxContexts( numContexts );
 
 
     return( true );
@@ -150,7 +150,7 @@ bool Simple3xDemo::frame()
     jagDraw::DrawInfo drawInfo;
     drawInfo._id = jagDraw::ContextSupport::instance()->getActiveContext();
 
-    (*_spp)( drawInfo );
+    (*_prog)( drawInfo );
 
     (*_bop)( drawInfo );
     glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 0, (const void*)0 );

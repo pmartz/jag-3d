@@ -18,8 +18,8 @@
 *
 *************** <auto-copyright.pl END do not edit this line> ***************/
 
-#ifndef __JAGDRAW_SHADER_PROGRAM_H__
-#define __JAGDRAW_SHADER_PROGRAM_H__ 1
+#ifndef __JAGDRAW_PROGRAM_H__
+#define __JAGDRAW_PROGRAM_H__ 1
 
 
 #include <jagDraw/Export.h>
@@ -39,12 +39,12 @@ namespace jagDraw {
 struct DrawInfo;
 
 
-/** \class ShaderProgram ShaderProgram.h <jagDraw/ShaderProgram.h>
+/** \class Program Program.h <jagDraw/Program.h>
 \brief
 \details \gl{section 2.11.2}.
 */
-class JAGDRAW_EXPORT ShaderProgram : public DrawablePrep,
-            public SHARED_FROM_THIS(ShaderProgram),
+class JAGDRAW_EXPORT Program : public DrawablePrep,
+            public SHARED_FROM_THIS(Program),
             protected jagBase::LogBase
 {
 public:
@@ -56,8 +56,8 @@ public:
         NormalMatrix
     };
 
-    ShaderProgram();
-    ~ShaderProgram();
+    Program();
+    ~Program();
 
     /** \brief Attach a shader to this program.
     \details This function adds \c shader to the \c _shaders list.
@@ -85,7 +85,7 @@ public:
     glCreateProgram() to generate the ID. */
     GLint getId( const unsigned int contextID );
 
-    /** \brief Tell the ShaderProgram how many contexts to expect.
+    /** \brief Tell the Program how many contexts to expect.
     \details Resizes the _ids variable, then iterates over all attached
     Shader objects, invoking setMaxContexts on each.
     */
@@ -214,7 +214,7 @@ private:
     ExplicitLocationMap _explicitVertexAttribLocations;
 };
 
-typedef jagBase::ptr< ShaderProgram >::shared_ptr ShaderProgramPtr;
+typedef jagBase::ptr< Program >::shared_ptr ShaderProgramPtr;
 
 
 // jagDraw

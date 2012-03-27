@@ -56,7 +56,7 @@ protected:
     jagDraw::BufferObjectPtr _cbop;
     jagDraw::BufferObjectPtr _ibop;
     jagDraw::BufferObjectPtr _ibop2;
-    jagDraw::ShaderProgramPtr _spp;
+    jagDraw::ShaderProgramPtr _prog;
     jagDraw::VertexAttribPtr _verts, _color;
     jagDraw::VertexAttribPtr _iVerts, _iColor;
     jagDraw::VertexArrayObjectPtr _vaop;
@@ -193,9 +193,9 @@ bool DrawCommandDemo::startup()
         jagDraw::ShaderPtr fs( new jagDraw::Shader( GL_FRAGMENT_SHADER ) );
         fs->addSourceString( std::string( fShaderSource ) );
 
-        _spp = jagDraw::ShaderProgramPtr( new jagDraw::ShaderProgram );
-        _spp->attachShader( vs );
-        _spp->attachShader( fs );
+        _prog = jagDraw::ShaderProgramPtr( new jagDraw::Program );
+        _prog->attachShader( vs );
+        _prog->attachShader( fs );
     }
 
 
@@ -205,7 +205,7 @@ bool DrawCommandDemo::startup()
     _cbop->setMaxContexts( numContexts );
     _ibop->setMaxContexts( numContexts );
     _ibop2->setMaxContexts( numContexts );
-    _spp->setMaxContexts( numContexts );
+    _prog->setMaxContexts( numContexts );
     _vaop->setMaxContexts( numContexts );
     _elbop->setMaxContexts( numContexts );
 
@@ -233,13 +233,13 @@ bool DrawCommandDemo::frame()
     glClear( GL_COLOR_BUFFER_BIT );
 
     // drawInfo stores the contextID (used by many Jag objects to
-    // look up their object ID), and the current ShaderProgram
+    // look up their object ID), and the current Program
     // (used by vertex attribs and uniforms to look up their locations).
     jagDraw::DrawInfo drawInfo;
     drawInfo._id = jagDraw::ContextSupport::instance()->getActiveContext();
 
-    // glUseProgram for our ShaderProgram.
-    (*_spp)( drawInfo );
+    // glUseProgram for our Program.
+    (*_prog)( drawInfo );
 
     // Bind the GL_ARRAY_BUFFER for vertices
     (*_vbop)( drawInfo );
