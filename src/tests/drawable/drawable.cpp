@@ -60,13 +60,13 @@ protected:
 
 DemoInterface* DemoInterface::create( bpo::options_description& desc )
 {
+    jagBase::Log::instance()->setPriority( jagBase::Log::PrioTrace, jagBase::Log::Console );
+
     return( new DrawableDemo );
 }
 
 bool DrawableDemo::startup()
 {
-    jagBase::Log::instance()->setPriority( jagBase::Log::PrioTrace, jagBase::Log::Console );
-
     const char* vShaderSource =
         "#version 130 \n"
         "uniform bool swizzle; \n"

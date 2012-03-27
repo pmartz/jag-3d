@@ -67,13 +67,13 @@ protected:
 
 DemoInterface* DemoInterface::create( bpo::options_description& desc )
 {
+    jagBase::Log::instance()->setPriority( jagBase::Log::PrioTrace, jagBase::Log::Console );
+
     return( new DrawDemo );
 }
 
 bool DrawDemo::startup()
 {
-    jagBase::Log::instance()->setPriority( jagBase::Log::PrioTrace, jagBase::Log::Console );
-
     _vaop = jagDraw::VertexArrayObjectPtr( new jagDraw::VertexArrayObject );
 
     const float z = .5f;

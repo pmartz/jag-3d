@@ -70,13 +70,13 @@ protected:
 
 DemoInterface* DemoInterface::create( bpo::options_description& desc )
 {
+    jagBase::Log::instance()->setPriority( jagBase::Log::PrioTrace, jagBase::Log::Console );
+
     return( new DrawCommandDemo );
 }
 
 bool DrawCommandDemo::startup()
 {
-    jagBase::Log::instance()->setPriority( jagBase::Log::PrioTrace, jagBase::Log::Console );
-
     const float z = .5f;
     typedef std::vector< gmtl::Point3f > Point3fArray;
     {
