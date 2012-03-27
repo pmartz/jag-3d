@@ -25,6 +25,7 @@
 
 #include <jagDraw/BufferObject.h>
 #include <jagDraw/VertexAttrib.h>
+#include <jagDraw/VertexArrayObject.h>
 #include <jagBase/LogMacros.h>
 #include <gmtl/gmtl.h>
 
@@ -71,16 +72,18 @@ void Osg2Jag::apply( osg::Geometry* geom )
     jagDraw::DrawablePtr draw( jagDraw::DrawablePtr( new jagDraw::Drawable ) );
     _jagDrawables.push_back( draw );
 
+    jagDraw::VertexArrayObjectPtr vaop( new jagDraw::VertexArrayObject );
+
     const unsigned int numVertices( geom->getVertexArray()->getNumElements() );
     {
         osg::Matrix m = osg::computeLocalToWorld( getNodePath() );
         ArrayInfo info( asJagArray( geom->getVertexArray(), m ) );
         jagDraw::BufferObjectPtr bop( new jagDraw::BufferObject( GL_ARRAY_BUFFER, info._buffer ) );
-        draw->addVertexArrayCommand( bop, jagDraw::VertexArrayCommand::Vertex );
+        vaop->addVertexArrayCommand( bop, jagDraw::VertexArrayCommand::Vertex );
 
         jagDraw::VertexAttribPtr attrib( new jagDraw::VertexAttrib(
             "vertex", info._componentsPerElement, info._type, GL_FALSE, 0, 0 ) );
-        draw->addVertexArrayCommand( attrib, jagDraw::VertexArrayCommand::Vertex );
+        vaop->addVertexArrayCommand( attrib, jagDraw::VertexArrayCommand::Vertex );
     }
     if( ( geom->getNormalArray() != NULL ) &&
         ( geom->getNormalBinding() != osg::Geometry::BIND_OFF ) )
@@ -92,13 +95,15 @@ void Osg2Jag::apply( osg::Geometry* geom )
         m.setTrans(0.,0.,0.);
         ArrayInfo info( asJagArray( geom->getNormalArray(), m ) );
         jagDraw::BufferObjectPtr bop( new jagDraw::BufferObject( GL_ARRAY_BUFFER, info._buffer ) );
-        draw->addVertexArrayCommand( bop, jagDraw::VertexArrayCommand::Normal );
+        vaop->addVertexArrayCommand( bop, jagDraw::VertexArrayCommand::Normal );
 
         jagDraw::VertexAttribPtr attrib( new jagDraw::VertexAttrib(
             "normal", info._componentsPerElement, info._type, GL_FALSE, 0, 0 ) );
-        draw->addVertexArrayCommand( attrib, jagDraw::VertexArrayCommand::Normal );
+        vaop->addVertexArrayCommand( attrib, jagDraw::VertexArrayCommand::Normal );
     }
     // TBD tex coords
+
+    draw->addVertexArrayCommand( vaop );
 
     unsigned int idx;
     for( idx=0; idx<geom->getNumPrimitiveSets(); idx++ )
