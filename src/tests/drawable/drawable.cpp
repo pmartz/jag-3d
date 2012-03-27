@@ -141,11 +141,13 @@ bool DrawableDemo::startup()
         v3fa.push_back( gmtl::Point3f( -.6f, .9f, z ) );
         jagBase::BufferPtr vbp( new jagBase::Buffer( v3fa.size() * sizeof( gmtl::Point3f ), (void*)&v3fa[0] ) );
         jagDraw::BufferObjectPtr vbop( new jagDraw::BufferObject( GL_ARRAY_BUFFER, vbp ) );
-        drawable->addVertexArrayCommand( vbop, jagDraw::VertexArrayCommand::Vertex );
+
+        jagDraw::VertexArrayObjectPtr vaop( new jagDraw::VertexArrayObject );
+        vaop->addVertexArrayCommand( vbop, jagDraw::VertexArrayCommand::Vertex );
 
         jagDraw::VertexAttribPtr verts( new jagDraw::VertexAttrib(
             "vertex", 3, GL_FLOAT, GL_FALSE, 0, 0 ) );
-        drawable->addVertexArrayCommand( verts, jagDraw::VertexArrayCommand::Vertex );
+        vaop->addVertexArrayCommand( verts, jagDraw::VertexArrayCommand::Vertex );
 
         Point3fArray c3fa;
         c3fa.push_back( gmtl::Point3f( 1.f, 0.f, 0.f ) );
@@ -156,11 +158,13 @@ bool DrawableDemo::startup()
         c3fa.push_back( gmtl::Point3f( 1.f, 0.f, 1.f ) );
         jagBase::BufferPtr cbp( new jagBase::Buffer( c3fa.size() * sizeof( gmtl::Point3f ), (void*)&c3fa[0] ) );
         jagDraw::BufferObjectPtr cbop( new jagDraw::BufferObject( GL_ARRAY_BUFFER, cbp ) );
-        drawable->addVertexArrayCommand( cbop );
+        vaop->addVertexArrayCommand( cbop );
 
         jagDraw::VertexAttribPtr color( new jagDraw::VertexAttrib(
             "color", 3, GL_FLOAT, GL_FALSE, 0, 0 ) );
-        drawable->addVertexArrayCommand( color );
+        vaop->addVertexArrayCommand( color );
+
+        drawable->addVertexArrayCommand( vaop );
 
         jagBase::GLubyteArray elements;
         unsigned int idx;
@@ -168,9 +172,7 @@ bool DrawableDemo::startup()
             elements.push_back( idx );
         jagBase::BufferPtr elbp( new jagBase::Buffer( elements.size() * sizeof( GLubyte ), (void*)&elements[0] ) );
         jagDraw::BufferObjectPtr elbop( new jagDraw::BufferObject( GL_ELEMENT_ARRAY_BUFFER, elbp ) );
-        drawable->addVertexArrayCommand( elbop );
-
-        jagDraw::DrawElementsPtr drawElements( new jagDraw::DrawElements( GL_TRIANGLE_STRIP, elements.size(), GL_UNSIGNED_BYTE, 0 ) );
+        jagDraw::DrawElementsPtr drawElements( new jagDraw::DrawElements( GL_TRIANGLE_STRIP, elements.size(), GL_UNSIGNED_BYTE, 0, elbop ) );
         drawable->addDrawCommand( drawElements );
 
         _drawableList.push_back( drawable );
@@ -205,10 +207,12 @@ bool DrawableDemo::startup()
             i3fa.push_back( gmtl::Point3f( 1.f, 0.f, 1.f ) );
         jagBase::BufferPtr ibp( new jagBase::Buffer( i3fa.size() * sizeof( gmtl::Point3f ), (void*)&i3fa[0] ) );
         jagDraw::BufferObjectPtr ibop( new jagDraw::BufferObject( GL_ARRAY_BUFFER, ibp ) );
-        drawable->addVertexArrayCommand( ibop, jagDraw::VertexArrayCommand::Vertex );
 
-        drawable->addVertexArrayCommand( iVerts, jagDraw::VertexArrayCommand::Vertex );
-        drawable->addVertexArrayCommand( iColor );
+        jagDraw::VertexArrayObjectPtr vaop( new jagDraw::VertexArrayObject );
+        vaop->addVertexArrayCommand( ibop, jagDraw::VertexArrayCommand::Vertex );
+        vaop->addVertexArrayCommand( iVerts, jagDraw::VertexArrayCommand::Vertex );
+        vaop->addVertexArrayCommand( iColor );
+        drawable->addVertexArrayCommand( vaop );
 
         drawable->addDrawCommand( drawArrays );
 
@@ -247,13 +251,9 @@ bool DrawableDemo::startup()
         // Enable and specify the "color" vertex attrib.
         vaop->addVertexArrayCommand( iColor );
 
-        // A DrawCommand to unbind the VAO after we're done drawing.
-        jagDraw::VertexArrayObjectUnbindPtr vaoUnbind( new jagDraw::VertexArrayObjectUnbind() );
-
         drawable->addVertexArrayCommand( vaop );
 
         drawable->addDrawCommand( drawArrays );
-        drawable->addDrawCommand( vaoUnbind );
 
         _drawableList.push_back( drawable );
     }

@@ -91,7 +91,7 @@ void BufferObject::setTarget( const GLenum target )
     _target = target;
 }
 void BufferObject::setUsage( const GLenum usage )
-{ 
+{
     _usage = usage; 
 }
 
