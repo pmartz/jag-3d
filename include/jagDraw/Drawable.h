@@ -39,39 +39,22 @@ struct DrawInfo;
 
 /** \class Drawable Drawable.h <jagDraw/Drawable.h>
 \brief A grouping of objects for rendering geometry.
-\details Drawable stores three separate lists of jag objects:
-\li DrawablePrep objects. These are objects like Program, Uniform, Texture, etc.
-\li VertexArrayCommand objects. These are things like BufferObject, VertexAttrib, and VertexArrayObject.
+\details Drawable stores two separate lists of jag objects:
+\li DrawablePrep objects. These are objects like Program, Uniform, Texture, and VertexArrayObjects.
 \li DrawCommand objects. These are commands for rendering, such as glDrawArrays, glDrawElements, and others.
 
-Drawable::operator()( DrawInfo& ) executes the three groups of commands in the order
+Drawable::operator()( DrawInfo& ) executes the two groups of commands in the order
 above, and each command within a given group is executed sequentially.
 
-
-
-Note that when adding a BufferObject to the VertexArrayCommands list, the design
-intent is that the BufferObject binding be set to GL_ARRAY_BUFFER, but this is not
-a strict requirement.
+Note that BufferObject can't be added directly to a Drawable. In a typical use case, buffer objects
+bound to GL_ARRAY_BUFFER are attached to a VertexArrayObject, and buffer objects bound to GL_ELEMENT_BUFFER
+are attached to DrawElements commands.
 
 jagDraw module client code (such as an application or loader plugin) creates a
-Drawable and adds any required commands. Commands within a given set should be
-added in their desired execution order. For example, if the app wants a VertexAttrib
-to source its data from a specific VufferObject, the app adds the BufferObject
-first, then the VertexAttrib, as follows:
-\code
-    drawable->addVertexArrayCommand( bufferObj );
-    drawable->addVertexArrayCommand( vertexAttrib );
-\endcode
-At draw time, Drawable::operator()( DrawInfo& ) would bind the buffer object,
-then enable the vertex attrib and issue the glVertexAttribPointer() command.
+Drawable and adds any required commands.
 
-All three command lists can be accessed and modified directly with
-getDrawablePrepList(), getVertexArrayCommandList(), and getDrawCommandList().
-
-Note that getVertexArrayCommandList() takes an optional second parameter
-to specify a VertexArrayCommand::UsageHint. VertexArrayCommand objects with
-UsageHint Vertex are used by getBound() to compute the bounding volume. Other
-usage hints are reserved for future use.
+Both command lists can be accessed and modified directly with
+getDrawablePrepList() and getDrawCommandList().
 */
 class JAGDRAW_EXPORT Drawable : protected jagBase::LogBase
 {
