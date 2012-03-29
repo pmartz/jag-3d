@@ -90,7 +90,7 @@ void Drawable::insertDrawablePrep( DrawablePrepPtr dpp, unsigned int pos )
     else
     {
         _drawablePrep.resize( _drawablePrep.size()+1 );
-        unsigned int idx;
+        size_t idx;
         for( idx = _drawablePrep.size()-1; idx>pos; idx-- )
             _drawablePrep[ idx ] = _drawablePrep[ idx-1 ];
     }

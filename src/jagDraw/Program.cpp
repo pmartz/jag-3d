@@ -322,7 +322,7 @@ bool Program::validate( unsigned int contextID )
 
 unsigned int Program::getNumActiveUniforms( const GLuint id ) const
 {
-    return( _uniformLocations.size() );
+    return( (unsigned int)( _uniformLocations.size() ) );
 }
 void Program::getActiveUniform( const GLuint id, const GLuint index, std::string& name, GLenum& type )
 {
@@ -335,7 +335,7 @@ void Program::getActiveUniform( const GLuint id, const GLuint index, std::string
 }
 unsigned int Program::getNumActiveAttribs( const GLuint id ) const
 {
-    return( _vertexAttribLocations.size() );
+    return( ( unsigned int )( _vertexAttribLocations.size() ) );
 }
 void Program::getActiveAttrib( const GLuint id, const GLuint index, std::string& name, GLenum& type )
 {
