@@ -36,20 +36,19 @@ BufferObject::BufferObject( const GLenum target )
 {}
 
 BufferObject::BufferObject( const GLenum target, const jagBase::BufferPtr b, const GLenum usage )
-  : VertexArrayCommand( VertexArrayCommand::BufferObjectType ),
-    jagBase::LogBase( "jag.draw.bufobj" ),
+  : jagBase::LogBase( "jag.draw.bufobj" ),
+    VertexArrayCommand( VertexArrayCommand::BufferObjectType ),
     _target( target ),
     _usage( usage ),
     _buffer( b )
 {}
 
 BufferObject::BufferObject( const BufferObject& rhs )
-  : VertexArrayCommand( rhs ),
-    jagBase::LogBase( "jag.draw.bufobj" ),
+  : jagBase::LogBase( rhs ),
+    VertexArrayCommand( rhs ),
     _target( rhs._target ),
     _usage( rhs._usage ),
-    _buffer( rhs._buffer ),
-    _ids( rhs._ids )
+    _buffer( rhs._buffer )
 {}
 
 
@@ -58,7 +57,7 @@ BufferObject::~BufferObject()
     // TBD Handle object deletion
 }
 
-GLint BufferObject::getId( const unsigned int contextID )
+GLuint BufferObject::getID( const unsigned int contextID )
 {
     if( _ids[ contextID ] == 0 )
     {
@@ -66,14 +65,6 @@ GLint BufferObject::getId( const unsigned int contextID )
     }
 
     return( _ids[ contextID ] );
-}
-
-void BufferObject::setMaxContexts( const unsigned int numContexts )
-{
-    while( _ids._data.size() < numContexts )
-    {
-        _ids._data.push_back( 0 );
-    }
 }
 
 void BufferObject::setBuffer( jagBase::BufferPtr b ) 
@@ -97,7 +88,7 @@ void BufferObject::setUsage( const GLenum usage )
 
 void BufferObject::operator()( DrawInfo& drawInfo )
 {
-    const GLuint id( getId( drawInfo._id ) );
+    const GLuint id( getID( drawInfo._id ) );
     glBindBuffer( _target, id );
 }
 
@@ -105,7 +96,7 @@ void BufferObject::subData( GLsizeiptr offset, GLsizeiptr size, const GLvoid* da
 {
     const unsigned int contextID( 0 );
 
-    const GLuint id( getId( contextID ) );
+    const GLuint id( getID( contextID ) );
 
     glBindBuffer( _target, id );
     glBufferSubData( _target, offset, size, data );
@@ -118,7 +109,7 @@ GLbyte* BufferObject::map( const GLenum access )
 {
     const unsigned int contextID( 0 );
 
-    const GLuint id( getId( contextID ) );
+    const GLuint id( getID( contextID ) );
 
     glBindBuffer( _target, id );
     GLbyte* addr = (GLbyte*)( glMapBuffer( _target, access ) );
@@ -130,7 +121,7 @@ void BufferObject::unmap()
 {
     const unsigned int contextID( 0 );
 
-    const GLuint id( getId( contextID ) );
+    const GLuint id( getID( contextID ) );
 
     glBindBuffer( _target, id );
     glUnmapBuffer( _target );

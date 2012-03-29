@@ -31,7 +31,7 @@ namespace jagDraw {
 
 /** \struct PerContextData PerContextData.h <jagDraw/PerContextData.h>
 */
-template< class T >
+template< typename T >
 struct PerContextData
 {
     PerContextData()
@@ -47,22 +47,20 @@ struct PerContextData
         return( *this );
     }
 
-    T& operator[]( unsigned int idx )
+    T& operator[]( const unsigned int idx )
     {
-        return( _data[ idx ] );
+        return( ( T& )( _data[ idx ] ) );
     }
-    const T& operator[]( unsigned int idx ) const
+    const T& operator[]( const unsigned int idx ) const
     {
-        return( _data[ idx ] );
+        return( ( T& )( _data[ idx ] ) );
     }
 
     std::vector< T > _data;
 };
 
 typedef PerContextData< GLuint > PerContextGLuint;
-
-typedef std::pair< GLuint, bool > IDStatusPair;
-typedef PerContextData< IDStatusPair > PerContextIDStatus;
+typedef PerContextData< GLboolean > PerContextGLboolean;
 
 
 // jagDraw

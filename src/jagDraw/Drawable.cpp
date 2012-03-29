@@ -67,12 +67,7 @@ void Drawable::setMaxContexts( const unsigned int numContexts )
 {
     BOOST_FOREACH( DrawablePrepPtr dpp, _drawablePrep )
     {
-        Program* prog( dynamic_cast< Program* >( dpp.get() ) );
-        if( prog != NULL )
-            prog->setMaxContexts( numContexts );
-        VertexArrayObject* vaop( dynamic_cast< VertexArrayObject* >( dpp.get() ) );
-        if( vaop != NULL )
-            vaop->setMaxContexts( numContexts );
+        dpp->setMaxContexts( numContexts );
     }
 
     BOOST_FOREACH( DrawCommandPtr dcp, _drawCommands )

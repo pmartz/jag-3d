@@ -22,6 +22,7 @@
 #define __JAGDRAW_VERTEX_ARRAY_COMMAND_H__ 1
 
 #include <jagDraw/Export.h>
+#include <jagDraw/ObjectID.h>
 #include <jagBase/ptr.h>
 
 #include <vector>
@@ -37,7 +38,7 @@ struct DrawInfo;
 \brief
 \details
 */
-class /*JAGDRAW_EXPORT*/ VertexArrayCommand
+class /*JAGDRAW_EXPORT*/ VertexArrayCommand : public ObjectID
 {
 public:
     /** \brief TBD
@@ -59,10 +60,12 @@ public:
     } UsageHint;
 
     VertexArrayCommand( const Type type )
-      : _type( type )
+      : ObjectID(),
+        _type( type )
     {}
     VertexArrayCommand( const VertexArrayCommand& rhs )
-      : _type( rhs._type )
+      : ObjectID( rhs ),
+        _type( rhs._type )
     {}
     ~VertexArrayCommand()
     {}

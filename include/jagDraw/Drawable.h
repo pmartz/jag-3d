@@ -23,6 +23,7 @@
 
 #include <jagDraw/Export.h>
 #include <jagBase/LogBase.h>
+#include <jagDraw/ObjectID.h>
 #include <jagDraw/DrawablePrep.h>
 #include <jagDraw/VertexArrayCommand.h>
 #include <jagDraw/DrawCommand.h>
@@ -56,7 +57,7 @@ Drawable and adds any required commands.
 Both command lists can be accessed and modified directly with
 getDrawablePrepList() and getDrawCommandList().
 */
-class JAGDRAW_EXPORT Drawable : protected jagBase::LogBase
+class JAGDRAW_EXPORT Drawable : protected jagBase::LogBase, public ObjectIDOwner
 {
 public:
     Drawable();
@@ -79,7 +80,7 @@ public:
     \details Drawable iterates over all other attached Jag objects and
     passes \c numContexts to their setMaxContexts() member function.
     */
-    void setMaxContexts( const unsigned int numContexts );
+    virtual void setMaxContexts( const unsigned int numContexts );
 
 
     /** \brief Add a drawable prep command, such as a uniform or a shader program.

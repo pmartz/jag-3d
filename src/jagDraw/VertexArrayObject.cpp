@@ -31,12 +31,13 @@ namespace jagDraw {
 
 
 VertexArrayObject::VertexArrayObject()
-  : DrawablePrep()
+  : DrawablePrep(),
+    ObjectID()
 {}
 
 VertexArrayObject::VertexArrayObject( const VertexArrayObject& rhs )
   : DrawablePrep( rhs ),
-    _ids( rhs._ids )
+    ObjectID( rhs )
 {}
 
 
@@ -50,41 +51,37 @@ void VertexArrayObject::operator()( DrawInfo& drawInfo )
 {
     const unsigned int contextID( drawInfo._id );
 
-    glBindVertexArray( getId( contextID ) );
+    glBindVertexArray( getID( contextID ) );
+    GLboolean& initialized( _initialized[ contextID ] );
 
-    IDStatusPair& idStatus = _ids[ contextID ];
-    if( !( idStatus.second ) )
+    if( initialized == GL_FALSE )
     {
         BOOST_FOREACH( VertexArrayCommandPtr& vac, _commands )
         {
             (*vac)( drawInfo );
         }
-        idStatus.second = true;
+        initialized = GL_TRUE;
     }
 }
 
-GLint VertexArrayObject::getId( const unsigned int contextID )
+GLuint VertexArrayObject::getID( const unsigned int contextID )
 {
-    if( _ids[ contextID ].first == 0 )
+    if( _ids[ contextID ] == 0 )
     {
         internalInit( contextID );
     }
 
-    return( _ids[ contextID ].first );
+    return( _ids[ contextID ] );
 }
 
 void VertexArrayObject::setMaxContexts( const unsigned int numContexts )
 {
-    while( _ids._data.size() < numContexts )
-    {
-        _ids._data.push_back( jagDraw::IDStatusPair( 0, false ) );
-    }
+    _ids._data.resize( numContexts );
+    _initialized._data.resize( numContexts );
 
     BOOST_FOREACH( VertexArrayCommandPtr& vac, _commands )
     {
-        BufferObject* bop( dynamic_cast< BufferObject* >( vac.get() ) );
-        if( bop != NULL )
-            bop->setMaxContexts( numContexts );
+        vac->setMaxContexts( numContexts );
     }
 }
 
@@ -92,9 +89,10 @@ void VertexArrayObject::addVertexArrayCommand( VertexArrayCommandPtr vacp, const
 {
     _commands.push_back( vacp );
 
-    BOOST_FOREACH( IDStatusPair& idStatus, _ids._data )
+    unsigned int idx;
+    for( idx=0; idx < _initialized._data.size(); idx++ )
     {
-        idStatus.second = false;
+        _initialized[ idx ] = false;
     }
 
     if( usage == VertexArrayCommand::Vertex )
@@ -114,10 +112,8 @@ const VertexArrayCommandList& VertexArrayObject::getVertexArrayCommandList() con
 
 void VertexArrayObject::internalInit( const unsigned int contextID )
 {
-    IDStatusPair& idStatus = _ids[ contextID ];
-
-    glGenVertexArrays( 1, &( idStatus.first ) );
-    idStatus.second = false;
+    glGenVertexArrays( 1, &( _ids[ contextID ] ) );
+    _initialized[ contextID ] = GL_FALSE;
 
     JAG3D_ERROR_CHECK( "VertexArrayObject::internalInit()" );
 }

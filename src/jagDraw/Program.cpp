@@ -33,7 +33,6 @@
 namespace jagDraw {
 
 
-
 void Program::printInfoLog( const GLuint id )
 {
     if( !JAG3D_LOG_ERROR )
@@ -58,7 +57,15 @@ void Program::printInfoLog( const GLuint id )
 }
 
 Program::Program()
-  : jagBase::LogBase( "jag.draw.program" )
+  : DrawablePrep(),
+    ObjectID(),
+    jagBase::LogBase( "jag.draw.program" )
+{
+}
+Program::Program( const Program& rhs )
+  : DrawablePrep( rhs ),
+    ObjectID( rhs ),
+    jagBase::LogBase( rhs )
 {
 }
 
@@ -82,13 +89,14 @@ void Program::operator()( DrawInfo& drawInfo )
     drawInfo._program = shared_from_this();
 
     const unsigned int contextID( ( unsigned int )( drawInfo._id ) );
-    const GLuint id( getId( contextID ) );
+    const GLuint id( getID( contextID ) );
+    const GLboolean& linked( _linkStatus[ contextID ] );
 
-    if( !( _ids[ contextID ].second ) )
+    if( linked == GL_FALSE )
     {
         if( id == 0 )
         {
-            // This is out of the ordinary. getId() should have called glCreateProgram().
+            // This is out of the ordinary. getID() should have called glCreateProgram().
             JAG3D_ERROR( "Program ID==0." );
             return;
         }
@@ -128,7 +136,7 @@ GLuint Program::getExplicitAttribLocation( const std::string& name ) const
 void Program::setParameter( GLenum pname, GLint value )
 {
     const unsigned int contextID( 0 );
-    const GLuint id( getId( contextID ) );
+    const GLuint id( getID( contextID ) );
 
 #if 0 // these are potentially not supported if not defined correctly.
 
@@ -145,27 +153,25 @@ void Program::setParameter( GLenum pname, GLint value )
 void Program::get( GLenum pname, GLint *params )
 {
     const unsigned int contextID( 0 );
-    const GLuint id( _ids[ contextID ].first );
+    const GLuint id( getID( contextID ) );
 
     glGetProgramiv( id, pname, params );
 }
 
-GLint Program::getId( const unsigned int contextID )
+GLuint Program::getID( const unsigned int contextID )
 {
-    if( _ids[ contextID ].first == 0 )
+    if( _ids[ contextID ] == 0 )
     {
         internalInit( contextID );
     }
 
-    return( _ids[ contextID ].first );
+    return( _ids[ contextID ] );
 }
 
 void Program::setMaxContexts( const unsigned int numContexts )
 {
-    while( _ids._data.size() < numContexts )
-    {
-        _ids._data.push_back( jagDraw::IDStatusPair( 0, false ) );
-    }
+    _ids._data.resize( numContexts );
+    _linkStatus._data.resize( numContexts );
 
     BOOST_FOREACH( const ShaderList::value_type& shader, _shaders )
     {
@@ -184,10 +190,7 @@ bool Program::link( unsigned int contextID )
         return( false );
     }
 
-    // idLink.first is OpenGL program ID.
-    // idLink.second is link status: true after successful linked.
-    IDStatusPair& idLink( _ids[ contextID ] );
-    const GLuint id( idLink.first );
+    const GLuint id( getID( contextID ) );
 
     if( JAG3D_LOG_DEBUG )
     {
@@ -208,7 +211,7 @@ bool Program::link( unsigned int contextID )
     JAG3D_TRACE( "  link(): Attaching shaders." );
     BOOST_FOREACH( const ShaderList::value_type& shader, _shaders )
     {
-        GLint shaderID = shader->getId( contextID );
+        GLint shaderID = shader->getID( contextID );
         abortLink = abortLink || ( shaderID == 0 );
         if( !abortLink ) {
             glAttachShader( id, shaderID );
@@ -229,12 +232,12 @@ bool Program::link( unsigned int contextID )
     {
         printInfoLog( id );
         glDeleteProgram( id );
-        idLink.first = 0;
-        idLink.second = false;
+        _ids[ contextID ] = 0;
+        _linkStatus[ contextID ] = GL_FALSE;
         return( false );
     }
 
-    idLink.second = true;
+    _linkStatus[ contextID ] = GL_TRUE;
     {
         GLint n;
         glUseProgram( id );
@@ -301,7 +304,7 @@ bool Program::link( unsigned int contextID )
 
 bool Program::validate( unsigned int contextID )
 {
-    const GLuint id( getId( contextID ) );
+    const GLuint id( getID( contextID ) );
 
     GLint status;
     glValidateProgram( id );
@@ -310,8 +313,8 @@ bool Program::validate( unsigned int contextID )
     {
         printInfoLog( id );
         glDeleteProgram( id );
-        _ids[ contextID ].first = 0;
-        // TBD also set second (link status) to false?
+        _ids[ contextID ] = 0;
+        // TBD also set _linkStatus) to false?
     }
     return( status == GL_TRUE );
 }
@@ -352,8 +355,8 @@ void Program::internalInit( const unsigned int contextID )
     if( id == 0 )
         JAG3D_ERROR( "glCreateProgram() returned program ID 0." );
 
-    _ids[ contextID ].first = id;
-    _ids[ contextID ].second = false;
+    _ids[ contextID ] = id;
+    _linkStatus[ contextID ] = GL_FALSE;
 }
 
 void Program::fromSourceFiles( const std::string &vertexShaderFile,

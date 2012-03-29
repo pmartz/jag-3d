@@ -25,6 +25,7 @@
 #include <jagDraw/Export.h>
 #include <jagDraw/PlatformOpenGL.h>
 #include <jagDraw/BufferObject.h>
+#include <jagDraw/ObjectID.h>
 #include <jagBase/types.h>
 
 
@@ -45,7 +46,7 @@ values).
 \li Derive a class from DrawCommand.
 \li Override and define the pure virtual operator() member function.
 */
-class DrawCommand
+class DrawCommand : public ObjectIDOwner
 {
 public:
     enum DrawCommandType{
@@ -80,22 +81,30 @@ public:
         UserDefined7
     };
 
-    DrawCommand( DrawCommandType drawCommandType, GLenum mode=GL_POINTS )
-      : _drawCommandType( drawCommandType ),
-        _mode( mode )
+    DrawCommand( const DrawCommandType drawCommandType, const GLenum mode=GL_POINTS, const GLsizei count=0, const GLsizei primcount=0 )
+      : ObjectIDOwner(),
+        _drawCommandType( drawCommandType ),
+        _mode( mode ),
+        _count( count ),
+        _primcount( primcount )
+    {}
+    DrawCommand( const DrawCommand& rhs )
+      : ObjectIDOwner( rhs ),
+        _drawCommandType( rhs._drawCommandType ),
+        _mode( rhs._mode ),
+        _count( rhs._count ),
+        _primcount( rhs._primcount )
     {}
     virtual ~DrawCommand() 
     {}
 
+    /**
+    */
     DrawCommandType getType() { return _drawCommandType; }
 
     /**
     */
     virtual void operator()( DrawInfo& ) = 0;
-
-    /** \brief Tell the DrawCommand how many contexts to expect.
-    \details Invokes setMaxContexts() on any BufferObjects that the DrawCommand owns. */
-    virtual void setMaxContexts( const unsigned int numContexts ) {}
 
 protected:
     DrawCommandType _drawCommandType;
@@ -118,10 +127,23 @@ protected:
 class DrawElementsBase
 {
 protected:
-    GLenum _type;
-    GLvoid* _offset;
+    DrawElementsBase( const GLenum type, const GLvoid* offset=NULL,
+        const jagDraw::BufferObjectPtr elementBuffer=jagDraw::BufferObjectPtr() )
+      : _type( type ),
+        _offset( offset ),
+        _elementBuffer( elementBuffer )
+    {}
+    DrawElementsBase( const DrawElementsBase& rhs )
+      : _type( rhs._type ),
+        _offset( rhs._offset ),
+        _elementBuffer( rhs._elementBuffer )
+    {}
+    virtual ~DrawElementsBase() {}
 
-    jagDraw::BufferObjectPtr _elementBuffer;
+    GLenum _type;
+    const GLvoid* _offset;
+
+    const jagDraw::BufferObjectPtr _elementBuffer;
 };
 
 class BaseVertexBase
@@ -158,11 +180,10 @@ class DrawArrays : public DrawCommand,
             public DrawArraysBase
 {
 public:
-    DrawArrays( GLenum mode, GLint first, GLsizei count )
-      : DrawCommand( DrawArraysType, mode )
+    DrawArrays( const GLenum mode, const GLint first, const GLsizei count )
+      : DrawCommand( DrawArraysType, mode, count )
     {
         _first = first;
-        _count = count;
     }
 
     virtual void operator()( DrawInfo& drawInfo )
@@ -182,12 +203,10 @@ class DrawArraysInstanced : public DrawCommand,
             public DrawArraysBase
 {
 public:
-    DrawArraysInstanced( GLenum mode, GLint first, GLsizei count, GLsizei primcount )
-      : DrawCommand( DrawArraysInstancedType, mode )
+    DrawArraysInstanced( const GLenum mode, const GLint first, const GLsizei count, const GLsizei primcount )
+      : DrawCommand( DrawArraysInstancedType, mode, count, primcount )
     {
         _first = first;
-        _count = count;
-        _primcount = primcount;
     }
 
     virtual void operator()( DrawInfo& drawInfo )
@@ -207,7 +226,7 @@ class DrawArraysIndirect : public DrawCommand,
             public IndirectBase
 {
 public:
-    DrawArraysIndirect( GLenum mode, const GLvoid* indirect )
+    DrawArraysIndirect( const GLenum mode, const GLvoid* indirect )
       : DrawCommand( DrawArraysIndirectType, mode )
     {
         _indirect = const_cast< GLvoid* >( indirect );
@@ -232,9 +251,9 @@ class MultiDrawArrays : public DrawCommand,
             public MultiArrayBase
 {
 public:
-    MultiDrawArrays( GLenum mode, const jagBase::GLintArray& first,
-            const jagBase::GLsizeiArray& count, GLsizei primcount )
-      : DrawCommand( MultiDrawArraysType, mode ),
+    MultiDrawArrays( const GLenum mode, const jagBase::GLintArray& first,
+            const jagBase::GLsizeiArray& count, const GLsizei primcount )
+      : DrawCommand( MultiDrawArraysType, mode, 0, primcount ),
         _firstArray( first )
     {
         _countArray = count;
@@ -265,28 +284,29 @@ class DrawElements : public DrawCommand,
             public DrawElementsBase
 {
 public:
-    DrawElements( GLenum mode, GLsizei count, GLenum type, const GLvoid* offset )
-      : DrawCommand( DrawElementsType, mode )
-    {
-        _count = count;
-        _type = type;
-        _offset = const_cast< GLvoid* >( offset );
-    }
-    DrawElements( GLenum mode, GLsizei count, GLenum type,
-            const GLvoid* offset, jagDraw::BufferObjectPtr elementBuffer )
-      : DrawCommand( DrawElementsType, mode )
-    {
-        _count = count;
-        _type = type;
-        _offset = const_cast< GLvoid* >( offset );
-        _elementBuffer = elementBuffer;
-    }
+    DrawElements( const GLenum mode, const GLsizei count, const GLenum type, const GLvoid* offset,
+            const jagDraw::BufferObjectPtr elementBuffer=jagDraw::BufferObjectPtr() )
+      : DrawCommand( DrawElementsType, mode, count ),
+        DrawElementsBase( type, offset, elementBuffer )
+    {}
+    DrawElements( const DrawElements& rhs )
+      : DrawCommand( rhs ),
+        DrawElementsBase( rhs )
+    {}
+    virtual ~DrawElements() {}
 
+    /** \brief Tell the DrawCommand how many contexts to expect.
+    \details Invokes setMaxContexts() on any BufferObjects that the DrawCommand owns. */
     virtual void setMaxContexts( const unsigned int numContexts )
     {
         if( _elementBuffer != NULL )
             _elementBuffer->setMaxContexts( numContexts );
     }
+
+    /** \brief TBD
+    \details TBD
+    */
+    virtual void deleteID( const jagDraw::jagDrawContextID contextID ) {}
 
     virtual void operator()( DrawInfo& drawInfo )
     {
@@ -313,13 +333,9 @@ class DrawElementsInstanced : public DrawCommand,
 public:
     DrawElementsInstanced( GLenum mode, GLsizei count, GLenum type,
             const GLvoid* offset, GLsizei primcount )
-      : DrawCommand( DrawElementsInstancedType, mode )
-    {
-        _count = count;
-        _type = type;
-        _offset = const_cast< GLvoid* >( offset );
-        _primcount = primcount;
-    }
+      : DrawCommand( DrawElementsInstancedType, mode, count, primcount ),
+        DrawElementsBase( type, offset )
+    {}
 
     virtual void operator()( DrawInfo& drawInfo )
     {
@@ -340,12 +356,11 @@ class MultiDrawElements : public DrawCommand,
 public:
     MultiDrawElements( GLenum mode, const jagBase::GLsizeiArray& count, GLenum type,
             const jagBase::GLvoidPtrArray& indices, GLsizei primcount)
-      : DrawCommand( MultiDrawElementsType, mode )
+      : DrawCommand( MultiDrawElementsType, mode, 0, primcount ),
+        DrawElementsBase( type )
     { 
         _countArray = count;
-        _type = type;
         _indicesArray = indices;
-        _primcount = primcount;
     }
 
     virtual void operator()( DrawInfo& drawInfo )
@@ -367,13 +382,11 @@ class DrawRangeElements : public DrawCommand,
 public:
     DrawRangeElements( GLenum mode, GLuint start, GLuint end, GLsizei count, GLenum type,
             const GLvoid* offset )
-      : DrawCommand( DrawRangeElementsType, mode )
+      : DrawCommand( DrawRangeElementsType, mode, count ),
+        DrawElementsBase( type, offset )
     {
-        _count = count;
-        _type = type;
         _start = start;
         _end = end;
-        _offset = const_cast< GLvoid* >( offset );
     }
 
     virtual void operator()( DrawInfo& drawInfo )
@@ -395,11 +408,9 @@ class DrawElementsBaseVertex : public DrawCommand,
 public:
     DrawElementsBaseVertex( GLenum mode, GLsizei count, GLenum type,
             const GLvoid* offset, GLint baseVertex )
-      : DrawCommand( DrawElementsBaseVertexType, mode )
+      : DrawCommand( DrawElementsBaseVertexType, mode, count ),
+        DrawElementsBase( type, offset )
     {
-        _count = count;
-        _type = type;
-        _offset = const_cast< GLvoid* >( offset );
         _baseVertex = baseVertex;
     }
 
@@ -422,13 +433,11 @@ class DrawRangeElementsBaseVertex : public DrawCommand,
 public:
     DrawRangeElementsBaseVertex( GLenum mode, GLuint start, GLuint end, GLsizei count, GLenum type,
             const GLvoid* offset, GLint baseVertex )
-      : DrawCommand( DrawRangeElementsBaseVertexType, mode )
+      : DrawCommand( DrawRangeElementsBaseVertexType, mode, count ),
+        DrawElementsBase( type, offset )
     {
-        _count = count;
-        _type = type;
         _start = start;
         _end = end;
-        _offset = const_cast< GLvoid* >( offset );
         _baseVertex = baseVertex;
     }
 
@@ -451,12 +460,9 @@ class DrawElementsInstancedBaseVertex : public DrawCommand,
 public:
     DrawElementsInstancedBaseVertex( GLenum mode, GLsizei count, GLenum type,
         const GLvoid* offset, GLsizei primcount, GLint baseVertex )
-      : DrawCommand( DrawElementsInstancedBaseVertexType, mode )
+      : DrawCommand( DrawElementsInstancedBaseVertexType, mode, count, primcount ),
+        DrawElementsBase( type, offset )
     {
-        _count = count;
-        _type = type;
-        _offset = const_cast< GLvoid* >( offset );
-        _primcount = primcount;
         _baseVertex = baseVertex;
     }
 
@@ -478,9 +484,9 @@ class DrawElementsIndirect : public DrawCommand,
 {
 public:
     DrawElementsIndirect( GLenum mode, GLenum type, const GLvoid* indirect )
-      : DrawCommand( DrawElementsIndirectType, mode )
+      : DrawCommand( DrawElementsIndirectType, mode ),
+        DrawElementsBase( type )
     {
-        _type = type;
         _indirect = const_cast< GLvoid* >( indirect );
     }
 
@@ -504,13 +510,12 @@ public:
     MultiDrawElementsBaseVertex( GLenum mode, const jagBase::GLsizeiArray& count, 
             GLenum type, const jagBase::GLvoidPtrArray& indices, GLsizei primcount,
             const jagBase::GLintArray& basevertex )
-      : DrawCommand( MultiDrawElementsBaseVertexType, mode ),
+      : DrawCommand( MultiDrawElementsBaseVertexType, mode, 0, primcount ),
+        DrawElementsBase( type ),
         _basevertexArray( basevertex )
     { 
         _countArray = count;
-        _type = type;
         _indicesArray = indices;
-        _primcount = primcount;
     }
 
     virtual void operator()( DrawInfo& drawInfo )

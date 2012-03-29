@@ -25,7 +25,7 @@
 #include <jagDraw/Export.h>
 #include <jagDraw/PlatformOpenGL.h>
 #include <jagBase/LogBase.h>
-#include <jagDraw/PerContextData.h>
+#include <jagDraw/ObjectID.h>
 #include <jagBase/types.h>
 #include <jagBase/ptr.h>
 #include <string>
@@ -38,7 +38,7 @@ namespace jagDraw {
 /** \class Shader Shader.h <jagDraw/Shader.h>
 \brief TBD.
 */
-class JAGDRAW_EXPORT Shader : protected jagBase::LogBase
+class JAGDRAW_EXPORT Shader : public ObjectID, protected jagBase::LogBase
 {
 public:
     Shader( GLenum type );
@@ -51,11 +51,12 @@ public:
     /** \brief Get the OpenGL shader object ID for the specified \c contextID.
     \details If an ID hasn't already been created for \c contextID, getId() calls
     glCreateShader() to generate the ID and compiles all attached shader source strings. */
-    GLuint getId( const unsigned int contextID );
-
-    /** \brief Tell the Shader how many contexts to expect.
-    \details Resizes the _ids variable */
-    void setMaxContexts( const unsigned int numContexts );
+    virtual GLuint getID( const jagDraw::jagDrawContextID contextID );
+    
+    /** \brief TBD
+    \details TBD
+    */
+    virtual void deleteID( const jagDraw::jagDrawContextID contextID ) {}
 
 protected:
     void internalInit( const unsigned int contextID );
@@ -70,8 +71,6 @@ protected:
 
     GLenum _type;
     jagBase::StringList _sourceList;
-
-    PerContextGLuint _ids;
 };
 
 typedef jagBase::ptr< jagDraw::Shader >::shared_ptr ShaderPtr;

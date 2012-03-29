@@ -55,7 +55,7 @@ void Shader::addSourceString( const std::string& source )
     _sourceList.push_back( source );
 }
 
-GLuint Shader::getId( const unsigned int contextID )
+GLuint Shader::getID( const unsigned int contextID )
 {
     if( _ids[ contextID ] == 0 )
     {
@@ -63,14 +63,6 @@ GLuint Shader::getId( const unsigned int contextID )
     }
 
     return( _ids[ contextID ] );
-}
-
-void Shader::setMaxContexts( const unsigned int numContexts )
-{
-    while( _ids._data.size() < numContexts )
-    {
-        _ids._data.push_back( 0 );
-    }
 }
 
 

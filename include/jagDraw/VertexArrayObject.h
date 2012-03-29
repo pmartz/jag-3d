@@ -40,24 +40,35 @@ struct DrawInfo;
 /** \class VertexArrayObject VertexArrayObject.h <jagDraw/VertexArrayObject.h>
 \brief A context-safe wrapper for OpenGL vertex array objects.
 \details \gl{section 2.10}.
+
+Diamond inheritance note: See the documentation for ObjectID.
 */
-class JAGDRAW_EXPORT VertexArrayObject : public DrawablePrep
+class JAGDRAW_EXPORT VertexArrayObject : public DrawablePrep,
+            public ObjectID
 {
 public:
     VertexArrayObject();
     VertexArrayObject( const VertexArrayObject& rhs );
-
     virtual ~VertexArrayObject();
 
     virtual void operator()( DrawInfo& drawInfo );
 
-    GLint getId( const unsigned int contextID );
+    /** \brief TBD
+    \details TBD
+    */
+    virtual GLuint getID( const jagDraw::jagDrawContextID contextID );
 
     /** \brief Tell the VertexArrayObject how many contexts to expect.
     \details Resizes the _ids variable, then iterates over all attached
     BufferObjects, invoking setMaxContexts on each.
     */
-    void setMaxContexts( const unsigned int numContexts );
+    virtual void setMaxContexts( const unsigned int numContexts );
+
+    /** \brief TBD
+    \details TBD
+    */
+    virtual void deleteID( const jagDraw::jagDrawContextID contextID ) {}
+
 
     void addVertexArrayCommand( VertexArrayCommandPtr vacp, const VertexArrayCommand::UsageHint& usage=VertexArrayCommand::Unspecified );
     VertexArrayCommandList& getVertexArrayCommandList();
@@ -66,7 +77,7 @@ public:
 protected:
     void internalInit( const unsigned int contextID );
 
-    PerContextIDStatus _ids;
+    PerContextGLboolean _initialized;
 
     VertexArrayCommandList _commands;
 

@@ -21,7 +21,7 @@
 #ifndef __JAGDRAW_DRAWABLE_PREP_H__
 #define __JAGDRAW_DRAWABLE_PREP_H__ 1
 
-#include <jagDraw/Export.h>
+#include <jagDraw/ObjectID.h>
 #include <jagBase/ptr.h>
 
 #include <vector>
@@ -37,7 +37,7 @@ struct DrawInfo;
 \brief
 \details
 */
-class DrawablePrep
+class DrawablePrep : public ObjectIDOwner
 {
 public:
     DrawablePrep() {}
@@ -46,8 +46,6 @@ public:
     /**
     */
     virtual void operator()( DrawInfo& ) = 0;
-
-protected:
 };
 
 typedef jagBase::ptr< jagDraw::DrawablePrep >::shared_ptr DrawablePrepPtr;

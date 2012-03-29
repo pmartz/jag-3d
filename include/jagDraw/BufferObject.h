@@ -42,8 +42,8 @@ struct DrawInfo;
 \brief A context-safe wrapper for OpenGL buffer objects.
 \details \gl{section 2.9}.
 */
-class JAGDRAW_EXPORT BufferObject : public VertexArrayCommand,
-            public jagBase::LogBase
+class JAGDRAW_EXPORT BufferObject : protected jagBase::LogBase,
+            public VertexArrayCommand
 {
 public:
     /**
@@ -60,11 +60,8 @@ public:
 
     virtual ~BufferObject();
 
-    GLint getId( const unsigned int contextID );
 
-    /** \brief Tell the BufferObject how many contexts to expect.
-    \details Resizes the _ids variable */
-    void setMaxContexts( const unsigned int numContexts );
+    virtual GLuint getID( const jagDraw::jagDrawContextID contextID );
 
     void setBuffer( jagBase::BufferPtr b );
     jagBase::BufferPtr getBuffer() { return( _buffer ); }
@@ -93,8 +90,6 @@ protected:
     GLenum _target;
     GLenum _usage;
     jagBase::BufferPtr _buffer;
-
-    PerContextGLuint _ids;
 };
 
 typedef jagBase::ptr< jagDraw::BufferObject >::shared_ptr BufferObjectPtr;

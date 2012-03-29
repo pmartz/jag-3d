@@ -25,6 +25,7 @@
 #include <jagDraw/Export.h>
 #include <jagDraw/DrawablePrep.h>
 #include <jagBase/LogBase.h>
+#include <jagDraw/ObjectID.h>
 #include <jagDraw/Shader.h>
 #include <jagDraw/PerContextData.h>
 #include <jagBase/ptr.h>
@@ -42,9 +43,11 @@ struct DrawInfo;
 /** \class Program Program.h <jagDraw/Program.h>
 \brief
 \details \gl{section 2.11.2}.
+
+Diamond inheritance note: See the documentation for ObjectID.
 */
 class JAGDRAW_EXPORT Program : public DrawablePrep,
-            public SHARED_FROM_THIS(Program),
+            public ObjectID, public SHARED_FROM_THIS(Program),
             protected jagBase::LogBase
 {
 public:
@@ -57,6 +60,7 @@ public:
     };
 
     Program();
+    Program( const Program& rhs );
     ~Program();
 
     /** \brief Attach a shader to this program.
@@ -83,13 +87,13 @@ public:
     /** \brief Get the OpenGL program object ID for the specified \c contextID.
     \details If an ID hasn't already been created for \c contextID, getId() calls
     glCreateProgram() to generate the ID. */
-    GLint getId( const unsigned int contextID );
+    virtual GLuint getID( const unsigned int contextID );
 
     /** \brief Tell the Program how many contexts to expect.
     \details Resizes the _ids variable, then iterates over all attached
     Shader objects, invoking setMaxContexts on each.
     */
-    void setMaxContexts( const unsigned int numContexts );
+    virtual void setMaxContexts( const unsigned int numContexts );
 
     /** \brief Link the program.
     \details This function performs the following tasks:
@@ -204,7 +208,7 @@ private:
 
     ShaderList _shaders;
 
-    PerContextIDStatus _ids;
+    PerContextGLboolean _linkStatus;
 
     typedef std::map< HashValue, GLint > LocationMap;
     LocationMap _uniformLocations;
