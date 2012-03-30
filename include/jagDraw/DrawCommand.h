@@ -589,29 +589,6 @@ public:
 typedef jagBase::ptr< PrimitiveRestartDisable >::shared_ptr PrimitiveRestartDisablePtr;
 
 
-/** \class VertexArrayObjectUnbind DrawCommand.h <jagDraw/DrawCommand.h>
-\brief Binds the default vertex array object buffer.
-\details If client code attaches a VertexArrayObject vertex array command to
-a Drawable, then the client code can attach an instance of the
-VertexArrayObjectUnbind DrawCommand to bind the default vertex array object.
-*/
-class VertexArrayObjectUnbind : public DrawCommand
-{
-public:
-    VertexArrayObjectUnbind()
-      : DrawCommand( VertexArrayObjectUnbindType )
-    { 
-    }
-
-    virtual void operator()( DrawInfo& )
-    {
-        glBindVertexArray( 0 );
-    }
-};
-
-typedef jagBase::ptr< VertexArrayObjectUnbind >::shared_ptr VertexArrayObjectUnbindPtr;
-
-
 // jagDraw
 }
 
