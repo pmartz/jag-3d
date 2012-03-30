@@ -168,7 +168,7 @@ bool DrawCommandDemo::startup()
         jagBase::BufferPtr elbp( new jagBase::Buffer( elements.size() * sizeof( GLubyte ), (void*)&elements[0] ) );
         _elbop = jagDraw::BufferObjectPtr( new jagDraw::BufferObject( GL_ELEMENT_ARRAY_BUFFER, elbp ) );
     }
-    _drawElements = jagDraw::DrawElementsPtr( new jagDraw::DrawElements( GL_TRIANGLE_STRIP, elements.size(), GL_UNSIGNED_BYTE, 0 ) );
+    _drawElements = jagDraw::DrawElementsPtr( new jagDraw::DrawElements( GL_TRIANGLE_STRIP, (const GLsizei)( elements.size() ), GL_UNSIGNED_BYTE, 0 ) );
 
     {
         const char* vShaderSource =
