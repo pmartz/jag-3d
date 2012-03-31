@@ -256,10 +256,14 @@ bool Program::link( unsigned int contextID )
         {
             GLint osize;
             GLenum type;
-            std::string uniformName;
             glGetActiveUniform( id, idx, (GLsizei)maxLength, NULL, &osize, &type, buf );
-            uniformName = std::string( buf );
-            GLint location = glGetUniformLocation( id, buf );
+            const GLint location = glGetUniformLocation( id, buf );
+            std::string uniformName( buf );
+            if( uniformName.find_last_of( '[' ) != uniformName.npos )
+            {
+                // Some drivers append "[...]" to end of array names. Strip this.
+                uniformName = uniformName.substr( 0, uniformName.find_last_of( '[' ) );
+            }
             const HashValue hash( createHash( uniformName ) );
             if( JAG3D_LOG_INFO )
             {
@@ -289,10 +293,9 @@ bool Program::link( unsigned int contextID )
         {
             GLint osize;
             GLenum type;
-            std::string attribName;
             glGetActiveAttrib( id, idx, (GLsizei)maxLength, NULL, &osize, &type, buf );
-            attribName = std::string( buf );
-            GLint location = glGetAttribLocation( id, buf );
+            const GLint location = glGetAttribLocation( id, buf );
+            const std::string attribName( buf );
             const HashValue hash( createHash( attribName ) );
             if( JAG3D_LOG_INFO )
             {
