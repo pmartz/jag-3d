@@ -249,12 +249,17 @@ bool Program::link( unsigned int contextID )
             if( n > 0 )
                 ls << "        hashcode  loc  name" << std::endl;
         }
-        for( GLint i = 0; i < n; i++ )
+        GLint maxLength;
+        glGetProgramiv( id, GL_ACTIVE_UNIFORM_MAX_LENGTH, &maxLength );
+        char* buf = new char[ maxLength ];
+        for( GLint idx = 0; idx < n; idx++ )
         {
+            GLint osize;
             GLenum type;
             std::string uniformName;
-            getActiveUniform( id, i, uniformName, type );
-            GLint location = glGetUniformLocation( id, uniformName.c_str() );
+            glGetActiveUniform( id, idx, (GLsizei)maxLength, NULL, &osize, &type, buf );
+            uniformName = std::string( buf );
+            GLint location = glGetUniformLocation( id, buf );
             const HashValue hash( createHash( uniformName ) );
             if( JAG3D_LOG_INFO )
             {
@@ -268,6 +273,7 @@ bool Program::link( unsigned int contextID )
             }
             _uniformLocations[ hash ] = location;
         }
+        delete[] buf;
 
         glGetProgramiv( id, GL_ACTIVE_ATTRIBUTES, &n );
         if( JAG3D_LOG_INFO )
@@ -277,12 +283,16 @@ bool Program::link( unsigned int contextID )
             if( n > 0 )
                 ls << "        hashcode  loc  name" << std::endl;
         }
-        for( GLint i = 0; i < n; i++ )
+        glGetProgramiv( id, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &maxLength );
+        buf = new char[ maxLength ];
+        for( GLint idx = 0; idx < n; idx++ )
         {
+            GLint osize;
             GLenum type;
             std::string attribName;
-            getActiveAttrib( id, i, attribName, type );
-            GLint location = glGetAttribLocation( id, attribName.c_str() );
+            glGetActiveAttrib( id, idx, (GLsizei)maxLength, NULL, &osize, &type, buf );
+            attribName = std::string( buf );
+            GLint location = glGetAttribLocation( id, buf );
             const HashValue hash( createHash( attribName ) );
             if( JAG3D_LOG_INFO )
             {
@@ -324,27 +334,9 @@ unsigned int Program::getNumActiveUniforms( const GLuint id ) const
 {
     return( (unsigned int)( _uniformLocations.size() ) );
 }
-void Program::getActiveUniform( const GLuint id, const GLuint index, std::string& name, GLenum& type )
-{
-    char namebuff[ 256 ];
-    GLsizei len;
-    GLsizei isize = sizeof( namebuff );
-    GLint osize;
-    glGetActiveUniform( id, index, isize, &len, &osize, &type, namebuff );
-    name = std::string( namebuff );
-}
 unsigned int Program::getNumActiveAttribs( const GLuint id ) const
 {
     return( ( unsigned int )( _vertexAttribLocations.size() ) );
-}
-void Program::getActiveAttrib( const GLuint id, const GLuint index, std::string& name, GLenum& type )
-{
-    char namebuff[ 256 ];
-    GLsizei len;
-    GLsizei isize = sizeof( namebuff );
-    GLint osize;
-    glGetActiveAttrib( id, index, isize, &len, &osize, &type, namebuff );
-    name = std::string( namebuff );
 }
 
 

@@ -121,19 +121,11 @@ public:
     \details
     */
     unsigned int getNumActiveUniforms( const GLuint id ) const;
-    /** \brief
-    \details
-    */
-    void getActiveUniform( const GLuint id, const GLuint index, std::string& name, GLenum& type );
 
     /** \brief
     \details
     */
     unsigned int getNumActiveAttribs( const GLuint id ) const;
-    /** \brief
-    \details
-    */
-    void getActiveAttrib( const GLuint id, const GLuint index, std::string& name, GLenum& type );
 
 
 
