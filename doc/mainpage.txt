@@ -44,5 +44,7 @@ loader as soon as possible. It's difficult to do anything interesting in GL4cpfc
 without textures.
 \li "State sorting" (sorting Drawables based on the commands that configure GL for
 rendering) needs to be implemented.
+\li CMake cleanup: all tests currently link with the release version of jagBase and jagDraw.
+\li CMake cleanup: Need the same RELATIVE_LIB_PATH fix as done on other projects.
 
 */
