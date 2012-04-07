@@ -140,15 +140,19 @@ foreach( lib ${_requestedComponents} )
     )
     if( NOT POCO_${lib}_LIBRARY )
         message( WARNING "Could not find Poco component library ${lib}" )
+    else()
+        list( APPEND POCO_LIBRARIES "optimized" ${POCO_${lib}_LIBRARY} )
     endif()
-    list( APPEND POCO_LIBRARIES "optimized" ${POCO_${lib}_LIBRARY} )
-
     find_library( POCO_${lib}_LIBRARY_DEBUG
         NAMES ${lib}${_crtDebugSuffix}
             Poco${lib}${_crtDebugSuffix}
         PATH_SUFFIXES lib
     )
-    list( APPEND POCO_LIBRARIES "debug" ${POCO_${lib}_LIBRARY_DEBUG} )
+    if( NOT POCO_${lib}_LIBRARY_DEBUG )
+        message( WARNING "Could not find Poco component Debug library ${lib}" )
+    else()
+        list( APPEND POCO_LIBRARIES "debug" ${POCO_${lib}_LIBRARY_DEBUG} )
+    endif()
 endforeach()
 
 
