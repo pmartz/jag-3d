@@ -101,9 +101,6 @@ macro( _addNonWindowedExecutable _category _exeName )
         ${_requiredDependencyIncludes}
     )
 
-    if( WIN32 )
-        set( RELATIVE_LIB_PATH ../../../lib/ )
-    endif()
     target_link_libraries( ${_exeName}
         ${_projectLibraries}
         ${_optionalDependencyLibraries}
@@ -132,9 +129,6 @@ macro( _addFreeglutExecutable _category _exeName )
         ${_requiredDependencyIncludes}
     )
 
-    if( WIN32 )
-        set( RELATIVE_LIB_PATH ../../../lib/ )
-    endif()
     target_link_libraries( ${_localExeName}
         ${libs}
         ${Freeglut_LIBRARIES}
@@ -171,9 +165,6 @@ macro( _addQtExecutable _category _exeName )
         ${_requiredDependencyIncludes}
     )
 
-    if( WIN32 )
-        set( RELATIVE_LIB_PATH ../../../lib/ )
-    endif()
     target_link_libraries( ${_localExeName}
         ${libs}
         ${QT_QTOPENGL_LIBRARY}
