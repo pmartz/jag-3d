@@ -1,0 +1,12 @@
+On Ubuntu Linux (needs DWMake):
+
+   $ make
+   $ ./RUN
+
+On Windows:
+
+    1. Download, install and boot to Ubuntu
+    $ make
+    $ ./RUN
+
+
