@@ -26,8 +26,6 @@ endif()
 
 
 set( HEADER_PATH ${PROJECT_SOURCE_DIR}/include/${_libName} )
-#file(GLOB_RECURSE _jagBaseHeaderFiles ${HEADER_PATH}/*.h )
-
 set( _jagBaseHeaderFiles
     ${HEADER_PATH}/Export.h
     ${HEADER_PATH}/Buffer.h
@@ -47,12 +45,4 @@ set( _jagBaseSourceFiles
 _addLibrary( ${_libName}
     ${_jagBaseHeaderFiles}
     ${_jagBaseSourceFiles}
-)
-
-install(
-    DIRECTORY ${HEADER_PATH}
-    DESTINATION include
-    USE_SOURCE_PERMISSIONS
-    FILES_MATCHING PATTERN "*.h"
-    PATTERN ".hg" EXCLUDE
 )

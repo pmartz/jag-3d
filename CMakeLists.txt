@@ -85,7 +85,7 @@ include( FindPOCOHelper )
 # for other platforms.
 
 #   At least one windowing API is required for demos/tests/examples:
-find_package( Qt4 COMPONENTS QtCore QtGui QtOpenGL )
+find_package( Qt 4.8.0 COMPONENTS QtCore QtGui QtOpenGL )
 include( FindFreeglutHelper )
 
 FreeglutMenuSetup()
@@ -99,12 +99,9 @@ GGTFinder()
 POCOFinder()
 
 
+
 if( QT_FOUND )
     include( ${QT_USE_FILE} )
-else()
-    if( QT_QMAKE_EXECUTABLE AND NOT QT4_QGLOBAL_H_FILE )
-        message( STATUS "Qt was not found because the qglobal.h file was not found." )
-    endif()
 endif()
 
 # if( GLEW_FOUND )

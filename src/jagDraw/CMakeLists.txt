@@ -98,11 +98,3 @@ _addLibrary( ${_libName}
     JAG_LIBRARIES
         jagBase
 )
-
-install(
-    DIRECTORY ${HEADER_PATH}
-    DESTINATION include
-    USE_SOURCE_PERMISSIONS
-    FILES_MATCHING PATTERN "*.h"
-    PATTERN ".hg" EXCLUDE
-)
