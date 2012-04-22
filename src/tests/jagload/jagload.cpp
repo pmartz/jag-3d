@@ -261,10 +261,10 @@ gmtl::Matrix44f JagLoadDemo::computeProjection( float aspect )
 
 void JagLoadDemo::makeViewMatrices( gmtl::Matrix44f& view, gmtl::Matrix33f& normal )
 {
-    osg::Matrix m( osg::Matrix::lookAt( _bs.center() + ( osg::Vec3( 0., -4., 1.5 ) * _bs.radius() ),
-        _bs.center(), osg::Vec3( 0., 0., 1. ) ) );
-//    osg::Matrix m( osg::Matrix::lookAt( _bs.center() + ( osg::Vec3( -.5, -4., 0. ) * _bs.radius() ),
-//        _bs.center(), osg::Vec3( -1., 0., 0. ) ) );
+    const osg::Vec3 eye( _bs.center() + ( osg::Vec3( 0., -4., 1.5 ) * _bs.radius() ) );
+    const osg::Vec3 center( _bs.center() );
+    const osg::Vec3 up( 0., 0., 1. );
+    osg::Matrix m( osg::Matrix::lookAt( eye, center, up ) );
 
     gmtl::Matrix44f v;
     unsigned int r, c;
