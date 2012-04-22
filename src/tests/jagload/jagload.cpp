@@ -270,10 +270,11 @@ void JagLoadDemo::makeViewMatrices( gmtl::Matrix44f& view, gmtl::Matrix33f& norm
     unsigned int r, c;
     for( r=0; r<4; r++ )
         for( c=0; c<4; c++ )
-            v( r, c ) = m( c, r );
-    view = v;
+            view( r, c ) = m( c, r );
 
-    normal( 0, 0 ) = v( 0, 0 );  normal( 0, 1 ) = v( 0, 1 );  normal( 0, 2 ) = v( 0, 2 );
-    normal( 1, 0 ) = v( 1, 0 );  normal( 1, 1 ) = v( 1, 1 );  normal( 1, 2 ) = v( 1, 2 );
-    normal( 2, 0 ) = v( 2, 0 );  normal( 2, 1 ) = v( 2, 1 );  normal( 2, 2 ) = v( 2, 2 );
+    // Normal matrix is inverse transpose of view matrix.
+    m.invert( m );
+    for( r=0; r<3; r++ )
+        for( c=0; c<3; c++ )
+            normal( r, c ) = m( r, c );
 }
