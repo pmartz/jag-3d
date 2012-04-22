@@ -87,7 +87,7 @@ macro( _exeInstall _category _exeName )
     endif()
     install(
         TARGETS ${_exeName}
-        RUNTIME DESTINATION _installDir COMPONENT libjag3d
+        RUNTIME DESTINATION ${_installDir}
     )
 endmacro()
 
