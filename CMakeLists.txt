@@ -85,7 +85,7 @@ include( FindPOCOHelper )
 # for other platforms.
 
 #   At least one windowing API is required for demos/tests/examples:
-find_package( Qt4 COMPONENTS QtCore QtGui QtOpenGL )
+find_package( Qt4 4.8.0 COMPONENTS QtCore QtGui QtOpenGL )
 include( FindFreeglutHelper )
 
 FreeglutMenuSetup()
