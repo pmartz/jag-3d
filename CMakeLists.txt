@@ -74,16 +74,38 @@ include( FindPOCOHelper )
 # gl3w usage is an option that default to ON for Windows and OFF
 # for other platforms.
 
+#
 #   At least one windowing API is required for demos/tests/examples:
-find_package( Qt4 4.8.0 COMPONENTS QtCore QtGui QtOpenGL )
-include( FindFreeglutHelper )
+option( JAG3D_USE_FREEGLUT "If set and freeglut is found, JAG builds windowed executables with freeglut." ON )
+if( JAG3D_USE_FREEGLUT )
+    include( FindFreeglutHelper )
+endif()
+option( JAG3D_USE_QT "If set and Qt is found, JAG builds windowed executables with Qt." ON )
+if( JAG3D_USE_QT )
+    find_package( Qt4 4.8.0 COMPONENTS QtCore QtGui QtOpenGL )
+endif()
+option( JAG3D_USE_VRJ "If set and VR Juggler is found, JAG builds windowed executables with VR Juggler." ON )
+if( JAG3D_USE_VRJ )
+    include( FindVrjHelper )
+endif()
 
-FreeglutMenuSetup()
+
+if( JAG3D_USE_FREEGLUT )
+    FreeglutMenuSetup()
+endif()
+if( JAG3D_USE_VRJ )
+    VrjMenuSetup()
+endif()
 GGTMenuSetup()
 # GLEWMenuSetup()
 POCOMenuSetup()
 
-FreeglutFinder()
+if( JAG3D_USE_FREEGLUT )
+    FreeglutFinder()
+endif()
+if( JAG3D_USE_VRJ )
+    VrjFinder()
+endif()
 GGTFinder()
 # GLEWFinder()
 POCOFinder()
@@ -137,6 +159,7 @@ option( BUILD_SHARED_LIBS "Set to ON to build JAG3D for dynamic linking. Use OFF
 if( NOT BUILD_SHARED_LIBS )
     add_definitions( -DJAG3D_STATIC )
 endif()
+
 
 include( CMakeMacros )
 
