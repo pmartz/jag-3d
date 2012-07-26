@@ -19,8 +19,8 @@
 #************** <auto-copyright.pl END do not edit this line> ***************
 
 
-set( _optionalDependencyIncludes )
-set( _optionalDependencyLibraries )
+unset( _optionalDependencyIncludes )
+unset( _optionalDependencyLibraries )
 
 # Using gl3w, not GLEW. See top-level CMakeLists.txt for info.
 # if( GLEW_FOUND )
@@ -122,11 +122,15 @@ macro( _addFreeglutExecutable _category _exeName )
         ${sources}
     )
 
-    include_directories(
+    unset( _allIncludes )
+    set( _allIncludes
         ${_projectIncludes}
         ${Freeglut_INCLUDE_DIR}
         ${_optionalDependencyIncludes}
         ${_requiredDependencyIncludes}
+    )
+    set_target_properties( ${_localExeName}
+        PROPERTIES INCLUDE_DIRECTORIES "${_allIncludes}"
     )
 
     target_link_libraries( ${_localExeName}
@@ -158,11 +162,18 @@ macro( _addQtExecutable _category _exeName )
         ${sources}
     )
 
-    include_directories(
+    unset( _allIncludes )
+    set( _allIncludes
         ${_projectIncludes}
+        ${QT_INCLUDE_DIR}
         ${QT_QTOPENGL_INCLUDE_DIR}
+        ${QT_QTGUI_INCLUDE_DIR}
+        ${QT_QTCORE_INCLUDE_DIR}
         ${_optionalDependencyIncludes}
         ${_requiredDependencyIncludes}
+    )
+    set_target_properties( ${_localExeName}
+        PROPERTIES INCLUDE_DIRECTORIES "${_allIncludes}"
     )
 
     target_link_libraries( ${_localExeName}
@@ -179,12 +190,49 @@ macro( _addQtExecutable _category _exeName )
     set_target_properties( ${_localExeName} PROPERTIES PROJECT_LABEL "${_category} ${_localExeName}" )
 endmacro()
 
+macro( _addVrjExecutable _category _exeName )
+    set( _localExeName "${_exeName}-vrj" )
+
+    _splitList( ADDITIONAL_LIBRARIES sources libs ${ARGN} )
+
+    add_executable( ${_localExeName}
+        ${PROJECT_SOURCE_DIR}/src/demoSupport/vrjSupport.cpp
+        ${sources}
+    )
+
+    unset( _allIncludes )
+    set( _allIncludes
+        ${_projectIncludes}
+        ${Vrj_INCLUDE_DIRS}
+        ${_optionalDependencyIncludes}
+        ${_requiredDependencyIncludes}
+    )
+    set_target_properties( ${_localExeName}
+        PROPERTIES INCLUDE_DIRECTORIES "${_allIncludes}"
+    )
+
+    target_link_libraries( ${_localExeName}
+        ${libs}
+        ${Vrj_LIBRARIES}
+        ${_projectLibraries}
+        ${_optionalDependencyLibraries}
+        ${_requiredDependencyLibraries}
+    )
+    
+    _exeInstall( ${_category} ${_localExeName} )
+
+    set_target_properties( ${_localExeName} PROPERTIES PROJECT_LABEL "${_category} ${_localExeName}" )
+endmacro()
+
 macro( _addExecutable _category _exeName )
-    if( Freeglut_FOUND )
+    if( Freeglut_FOUND AND JAG3D_USE_FREEGLUT )
         _addFreeglutExecutable( ${_category} ${_exeName} ${ARGN} )
     endif()
-    if( QT4_FOUND )
+    if( QT4_FOUND AND JAG3D_USE_QT )
         _addQtExecutable( ${_category} ${_exeName} ${ARGN} )
+    endif()
+    if( QT4_FOUND AND JAG3D_USE_VRJ )
+        _addVrjExecutable( ${_category} ${_exeName} ${ARGN} )
     endif()
 endmacro()
 
