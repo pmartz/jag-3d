@@ -62,8 +62,12 @@ endfunction()
 #   sonix  snx    SNX
 #   vpr    vpr    VPR
 set( _requestedComponents )
+# vrj is always present.
+_getLibVersion( "vrj" "VJ" _outVersion )
+#message( STATUS "${_dir} ${_outVersion}" )
+list( APPEND _requestedComponents "vrj${_outVersion}" )
+#
 foreach( _component ${Vrj_FIND_COMPONENTS})
-
     # Get version string first.
     if( "${_component}" STREQUAL "sonix" )
         set( _dir "snx" )
@@ -79,13 +83,9 @@ foreach( _component ${Vrj_FIND_COMPONENTS})
 #    message( STATUS "${_dir} ${_outVersion}" )
     set( _componentName "${_component}${_outVersion}" )
 
+    # Add to list.
     list( APPEND _requestedComponents ${_componentName} )
 endforeach()
-#
-# vrj is always present.
-_getLibVersion( "vrj" "VJ" _outVersion )
-#message( STATUS "${_dir} ${_outVersion}" )
-list( APPEND _requestedComponents "vrj${_outVersion}" )
 list( REMOVE_DUPLICATES _requestedComponents )
 
 #message( STATUS "${_requestedComponents}" )

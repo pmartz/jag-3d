@@ -204,6 +204,7 @@ macro( _addVrjExecutable _category _exeName )
     set( _allIncludes
         ${_projectIncludes}
         ${Vrj_INCLUDE_DIRS}
+        ${CppDOM_INCLUDE_DIRS}
         ${_optionalDependencyIncludes}
         ${_requiredDependencyIncludes}
     )
@@ -214,6 +215,7 @@ macro( _addVrjExecutable _category _exeName )
     target_link_libraries( ${_localExeName}
         ${libs}
         ${Vrj_LIBRARIES}
+        ${CppDOM_LIBRARIES}
         ${_projectLibraries}
         ${_optionalDependencyLibraries}
         ${_requiredDependencyLibraries}
@@ -231,7 +233,7 @@ macro( _addExecutable _category _exeName )
     if( QT4_FOUND AND JAG3D_USE_QT )
         _addQtExecutable( ${_category} ${_exeName} ${ARGN} )
     endif()
-    if( QT4_FOUND AND JAG3D_USE_VRJ )
+    if( Vrj_FOUND AND CppDOM_FOUND AND JAG3D_USE_VRJ )
         _addVrjExecutable( ${_category} ${_exeName} ${ARGN} )
     endif()
 endmacro()
