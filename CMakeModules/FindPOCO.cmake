@@ -80,7 +80,7 @@ if( POCO_INCLUDE_DIR )
         
         string( REGEX MATCHALL "[0-9A-Za-z][0-9A-Za-z]" _versionsHex ${_versionHex} )
         # _versionsHex (note plural) is a list of four 2-hex-character strings,
-        # something like "01:04:0a:02". New we just need to convert each list
+        # something like "01:04:0a:02". Now we just need to convert each list
         # element from hex to decimal.
         
         foreach( _verNum ${_versionsHex} )
