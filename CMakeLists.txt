@@ -58,21 +58,10 @@ endif()
 #
 # Dependencies
 
-#   Required dependencies:
-find_package( OpenGL REQUIRED )
-find_package( Boost 1.44.0 REQUIRED thread program_options date_time )
-include( FindGGTHelper )
-include( FindPOCOHelper )
-
-#   Required for Windows only:
-#include( FindGLEWHelper )
-# NO. Currently using gl3w (https://github.com/skaslev/gl3w/wiki/)
-# to work around GLEW's lack of GL3/4 support. gl3w source is
-# embedded in include/jagDraw and src/jagDraw; no external
-# dependency requirement.
-#
-# gl3w usage is an option that default to ON for Windows and OFF
-# for other platforms.
+set( _boostComponents )
+list( APPEND _boostComponents thread )
+list( APPEND _boostComponents program_options )
+list( APPEND _boostComponents date_time )
 
 #
 #   At least one windowing API is required for demos/tests/examples:
@@ -86,9 +75,27 @@ if( JAG3D_USE_QT )
 endif()
 option( JAG3D_USE_VRJ "If set and VR Juggler is found, JAG builds windowed executables with VR Juggler." ON )
 if( JAG3D_USE_VRJ )
+    list( APPEND _boostComponents signals )
     include( FindCppDOMHelper )
     include( FindVrjHelper )
 endif()
+
+#   Required dependencies:
+find_package( OpenGL REQUIRED )
+find_package( Boost 1.44.0 REQUIRED ${_boostComponents} )
+include( FindGGTHelper )
+include( FindPOCOHelper )
+
+#   Required for Windows only:
+#include( FindGLEWHelper )
+# NO. Currently using gl3w (https://github.com/skaslev/gl3w/wiki/)
+# to work around GLEW's lack of GL3/4 support. gl3w source is
+# embedded in include/jagDraw and src/jagDraw; no external
+# dependency requirement.
+#
+# gl3w usage is an option that default to ON for Windows and OFF
+# for other platforms.
+
 
 
 if( JAG3D_USE_FREEGLUT )
