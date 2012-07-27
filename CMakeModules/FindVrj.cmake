@@ -53,38 +53,12 @@ endfunction()
 
 
 # Get a list of requested Vrj components. 'vrj' is assumed as always requested.
-# Also find and append version numbers.
-#   lib    dir    substring
-#   ------ ------ ---------
-#   vrj    vrj    VJ
-#   gadget gadget GADGET
-#   jccl   jccl   JCCL
-#   sonix  snx    SNX
-#   vpr    vpr    VPR
 set( _requestedComponents )
 # vrj is always present.
-_getLibVersion( "vrj" "VJ" _outVersion )
-#message( STATUS "${_dir} ${_outVersion}" )
-list( APPEND _requestedComponents "vrj${_outVersion}" )
+list( APPEND _requestedComponents "vrj" )
 #
 foreach( _component ${Vrj_FIND_COMPONENTS})
-    # Get version string first.
-    if( "${_component}" STREQUAL "sonix" )
-        set( _dir "snx" )
-    else()
-        set( _dir "${_component}" )
-    endif()
-    if( "${_component}" STREQUAL "vrj" )
-        set( _substring "VJ" )
-    else()
-        string( TOUPPER ${_dir} _substring )
-    endif()
-    _getLibVersion( ${_dir} ${_substring} _outVersion )
-#    message( STATUS "${_dir} ${_outVersion}" )
-    set( _componentName "${_component}${_outVersion}" )
-
-    # Add to list.
-    list( APPEND _requestedComponents ${_componentName} )
+    list( APPEND _requestedComponents ${_component} )
 endforeach()
 list( REMOVE_DUPLICATES _requestedComponents )
 
@@ -93,9 +67,34 @@ list( REMOVE_DUPLICATES _requestedComponents )
 # Find each library.
 set( Vrj_LIBRARIES )
 foreach( lib ${_requestedComponents} )
+    # Get the library version string.
+    #   lib     dir    substring
+    #   ------  ------ ---------
+    #   vrj     vrj    VJ
+    #   vrj_ogl vrj    VJ
+    #   gadget  gadget GADGET
+    #   jccl    jccl   JCCL
+    #   sonix   snx    SNX
+    #   vpr     vpr    VPR
+    if( "${lib}" STREQUAL "sonix" )
+        set( _dir "snx" )
+    elseif( "${lib}" STREQUAL "vrj_ogl" )
+        set( _dir "vrj" )
+    else()
+        set( _dir "${lib}" )
+    endif()
+    if( "${lib}" STREQUAL "vrj" OR "${lib}" STREQUAL "vrj_ogl" )
+        set( _substring "VJ" )
+    else()
+        string( TOUPPER ${_dir} _substring )
+    endif()
+
+    _getLibVersion( ${_dir} ${_substring} _versionString )
+#    message( STATUS "${lib} ${_dir} ${_versionString}" )
+
     unset( "Vrj_${lib}_LIBRARY" CACHE )
     find_library( Vrj_${lib}_LIBRARY
-        NAMES ${lib}
+        NAMES ${lib}${_versionString}
         ENV Vrj_ROOT
     )
     if( NOT Vrj_${lib}_LIBRARY )
@@ -107,7 +106,7 @@ foreach( lib ${_requestedComponents} )
 
     unset( "Vrj_${lib}_LIBRARY_DEBUG" CACHE )
     find_library( Vrj_${lib}_LIBRARY_DEBUG
-        NAMES ${lib}
+        NAMES ${lib}_d${_versionString}
         PATH_SUFFIXES debug
         ENV Vrj_ROOT
     )
