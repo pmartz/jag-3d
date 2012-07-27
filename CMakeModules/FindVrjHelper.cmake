@@ -136,7 +136,7 @@ macro( VrjFinder )
         ${VrjBuildRoot} )
 
 
-    find_package( Vrj 3.1 REQUIRED gadget-2_1_27 jccl-1_5_1 sonix-1_5_1 vpr-2_3_4 )
+    find_package( Vrj 3.1.6 REQUIRED gadget-2_1_27 jccl-1_5_1 sonix-1_5_1 vpr-2_3_4 )
 
 
     # Restore internal variables
