@@ -3,7 +3,7 @@
 # This module defines
 #  Vrj_INCLUDE_DIRS
 #  Vrj_LIBRARIES, libraries to link against to use VR Juggler.
-#  Vrj_VERSION, package version in CMake decimal version# format (e.g., 3.1)
+#  Vrj_VERSION, package version in CMake decimal version# format (e.g., 3.1.6)
 #  Vrj_FOUND, If false, do not try to use VR Juggler.
 #
 # Suppert environment variable search hint:
@@ -28,13 +28,13 @@ endif()
 # Set Vrj_VERSION.
 set( Vrj_VERSION )
 if( Vrj_INCLUDE_DIRS )
-    set( _versionFile "${Vrj_INCLUDE_DIRS}/vrj/vrjDefines.h" )
+    set( _versionFile "${Vrj_INCLUDE_DIRS}/vrj/vrjParam.h" )
     if( NOT EXISTS ${_versionFile} )
         message( SEND_ERROR "Can't find ${_versionFile}" )
     else()
         file( READ "${_versionFile}" _versionContents )
-        string( REGEX REPLACE ".*#define PACKAGE_VERSION[ \t]+\"([0-9.]+).*"
-            "\\1" _version ${_versionContents} )
+        string( REGEX REPLACE ".*#define __VJ_MAJOR__[ \t]+([0-9]+).*__VJ_MINOR__[ \t]+([0-9]+).*__VJ_PATCH__[ \t]+([0-9]+).*"
+            "\\1.\\2.\\3" _version ${_versionContents} )
     endif()
 endif()
 
