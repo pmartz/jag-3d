@@ -34,19 +34,61 @@ if( Vrj_INCLUDE_DIRS )
     else()
         file( READ "${_versionFile}" _versionContents )
         string( REGEX REPLACE ".*#define __VJ_MAJOR__[ \t]+([0-9]+).*__VJ_MINOR__[ \t]+([0-9]+).*__VJ_PATCH__[ \t]+([0-9]+).*"
-            "\\1.\\2.\\3" _version ${_versionContents} )
+            "\\1.\\2.\\3" Vrj_VERSION ${_versionContents} )
     endif()
 endif()
 
+function( _getLibVersion _inDir _inSubstring _outVersion )
+#    message( STATUS "_getLibVersion ${_inDir} ${_inSubstring} ${${_outVersion}}" )
+    set( _versionFile "${Vrj_INCLUDE_DIRS}/${_inDir}/${_inDir}Param.h" )
+    if( NOT EXISTS ${_versionFile} )
+        message( SEND_ERROR "_getLibVersion: Can't find ${_versionFile}" )
+    else()
+        file( READ "${_versionFile}" _versionContents )
+        string( REGEX REPLACE ".*#define __${_inSubstring}_MAJOR__[ \t]+([0-9]+).*__${_inSubstring}_MINOR__[ \t]+([0-9]+).*__${_inSubstring}_PATCH__[ \t]+([0-9]+).*"
+            "-\\1_\\2_\\3" _result ${_versionContents} )
+    endif()
+    set( ${_outVersion} ${_result} PARENT_SCOPE )
+endfunction()
+
 
 # Get a list of requested Vrj components. 'vrj' is assumed as always requested.
-#   vrj gadget jccl sonix vpr
+# Also find and append version numbers.
+#   lib    dir    substring
+#   ------ ------ ---------
+#   vrj    vrj    VJ
+#   gadget gadget GADGET
+#   jccl   jccl   JCCL
+#   sonix  snx    SNX
+#   vpr    vpr    VPR
 set( _requestedComponents )
 foreach( _component ${Vrj_FIND_COMPONENTS})
-    list( APPEND _requestedComponents ${_component} )
+
+    # Get version string first.
+    if( "${_component}" STREQUAL "sonix" )
+        set( _dir "snx" )
+    else()
+        set( _dir "${_component}" )
+    endif()
+    if( "${_component}" STREQUAL "vrj" )
+        set( _substring "VJ" )
+    else()
+        string( TOUPPER ${_dir} _substring )
+    endif()
+    _getLibVersion( ${_dir} ${_substring} _outVersion )
+#    message( STATUS "${_dir} ${_outVersion}" )
+    set( _componentName "${_component}${_outVersion}" )
+
+    list( APPEND _requestedComponents ${_componentName} )
 endforeach()
-list( APPEND _requestedComponents "vrj-3_1_6" )
+#
+# vrj is always present.
+_getLibVersion( "vrj" "VJ" _outVersion )
+#message( STATUS "${_dir} ${_outVersion}" )
+list( APPEND _requestedComponents "vrj${_outVersion}" )
 list( REMOVE_DUPLICATES _requestedComponents )
+
+#message( STATUS "${_requestedComponents}" )
 
 # Find each library.
 set( Vrj_LIBRARIES )
