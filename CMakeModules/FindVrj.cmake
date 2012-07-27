@@ -4,7 +4,7 @@
 #  Vrj_INCLUDE_DIRS
 #  Vrj_LIBRARIES, libraries to link against to use VR Juggler.
 #  Vrj_VERSION, package version in CMake decimal version# format (e.g., 3.1.6)
-#  Vrj_FOUND, If false, do not try to use VR Juggler.
+#  VRJ_FOUND (Note capitalization), If false, do not try to use VR Juggler.
 #
 # Suppert environment variable search hint:
 #  Vrj_ROOT, VR Juggler install directory root.
@@ -119,7 +119,7 @@ foreach( lib ${_requestedComponents} )
 endforeach()
 
 
-# handle the QUIETLY and REQUIRED arguments and set Vrj_FOUND to TRUE if 
+# handle the QUIETLY and REQUIRED arguments and set VRJ_FOUND to TRUE if 
 # all listed variables are TRUE
 include( FindPackageHandleStandardArgs )
 FIND_PACKAGE_HANDLE_STANDARD_ARGS( Vrj

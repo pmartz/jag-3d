@@ -4,7 +4,7 @@
 #  CppDOM_INCLUDE_DIRS
 #  CppDOM_LIBRARIES, libraries to link against to use CppDOM.
 #  CppDOM_VERSION, package version in CMake decimal version# format (e.g., 3.1.6)
-#  CppDOM_FOUND, If false, do not try to use CppDOM.
+#  CPPDOM_FOUND (Note capitalization), If false, do not try to use CppDOM.
 #
 # Suppert environment variable search hint:
 #  CppDOM_ROOT, CppDOM install directory root.
@@ -69,7 +69,7 @@ else()
 endif()
 
 
-# handle the QUIETLY and REQUIRED arguments and set CppDOM_FOUND to TRUE if
+# handle the QUIETLY and REQUIRED arguments and set CPPDOM_FOUND to TRUE if
 # all listed variables are TRUE
 include( FindPackageHandleStandardArgs )
 FIND_PACKAGE_HANDLE_STANDARD_ARGS( CppDOM
