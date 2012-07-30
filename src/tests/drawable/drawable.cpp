@@ -45,7 +45,7 @@ public:
     {}
     virtual ~DrawableDemo() {}
 
-    virtual bool startup();
+    virtual bool startup( const unsigned int numContexts );
     virtual bool init();
     virtual bool frame();
     virtual bool shutdown()
@@ -65,7 +65,7 @@ DemoInterface* DemoInterface::create( bpo::options_description& desc )
     return( new DrawableDemo );
 }
 
-bool DrawableDemo::startup()
+bool DrawableDemo::startup( const unsigned int numContexts )
 {
     const char* vShaderSource =
         "#version 130 \n"
@@ -260,7 +260,6 @@ bool DrawableDemo::startup()
 
 
     // Tell all Jag objects how many contexts to expect.
-    const unsigned int numContexts( jagDraw::ContextSupport::instance()->getNumRegisteredContexts() );
     BOOST_FOREACH( const jagDraw::DrawableList::value_type& dp, _drawableList )
     {
         dp->setMaxContexts( numContexts );

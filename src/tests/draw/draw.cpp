@@ -45,7 +45,7 @@ public:
     {}
     virtual ~DrawDemo() {}
 
-    virtual bool startup();
+    virtual bool startup( const unsigned int numContexts );
     virtual bool init();
     virtual bool frame();
     virtual bool shutdown()
@@ -72,7 +72,7 @@ DemoInterface* DemoInterface::create( bpo::options_description& desc )
     return( new DrawDemo );
 }
 
-bool DrawDemo::startup()
+bool DrawDemo::startup( const unsigned int numContexts )
 {
     _vaop = jagDraw::VertexArrayObjectPtr( new jagDraw::VertexArrayObject );
 
@@ -164,7 +164,6 @@ bool DrawDemo::startup()
 
 
     // Tell all Jag objects how many contexts to expect.
-    const unsigned int numContexts( jagDraw::ContextSupport::instance()->getNumRegisteredContexts() );
     _vbop->setMaxContexts( numContexts );
     _cbop->setMaxContexts( numContexts );
     _ibop->setMaxContexts( numContexts );

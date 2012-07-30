@@ -43,7 +43,7 @@ public:
     {}
     virtual ~Simple3xDemo() {}
 
-    virtual bool startup();
+    virtual bool startup( const unsigned int numContexts );
     virtual bool init();
     virtual bool frame();
     virtual bool shutdown() { return( true ); }
@@ -61,7 +61,7 @@ DemoInterface* DemoInterface::create( bpo::options_description& desc )
     return( new Simple3xDemo );
 }
 
-bool Simple3xDemo::startup()
+bool Simple3xDemo::startup( const unsigned int numContexts )
 {
     {
         float z = .5f;
@@ -103,7 +103,6 @@ bool Simple3xDemo::startup()
 
 
     // Tell all Jag objects how many contexts to expect.
-    const unsigned int numContexts( jagDraw::ContextSupport::instance()->getNumRegisteredContexts() );
     _bop->setMaxContexts( numContexts );
     _prog->setMaxContexts( numContexts );
 
