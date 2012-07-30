@@ -53,7 +53,7 @@ public:
     {}
     virtual ~JagLoadDemo() {}
 
-    virtual bool startup();
+    virtual bool startup( const unsigned int numContexts );
     virtual bool init();
     virtual bool frame();
     virtual void reshape( const int w, const int h );
@@ -81,7 +81,7 @@ DemoInterface* DemoInterface::create( bpo::options_description& desc )
     return( new JagLoadDemo );
 }
 
-bool JagLoadDemo::startup()
+bool JagLoadDemo::startup( const unsigned int numContexts )
 {
     //std::string fileName( "GRINDER_WHEEL.PRT.ive" );
     //std::string fileName( "M55339.ASM.ive" );
@@ -185,7 +185,6 @@ bool JagLoadDemo::startup()
 
 
     // Tell all Jag objects how many contexts to expect.
-    const unsigned int numContexts( jagDraw::ContextSupport::instance()->getNumRegisteredContexts() );
     BOOST_FOREACH( const jagDraw::DrawableList::value_type& dp, _drawList )
     {
         dp->setMaxContexts( numContexts );

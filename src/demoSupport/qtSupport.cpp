@@ -143,7 +143,7 @@ int main( int argc, char** argv )
         w->resize( 300, 300 );
         w->show();
     }
-    if( !( di->startup() ) )
+    if( !( di->startup( jagDraw::ContextSupport::instance()->getNumRegisteredContexts() ) ) )
         return( 1 );
 
     return( app.exec() );

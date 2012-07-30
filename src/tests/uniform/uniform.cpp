@@ -43,7 +43,7 @@ public:
     {}
     virtual ~UniformDemo() {}
 
-    virtual bool startup();
+    virtual bool startup( const unsigned int numContexts );
     virtual bool init();
     virtual bool frame();
     virtual bool shutdown()
@@ -77,7 +77,7 @@ DemoInterface* DemoInterface::create( bpo::options_description& desc )
     return( new UniformDemo );
 }
 
-bool UniformDemo::startup()
+bool UniformDemo::startup( const unsigned int numContexts )
 {
     const float z = .5f;
     typedef std::vector< gmtl::Point3f > Point3fArray;
@@ -227,7 +227,6 @@ bool UniformDemo::startup()
 
 
     // Tell all Jag objects how many contexts to expect.
-    const unsigned int numContexts( jagDraw::ContextSupport::instance()->getNumRegisteredContexts() );
     _vbop->setMaxContexts( numContexts );
     _cbop->setMaxContexts( numContexts );
     _ibop->setMaxContexts( numContexts );

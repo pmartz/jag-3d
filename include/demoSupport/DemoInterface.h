@@ -40,7 +40,7 @@ public:
     static DemoInterface* create( boost::program_options::options_description& desc );
 
     /** Called before any contexts are created. */
-    virtual bool startup() = 0;
+    virtual bool startup( const unsigned int numContexts ) = 0;
     /** Called after a context has been created. */
     virtual bool init() = 0;
     /** Called to render a frame. */

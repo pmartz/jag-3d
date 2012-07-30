@@ -132,7 +132,7 @@ int main( int argc, char* argv[] )
         glutKeyboardFunc( keyboard );
     }
 
-    if( !( di->startup() ) )
+    if( !( di->startup( jagDraw::ContextSupport::instance()->getNumRegisteredContexts() ) ) )
         return( 1 );
 
     glutMainLoop();
