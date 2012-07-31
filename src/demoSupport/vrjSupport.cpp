@@ -25,7 +25,7 @@
 #include <vrj/Kernel/Kernel.h>
 #include <vrj/vrjConfig.h>
 #include <vrj/Draw/OpenGL/App.h>
-//#include <vrj/Draw/OpenGL/DrawManager.h>
+#include <vrj/Draw/OpenGL/DrawManager.h>
 
 #include <boost/program_options/options_description.hpp>
 #include <boost/program_options/variables_map.hpp>
@@ -42,7 +42,9 @@ class JagDemoApp : public opengl::App
 public:
     JagDemoApp( DemoInterface* di )
       : opengl::App(),
-        _di( di )
+        _di( di ),
+        _numContexts( 0 ),
+        _initialized( false )
     {}
     virtual ~JagDemoApp()
     {}
@@ -59,12 +61,15 @@ public:
 
 protected:
     DemoInterface* _di;
+
+    unsigned int _numContexts;
+    bool _initialized;
+    vpr::Mutex _guard;
 };
 
 void JagDemoApp::init()
 {
     opengl::App::init();
-    _di->startup( 1 );
 }
 
 void JagDemoApp::bufferPreDraw()
@@ -91,8 +96,9 @@ void JagDemoApp::contextInit()
 {
     opengl::App::contextInit();
 
-    //const int ctx( opengl::DrawManager::instance()->getCurrentContext() );
-    const int ctx( 0 );
+    vrj::opengl::DrawManager* gl_manager(
+        dynamic_cast< vrj::opengl::DrawManager* >( getDrawManager() ) );
+    const int ctx( gl_manager->getCurrentContext() );
 
     const jagDraw::platformContextID pCtxId( static_cast<
         const jagDraw::platformContextID >( ctx ) );
@@ -102,12 +108,29 @@ void JagDemoApp::contextInit()
     cs->setActiveContext( contextID );
     cs->initContext();
 
+    {
+        vpr::Guard< vpr::Mutex > guard( _guard );
+        _numContexts += 1;
+    }
+
     _di->init();
 }
 void JagDemoApp::draw()
 {
-    //const int ctx( opengl::DrawManager::instance()->getCurrentContext() );
-    const int ctx( 0 );
+    {
+        vpr::Guard< vpr::Mutex > guard( _guard );
+        if( !_initialized )
+        {
+            _di->startup( _numContexts );
+            _initialized = true;
+        }
+    }
+
+    vrj::opengl::DrawManager* gl_manager(
+        dynamic_cast< vrj::opengl::DrawManager* >( getDrawManager() ) );
+    vprASSERT(gl_manager != NULL);
+
+    const int ctx( gl_manager->getCurrentContext() );
 
     const jagDraw::platformContextID pCtxId( static_cast<
         const jagDraw::platformContextID >( ctx ) );
@@ -115,6 +138,9 @@ void JagDemoApp::draw()
     jagDraw::jagDrawContextID contextID( cs->getJagContextID( pCtxId ) );
 
     cs->setActiveContext( contextID );
+
+
+    vrj::opengl::UserData* user_data( gl_manager->currentUserData() );
 
     _di->frame();
 }
