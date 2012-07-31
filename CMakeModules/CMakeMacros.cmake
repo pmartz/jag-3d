@@ -66,12 +66,10 @@ macro( _splitList _tokenIn _list0out _list1out )
     foreach( element ${ARGN} )
         if( tokenFound )
             list( APPEND ${_list1out} ${element} )
+        elseif( ${element} STREQUAL ${_tokenIn} )
+            set( tokenFound 1 )
         else()
-            if( ${element} STREQUAL ${_tokenIn} )
-                set( tokenFound 1 )
-            else()
-                list( APPEND ${_list0out} ${element} )
-            endif()
+            list( APPEND ${_list0out} ${element} )
         endif()
     endforeach()
 endmacro()
@@ -115,17 +113,27 @@ endmacro()
 macro( _addFreeglutExecutable _category _exeName )
     set( _localExeName "${_exeName}-freeglut" )
 
-    _splitList( ADDITIONAL_LIBRARIES sources libs ${ARGN} )
+    unset( _sources )
+    unset( _includesAndLibs )
+    unset( _includes )
+    unset( _libs )
+    _splitList( ADDITIONAL_INCLUDES _sources _includesAndLibs ${ARGN} )
+    if( "${_includesAndLibs}" STREQUAL "" )
+        _splitList( ADDITIONAL_LIBRARIES _sources _libs ${ARGN} )
+    else()
+        _splitList( ADDITIONAL_LIBRARIES _includes _libs ${_includesAndLibs} )
+    endif()
 
     add_executable( ${_localExeName}
         ${PROJECT_SOURCE_DIR}/src/demoSupport/freeglutSupport.cpp
-        ${sources}
+        ${_sources}
     )
 
     unset( _allIncludes )
     set( _allIncludes
         ${_projectIncludes}
         ${Freeglut_INCLUDE_DIR}
+        ${_includes}
         ${_optionalDependencyIncludes}
         ${_requiredDependencyIncludes}
     )
@@ -134,7 +142,7 @@ macro( _addFreeglutExecutable _category _exeName )
     )
 
     target_link_libraries( ${_localExeName}
-        ${libs}
+        ${_libs}
         ${Freeglut_LIBRARIES}
         ${_projectLibraries}
         ${_optionalDependencyLibraries}
@@ -154,12 +162,21 @@ macro( _addQtExecutable _category _exeName )
         OPTIONS "-f"
     )
 
-    _splitList( ADDITIONAL_LIBRARIES sources libs ${ARGN} )
+    unset( _sources )
+    unset( _includesAndLibs )
+    unset( _includes )
+    unset( _libs )
+    _splitList( ADDITIONAL_INCLUDES _sources _includesAndLibs ${ARGN} )
+    if( "${_includesAndLibs}" STREQUAL "" )
+        _splitList( ADDITIONAL_LIBRARIES _sources _libs ${ARGN} )
+    else()
+        _splitList( ADDITIONAL_LIBRARIES _includes _libs ${_includesAndLibs} )
+    endif()
 
     add_executable( ${_localExeName}
         ${PROJECT_SOURCE_DIR}/src/demoSupport/qtSupport.cpp
         ${_mocFiles}
-        ${sources}
+        ${_sources}
     )
 
     unset( _allIncludes )
@@ -169,6 +186,7 @@ macro( _addQtExecutable _category _exeName )
         ${QT_QTOPENGL_INCLUDE_DIR}
         ${QT_QTGUI_INCLUDE_DIR}
         ${QT_QTCORE_INCLUDE_DIR}
+        ${_includes}
         ${_optionalDependencyIncludes}
         ${_requiredDependencyIncludes}
     )
@@ -177,7 +195,7 @@ macro( _addQtExecutable _category _exeName )
     )
 
     target_link_libraries( ${_localExeName}
-        ${libs}
+        ${_libs}
         ${QT_QTOPENGL_LIBRARY}
         ${QT_LIBRARIES}
         ${_projectLibraries}
@@ -193,17 +211,27 @@ endmacro()
 macro( _addVrjExecutable _category _exeName )
     set( _localExeName "${_exeName}-vrj" )
 
-    _splitList( ADDITIONAL_LIBRARIES sources libs ${ARGN} )
+    unset( _sources )
+    unset( _includesAndLibs )
+    unset( _includes )
+    unset( _libs )
+    _splitList( ADDITIONAL_INCLUDES _sources _includesAndLibs ${ARGN} )
+    if( "${_includesAndLibs}" STREQUAL "" )
+        _splitList( ADDITIONAL_LIBRARIES _sources _libs ${ARGN} )
+    else()
+        _splitList( ADDITIONAL_LIBRARIES _includes _libs ${_includesAndLibs} )
+    endif()
 
     add_executable( ${_localExeName}
         ${PROJECT_SOURCE_DIR}/src/demoSupport/vrjSupport.cpp
-        ${sources}
+        ${_sources}
     )
 
     unset( _allIncludes )
     set( _allIncludes
         ${_projectIncludes}
         ${Vrj_INCLUDE_DIRS}
+        ${_includes}
         ${CppDOM_INCLUDE_DIRS}
         ${_optionalDependencyIncludes}
         ${_requiredDependencyIncludes}
@@ -213,7 +241,7 @@ macro( _addVrjExecutable _category _exeName )
     )
 
     target_link_libraries( ${_localExeName}
-        ${libs}
+        ${_libs}
         ${Vrj_LIBRARIES}
         ${CppDOM_LIBRARIES}
         ${_projectLibraries}
