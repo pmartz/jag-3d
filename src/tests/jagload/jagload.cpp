@@ -55,7 +55,7 @@ public:
 
     virtual bool startup( const unsigned int numContexts );
     virtual bool init();
-    virtual bool frame();
+    virtual bool frame( const gmtl::Matrix44f& view, const gmtl::Matrix44f& proj );
     virtual void reshape( const int w, const int h );
     virtual bool shutdown()
     {
@@ -65,12 +65,15 @@ public:
 protected:
     gmtl::Matrix44f computeProjection( float aspect );
     void makeViewMatrices( gmtl::Matrix44f& view, gmtl::Matrix33f& normal );
+    gmtl::Matrix33f computeNormalMatrix( const gmtl::Matrix44f& in );
 
     jagDraw::DrawableList _drawList;
 
     gmtl::Matrix44f _proj;
-    jagDraw::UniformPtr _viewProjUniform;
     osg::BoundingSphere _bs;
+
+    jagDraw::PerContextData< jagDraw::UniformPtr > _viewProjUniform;
+    jagDraw::PerContextData< jagDraw::UniformPtr > _normalUniform;
 };
 
 
@@ -93,11 +96,11 @@ bool JagLoadDemo::startup( const unsigned int numContexts )
     //std::string fileName( "cow.osg" );
     //std::string fileName( "dumptruck.osg" );
     std::string fileName( "teapot.osg" );
-    JAG3D_INFO_STATIC( "jag.demo.jagload", fileName );
+    JAG3D_INFO_STATIC( _logName, fileName );
 
     if( fileName.empty() )
     {
-        JAG3D_FATAL_STATIC( "jag.demo.jagload", "Specify '--load <fileName>' on command line." );
+        JAG3D_FATAL_STATIC( _logName, "Specify '--load <fileName>' on command line." );
         return( false );
     }
 
@@ -106,7 +109,7 @@ bool JagLoadDemo::startup( const unsigned int numContexts )
         if( !root.valid() )
         {
             std::string msg( "Can't load \"" + fileName + "\"." );
-            JAG3D_FATAL_STATIC( "jag.demo.jagload", msg );
+            JAG3D_FATAL_STATIC( _logName, msg );
             return( false );
         }
         _bs = root->getBound();
@@ -117,7 +120,7 @@ bool JagLoadDemo::startup( const unsigned int numContexts )
     }
     if( _drawList.size() == 0 )
     {
-        JAG3D_FATAL_STATIC( "jag.demo.jagload", "No Drawables from OSG conversion." );
+        JAG3D_FATAL_STATIC( _logName, "No Drawables from OSG conversion." );
         return( false );
     }
 
@@ -172,22 +175,18 @@ bool JagLoadDemo::startup( const unsigned int numContexts )
 
     _proj = computeProjection( 1. );
 
-    gmtl::Matrix44f viewMat;
-    gmtl::Matrix33f normalMat;
-    makeViewMatrices( viewMat, normalMat );
-    const gmtl::Matrix44f viewProj( _proj * viewMat );
-    _viewProjUniform = jagDraw::UniformPtr(
-        new jagDraw::Uniform( "viewProjectionMatrix", viewProj ) );
-    firstDrawable->insertDrawablePrep( _viewProjUniform );
-
-    firstDrawable->insertDrawablePrep( jagDraw::UniformPtr( new jagDraw::Uniform(
-        "normalMatrix", normalMat ) ) );
-
 
     // Tell all Jag objects how many contexts to expect.
     BOOST_FOREACH( const jagDraw::DrawableList::value_type& dp, _drawList )
     {
         dp->setMaxContexts( numContexts );
+    }
+    for( unsigned int idx=0; idx<numContexts; ++idx )
+    {
+        _viewProjUniform._data.push_back( jagDraw::UniformPtr(
+            new jagDraw::Uniform( "viewProjectionMatrix", gmtl::MAT_IDENTITY44F ) ) );
+        _normalUniform._data.push_back( jagDraw::UniformPtr(
+            new jagDraw::Uniform( "normalMatrix", gmtl::MAT_IDENTITY33F ) ) );
     }
 
 
@@ -211,7 +210,7 @@ bool JagLoadDemo::init()
     return( true );
 }
 
-bool JagLoadDemo::frame()
+bool JagLoadDemo::frame( const gmtl::Matrix44f& view, const gmtl::Matrix44f& proj )
 {
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
@@ -221,6 +220,26 @@ bool JagLoadDemo::frame()
     jagDraw::DrawInfo drawInfo;
     drawInfo._id = jagDraw::ContextSupport::instance()->getActiveContext();
 
+    // Systems such as VRJ will pass view and projection matrices.
+    if( view.mState != gmtl::Matrix44f::IDENTITY || proj.mState != gmtl::Matrix44f::IDENTITY )
+    {
+        const gmtl::Matrix44f viewProj( proj * view );
+        _viewProjUniform[ drawInfo._id ]->set( viewProj );
+        gmtl::Matrix33f normalMat( computeNormalMatrix( view ) );
+        _normalUniform[ drawInfo._id ]->set( normalMat );
+    }
+    else
+    {
+        gmtl::Matrix44f viewMat;
+        gmtl::Matrix33f normalMat;
+        makeViewMatrices( viewMat, normalMat );
+        const gmtl::Matrix44f viewProj( _proj * viewMat );
+        _viewProjUniform[ drawInfo._id ]->set( viewProj );
+        _normalUniform[ drawInfo._id ]->set( normalMat );
+    }
+    (*_viewProjUniform[ drawInfo._id ])( drawInfo );
+    (*_normalUniform[ drawInfo._id ])( drawInfo );
+
     // Render all Drawables.
     BOOST_FOREACH( const jagDraw::DrawableList::value_type& dp, _drawList )
     {
@@ -229,27 +248,21 @@ bool JagLoadDemo::frame()
 
     glFlush ();
 
-    JAG3D_ERROR_CHECK( "uniform display()" );
+    JAG3D_ERROR_CHECK( "jagload display()" );
 
     return( true );
 }
 
 void JagLoadDemo::reshape( const int w, const int h )
 {
-    if( _viewProjUniform == NULL )
-        return;
-
     _proj = computeProjection( (float)w/(float)h );
-
-    gmtl::Matrix44f viewMat;
-    gmtl::Matrix33f normalMat;
-    makeViewMatrices( viewMat, normalMat );
-    const gmtl::Matrix44f viewProj( _proj * viewMat );
-    _viewProjUniform->set( viewProj );
 }
 
 gmtl::Matrix44f JagLoadDemo::computeProjection( float aspect )
 {
+    if( !( _bs.valid() ) )
+        return( gmtl::MAT_IDENTITY44F );
+
     gmtl::Matrix44f proj;
     float zNear = 3.5 * _bs.radius();
     float zFar = 5.75 * _bs.radius();
@@ -276,4 +289,15 @@ void JagLoadDemo::makeViewMatrices( gmtl::Matrix44f& view, gmtl::Matrix33f& norm
     for( r=0; r<3; r++ )
         for( c=0; c<3; c++ )
             normal( r, c ) = m( r, c );
+}
+
+gmtl::Matrix33f JagLoadDemo::computeNormalMatrix( const gmtl::Matrix44f& in )
+{
+    gmtl::Matrix44f invIn;
+    gmtl::invert( invIn, in );
+    gmtl::Matrix33f out;
+    for( unsigned int r=0; r<3; r++ )
+        for( unsigned int c=0; c<3; c++ )
+            out( r, c ) = invIn( r, c );
+    return( out );
 }
