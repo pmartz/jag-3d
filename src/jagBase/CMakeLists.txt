@@ -31,6 +31,7 @@ set( HEADER_PATH ${PROJECT_SOURCE_DIR}/include/${_libName} )
 set( _jagBaseHeaderFiles
     ${HEADER_PATH}/Export.h
     ${HEADER_PATH}/Buffer.h
+    ${HEADER_PATH}/gmtlSupport.h
     ${HEADER_PATH}/Log.h
     ${HEADER_PATH}/LogBase.h
     ${HEADER_PATH}/LogMacros.h
