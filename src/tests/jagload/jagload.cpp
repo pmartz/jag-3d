@@ -41,6 +41,10 @@
 #include <osg/io_utils>
 
 
+// TBD move to GMTL proper
+#include <jagBase/gmtlSupport.h>
+
+
 using namespace std;
 namespace bpo = boost::program_options;
 
@@ -273,31 +277,30 @@ gmtl::Matrix44f JagLoadDemo::computeProjection( float aspect )
 
 void JagLoadDemo::makeViewMatrices( gmtl::Matrix44f& view, gmtl::Matrix33f& normal )
 {
-    const osg::Vec3 eye( _bs.center() + ( osg::Vec3( 0., -4., 1.5 ) * _bs.radius() ) );
-    const osg::Vec3 center( _bs.center() );
-    const osg::Vec3 up( 0., 0., 1. );
-    osg::Matrix m( osg::Matrix::lookAt( eye, center, up ) );
+    const osg::Vec3 osgEye( _bs.center() + ( osg::Vec3( 0., -4., 1.5 ) * _bs.radius() ) );
+    const gmtl::Point3f eye( osgEye[ 0 ], osgEye[ 1 ], osgEye[ 2 ] );
+    const gmtl::Point3f center( _bs.center()[ 0 ], _bs.center()[ 1 ], _bs.center()[ 2 ] );
+    const gmtl::Vec3f up( 0.f, 0.f, 1.f );
 
-    gmtl::Matrix44f v;
-    unsigned int r, c;
-    for( r=0; r<4; r++ )
-        for( c=0; c<4; c++ )
-            view( r, c ) = m( c, r );
-
-    // Normal matrix is inverse transpose of view matrix.
-    m.invert( m );
-    for( r=0; r<3; r++ )
-        for( c=0; c<3; c++ )
-            normal( r, c ) = m( r, c );
+    gmtl::setLookAt( view, eye, center, up );
+    normal = computeNormalMatrix( view );
 }
 
 gmtl::Matrix33f JagLoadDemo::computeNormalMatrix( const gmtl::Matrix44f& in )
 {
-    gmtl::Matrix44f invIn;
-    gmtl::invert( invIn, in );
-    gmtl::Matrix33f out;
+    gmtl::Matrix33f tempIn;
     for( unsigned int r=0; r<3; r++ )
         for( unsigned int c=0; c<3; c++ )
-            out( r, c ) = invIn( r, c );
-    return( out );
+            tempIn( r, c ) = in( r, c );
+
+#if 0
+    // TBD
+    // Normals convert to eye coords using the inversetranspose
+    // of the upper left 3x3 of the modelview matrix.
+    gmtl::Matrix33f invIn, result;
+    gmtl::invert( invIn, tempIn );
+    gmtl::transpose( result, invIn );
+#endif
+
+    return( tempIn );
 }

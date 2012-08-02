@@ -32,28 +32,6 @@
 #include <boost/program_options/parsers.hpp>
 
 
-
-gmtl::Matrix44f makeFrustum( const double left, const double right,
-    const double bottom, const double top, const double zNear, const double zFar )
-{
-    const double A = ( right+left ) / ( right-left );
-    const double B = ( top+bottom ) / ( top-bottom );
-    const double C = ( zNear+zFar )/( zNear-zFar );
-    const double D = ( 2.*zNear*zFar )/( zNear-zFar );
-    const double E = ( 2.*zNear )/( right-left );
-    const double F = ( 2.*zNear )/( top-bottom );
-
-    gmtl::Matrix44f m;
-    // GMTL set() takes row-major parameters
-    m.set( E, 0., A, 0.,
-        0., F, B, 0.,
-        0., 0., C, D,
-        0., 0., -1., 0. );
-    return( m );
-}
-
-
-
 using namespace std;
 using namespace vrj;
 namespace bpo = boost::program_options;
@@ -181,10 +159,10 @@ void JagDemoApp::draw()
 
     ProjectionPtr project( user_data->getProjection() );
     const Frustum& vrjFrustum( project->getFrustum() );
-    const gmtl::Matrix44f proj( makeFrustum(
-        vrjFrustum[ Frustum::VJ_LEFT ], vrjFrustum[ Frustum::VJ_RIGHT ],
-        vrjFrustum[ Frustum::VJ_BOTTOM ], vrjFrustum[ Frustum::VJ_TOP ],
-        vrjFrustum[ Frustum::VJ_NEAR ], vrjFrustum[ Frustum::VJ_FAR ] ) );
+    gmtl::Matrix44f proj; gmtl::setFrustum< float >( proj,
+        vrjFrustum[ Frustum::VJ_LEFT ], vrjFrustum[ Frustum::VJ_TOP ],
+        vrjFrustum[ Frustum::VJ_RIGHT ], vrjFrustum[ Frustum::VJ_BOTTOM ], 
+        vrjFrustum[ Frustum::VJ_NEAR ], vrjFrustum[ Frustum::VJ_FAR ] );
 
 
     _di->frame( project->getViewMatrix(), proj );
