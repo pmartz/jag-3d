@@ -45,7 +45,7 @@ public:
 
     virtual bool startup( const unsigned int numContexts );
     virtual bool init();
-    virtual bool frame();
+    virtual bool frame( const gmtl::Matrix44f& view, const gmtl::Matrix44f& proj );
     virtual bool shutdown()
     {
         return( true );
@@ -255,7 +255,7 @@ bool UniformDemo::init()
     return( true );
 }
 
-bool UniformDemo::frame()
+bool UniformDemo::frame( const gmtl::Matrix44f& view, const gmtl::Matrix44f& proj )
 {
     glClear( GL_COLOR_BUFFER_BIT );
 

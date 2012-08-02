@@ -22,6 +22,8 @@
 #define __JAG3D_DEMO_SUPPORT_DEMO_INTERFACE_H__ 1
 
 
+#include <gmtl/gmtl.h>
+
 #include <boost/program_options/options_description.hpp>
 
 
@@ -44,7 +46,7 @@ public:
     /** Called after a context has been created. */
     virtual bool init() = 0;
     /** Called to render a frame. */
-    virtual bool frame() = 0;
+    virtual bool frame( const gmtl::Matrix44f& view=gmtl::MAT_IDENTITY44F, const gmtl::Matrix44f& proj=gmtl::MAT_IDENTITY44F ) = 0;
     /** Called on window resize. */
     virtual void reshape( const int w, const int h ) {}
     /** Called prior to exit. */
