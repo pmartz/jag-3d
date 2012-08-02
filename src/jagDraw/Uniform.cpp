@@ -30,7 +30,6 @@ namespace jagDraw {
 
 
 Uniform::Uniform( const std::string& name )
-  : _transpose( false )
 {
     internalInit( name );
 }
@@ -254,16 +253,10 @@ void Uniform::set( const gmtl::Matrix33f& m )
         return;
     }
     
-    unsigned int idx( 0 ), r, c;
-    for( r=0; r<3; r++ )
-        for( c=0; c<3; c++ )
-            _value.mat3f[ idx++ ] = m( r, c );
-    /* Hm. Why doesn't this work? Seems to transpose the matrix.
     const float* f( m.getData() );
     unsigned int idx;
     for( idx=0; idx<9; idx++ )
         _value.mat3f[ idx ] = f[ idx ];
-        */
 }
 
 void Uniform::set( const gmtl::Matrix44f& m )
@@ -274,16 +267,10 @@ void Uniform::set( const gmtl::Matrix44f& m )
         return;
     }
 
-    unsigned int idx( 0 ), r, c;
-    for( r=0; r<4; r++ )
-        for( c=0; c<4; c++ )
-            _value.mat4f[ idx++ ] = m( r, c );
-    /* Hm. Why doesn't this work? Seems to transpose the matrix.
     const float* f( m.getData() );
     unsigned int idx;
     for( idx=0; idx<16; idx++ )
         _value.mat3f[ idx ] = f[ idx ];
-        */
 }
 
 
@@ -291,6 +278,7 @@ void Uniform::internalInit( const std::string& name )
 {
     _name = name;
     _indexHash = Program::createHash( _name );
+    _transpose = false;
 }
 
 
