@@ -41,10 +41,6 @@
 #include <osg/io_utils>
 
 
-// TBD move to GMTL proper
-#include <jagBase/gmtlSupport.h>
-
-
 using namespace std;
 namespace bpo = boost::program_options;
 
