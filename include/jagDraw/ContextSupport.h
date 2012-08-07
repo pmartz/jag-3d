@@ -36,7 +36,7 @@ namespace jagDraw
 
 
 typedef unsigned int jagDrawContextID;
-typedef GLint platformContextID;
+typedef int platformContextID;
 
 
 /** \class ContextSupport ContextSupport.h <jagDraw/ContextSupport.h>
