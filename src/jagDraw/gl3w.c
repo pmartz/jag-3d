@@ -1,4 +1,7 @@
+#ifdef _WIN32
 #define JAGDRAW_GL3W_EXPORT __declspec( dllexport )
+#endif
+
 #include <jagDraw/GL3/gl3w.h>
 
 #ifdef _WIN32
