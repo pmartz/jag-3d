@@ -22,7 +22,7 @@
 #include <jagDraw/PlatformOpenGL.h>
 #include <jagBase/LogMacros.h>
 #include <boost/foreach.hpp>
-#include <jagDraw/error.h>
+#include <jagDraw/Error.h>
 #include <iostream>
 #include <fstream>
 
