@@ -42,6 +42,7 @@ set( _jagDrawHeaderFiles
     ${HEADER_PATH}/Program.h
     ${HEADER_PATH}/Shader.h
 #    ${HEADER_PATH}/Texture.h
+    ${HEADER_PATH}/types.h
     ${HEADER_PATH}/Uniform.h
     ${HEADER_PATH}/VertexArrayCommand.h
     ${HEADER_PATH}/VertexArrayObject.h
