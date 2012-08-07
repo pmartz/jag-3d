@@ -62,6 +62,7 @@ set( _boostComponents )
 list( APPEND _boostComponents thread )
 list( APPEND _boostComponents program_options )
 list( APPEND _boostComponents date_time )
+list( APPEND _boostComponents system )
 
 #
 #   At least one windowing API is required for demos/tests/examples:
@@ -86,6 +87,10 @@ find_package( Boost 1.44.0 REQUIRED ${_boostComponents} )
 include( FindGGTHelper )
 include( FindPOCOHelper )
 
+if(APPLE)
+    find_library(COREFOUNDATION_LIBRARY CoreFoundation)
+    mark_as_advanced(COREFOUNDATION_LIBRARY)
+endif(APPLE)
 #   Required for Windows only:
 #include( FindGLEWHelper )
 # NO. Currently using gl3w (https://github.com/skaslev/gl3w/wiki/)

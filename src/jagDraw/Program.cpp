@@ -22,7 +22,7 @@
 #include <jagDraw/PlatformOpenGL.h>
 #include <jagDraw/DrawInfo.h>
 #include <jagBase/LogMacros.h>
-#include <jagDraw/error.h>
+#include <jagDraw/Error.h>
 #include <stdio.h>
 #include <iostream>
 

@@ -47,6 +47,13 @@ set( _requiredDependencyLibraries
     ${Boost_LIBRARIES}
     ${OPENGL_gl_LIBRARY}
 )
+
+if(APPLE)
+    list(APPEND _requiredDependencyLibraries
+        ${COREFOUNDATION_LIBRARY}
+    )
+endif(APPLE)
+
 set( _projectLibraries
     jagDraw
     jagBase
