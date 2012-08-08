@@ -83,6 +83,7 @@ endif()
 
 #   Required dependencies:
 find_package( OpenGL REQUIRED )
+find_package( GL3 REQUIRED )
 find_package( Boost 1.44.0 REQUIRED ${_boostComponents} )
 include( FindGGTHelper )
 include( FindPOCOHelper )
@@ -100,7 +101,6 @@ endif(APPLE)
 #
 # gl3w usage is an option that default to ON for Windows and OFF
 # for other platforms.
-
 
 
 if( JAG3D_USE_FREEGLUT )
