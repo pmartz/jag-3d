@@ -1,5 +1,5 @@
 # Finds the gl3.h header file.
-# Looks for GL3/gl3.h or OpenGL/OpenGL.h (for OSX compatibility).
+# Looks for GL3/gl3.h or OpenGL/gl3.h (for OSX compatibility).
 # 
 # This script defines the following:
 #  GL3_FOUND // Set to TRUE if gl3.h is found
@@ -22,11 +22,12 @@
 
 
 FIND_PATH( GL3_GL3_HEADER 
-    NAMES GL3/gl3.h OpenGL/OpenGL.h
+    NAMES GL3/gl3.h OpenGL/gl3.h
     HINTS ${GL3_ROOT}
     PATHS ENV GL3_ROOT
 )
-FIND_PATH( GL3_GLCOREARB_HEADER GL3/glcorearb.h
+FIND_PATH( GL3_GLCOREARB_HEADER
+    NAMES GL3/glcorearb.h OpenGL/glcorearb.h
     HINTS ${GL3_ROOT}
     PATHS ENV GL3_ROOT
 )
