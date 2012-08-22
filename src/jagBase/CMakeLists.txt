@@ -39,7 +39,7 @@ set( _jagBaseHeaderFiles
     ${HEADER_PATH}/types.h
     ${HEADER_PATH}/Version.h
 )
-message( "${_jagBaseHeaderFiles}")
+
 set( _jagBaseSourceFiles
     Log.cpp
     Version.cpp
@@ -51,7 +51,7 @@ _addLibrary( ${_libName}
 )
 
 install(
-    DIRECTORY "${HEADER_PATH}"
+    DIRECTORY ${HEADER_PATH}
     DESTINATION include
     USE_SOURCE_PERMISSIONS
     #FILES_MATCHING 
