@@ -21,8 +21,10 @@
 #ifndef __JAGDRAW_OBJECT_ID_H__
 #define __JAGDRAW_OBJECT_ID_H__ 1
 
+#include <jagDraw/PlatformOpenGL.h>
 #include <jagDraw/ContextSupport.h>
 #include <jagDraw/PerContextData.h>
+#include <jagDraw/types.h>
 #include <jagBase/ptr.h>
 
 #include <vector>

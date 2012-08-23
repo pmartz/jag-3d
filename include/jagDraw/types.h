@@ -18,50 +18,24 @@
 *
 *************** <auto-copyright.pl END do not edit this line> ***************/
 
-#ifndef __JAGDRAW_PER_CONTEXT_DATA_H__
-#define __JAGDRAW_PER_CONTEXT_DATA_H__ 1
+#ifndef __JAGDRAW_TYPES_H__
+#define __JAGDRAW_TYPES_H__ 1
 
 
-#include <vector>
+#include <jagDraw/PlatformOpenGL.h>
+#include <jagDraw/PerContextData.h>
 
 
 namespace jagDraw {
 
 
-/** \struct PerContextData PerContextData.h <jagDraw/PerContextData.h>
-*/
-template< typename T >
-struct PerContextData
-{
-    PerContextData()
-    {
-    }
-    ~PerContextData()
-    {
-    }
-
-    PerContextData& operator=( const PerContextData& rhs )
-    {
-        _data = rhs._data;
-        return( *this );
-    }
-
-    T& operator[]( const unsigned int idx )
-    {
-        return( ( T& )( _data[ idx ] ) );
-    }
-    const T& operator[]( const unsigned int idx ) const
-    {
-        return( ( T& )( _data[ idx ] ) );
-    }
-
-    std::vector< T > _data;
-};
+typedef PerContextData< GLuint > PerContextGLuint;
+typedef PerContextData< GLboolean > PerContextGLboolean;
 
 
 // jagDraw
 }
 
 
-// __JAGDRAW_PER_CONTEXT_DATA_H__
+// __JAGDRAW_TYPES_H__
 #endif
