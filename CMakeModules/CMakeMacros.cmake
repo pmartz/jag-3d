@@ -36,6 +36,7 @@ set( _requiredDependencyIncludes
     ${POCO_INCLUDE_DIR}
     ${Boost_INCLUDE_DIR}
     ${GGT_INCLUDE_DIR}
+    ${GL3_INCLUDE_DIR}
     ${OPENGL_INCLUDE_DIR}
 )
 set( _projectIncludes

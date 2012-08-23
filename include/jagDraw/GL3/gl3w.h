@@ -1,7 +1,7 @@
 #ifndef __gl3w_h_
 #define __gl3w_h_
 
-#include <jagDraw/GL3/gl3.h>
+#include <GL3/gl3.h>
 
 #ifndef JAGDRAW_GL3W_EXPORT
     #if defined( _MSC_VER ) || defined( __CYGWIN__ ) || defined( __MINGW32__ ) || defined( __BCPLUSPLUS__ ) || defined( __MWERKS__ )

@@ -42,6 +42,7 @@ set( _jagDrawHeaderFiles
     ${HEADER_PATH}/Program.h
     ${HEADER_PATH}/Shader.h
 #    ${HEADER_PATH}/Texture.h
+    ${HEADER_PATH}/types.h
     ${HEADER_PATH}/Uniform.h
     ${HEADER_PATH}/VertexArrayCommand.h
     ${HEADER_PATH}/VertexArrayObject.h
@@ -78,7 +79,6 @@ unset( _jagDrawGl3wHeaderFiles )
 unset( _jagDrawGl3wSourceFiles )
 if( JAG3D_USE_GL3W )
     set( _jagDrawGl3wHeaderFiles
-        ${HEADER_PATH}/GL3/gl3.h
         ${HEADER_PATH}/GL3/gl3w.h
         ${HEADER_PATH}/ContextSupportGl3w.h
     )
