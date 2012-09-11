@@ -40,7 +40,7 @@ set( _requiredDependencyIncludes
     ${OPENGL_INCLUDE_DIR}
 )
 set( _projectIncludes
-    ${PROJECT_SOURCE_DIR}/include
+    ${PROJECT_SOURCE_DIR}/src
 )
 
 set( _requiredDependencyLibraries
@@ -166,7 +166,7 @@ macro( _addQtExecutable _category _exeName )
     set( _localExeName "${_exeName}-qt" )
 
     QT4_WRAP_CPP( _mocFiles
-        ${PROJECT_SOURCE_DIR}/include/demoSupport/qtGlWidget.h
+        ${PROJECT_SOURCE_DIR}/src/demoSupport/qtGlWidget.h
         OPTIONS "-f"
     )
 
