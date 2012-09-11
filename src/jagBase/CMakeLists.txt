@@ -25,19 +25,16 @@ if( BUILD_SHARED_LIBS )
 endif()
 
 
-set( HEADER_PATH ${PROJECT_SOURCE_DIR}/include/${_libName} )
-#file(GLOB_RECURSE _jagBaseHeaderFiles ${HEADER_PATH}/*.h )
-
 set( _jagBaseHeaderFiles
-    ${HEADER_PATH}/Export.h
-    ${HEADER_PATH}/Buffer.h
-    ${HEADER_PATH}/gmtlSupport.h
-    ${HEADER_PATH}/Log.h
-    ${HEADER_PATH}/LogBase.h
-    ${HEADER_PATH}/LogMacros.h
-    ${HEADER_PATH}/ptr.h
-    ${HEADER_PATH}/types.h
-    ${HEADER_PATH}/Version.h
+    Export.h
+    Buffer.h
+    gmtlSupport.h
+    Log.h
+    LogBase.h
+    LogMacros.h
+    ptr.h
+    types.h
+    Version.h
 )
 
 set( _jagBaseSourceFiles
@@ -51,10 +48,13 @@ _addLibrary( ${_libName}
 )
 
 install(
-    DIRECTORY ${HEADER_PATH}
-    DESTINATION include
+    DIRECTORY .
+    DESTINATION include/jagBase
     USE_SOURCE_PERMISSIONS
-    #FILES_MATCHING 
+    FILES_MATCHING 
     PATTERN "*.h"
     PATTERN ".hg" EXCLUDE
+    PATTERN ".txt" EXCLUDE
+    PATTERN ".cpp" EXCLUDE
+    PATTERN ".cxx" EXCLUDE
 )

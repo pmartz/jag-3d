@@ -25,28 +25,27 @@ if( BUILD_SHARED_LIBS )
 endif()
 
 
-set( HEADER_PATH ${PROJECT_SOURCE_DIR}/include/${_libName} )
 set( _jagDrawHeaderFiles
-    ${HEADER_PATH}/Export.h
-    ${HEADER_PATH}/BufferObject.h
-    ${HEADER_PATH}/ContextSupport.h
-    ${HEADER_PATH}/Drawable.h
-    ${HEADER_PATH}/DrawablePrep.h
-    ${HEADER_PATH}/DrawCommand.h
-    ${HEADER_PATH}/DrawInfo.h
-    ${HEADER_PATH}/DrawCommon.h
-    ${HEADER_PATH}/Error.h
-    ${HEADER_PATH}/ObjectID.h
-    ${HEADER_PATH}/PerContextData.h
-    ${HEADER_PATH}/PlatformOpenGL.h
-    ${HEADER_PATH}/Program.h
-    ${HEADER_PATH}/Shader.h
-#    ${HEADER_PATH}/Texture.h
-    ${HEADER_PATH}/types.h
-    ${HEADER_PATH}/Uniform.h
-    ${HEADER_PATH}/VertexArrayCommand.h
-    ${HEADER_PATH}/VertexArrayObject.h
-    ${HEADER_PATH}/VertexAttrib.h
+    Export.h
+    BufferObject.h
+    ContextSupport.h
+    Drawable.h
+    DrawablePrep.h
+    DrawCommand.h
+    DrawInfo.h
+    DrawCommon.h
+    Error.h
+    ObjectID.h
+    PerContextData.h
+    PlatformOpenGL.h
+    Program.h
+    Shader.h
+#    Texture.h
+    types.h
+    Uniform.h
+    VertexArrayCommand.h
+    VertexArrayObject.h
+    VertexAttrib.h
 )
 
 set( _jagDrawSourceFiles
@@ -67,8 +66,8 @@ set( _jagDrawSourceFiles
 # unset( _jagDrawGLEWSourceFiles )
 # if( GLEW_FOUND )
 #     set( _jagDrawGLEWHeaderFiles
-#         ${HEADER_PATH}/PlatformGLEW.h
-#         ${HEADER_PATH}/ContextSupportGLEW.h
+#         PlatformGLEW.h
+#         ContextSupportGLEW.h
 #     )
 #     set( _jagDrawGLEWSourceFiles
 #         ContextSupportGLEW.cpp
@@ -79,8 +78,8 @@ unset( _jagDrawGl3wHeaderFiles )
 unset( _jagDrawGl3wSourceFiles )
 if( JAG3D_USE_GL3W )
     set( _jagDrawGl3wHeaderFiles
-        ${HEADER_PATH}/GL3/gl3w.h
-        ${HEADER_PATH}/ContextSupportGl3w.h
+        GL3/gl3w.h
+        ContextSupportGl3w.h
     )
     set( _jagDrawGl3wSourceFiles
         gl3w.c
@@ -100,10 +99,13 @@ _addLibrary( ${_libName}
 )
 
 install(
-    DIRECTORY ${HEADER_PATH}
-    DESTINATION include
+    DIRECTORY .
+    DESTINATION include/jagDraw
     USE_SOURCE_PERMISSIONS
-    #FILES_MATCHING 
+    FILES_MATCHING 
     PATTERN "*.h"
     PATTERN ".hg" EXCLUDE
+    PATTERN ".txt" EXCLUDE
+    PATTERN ".cpp" EXCLUDE
+    PATTERN ".cxx" EXCLUDE
 )
