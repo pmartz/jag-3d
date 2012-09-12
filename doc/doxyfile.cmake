@@ -101,8 +101,8 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 # configuration options related to the input files
 #---------------------------------------------------------------------------
-INPUT                  = "${PROJECT_SOURCE_DIR}/include/jagBase" \
-                         "${PROJECT_SOURCE_DIR}/include/jagDraw" \
+INPUT                  = "${PROJECT_SOURCE_DIR}/src/jagBase" \
+                         "${PROJECT_SOURCE_DIR}/src/jagDraw" \
                          "${PROJECT_SOURCE_DIR}/doc"
 INPUT_ENCODING         = UTF-8
 FILE_PATTERNS          = *.h *.txt
