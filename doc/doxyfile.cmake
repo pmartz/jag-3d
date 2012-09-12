@@ -5,7 +5,7 @@
 #---------------------------------------------------------------------------
 DOXYFILE_ENCODING      = UTF-8
 PROJECT_NAME           = Jag3D
-PROJECT_NUMBER         = "Jag3D ${JAG3D_VERSION}"
+PROJECT_NUMBER         = "Jag3D ${JAG3D_MAJOR_VERSION}.${JAG3D_MINOR_VERSION}.${JAG3D_SUB_VERSION}"
 OUTPUT_DIRECTORY       = "${PROJECT_BINARY_DIR}/doc"
 CREATE_SUBDIRS         = NO
 OUTPUT_LANGUAGE        = English

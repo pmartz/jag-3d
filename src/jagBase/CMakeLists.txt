@@ -24,6 +24,9 @@ if( BUILD_SHARED_LIBS )
     add_definitions( -DJAGBASE_LIBRARY )
 endif()
 
+configure_file( "Version.h.in"
+    "${PROJECT_SOURCE_DIR}/src/jagBase/Version.h" @ONLY )
+
 
 set( _jagBaseHeaderFiles
     Export.h
@@ -57,4 +60,5 @@ install(
     PATTERN ".txt" EXCLUDE
     PATTERN ".cpp" EXCLUDE
     PATTERN ".cxx" EXCLUDE
+    PATTERN ".in" EXCLUDE
 )
