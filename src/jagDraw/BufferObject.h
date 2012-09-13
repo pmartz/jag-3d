@@ -25,6 +25,7 @@
 #include <jagDraw/PlatformOpenGL.h>
 #include <jagBase/LogBase.h>
 #include <jagDraw/VertexArrayCommand.h>
+#include <jagDraw/ObjectID.h>
 #include <jagDraw/PerContextData.h>
 #include <jagBase/ptr.h>
 #include <jagBase/Buffer.h>
@@ -43,7 +44,7 @@ struct DrawInfo;
 \details \gl{section 2.9}.
 */
 class JAGDRAW_EXPORT BufferObject : protected jagBase::LogBase,
-            public VertexArrayCommand
+            public ObjectID, public VertexArrayCommand
 {
 public:
     /**

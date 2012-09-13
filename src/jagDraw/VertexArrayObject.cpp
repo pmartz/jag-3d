@@ -82,7 +82,17 @@ void VertexArrayObject::setMaxContexts( const unsigned int numContexts )
 
     BOOST_FOREACH( VertexArrayCommandPtr& vac, _commands )
     {
-        vac->setMaxContexts( numContexts );
+        // Not all vertex array commands have objectIDs. Only set the
+        // max context count on commands that have IDs.
+        ObjectIDPtr objID( boost::dynamic_pointer_cast< ObjectID >( vac ) );
+        if( objID != NULL )
+            objID->setMaxContexts( numContexts );
+        else
+        {
+            ObjectIDOwnerPtr objIDOwner( boost::dynamic_pointer_cast< ObjectIDOwner >( vac ) );
+            if( objIDOwner != NULL )
+                objIDOwner->setMaxContexts( numContexts );
+        }
     }
 }
 
