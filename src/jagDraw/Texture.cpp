@@ -20,6 +20,8 @@
 
 #include <jagDraw/Texture.h>
 #include <jagDraw/DrawInfo.h>
+#include <jagDraw/Error.h>
+#include <jagBase/LogMacros.h>
 
 
 namespace jagDraw {
@@ -27,14 +29,12 @@ namespace jagDraw {
 
 Texture::Texture()
   : DrawablePrep(),
-    ObjectID(),
     jagBase::LogBase( "jag.draw.texture" ),
     _target( 0 )
 {
 }
 Texture::Texture( const GLenum target, ImagePtr image )
   : DrawablePrep(),
-    ObjectID(),
     jagBase::LogBase( "jag.draw.texture" ),
     _target( target ),
     _image( image )
@@ -42,7 +42,6 @@ Texture::Texture( const GLenum target, ImagePtr image )
 }
 Texture::Texture( const Texture& rhs )
   : DrawablePrep( rhs ),
-    ObjectID( rhs ),
     jagBase::LogBase( rhs ),
     _target( rhs._target ),
     _image( rhs._image )
@@ -60,13 +59,19 @@ void Texture::operator()( DrawInfo& drawInfo )
 
     // TBD need to get this from somewhere, but it doesn't make sense to
     // store it internally in the Texture object.
-    //glActiveTexture( _texture );
+    glActiveTexture( GL_TEXTURE0 );
 
     glBindTexture( _target, getID( contextID ) );
+
+    JAG3D_ERROR_CHECK( "Texture::operator()" );
 }
 
 GLuint Texture::getID( const jagDraw::jagDrawContextID contextID )
 {
+    // TBD Hack
+    if( _ids._data.size() == 0 )
+        _ids._data.resize( 1 );
+
     if( _ids[ contextID ] == 0 )
     {
         internalInit( contextID );
@@ -84,8 +89,8 @@ void Texture::internalInit( const unsigned int contextID )
 
     glTexParameterf( _target, GL_TEXTURE_WRAP_S,     GL_CLAMP_TO_EDGE );
     glTexParameterf( _target, GL_TEXTURE_WRAP_T,     GL_CLAMP_TO_EDGE );
-    glTexParameterf( _target, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR );
-    glTexParameterf( _target, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+    glTexParameterf( _target, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
+    glTexParameterf( _target, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
 
     if( _image != NULL )
     {
@@ -115,9 +120,11 @@ void Texture::internalInit( const unsigned int contextID )
             break;
         }
     }
-    glGenerateMipmap( _target );
+    //glGenerateMipmap( _target );
 
-    glBindTexture( _target, 0); 
+    glBindTexture( _target, 0 );
+
+    JAG3D_ERROR_CHECK( "Texture::internalInit()" );
 }
 
 

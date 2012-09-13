@@ -38,8 +38,8 @@ namespace jagDraw {
 \brief TBD
 \details TBD
 */
-class Texture : public DrawablePrep,
-        public ObjectID, protected jagBase::LogBase
+class JAGDRAW_EXPORT Texture : public DrawablePrep, public ObjectID,
+        protected jagBase::LogBase
 {
 public:
     /**
@@ -55,7 +55,7 @@ public:
     virtual void operator()( DrawInfo& drawInfo );
 
     /** \brief TBD
-    Override from ObjectID. */
+    Override from DrawablePrep. */
     virtual GLuint getID( const jagDraw::jagDrawContextID contextID );
 
 #if 0 // chaskii stuff
