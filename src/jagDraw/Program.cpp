@@ -194,7 +194,7 @@ bool Program::link( unsigned int contextID )
 
     if( JAG3D_LOG_DEBUG )
     {
-        _logStream->debug() << "  Program: contextID: " << contextID <<
+        _logStream->debug() << "  ContextID: " << contextID <<
             ", object ID: " << id << std::endl;
     }
 
