@@ -108,15 +108,15 @@ void Texture::internalInit( const unsigned int contextID )
         {
         case GL_TEXTURE_1D:
             glTexImage1D( _target, level, internalFormat,
-                width, border, format, type, data.get() );
+                width, border, format, type, data->data() );
             break;
         case GL_TEXTURE_2D:
             glTexImage2D( _target, level, internalFormat,
-                width, height, border, format, type, data.get() );
+                width, height, border, format, type, data->data() );
             break;
         case GL_TEXTURE_3D:
             glTexImage3D( _target, level, internalFormat,
-                width, height, depth, border, format, type, data.get() );
+                width, height, depth, border, format, type, data->data() );
             break;
         }
     }

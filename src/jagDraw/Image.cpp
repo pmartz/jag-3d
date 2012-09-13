@@ -55,7 +55,7 @@ void Image::set( const GLint level, const GLenum internalFormat,
 void Image::get( GLint& level, GLenum& internalFormat,
     GLsizei& width, GLsizei& height, GLsizei& depth,
     GLint& border, GLenum& format, GLenum& type,
-    jagBase::BufferPtr data )
+    jagBase::BufferPtr& data )
 {
     level = _level;
     internalFormat = _internalFormat;
