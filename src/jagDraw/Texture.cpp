@@ -84,8 +84,15 @@ GLuint Texture::getID( const jagDraw::jagDrawContextID contextID )
 void Texture::internalInit( const unsigned int contextID )
 {
     glGenTextures( 1, &( _ids[ contextID ] ) );
+    const GLint id( _ids[ contextID ] );
 
-    glBindTexture( _target, _ids[ contextID ] );
+    if( JAG3D_LOG_DEBUG )
+    {
+        _logStream->debug() << "internalInit(): ContextID: " << contextID <<
+            ", object ID: " << id << std::endl;
+    }
+
+    glBindTexture( _target, id );
 
     glTexParameterf( _target, GL_TEXTURE_WRAP_S,     GL_CLAMP_TO_EDGE );
     glTexParameterf( _target, GL_TEXTURE_WRAP_T,     GL_CLAMP_TO_EDGE );
