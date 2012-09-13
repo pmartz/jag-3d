@@ -72,9 +72,12 @@ void Drawable::setMaxContexts( const unsigned int numContexts )
         ObjectIDPtr objID( boost::dynamic_pointer_cast< ObjectID >( dpp ) );
         if( objID != NULL )
             objID->setMaxContexts( numContexts );
-        ObjectIDOwnerPtr objIDOwner( boost::dynamic_pointer_cast< ObjectIDOwner >( dpp ) );
-        if( objIDOwner != NULL )
-            objIDOwner->setMaxContexts( numContexts );
+        else
+        {
+            ObjectIDOwnerPtr objIDOwner( boost::dynamic_pointer_cast< ObjectIDOwner >( dpp ) );
+            if( objIDOwner != NULL )
+                objIDOwner->setMaxContexts( numContexts );
+        }
     }
 
     BOOST_FOREACH( DrawCommandPtr dcp, _drawCommands )

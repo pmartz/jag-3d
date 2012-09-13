@@ -38,7 +38,7 @@ struct DrawInfo;
 \brief
 \details
 */
-class /*JAGDRAW_EXPORT*/ VertexArrayCommand : public ObjectID
+class /*JAGDRAW_EXPORT*/ VertexArrayCommand
 {
 public:
     /** \brief TBD
@@ -60,12 +60,10 @@ public:
     } UsageHint;
 
     VertexArrayCommand( const Type type )
-      : ObjectID(),
-        _type( type )
+      : _type( type )
     {}
     VertexArrayCommand( const VertexArrayCommand& rhs )
-      : ObjectID( rhs ),
-        _type( rhs._type )
+      : _type( rhs._type )
     {}
     ~VertexArrayCommand()
     {}
