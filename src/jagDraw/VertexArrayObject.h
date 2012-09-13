@@ -24,6 +24,7 @@
 #include <jagDraw/Export.h>
 #include <jagDraw/PlatformOpenGL.h>
 #include <jagDraw/DrawablePrep.h>
+#include <jagDraw/ObjectID.h>
 #include <jagDraw/VertexArrayCommand.h>
 #include <jagDraw/PerContextData.h>
 #include <jagBase/ptr.h>

@@ -35,12 +35,13 @@ set( _jagDrawHeaderFiles
     DrawInfo.h
     DrawCommon.h
     Error.h
+    Image.h
     ObjectID.h
     PerContextData.h
     PlatformOpenGL.h
     Program.h
     Shader.h
-#    Texture.h
+    Texture.h
     types.h
     Uniform.h
     VertexArrayCommand.h
@@ -54,8 +55,10 @@ set( _jagDrawSourceFiles
     Drawable.cpp
     DrawInfo.cpp
     Error.cpp
+    Image.cpp
     Program.cpp
     Shader.cpp
+    Texture.cpp
     Uniform.cpp
     VertexArrayObject.cpp
 )
