@@ -36,7 +36,7 @@ namespace jagDraw {
 \brief TBD
 \details TBD
 */
-class Image : protected jagBase::LogBase
+class JAGDRAW_EXPORT Image : protected jagBase::LogBase
 {
 public:
     Image();
