@@ -240,7 +240,7 @@ bool DrawDemo::frame( const gmtl::Matrix44f& view, const gmtl::Matrix44f& proj )
 
     glFlush ();
 
-    JAG3D_ERROR_CHECK( "simple3x display()" );
+    JAG3D_ERROR_CHECK( "DrawDemo frame()" );
 
     return( true );
 }
