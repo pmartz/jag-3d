@@ -170,7 +170,8 @@ GLuint Program::getID( const unsigned int contextID )
 
 void Program::setMaxContexts( const unsigned int numContexts )
 {
-    _ids._data.resize( numContexts );
+    ObjectID::setMaxContexts( numContexts );
+
     _linkStatus._data.resize( numContexts );
 
     BOOST_FOREACH( const ShaderList::value_type& shader, _shaders )
