@@ -21,7 +21,6 @@
 #ifndef __JAGDRAW_DRAWABLE_PREP_H__
 #define __JAGDRAW_DRAWABLE_PREP_H__ 1
 
-#include <jagDraw/ObjectID.h>
 #include <jagBase/ptr.h>
 
 #include <vector>
@@ -37,7 +36,7 @@ struct DrawInfo;
 \brief
 \details
 */
-class DrawablePrep : public ObjectIDOwner
+class DrawablePrep
 {
 public:
     DrawablePrep() {}

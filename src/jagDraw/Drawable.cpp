@@ -67,7 +67,14 @@ void Drawable::setMaxContexts( const unsigned int numContexts )
 {
     BOOST_FOREACH( DrawablePrepPtr dpp, _drawablePrep )
     {
-        dpp->setMaxContexts( numContexts );
+        // Some DrawablePrep objects are ObjectIDs or ObjectIDOwners,
+        // but some are not (such as Uniforms, which don't have an ID).
+        ObjectIDPtr objID( boost::dynamic_pointer_cast< ObjectID >( dpp ) );
+        if( objID != NULL )
+            objID->setMaxContexts( numContexts );
+        ObjectIDOwnerPtr objIDOwner( boost::dynamic_pointer_cast< ObjectIDOwner >( dpp ) );
+        if( objIDOwner != NULL )
+            objIDOwner->setMaxContexts( numContexts );
     }
 
     BOOST_FOREACH( DrawCommandPtr dcp, _drawCommands )

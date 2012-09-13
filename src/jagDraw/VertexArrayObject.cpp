@@ -76,7 +76,8 @@ GLuint VertexArrayObject::getID( const unsigned int contextID )
 
 void VertexArrayObject::setMaxContexts( const unsigned int numContexts )
 {
-    _ids._data.resize( numContexts );
+    ObjectID::setMaxContexts( numContexts );
+
     _initialized._data.resize( numContexts );
 
     BOOST_FOREACH( VertexArrayCommandPtr& vac, _commands )

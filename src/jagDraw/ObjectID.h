@@ -56,6 +56,9 @@ public:
     virtual void deleteID( const jagDraw::jagDrawContextID contextID ) {}
 };
 
+typedef jagBase::ptr< jagDraw::ObjectIDOwner >::shared_ptr ObjectIDOwnerPtr;
+typedef std::vector< ObjectIDOwnerPtr > ObjectIDOwnerList;
+
 
 /** \class ObjectID ObjectID.h <jagDraw/ObjectID.h>
 \brief Base for classes that own OpenGL object identifiers.
@@ -74,7 +77,7 @@ are defined in either ObjectID, or in VertexArrayObject and Program.
 Examples of classes deriving from ObjectID include Program, Shader, BufferObject,
 Texture, and VertexArrayObject.
 */
-class ObjectID : public ObjectIDOwner
+class ObjectID
 {
 public:
     ObjectID() {}

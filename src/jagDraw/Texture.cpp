@@ -68,10 +68,6 @@ void Texture::operator()( DrawInfo& drawInfo )
 
 GLuint Texture::getID( const jagDraw::jagDrawContextID contextID )
 {
-    // TBD Hack
-    if( _ids._data.size() == 0 )
-        _ids._data.resize( 1 );
-
     if( _ids[ contextID ] == 0 )
     {
         internalInit( contextID );
