@@ -1,0 +1,48 @@
+/**
+
+\mainpage Jag3D: A 3D Rendering Toolkit
+
+\section jagBase
+
+\li \ref jagBaseVersion "Version Utilities"
+\li \ref jagBaseLogging "Message Logging Utilities"
+
+\section jagDraw
+
+This module contains host-side data store and multi-context support
+for many OpenGL commands.
+
+This is the only module that executes OpenGL commands. All jagDraw
+OpenGL code is compatible with an OpenGL v4.0 core profile / forward
+compatible (GL4cpfc) context.
+
+Note that hardware mipmap generation is unavailable in GL4cpfc. Jag will need
+host-side image filtering code to replace this functionality.
+
+Direct OpenGL support:
+\li \ref jagDrawError "OpenGL Errors"
+\li \link jagDraw::VertexAttrib Generic Vertex Attributes \endlink
+\li \link jagDraw::VertexArrayObject Vertex Array Objects \endlink
+\li \link jagDraw::DrawCommand Drawing commands \endlink
+\li \link jagDraw::BufferObject Buffer Objects \endlink
+\li \link jagDraw::Shader Shader Objects \endlink
+\li \link jagDraw::Program Program Objects \endlink
+\li \link jagDraw::Uniform Uniform Variables \endlink
+
+Higher level constructs:
+\li \link jagDraw::Drawable Drawable Objects \endlink
+
+\section jagSG
+
+jagSG, the scene graph module, does not currently exist.
+
+\section ProjectRoadmap Upcoming Work and Project Notes
+
+\li The Uniform class needs to be fleshed out.
+\li Need to develop the plugin infrastructure and create an OSG-based image
+loader as soon as possible. It's difficult to do anything interesting in GL4cpfc
+without textures.
+\li "State sorting" (sorting Drawables based on the commands that configure GL for
+rendering) needs to be implemented.
+
+*/
