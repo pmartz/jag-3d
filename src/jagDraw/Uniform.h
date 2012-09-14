@@ -50,6 +50,7 @@ class JAGDRAW_EXPORT Uniform : public DrawablePrep,
 {
 public:
     Uniform( const std::string& name );
+    Uniform( const std::string& name, const GLenum type );
     Uniform( const Uniform& rhs );
     virtual ~Uniform();
 
@@ -60,26 +61,47 @@ public:
 
     UNIFORM_OF_TYPE( bool );
     UNIFORM_OF_TYPE( GLint );
+    UNIFORM_OF_TYPE( GLuint );
     UNIFORM_OF_TYPE( GLfloat );
+    UNIFORM_OF_TYPE( GLdouble );
 
     UNIFORM_OF_TYPE( gmtl::Point2i );
     UNIFORM_OF_TYPE( gmtl::Point3i );
     UNIFORM_OF_TYPE( gmtl::Point4i );
 
+    UNIFORM_OF_TYPE( gmtl::Point2ui );
+    UNIFORM_OF_TYPE( gmtl::Point3ui );
+    UNIFORM_OF_TYPE( gmtl::Point4ui );
+
     UNIFORM_OF_TYPE( gmtl::Point2f );
     UNIFORM_OF_TYPE( gmtl::Point3f );
     UNIFORM_OF_TYPE( gmtl::Point4f );
+
+    UNIFORM_OF_TYPE( gmtl::Point2d );
+    UNIFORM_OF_TYPE( gmtl::Point3d );
+    UNIFORM_OF_TYPE( gmtl::Point4d );
 
     UNIFORM_OF_TYPE( gmtl::Matrix22f );
     UNIFORM_OF_TYPE( gmtl::Matrix33f );
     UNIFORM_OF_TYPE( gmtl::Matrix44f );
 
     UNIFORM_OF_TYPE( gmtl::Matrix23f );
-    //UNIFORM_OF_TYPE( gmtl::Matrix24f );
-    //UNIFORM_OF_TYPE( gmtl::Matrix32f );
+    UNIFORM_OF_TYPE( gmtl::Matrix24f );
+    UNIFORM_OF_TYPE( gmtl::Matrix32f );
     UNIFORM_OF_TYPE( gmtl::Matrix34f );
-    //UNIFORM_OF_TYPE( gmtl::Matrix42f );
-    //UNIFORM_OF_TYPE( gmtl::Matrix43f );
+    UNIFORM_OF_TYPE( gmtl::Matrix42f );
+    UNIFORM_OF_TYPE( gmtl::Matrix43f );
+
+    UNIFORM_OF_TYPE( gmtl::Matrix22d );
+    UNIFORM_OF_TYPE( gmtl::Matrix33d );
+    UNIFORM_OF_TYPE( gmtl::Matrix44d );
+
+    UNIFORM_OF_TYPE( gmtl::Matrix23d );
+    UNIFORM_OF_TYPE( gmtl::Matrix24d );
+    UNIFORM_OF_TYPE( gmtl::Matrix32d );
+    UNIFORM_OF_TYPE( gmtl::Matrix34d );
+    UNIFORM_OF_TYPE( gmtl::Matrix42d );
+    UNIFORM_OF_TYPE( gmtl::Matrix43d );
 
 
 #undef UNIFORM_OF_TYPE
@@ -96,7 +118,8 @@ public:
     \gl{section 2.11.4} */
     virtual void operator()( DrawInfo& drawInfo );
 
-    GLenum getType() { return _type; }
+    void setType( const GLenum type ) { _type = type; }
+    GLenum getType() { return( _type ); }
 
     void setTranspose( const bool transpose=true ) { _transpose = transpose; }
     bool getTranspose() const { return( _transpose ); }
