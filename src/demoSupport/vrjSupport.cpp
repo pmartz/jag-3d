@@ -20,6 +20,7 @@
 
 
 #include <demoSupport/DemoInterface.h>
+#include <jagDraw/PlatformOpenGL.h>
 #include <jagDraw/ContextSupport.h>
 
 #include <vrj/Kernel/Kernel.h>
