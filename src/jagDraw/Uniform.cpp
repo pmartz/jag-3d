@@ -33,6 +33,11 @@ Uniform::Uniform( const std::string& name )
 {
     internalInit( name );
 }
+Uniform::Uniform( const std::string& name, const GLenum type )
+{
+    internalInit( name );
+    _type = type;
+}
 Uniform::Uniform( const Uniform& rhs )
   : _name( rhs._name ),
     _indexHash( rhs._indexHash ),
@@ -68,26 +73,47 @@ Uniform::~Uniform()
 
 TYPE_METHOD_BODIES( bool, GL_BOOL )
 TYPE_METHOD_BODIES( GLint, GL_INT )
+TYPE_METHOD_BODIES( GLuint, GL_UNSIGNED_INT )
 TYPE_METHOD_BODIES( GLfloat, GL_FLOAT )
+TYPE_METHOD_BODIES( GLdouble, GL_DOUBLE )
 
 TYPE_METHOD_BODIES( gmtl::Point2i, GL_INT_VEC2 )
 TYPE_METHOD_BODIES( gmtl::Point3i, GL_INT_VEC3 )
 TYPE_METHOD_BODIES( gmtl::Point4i, GL_INT_VEC4 )
 
+TYPE_METHOD_BODIES( gmtl::Point2ui, GL_UNSIGNED_INT_VEC2 )
+TYPE_METHOD_BODIES( gmtl::Point3ui, GL_UNSIGNED_INT_VEC3 )
+TYPE_METHOD_BODIES( gmtl::Point4ui, GL_UNSIGNED_INT_VEC4 )
+
 TYPE_METHOD_BODIES( gmtl::Point2f, GL_FLOAT_VEC2 )
 TYPE_METHOD_BODIES( gmtl::Point3f, GL_FLOAT_VEC3 )
 TYPE_METHOD_BODIES( gmtl::Point4f, GL_FLOAT_VEC4 )
 
+TYPE_METHOD_BODIES( gmtl::Point2d, GL_DOUBLE_VEC2 )
+TYPE_METHOD_BODIES( gmtl::Point3d, GL_DOUBLE_VEC3 )
+TYPE_METHOD_BODIES( gmtl::Point4d, GL_DOUBLE_VEC4 )
+
+TYPE_METHOD_BODIES( gmtl::Matrix22f, GL_FLOAT_MAT3 )
 TYPE_METHOD_BODIES( gmtl::Matrix33f, GL_FLOAT_MAT3 )
 TYPE_METHOD_BODIES( gmtl::Matrix44f, GL_FLOAT_MAT4 )
 
-TYPE_METHOD_BODIES( gmtl::Matrix22f, GL_FLOAT_MAT2 )
 TYPE_METHOD_BODIES( gmtl::Matrix23f, GL_FLOAT_MAT2x3 )
-//TYPE_METHOD_BODIES( gmtl::Matrix24f, GL_FLOAT_MAT2x4 )
-//TYPE_METHOD_BODIES( gmtl::Matrix32f, GL_FLOAT_MAT3x2 )
+TYPE_METHOD_BODIES( gmtl::Matrix24f, GL_FLOAT_MAT2x4 )
+TYPE_METHOD_BODIES( gmtl::Matrix32f, GL_FLOAT_MAT3x2 )
 TYPE_METHOD_BODIES( gmtl::Matrix34f, GL_FLOAT_MAT3x4 )
-//TYPE_METHOD_BODIES( gmtl::Matrix42f, GL_FLOAT_MAT4x2 )
-//TYPE_METHOD_BODIES( gmtl::Matrix43f, GL_FLOAT_MAT4x3 )
+TYPE_METHOD_BODIES( gmtl::Matrix42f, GL_FLOAT_MAT4x2 )
+TYPE_METHOD_BODIES( gmtl::Matrix43f, GL_FLOAT_MAT4x3 )
+
+TYPE_METHOD_BODIES( gmtl::Matrix22d, GL_DOUBLE_MAT3 )
+TYPE_METHOD_BODIES( gmtl::Matrix33d, GL_DOUBLE_MAT3 )
+TYPE_METHOD_BODIES( gmtl::Matrix44d, GL_DOUBLE_MAT4 )
+
+TYPE_METHOD_BODIES( gmtl::Matrix23d, GL_DOUBLE_MAT2x3 )
+TYPE_METHOD_BODIES( gmtl::Matrix24d, GL_DOUBLE_MAT2x4 )
+TYPE_METHOD_BODIES( gmtl::Matrix32d, GL_DOUBLE_MAT3x2 )
+TYPE_METHOD_BODIES( gmtl::Matrix34d, GL_DOUBLE_MAT3x4 )
+TYPE_METHOD_BODIES( gmtl::Matrix42d, GL_DOUBLE_MAT4x2 )
+TYPE_METHOD_BODIES( gmtl::Matrix43d, GL_DOUBLE_MAT4x3 )
 
 
 void Uniform::operator()( DrawInfo& drawInfo, const GLint loc ) const
@@ -122,29 +148,51 @@ void Uniform::operator()( DrawInfo& drawInfo, const GLint loc ) const
 
         CASE_CALL_UNIFORM( GL_BOOL, bool, glUniform1i )
         CASE_CALL_UNIFORM( GL_INT, GLint, glUniform1i )
+        CASE_CALL_UNIFORM( GL_UNSIGNED_INT, GLuint, glUniform1ui )
         CASE_CALL_UNIFORM( GL_FLOAT, GLfloat, glUniform1f )
+        CASE_CALL_UNIFORM( GL_DOUBLE, GLdouble, glUniform1d )
 
         CASE_CALL_UNIFORM_V( GL_INT_VEC2, gmtl::Point2i, glUniform2iv )
         CASE_CALL_UNIFORM_V( GL_INT_VEC3, gmtl::Point3i, glUniform3iv )
         CASE_CALL_UNIFORM_V( GL_INT_VEC4, gmtl::Point4i, glUniform4iv )
 
+        CASE_CALL_UNIFORM_V( GL_UNSIGNED_INT_VEC2, gmtl::Point2ui, glUniform2uiv )
+        CASE_CALL_UNIFORM_V( GL_UNSIGNED_INT_VEC3, gmtl::Point3ui, glUniform3uiv )
+        CASE_CALL_UNIFORM_V( GL_UNSIGNED_INT_VEC4, gmtl::Point4ui, glUniform4uiv )
+
         CASE_CALL_UNIFORM_V( GL_FLOAT_VEC2, gmtl::Point2f, glUniform2fv )
         CASE_CALL_UNIFORM_V( GL_FLOAT_VEC3, gmtl::Point3f, glUniform3fv )
         CASE_CALL_UNIFORM_V( GL_FLOAT_VEC4, gmtl::Point4f, glUniform4fv )
+
+        CASE_CALL_UNIFORM_V( GL_DOUBLE_VEC2, gmtl::Point2d, glUniform2dv )
+        CASE_CALL_UNIFORM_V( GL_DOUBLE_VEC3, gmtl::Point3d, glUniform3dv )
+        CASE_CALL_UNIFORM_V( GL_DOUBLE_VEC4, gmtl::Point4d, glUniform4dv )
 
         CASE_CALL_MATRIXUNIFORM_V( GL_FLOAT_MAT2, gmtl::Matrix22f, glUniformMatrix2fv )
         CASE_CALL_MATRIXUNIFORM_V( GL_FLOAT_MAT3, gmtl::Matrix33f, glUniformMatrix3fv )
         CASE_CALL_MATRIXUNIFORM_V( GL_FLOAT_MAT4, gmtl::Matrix44f, glUniformMatrix4fv )
 
         CASE_CALL_MATRIXUNIFORM_V( GL_FLOAT_MAT2x3, gmtl::Matrix23f, glUniformMatrix2x3fv )
-        //CASE_CALL_MATRIXUNIFORM_V( GL_FLOAT_MAT2x4, gmtl::Matrix24f, glUniformMatrix2x4fv )
-        //CASE_CALL_MATRIXUNIFORM_V( GL_FLOAT_MAT3x2, gmtl::Matrix32f, glUniformMatrix3x2fv )
+        CASE_CALL_MATRIXUNIFORM_V( GL_FLOAT_MAT2x4, gmtl::Matrix24f, glUniformMatrix2x4fv )
+        CASE_CALL_MATRIXUNIFORM_V( GL_FLOAT_MAT3x2, gmtl::Matrix32f, glUniformMatrix3x2fv )
         CASE_CALL_MATRIXUNIFORM_V( GL_FLOAT_MAT3x4, gmtl::Matrix34f, glUniformMatrix3x4fv )
-        //CASE_CALL_MATRIXUNIFORM_V( GL_FLOAT_MAT4x2, gmtl::Matrix42f, glUniformMatrix4x2fv )
-        //CASE_CALL_MATRIXUNIFORM_V( GL_FLOAT_MAT4x3, gmtl::Matrix43f, glUniformMatrix4x3fv )
+        CASE_CALL_MATRIXUNIFORM_V( GL_FLOAT_MAT4x2, gmtl::Matrix42f, glUniformMatrix4x2fv )
+        CASE_CALL_MATRIXUNIFORM_V( GL_FLOAT_MAT4x3, gmtl::Matrix43f, glUniformMatrix4x3fv )
+
+        CASE_CALL_MATRIXUNIFORM_V( GL_DOUBLE_MAT2, gmtl::Matrix22d, glUniformMatrix2dv )
+        CASE_CALL_MATRIXUNIFORM_V( GL_DOUBLE_MAT3, gmtl::Matrix33d, glUniformMatrix3dv )
+        CASE_CALL_MATRIXUNIFORM_V( GL_DOUBLE_MAT4, gmtl::Matrix44d, glUniformMatrix4dv )
+
+        CASE_CALL_MATRIXUNIFORM_V( GL_DOUBLE_MAT2x3, gmtl::Matrix23d, glUniformMatrix2x3dv )
+        CASE_CALL_MATRIXUNIFORM_V( GL_DOUBLE_MAT2x4, gmtl::Matrix24d, glUniformMatrix2x4dv )
+        CASE_CALL_MATRIXUNIFORM_V( GL_DOUBLE_MAT3x2, gmtl::Matrix32d, glUniformMatrix3x2dv )
+        CASE_CALL_MATRIXUNIFORM_V( GL_DOUBLE_MAT3x4, gmtl::Matrix34d, glUniformMatrix3x4dv )
+        CASE_CALL_MATRIXUNIFORM_V( GL_DOUBLE_MAT4x2, gmtl::Matrix42d, glUniformMatrix4x2dv )
+        CASE_CALL_MATRIXUNIFORM_V( GL_DOUBLE_MAT4x3, gmtl::Matrix43d, glUniformMatrix4x3dv )
 
 
         default:
+            JAG3D_ERROR_STATIC( "jag.draw.uniform", "operator(): Type unsupported." );
             break;
     }
 }
