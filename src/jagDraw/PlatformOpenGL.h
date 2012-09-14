@@ -32,7 +32,7 @@
 #    define GL_GLEXT_PROTOTYPES
 #  endif
 #  if defined( __APPLE__)
-#    include<OpenGL/OpenGL.h>
+#    include<OpenGL/gl3.h>
 #  elif defined( USE_EGL )
 #    include <EGL/egl.h>
 #    include <EGL/eglext.h>

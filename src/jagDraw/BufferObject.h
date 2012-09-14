@@ -140,6 +140,7 @@ public:
     {}
 };
 
+#ifdef GL_VERSION_4_0
 /**
 \details One class for each buffer bind target. See \gl{table 2.8}.
 */
@@ -153,7 +154,8 @@ public:
         BufferObject( GL_DRAW_INDIRECT_BUFFER, b, usage )
     {}
 };
-
+#endif
+    
 /**
 \details One class for each buffer bind target. See \gl{table 2.8}.
 */

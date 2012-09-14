@@ -133,23 +133,6 @@ GLuint Program::getExplicitAttribLocation( const std::string& name ) const
     return( ( it != _explicitVertexAttribLocations.end() ) ? it->second : -1 );
 }
 
-void Program::setParameter( GLenum pname, GLint value )
-{
-    const unsigned int contextID( 0 );
-    const GLuint id( getID( contextID ) );
-
-#if 0 // these are potentially not supported if not defined correctly.
-
-    if( pname == GL_GEOMETRY_SHADER ) pname = GL_GEOMETRY_SHADER_ARB;
-    else if( pname == GL_GEOMETRY_VERTICES_OUT ) pname = GL_GEOMETRY_VERTICES_OUT_ARB;
-    else if( pname == GL_GEOMETRY_INPUT_TYPE ) pname = GL_GEOMETRY_INPUT_TYPE_ARB;
-    else if( pname == GL_GEOMETRY_OUTPUT_TYPE ) pname = GL_GEOMETRY_OUTPUT_TYPE_ARB;
-
-#endif
-
-    glProgramParameteri( id, pname, value );
-}
-
 void Program::get( GLenum pname, GLint *params )
 {
     const unsigned int contextID( 0 );

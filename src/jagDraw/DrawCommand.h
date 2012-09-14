@@ -262,6 +262,7 @@ protected:
     jagBase::GLvoidPtrArray _indicesArray;
 };
 
+#ifdef GL_VERSION_4_0
 class IndirectBase
 {
 public:
@@ -294,7 +295,7 @@ protected:
 
     jagDraw::BufferObjectPtr _indirectBuffer;
 };
-
+#endif
 
 
 /** \class DrawArrays DrawCommand.h <jagDraw/DrawCommand.h>
@@ -353,6 +354,7 @@ public:
 typedef jagBase::ptr< jagDraw::DrawArraysInstanced >::shared_ptr DrawArraysInstancedPtr;
 
 
+#ifdef GL_VERSION_4_0
 /** \class DrawArraysIndirect DrawCommand.h <jagDraw/DrawCommand.h>
 \brief
 \details
@@ -394,7 +396,7 @@ public:
 };
 
 typedef jagBase::ptr< jagDraw::DrawArraysIndirect >::shared_ptr DrawArraysIndirectPtr;
-
+#endif
 
 /** \class MultiDrawArrays DrawCommand.h <jagDraw/DrawCommand.h>
 \brief
@@ -782,6 +784,7 @@ public:
 typedef jagBase::ptr< jagDraw::DrawElementsInstancedBaseVertex >::shared_ptr DrawElementsInstancedBaseVertexPtr;
 
 
+#ifdef GL_VERSION_4_0
 /** \class DrawElementsIndirect DrawCommand.h <jagDraw/DrawCommand.h>
 \brief
 \details
@@ -831,7 +834,7 @@ public:
 };
 
 typedef jagBase::ptr< jagDraw::DrawElementsIndirect >::shared_ptr DrawElementsIndirectPtr;
-
+#endif
 
 /** \class MultiDrawElementsBaseVertex DrawCommand.h <jagDraw/DrawCommand.h>
 \brief
