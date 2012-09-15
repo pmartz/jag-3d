@@ -133,6 +133,16 @@ GLuint Program::getExplicitAttribLocation( const std::string& name ) const
     return( ( it != _explicitVertexAttribLocations.end() ) ? it->second : -1 );
 }
 
+#ifdef GL_VERSION_4_1
+void Program::setParameter( GLenum pname, GLint value )
+{
+    const unsigned int contextID( 0 );
+    const GLuint id( getID( contextID ) );
+
+    glProgramParameteri( id, pname, value );
+}
+#endif
+
 void Program::get( GLenum pname, GLint *params )
 {
     const unsigned int contextID( 0 );
