@@ -29,6 +29,8 @@
 #include <jagBase/ptr.h>
 #include <gmtl/gmtl.h>
 
+#include <boost/any.hpp>
+
 #include <vector>
 #include <string>
 
@@ -48,25 +50,62 @@ class JAGDRAW_EXPORT Uniform : public DrawablePrep,
 {
 public:
     Uniform( const std::string& name );
-    Uniform( const Uniform& u );
+    Uniform( const std::string& name, const GLenum type );
+    Uniform( const Uniform& rhs );
+    virtual ~Uniform();
 
-    explicit Uniform( const std::string& name, const bool b );
-    explicit Uniform( const std::string& name, const GLint i );
-    explicit Uniform( const std::string& name, const GLfloat f );
+#define UNIFORM_OF_TYPE(__type) \
+    explicit Uniform( const std::string& name, const __type& v ); \
+    void set( const __type& v ); \
+    void get( __type& v );
 
-    explicit Uniform( const std::string& name, const gmtl::Point2f& p );
-    explicit Uniform( const std::string& name, const gmtl::Vec3f& p );
-    explicit Uniform( const std::string& name, const gmtl::Point3f& p );
-    explicit Uniform( const std::string& name, const gmtl::Point4f& p );
+    UNIFORM_OF_TYPE( bool );
+    UNIFORM_OF_TYPE( GLint );
+    UNIFORM_OF_TYPE( GLuint );
+    UNIFORM_OF_TYPE( GLfloat );
+    UNIFORM_OF_TYPE( GLdouble );
 
-    explicit Uniform( const std::string& name, const gmtl::Matrix33f& m );
-    explicit Uniform( const std::string& name, const gmtl::Matrix44f& m );
+    UNIFORM_OF_TYPE( gmtl::Point2i );
+    UNIFORM_OF_TYPE( gmtl::Point3i );
+    UNIFORM_OF_TYPE( gmtl::Point4i );
 
-    /*
-    UniformValue( iiMath::vec2i v2i );
-    UniformValue( iiMath::vec3i v3i );
-    UniformValue( iiMath::vec4i v4i );
-    */
+    UNIFORM_OF_TYPE( gmtl::Point2ui );
+    UNIFORM_OF_TYPE( gmtl::Point3ui );
+    UNIFORM_OF_TYPE( gmtl::Point4ui );
+
+    UNIFORM_OF_TYPE( gmtl::Point2f );
+    UNIFORM_OF_TYPE( gmtl::Point3f );
+    UNIFORM_OF_TYPE( gmtl::Point4f );
+
+    UNIFORM_OF_TYPE( gmtl::Point2d );
+    UNIFORM_OF_TYPE( gmtl::Point3d );
+    UNIFORM_OF_TYPE( gmtl::Point4d );
+
+    UNIFORM_OF_TYPE( gmtl::Matrix22f );
+    UNIFORM_OF_TYPE( gmtl::Matrix33f );
+    UNIFORM_OF_TYPE( gmtl::Matrix44f );
+
+    UNIFORM_OF_TYPE( gmtl::Matrix23f );
+    UNIFORM_OF_TYPE( gmtl::Matrix24f );
+    UNIFORM_OF_TYPE( gmtl::Matrix32f );
+    UNIFORM_OF_TYPE( gmtl::Matrix34f );
+    UNIFORM_OF_TYPE( gmtl::Matrix42f );
+    UNIFORM_OF_TYPE( gmtl::Matrix43f );
+
+    UNIFORM_OF_TYPE( gmtl::Matrix22d );
+    UNIFORM_OF_TYPE( gmtl::Matrix33d );
+    UNIFORM_OF_TYPE( gmtl::Matrix44d );
+
+    UNIFORM_OF_TYPE( gmtl::Matrix23d );
+    UNIFORM_OF_TYPE( gmtl::Matrix24d );
+    UNIFORM_OF_TYPE( gmtl::Matrix32d );
+    UNIFORM_OF_TYPE( gmtl::Matrix34d );
+    UNIFORM_OF_TYPE( gmtl::Matrix42d );
+    UNIFORM_OF_TYPE( gmtl::Matrix43d );
+
+
+#undef UNIFORM_OF_TYPE
+
 
     /** \brief TBD
     \details TBD
@@ -79,11 +118,8 @@ public:
     \gl{section 2.11.4} */
     virtual void operator()( DrawInfo& drawInfo );
 
-    GLenum getType() { return _type; }
-
-    // TBD need more setters, one for each type.
-    void set( const gmtl::Matrix33f& m );
-    void set( const gmtl::Matrix44f& m );
+    void setType( const GLenum type ) { _type = type; }
+    GLenum getType() { return( _type ); }
 
     void setTranspose( const bool transpose=true ) { _transpose = transpose; }
     bool getTranspose() const { return( _transpose ); }
@@ -94,25 +130,9 @@ protected:
     std::string _name;
     Program::HashValue _indexHash;
 
+    boost::any _value;
+
     GLenum _type;
-
-    union {
-        bool    b;
-
-        GLint   i;
-        GLint   v2i[2]; 
-        GLint   v3i[3]; 
-        GLint   v4i[4]; 
-
-        GLfloat f;
-        GLfloat p2f[2];
-        GLfloat p3f[3];
-        GLfloat p4f[4];
-
-        GLfloat mat3f[9];
-        GLfloat mat4f[16];
-    } _value;
-
     bool _transpose;
 };
 
