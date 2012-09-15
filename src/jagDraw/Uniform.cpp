@@ -33,166 +33,88 @@ Uniform::Uniform( const std::string& name )
 {
     internalInit( name );
 }
-Uniform::Uniform( const Uniform& u )
-  : _name( u._name ),
-    _indexHash( u._indexHash ),
-    _type( u._type ),
-    _transpose( u._transpose )
+Uniform::Uniform( const std::string& name, const GLenum type )
 {
-    _value = u._value;
+    internalInit( name );
+    _type = type;
+}
+Uniform::Uniform( const Uniform& rhs )
+  : _name( rhs._name ),
+    _indexHash( rhs._indexHash ),
+    _value( rhs._value ),
+    _type( rhs._type ),
+    _transpose( rhs._transpose )
+{
+}
+Uniform::~Uniform()
+{
+}
 
-    /*
-    switch( _type )
-    {
-        case GL_INT:        _value.i = u._value.i;                                                  break;
-        case GL_INT_VEC2:   memcpy( (void *)_value.v2i, (const void *)u._value.v2i, sizeof(_value.v2i)); break;
-        case GL_INT_VEC3:   memcpy( (void *)_value.v3i, (const void *)u._value.v3i, sizeof(_value.v3i));  break;
-        case GL_INT_VEC4:   memcpy( (void *)_value.v4i, (const void *)u._value.v4i, sizeof(_value.v4i));  break;
-
-        case GL_FLOAT:      _value.f = u._value.f;                                                  break;
-        case GL_FLOAT_VEC2: memcpy( (void *)_value.v2f, (const void *)u._value.v2f, sizeof(_value.v2f)); break;
-        case GL_FLOAT_VEC3: memcpy( (void *)_value.v3f, (const void *)u._value.v3f, sizeof(_value.v3f));  break;
-        case GL_FLOAT_VEC4: memcpy( (void *)_value.v4f, (const void *)u._value.v4f, sizeof(_value.v4f));  break;
-
-        case GL_FLOAT_MAT2:     break; // unsupported
-        case GL_FLOAT_MAT2x3:   break; // unsupported
-        case GL_FLOAT_MAT2x4:   break; // unsupported
-        case GL_FLOAT_MAT3x2:   break; // unsupported
-        case GL_FLOAT_MAT3x4:   break; // unsupported
-        case GL_FLOAT_MAT4x2:   break; // unsupported
-        case GL_FLOAT_MAT4x3:   break; // unsupported
-
-        case GL_FLOAT_MAT3: memcpy( _value.mat3f, u._value.mat3f, sizeof(_value.mat3f) ); break;
-        case GL_FLOAT_MAT4: memcpy( _value.mat4f, u._value.mat4f, sizeof(_value.mat4f) ); break;
-
-        default:
-            break;
+#define TYPE_METHOD_BODIES(__type,__typeid) \
+    Uniform::Uniform( const std::string& name, const __type& v ) \
+    { \
+        internalInit( name ); \
+        _type = __typeid; \
+        set( v ); \
+    } \
+    void Uniform::set( const __type& v ) \
+    { \
+        if( _type != __typeid ) \
+        { \
+            JAG3D_ERROR_STATIC( "jag.draw.uniform", "Type mismatch." ); \
+            return; \
+        } \
+        _value = v; \
+    } \
+    void Uniform::get( __type& v ) \
+    { \
+        v = boost::any_cast< __type >( _value ); \
     }
-    */
-}
 
+TYPE_METHOD_BODIES( bool, GL_BOOL )
+TYPE_METHOD_BODIES( GLint, GL_INT )
+TYPE_METHOD_BODIES( GLuint, GL_UNSIGNED_INT )
+TYPE_METHOD_BODIES( GLfloat, GL_FLOAT )
+TYPE_METHOD_BODIES( GLdouble, GL_DOUBLE )
 
-Uniform::Uniform( const std::string& name, const bool b )
-{
-    internalInit( name );
-    _type = GL_BOOL;
-    _value.b = b;
-}
+TYPE_METHOD_BODIES( gmtl::Point2i, GL_INT_VEC2 )
+TYPE_METHOD_BODIES( gmtl::Point3i, GL_INT_VEC3 )
+TYPE_METHOD_BODIES( gmtl::Point4i, GL_INT_VEC4 )
 
-Uniform::Uniform( const std::string& name, const GLint i )
-{
-    internalInit( name );
-    _type = GL_INT;
-    _value.i = i;
-}
+TYPE_METHOD_BODIES( gmtl::Point2ui, GL_UNSIGNED_INT_VEC2 )
+TYPE_METHOD_BODIES( gmtl::Point3ui, GL_UNSIGNED_INT_VEC3 )
+TYPE_METHOD_BODIES( gmtl::Point4ui, GL_UNSIGNED_INT_VEC4 )
 
-Uniform::Uniform( const std::string& name, const GLfloat f )
-{
-    internalInit( name );
-    _type = GL_FLOAT;
-    _value.f = f;
-}
+TYPE_METHOD_BODIES( gmtl::Point2f, GL_FLOAT_VEC2 )
+TYPE_METHOD_BODIES( gmtl::Point3f, GL_FLOAT_VEC3 )
+TYPE_METHOD_BODIES( gmtl::Point4f, GL_FLOAT_VEC4 )
 
-Uniform::Uniform( const std::string& name, const gmtl::Point2f& p )
-{
-    internalInit( name );
-    _type = GL_FLOAT_VEC2;
-    _value.p2f[0] = p[0];
-    _value.p2f[1] = p[1];
-}
+TYPE_METHOD_BODIES( gmtl::Point2d, GL_DOUBLE_VEC2 )
+TYPE_METHOD_BODIES( gmtl::Point3d, GL_DOUBLE_VEC3 )
+TYPE_METHOD_BODIES( gmtl::Point4d, GL_DOUBLE_VEC4 )
 
-Uniform::Uniform( const std::string& name, const gmtl::Vec3f& p )
-{
-    internalInit( name );
-    _type = GL_FLOAT_VEC3;
-    _value.p3f[0] = p[0];
-    _value.p3f[1] = p[1];
-    _value.p3f[2] = p[2];
-}
-Uniform::Uniform( const std::string& name, const gmtl::Point3f& p )
-{
-    internalInit( name );
-    _type = GL_FLOAT_VEC3;
-    _value.p3f[0] = p[0];
-    _value.p3f[1] = p[1];
-    _value.p3f[2] = p[2];
-}
+TYPE_METHOD_BODIES( gmtl::Matrix22f, GL_FLOAT_MAT3 )
+TYPE_METHOD_BODIES( gmtl::Matrix33f, GL_FLOAT_MAT3 )
+TYPE_METHOD_BODIES( gmtl::Matrix44f, GL_FLOAT_MAT4 )
 
-Uniform::Uniform( const std::string& name, const gmtl::Point4f& p )
-{
-    internalInit( name );
-    _type = GL_FLOAT_VEC4;
-    _value.p4f[0] = p[0];
-    _value.p4f[1] = p[1];
-    _value.p4f[2] = p[2];
-    _value.p4f[3] = p[3];
-}
+TYPE_METHOD_BODIES( gmtl::Matrix23f, GL_FLOAT_MAT2x3 )
+TYPE_METHOD_BODIES( gmtl::Matrix24f, GL_FLOAT_MAT2x4 )
+TYPE_METHOD_BODIES( gmtl::Matrix32f, GL_FLOAT_MAT3x2 )
+TYPE_METHOD_BODIES( gmtl::Matrix34f, GL_FLOAT_MAT3x4 )
+TYPE_METHOD_BODIES( gmtl::Matrix42f, GL_FLOAT_MAT4x2 )
+TYPE_METHOD_BODIES( gmtl::Matrix43f, GL_FLOAT_MAT4x3 )
 
-Uniform::Uniform( const std::string& name, const gmtl::Matrix33f& m )
-{
-    internalInit( name );
-    _type = GL_FLOAT_MAT3;
-    set( m );
-}
-Uniform::Uniform( const std::string& name, const gmtl::Matrix44f& m )
-{
-    internalInit( name );
-    _type = GL_FLOAT_MAT4;
-    set( m );
-}
+TYPE_METHOD_BODIES( gmtl::Matrix22d, GL_DOUBLE_MAT3 )
+TYPE_METHOD_BODIES( gmtl::Matrix33d, GL_DOUBLE_MAT3 )
+TYPE_METHOD_BODIES( gmtl::Matrix44d, GL_DOUBLE_MAT4 )
 
-/*
-Uniform::Uniform( iiMath::vec2i v2i )
-{
-    _type = GL_INT_VEC2;
-    memcpy( (void *)_value.v2i, (const void *)v2i.getData(), sizeof( _value.v2i ));
-}
+TYPE_METHOD_BODIES( gmtl::Matrix23d, GL_DOUBLE_MAT2x3 )
+TYPE_METHOD_BODIES( gmtl::Matrix24d, GL_DOUBLE_MAT2x4 )
+TYPE_METHOD_BODIES( gmtl::Matrix32d, GL_DOUBLE_MAT3x2 )
+TYPE_METHOD_BODIES( gmtl::Matrix34d, GL_DOUBLE_MAT3x4 )
+TYPE_METHOD_BODIES( gmtl::Matrix42d, GL_DOUBLE_MAT4x2 )
+TYPE_METHOD_BODIES( gmtl::Matrix43d, GL_DOUBLE_MAT4x3 )
 
-Uniform::Uniform( iiMath::vec3i v3i )
-{
-    _type = GL_INT_VEC3;
-    memcpy( (void *)_value.v3i, (const void *)v3i.getData(), sizeof(_value.v3i ));
-}
-
-Uniform::Uniform( iiMath::vec4i v4i )
-{
-    _type = GL_INT_VEC4;
-    memcpy( (void *)_value.v4i, (const void *) v4i.getData(), sizeof( _value.v4i ));
-}
-
-
-
-Uniform::Uniform( iiMath::vec2f v2f )
-{
-    _type = GL_FLOAT_VEC2;
-    memcpy( (void *)_value.v2f, (const void *)v2f.getData(), sizeof( _value.v2f));
-}
-
-Uniform::Uniform( iiMath::vec3f v3f )
-{
-    _type = GL_FLOAT_VEC3;
-    memcpy( (void *)_value.v3f, (const void *)v3f.getData(), sizeof(_value.v3f) );
-}
-
-Uniform::Uniform( iiMath::vec4f v4f )
-{
-    _type = GL_FLOAT_VEC4;
-    memcpy( (void *)_value.v4f, (const void *)v4f.getData(), sizeof(_value.v4f) );
-}
-
-
-Uniform::Uniform( iiMath::matrix3f mat3f )
-{
-    _type = GL_FLOAT_MAT3;
-    memcpy( _value.mat3f, mat3f.getData(), sizeof(_value.mat3f) );
-}
-
-Uniform::Uniform( iiMath::matrix4f mat4f )
-{
-    _type = GL_FLOAT_MAT4;
-    memcpy( _value.mat4f, mat4f.getData(), sizeof(_value.mat4f) );
-}
-*/
 
 void Uniform::operator()( DrawInfo& drawInfo, const GLint loc ) const
 {
@@ -202,30 +124,75 @@ void Uniform::operator()( DrawInfo& drawInfo, const GLint loc ) const
 
     switch( _type )
     {
-        case GL_BOOL:       glUniform1i( loc, (GLint)( _value.b ) ); break;
+#define CASE_CALL_UNIFORM(__typeid,__type,__func) \
+        case __typeid: \
+        { \
+            const __type& v( boost::any_cast< const __type >( _value ) ); \
+            __func( loc, v ); \
+            break; \
+        }
+#define CASE_CALL_UNIFORM_V(__typeid,__type,__func) \
+        case __typeid: \
+        { \
+            const __type& v( boost::any_cast< const __type >( _value ) ); \
+            __func( loc, 1, v.getData() ); \
+            break; \
+        }
+#define CASE_CALL_MATRIXUNIFORM_V(__typeid,__type,__func) \
+        case __typeid: \
+        { \
+            const __type& v( boost::any_cast< const __type >( _value ) ); \
+            __func( loc, 1, _transpose ? GL_TRUE : GL_FALSE, v.getData() ); \
+            break; \
+        }
 
-        case GL_INT:        glUniform1i( loc, _value.i );         break;
-        case GL_INT_VEC2:   glUniform2iv( loc, 1, _value.v2i );   break;
-        case GL_INT_VEC3:   glUniform3iv( loc, 1, _value.v3i );   break;
-        case GL_INT_VEC4:   glUniform4iv( loc, 1, _value.v4i );   break;
+        CASE_CALL_UNIFORM( GL_BOOL, bool, glUniform1i )
+        CASE_CALL_UNIFORM( GL_INT, GLint, glUniform1i )
+        CASE_CALL_UNIFORM( GL_UNSIGNED_INT, GLuint, glUniform1ui )
+        CASE_CALL_UNIFORM( GL_FLOAT, GLfloat, glUniform1f )
+        CASE_CALL_UNIFORM( GL_DOUBLE, GLdouble, glUniform1d )
 
-        case GL_FLOAT:      glUniform1f( loc, _value.f );         break;
-        case GL_FLOAT_VEC2: glUniform2fv( loc, 1, _value.p2f );   break;
-        case GL_FLOAT_VEC3: glUniform3fv( loc, 1, _value.p3f );   break;
-        case GL_FLOAT_VEC4: glUniform4fv( loc, 1, _value.p4f );   break;
+        CASE_CALL_UNIFORM_V( GL_INT_VEC2, gmtl::Point2i, glUniform2iv )
+        CASE_CALL_UNIFORM_V( GL_INT_VEC3, gmtl::Point3i, glUniform3iv )
+        CASE_CALL_UNIFORM_V( GL_INT_VEC4, gmtl::Point4i, glUniform4iv )
 
-        case GL_FLOAT_MAT2:     break; // unsupported
-        case GL_FLOAT_MAT2x3:   break; // unsupported
-        case GL_FLOAT_MAT2x4:   break; // unsupported
-        case GL_FLOAT_MAT3x2:   break; // unsupported
-        case GL_FLOAT_MAT3x4:   break; // unsupported
-        case GL_FLOAT_MAT4x2:   break; // unsupported
-        case GL_FLOAT_MAT4x3:   break; // unsupported
+        CASE_CALL_UNIFORM_V( GL_UNSIGNED_INT_VEC2, gmtl::Point2ui, glUniform2uiv )
+        CASE_CALL_UNIFORM_V( GL_UNSIGNED_INT_VEC3, gmtl::Point3ui, glUniform3uiv )
+        CASE_CALL_UNIFORM_V( GL_UNSIGNED_INT_VEC4, gmtl::Point4ui, glUniform4uiv )
 
-        case GL_FLOAT_MAT3: glUniformMatrix3fv( loc, 1, _transpose ? GL_TRUE : GL_FALSE, _value.mat3f ); break;
-        case GL_FLOAT_MAT4: glUniformMatrix4fv( loc, 1, _transpose ? GL_TRUE : GL_FALSE, _value.mat4f ); break;
+        CASE_CALL_UNIFORM_V( GL_FLOAT_VEC2, gmtl::Point2f, glUniform2fv )
+        CASE_CALL_UNIFORM_V( GL_FLOAT_VEC3, gmtl::Point3f, glUniform3fv )
+        CASE_CALL_UNIFORM_V( GL_FLOAT_VEC4, gmtl::Point4f, glUniform4fv )
+
+        CASE_CALL_UNIFORM_V( GL_DOUBLE_VEC2, gmtl::Point2d, glUniform2dv )
+        CASE_CALL_UNIFORM_V( GL_DOUBLE_VEC3, gmtl::Point3d, glUniform3dv )
+        CASE_CALL_UNIFORM_V( GL_DOUBLE_VEC4, gmtl::Point4d, glUniform4dv )
+
+        CASE_CALL_MATRIXUNIFORM_V( GL_FLOAT_MAT2, gmtl::Matrix22f, glUniformMatrix2fv )
+        CASE_CALL_MATRIXUNIFORM_V( GL_FLOAT_MAT3, gmtl::Matrix33f, glUniformMatrix3fv )
+        CASE_CALL_MATRIXUNIFORM_V( GL_FLOAT_MAT4, gmtl::Matrix44f, glUniformMatrix4fv )
+
+        CASE_CALL_MATRIXUNIFORM_V( GL_FLOAT_MAT2x3, gmtl::Matrix23f, glUniformMatrix2x3fv )
+        CASE_CALL_MATRIXUNIFORM_V( GL_FLOAT_MAT2x4, gmtl::Matrix24f, glUniformMatrix2x4fv )
+        CASE_CALL_MATRIXUNIFORM_V( GL_FLOAT_MAT3x2, gmtl::Matrix32f, glUniformMatrix3x2fv )
+        CASE_CALL_MATRIXUNIFORM_V( GL_FLOAT_MAT3x4, gmtl::Matrix34f, glUniformMatrix3x4fv )
+        CASE_CALL_MATRIXUNIFORM_V( GL_FLOAT_MAT4x2, gmtl::Matrix42f, glUniformMatrix4x2fv )
+        CASE_CALL_MATRIXUNIFORM_V( GL_FLOAT_MAT4x3, gmtl::Matrix43f, glUniformMatrix4x3fv )
+
+        CASE_CALL_MATRIXUNIFORM_V( GL_DOUBLE_MAT2, gmtl::Matrix22d, glUniformMatrix2dv )
+        CASE_CALL_MATRIXUNIFORM_V( GL_DOUBLE_MAT3, gmtl::Matrix33d, glUniformMatrix3dv )
+        CASE_CALL_MATRIXUNIFORM_V( GL_DOUBLE_MAT4, gmtl::Matrix44d, glUniformMatrix4dv )
+
+        CASE_CALL_MATRIXUNIFORM_V( GL_DOUBLE_MAT2x3, gmtl::Matrix23d, glUniformMatrix2x3dv )
+        CASE_CALL_MATRIXUNIFORM_V( GL_DOUBLE_MAT2x4, gmtl::Matrix24d, glUniformMatrix2x4dv )
+        CASE_CALL_MATRIXUNIFORM_V( GL_DOUBLE_MAT3x2, gmtl::Matrix32d, glUniformMatrix3x2dv )
+        CASE_CALL_MATRIXUNIFORM_V( GL_DOUBLE_MAT3x4, gmtl::Matrix34d, glUniformMatrix3x4dv )
+        CASE_CALL_MATRIXUNIFORM_V( GL_DOUBLE_MAT4x2, gmtl::Matrix42d, glUniformMatrix4x2dv )
+        CASE_CALL_MATRIXUNIFORM_V( GL_DOUBLE_MAT4x3, gmtl::Matrix43d, glUniformMatrix4x3dv )
+
 
         default:
+            JAG3D_ERROR_STATIC( "jag.draw.uniform", "operator(): Type unsupported." );
             break;
     }
 }
@@ -243,34 +210,6 @@ void Uniform::operator()( DrawInfo& drawInfo )
         GLint index( drawInfo._program->getUniformLocation( _indexHash ) );
         operator()( drawInfo, index );
     }
-}
-
-void Uniform::set( const gmtl::Matrix33f& m )
-{
-    if( _type != GL_FLOAT_MAT3 )
-    {
-        JAG3D_ERROR_STATIC( "jag.draw.uniform", "Type mismatch." );
-        return;
-    }
-    
-    const float* f( m.getData() );
-    unsigned int idx;
-    for( idx=0; idx<9; idx++ )
-        _value.mat3f[ idx ] = f[ idx ];
-}
-
-void Uniform::set( const gmtl::Matrix44f& m )
-{
-    if( _type != GL_FLOAT_MAT4 )
-    {
-        JAG3D_ERROR_STATIC( "jag.draw.uniform", "Type mismatch." );
-        return;
-    }
-
-    const float* f( m.getData() );
-    unsigned int idx;
-    for( idx=0; idx<16; idx++ )
-        _value.mat3f[ idx ] = f[ idx ];
 }
 
 
