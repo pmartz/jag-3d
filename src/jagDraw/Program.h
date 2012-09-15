@@ -128,7 +128,11 @@ public:
     unsigned int getNumActiveAttribs( const GLuint id ) const;
 
 
- 
+
+#ifdef GL_VERSION_4_1
+    // TBD need to get context ID, probably as a param?
+    void setParameter( GLenum pname, GLint value ); // Used for Geometry Shaders 
+#endif
     // TBD need to get context ID, probably as a param?
     void get( GLenum pname, GLint* params );
 
