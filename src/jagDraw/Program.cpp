@@ -307,7 +307,7 @@ bool Program::link( unsigned int contextID )
             const std::string blockName( buf );
             const HashValue hash( createHash( blockName ) );
             BlockInfo& bi( _blockInfo[ hash ] );
-            bi._binding = idx;
+            bi._bindIndex = idx;
             if( JAG3D_LOG_INFO )
             {
                 Poco::LogStream& ls( _logStream->information() );

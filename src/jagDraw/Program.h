@@ -43,8 +43,6 @@ struct DrawInfo;
 /** \class Program Program.h <jagDraw/Program.h>
 \brief
 \details \gl{section 2.11.2}.
-
-Diamond inheritance note: See the documentation for ObjectID.
 */
 class JAGDRAW_EXPORT Program : public DrawablePrep,
             public ObjectID, public SHARED_FROM_THIS(Program),
@@ -217,7 +215,7 @@ private:
     // Named uniform block support (aka interface blocks)
     typedef std::map< HashValue, GLuint > OffsetMap;
     typedef struct {
-        GLuint _binding;
+        GLuint _bindIndex;
         OffsetMap _offsets;
     } BlockInfo;
     typedef std::map< HashValue, BlockInfo > BlockInfoMap;

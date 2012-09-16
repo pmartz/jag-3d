@@ -148,5 +148,32 @@ void BufferObject::internalInit( const unsigned int contextID )
 }
 
 
+
+IndexedBufferObject::IndexedBufferObject( const GLenum target )
+  : BufferObject( target ),
+    _index( 0 )
+{
+}
+IndexedBufferObject::IndexedBufferObject( const GLenum target, const jagBase::BufferPtr b, const GLenum usage )
+  : BufferObject( target, b, usage ),
+    _index( 0 )
+{
+}
+IndexedBufferObject::IndexedBufferObject( const IndexedBufferObject& rhs )
+  : BufferObject( rhs ),
+    _index( 0 )
+{
+}
+IndexedBufferObject::~IndexedBufferObject()
+{
+}
+
+void IndexedBufferObject::operator()( DrawInfo& drawInfo )
+{
+    const GLuint id( getID( drawInfo._id ) );
+    glBindBufferBase( _target, _index, id );
+}
+
+
 // jagDraw
 }
