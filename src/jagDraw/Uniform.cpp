@@ -22,6 +22,7 @@
 #include <jagDraw/PlatformOpenGL.h>
 #include <jagDraw/DrawInfo.h>
 #include <jagBase/LogMacros.h>
+#include <jagDraw/Error.h>
 
 #include <string>
 
@@ -30,16 +31,22 @@ namespace jagDraw {
 
 
 Uniform::Uniform( const std::string& name )
+  : DrawablePrep(),
+    jagBase::LogBase( "jag.draw.uniform" )
 {
     internalInit( name );
 }
 Uniform::Uniform( const std::string& name, const GLenum type )
+  : DrawablePrep(),
+    jagBase::LogBase( "jag.draw.uniform" )
 {
     internalInit( name );
     _type = type;
 }
 Uniform::Uniform( const Uniform& rhs )
-  : _name( rhs._name ),
+  : DrawablePrep( rhs ),
+    jagBase::LogBase( "jag.draw.uniform" ),
+    _name( rhs._name ),
     _indexHash( rhs._indexHash ),
     _value( rhs._value ),
     _type( rhs._type ),
@@ -52,6 +59,8 @@ Uniform::~Uniform()
 
 #define TYPE_METHOD_BODIES(__type,__typeid) \
     Uniform::Uniform( const std::string& name, const __type& v ) \
+      : DrawablePrep(), \
+        jagBase::LogBase( "jag.draw.uniform" ) \
     { \
         internalInit( name ); \
         _type = __typeid; \
@@ -61,7 +70,7 @@ Uniform::~Uniform()
     { \
         if( _type != __typeid ) \
         { \
-            JAG3D_ERROR_STATIC( "jag.draw.uniform", "Type mismatch." ); \
+            JAG3D_ERROR( "Type mismatch." ); \
             return; \
         } \
         _value = v; \
@@ -192,8 +201,14 @@ void Uniform::operator()( DrawInfo& drawInfo, const GLint loc ) const
 
 
         default:
-            JAG3D_ERROR_STATIC( "jag.draw.uniform", "operator(): Type unsupported." );
+            JAG3D_ERROR( "operator(): Type unsupported." );
             break;
+    }
+
+    const GLenum errorEnum( JAG3D_ERROR_CHECK( "Uniform::operator()" ) );
+    if( JAG3D_LOG_CRITICAL && ( errorEnum == GL_INVALID_OPERATION ) )
+    {
+        JAG3D_CRITICAL( "\tVariable \"" + _name + "\": Possible type mismatch between host and shader." );
     }
 }
 

@@ -30,14 +30,14 @@ namespace jagDraw
 {
 
 
-void errorCheck( const std::string& msg )
+GLenum errorCheck( const std::string& msg )
 {
     const GLenum errorEnum = glGetError();
 
 #ifndef JAG3D_DISABLE_LOGGING
 
     if( errorEnum == GL_NO_ERROR )
-        return;
+        return( errorEnum );
 
     std::string enumStr( "Unknown" );
     switch( errorEnum ) {
@@ -53,17 +53,19 @@ void errorCheck( const std::string& msg )
     JAG3D_ERROR_STATIC( "jag.draw.glerror", enumStr );
 
 #endif
+
+    return( errorEnum );
 }
 
 
-void fboErrorCheck( const std::string& msg )
+GLenum fboErrorCheck( const std::string& msg )
 {
     const GLenum errorEnum( glCheckFramebufferStatus( GL_DRAW_FRAMEBUFFER ) );
 
 #ifndef JAG3D_DISABLE_LOGGING
 
     if( errorEnum == GL_FRAMEBUFFER_COMPLETE )
-        return;
+        return( errorEnum );
 
     std::string enumStr( "Unknown" );
     switch( errorEnum ) {
@@ -87,6 +89,8 @@ void fboErrorCheck( const std::string& msg )
     JAG3D_ERROR_STATIC( "jag.draw.glerror", outMsg );
 
 #endif
+
+    return( errorEnum );
 }
 
 
