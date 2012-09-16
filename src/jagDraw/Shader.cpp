@@ -98,7 +98,7 @@ void Shader::printInfoLog( const GLuint id )
 void Shader::internalInit( const unsigned int contextID )
 {
     std::vector< const char* > src;
-    std::vector< GLint > length;
+    GLintVec length;
     BOOST_FOREACH( jagBase::StringList::value_type& srcStr, _sourceList )
     {
         //1. Scan for any built-in variables

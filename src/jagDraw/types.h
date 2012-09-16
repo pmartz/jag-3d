@@ -25,12 +25,24 @@
 #include <jagDraw/PlatformOpenGL.h>
 #include <jagDraw/PerContextData.h>
 
+#include <vector>
+
 
 namespace jagDraw {
 
 
-typedef PerContextData< GLuint > PerContextGLuint;
 typedef PerContextData< GLboolean > PerContextGLboolean;
+typedef PerContextData< GLint > PerContextGLint;
+typedef PerContextData< GLuint > PerContextGLuint;
+typedef PerContextData< GLfloat > PerContextGLfloat;
+typedef PerContextData< GLdouble > PerContextGLdouble;
+
+
+typedef std::vector< GLboolean > GLbooleanVec;
+typedef std::vector< GLint > GLintVec;
+typedef std::vector< GLuint > GLuintVec;
+typedef std::vector< GLfloat > GLfloatVec;
+typedef std::vector< GLdouble > GLdoubleVec;
 
 
 // jagDraw
