@@ -204,12 +204,24 @@ private:
 
     PerContextGLboolean _linkStatus;
 
+    // Support for uniforms in the default uniform block
     typedef std::map< HashValue, GLint > LocationMap;
     LocationMap _uniformLocations;
+
+    // Vertex attribute support
     LocationMap _vertexAttribLocations;
 
     typedef std::map< std::string, GLint > ExplicitLocationMap;
     ExplicitLocationMap _explicitVertexAttribLocations;
+
+    // Named uniform block support (aka interface blocks)
+    typedef std::map< HashValue, GLuint > OffsetMap;
+    typedef struct {
+        GLuint _binding;
+        OffsetMap _offsets;
+    } BlockInfo;
+    typedef std::map< HashValue, BlockInfo > BlockInfoMap;
+    BlockInfoMap _blockInfo;
 };
 
 typedef jagBase::ptr< Program >::shared_ptr ShaderProgramPtr;
