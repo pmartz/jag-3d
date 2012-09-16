@@ -66,14 +66,6 @@ typedef std::vector< ObjectIDOwnerPtr > ObjectIDOwnerList;
 generated, stored, and deleted, one for each active context. ObjectID provides a common
 interface for such classes.
 
-Note that some classes derive from both ObjectID and (indirectly) ObjectIDOwner, creating
-a diamond inheritance pattern. Examples are VertexArrayObject and Program, which both
-maintain their own OpenGL IDs (derive from ObjectID) and own classes that derive from ObjectID
-(such as BufferObject and Shader. This apparent inheritance pattern isn't an issue because
-both VertexArrayObject and Program are ObjectIDOwner classes by virtue of being DrawablePrep
-classes, and DrawablePrep doesn't override any methods in ObjectIDOwner. Thus all methods
-are defined in either ObjectID, or in VertexArrayObject and Program.
-
 Examples of classes deriving from ObjectID include Program, Shader, BufferObject,
 Texture, and VertexArrayObject.
 */

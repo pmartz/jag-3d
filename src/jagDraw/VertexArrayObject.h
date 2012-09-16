@@ -41,8 +41,6 @@ struct DrawInfo;
 /** \class VertexArrayObject VertexArrayObject.h <jagDraw/VertexArrayObject.h>
 \brief A context-safe wrapper for OpenGL vertex array objects.
 \details \gl{section 2.10}.
-
-Diamond inheritance note: See the documentation for ObjectID.
 */
 class JAGDRAW_EXPORT VertexArrayObject : public DrawablePrep,
             public ObjectID

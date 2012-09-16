@@ -44,6 +44,7 @@ set( _jagDrawHeaderFiles
     Texture.h
     types.h
     Uniform.h
+    UniformBlock.h
     VertexArrayCommand.h
     VertexArrayObject.h
     VertexAttrib.h
@@ -60,6 +61,7 @@ set( _jagDrawSourceFiles
     Shader.cpp
     Texture.cpp
     Uniform.cpp
+    UniformBlock.cpp
     VertexArrayObject.cpp
 )
 
