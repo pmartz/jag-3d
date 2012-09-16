@@ -26,6 +26,7 @@
 #include <jagDraw/PlatformOpenGL.h>
 #include <jagDraw/DrawablePrep.h>
 #include <jagDraw/Program.h>
+#include <jagBase/LogBase.h>
 #include <jagBase/ptr.h>
 #include <gmtl/gmtl.h>
 
@@ -45,7 +46,7 @@ struct DrawInfo;
 \brief
 \details \gl{section 2.11.4}
 */
-class JAGDRAW_EXPORT Uniform : public DrawablePrep,
+class JAGDRAW_EXPORT Uniform : public DrawablePrep, public jagBase::LogBase,
         public SHARED_FROM_THIS(Uniform)
 {
 public:
