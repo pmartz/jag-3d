@@ -183,6 +183,37 @@ void Program::setMaxContexts( const unsigned int numContexts )
     }
 }
 
+void logHeader( Poco::LogStream& ls )
+{
+    ls.width( 16 );
+    ls << std::right << "hashcode";
+    ls.width( 12 );
+    ls << std::left << "  loc  off  ";
+    ls.width( 30 );
+    ls << "name";
+    ls.width( 0 );
+    ls << "desc" << std::endl;
+}
+void logValues( Poco::LogStream& ls, const Program::HashValue& hash, const GLint loc, const GLuint off,
+    const std::string& name, const std::string& desc, const bool displayOffset=false )
+{
+    ls.width( 16 );
+    ls << std::hex << std::right << hash;
+    ls.width( 2 ); ls << "  ";
+    ls.width( 3 );
+    ls << std::dec << std::left << loc;
+    ls.width( 2 ); ls << "  ";
+    ls.width( 3 );
+    if( displayOffset )
+        ls << off;
+    else
+        ls << " ";
+    ls.width( 2 ); ls << "  ";
+    ls.width( 30 );
+    ls << name;
+    ls.width( 0 );
+    ls << desc << std::endl;
+}
 
 bool Program::link( unsigned int contextID )
 {
@@ -242,21 +273,19 @@ bool Program::link( unsigned int contextID )
 
     _linkStatus[ contextID ] = GL_TRUE;
     {
-        // Query uniforms and their locations
-        GLint numUniforms;
         glUseProgram( id );
+
+        const GLint maxLength( 128 );
+        char buf[ maxLength ];
+
+        Poco::LogStream& ls( _logStream->information() );
+
+        // Query uniforms and their locations
+        logHeader( ls );
+
+        GLint numUniforms;
         glGetProgramiv( id, GL_ACTIVE_UNIFORMS, &numUniforms );
-        if( JAG3D_LOG_INFO )
-        {
-            Poco::LogStream& ls( _logStream->information() );
-            ls << "Active uniforms (" << numUniforms << "):" << std::endl;
-            if( numUniforms > 0 )
-                ls << "        hashcode  loc  name" << std::endl;
-        }
         GLuintVec namedBlockUniformIndices;
-        GLint maxLength;
-        glGetProgramiv( id, GL_ACTIVE_UNIFORM_MAX_LENGTH, &maxLength );
-        char* buf = new char[ maxLength ];
         for( GLint idx = 0; idx < numUniforms; idx++ )
         {
             GLint osize;
@@ -277,29 +306,13 @@ bool Program::link( unsigned int contextID )
             }
             const HashValue hash( createHash( uniformName ) );
             if( JAG3D_LOG_INFO )
-            {
-                Poco::LogStream& ls( _logStream->information() );
-                ls.width( 16 );
-                ls << std::hex << std::right << hash << "  ";
-                ls.width( 5 );
-                ls << std::dec << std::left << location;
-                ls.width( 0 );
-                ls << uniformName << std::endl;
-            }
+                logValues( ls, hash, location, 0, uniformName, "default block" );
             _uniformLocations[ hash ] = location;
         }
-        delete[] buf;
 
         // Query uniform block info
         GLint numUniformBlocks;
         glGetProgramiv( id, GL_ACTIVE_UNIFORM_BLOCKS, &numUniformBlocks );
-        if( JAG3D_LOG_INFO )
-        {
-            Poco::LogStream& ls( _logStream->information() );
-            ls << "Active uniform blocks (" << numUniformBlocks << "):" << std::endl;
-            if( numUniformBlocks > 0 )
-                ls << "        hashcode  idx  off  name" << std::endl;
-        }
         _blockInfo.clear();
         GLintVec nuIdx, nuOff;
         nuIdx.resize( namedBlockUniformIndices.size() );
@@ -308,8 +321,6 @@ bool Program::link( unsigned int contextID )
         nuOff.resize( namedBlockUniformIndices.size() );
         glGetActiveUniformsiv( id, (GLsizei)namedBlockUniformIndices.size(), namedBlockUniformIndices.data(),
             GL_UNIFORM_OFFSET, nuOff.data() );
-        maxLength = 128;
-        buf = new char[ maxLength ];
         for( GLuint idx = 0; idx < (GLuint)numUniformBlocks; idx++ )
         {
             glUniformBlockBinding( id, idx, idx );
@@ -322,16 +333,7 @@ bool Program::link( unsigned int contextID )
             glGetActiveUniformBlockiv( id, idx, GL_UNIFORM_BLOCK_DATA_SIZE, &size );
             bi._minSize = (size_t)size;
             if( JAG3D_LOG_INFO )
-            {
-                Poco::LogStream& ls( _logStream->information() );
-                ls.width( 16 );
-                ls << std::hex << std::right << hash << "  ";
-                ls.width( 3 );
-                ls << std::dec << std::left << idx << "  ";
-                ls.width( 0 );
-                ls << "     ";
-                ls << std::left << blockName << std::endl;
-            }
+                logValues( ls, hash, idx, 0, blockName, "block name" );
             unsigned int uidx( 0 );
             BOOST_FOREACH( GLuint blockIdx, nuIdx )
             {
@@ -339,38 +341,23 @@ bool Program::link( unsigned int contextID )
                 {
                     glGetActiveUniformName( id, namedBlockUniformIndices[ uidx ], maxLength, NULL, buf );
                     std::string nubName( buf );
+                    if( nubName.find_last_of( '[' ) != nubName.npos )
+                    {
+                        // Some drivers append "[...]" to end of array names. Strip this.
+                        nubName = nubName.substr( 0, nubName.find_last_of( '[' ) );
+                    }
                     const HashValue nubHash( createHash( nubName ) );
                     bi._offsets[ nubHash ] = nuOff[ uidx ];
                     if( JAG3D_LOG_INFO )
-                    {
-                        Poco::LogStream& ls( _logStream->information() );
-                        ls.width( 16 );
-                        ls << std::hex << std::right << nubHash << "  ";
-                        ls.width( 0 );
-                        ls << "     ";
-                        ls.width( 3 );
-                        ls << std::dec << std::left << nuOff[ uidx ] << "  ";
-                        ls.width( 0 );
-                        ls << std::left << nubName << std::endl;
-                    }
+                        logValues( ls, nubHash, idx, nuOff[ uidx], nubName, "  block: " + blockName, true );
                 }
                 ++uidx;
             }
         }
-        delete[] buf;
 
         // Query generic vertex attributes and their locations
         GLint numAttribs;
         glGetProgramiv( id, GL_ACTIVE_ATTRIBUTES, &numAttribs );
-        if( JAG3D_LOG_INFO )
-        {
-            Poco::LogStream& ls( _logStream->information() );
-            ls << "Active attributes (" << numAttribs << "):" << std::endl;
-            if( numAttribs > 0 )
-                ls << "        hashcode  loc  name" << std::endl;
-        }
-        glGetProgramiv( id, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &maxLength );
-        buf = new char[ maxLength ];
         for( GLint idx = 0; idx < numAttribs; idx++ )
         {
             GLint osize;
@@ -380,16 +367,7 @@ bool Program::link( unsigned int contextID )
             const std::string attribName( buf );
             const HashValue hash( createHash( attribName ) );
             if( JAG3D_LOG_INFO )
-            {
-                Poco::LogStream& ls( _logStream->information() );
-                ls.width( 16 );
-                ls << std::hex << std::right << hash << "  ";
-                ls.width( 5 );
-                ls << std::dec << std::left << location;
-                ls.width( 0 );
-                ls << attribName << std::endl;
-            }
-
+                logValues( ls, hash, location, 0, attribName, "vertex attrib" );
             _vertexAttribLocations[ createHash( attribName ) ] = location;
         }
         glUseProgram( 0 );
