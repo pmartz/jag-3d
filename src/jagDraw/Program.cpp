@@ -118,6 +118,16 @@ void Program::operator()( DrawInfo& drawInfo )
         if( uIt != drawInfo._uniformMap.end() )
             (*( uIt->second ))( drawInfo, it.second );
     }
+
+    // Iterate over active uniform blocks. If an active uniform block matches a uniform
+    // in the drawInfo._uniformBlockMap, bind the uniform buffer object.
+    BOOST_FOREACH( const BlockInfoMap::value_type& it, _blockInfo )
+    {
+        const HashValue& hash( it.first );
+        DrawInfo::UniformBlockMap::iterator ubIt( drawInfo._uniformBlockMap.find( hash ) );
+        if( ubIt != drawInfo._uniformBlockMap.end() )
+            (*( ubIt->second ))( drawInfo, it.second );
+    }
 }
 
 
@@ -308,6 +318,9 @@ bool Program::link( unsigned int contextID )
             const HashValue hash( createHash( blockName ) );
             BlockInfo& bi( _blockInfo[ hash ] );
             bi._bindIndex = idx;
+            GLint size;
+            glGetActiveUniformBlockiv( id, idx, GL_UNIFORM_BLOCK_DATA_SIZE, &size );
+            bi._minSize = (size_t)size;
             if( JAG3D_LOG_INFO )
             {
                 Poco::LogStream& ls( _logStream->information() );
@@ -499,6 +512,16 @@ GLint Program::getVertexAttribLocation( const HashValue& h ) const
 GLint Program::getVertexAttribLocation( const std::string& s ) const
 {
     return( getVertexAttribLocation( createHash( s ) ) );
+}
+
+const Program::BlockInfo& Program::getUniformBlockInfo( const HashValue& h ) const
+{
+    BlockInfoMap::const_iterator it( _blockInfo.find( h ) );
+    return( it->second );
+}
+const Program::BlockInfo& Program::getUniformBlockInfo( const std::string& s ) const
+{
+    return( getUniformBlockInfo( createHash( s ) ) );
 }
 
 

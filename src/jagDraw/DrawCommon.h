@@ -32,6 +32,7 @@
 #include <jagDraw/Shader.h>
 #include <jagDraw/Program.h>
 #include <jagDraw/Uniform.h>
+#include <jagDraw/UniformBlock.h>
 #include <jagDraw/Error.h>
 #include <jagDraw/ContextSupport.h>
 
