@@ -45,7 +45,16 @@ struct DrawInfo;
 
 /** \class UniformBlock UniformBlock.h <jagDraw/UniformBlock.h>
 \brief Support for GLSL interface blocks / named uniform blocks.
-\details \gl{section 2.9} \gl{section 2.11.4}.
+\details
+
+Future enhancements:
+
+Requires efficiency enhancements. If the attached Uniform values
+have not changed, there is no need to copy their values into the
+buffer. But when the values have changes, UniformBlock should
+map the buffer and modify the values.
+
+\gl{section 2.9} \gl{section 2.11.4}.
 */
 class JAGDRAW_EXPORT UniformBlock : public DrawablePrep,
             public ObjectIDOwner, public SHARED_FROM_THIS(UniformBlock),
