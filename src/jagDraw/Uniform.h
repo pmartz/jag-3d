@@ -44,7 +44,52 @@ struct DrawInfo;
 
 /** \class Uniform Uniform.h <jagDraw\Uniform.h>
 \brief
-\details \gl{section 2.11.4}
+\details
+
+Future enhancements:
+
+Requires support for arrays.
+
+Requires efficiency enhancements. Consider the following scenarios:
+
+\code
+  frame {
+    bind program A
+    set uniform
+    draw
+    bind program B
+    draw
+  }
+\endcode
+
+In the above scenario, Uniform::operator() should result in a
+call to glUniform*() only in the first frame, but not subsequent
+frames because the uniform value is automatically restored when
+program A is re-bound.
+
+(However, note that glUniform*() must be called if the uniform value
+changes, or if program A is re-linked.)
+
+\code
+  frame {
+    bind program
+    set value X for uniform "name"
+    draw
+    set value Y for uniform "name"
+    draw
+  }
+\endcode
+
+JAG supports multiple Uniform instances that all have the same name,
+and therefore all map to the same GLSL uniform variable. This is the
+case in the above scenario. In such a scenario, the two separate Uniform
+instances must always call glUniform*() to set their different values.
+Currently this already happens, becahse Uniform::operator() is dumb and
+simply always sets its value. This will change in the future when
+Uniform becomes "smarter", but we must keep this scenario in mind when
+we make that change.
+
+\gl{section 2.11.4}
 */
 class JAGDRAW_EXPORT Uniform : public DrawablePrep, public jagBase::LogBase,
         public SHARED_FROM_THIS(Uniform)
