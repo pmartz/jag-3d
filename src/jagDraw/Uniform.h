@@ -43,7 +43,7 @@ struct DrawInfo;
 
 
 /** \class Uniform Uniform.h <jagDraw\Uniform.h>
-\brief
+\brief Support for setting GLSL uniform variables.
 \details
 
 Future enhancements:
