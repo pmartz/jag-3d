@@ -195,6 +195,18 @@ public:
     getVertexAttribLocation( const HashValue& h ) const. */
     GLint getVertexAttribLocation( const std::string& s ) const;
 
+
+    // Used in the interface to UniformBlock.
+    typedef std::map< HashValue, GLuint > OffsetMap;
+    typedef struct {
+        GLuint _bindIndex;
+        size_t _minSize;
+        OffsetMap _offsets;
+    } BlockInfo;
+
+    const BlockInfo& getUniformBlockInfo( const HashValue& h ) const;
+    const BlockInfo& getUniformBlockInfo( const std::string& s ) const;
+
 private:
     void internalInit( const unsigned int contextID );
 
@@ -213,11 +225,6 @@ private:
     ExplicitLocationMap _explicitVertexAttribLocations;
 
     // Named uniform block support (aka interface blocks)
-    typedef std::map< HashValue, GLuint > OffsetMap;
-    typedef struct {
-        GLuint _bindIndex;
-        OffsetMap _offsets;
-    } BlockInfo;
     typedef std::map< HashValue, BlockInfo > BlockInfoMap;
     BlockInfoMap _blockInfo;
 };

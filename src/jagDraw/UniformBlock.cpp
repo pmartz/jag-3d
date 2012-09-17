@@ -60,15 +60,75 @@ UniformBlock::~UniformBlock()
 }
 
 
-void UniformBlock::operator()( DrawInfo& drawInfo, const GLuint bindIndex ) const
+void UniformBlock::addUniform( UniformPtr uniform )
 {
-    std::ostringstream ostr;
-    ostr << bindIndex;
-    JAG3D_TRACE( "operator(): " + _name + ", bindIndex: " + ostr.str() );
+    _uniforms.push_back( uniform );
+}
+
+
+void UniformBlock::operator()( DrawInfo& drawInfo, const Program::BlockInfo& blockInfo ) const
+{
+    if( JAG3D_LOG_TRACE )
+    {
+        std::ostringstream ostr;
+        ostr << blockInfo._bindIndex;
+        JAG3D_TRACE( "operator(): " + _name + ", bindIndex: " + ostr.str() );
+    }
+
+    if( _buffer->size() < blockInfo._minSize )
+        _buffer->setSize( blockInfo._minSize );
+
+    // TBD load uniforms into buffer
+    Program::OffsetMap offsets( blockInfo._offsets );
+    BOOST_FOREACH( UniformPtr uniform, _uniforms )
+    {
+        Program::OffsetMap::const_iterator it( offsets.find( uniform->getNameHash() ) );
+        if( it != offsets.end() )
+        {
+            const GLuint offsetValue( it->second );
+
+#define HANDLE_CASE(__typeid,__type) \
+            case __typeid: \
+            { \
+                __type value; \
+                uniform->get( value ); \
+                memcpy( _buffer->offset( offsetValue ), &value, sizeof( __type ) ); \
+                break; \
+            }
+
+            switch( uniform->getType() )
+            {
+            HANDLE_CASE( GL_FLOAT, GLfloat )
+            HANDLE_CASE( GL_FLOAT_VEC3, gmtl::Point3f )
+            default:
+                JAG3D_ERROR( "operator(): Unsupported uniform type." );
+                break;
+            }
+
+#undef HANDLE_CASE
+
+        }
+    }
+
+    // bind 
+    _bufferObject->setIndex( blockInfo._bindIndex );
+    (*_bufferObject)( drawInfo );
 }
 void UniformBlock::operator()( DrawInfo& drawInfo )
 {
     JAG3D_TRACE( "operator(): " + _name );
+
+    // Add this uniform block to the pool of potentially active uniform blocks
+    // for the current frame and draw thread.
+    drawInfo._uniformBlockMap[ _nameHash ] = shared_from_this();
+
+    // UniformBlock::operator() could execute before Program::operator(),
+    // so only look up uniform block info if a Program is available.
+    if( drawInfo._program != NULL )
+    {
+        Program::BlockInfo blockInfo( drawInfo._program->getUniformBlockInfo( _nameHash ) );
+        operator()( drawInfo, blockInfo );
+    }
 }
 
 void UniformBlock::setMaxContexts( const unsigned int numContexts )

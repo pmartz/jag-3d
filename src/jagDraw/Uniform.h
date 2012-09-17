@@ -125,6 +125,8 @@ public:
     void setTranspose( const bool transpose=true ) { _transpose = transpose; }
     bool getTranspose() const { return( _transpose ); }
 
+    const Program::HashValue getNameHash() const { return( _indexHash ); }
+
 protected:
     void internalInit( const std::string& name );
 

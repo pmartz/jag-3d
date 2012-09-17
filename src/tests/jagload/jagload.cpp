@@ -133,7 +133,7 @@ bool JagLoadDemo::startup( const unsigned int numContexts )
         "uniform mat3 normalMatrix; \n"
         "uniform vec3 ecLightDir; \n"
         "uniform blockTest { \n"
-        "    float ambientMat; \n"
+        "    float ambientScene; \n"
         "    vec3 diffuseMat; \n"
         "}; \n"
         " \n"
@@ -145,8 +145,7 @@ bool JagLoadDemo::startup( const unsigned int numContexts )
         "{ \n"
         "    vec3 ecNormal = normalize( normalMatrix * normal ); \n"
         "    float diffuse = max( dot( ecLightDir, ecNormal ), 0. ); \n"
-        //"    color = vec4( vec3(diffuse), 1. ); \n"
-        "    color = vec4( ambientMat ) + vec4( diffuseMat * diffuse, 1. ); \n"
+        "    color = vec4( ambientScene ) + vec4( diffuseMat * diffuse, 1. ); \n"
         " \n"
         "    gl_Position = viewProjectionMatrix * vertex; \n"
         "} \n";
@@ -172,6 +171,15 @@ bool JagLoadDemo::startup( const unsigned int numContexts )
     prog->attachShader( fs );
 
     firstDrawable->insertDrawablePrep( prog );
+
+    // Test uniform blocks
+    jagDraw::UniformBlockPtr ubp( jagDraw::UniformBlockPtr(
+        new jagDraw::UniformBlock( "blockTest" ) ) );
+    ubp->addUniform( jagDraw::UniformPtr(
+        new jagDraw::Uniform( "ambientScene", .2f ) ) );
+    ubp->addUniform( jagDraw::UniformPtr(
+        new jagDraw::Uniform( "diffuseMat", gmtl::Point3f( 0.f, .7f, 0.9f ) ) ) );
+    firstDrawable->insertDrawablePrep( ubp );
 
     gmtl::Vec3f lightVec( 0.5, .7, 1. );
     gmtl::normalize( lightVec );

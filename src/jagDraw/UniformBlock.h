@@ -56,10 +56,12 @@ public:
     UniformBlock( const UniformBlock& rhs );
     virtual ~UniformBlock();
 
+    void addUniform( UniformPtr uniform );
+
     /** \brief TBD
     \details TBD
     Does not add this uniform block to drawInfo._uniformBlockMap. */
-    void operator()( DrawInfo& drawInfo, const GLuint bindIndex ) const;
+    void operator()( DrawInfo& drawInfo, const Program::BlockInfo& blockInfo ) const;
     /** \brief TBD
     \details Override methods from DrawablePrep.
     Adds this uniform to drawInfo._uniformBlockMap. */

@@ -25,6 +25,7 @@
 #include <jagDraw/ContextSupport.h>
 #include <jagDraw/Program.h>
 #include <jagDraw/Uniform.h>
+#include <jagDraw/UniformBlock.h>
 
 
 namespace jagDraw {
@@ -54,6 +55,16 @@ struct JAGDRAW_EXPORT DrawInfo
     If a match is found, the corresponding uniform value is specified.
     */
     UniformMap _uniformMap;
+
+
+    typedef std::map< Program::HashValue, ConstUniformBlockPtr > UniformBlockMap;
+
+    /** \brief List of active uniform blocks during draw.
+    \details When a new Program is used, it iterates over its
+    active uniform blocks and attempts to find a hash key match in this map.
+    If a match is found, it binds the corresponding uniform block.
+    */
+    UniformBlockMap _uniformBlockMap;
 };
 
 
