@@ -99,7 +99,7 @@ bool TextureDemo::startup( const unsigned int numContexts )
         prog->attachShader( fs );
     }
 
-    jagDraw::UniformPtr texture( new jagDraw::Uniform( "texture", 0 ) );
+    jagDraw::UniformPtr texture( new jagDraw::Uniform( "texture", GL_SAMPLER_2D, (GLint)0 ) );
 
 
     jagDraw::DrawablePtr drawable( new jagDraw::Drawable() );

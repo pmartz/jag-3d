@@ -41,8 +41,17 @@ Uniform::Uniform( const std::string& name, const GLenum type )
     jagBase::LogBase( "jag.draw.uniform" )
 {
     internalInit( name );
-    _type = type;
+    setType( type );
 }
+Uniform::Uniform( const std::string& name, const GLenum type, const GLint& v )
+    : DrawablePrep(),
+    jagBase::LogBase( "jag.draw.uniform" )
+{
+    internalInit( name );
+    setType( type );
+    _value = v;
+}
+
 Uniform::Uniform( const Uniform& rhs )
   : DrawablePrep( rhs ),
     jagBase::LogBase( "jag.draw.uniform" ),
@@ -50,6 +59,7 @@ Uniform::Uniform( const Uniform& rhs )
     _indexHash( rhs._indexHash ),
     _value( rhs._value ),
     _type( rhs._type ),
+    _isSampler( rhs._isSampler ),
     _transpose( rhs._transpose )
 {
 }
@@ -57,23 +67,36 @@ Uniform::~Uniform()
 {
 }
 
+
+void Uniform::setSampler( const GLint& v )
+{
+    if( !_isSampler )
+    {
+        JAG3D_ERROR( "Type mismatch. setSampler() requires sampler type." );
+        return;
+    }
+    _value = v;
+} \
+
+
 #define TYPE_METHOD_BODIES(__type,__typeid) \
     Uniform::Uniform( const std::string& name, const __type& v ) \
       : DrawablePrep(), \
         jagBase::LogBase( "jag.draw.uniform" ) \
     { \
         internalInit( name ); \
-        _type = __typeid; \
+        setType( __typeid ); \
         set( v ); \
     } \
     void Uniform::set( const __type& v ) \
     { \
-        if( _type != __typeid ) \
+        if( ( _type == __typeid ) || \
+            (( __typeid == GL_INT ) && _isSampler ) ) \
         { \
-            JAG3D_ERROR( "Type mismatch." ); \
+            _value = v; \
             return; \
         } \
-        _value = v; \
+        JAG3D_ERROR( "Type mismatch." ); \
     } \
     void Uniform::get( __type& v ) \
     { \
@@ -131,78 +154,87 @@ void Uniform::operator()( DrawInfo& drawInfo, const GLint loc ) const
     // uniform is already in the drawInfo._uniformMap.
     //drawInfo._uniformMap[ _indexHash ] = shared_from_this();
 
-    switch( _type )
+    if( _isSampler )
     {
+        const GLint& v( boost::any_cast< const GLint >( _value ) );
+        glUniform1i( loc, v );
+    }
+
+    else
+    {
+        switch( _type )
+        {
 #define CASE_CALL_UNIFORM(__typeid,__type,__func) \
-        case __typeid: \
-        { \
-            const __type& v( boost::any_cast< const __type >( _value ) ); \
-            __func( loc, v ); \
-            break; \
-        }
+            case __typeid: \
+            { \
+                const __type& v( boost::any_cast< const __type >( _value ) ); \
+                __func( loc, v ); \
+                break; \
+            }
 #define CASE_CALL_UNIFORM_V(__typeid,__type,__func) \
-        case __typeid: \
-        { \
-            const __type& v( boost::any_cast< const __type >( _value ) ); \
-            __func( loc, 1, v.getData() ); \
-            break; \
-        }
+            case __typeid: \
+            { \
+                const __type& v( boost::any_cast< const __type >( _value ) ); \
+                __func( loc, 1, v.getData() ); \
+                break; \
+            }
 #define CASE_CALL_MATRIXUNIFORM_V(__typeid,__type,__func) \
-        case __typeid: \
-        { \
-            const __type& v( boost::any_cast< const __type >( _value ) ); \
-            __func( loc, 1, _transpose ? GL_TRUE : GL_FALSE, v.getData() ); \
-            break; \
+            case __typeid: \
+            { \
+                const __type& v( boost::any_cast< const __type >( _value ) ); \
+                __func( loc, 1, _transpose ? GL_TRUE : GL_FALSE, v.getData() ); \
+                break; \
+            }
+
+            CASE_CALL_UNIFORM( GL_BOOL, bool, glUniform1i )
+            CASE_CALL_UNIFORM( GL_INT, GLint, glUniform1i )
+            CASE_CALL_UNIFORM( GL_UNSIGNED_INT, GLuint, glUniform1ui )
+            CASE_CALL_UNIFORM( GL_FLOAT, GLfloat, glUniform1f )
+            CASE_CALL_UNIFORM( GL_DOUBLE, GLdouble, glUniform1d )
+
+            CASE_CALL_UNIFORM_V( GL_INT_VEC2, gmtl::Point2i, glUniform2iv )
+            CASE_CALL_UNIFORM_V( GL_INT_VEC3, gmtl::Point3i, glUniform3iv )
+            CASE_CALL_UNIFORM_V( GL_INT_VEC4, gmtl::Point4i, glUniform4iv )
+
+            CASE_CALL_UNIFORM_V( GL_UNSIGNED_INT_VEC2, gmtl::Point2ui, glUniform2uiv )
+            CASE_CALL_UNIFORM_V( GL_UNSIGNED_INT_VEC3, gmtl::Point3ui, glUniform3uiv )
+            CASE_CALL_UNIFORM_V( GL_UNSIGNED_INT_VEC4, gmtl::Point4ui, glUniform4uiv )
+
+            CASE_CALL_UNIFORM_V( GL_FLOAT_VEC2, gmtl::Point2f, glUniform2fv )
+            CASE_CALL_UNIFORM_V( GL_FLOAT_VEC3, gmtl::Point3f, glUniform3fv )
+            CASE_CALL_UNIFORM_V( GL_FLOAT_VEC4, gmtl::Point4f, glUniform4fv )
+
+            CASE_CALL_UNIFORM_V( GL_DOUBLE_VEC2, gmtl::Point2d, glUniform2dv )
+            CASE_CALL_UNIFORM_V( GL_DOUBLE_VEC3, gmtl::Point3d, glUniform3dv )
+            CASE_CALL_UNIFORM_V( GL_DOUBLE_VEC4, gmtl::Point4d, glUniform4dv )
+
+            CASE_CALL_MATRIXUNIFORM_V( GL_FLOAT_MAT2, gmtl::Matrix22f, glUniformMatrix2fv )
+            CASE_CALL_MATRIXUNIFORM_V( GL_FLOAT_MAT3, gmtl::Matrix33f, glUniformMatrix3fv )
+            CASE_CALL_MATRIXUNIFORM_V( GL_FLOAT_MAT4, gmtl::Matrix44f, glUniformMatrix4fv )
+
+            CASE_CALL_MATRIXUNIFORM_V( GL_FLOAT_MAT2x3, gmtl::Matrix23f, glUniformMatrix2x3fv )
+            CASE_CALL_MATRIXUNIFORM_V( GL_FLOAT_MAT2x4, gmtl::Matrix24f, glUniformMatrix2x4fv )
+            CASE_CALL_MATRIXUNIFORM_V( GL_FLOAT_MAT3x2, gmtl::Matrix32f, glUniformMatrix3x2fv )
+            CASE_CALL_MATRIXUNIFORM_V( GL_FLOAT_MAT3x4, gmtl::Matrix34f, glUniformMatrix3x4fv )
+            CASE_CALL_MATRIXUNIFORM_V( GL_FLOAT_MAT4x2, gmtl::Matrix42f, glUniformMatrix4x2fv )
+            CASE_CALL_MATRIXUNIFORM_V( GL_FLOAT_MAT4x3, gmtl::Matrix43f, glUniformMatrix4x3fv )
+
+            CASE_CALL_MATRIXUNIFORM_V( GL_DOUBLE_MAT2, gmtl::Matrix22d, glUniformMatrix2dv )
+            CASE_CALL_MATRIXUNIFORM_V( GL_DOUBLE_MAT3, gmtl::Matrix33d, glUniformMatrix3dv )
+            CASE_CALL_MATRIXUNIFORM_V( GL_DOUBLE_MAT4, gmtl::Matrix44d, glUniformMatrix4dv )
+
+            CASE_CALL_MATRIXUNIFORM_V( GL_DOUBLE_MAT2x3, gmtl::Matrix23d, glUniformMatrix2x3dv )
+            CASE_CALL_MATRIXUNIFORM_V( GL_DOUBLE_MAT2x4, gmtl::Matrix24d, glUniformMatrix2x4dv )
+            CASE_CALL_MATRIXUNIFORM_V( GL_DOUBLE_MAT3x2, gmtl::Matrix32d, glUniformMatrix3x2dv )
+            CASE_CALL_MATRIXUNIFORM_V( GL_DOUBLE_MAT3x4, gmtl::Matrix34d, glUniformMatrix3x4dv )
+            CASE_CALL_MATRIXUNIFORM_V( GL_DOUBLE_MAT4x2, gmtl::Matrix42d, glUniformMatrix4x2dv )
+            CASE_CALL_MATRIXUNIFORM_V( GL_DOUBLE_MAT4x3, gmtl::Matrix43d, glUniformMatrix4x3dv )
+
+
+            default:
+                JAG3D_ERROR( "operator(): Type unsupported." );
+                break;
         }
-
-        CASE_CALL_UNIFORM( GL_BOOL, bool, glUniform1i )
-        CASE_CALL_UNIFORM( GL_INT, GLint, glUniform1i )
-        CASE_CALL_UNIFORM( GL_UNSIGNED_INT, GLuint, glUniform1ui )
-        CASE_CALL_UNIFORM( GL_FLOAT, GLfloat, glUniform1f )
-        CASE_CALL_UNIFORM( GL_DOUBLE, GLdouble, glUniform1d )
-
-        CASE_CALL_UNIFORM_V( GL_INT_VEC2, gmtl::Point2i, glUniform2iv )
-        CASE_CALL_UNIFORM_V( GL_INT_VEC3, gmtl::Point3i, glUniform3iv )
-        CASE_CALL_UNIFORM_V( GL_INT_VEC4, gmtl::Point4i, glUniform4iv )
-
-        CASE_CALL_UNIFORM_V( GL_UNSIGNED_INT_VEC2, gmtl::Point2ui, glUniform2uiv )
-        CASE_CALL_UNIFORM_V( GL_UNSIGNED_INT_VEC3, gmtl::Point3ui, glUniform3uiv )
-        CASE_CALL_UNIFORM_V( GL_UNSIGNED_INT_VEC4, gmtl::Point4ui, glUniform4uiv )
-
-        CASE_CALL_UNIFORM_V( GL_FLOAT_VEC2, gmtl::Point2f, glUniform2fv )
-        CASE_CALL_UNIFORM_V( GL_FLOAT_VEC3, gmtl::Point3f, glUniform3fv )
-        CASE_CALL_UNIFORM_V( GL_FLOAT_VEC4, gmtl::Point4f, glUniform4fv )
-
-        CASE_CALL_UNIFORM_V( GL_DOUBLE_VEC2, gmtl::Point2d, glUniform2dv )
-        CASE_CALL_UNIFORM_V( GL_DOUBLE_VEC3, gmtl::Point3d, glUniform3dv )
-        CASE_CALL_UNIFORM_V( GL_DOUBLE_VEC4, gmtl::Point4d, glUniform4dv )
-
-        CASE_CALL_MATRIXUNIFORM_V( GL_FLOAT_MAT2, gmtl::Matrix22f, glUniformMatrix2fv )
-        CASE_CALL_MATRIXUNIFORM_V( GL_FLOAT_MAT3, gmtl::Matrix33f, glUniformMatrix3fv )
-        CASE_CALL_MATRIXUNIFORM_V( GL_FLOAT_MAT4, gmtl::Matrix44f, glUniformMatrix4fv )
-
-        CASE_CALL_MATRIXUNIFORM_V( GL_FLOAT_MAT2x3, gmtl::Matrix23f, glUniformMatrix2x3fv )
-        CASE_CALL_MATRIXUNIFORM_V( GL_FLOAT_MAT2x4, gmtl::Matrix24f, glUniformMatrix2x4fv )
-        CASE_CALL_MATRIXUNIFORM_V( GL_FLOAT_MAT3x2, gmtl::Matrix32f, glUniformMatrix3x2fv )
-        CASE_CALL_MATRIXUNIFORM_V( GL_FLOAT_MAT3x4, gmtl::Matrix34f, glUniformMatrix3x4fv )
-        CASE_CALL_MATRIXUNIFORM_V( GL_FLOAT_MAT4x2, gmtl::Matrix42f, glUniformMatrix4x2fv )
-        CASE_CALL_MATRIXUNIFORM_V( GL_FLOAT_MAT4x3, gmtl::Matrix43f, glUniformMatrix4x3fv )
-
-        CASE_CALL_MATRIXUNIFORM_V( GL_DOUBLE_MAT2, gmtl::Matrix22d, glUniformMatrix2dv )
-        CASE_CALL_MATRIXUNIFORM_V( GL_DOUBLE_MAT3, gmtl::Matrix33d, glUniformMatrix3dv )
-        CASE_CALL_MATRIXUNIFORM_V( GL_DOUBLE_MAT4, gmtl::Matrix44d, glUniformMatrix4dv )
-
-        CASE_CALL_MATRIXUNIFORM_V( GL_DOUBLE_MAT2x3, gmtl::Matrix23d, glUniformMatrix2x3dv )
-        CASE_CALL_MATRIXUNIFORM_V( GL_DOUBLE_MAT2x4, gmtl::Matrix24d, glUniformMatrix2x4dv )
-        CASE_CALL_MATRIXUNIFORM_V( GL_DOUBLE_MAT3x2, gmtl::Matrix32d, glUniformMatrix3x2dv )
-        CASE_CALL_MATRIXUNIFORM_V( GL_DOUBLE_MAT3x4, gmtl::Matrix34d, glUniformMatrix3x4dv )
-        CASE_CALL_MATRIXUNIFORM_V( GL_DOUBLE_MAT4x2, gmtl::Matrix42d, glUniformMatrix4x2dv )
-        CASE_CALL_MATRIXUNIFORM_V( GL_DOUBLE_MAT4x3, gmtl::Matrix43d, glUniformMatrix4x3dv )
-
-
-        default:
-            JAG3D_ERROR( "operator(): Type unsupported." );
-            break;
     }
 
     const GLenum errorEnum( JAG3D_ERROR_CHECK( "Uniform::operator()" ) );
@@ -227,6 +259,56 @@ void Uniform::operator()( DrawInfo& drawInfo )
     }
 }
 
+
+void Uniform::setType( const GLenum type )
+{
+    _type = type;
+    _isSampler = (
+        ( _type == GL_SAMPLER_1D ) ||
+        ( _type == GL_SAMPLER_2D ) ||
+        ( _type == GL_SAMPLER_3D ) ||
+        ( _type == GL_SAMPLER_CUBE ) ||
+        ( _type == GL_SAMPLER_1D_SHADOW ) ||
+        ( _type == GL_SAMPLER_2D_SHADOW ) ||
+        ( _type == GL_SAMPLER_1D_ARRAY ) ||
+        ( _type == GL_SAMPLER_2D_ARRAY ) ||
+        ( _type == GL_SAMPLER_1D_ARRAY_SHADOW ) ||
+        ( _type == GL_SAMPLER_2D_ARRAY_SHADOW ) ||
+        ( _type == GL_SAMPLER_CUBE_SHADOW ) ||
+        ( _type == GL_SAMPLER_2D_RECT ) ||
+        ( _type == GL_SAMPLER_2D_RECT_SHADOW ) ||
+        ( _type == GL_SAMPLER_BUFFER ) ||
+        ( _type == GL_SAMPLER_2D_MULTISAMPLE ) ||
+        ( _type == GL_SAMPLER_2D_MULTISAMPLE_ARRAY ) ||
+        ( _type == GL_SAMPLER_BINDING ) ||
+        ( _type == GL_INT_SAMPLER_1D ) ||
+        ( _type == GL_INT_SAMPLER_2D ) ||
+        ( _type == GL_INT_SAMPLER_3D ) ||
+        ( _type == GL_INT_SAMPLER_CUBE ) ||
+        ( _type == GL_INT_SAMPLER_1D_ARRAY ) ||
+        ( _type == GL_INT_SAMPLER_2D_ARRAY ) ||
+        ( _type == GL_INT_SAMPLER_2D_RECT ) ||
+        ( _type == GL_INT_SAMPLER_BUFFER ) ||
+        ( _type == GL_INT_SAMPLER_2D_MULTISAMPLE ) ||
+        ( _type == GL_INT_SAMPLER_2D_MULTISAMPLE_ARRAY ) ||
+        ( _type == GL_UNSIGNED_INT_SAMPLER_1D ) ||
+        ( _type == GL_UNSIGNED_INT_SAMPLER_2D ) ||
+        ( _type == GL_UNSIGNED_INT_SAMPLER_3D ) ||
+        ( _type == GL_UNSIGNED_INT_SAMPLER_CUBE ) ||
+        ( _type == GL_UNSIGNED_INT_SAMPLER_1D_ARRAY ) ||
+        ( _type == GL_UNSIGNED_INT_SAMPLER_2D_ARRAY ) ||
+        ( _type == GL_UNSIGNED_INT_SAMPLER_2D_RECT ) ||
+        ( _type == GL_UNSIGNED_INT_SAMPLER_BUFFER ) ||
+        ( _type == GL_UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE ) ||
+        ( _type == GL_UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE_ARRAY ) ||
+#ifdef GL_VERSION_4_0
+        ( _type == GL_SAMPLER_CUBE_MAP_ARRAY ) ||
+        ( _type == GL_SAMPLER_CUBE_MAP_ARRAY_SHADOW ) ||
+        ( _type == GL_INT_SAMPLER_CUBE_MAP_ARRAY ) ||
+        ( _type == GL_UNSIGNED_INT_SAMPLER_CUBE_MAP_ARRAY )
+#endif
+        );
+}
 
 void Uniform::internalInit( const std::string& name )
 {

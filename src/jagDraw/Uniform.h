@@ -50,15 +50,45 @@ class JAGDRAW_EXPORT Uniform : public DrawablePrep, public jagBase::LogBase,
         public SHARED_FROM_THIS(Uniform)
 {
 public:
+    /** \brief Constructor, specified uniform name. */
     Uniform( const std::string& name );
+    /** \brief Constructor, specified uniform name and type.
+    \details \param type from OpenGL spec table 2.10. */
     Uniform( const std::string& name, const GLenum type );
+    /** \brief Constructor, specifically for creation of sampler uniforms.
+    \detauls \param type from OpenGL spec table 2.10.
+    \param v Sampler texture unit. */
+    explicit Uniform( const std::string& name, const GLenum type, const GLint& v );
+    /** \brief Copy constructor. */
     Uniform( const Uniform& rhs );
+    /** \brief Destructor. */
     virtual ~Uniform();
 
+
+    /** \brief Set the value of a sampler uniform.
+    \details It's also acceptable to use the set(GLint) method. */
+    void setSampler( const GLint& v );
+
+
+    /** \def UNIFORM_OF_TYPE
+    \brief Declares Uniform class methods for various data types.
+    \details For each type of uniform variable, the UNIFORM_OF_TYPE macro
+    declares an explicit constructor and set/get accessors.
+
+    Note that UNIFORM_OF_TYPE does not need to be invoked for GL_SAMPLER*
+    data types, as these all use the UNIFORM_OF_TYPE(GLint) invocation,
+    and can also use the constructors that take a type and the setSampler()
+    method. */
+    /** \func set(GLint)
+    \brief Sets a GL_INT or sampler-type uniform value.
+    \details If the \c _type variable is GL_INT, or if _isSampler is true,
+    this method sets the uniform value. Otherwise it logs an error and returns.
+    */
 #define UNIFORM_OF_TYPE(__type) \
     explicit Uniform( const std::string& name, const __type& v ); \
     void set( const __type& v ); \
     void get( __type& v );
+
 
     UNIFORM_OF_TYPE( bool );
     UNIFORM_OF_TYPE( GLint );
@@ -119,7 +149,7 @@ public:
     \gl{section 2.11.4} */
     virtual void operator()( DrawInfo& drawInfo );
 
-    void setType( const GLenum type ) { _type = type; }
+    void setType( const GLenum type );
     GLenum getType() { return( _type ); }
 
     void setTranspose( const bool transpose=true ) { _transpose = transpose; }
@@ -136,6 +166,7 @@ protected:
     boost::any _value;
 
     GLenum _type;
+    bool _isSampler;
     bool _transpose;
 };
 
