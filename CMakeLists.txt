@@ -182,6 +182,7 @@ include( CMakeMacros )
 
 
 add_subdirectory( src/jagBase )
+add_subdirectory( src/jagDisk )
 add_subdirectory( src/jagDraw )
 
 
