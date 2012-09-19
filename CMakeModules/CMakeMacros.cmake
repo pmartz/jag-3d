@@ -304,3 +304,21 @@ macro( _addLibrary _libName )
     include( ModuleInstall REQUIRED )
 endmacro()
 
+# Supports jag3d plugin info (.jagpi) files, which must reside in the
+# same directory as the plugin shared libraries / DLLs. This means
+# they must be installed into the bin directory, but also they
+# must be copied into the CMake output build tree per config type.
+#
+macro( _addPluginInfo _name )
+    # Copy .jagpi file to development bin directories.
+    # NOTE this is done during CMake config.
+    foreach( _configDir ${CMAKE_CONFIGURATION_TYPES} )
+        configure_file( ${_name}
+            ${PROJECT_BINARY_DIR}/bin/${_configDir}/${_name} COPYONLY )
+    endforeach()
+
+    # Install .jagpi file to bin directory.
+    install( FILES ${_name}
+        DESTINATION bin
+    )
+endmacro()

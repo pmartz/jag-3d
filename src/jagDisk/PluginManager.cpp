@@ -96,7 +96,7 @@ PluginManager::PluginManager( const int initFlags )
     {
         std::string paths;
         try {
-            paths = Poco::Environment::get( "LATTICEFX_PLUGIN_PATH" );
+            paths = Poco::Environment::get( "JAG3D_PLUGIN_PATH" );
         } catch (...) {}
         if( !paths.empty() )
             addPaths( paths, false );
@@ -169,7 +169,7 @@ bool PluginManager::loadPlugins( const std::string& name )
     if( pluginPaths.empty() )
     {
         JAG3D_ERROR( "No plugin found for \"" + name + "\"." );
-        JAG3D_ERROR( "Possible missing or corrupt .ini file." );
+        JAG3D_ERROR( "Possible missing or corrupt .jagpi file." );
         return( false );
     }
 
@@ -182,7 +182,7 @@ bool PluginManager::loadPlugins( const std::string& name, const std::string& des
     if( pluginPaths.empty() )
     {
         JAG3D_ERROR( "No plugin found for \"" + name + "\"." );
-        JAG3D_ERROR( "Possible missing or corrupt .ini file." );
+        JAG3D_ERROR( "Possible missing or corrupt .jagpi file." );
         return( false );
     }
 
@@ -273,28 +273,28 @@ void PluginManager::loadConfigFiles()
         if( !( path.tryParse( s.c_str() ) ) )
             continue;
         path.makeDirectory();
-        path.setFileName( "*.ini" );
+        path.setFileName( "*.jagpi" );
 
         StringSet stringSet;
         Poco::Glob::glob( path, stringSet, Poco::Glob::GLOB_DOT_SPECIAL );
-        BOOST_FOREACH( StringSet::value_type iniFileName, stringSet )
+        BOOST_FOREACH( StringSet::value_type jagpiFileName, stringSet )
         {
-            JAG3D_TRACE( iniFileName );
+            JAG3D_TRACE( jagpiFileName );
 
-            Poco::AutoPtr< IniFileConfiguration > conf( new IniFileConfiguration( iniFileName ) );
+            Poco::AutoPtr< IniFileConfiguration > conf( new IniFileConfiguration( jagpiFileName ) );
             PluginInfo pi;
             try {
-                pi._name = conf->getString( "LatticeFXPlugin.Name" );
-                pi._description = conf->getString( "LatticeFXPlugin.Description" );
+                pi._name = conf->getString( "Jag3DPlugin.Name" );
+                pi._description = conf->getString( "Jag3DPlugin.Description" );
             }
             catch( ... )
             {
-                // Not one of our .ini files, or badly formed .ini file.
+                // Not one of our .jagpi files, or badly formed .jagpi file.
                 continue;
             }
 
             pi._path = path;
-            pi._path.setFileName( Poco::Path( iniFileName ).getBaseName()
+            pi._path.setFileName( Poco::Path( jagpiFileName ).getBaseName()
                 + Poco::SharedLibrary::suffix() );
             if( !( Poco::File( pi._path ).exists() ) )
                 continue;
