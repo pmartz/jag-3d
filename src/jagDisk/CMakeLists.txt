@@ -40,8 +40,8 @@ _addLibrary( ${_libName}
     ${_jagDiskHeaderFiles}
     ${_jagDiskSourceFiles}
     JAG_LIBRARIES
-        jagBase
         jagDraw
+        jagBase
 )
 
 install(

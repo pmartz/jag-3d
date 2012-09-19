@@ -186,6 +186,11 @@ add_subdirectory( src/jagDisk )
 add_subdirectory( src/jagDraw )
 
 
+option( JAG3D_BUILD_PLUGINS "Enable to build plugins" ON )
+if( JAG3D_BUILD_PLUGINS )
+    add_subdirectory( src/plugins )
+endif()
+
 option( JAG3D_BUILD_TESTS "Enable to build test code" ON )
 if( JAG3D_BUILD_TESTS )
     enable_testing()
