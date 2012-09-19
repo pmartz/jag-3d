@@ -276,7 +276,7 @@ endmacro()
 
 
 
-macro( _addLibrary _libName )
+macro( _addLibraryInternal _category _libName )
     include_directories(
         ${_projectIncludes}
         ${_optionalDependencyIncludes}
@@ -299,10 +299,19 @@ macro( _addLibrary _libName )
 
     set_target_properties( ${_libName} PROPERTIES VERSION ${JAG3D_VERSION} )
     set_target_properties( ${_libName} PROPERTIES SOVERSION ${JAG3D_VERSION} )
-    set_target_properties( ${_libName} PROPERTIES PROJECT_LABEL "Lib ${_libName}" )
+    set_target_properties( ${_libName} PROPERTIES PROJECT_LABEL "${_category} ${_libName}" )
 
     include( ModuleInstall REQUIRED )
 endmacro()
+
+macro( _addLibrary _libName )
+    _addLibraryInternal( Lib ${_libName} ${ARGN} )
+endmacro()
+
+macro( _addPlugin _libName )
+    _addLibraryInternal( Plugin ${_libName} ${ARGN} )
+endmacro()
+
 
 # Supports jag3d plugin info (.jagpi) files, which must reside in the
 # same directory as the plugin shared libraries / DLLs. This means
