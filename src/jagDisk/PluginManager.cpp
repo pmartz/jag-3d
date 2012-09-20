@@ -42,18 +42,21 @@ using Poco::Util::IniFileConfiguration;
 namespace jagDisk {
 
 
-OperationInfo::OperationInfo( ReaderWriterPtr instance, const std::string& className,
+ReaderWriterInfo::ReaderWriterInfo( ReaderWriterPtr instance, const std::string& className,
             const std::string& baseClassName, const std::string& description )
-  : _opInstance( instance ),
-    _pluginName( PluginManager::instance()->getActivelyLoadingPlugin() ),
+  : _rwInstance( instance ),
     _className( className ),
     _baseClassName( baseClassName ),
     _description( description )
 {
-    PluginManager::instance()->addOperation( *this );
+    PluginManager::PluginInfo* pi( PluginManager::instance()->getActivelyLoadingPlugin() );
+    _pluginName = pi->_name;
+    pi->_readerWriters.push_back( instance );
+
+    PluginManager::instance()->addReaderWriter( *this );
 }
 
-bool operator<( const OperationInfo& lhs, const OperationInfo& rhs )
+bool operator<( const ReaderWriterInfo& lhs, const ReaderWriterInfo& rhs )
 {
     if( lhs._pluginName < rhs._pluginName )
         return( true );
@@ -86,7 +89,8 @@ PluginManager* PluginManager::instance( const int initFlags )
 }
 
 PluginManager::PluginManager( const int initFlags )
-  : LogBase( "jag.disk.plugmgr" )
+  : LogBase( "jag.disk.plugmgr" ),
+    _activelyLoadingPlugin( NULL )
 {
     if( ( initFlags & USE_CURRENT_DIRECTORY ) != 0 )
     {
@@ -105,7 +109,7 @@ PluginManager::PluginManager( const int initFlags )
     {
         std::string paths;
         try {
-            Poco::Environment::get( "PATH" );
+            paths = Poco::Environment::get( "PATH" );
         } catch (...) {}
         if( !paths.empty() )
             addPaths( paths, false );
@@ -114,7 +118,7 @@ PluginManager::PluginManager( const int initFlags )
     {
         std::string paths;
         try {
-            Poco::Environment::get( "LD_LIBRARY_PATH" );
+            paths = Poco::Environment::get( "LD_LIBRARY_PATH" );
         } catch (...) {}
         if( !paths.empty() )
             addPaths( paths, false );
@@ -163,101 +167,72 @@ void PluginManager::clearPaths()
 }
 
 
-bool PluginManager::loadPlugins( const std::string& name )
+bool PluginManager::loadPlugins( PluginInfoPtrVec& plugins )
 {
-    Poco::Path::StringVec pluginPaths( find( name ) );
-    if( pluginPaths.empty() )
+    BOOST_FOREACH( PluginInfo* pi, plugins )
     {
-        JAG3D_ERROR( "No plugin found for \"" + name + "\"." );
-        JAG3D_ERROR( "Possible missing or corrupt .jagpi file." );
-        return( false );
-    }
+        if( pi->_loaded )
+            continue;
 
-    _activelyLoadingPlugin = name;
-    return( internalLoadLibraries( pluginPaths ) );
-}
-bool PluginManager::loadPlugins( const std::string& name, const std::string& description )
-{
-    Poco::Path::StringVec pluginPaths( find( name, description ) );
-    if( pluginPaths.empty() )
-    {
-        JAG3D_ERROR( "No plugin found for \"" + name + "\"." );
-        JAG3D_ERROR( "Possible missing or corrupt .jagpi file." );
-        return( false );
-    }
-
-    _activelyLoadingPlugin = name;
-    return( internalLoadLibraries( pluginPaths ) );
-}
-bool PluginManager::loadPlugin( const std::string& name, const std::string& pathName )
-{
-    Poco::Path::StringVec pluginPaths;
-    pluginPaths.push_back( pathName );
-    _activelyLoadingPlugin = name;
-    return( internalLoadLibraries( pluginPaths ) );
-}
-
-bool PluginManager::internalLoadLibraries( const Poco::Path::StringVec& libNames )
-{
-    if( libNames.empty() )
-        return( false );
-
-    // Attempt to load all shared libraries found.
-    BOOST_FOREACH( Poco::Path::StringVec::value_type libName, libNames )
-    {
-        typedef Poco::ClassLoader< ReaderWriter > LibLoader;
-        LibLoader loader;
-        try {
-            loader.loadLibrary( libName );
-        } catch( Poco::LibraryLoadException lle ) {
-            JAG3D_ERROR( "Caught Poco::LibraryLoadException." );
-            JAG3D_ERROR( "Exception message: " + lle.message() );
+        if( loadPlugin( pi ) )
+            pi->_loaded = true;
+        else
+            // Abort.
             return( false );
-        } catch( ... ) {
-            JAG3D_ERROR( "Can't load \"" + libName + "\", unknown exception." );
-            return( false );
-        }
     }
 
     return( true );
 }
 
-
-Poco::Path::StringVec PluginManager::find( const std::string& name )
+bool PluginManager::loadPlugin( PluginInfo* pi )
 {
-    Poco::Path::StringVec returnPaths;
-    PluginInfoSetRange range( _pluginInfo.equal_range( PluginInfo( name ) ) );
-    PluginInfoSet::const_iterator it( range.first );
-    while( it != range.second )
-    {
-        returnPaths.push_back( it->_path.toString() );
-        it++;
+    _activelyLoadingPlugin = pi;
+
+    const Poco::Path& lib( pi->_path );
+
+    typedef Poco::ClassLoader< ReaderWriter > LibLoader;
+    LibLoader loader;
+    try {
+        loader.loadLibrary( lib.toString() );
+    } catch( Poco::LibraryLoadException lle ) {
+        JAG3D_ERROR( "Can't load \"" + lib.toString() + "\":" );
+        JAG3D_ERROR( "\tCaught Poco::LibraryLoadException." );
+        JAG3D_ERROR( "\tMessage: " + lle.message() );
+        return( false );
+    } catch( ... ) {
+        JAG3D_ERROR( "Can't load \"" + lib.toString() + "\": unknown exception." );
+        return( false );
     }
 
-    return( returnPaths );
-}
-Poco::Path::StringVec PluginManager::find( const std::string& name, const std::string& description )
-{
-    JAG3D_CRITICAL( "find(name,descrip): This function is not yet implemented." );
-    return( Poco::Path::StringVec() );
+    return( true );
 }
 
-void PluginManager::addOperation( const OperationInfo& opInfo )
+PluginManager::PluginInfoPtrVec PluginManager::getPluginsForExtension( const std::string& extension )
 {
-    _opInfo.push_back( opInfo );
-}
+    PluginInfoPtrVec plugins;
 
-ReaderWriterPtr PluginManager::createOperation( const std::string& pluginName, const std::string& className )
-{
-    /*
-    BOOST_FOREACH( const OperationInfo& opInfo, _opInfo )
+    BOOST_FOREACH( PluginInfo& pi, _pluginInfo )
     {
-        if( ( opInfo._pluginName == pluginName ) && 
-                ( opInfo._className == className ) )
-            return( ReaderWriterPtr( opInfo._opInstance->create() ) );
+        if( ( pi._extensions.find( extension ) != pi._extensions.end() ) ||
+            ( pi._extensions.find( "*" ) != pi._extensions.end() ) )
+            // The PluginInfo either supports this extension explicitly,
+            // or claims to support all extensions ("*").
+            plugins.push_back( &pi );
     }
-    */
-    return( ReaderWriterPtr( ( ReaderWriter* )( NULL ) ) );
+
+    return( plugins );
+}
+
+
+const ReaderWriterInfoVec& PluginManager::getLoadedReaderWriters() const
+{
+    return( _rwInfo );
+}
+
+
+void PluginManager::addReaderWriter( const ReaderWriterInfo& rwInfo )
+{
+    _rwInfo.push_back( rwInfo );
 }
 
 
@@ -301,12 +276,12 @@ void PluginManager::loadConfigFiles()
                 size_t pos( extensions.find( ";" ) );
                 if( pos != std::string::npos )
                 {
-                    pi._extensions.push_back( extensions.substr( 0, pos ) );
+                    pi._extensions.insert( extensions.substr( 0, pos ) );
                     extensions = extensions.substr( pos+1 );
                 }
                 else
                 {
-                    pi._extensions.push_back( extensions );
+                    pi._extensions.insert( extensions );
                     extensions.clear();
                 }
             }
@@ -317,7 +292,7 @@ void PluginManager::loadConfigFiles()
             if( !( Poco::File( pi._path ).exists() ) )
                 continue;
 
-            _pluginInfo.insert( pi );
+            _pluginInfo.push_back( pi );
 
             JAG3D_TRACE( pi._path.toString() );
             JAG3D_TRACE( pi._name );

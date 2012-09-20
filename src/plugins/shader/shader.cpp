@@ -38,7 +38,15 @@ public:
     virtual ~ShaderRW()
     {}
 
-    virtual Shader* read()
+    virtual bool supportsExtension( const std::string& extension )
+    {
+        const std::string supported( "vs gs fs vert geom frag" );
+        return( !( extension.empty() ) &&
+            ( supported.find( extension ) != std::string::npos ) );
+    }
+
+
+    virtual void* read( const std::string& fileName )
     {
         return( (Shader*)NULL );
     }
@@ -46,17 +54,14 @@ public:
 protected:
 };
 
-#if 0
-// TBD
-// Register the MyMask operation with the PluginManager
-// This declares a static object initialized when the plugin is loaded.
-REGISTER_OPERATION(
+// Register the ShaderRW class with the PluginManager.
+// This macro declares a static object initialized when the plugin is loaded.
+REGISTER_READERWRITER(
     new ShaderRW(),   // Create an instance of MyMask.
     ShaderRW,         // Class name -- NOT a string.
     "ReaderWriter",   // Base class name as a string.
     "Test mask."      // Description text.
-)
-#endif
+);
 
 
 // Poco ClassLibrary manifest registration. Add a POCO_EXPORT_CLASS

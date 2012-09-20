@@ -29,11 +29,13 @@ set( _jagDiskHeaderFiles
     Export.h
     PluginManager.h
     ReaderWriter.h
+    ReadWrite.h
 )
 
 set( _jagDiskSourceFiles
     PluginManager.cpp
     ReaderWriter.cpp
+    ReadWrite.cpp
 )
 
 _addLibrary( ${_libName}
