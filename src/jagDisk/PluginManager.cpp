@@ -150,7 +150,7 @@ void PluginManager::addPaths( const std::string& paths, const bool loadConfigs )
         if( JAG3D_LOG_TRACE )
         {
             std::ostringstream ostr;
-            ostr << paths.substr( lastPos, len ) << " " << pos << " " << lastPos;
+            ostr << "Adding path: " << paths.substr( lastPos, len ) << " " << pos << " " << lastPos;
             JAG3D_TRACE( ostr.str() );
         }
         if( len > 0 )
@@ -174,9 +174,7 @@ bool PluginManager::loadPlugins( PluginInfoPtrVec& plugins )
         if( pi->_loaded )
             continue;
 
-        if( loadPlugin( pi ) )
-            pi->_loaded = true;
-        else
+        if( !( loadPlugin( pi ) ) )
             // Abort.
             return( false );
     }
@@ -204,6 +202,7 @@ bool PluginManager::loadPlugin( PluginInfo* pi )
         return( false );
     }
 
+    pi->_loaded = true;
     return( true );
 }
 
@@ -254,7 +253,7 @@ void PluginManager::loadConfigFiles()
         Poco::Glob::glob( path, stringSet, Poco::Glob::GLOB_DOT_SPECIAL );
         BOOST_FOREACH( StringSet::value_type jagpiFileName, stringSet )
         {
-            JAG3D_TRACE( jagpiFileName );
+            JAG3D_DEBUG( "Found plugin info file: " + jagpiFileName );
 
             std::string extensions;
             Poco::AutoPtr< IniFileConfiguration > conf( new IniFileConfiguration( jagpiFileName ) );
@@ -266,7 +265,7 @@ void PluginManager::loadConfigFiles()
             }
             catch( ... )
             {
-                // Not one of our .jagpi files, or badly formed .jagpi file.
+                JAG3D_WARNING( "\tNot one of our .jagpi files, or badly formed .jagpi file." );
                 continue;
             }
 
@@ -294,9 +293,9 @@ void PluginManager::loadConfigFiles()
 
             _pluginInfo.push_back( pi );
 
-            JAG3D_TRACE( pi._path.toString() );
-            JAG3D_TRACE( pi._name );
-            JAG3D_TRACE( pi._description );
+            JAG3D_DEBUG( "\tLocation: " + pi._path.toString() );
+            JAG3D_DEBUG( "\tPlugin name: " + pi._name );
+            JAG3D_DEBUG( "\tPlugin desc: " + pi._description );
         }
     }
 }

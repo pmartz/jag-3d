@@ -80,7 +80,7 @@ protected:
 
 DemoInterface* DemoInterface::create( bpo::options_description& desc )
 {
-    jagBase::Log::instance()->setPriority( jagBase::Log::PrioTrace, jagBase::Log::Console );
+    jagBase::Log::instance()->setPriority( jagBase::Log::PrioDebug, jagBase::Log::Console );
 
     return( new JagLoadDemo );
 }
@@ -167,6 +167,7 @@ bool JagLoadDemo::startup( const unsigned int numContexts )
     fs->addSourceString( std::string( fShaderSource ) );
 
     jagDisk::read( "C:\\Projects\\JAG\\jag3d\\data\\jagload.vert" );
+    jagDisk::read( "C:\\Projects\\JAG\\jag3d\\data\\jagload.frag" );
 
     jagDraw::ShaderProgramPtr prog;
     prog = jagDraw::ShaderProgramPtr( new jagDraw::Program );
