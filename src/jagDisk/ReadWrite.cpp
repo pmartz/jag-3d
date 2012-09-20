@@ -33,14 +33,21 @@ void* read( const std::string& fileName )
 {
     PluginManager* pm( PluginManager::instance() );
 
+    const std::string logStr( "jag.disk.rw" );
+    JAG3D_TRACE_STATIC( logStr, "read() for: " + fileName );
+
     // Try loaded ReaderWriters first.
     const ReaderWriterInfoVec& rwVec( pm->getLoadedReaderWriters() );
     BOOST_FOREACH( const ReaderWriterInfo& rwInfo, rwVec )
     {
+        JAG3D_TRACE_STATIC( logStr, "\tTrying loaded ReaderWriter subclass " + rwInfo._className );
         ReaderWriterPtr rw( rwInfo._rwInstance );
         void* data( rw->read( fileName ) );
         if( data != NULL )
+        {
+            JAG3D_TRACE_STATIC( logStr, "\tread(): Success." );
             return( data );
+        }
     }
 
     Poco::Path pathName( fileName );
@@ -55,21 +62,22 @@ void* read( const std::string& fileName )
             // We already tried the ReaderWriter(s) in this plugin.
             continue;
 
+        JAG3D_TRACE_STATIC( logStr, "\tLoading new plugin: " + pi->_name );
         if( !( pm->loadPlugin( pi ) ) )
             // Load failes.
             continue;
 
         BOOST_FOREACH( ReaderWriterPtr rw, pi->_readerWriters )
         {
+            JAG3D_TRACE_STATIC( logStr, "\tTrying new ReaderWriter." );
             void* data( rw->read( fileName ) );
             if( data != NULL )
                 return( data );
         }
     }
 
-    const std::string logStr( "jag.disk.rw" );
-    JAG3D_NOTICE_STATIC( logStr, "\tRead operation failed for:" );
-    JAG3D_NOTICE_STATIC( logStr, "read( \"" + fileName + "\" )." );
+    JAG3D_NOTICE_STATIC( logStr, "Read operation failed for:" );
+    JAG3D_NOTICE_STATIC( logStr, "\tread( \"" + fileName + "\" )." );
 
     return( NULL );
 }
