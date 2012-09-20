@@ -24,6 +24,7 @@
 #include <jagBase/Version.h>
 #include <jagBase/Log.h>
 #include <jagBase/LogMacros.h>
+#include <jagDisk/ReadWrite.h>
 #include <Poco/Message.h>
 #include <boost/program_options/options_description.hpp>
 #include <gmtl/gmtl.h>
@@ -164,6 +165,8 @@ bool JagLoadDemo::startup( const unsigned int numContexts )
         "} \n";
     jagDraw::ShaderPtr fs( new jagDraw::Shader( GL_FRAGMENT_SHADER ) );
     fs->addSourceString( std::string( fShaderSource ) );
+
+    jagDisk::read( "C:\\Projects\\JAG\\jag3d\\data\\jagload.vert" );
 
     jagDraw::ShaderProgramPtr prog;
     prog = jagDraw::ShaderProgramPtr( new jagDraw::Program );

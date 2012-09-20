@@ -39,40 +39,40 @@ namespace jagDisk {
 */
 /**@{*/
 
-/** \class OperationInfo PluginManager.h <latticefx/core/PluginManager.h>
+/** \class ReaderWriterInfo PluginManager.h <jagDisk/PluginManager.h>
 \brief A collection of information for classes exported from a plugin.
-\details Plugins create an instance of OperationInfo for each class (OperationInfo-derived class)
+\details Plugins create an instance of ReaderWriterInfo for each class (ReaderWriterInfo-derived class)
 exported by the plugin. The constructor automatically registers all information with the PluginManager
-singleton, using PluginManager::addOperation().
-\see REGISTER_OPERATION
+singleton, using PluginManager::addReaderWriter().
+\see REGISTER_READERWRITER
 */
-struct JAGDISK_EXPORT OperationInfo
+struct JAGDISK_EXPORT ReaderWriterInfo
 {
-    OperationInfo( ReaderWriterPtr instance, const std::string& className,
+    ReaderWriterInfo( ReaderWriterPtr instance, const std::string& className,
             const std::string& baseClassName, const std::string& description );
 
     std::string _pluginName;
     std::string _className, _baseClassName, _description;
-    ReaderWriterPtr _opInstance;
+    ReaderWriterPtr _rwInstance;
 
-    friend bool operator<( const OperationInfo& lhs, const OperationInfo& rhs );
+    friend bool operator<( const ReaderWriterInfo& lhs, const ReaderWriterInfo& rhs );
 };
-typedef std::vector< OperationInfo > OperationInfoVec;
+typedef std::vector< ReaderWriterInfo > ReaderWriterInfoVec;
 
-bool operator<( const OperationInfo& lhs, const OperationInfo& rhs );
+bool operator<( const ReaderWriterInfo& lhs, const ReaderWriterInfo& rhs );
 
 
-/** \def REGISTER_OPERATION
+/** \def REGISTER_READERWRITER
 \brief Convenience CPP macro for plugin class registration.
 \details Plugins use this macro once for every exporter class they contain.
-The macro declares a static instance of type OperationInfo. Static instances
+The macro declares a static instance of type ReaderWriterInfo. Static instances
 are initialized immediately following plugin (shared libraries) load, which
 causes each exported class to immediately register itself with the PluginManager.
-See PluginManager::addOperation(), which is invoked by the OperationInfo
+See PluginManager::addReaderWriter(), which is invoked by the ReaderWriterInfo
 constructor. */
-#define REGISTER_OPERATION(_instance,_className,_baseClassName,_description) \
-static OperationInfo staticOperationRegistration_##_className( \
-    ReaderWriterPtr( _instance ), #_className, _baseClassName, _description );
+#define REGISTER_READERWRITER(_instance,_className,_baseClassName,_description) \
+static ReaderWriterInfo staticRWRegistration_##_className( \
+    ReaderWriterPtr( _instance ), #_className, _baseClassName, _description )
 
 
 
@@ -97,7 +97,7 @@ same base name and exist in the same directory. This system allows multiple plug
 use the same generic plugin name.
 
 Plugins use the REGISTER_OPERATION macro to register a class (derived from ReaderWriter)
-with the PluginManager. Use of REGISTER_OPERATION results in a call to addOperation()
+with the PluginManager. Use of REGISTER_OPERATION results in a call to addReaderWriter()
 when the plugin is loaded.
 
 To create an instance of a plugin class object, applications call createOperation().
@@ -117,7 +117,7 @@ public:
     /** \brief Create the PluginManager singleton instance.
     \param initFlags specifies default plugin search paths.
     */
-    static PluginManager* instance( const int initFlags=( USE_CURRENT_DIRECTORY | USE_JAG3D_PLUGIN_PATN_ENV_VAR ) );
+    static PluginManager* instance( const int initFlags=( USE_CURRENT_DIRECTORY | USE_SYSTEM_PATH | USE_JAG3D_PLUGIN_PATN_ENV_VAR ) );
     virtual ~PluginManager();
 
     /** \brief Add a single plugin search path.
@@ -143,66 +143,68 @@ public:
     addPath() for efficiency reasons. */
     void loadConfigFiles();
 
-    /** \brief Load all plugins with plugin name equal to \c name. */
-    bool loadPlugins( const std::string& name );
-    /** \brief Load all plugins whose name and description match the parameters. */
-    bool loadPlugins( const std::string& name, const std::string& description );
-    /** \brief Load the specific plugin named in \c _pathName. Loaded operations
-    will be associated with the plugin name \c name. */
-    bool loadPlugin( const std::string& name, const std::string& pathName );
-
-    /** \brief Returns a list of all plugin path names with name \c name. */
-    Poco::Path::StringVec find( const std::string& name );
-    /** \brief Returns a list of all plugin path names that match the given parameters. */
-    Poco::Path::StringVec find( const std::string& name, const std::string& description );
-
-    /** \brief Adds an OperationInfo record to the list of registered operations.
-    \details The operation is associated with the actively loading plugin (getActivelyLoadingPlugin()).
-    This function is primarily used by the OperationInfo constructor, and indirectly
-    by the REFISTER_OPERATION convenience macro for registration of plugin Operations. */
-    void addOperation( const OperationInfo& opInfo );
-
-    /** \brief Create a new instance of the registered Operation.
-    \details NULL is returned if no Operation named \c className is registered, or it
-    is registered for a different plugin than \c pluginName. */
-    ReaderWriterPtr createOperation( const std::string& pluginName, const std::string& className );
-
-    /** \brief Returns the plugin name of the most recently loaded plugin.
-    \details This function is not inteded for direct application use, but is public
-    for easy access by the OperationInfo class.
-
-    The actively loading plugin name is set by the loadPlugin() and loadPlugins()
-    functions immediately prior to actually loading the plugin. When the load occurs, 
-    plugin static initializers invoke addOperation(), which calls getActivelyLoadingPlugin()
-    and associates all newly registered plugin operations with the actively loading plugin. */
-    std::string getActivelyLoadingPlugin() { return( _activelyLoadingPlugin ); }
-
 
     typedef struct PluginInfo
     {
-        PluginInfo( const std::string& name=std::string( "" ) ) : _name( name ) {}
+        PluginInfo( const std::string& name=std::string( "" ) )
+          : _loaded( false ),
+            _name( name )
+        {}
+
+        mutable bool _loaded;
 
         Poco::Path _path;         /**< Full path and name to plugin shared library. */
         std::string _name;        /**< Taken from plugin .jagpi file */
         std::string _description; /**< Taken from plugin .jagpi file */
-        jagBase::StringList _extensions; /**< Taken from plugin .jagpi file "Extensions" string */
+
+        typedef std::set< std::string > StringSet;
+        StringSet _extensions; /**< Taken from plugin .jagpi file "Extensions" string */
+
+        ReaderWriterList _readerWriters;
 
         friend bool operator<( const PluginInfo& lhs, const PluginInfo& rhs );
     };
-    typedef std::multiset< PluginInfo > PluginInfoSet;
-    typedef std::pair< PluginInfoSet::iterator, PluginInfoSet::iterator > PluginInfoSetRange;
+    typedef std::vector< PluginInfo > PluginInfoVec;
+    typedef std::vector< PluginInfo* > PluginInfoPtrVec;
+
+    /** \brief Load all specified plugins. */
+    bool loadPlugins( PluginInfoPtrVec& plugins );
+    /** \brief Load a single plugin. */
+    bool loadPlugin( PluginInfo* pi );
+
+    /** \brief Return a list of all plugins that support the specified \c extension. */
+    PluginInfoPtrVec getPluginsForExtension( const std::string& extension );
+
+
+    const ReaderWriterInfoVec& getLoadedReaderWriters() const;
+
+
+    /** \brief Adds an ReaderWriterInfo record to the list of registered operations.
+    \details The operation is associated with the actively loading plugin (getActivelyLoadingPlugin()).
+    This function is primarily used by the ReaderWriterInfo constructor, and indirectly
+    by the REFISTER_OPERATION convenience macro for registration of plugin Operations. */
+    void addReaderWriter( const ReaderWriterInfo& rwInfo );
+
+    /** \brief Returns the plugin name of the most recently loaded plugin.
+    \details This function is not inteded for direct application use, but is public
+    for easy access by the ReaderWriterInfo class.
+
+    The actively loading plugin name is set by the loadPlugin() and loadPlugins()
+    functions immediately prior to actually loading the plugin. When the load occurs, 
+    plugin static initializers invoke addReaderWriter(), which calls getActivelyLoadingPlugin()
+    and associates all newly registered plugin operations with the actively loading plugin. */
+    PluginInfo* getActivelyLoadingPlugin() { return( _activelyLoadingPlugin ); }
+
 
 protected:
     PluginManager( const int initFlags );
 
-    bool internalLoadLibraries( const Poco::Path::StringVec& libNames );
-
-    std::string _activelyLoadingPlugin;
+    PluginInfo* _activelyLoadingPlugin;
 
     Poco::Path::StringVec _paths;
-    PluginInfoSet _pluginInfo;
+    PluginInfoVec _pluginInfo;
 
-    OperationInfoVec _opInfo;
+    ReaderWriterInfoVec _rwInfo;
 };
 
 bool operator<( const PluginManager::PluginInfo& lhs, const PluginManager::PluginInfo& rhs );

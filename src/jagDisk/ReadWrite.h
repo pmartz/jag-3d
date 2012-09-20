@@ -18,63 +18,33 @@
 *
 *************** <auto-copyright.pl END do not edit this line> ***************/
 
-#ifndef __JAGDISK_READER_WRITER_H__
-#define __JAGDISK_READER_WRITER_H__ 1
+#ifndef __JAGDISK_READ_WRITE_H__
+#define __JAGDISK_READ_WRITE_H__ 1
 
 
 #include <jagDisk/Export.h>
-#include <jagBase/LogBase.h>
-#include <Poco/Path.h>
 
-#include <jagBase/ptr.h>
 #include <string>
-#include <vector>
 
 
 namespace jagDisk {
 
 
-/** \addtogroup PluginSupport Plugin Support
-*/
-/**@{*/
 
-
-/** \class ReaderWriter ReaderWriter.H <jagDisk/ReaderWriter.H>
-\brief
+/** \brief
 \details
 */
-class JAGDISK_EXPORT ReaderWriter : protected jagBase::LogBase
-{
-public:
-    ReaderWriter( const std::string& logName=std::string( "rw" ) );
-    ReaderWriter( const ReaderWriter& rhs );
-    ~ReaderWriter();
+JAGDISK_EXPORT void* read( const std::string& fileName );
 
-    virtual bool supportsExtension( const std::string& extension )
-    {
-        return( true );
-    }
-
-    virtual void* read( const std::string& fileName )
-    {
-        return( NULL );
-    }
-    virtual bool write( const std::string& fileName, const void* data )
-    {
-        return( false );
-    }
-};
-
-typedef jagBase::ptr< jagDisk::ReaderWriter >::shared_ptr ReaderWriterPtr;
-typedef std::vector< ReaderWriterPtr > ReaderWriterList;
-
-
-/**@}*/
+/** \brief
+\details
+*/
+JAGDISK_EXPORT bool write( const std::string& fileName, const void* data );
 
 
 // jagDisk
 }
 
 
-// __JAGDISK_READER_WRITER_H__
+// __JAGDISK_READ_WRITE_H__
 #endif
