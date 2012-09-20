@@ -31,12 +31,8 @@ set( CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/CMakeModules;${CMAKE_MODULE_PATH}"
 
 
 set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin )
+set( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} )
 set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib )
-if( WIN32 )
-    set( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} )
-else()
-    set( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY} )
-endif()
 
 
 if( WIN32 AND MSVC )
@@ -181,32 +177,14 @@ endif()
 include( CMakeMacros )
 
 
-add_subdirectory( src/jagBase )
-add_subdirectory( src/jagDisk )
-add_subdirectory( src/jagDraw )
-
-
 option( JAG3D_BUILD_PLUGINS "Enable to build plugins" ON )
-if( JAG3D_BUILD_PLUGINS )
-    add_subdirectory( src/plugins )
-endif()
-
 option( JAG3D_BUILD_TESTS "Enable to build test code" ON )
-if( JAG3D_BUILD_TESTS )
-    enable_testing()
-    add_definitions( -DJAG3D_BUILD_TESTS )
-    add_subdirectory( src/tests )
-endif()
-
 option( JAG3D_BUILD_APPS "Enable to build applications" OFF )
-if( JAG3D_BUILD_APPS )
-    add_subdirectory( src/apps )
-endif()
-
 option( JAG3D_BUILD_EXAMPLES "Enable to build example code" OFF )
-if( JAG3D_BUILD_EXAMPLES )
-    add_subdirectory( src/examples )
-endif()
+
+
+add_subdirectory( src )
+
 
 option( JAG3D_INSTALL_DATA "Enable to add the data directory to the install target" OFF )
 if( JAG3D_INSTALL_DATA )

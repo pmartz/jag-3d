@@ -19,6 +19,11 @@
 #************** <auto-copyright.pl END do not edit this line> ***************
 
 
+if( WIN32 )
+    set( CMAKE_DEBUG_POSTFIX d )
+endif()
+
+
 unset( _optionalDependencyIncludes )
 unset( _optionalDependencyLibraries )
 
