@@ -38,9 +38,9 @@ public:
     virtual ~ShaderRW()
     {}
 
-    virtual ShaderPtr read()
+    virtual Shader* read()
     {
-        return( ShaderPtr( (Shader*)NULL ) );
+        return( (Shader*)NULL );
     }
 
 protected:
@@ -51,10 +51,10 @@ protected:
 // Register the MyMask operation with the PluginManager
 // This declares a static object initialized when the plugin is loaded.
 REGISTER_OPERATION(
-    new MyMask(),    // Create an instance of MyMask.
-    MyMask,          // Class name -- NOT a string.
-    "RTPOperation",  // Base class name as a string.
-    "Test mask."     // Description text.
+    new ShaderRW(),   // Create an instance of MyMask.
+    ShaderRW,         // Class name -- NOT a string.
+    "ReaderWriter",   // Base class name as a string.
+    "Test mask."      // Description text.
 )
 #endif
 

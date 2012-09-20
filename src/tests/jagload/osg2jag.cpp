@@ -26,6 +26,7 @@
 #include <jagDraw/BufferObject.h>
 #include <jagDraw/VertexAttrib.h>
 #include <jagDraw/VertexArrayObject.h>
+#include <jagDraw/types.h>
 #include <jagBase/LogMacros.h>
 #include <gmtl/gmtl.h>
 
@@ -128,8 +129,8 @@ void Osg2Jag::apply( osg::Geometry* geom )
             const osg::DrawArrayLengths* dal( static_cast< const osg::DrawArrayLengths* >( ps ) );
             const unsigned int size( dal->size() );
 
-            jagBase::GLintArray first( new GLint[ size ] );
-            jagBase::GLsizeiArray count( new GLsizei[ size ] );
+            jagDraw::GLintArray first( new GLint[ size ] );
+            jagDraw::GLsizeiArray count( new GLsizei[ size ] );
             GLint* fp( first.get() );
             GLsizei* cp( count.get() );
 
@@ -258,7 +259,7 @@ Osg2Jag::ArrayInfo Osg2Jag::asJagArray( const osg::VectorGLubyte* arrayIn )
     info._numElements = size;
     info._componentsPerElement = 1;
 
-    jagBase::GLubyteArray out;
+    jagDraw::GLubyteVec out;
     out.resize( size );
     unsigned int idx;
     for( idx=0; idx<size; idx++ )
@@ -278,7 +279,7 @@ Osg2Jag::ArrayInfo Osg2Jag::asJagArray( const osg::VectorGLushort* arrayIn )
     info._numElements = size;
     info._componentsPerElement = 1;
 
-    jagBase::GLushortArray out;
+    jagDraw::GLushortVec out;
     out.resize( size );
     unsigned int idx;
     for( idx=0; idx<size; idx++ )
@@ -298,7 +299,7 @@ Osg2Jag::ArrayInfo Osg2Jag::asJagArray( const osg::VectorGLuint* arrayIn )
     info._numElements = size;
     info._componentsPerElement = 1;
 
-    jagBase::GLuintArray out;
+    jagDraw::GLuintVec out;
     out.resize( size );
     unsigned int idx;
     for( idx=0; idx<size; idx++ )

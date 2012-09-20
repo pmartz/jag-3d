@@ -230,8 +230,8 @@ protected:
 class MultiArrayBase
 {
 public:
-    MultiArrayBase( const jagBase::GLsizeiArray countArray,
-                const jagBase::GLvoidPtrArray indicesArray=jagBase::GLvoidPtrArray() )
+    MultiArrayBase( const jagDraw::GLsizeiArray countArray,
+                const jagDraw::GLvoidPtrArray indicesArray=jagDraw::GLvoidPtrArray() )
       : _countArray( countArray ),
         _indicesArray( indicesArray )
     {}
@@ -243,23 +243,23 @@ public:
     {}
 
 
-    void setCountArray( const jagBase::GLsizeiArray countArray )
+    void setCountArray( const jagDraw::GLsizeiArray countArray )
     {
         _countArray = countArray;
     }
-    jagBase::GLsizeiArray& getCountArray() { return( _countArray ); }
-    const jagBase::GLsizeiArray& getCountArray() const { return( _countArray ); }
+    jagDraw::GLsizeiArray& getCountArray() { return( _countArray ); }
+    const jagDraw::GLsizeiArray& getCountArray() const { return( _countArray ); }
 
-    void setIndicesArray( const jagBase::GLvoidPtrArray indicesArray )
+    void setIndicesArray( const jagDraw::GLvoidPtrArray indicesArray )
     {
         _indicesArray = indicesArray;
     }
-    jagBase::GLvoidPtrArray& getIndicesArray() { return( _indicesArray ); }
-    const jagBase::GLvoidPtrArray& getIndicesArray() const { return( _indicesArray ); }
+    jagDraw::GLvoidPtrArray& getIndicesArray() { return( _indicesArray ); }
+    const jagDraw::GLvoidPtrArray& getIndicesArray() const { return( _indicesArray ); }
 
 protected:
-    jagBase::GLsizeiArray _countArray;
-    jagBase::GLvoidPtrArray _indicesArray;
+    jagDraw::GLsizeiArray _countArray;
+    jagDraw::GLvoidPtrArray _indicesArray;
 };
 
 #ifdef GL_VERSION_4_0
@@ -406,8 +406,8 @@ class MultiDrawArrays : public DrawCommand,
             public MultiArrayBase
 {
 public:
-    MultiDrawArrays( const GLenum mode, const jagBase::GLintArray& first,
-            const jagBase::GLsizeiArray& count, const GLsizei primcount )
+    MultiDrawArrays( const GLenum mode, const jagDraw::GLintArray& first,
+            const jagDraw::GLsizeiArray& count, const GLsizei primcount )
       : DrawCommand( MultiDrawArraysType, mode, 0, primcount ),
         MultiArrayBase( count ),
         _firstArray( first )
@@ -426,7 +426,7 @@ public:
     }
 
 protected:
-    jagBase::GLintArray _firstArray;
+    jagDraw::GLintArray _firstArray;
 };
 
 typedef jagBase::ptr< jagDraw::MultiDrawArrays >::shared_ptr MultiDrawArraysPtr;
@@ -539,8 +539,8 @@ class MultiDrawElements : public DrawCommand,
             public DrawElementsBase, public MultiArrayBase
 {
 public:
-    MultiDrawElements( GLenum mode, const jagBase::GLsizeiArray& count, GLenum type,
-            const jagBase::GLvoidPtrArray& indices, GLsizei primcount,
+    MultiDrawElements( GLenum mode, const jagDraw::GLsizeiArray& count, GLenum type,
+            const jagDraw::GLvoidPtrArray& indices, GLsizei primcount,
             const jagDraw::BufferObjectPtr elementBuffer=jagDraw::BufferObjectPtr() )
       : DrawCommand( MultiDrawElementsType, mode, 0, primcount ),
         DrawElementsBase( type, 0, elementBuffer ),
@@ -848,9 +848,9 @@ class MultiDrawElementsBaseVertex : public DrawCommand,
             public DrawElementsBase, public MultiArrayBase
 {
 public:
-    MultiDrawElementsBaseVertex( GLenum mode, const jagBase::GLsizeiArray& count, 
-            GLenum type, const jagBase::GLvoidPtrArray& indices, GLsizei primcount,
-            const jagBase::GLintArray& basevertex )
+    MultiDrawElementsBaseVertex( GLenum mode, const jagDraw::GLsizeiArray& count, 
+            GLenum type, const jagDraw::GLvoidPtrArray& indices, GLsizei primcount,
+            const jagDraw::GLintArray& basevertex )
       : DrawCommand( MultiDrawElementsBaseVertexType, mode, 0, primcount ),
         DrawElementsBase( type ),
         MultiArrayBase( count, indices ),
@@ -888,7 +888,7 @@ public:
     }
 
 protected:
-    jagBase::GLintArray _basevertexArray;
+    jagDraw::GLintArray _basevertexArray;
 };
 
 typedef jagBase::ptr< jagDraw::MultiDrawElementsBaseVertex >::shared_ptr MultiDrawElementsBaseVertexPtr;

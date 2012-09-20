@@ -21,6 +21,7 @@
 #include <demoSupport/DemoInterface.h>
 
 #include <jagDraw/DrawCommon.h>
+#include <jagDraw/types.h>
 #include <jagBase/Version.h>
 #include <jagBase/Log.h>
 #include <jagBase/LogMacros.h>
@@ -166,13 +167,13 @@ bool DrawableDemo::startup( const unsigned int numContexts )
 
         drawable->addDrawablePrep( vaop );
 
-        jagBase::GLubyteArray elements;
+        jagDraw::GLubyteVec elements;
         unsigned int idx;
         for( idx=0; idx<6; idx++ )
             elements.push_back( idx );
         jagBase::BufferPtr elbp( new jagBase::Buffer( elements.size() * sizeof( GLubyte ), (void*)&elements[0] ) );
         jagDraw::BufferObjectPtr elbop( new jagDraw::BufferObject( GL_ELEMENT_ARRAY_BUFFER, elbp ) );
-        jagDraw::DrawElementsPtr drawElements( new jagDraw::DrawElements( GL_TRIANGLE_STRIP, elements.size(), GL_UNSIGNED_BYTE, 0, elbop ) );
+        jagDraw::DrawElementsPtr drawElements( new jagDraw::DrawElements( GL_TRIANGLE_STRIP, (const GLsizei) elements.size(), GL_UNSIGNED_BYTE, 0, elbop ) );
         drawable->addDrawCommand( drawElements );
 
         _drawableList.push_back( drawable );

@@ -281,9 +281,11 @@ void PluginManager::loadConfigFiles()
         {
             JAG3D_TRACE( jagpiFileName );
 
+            std::string extensions;
             Poco::AutoPtr< IniFileConfiguration > conf( new IniFileConfiguration( jagpiFileName ) );
             PluginInfo pi;
             try {
+                extensions = conf->getString( "Jag3DPlugin.Extensions" );
                 pi._name = conf->getString( "Jag3DPlugin.Name" );
                 pi._description = conf->getString( "Jag3DPlugin.Description" );
             }
@@ -291,6 +293,22 @@ void PluginManager::loadConfigFiles()
             {
                 // Not one of our .jagpi files, or badly formed .jagpi file.
                 continue;
+            }
+
+            // Parse the extensions string into a vector of individual strings.
+            while( !( extensions.empty() ) )
+            {
+                size_t pos( extensions.find( ";" ) );
+                if( pos != std::string::npos )
+                {
+                    pi._extensions.push_back( extensions.substr( 0, pos ) );
+                    extensions = extensions.substr( pos+1 );
+                }
+                else
+                {
+                    pi._extensions.push_back( extensions );
+                    extensions.clear();
+                }
             }
 
             pi._path = path;

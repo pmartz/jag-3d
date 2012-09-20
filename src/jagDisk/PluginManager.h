@@ -25,6 +25,7 @@
 #include <jagDisk/Export.h>
 #include <jagDisk/ReaderWriter.h>
 #include <jagBase/LogBase.h>
+#include <jagBase/types.h>
 
 #include <Poco/Path.h>
 #include <string>
@@ -182,8 +183,9 @@ public:
         PluginInfo( const std::string& name=std::string( "" ) ) : _name( name ) {}
 
         Poco::Path _path;         /**< Full path and name to plugin shared library. */
-        std::string _name;        /**< Taken from plugin .ini file */
-        std::string _description; /**< Taken from plugin .ini file */
+        std::string _name;        /**< Taken from plugin .jagpi file */
+        std::string _description; /**< Taken from plugin .jagpi file */
+        jagBase::StringList _extensions; /**< Taken from plugin .jagpi file "Extensions" string */
 
         friend bool operator<( const PluginInfo& lhs, const PluginInfo& rhs );
     };
