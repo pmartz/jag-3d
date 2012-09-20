@@ -39,10 +39,18 @@ typedef PerContextData< GLdouble > PerContextGLdouble;
 
 
 typedef std::vector< GLboolean > GLbooleanVec;
+typedef std::vector< GLubyte > GLubyteVec;
+typedef std::vector< GLushort > GLushortVec;
 typedef std::vector< GLint > GLintVec;
 typedef std::vector< GLuint > GLuintVec;
 typedef std::vector< GLfloat > GLfloatVec;
 typedef std::vector< GLdouble > GLdoubleVec;
+
+typedef jagBase::ptr< GLboolean >::shared_array_ptr GLbooleanArray;
+typedef jagBase::ptr< GLint >::shared_array_ptr GLintArray;
+typedef jagBase::ptr< GLuint >::shared_array_ptr GLuintArray;
+typedef jagBase::ptr< GLsizei >::shared_array_ptr GLsizeiArray;
+typedef jagBase::ptr< GLvoid* >::shared_array_ptr GLvoidPtrArray;
 
 
 // jagDraw

@@ -30,18 +30,11 @@
 namespace jagBase {
 
 
+typedef jagBase::ptr< unsigned char >::shared_array_ptr UCharArray;
 typedef jagBase::ptr< unsigned int >::shared_ptr UIntPtr;
 
-typedef jagBase::ptr< unsigned char >::shared_array_ptr UCharArray;
-
-typedef jagBase::ptr< GLint >::shared_array_ptr GLintArray;
-typedef jagBase::ptr< GLsizei >::shared_array_ptr GLsizeiArray;
-typedef jagBase::ptr< GLvoid* >::shared_array_ptr GLvoidPtrArray;
-
-typedef std::vector< GLubyte > GLubyteArray;
-typedef std::vector< GLushort > GLushortArray;
-typedef std::vector< GLuint > GLuintArray;
 typedef std::vector< std::string > StringList;
+
 
 // jagBase
 }
