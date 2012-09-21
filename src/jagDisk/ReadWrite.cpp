@@ -29,7 +29,7 @@
 namespace jagDisk {
 
 
-void* read( const std::string& fileName )
+void* read( const std::string& fileName, const Options* options )
 {
     PluginManager* pm( PluginManager::instance() );
 
@@ -82,8 +82,57 @@ void* read( const std::string& fileName )
     return( NULL );
 }
 
-bool write( const std::string& fileName, const void* data )
+bool write( const std::string& fileName, const void* data, const Options* options )
 {
+    PluginManager* pm( PluginManager::instance() );
+
+    const std::string logStr( "jag.disk.rw" );
+    JAG3D_TRACE_STATIC( logStr, "write() for: " + fileName );
+
+    // Try loaded ReaderWriters first.
+    const ReaderWriterInfoVec& rwVec( pm->getLoadedReaderWriters() );
+    BOOST_FOREACH( const ReaderWriterInfo& rwInfo, rwVec )
+    {
+        JAG3D_TRACE_STATIC( logStr, "\tTrying loaded ReaderWriter subclass " + rwInfo._className );
+        ReaderWriterPtr rw( rwInfo._rwInstance );
+        if( rw->write( fileName, data ) )
+        {
+            JAG3D_TRACE_STATIC( logStr, "\twrite(): Success." );
+            return( true );
+        }
+    }
+
+    Poco::Path pathName( fileName );
+
+    // Get a PluginInfo for each plugin that advertizes support for this extension.
+    const std::string extension( pathName.getExtension() );
+    PluginManager::PluginInfoPtrVec plugins( pm->getPluginsForExtension( extension ) );
+
+    BOOST_FOREACH( PluginManager::PluginInfo* pi, plugins )
+    {
+        if( pi->_loaded )
+            // We already tried the ReaderWriter(s) in this plugin.
+            continue;
+
+        JAG3D_TRACE_STATIC( logStr, "\tLoading new plugin: " + pi->_name );
+        if( !( pm->loadPlugin( pi ) ) )
+            // Load failes.
+            continue;
+
+        BOOST_FOREACH( ReaderWriterPtr rw, pi->_readerWriters )
+        {
+            JAG3D_TRACE_STATIC( logStr, "\tTrying new ReaderWriter." );
+            if( rw->write( fileName, data ) )
+            {
+                JAG3D_TRACE_STATIC( logStr, "\twrite(): Success." );
+                return( true );
+            }
+        }
+    }
+
+    JAG3D_NOTICE_STATIC( logStr, "Write operation failed for:" );
+    JAG3D_NOTICE_STATIC( logStr, "\twrite( \"" + fileName + "\" )." );
+
     return( false );
 }
 

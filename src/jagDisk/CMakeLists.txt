@@ -27,12 +27,14 @@ endif()
 
 set( _jagDiskHeaderFiles
     Export.h
+    Options.h
     PluginManager.h
     ReaderWriter.h
     ReadWrite.h
 )
 
 set( _jagDiskSourceFiles
+    Options.cpp
     PluginManager.cpp
     ReaderWriter.cpp
     ReadWrite.cpp

@@ -143,20 +143,22 @@ void PluginManager::addPaths( const std::string& paths, const bool loadConfigs )
         return;
 
     const char sep( Poco::Path::pathSeparator() );
-    std::string::size_type pos, lastPos( 0 );
-    do {
-        pos = paths.find( sep, lastPos );
-        const std::string::size_type len( pos - lastPos );
-        if( JAG3D_LOG_TRACE )
+    std::string::size_type start( 0 ), end( paths.find( sep ) );
+    while( start != std::string::npos )
+    {
+        if( start != end )
         {
-            std::ostringstream ostr;
-            ostr << "Adding path: " << paths.substr( lastPos, len ) << " " << pos << " " << lastPos;
-            JAG3D_TRACE( ostr.str() );
+            if( JAG3D_LOG_TRACE )
+            {
+                std::ostringstream ostr;
+                ostr << "Adding path: " << paths.substr( start, end-start );
+                JAG3D_TRACE( ostr.str() );
+            }
+            _paths.push_back( paths.substr( start, end-start ) );
         }
-        if( len > 0 )
-            _paths.push_back( paths.substr( lastPos, len ) );
-        lastPos = pos+1;
-    } while( pos != paths.npos );
+        start = ( end == std::string::npos ) ? end : end+1;
+        end = paths.find( sep, start );
+    }
 
     if( loadConfigs )
         loadConfigFiles();
