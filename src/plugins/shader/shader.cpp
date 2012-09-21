@@ -21,8 +21,11 @@
 #include <jagDisk/PluginManager.h>
 #include <jagDisk/ReaderWriter.h>
 #include <Poco/ClassLibrary.h>
+#include <Poco/Path.h>
 
 #include <jagDraw/Shader.h>
+
+#include <fstream>
 
 
 using namespace jagDraw;
@@ -33,25 +36,79 @@ class ShaderRW : public ReaderWriter
 {
 public:
     ShaderRW()
-      : ReaderWriter( "shaderrw" )
+      : ReaderWriter( "shaderrw" ),
+        _type( 0 )
     {}
     virtual ~ShaderRW()
     {}
 
     virtual bool supportsExtension( const std::string& extension )
     {
-        const std::string supported( "vs gs fs vert geom frag" );
-        return( !( extension.empty() ) &&
-            ( supported.find( extension ) != std::string::npos ) );
+        const std::string allLower( extension );
+        return( isVert( allLower ) ||
+            isGeom( allLower ) ||
+            isFrag( allLower ) );
     }
 
-
-    virtual void* read( const std::string& fileName )
+    virtual void* read( const std::string& fileName ) const
     {
-        return( (Shader*)NULL );
+        std::ifstream iStr( fileName.c_str() );
+        if( !iStr )
+        {
+            // TBD record error
+            return( NULL );
+        }
+
+        Poco::Path pathName( fileName );
+        const std::string extension( pathName.getExtension() );
+        if( isVert( extension ) )
+            _type = GL_VERTEX_SHADER;
+        else if( isGeom( extension ) )
+            _type = GL_GEOMETRY_SHADER;
+        else if( isFrag( extension ) )
+            _type = GL_FRAGMENT_SHADER;
+
+        void* data( read( iStr ) );
+        _type = 0;
+        return( data );
+    }
+    virtual void* read( std::istream& iStr ) const
+    {
+        std::string shaderSource;
+        shaderSource.reserve( 4096 );
+
+        char buf[ 1024 ];
+        while( iStr.good() )
+        {
+            iStr.getline( buf, 128 );
+            shaderSource += std::string( buf ) + "\n";
+        }
+        shaderSource += std::string( "\0" );
+
+        jagDraw::Shader* shader( new jagDraw::Shader( _type ) );
+        shader->addSourceString( shaderSource );
+
+        return( shader );
     }
 
 protected:
+    static bool isVert( const std::string& extension )
+    {
+        return( ( extension == std::string( "vs" ) ) ||
+            ( extension == std::string( "vert" ) ) );
+    }
+    static bool isGeom( const std::string& extension )
+    {
+        return( ( extension == std::string( "gs" ) ) ||
+            ( extension == std::string( "geom" ) ) );
+    }
+    static bool isFrag( const std::string& extension )
+    {
+        return( ( extension == std::string( "fs" ) ) ||
+            ( extension == std::string( "frag" ) ) );
+    }
+
+    mutable GLenum _type;
 };
 
 // Register the ShaderRW class with the PluginManager.
@@ -60,7 +117,7 @@ REGISTER_READERWRITER(
     new ShaderRW(),   // Create an instance of MyMask.
     ShaderRW,         // Class name -- NOT a string.
     "ReaderWriter",   // Base class name as a string.
-    "Test mask."      // Description text.
+    "Read and write shaders to disk."  // Description text.
 );
 
 

@@ -29,6 +29,7 @@
 #include <jagBase/ptr.h>
 #include <string>
 #include <vector>
+#include <iostream>
 
 
 namespace jagDisk {
@@ -50,19 +51,29 @@ public:
     ReaderWriter( const ReaderWriter& rhs );
     ~ReaderWriter();
 
-    virtual bool supportsExtension( const std::string& extension )
+    virtual bool supportsExtension( const std::string& /*extension*/ )
     {
         return( true );
     }
 
-    virtual void* read( const std::string& fileName )
+    virtual void* read( const std::string& /*fileName*/ ) const
     {
         return( NULL );
     }
-    virtual bool write( const std::string& fileName, const void* data )
+    virtual bool write( const std::string& /*fileName*/, const void* /*data*/ )
     {
         return( false );
     }
+
+    virtual void* read( std::istream& /*iStr*/ ) const
+    {
+        return( NULL );
+    }
+    virtual bool write(  std::ostream& /*oStr*/, const void* /*data*/ )
+    {
+        return( false );
+    }
+
 };
 
 typedef jagBase::ptr< jagDisk::ReaderWriter >::shared_ptr ReaderWriterPtr;

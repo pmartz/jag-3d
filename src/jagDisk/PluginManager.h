@@ -109,7 +109,7 @@ public:
     typedef enum {
         NO_PATHS                    = 0,
         USE_CURRENT_DIRECTORY       = ( 1 << 0x0 ),
-        USE_JAG3D_PLUGIN_PATN_ENV_VAR = ( 1 << 0x1 ),
+        USE_JAG3D_PLUGIN_PATH_ENV_VAR = ( 1 << 0x1 ),
         USE_SYSTEM_PATH             = ( 1 << 0x2 ),
         USE_LD_LIBRARY_PATH         = ( 1 << 0x3 )
     } InitFlags;
@@ -117,7 +117,7 @@ public:
     /** \brief Create the PluginManager singleton instance.
     \param initFlags specifies default plugin search paths.
     */
-    static PluginManager* instance( const int initFlags=( USE_CURRENT_DIRECTORY | USE_SYSTEM_PATH | USE_JAG3D_PLUGIN_PATN_ENV_VAR ) );
+    static PluginManager* instance( const int initFlags=( USE_CURRENT_DIRECTORY | USE_SYSTEM_PATH | USE_JAG3D_PLUGIN_PATH_ENV_VAR ) );
     virtual ~PluginManager();
 
     /** \brief Add a single plugin search path.
