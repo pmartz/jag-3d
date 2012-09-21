@@ -91,7 +91,20 @@ void Shader::printInfoLog( const GLuint id )
     }
 
     ls << "----- BEGIN " << typeStr << " source dump:" << std::endl;
-    ls << getFullSource() << std::endl;
+    const std::string source( getFullSource() );
+    std::string::size_type start( 0 ), end( source.find( '\n' ) );
+    unsigned int lineNum( 1 );
+    while( start != std::string::npos )
+    {
+        ls.width( 5 );
+        ls << std::right << lineNum++;
+        ls.width( 0 );
+        ls << std::left << " " << source.substr( start, end-start ) << std::endl;
+
+        start = ( end == std::string::npos ) ? end : end+1;
+        end = source.find( '\n', start );
+    }
+    //ls << getFullSource() << std::endl;
     ls << "----- END " << typeStr << " source dump." << std::endl;
 }
 
