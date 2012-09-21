@@ -75,13 +75,21 @@ public:
     }
     virtual void* read( std::istream& iStr ) const
     {
+        // Get total file size. But because we're reading a text file,
+        // the size of the actual data we read might be smaller. For
+        // example, \cr\lf (two bytes) might be converted to \n (one byte).
         iStr.seekg( 0, std::ios::end );
         const std::istream::pos_type size( (unsigned long)( iStr.tellg() ) );
         iStr.seekg( 0, std::ios::beg );
 
-        char* buff( new char[ ( (unsigned long) size ) + 1 ] );
+        // totalSize reserves space for trailing '\0'.
+        const unsigned int totalSize( ( (unsigned long) size ) + 1 );
+        char* buff( new char[ totalSize ] );
+        // Don't know where the trailing '\0' goes, so fill the whole
+        // block with '0'.
+        memset( buff, '\0', totalSize );
+
         iStr.read( buff, size );
-        buff[ size ] = '\0';
 
         const std::string shaderSource( buff );
         delete[] buff;

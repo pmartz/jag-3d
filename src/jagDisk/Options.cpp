@@ -20,6 +20,7 @@
 
 #include <jagDisk/Options.h>
 #include <Poco/Path.h>
+#include <Poco/File.h>
 #include <Poco/Environment.h>
 
 
@@ -77,6 +78,17 @@ void Options::clearPaths()
 const Poco::Path::StringVec& Options::getPaths() const
 {
     return( _paths );
+}
+
+Poco::Path Options::findFile( const std::string& fileName ) const
+{
+    Poco::File file( fileName );
+    if( file.exists() )
+        return( Poco::Path( fileName ) );
+
+    Poco::Path pathName;
+    Poco::Path::find( _paths.begin(), _paths.end(), fileName, pathName );
+    return( pathName );
 }
 
 

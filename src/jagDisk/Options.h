@@ -60,11 +60,14 @@ public:
     void clearPaths();
     const Poco::Path::StringVec& getPaths() const;
 
+    Poco::Path findFile( const std::string& fileName ) const;
+
 protected:
     Poco::Path::StringVec _paths;
 };
 
 typedef jagBase::ptr< jagDisk::Options >::shared_ptr OptionsPtr;
+typedef jagBase::ptr< const jagDisk::Options >::shared_ptr ConstOptionsPtr;
 typedef std::vector< OptionsPtr > OptionsList;
 
 

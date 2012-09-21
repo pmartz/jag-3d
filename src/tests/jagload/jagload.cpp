@@ -127,8 +127,13 @@ bool JagLoadDemo::startup( const unsigned int numContexts )
 
     jagDraw::DrawablePtr firstDrawable( _drawList[ 0 ] );
 
-    jagDraw::ShaderPtr vs( (jagDraw::Shader*) jagDisk::read( "C:\\Projects\\JAG\\jag3d\\data\\jagload.vert" ) );
-    jagDraw::ShaderPtr fs( (jagDraw::Shader*) jagDisk::read( "C:\\Projects\\JAG\\jag3d\\data\\jagload.frag" ) );
+    jagDraw::ShaderPtr vs( (jagDraw::Shader*) jagDisk::read( "jagload.vert" ) );
+    jagDraw::ShaderPtr fs( (jagDraw::Shader*) jagDisk::read( "jagload.frag" ) );
+    if( ( vs == NULL ) || ( fs == NULL ) )
+    {
+        JAG3D_INFO_STATIC( _logName, "Unable to load shaders. Set JAG3D_DATA_PATH in the environment." );
+        return( false );
+    }
 
     jagDraw::ShaderProgramPtr prog;
     prog = jagDraw::ShaderProgramPtr( new jagDraw::Program );
