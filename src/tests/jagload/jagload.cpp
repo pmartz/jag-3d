@@ -127,47 +127,8 @@ bool JagLoadDemo::startup( const unsigned int numContexts )
 
     jagDraw::DrawablePtr firstDrawable( _drawList[ 0 ] );
 
-    const char* vShaderSource =
-        "#version 140 \n"
-        " \n"
-        "uniform mat4 viewProjectionMatrix; \n"
-        "uniform mat3 normalMatrix; \n"
-        "uniform vec3 ecLightDir; \n"
-        "uniform blockTest { \n"
-        "    float ambientScene; \n"
-        "    vec3 diffuseMat; \n"
-        "}; \n"
-        " \n"
-        "in vec4 vertex; \n"
-        "in vec3 normal; \n"
-        "out vec4 color; \n"
-        " \n"
-        "void main() \n"
-        "{ \n"
-        "    vec3 ecNormal = normalize( normalMatrix * normal ); \n"
-        "    float diffuse = max( dot( ecLightDir, ecNormal ), 0. ); \n"
-        "    color = vec4( ambientScene ) + vec4( diffuseMat * diffuse, 1. ); \n"
-        " \n"
-        "    gl_Position = viewProjectionMatrix * vertex; \n"
-        "} \n";
-    jagDraw::ShaderPtr vs( new jagDraw::Shader( GL_VERTEX_SHADER ) );
-    vs->addSourceString( std::string( vShaderSource ) );
-
-    const char* fShaderSource =
-        "#version 140 \n"
-        " \n"
-        "in vec4 color; \n"
-        "out vec4 fragData; \n"
-        " \n"
-        "void main() \n"
-        "{ \n"
-        "    fragData = color; \n"
-        "} \n";
-    jagDraw::ShaderPtr fs( new jagDraw::Shader( GL_FRAGMENT_SHADER ) );
-    fs->addSourceString( std::string( fShaderSource ) );
-
-    jagDisk::read( "C:\\Projects\\JAG\\jag3d\\data\\jagload.vert" );
-    jagDisk::read( "C:\\Projects\\JAG\\jag3d\\data\\jagload.frag" );
+    jagDraw::ShaderPtr vs( (jagDraw::Shader*) jagDisk::read( "C:\\Projects\\JAG\\jag3d\\data\\jagload.vert" ) );
+    jagDraw::ShaderPtr fs( (jagDraw::Shader*) jagDisk::read( "C:\\Projects\\JAG\\jag3d\\data\\jagload.frag" ) );
 
     jagDraw::ShaderProgramPtr prog;
     prog = jagDraw::ShaderProgramPtr( new jagDraw::Program );

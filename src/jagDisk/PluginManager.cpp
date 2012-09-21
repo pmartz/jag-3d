@@ -96,7 +96,7 @@ PluginManager::PluginManager( const int initFlags )
     {
         addPath( Poco::Path::current(), false );
     }
-    if( ( initFlags & USE_JAG3D_PLUGIN_PATN_ENV_VAR ) != 0 )
+    if( ( initFlags & USE_JAG3D_PLUGIN_PATH_ENV_VAR ) != 0 )
     {
         std::string paths;
         try {
