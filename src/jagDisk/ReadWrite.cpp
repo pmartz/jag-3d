@@ -20,6 +20,7 @@
 
 #include <jagDisk/ReadWrite.h>
 #include <jagDisk/PluginManager.h>
+#include <jagDisk/Options.h>
 #include <jagBase/LogMacros.h>
 #include <Poco/File.h>
 
@@ -31,10 +32,20 @@ namespace jagDisk {
 
 void* read( const std::string& fileName, const Options* options )
 {
-    PluginManager* pm( PluginManager::instance() );
-
     const std::string logStr( "jag.disk.rw" );
     JAG3D_TRACE_STATIC( logStr, "read() for: " + fileName );
+
+    ConstOptionsPtr opt( options != NULL ? options : new Options() );
+    Poco::Path pathName( opt->findFile( fileName ) );
+    if( !( pathName.isFile() ) )
+    {
+        JAG3D_TRACE_STATIC( logStr, "\tFailed. File not found." );
+        return( NULL );
+    }
+    const std::string fullName( pathName.toString() );
+    JAG3D_TRACE_STATIC( logStr, "\tFound: \"" + fullName + "\"." );
+
+    PluginManager* pm( PluginManager::instance() );
 
     // Try loaded ReaderWriters first.
     const ReaderWriterInfoVec& rwVec( pm->getLoadedReaderWriters() );
@@ -42,15 +53,13 @@ void* read( const std::string& fileName, const Options* options )
     {
         JAG3D_TRACE_STATIC( logStr, "\tTrying loaded ReaderWriter subclass " + rwInfo._className );
         ReaderWriterPtr rw( rwInfo._rwInstance );
-        void* data( rw->read( fileName ) );
+        void* data( rw->read( fullName ) );
         if( data != NULL )
         {
             JAG3D_TRACE_STATIC( logStr, "\tread(): Success." );
             return( data );
         }
     }
-
-    Poco::Path pathName( fileName );
 
     // Get a PluginInfo for each plugin that advertizes support for this extension.
     const std::string extension( pathName.getExtension() );
@@ -70,14 +79,14 @@ void* read( const std::string& fileName, const Options* options )
         BOOST_FOREACH( ReaderWriterPtr rw, pi->_readerWriters )
         {
             JAG3D_TRACE_STATIC( logStr, "\tTrying new ReaderWriter." );
-            void* data( rw->read( fileName ) );
+            void* data( rw->read( fullName ) );
             if( data != NULL )
                 return( data );
         }
     }
 
     JAG3D_NOTICE_STATIC( logStr, "Read operation failed for:" );
-    JAG3D_NOTICE_STATIC( logStr, "\tread( \"" + fileName + "\" )." );
+    JAG3D_NOTICE_STATIC( logStr, "\tread( \"" + fullName + "\" )." );
 
     return( NULL );
 }
