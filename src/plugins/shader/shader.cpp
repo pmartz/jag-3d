@@ -70,20 +70,21 @@ public:
 
         void* data( read( iStr ) );
         _type = 0;
+
         return( data );
     }
     virtual void* read( std::istream& iStr ) const
     {
-        std::string shaderSource;
-        shaderSource.reserve( 4096 );
+        iStr.seekg( 0, std::ios::end );
+        const std::istream::pos_type size( (unsigned long)( iStr.tellg() ) );
+        iStr.seekg( 0, std::ios::beg );
 
-        char buf[ 1024 ];
-        while( iStr.good() )
-        {
-            iStr.getline( buf, 128 );
-            shaderSource += std::string( buf ) + "\n";
-        }
-        shaderSource += std::string( "\0" );
+        char* buff( new char[ ( (unsigned long) size ) + 1 ] );
+        iStr.read( buff, size );
+        buff[ size ] = '\0';
+
+        const std::string shaderSource( buff );
+        delete[] buff;
 
         jagDraw::Shader* shader( new jagDraw::Shader( _type ) );
         shader->addSourceString( shaderSource );
