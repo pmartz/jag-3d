@@ -25,6 +25,7 @@
 #include <jagBase/Version.h>
 #include <jagBase/Log.h>
 #include <jagBase/LogMacros.h>
+#include <jagDisk/ReadWrite.h>
 #include <Poco/Message.h>
 #include <boost/program_options/options_description.hpp>
 #include <gmtl/gmtl.h>
@@ -151,8 +152,12 @@ bool TextureDemo::startup( const unsigned int numContexts )
             }
             jagBase::BufferPtr texbp( new jagBase::Buffer( texfa.size() * sizeof( float ), (void*)&texfa[0] ) );
 
+#if 1
             jagDraw::ImagePtr image( new jagDraw::Image() );
             image->set( 0, GL_RGB, 5, 4, 0, 0, GL_RGB, GL_FLOAT, texbp );
+#else
+            jagDraw::ImagePtr image( (jagDraw::Image*) jagDisk::read( "test.png" ) );
+#endif
 
             jagDraw::TexturePtr tex( new jagDraw::Texture( GL_TEXTURE_2D, image ) );
             drawable->addDrawablePrep( tex );

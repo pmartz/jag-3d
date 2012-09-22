@@ -24,9 +24,11 @@
 #include <Poco/Path.h>
 #include <Poco/String.h>
 
+#include <jagBase/Buffer.h>
 #include <jagDraw/Image.h>
 
-#include <osgDB/Registry>
+#include <osgDB/ReadFile>
+#include <osgDB/WriteFile>
 #include <osg/Image>
 
 #include <fstream>
@@ -62,36 +64,18 @@ public:
 
     virtual void* read( const std::string& fileName ) const
     {
-        std::ifstream iStr( fileName.c_str() );
-        if( !iStr )
-        {
-            // TBD record error
-            return( NULL );
-        }
-
-        return( read( iStr ) );
+        osg::ref_ptr< osg::Image > osgImage( osgDB::readImageFile( fileName ) );
+        return( convertFromOsgImage( osgImage.get() ) );
     }
     virtual void* read( std::istream& iStr ) const
     {
         return( NULL );
-#if 0
-        jagDraw::Shader* shader( new jagDraw::Shader( _type ) );
-        shader->addSourceString( shaderSource );
-
-        return( shader );
-#endif
     }
 
     virtual bool write( const std::string& fileName, const void* data ) const
     {
-        std::ofstream oStr( fileName.c_str() );
-        if( !oStr )
-        {
-            // TBD record error
-            return( NULL );
-        }
-
-        return( write( oStr, data ) );
+        osg::ref_ptr< osg::Image > osgImage( convertToOsgImage( (Image*)data ) );
+        return( osgDB::writeImageFile( *osgImage, fileName ) );
     }
     virtual bool write( std::ostream& oStr, const void* data ) const
     {
@@ -99,6 +83,26 @@ public:
     }
 
 protected:
+    Image* convertFromOsgImage( osg::Image* osgImage ) const
+    {
+        if( osgImage == NULL ) return( NULL );
+
+        const unsigned int size( osgImage->getTotalSizeInBytes() );
+        jagBase::BufferPtr buffer( new jagBase::Buffer( size, osgImage->getDataPointer() ) );
+
+        Image* newImage( new Image() );
+        newImage->set( 0, osgImage->getInternalTextureFormat(),
+            osgImage->s(), osgImage->t(), osgImage->r(), 0,
+            osgImage->getPixelFormat(), osgImage->getDataType(),
+            buffer );
+
+        return( newImage );
+    }
+
+    osg::Image* convertToOsgImage( Image* jagImage ) const
+    {
+        return( NULL );
+    }
 };
 
 // Register the ShaderRW class with the PluginManager.

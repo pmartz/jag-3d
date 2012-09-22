@@ -50,7 +50,7 @@ public:
     {
     }
 
-    Buffer( size_t size, void *ptr )
+    Buffer( size_t size, const void *ptr )
       : _size( size ),
         _buffer( size==0 ? NULL : new unsigned char[ size ] )
     {
@@ -80,7 +80,7 @@ public:
     void* data() { return( _buffer.get() ); }
     void* offset( size_t off ) { return( &( _buffer.get() )[ off ] ); }
 
-    void copy( void* ptr )
+    void copy( const void* ptr )
     {
         memcpy( _buffer.get(), ptr, _size );
     }
