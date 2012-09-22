@@ -88,6 +88,32 @@ macro( _splitList _tokenIn _list0out _list1out )
     endforeach()
 endmacro()
 
+# Given two input token delimiters, _tokenStart and _tokenEnd, return
+# all the elements in ARGN between the delimiters in _subListOut.
+# If _tokenStart is the empty string (""), _subListOut will contain all
+# elements from ARGN up to _tokenEnd. if _tokenEnd is the empty string,
+# _subListOut will contain all elements from ARGN following _tokenStart.
+# If both delimiters are empty, _subListOut will contain a copy of ARGN.
+#
+macro( _subList _tokenStart _tokenEnd _subListOut )
+    string( LENGTH "${_tokenStart}" length )
+    set( startFound FALSE )
+    if( length EQUAL 0 )
+        set( startFound TRUE )
+    endif()
+
+    unset( ${_subListOut} )
+    foreach( element ${ARGN} )
+        if( ${element} STREQUAL "${_tokenEnd}" )
+            break()
+        elseif( startFound )
+            list( APPEND ${_subListOut} ${element} )
+        elseif( ${element} STREQUAL ${_tokenStart} )
+            set( startFound TRUE )
+        endif()
+    endforeach()
+endmacro()
+
 
 # Support installing non-app executables into the share/jag3d/bin directory.
 #
@@ -283,22 +309,27 @@ endmacro()
 
 
 macro( _addLibraryInternal _category _libName )
+    _subList( "" JAG_LIBRARIES _sources ${ARGN} )
+    _subList( JAG_LIBRARIES ADDITIONAL_INCLUDES _jagLibs ${ARGN} )
+    _subList( ADDITIONAL_INCLUDES ADDITIONAL_LIBRARIES _includes ${ARGN} )
+    _subList( ADDITIONAL_LIBRARIES "" _libs ${ARGN} )
+
     include_directories(
         ${_projectIncludes}
+        ${_includes}
         ${_optionalDependencyIncludes}
         ${_requiredDependencyIncludes}
     )
 
-    _splitList( JAG_LIBRARIES sources libs ${ARGN} )
-
     if( BUILD_SHARED_LIBS )
-        add_library( ${_libName} SHARED ${sources} )
+        add_library( ${_libName} SHARED ${_sources} )
     else()
-        add_library( ${_libName} ${sources} )
+        add_library( ${_libName} ${_sources} )
     endif()
 
     target_link_libraries( ${_libName}
-        ${libs}
+        ${_jagLibs}
+        ${_libs}
         ${_optionalDependencyLibraries}
         ${_requiredDependencyLibraries}
     )
