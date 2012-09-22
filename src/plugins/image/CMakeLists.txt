@@ -29,6 +29,10 @@ _addPlugin( ${_libName}
     image.cpp
     JAG_LIBRARIES
         jagDisk jagDraw jagBase
+    ADDITIONAL_INCLUDES
+        ${OSG_INCLUDE_DIRS}
+    ADDITIONAL_LIBRARIES
+        ${OSG_LIBRARIES}
 )
 
 _addPluginInfo( image.jagpi )

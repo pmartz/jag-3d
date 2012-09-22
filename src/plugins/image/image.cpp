@@ -26,6 +26,9 @@
 
 #include <jagDraw/Image.h>
 
+#include <osgDB/Registry>
+#include <osg/Image>
+
 #include <fstream>
 
 
