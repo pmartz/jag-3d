@@ -1,0 +1,26 @@
+: Must be at top of every plugin .jagpi file.
+
+[Jag3DPlugin]
+
+
+
+: Supported extensions. If plugin contains more than one
+: ReaderWriter, list all extensions here. Separate extensions
+: with a semicolon, and do not include periods.
+
+Extensions = *
+
+
+
+: Name string. Apps reference this when specifying plugins
+: to load. Not necessarily the same as the plugin file name.
+
+Name = Image
+
+
+
+: Descriptive text. Apps can search for plugins using "Name"
+: alone, or both "Name" and "Description" to resolve name
+: ambiguity.
+
+Description = OSG-based image read/write.

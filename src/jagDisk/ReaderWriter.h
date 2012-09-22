@@ -55,12 +55,16 @@ public:
     {
         return( true );
     }
+    virtual bool excludesExtension( const std::string& /*extension*/ )
+    {
+        return( false );
+    }
 
     virtual void* read( const std::string& /*fileName*/ ) const
     {
         return( NULL );
     }
-    virtual bool write( const std::string& /*fileName*/, const void* /*data*/ )
+    virtual bool write( const std::string& /*fileName*/, const void* /*data*/ ) const
     {
         return( false );
     }
@@ -69,7 +73,7 @@ public:
     {
         return( NULL );
     }
-    virtual bool write(  std::ostream& /*oStr*/, const void* /*data*/ )
+    virtual bool write( std::ostream& /*oStr*/, const void* /*data*/ ) const
     {
         return( false );
     }

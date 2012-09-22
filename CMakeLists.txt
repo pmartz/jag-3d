@@ -123,6 +123,12 @@ GGTFinder()
 # GLEWFinder()
 POCOFinder()
 
+#
+# Eventually, this will be included only in the src/plugins/CMakeLists.txt.
+# For now, do it here, so that the jagload test can leverage it.
+include( FindOSGHelper )
+
+
 
 if( QT_FOUND )
     include( ${QT_USE_FILE} )
@@ -149,6 +155,8 @@ endif()
 if( JAG3D_USE_GL3W )
     add_definitions( -DJAG3D_USE_GL3W )
 endif()
+
+
 
 option( JAG3D_DISABLE_ALL_ERROR_CHECKS "If set, JAG disables all internal OpenGL error checking" OFF )
 if( JAG3D_DISABLE_ALL_ERROR_CHECKS )
