@@ -1,4 +1,6 @@
-include( FindOSGHelper )
+if( NOT OSG_FOUND )
+    return()
+endif()
 
 _addExecutable( Test jagload
     jagload.cpp

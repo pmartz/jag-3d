@@ -18,5 +18,17 @@
 #
 #************** <auto-copyright.pl END do not edit this line> ***************
 
-add_subdirectory( shader )
-add_subdirectory( image )
+if( NOT OSG_FOUND )
+    return()
+endif()
+
+# Required for ModuleInstall.cmake
+set( _libName image )
+
+_addPlugin( ${_libName}
+    image.cpp
+    JAG_LIBRARIES
+        jagDisk jagDraw jagBase
+)
+
+_addPluginInfo( image.jagpi )

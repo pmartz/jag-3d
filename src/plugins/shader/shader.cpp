@@ -22,6 +22,7 @@
 #include <jagDisk/ReaderWriter.h>
 #include <Poco/ClassLibrary.h>
 #include <Poco/Path.h>
+#include <Poco/String.h>
 
 #include <jagDraw/Shader.h>
 
@@ -36,7 +37,7 @@ class ShaderRW : public ReaderWriter
 {
 public:
     ShaderRW()
-      : ReaderWriter( "shaderrw" ),
+      : ReaderWriter( "shader" ),
         _type( 0 )
     {}
     virtual ~ShaderRW()
@@ -44,7 +45,7 @@ public:
 
     virtual bool supportsExtension( const std::string& extension )
     {
-        const std::string allLower( extension );
+        const std::string allLower( Poco::toLower( extension ) );
         return( isVert( allLower ) ||
             isGeom( allLower ) ||
             isFrag( allLower ) );
