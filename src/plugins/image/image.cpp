@@ -90,8 +90,31 @@ protected:
         const unsigned int size( osgImage->getTotalSizeInBytes() );
         jagBase::BufferPtr buffer( new jagBase::Buffer( size, osgImage->getDataPointer() ) );
 
+        // Check for deprecated internal formats and change to valid ones.
+        GLenum intFormat;
+        switch( osgImage->getInternalTextureFormat() ) {
+        case 1:
+        case GL_ALPHA:
+        case GL_LUMINANCE:
+            intFormat = GL_RED;
+            break;
+        case 2:
+        case GL_LUMINANCE_ALPHA:
+            intFormat = GL_RG;
+            break;
+        case 3:
+            intFormat = GL_RGB;
+            break;
+        case 4:
+            intFormat = GL_RGBA;
+            break;
+        default:
+            intFormat = osgImage->getInternalTextureFormat();
+            break;
+        }
+
         Image* newImage( new Image() );
-        newImage->set( 0, osgImage->getInternalTextureFormat(),
+        newImage->set( 0, intFormat,
             osgImage->s(), osgImage->t(), osgImage->r(), 0,
             osgImage->getPixelFormat(), osgImage->getDataType(),
             buffer );
