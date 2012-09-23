@@ -26,6 +26,7 @@
 
 #include <jagBase/Buffer.h>
 #include <jagDraw/Image.h>
+#include <jagDraw/PixelStore.h>
 
 #include <osgDB/ReadFile>
 #include <osgDB/WriteFile>
@@ -118,6 +119,10 @@ protected:
             osgImage->s(), osgImage->t(), osgImage->r(), 0,
             osgImage->getPixelFormat(), osgImage->getDataType(),
             buffer );
+
+        PixelStorePtr pixelStore( new PixelStore() );
+        pixelStore->_alignment = osgImage->getPacking();
+        newImage->setPixelStore( pixelStore );
 
         return( newImage );
     }

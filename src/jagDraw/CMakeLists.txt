@@ -38,6 +38,7 @@ set( _jagDrawHeaderFiles
     Image.h
     ObjectID.h
     PerContextData.h
+    PixelStore.h
     PlatformOpenGL.h
     Program.h
     Shader.h
@@ -57,6 +58,7 @@ set( _jagDrawSourceFiles
     DrawInfo.cpp
     Error.cpp
     Image.cpp
+    PixelStore.cpp
     Program.cpp
     Shader.cpp
     Texture.cpp
