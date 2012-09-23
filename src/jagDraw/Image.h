@@ -25,6 +25,7 @@
 #include <jagDraw/Export.h>
 #include <jagDraw/PlatformOpenGL.h>
 #include <jagBase/Buffer.h>
+#include <jagDraw/PixelStore.h>
 #include <jagBase/LogBase.h>
 #include <jagBase/ptr.h>
 
@@ -52,6 +53,9 @@ public:
         GLint& border, GLenum& format, GLenum& type,
         jagBase::BufferPtr& data );
 
+    void setPixelStore( PixelStorePtr pixelStore );
+    PixelStorePtr getPixelStore();
+
 protected:
     GLint _level;
     GLenum _internalFormat;
@@ -61,6 +65,8 @@ protected:
     GLenum _type;
 
     jagBase::BufferPtr _data;
+
+    PixelStorePtr _pixelStore;
 };
 
 typedef jagBase::ptr< jagDraw::Image >::shared_ptr ImagePtr;

@@ -19,6 +19,7 @@
 *************** <auto-copyright.pl END do not edit this line> ***************/
 
 #include <jagDraw/Image.h>
+#include <jagDraw/PixelStore.h>
 
 
 namespace jagDraw {
@@ -67,6 +68,16 @@ void Image::get( GLint& level, GLenum& internalFormat,
     type = _type;
     data = _data;
 }
+
+void Image::setPixelStore( PixelStorePtr pixelStore )
+{
+    _pixelStore = pixelStore;
+}
+PixelStorePtr Image::getPixelStore()
+{
+    return( _pixelStore );
+}
+
 
 
 // jagDraw

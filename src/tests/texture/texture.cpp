@@ -138,30 +138,10 @@ bool TextureDemo::startup( const unsigned int numContexts )
         vaop->addVertexArrayCommand( iColor );
         drawable->addDrawablePrep( vaop );
 
-        {
-            // Define texture map. 5x4 red/green array.
-            FloatArray texfa;
-            for( unsigned int gdx=0; gdx<4; ++gdx )
-            {
-                for( unsigned int rdx=0; rdx<5; ++rdx )
-                {
-                    texfa.push_back( (float)rdx/4.f ); // r
-                    texfa.push_back( (float)gdx/3.f ); // g
-                    texfa.push_back( 0.f ); // b
-                }
-            }
-            jagBase::BufferPtr texbp( new jagBase::Buffer( texfa.size() * sizeof( float ), (void*)&texfa[0] ) );
-
-#if 1
-            jagDraw::ImagePtr image( new jagDraw::Image() );
-            image->set( 0, GL_RGB, 5, 4, 0, 0, GL_RGB, GL_FLOAT, texbp );
-#else
-            jagDraw::ImagePtr image( (jagDraw::Image*) jagDisk::read( "test.png" ) );
-#endif
-
-            jagDraw::TexturePtr tex( new jagDraw::Texture( GL_TEXTURE_2D, image ) );
-            drawable->addDrawablePrep( tex );
-        }
+        // Load image using jagDisk plugin interface.
+        jagDraw::ImagePtr image( (jagDraw::Image*) jagDisk::read( "balloon.jpg" ) );
+        jagDraw::TexturePtr tex( new jagDraw::Texture( GL_TEXTURE_2D, image ) );
+        drawable->addDrawablePrep( tex );
 
         drawable->addDrawCommand( drawArrays );
 
