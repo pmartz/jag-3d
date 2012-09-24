@@ -70,7 +70,7 @@ protected:
 };
 
 typedef jagBase::ptr< jagDraw::Image >::shared_ptr ImagePtr;
-typedef std::vector< ImagePtr > ImageList;
+typedef std::vector< ImagePtr > ImageVec;
 
 
 // jagDraw

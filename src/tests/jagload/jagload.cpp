@@ -68,7 +68,7 @@ protected:
     void makeViewMatrices( gmtl::Matrix44f& view, gmtl::Matrix33f& normal );
     gmtl::Matrix33f computeNormalMatrix( const gmtl::Matrix44f& in );
 
-    jagDraw::DrawableList _drawList;
+    jagDraw::DrawableVec _drawableVec;
 
     gmtl::Matrix44f _proj;
     osg::BoundingSphere _bs;
@@ -117,15 +117,15 @@ bool JagLoadDemo::startup( const unsigned int numContexts )
 
         Osg2Jag osg2JagConverter;
         root->accept( osg2JagConverter );
-        _drawList = osg2JagConverter.getJagDrawableList();
+        _drawableVec = osg2JagConverter.getJagDrawableList();
     }
-    if( _drawList.size() == 0 )
+    if( _drawableVec.size() == 0 )
     {
         JAG3D_FATAL_STATIC( _logName, "No Drawables from OSG conversion." );
         return( false );
     }
 
-    jagDraw::DrawablePtr firstDrawable( _drawList[ 0 ] );
+    jagDraw::DrawablePtr firstDrawable( _drawableVec[ 0 ] );
 
     jagDraw::ShaderPtr vs( (jagDraw::Shader*) jagDisk::read( "jagload.vert" ) );
     jagDraw::ShaderPtr fs( (jagDraw::Shader*) jagDisk::read( "jagload.frag" ) );
@@ -160,7 +160,7 @@ bool JagLoadDemo::startup( const unsigned int numContexts )
 
 
     // Tell all Jag objects how many contexts to expect.
-    BOOST_FOREACH( const jagDraw::DrawableList::value_type& dp, _drawList )
+    BOOST_FOREACH( const jagDraw::DrawableVec::value_type& dp, _drawableVec )
     {
         dp->setMaxContexts( numContexts );
     }
@@ -224,7 +224,7 @@ bool JagLoadDemo::frame( const gmtl::Matrix44f& view, const gmtl::Matrix44f& pro
     (*_normalUniform[ drawInfo._id ])( drawInfo );
 
     // Render all Drawables.
-    BOOST_FOREACH( const jagDraw::DrawableList::value_type& dp, _drawList )
+    BOOST_FOREACH( const jagDraw::DrawableVec::value_type& dp, _drawableVec )
     {
         (*(dp))( drawInfo );
     }

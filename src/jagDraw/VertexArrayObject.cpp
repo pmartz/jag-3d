@@ -111,11 +111,11 @@ void VertexArrayObject::addVertexArrayCommand( VertexArrayCommandPtr vacp, const
         _vertices.push_back( vacp );
     }
 }
-VertexArrayCommandList& VertexArrayObject::getVertexArrayCommandList()
+VertexArrayCommandVec& VertexArrayObject::getVertexArrayCommandList()
 {
     return( _commands );
 }
-const VertexArrayCommandList& VertexArrayObject::getVertexArrayCommandList() const
+const VertexArrayCommandVec& VertexArrayObject::getVertexArrayCommandList() const
 {
     return( _commands );
 }

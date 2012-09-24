@@ -135,11 +135,11 @@ int main( int argc, char** argv )
             glFormat.setProfile( QGLFormat::CoreProfile );
     }
 
-    std::vector< GLWidget* > _widgetList;
+    std::vector< GLWidget* > _widgetVec;
     while( nwin-- )
     {
         GLWidget* w = new GLWidget( glFormat );
-        _widgetList.push_back( w );
+        _widgetVec.push_back( w );
         w->resize( 300, 300 );
         w->show();
     }
@@ -148,6 +148,6 @@ int main( int argc, char** argv )
 
     return( app.exec() );
 
-    BOOST_FOREACH( std::vector< GLWidget* >::value_type w, _widgetList )
+    BOOST_FOREACH( std::vector< GLWidget* >::value_type w, _widgetVec )
         delete w;
 }

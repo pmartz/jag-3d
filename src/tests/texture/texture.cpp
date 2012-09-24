@@ -56,7 +56,7 @@ public:
     }
 
 protected:
-    jagDraw::DrawableList _drawableList;
+    jagDraw::DrawableVec _drawableVec;
 };
 
 
@@ -145,12 +145,12 @@ bool TextureDemo::startup( const unsigned int numContexts )
 
         drawable->addDrawCommand( drawArrays );
 
-        _drawableList.push_back( drawable );
+        _drawableVec.push_back( drawable );
     }
 
 
     // Tell all Jag objects how many contexts to expect.
-    BOOST_FOREACH( const jagDraw::DrawableList::value_type& dp, _drawableList )
+    BOOST_FOREACH( const jagDraw::DrawableVec::value_type& dp, _drawableVec )
     {
         dp->setMaxContexts( numContexts );
     }
@@ -186,7 +186,7 @@ bool TextureDemo::frame( const gmtl::Matrix44f& view, const gmtl::Matrix44f& pro
     drawInfo._id = jagDraw::ContextSupport::instance()->getActiveContext();
 
     // Render all Drawables.
-    BOOST_FOREACH( jagDraw::DrawablePtr dp, _drawableList )
+    BOOST_FOREACH( jagDraw::DrawablePtr dp, _drawableVec )
     {
         (*(dp))( drawInfo );
     }

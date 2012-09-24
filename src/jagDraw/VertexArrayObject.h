@@ -70,23 +70,23 @@ public:
 
 
     void addVertexArrayCommand( VertexArrayCommandPtr vacp, const VertexArrayCommand::UsageHint& usage=VertexArrayCommand::Unspecified );
-    VertexArrayCommandList& getVertexArrayCommandList();
-    const VertexArrayCommandList& getVertexArrayCommandList() const;
+    VertexArrayCommandVec& getVertexArrayCommandList();
+    const VertexArrayCommandVec& getVertexArrayCommandList() const;
 
 protected:
     void internalInit( const unsigned int contextID );
 
     PerContextGLboolean _initialized;
 
-    VertexArrayCommandList _commands;
+    VertexArrayCommandVec _commands;
 
     /** Stores the buffer object and vertex attribute that contain
     and specify vertex data (tagged with usage "Vertex"). */
-    VertexArrayCommandList _vertices;
+    VertexArrayCommandVec _vertices;
 };
 
 typedef jagBase::ptr< jagDraw::VertexArrayObject >::shared_ptr VertexArrayObjectPtr;
-typedef std::vector< VertexArrayObjectPtr > VertexArrayObjectList;
+typedef std::vector< VertexArrayObjectPtr > VertexArrayObjectVec;
 
 
 // jagDraw

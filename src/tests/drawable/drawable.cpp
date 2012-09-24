@@ -55,7 +55,7 @@ public:
     }
 
 protected:
-    jagDraw::DrawableList _drawableList;
+    jagDraw::DrawableVec _drawableVec;
 };
 
 
@@ -176,7 +176,7 @@ bool DrawableDemo::startup( const unsigned int numContexts )
         jagDraw::DrawElementsPtr drawElements( new jagDraw::DrawElements( GL_TRIANGLE_STRIP, (const GLsizei) elements.size(), GL_UNSIGNED_BYTE, 0, elbop ) );
         drawable->addDrawCommand( drawElements );
 
-        _drawableList.push_back( drawable );
+        _drawableVec.push_back( drawable );
     }
 
     // Define elements shared by second and third drawables.
@@ -217,7 +217,7 @@ bool DrawableDemo::startup( const unsigned int numContexts )
 
         drawable->addDrawCommand( drawArrays );
 
-        _drawableList.push_back( drawable );
+        _drawableVec.push_back( drawable );
     }
 
     // Define third drawable (on the right)
@@ -256,12 +256,12 @@ bool DrawableDemo::startup( const unsigned int numContexts )
 
         drawable->addDrawCommand( drawArrays );
 
-        _drawableList.push_back( drawable );
+        _drawableVec.push_back( drawable );
     }
 
 
     // Tell all Jag objects how many contexts to expect.
-    BOOST_FOREACH( const jagDraw::DrawableList::value_type& dp, _drawableList )
+    BOOST_FOREACH( const jagDraw::DrawableVec::value_type& dp, _drawableVec )
     {
         dp->setMaxContexts( numContexts );
     }
@@ -297,7 +297,7 @@ bool DrawableDemo::frame( const gmtl::Matrix44f& view, const gmtl::Matrix44f& pr
     drawInfo._id = jagDraw::ContextSupport::instance()->getActiveContext();
 
     // Render all Drawables.
-    BOOST_FOREACH( jagDraw::DrawablePtr dp, _drawableList )
+    BOOST_FOREACH( jagDraw::DrawablePtr dp, _drawableVec )
     {
         (*(dp))( drawInfo );
     }

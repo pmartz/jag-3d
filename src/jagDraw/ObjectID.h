@@ -57,7 +57,7 @@ public:
 };
 
 typedef jagBase::ptr< jagDraw::ObjectIDOwner >::shared_ptr ObjectIDOwnerPtr;
-typedef std::vector< ObjectIDOwnerPtr > ObjectIDOwnerList;
+typedef std::vector< ObjectIDOwnerPtr > ObjectIDOwnerVec;
 
 
 /** \class ObjectID ObjectID.h <jagDraw/ObjectID.h>
@@ -111,7 +111,7 @@ protected:
 };
 
 typedef jagBase::ptr< jagDraw::ObjectID >::shared_ptr ObjectIDPtr;
-typedef std::vector< ObjectIDPtr > ObjectIDList;
+typedef std::vector< ObjectIDPtr > ObjectIDVec;
 
 
 // jagDraw

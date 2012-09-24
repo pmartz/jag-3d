@@ -217,7 +217,7 @@ protected:
 
 typedef jagBase::ptr< jagDraw::Uniform >::shared_ptr UniformPtr;
 typedef jagBase::ptr< const jagDraw::Uniform >::shared_ptr ConstUniformPtr;
-typedef std::vector< UniformPtr > UniformList;
+typedef std::vector< UniformPtr > UniformVec;
 
 
 // jagDraw

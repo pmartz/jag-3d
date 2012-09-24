@@ -70,11 +70,11 @@ protected:
     static std::string getTypeAsString( GLenum type );
 
     GLenum _type;
-    jagBase::StringList _sourceList;
+    jagBase::StringVec _sourceVec;
 };
 
 typedef jagBase::ptr< jagDraw::Shader >::shared_ptr ShaderPtr;
-typedef std::vector< ShaderPtr > ShaderList;
+typedef std::vector< ShaderPtr > ShaderVec;
 
 
 // jagDraw

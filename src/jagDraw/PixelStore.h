@@ -71,7 +71,7 @@ struct JAGDRAW_EXPORT PixelStore
 };
 
 typedef jagBase::ptr< jagDraw::PixelStore >::shared_ptr PixelStorePtr;
-typedef std::vector< PixelStorePtr > PixelStoreList;
+typedef std::vector< PixelStorePtr > PixelStoreVec;
 
 
 // jagDraw

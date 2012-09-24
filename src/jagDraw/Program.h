@@ -210,7 +210,7 @@ public:
 private:
     void internalInit( const unsigned int contextID );
 
-    ShaderList _shaders;
+    ShaderVec _shaders;
 
     PerContextGLboolean _linkStatus;
 
