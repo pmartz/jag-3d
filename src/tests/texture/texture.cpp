@@ -166,10 +166,8 @@ bool TextureDemo::init()
     // Auto-log the version string.
     jagBase::getVersionString();
 
-    // Display information on the type of context we created.
-    string msg = string( "GL_VERSION: " );
-    msg.append( (char*)(glGetString( GL_VERSION )) );
-    JAG3D_INFO_STATIC( _logName, msg );
+    // Auto-log the OpenGL version string.
+    jagDraw::getVersionString();
 
     JAG3D_ERROR_CHECK( "TextureDemo init()" );
     return( true );

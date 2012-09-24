@@ -18,25 +18,43 @@
 *
 *************** <auto-copyright.pl END do not edit this line> ***************/
 
-#ifndef __JAGDRAW_DRAW_COMMON_H__
-#define __JAGDRAW_DRAW_COMMON_H__ 1
+#ifndef __JAGDRAW_VERSION_H__
+#define __JAGDRAW_VERSION_H__ 1
+
+#include <jagDraw/Export.h>
+#include <string>
 
 
-#include <jagDraw/PlatformOpenGL.h>
-#include <jagDraw/DrawInfo.h>
-#include <jagDraw/BufferObject.h>
-#include <jagDraw/VertexAttrib.h>
-#include <jagDraw/VertexArrayObject.h>
-#include <jagDraw/DrawCommand.h>
-#include <jagDraw/Drawable.h>
-#include <jagDraw/Shader.h>
-#include <jagDraw/Program.h>
-#include <jagDraw/Uniform.h>
-#include <jagDraw/UniformBlock.h>
-#include <jagDraw/Error.h>
-#include <jagDraw/ContextSupport.h>
-#include <jagDraw/Version.h>
+namespace jagDraw {
 
 
-// __JAGDRAW_DRAW_COMMON_H__
+/** \addtogroup jagVersion Version Utilities */
+/*@{*/
+
+/** \brief OpenGL version number as an integer.
+\details Returns the OpenGL version number as an integer computed
+from the formula major * 100 + minor. For "3.1", the returned value
+is 301, for example.
+
+NOTE: This function requires a current context. Returns -1 if the
+OpenGL GL_VERSION string is empty. */
+int JAGDRAW_EXPORT getVersionNumber();
+
+/** \brief OpenGL version number as a string
+\details Returns the GL_VERSION string.
+
+This function automatically logs OpenGL version information to the
+Logger named "jag.draw.version" at priority "info".
+
+NOTE: This function requires a current context. */
+std::string JAGDRAW_EXPORT getVersionString();
+
+/*@}*/
+
+
+// jagDraw
+}
+
+
+// __JAGDRAW_VERSION_H__
 #endif

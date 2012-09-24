@@ -117,22 +117,8 @@ bool Simple3xDemo::init()
     // Auto-log the version string.
     jagBase::getVersionString();
 
-    // Display information on the type of context we created.
-    string msg( "GL_VENDOR: " );
-    msg.append( (char*)(glGetString( GL_VENDOR )) );
-    JAG3D_INFO_STATIC( _logName, msg );
-
-    msg = string( "GL_RENDERER: " );
-    msg.append( (char*)(glGetString( GL_RENDERER )) );
-    JAG3D_INFO_STATIC( _logName, msg );
-
-    msg = string( "GL_VERSION: " );
-    msg.append( (char*)(glGetString( GL_VERSION )) );
-    JAG3D_INFO_STATIC( _logName, msg );
-
-    msg = string( "GL_SHADING_LANGUAGE_VERSION: " );
-    msg.append( (char*)(glGetString( GL_SHADING_LANGUAGE_VERSION )) );
-    JAG3D_INFO_STATIC( _logName, msg );
+    // Auto-log the OpenGL version string.
+    jagDraw::getVersionString();
 
 
     JAG3D_ERROR_STATIC( _logName, "Test error logging. Should produce GL_INVALID_ENUM." );

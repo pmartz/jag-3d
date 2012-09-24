@@ -36,7 +36,7 @@
 namespace jagBase {
 
 
-/** \defgroup jagBaseVersion Version Utilities */
+/** \addtogroup jagVersion Version Utilities */
 /*@{*/
 
 #define JAG3D_MAJOR_VERSION @JAG3D_MAJOR_VERSION@
