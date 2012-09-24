@@ -93,7 +93,8 @@ protected:
 
         // Check for deprecated internal formats and change to valid ones.
         GLenum intFormat;
-        switch( osgImage->getInternalTextureFormat() ) {
+        switch( osgImage->getInternalTextureFormat() )
+        {
         case 1:
         case GL_ALPHA:
         case GL_LUMINANCE:
@@ -114,10 +115,26 @@ protected:
             break;
         }
 
+        // Also check for deprecated formats.
+        GLenum format;
+        switch( osgImage->getPixelFormat() )
+        {
+        case GL_ALPHA:
+        case GL_LUMINANCE:
+            format = GL_RED;
+            break;
+        case GL_LUMINANCE_ALPHA:
+            format = GL_RG;
+            break;
+        default:
+            format = osgImage->getPixelFormat();
+            break;
+        }
+
         Image* newImage( new Image() );
         newImage->set( 0, intFormat,
             osgImage->s(), osgImage->t(), osgImage->r(), 0,
-            osgImage->getPixelFormat(), osgImage->getDataType(),
+            format, osgImage->getDataType(),
             buffer );
 
         PixelStorePtr pixelStore( new PixelStore() );
