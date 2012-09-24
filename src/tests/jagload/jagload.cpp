@@ -186,7 +186,7 @@ bool JagLoadDemo::init()
     jagBase::getVersionString();
 
     // Auto-log the OpenGL version string.
-    jagDraw::getVersionString();
+    jagDraw::getOpenGLVersionString();
 
     return( true );
 }
