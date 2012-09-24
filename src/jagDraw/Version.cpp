@@ -28,7 +28,7 @@
 namespace jagDraw {
 
 
-int getVersionNumber()
+int getOpenGLVersionNumber()
 {
     const std::string versionString( (char*) glGetString( GL_VERSION ) );
     if( versionString.empty() )
@@ -38,16 +38,16 @@ int getVersionNumber()
     }
 
     std::istringstream istr( versionString );
-    unsigned int major, minor;
+    unsigned int major, minor, patch;
     char dot;
-    istr >> major >> dot >> minor;
-    const unsigned int versionNumber( major * 100 + minor );
+    istr >> major >> dot >> minor >> dot >> patch;
+    const unsigned int versionNumber( major * 10000 + minor * 100 + patch );
 
     return( versionNumber );
 }
 
 
-std::string getVersionString()
+std::string getOpenGLVersionString()
 {
     const std::string version( (char*) glGetString( GL_VERSION ) );
     if( version.empty() )
@@ -60,8 +60,11 @@ std::string getVersionString()
     const std::string renderer( (char*) glGetString( GL_RENDERER ) );
     const std::string glslVersion( (char*) glGetString( GL_SHADING_LANGUAGE_VERSION ) );
 
+    std::ostringstream ostr;
+    ostr << getOpenGLVersionNumber();
+
     JAG3D_INFO_STATIC( "jag.draw.version",
-        "GL_VERSION: " + version + "\n" +
+        "GL_VERSION: " + version + " (" + ostr.str() + ")\n" +
         "GL_VENDOR: " + vendor + "\n" +
         "GL_RENDERER: " + renderer + "\n" +
         "GL_SHADING_LANGUAGE_VERSION: " + glslVersion );

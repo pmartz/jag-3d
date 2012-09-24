@@ -118,7 +118,7 @@ bool Simple3xDemo::init()
     jagBase::getVersionString();
 
     // Auto-log the OpenGL version string.
-    jagDraw::getVersionString();
+    jagDraw::getOpenGLVersionString();
 
 
     JAG3D_ERROR_STATIC( _logName, "Test error logging. Should produce GL_INVALID_ENUM." );

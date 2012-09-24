@@ -278,7 +278,7 @@ bool DrawableDemo::init()
     jagBase::getVersionString();
 
     // Auto-log the OpenGL version string.
-    jagDraw::getVersionString();
+    jagDraw::getOpenGLVersionString();
 
     JAG3D_ERROR_CHECK( "DrawableDemo init()" );
     return( true );
