@@ -68,7 +68,7 @@ protected:
 
 typedef jagBase::ptr< jagDisk::Options >::shared_ptr OptionsPtr;
 typedef jagBase::ptr< const jagDisk::Options >::shared_ptr ConstOptionsPtr;
-typedef std::vector< OptionsPtr > OptionsList;
+typedef std::vector< OptionsPtr > OptionsVec;
 
 
 /**@}*/

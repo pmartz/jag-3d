@@ -197,7 +197,7 @@ void Osg2Jag::apply( osg::Geometry* geom )
     }
 }
 
-jagDraw::DrawableList Osg2Jag::getJagDrawableList()
+jagDraw::DrawableVec Osg2Jag::getJagDrawableList()
 {
     return( _jagDrawables );
 }

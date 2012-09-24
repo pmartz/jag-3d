@@ -160,7 +160,7 @@ public:
         typedef std::set< std::string > StringSet;
         StringSet _extensions; /**< Taken from plugin .jagpi file "Extensions" string */
 
-        ReaderWriterList _readerWriters;
+        ReaderWriterVec _readerWriters;
 
         friend bool operator<( const PluginInfo& lhs, const PluginInfo& rhs );
     };

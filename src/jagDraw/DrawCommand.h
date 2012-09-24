@@ -124,7 +124,7 @@ protected:
 };
 
 typedef jagBase::ptr< jagDraw::DrawCommand >::shared_ptr DrawCommandPtr;
-typedef std::vector< DrawCommandPtr > DrawCommandList;
+typedef std::vector< DrawCommandPtr > DrawCommandVec;
 
 
 class DrawArraysBase

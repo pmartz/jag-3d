@@ -52,7 +52,7 @@ void Shader::addSourceFile( const std::string& fileName )
 
 void Shader::addSourceString( const std::string& source )
 {
-    _sourceList.push_back( source );
+    _sourceVec.push_back( source );
 }
 
 GLuint Shader::getID( const unsigned int contextID )
@@ -112,7 +112,7 @@ void Shader::internalInit( const unsigned int contextID )
 {
     std::vector< const char* > src;
     GLintVec length;
-    BOOST_FOREACH( jagBase::StringList::value_type& srcStr, _sourceList )
+    BOOST_FOREACH( jagBase::StringVec::value_type& srcStr, _sourceVec )
     {
         //1. Scan for any built-in variables
         //   a. If OpenGL 3.1 replace deprecated 'gl_' variables with equivalent 'ii_' variables
@@ -180,7 +180,7 @@ std::string Shader::loadSource( const std::string& fileName )
 std::string Shader::getFullSource() const
 {
     std::string fullSource;
-    BOOST_FOREACH( const jagBase::StringList::value_type& srcStr, _sourceList )
+    BOOST_FOREACH( const jagBase::StringVec::value_type& srcStr, _sourceVec )
     {
         fullSource += srcStr;
     }

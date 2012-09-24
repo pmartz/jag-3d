@@ -91,7 +91,7 @@ private:
 };
 
 typedef jagBase::ptr< jagDraw::Texture >::shared_ptr TexturePtr;
-typedef std::vector< TexturePtr > TextureList;
+typedef std::vector< TexturePtr > TextureVec;
 
 
 // jagDraw

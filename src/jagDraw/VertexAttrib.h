@@ -83,7 +83,7 @@ protected:
 };
 
 typedef jagBase::ptr< jagDraw::VertexAttrib >::shared_ptr VertexAttribPtr;
-typedef std::vector< VertexAttribPtr > VertexAttribList;
+typedef std::vector< VertexAttribPtr > VertexAttribVec;
 
 
 /** \class VertexAttribI VertexAttrib.h <jagDraw/VertexAttrib.h>
@@ -114,7 +114,7 @@ public:
 };
 
 typedef jagBase::ptr< jagDraw::VertexAttribI >::shared_ptr VertexAttribIPtr;
-typedef std::vector< VertexAttribIPtr > VertexAttribIList;
+typedef std::vector< VertexAttribIPtr > VertexAttribIVec;
 
 
 // jagDraw

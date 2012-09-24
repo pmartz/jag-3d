@@ -177,7 +177,7 @@ void Program::setMaxContexts( const unsigned int numContexts )
 
     _linkStatus._data.resize( numContexts );
 
-    BOOST_FOREACH( const ShaderList::value_type& shader, _shaders )
+    BOOST_FOREACH( const ShaderVec::value_type& shader, _shaders )
     {
         shader->setMaxContexts( numContexts );
     }
@@ -243,7 +243,7 @@ bool Program::link( unsigned int contextID )
     // Attach all shaders to this program object.
     bool abortLink( false );
     JAG3D_TRACE( "  link(): Attaching shaders." );
-    BOOST_FOREACH( const ShaderList::value_type& shader, _shaders )
+    BOOST_FOREACH( const ShaderVec::value_type& shader, _shaders )
     {
         GLint shaderID = shader->getID( contextID );
         abortLink = abortLink || ( shaderID == 0 );

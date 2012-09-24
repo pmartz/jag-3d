@@ -48,7 +48,7 @@ public:
 };
 
 typedef jagBase::ptr< jagDraw::DrawablePrep >::shared_ptr DrawablePrepPtr;
-typedef std::vector< DrawablePrepPtr > DrawablePrepList;
+typedef std::vector< DrawablePrepPtr > DrawablePrepVec;
 
 
 // jagDraw

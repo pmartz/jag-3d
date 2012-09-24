@@ -77,7 +77,7 @@ protected:
 };
 
 typedef jagBase::ptr< jagDraw::VertexArrayCommand >::shared_ptr VertexArrayCommandPtr;
-typedef std::vector< VertexArrayCommandPtr > VertexArrayCommandList;
+typedef std::vector< VertexArrayCommandPtr > VertexArrayCommandVec;
 
 
 // jagDraw

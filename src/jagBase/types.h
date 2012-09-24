@@ -33,7 +33,7 @@ namespace jagBase {
 typedef jagBase::ptr< unsigned char >::shared_array_ptr UCharArray;
 typedef jagBase::ptr< unsigned int >::shared_ptr UIntPtr;
 
-typedef std::vector< std::string > StringList;
+typedef std::vector< std::string > StringVec;
 
 
 // jagBase

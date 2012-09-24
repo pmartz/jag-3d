@@ -44,7 +44,7 @@ public:
 
     void Osg2Jag::apply( osg::Geometry* geom );
 
-    jagDraw::DrawableList getJagDrawableList();
+    jagDraw::DrawableVec getJagDrawableList();
 
 
     struct ArrayInfo {
@@ -61,7 +61,7 @@ public:
     ArrayInfo asJagArray( const osg::VectorGLuint* arrayIn );
 
 protected:
-    jagDraw::DrawableList _jagDrawables;
+    jagDraw::DrawableVec _jagDrawables;
 };
 
 

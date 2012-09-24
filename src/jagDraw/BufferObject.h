@@ -94,7 +94,7 @@ protected:
 };
 
 typedef jagBase::ptr< jagDraw::BufferObject >::shared_ptr BufferObjectPtr;
-typedef std::vector< BufferObjectPtr > BufferObjectList;
+typedef std::vector< BufferObjectPtr > BufferObjectVec;
 
 
 class JAGDRAW_EXPORT IndexedBufferObject : public BufferObject
@@ -261,7 +261,7 @@ public:
 };
 
 typedef jagBase::ptr< jagDraw::UniformBuffer >::shared_ptr UniformBufferPtr;
-typedef std::vector< UniformBufferPtr > UniformBufferList;
+typedef std::vector< UniformBufferPtr > UniformBufferVec;
 
 
 // jagDraw

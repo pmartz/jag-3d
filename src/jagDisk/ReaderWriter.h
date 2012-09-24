@@ -81,7 +81,7 @@ public:
 };
 
 typedef jagBase::ptr< jagDisk::ReaderWriter >::shared_ptr ReaderWriterPtr;
-typedef std::vector< ReaderWriterPtr > ReaderWriterList;
+typedef std::vector< ReaderWriterPtr > ReaderWriterVec;
 
 
 /**@}*/

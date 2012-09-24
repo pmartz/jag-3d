@@ -107,11 +107,11 @@ void Drawable::insertDrawablePrep( DrawablePrepPtr dpp, unsigned int pos )
     _drawablePrep[ pos ] = dpp;
 }
 
-DrawablePrepList& Drawable::getDrawablePrepList()
+DrawablePrepVec& Drawable::getDrawablePrepList()
 {
     return( _drawablePrep );
 }
-const DrawablePrepList& Drawable::getDrawablePrepList() const
+const DrawablePrepVec& Drawable::getDrawablePrepList() const
 {
     return( _drawablePrep );
 }
@@ -122,11 +122,11 @@ void Drawable::addDrawCommand( DrawCommandPtr dcp )
     _drawCommands.push_back( dcp );
 }
 
-DrawCommandList& Drawable::getDrawCommandList()
+DrawCommandVec& Drawable::getDrawCommandList()
 {
     return( _drawCommands );
 }
-const DrawCommandList& Drawable::getDrawCommandList() const
+const DrawCommandVec& Drawable::getDrawCommandList() const
 {
     return( _drawCommands );
 }

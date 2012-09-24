@@ -92,9 +92,9 @@ public:
     /** \brief TBD
     \details TBD
     */
-    DrawablePrepList& getDrawablePrepList();
+    DrawablePrepVec& getDrawablePrepList();
     /** \overload */
-    const DrawablePrepList& getDrawablePrepList() const;
+    const DrawablePrepVec& getDrawablePrepList() const;
 
 
     /** \brief TBD
@@ -105,17 +105,17 @@ public:
     /** \brief TBD
     \details TBD
     */
-    DrawCommandList& getDrawCommandList();
+    DrawCommandVec& getDrawCommandList();
     /** \overload */
-    const DrawCommandList& getDrawCommandList() const;
+    const DrawCommandVec& getDrawCommandList() const;
 
 protected:
-    DrawablePrepList _drawablePrep;
-    DrawCommandList _drawCommands;
+    DrawablePrepVec _drawablePrep;
+    DrawCommandVec _drawCommands;
 };
 
 typedef jagBase::ptr< jagDraw::Drawable >::shared_ptr DrawablePtr;
-typedef std::vector< DrawablePtr > DrawableList;
+typedef std::vector< DrawablePtr > DrawableVec;
 
 
 // jagDraw

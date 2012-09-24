@@ -84,7 +84,7 @@ protected:
     std::string _name;
     Program::HashValue _nameHash;
 
-    UniformList _uniforms;
+    UniformVec _uniforms;
 
     UniformBufferPtr _bufferObject;
     jagBase::BufferPtr _buffer;
@@ -92,7 +92,7 @@ protected:
 
 typedef jagBase::ptr< jagDraw::UniformBlock >::shared_ptr UniformBlockPtr;
 typedef jagBase::ptr< const jagDraw::UniformBlock >::shared_ptr ConstUniformBlockPtr;
-typedef std::vector< UniformBlockPtr > UniformBlockList;
+typedef std::vector< UniformBlockPtr > UniformBlockVec;
 
 
 // jagDraw
