@@ -23,6 +23,12 @@
 #include <string>
 #include <sstream>
 
+#include <boost/version.hpp>
+#include <Poco/Version.h>
+#include <Poco/Environment.h>
+#include <gmtl/Version.h>
+
+
 namespace jagBase {
 
 
@@ -45,8 +51,31 @@ std::string getVersionString()
             JAG3D_SUB_VERSION << " (" <<
             getVersionNumber() << ").";
         s_jag3d_version = oStr.str();
-
         JAG3D_INFO_STATIC( "jag.base.version", s_jag3d_version );
+
+        std::ostringstream oStr2;
+        oStr2 << "Dependencies:\n";
+
+        oStr2 << "\tGMTL: " << gmtl::getVersion() << "\n";
+
+        oStr2 << "\tBoost: " << BOOST_VERSION / 100000 << "." <<
+            BOOST_VERSION / 100 % 100 << "." << BOOST_VERSION % 100 <<
+            " (" << BOOST_VERSION << ")\n";
+
+        oStr2 << "\tPoco: " << ((POCO_VERSION >> 24) & 0xff) << "." <<
+            ((POCO_VERSION >> 16) & 0xff) << "." << ((POCO_VERSION >> 8) & 0xff) << "." <<
+            ( POCO_VERSION & 0xff ) << " (0x" << std::hex << POCO_VERSION << std::dec << ")";
+
+        JAG3D_INFO_STATIC( "jag.base.version", oStr2.str() );
+
+        std::ostringstream oStr3;
+        oStr3 << "System:\n";
+
+        oStr3 << "\t" << Poco::Environment::osName() << " " <<
+            Poco::Environment::osVersion() << " " <<
+            Poco::Environment::osArchitecture();
+
+        JAG3D_INFO_STATIC( "jag.base.version", oStr3.str() );
     }
 
     return( s_jag3d_version );
