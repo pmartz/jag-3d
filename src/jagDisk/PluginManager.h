@@ -144,7 +144,7 @@ public:
     void loadConfigFiles();
 
 
-    typedef struct PluginInfo
+    struct PluginInfo
     {
         PluginInfo( const std::string& name=std::string( "" ) )
           : _loaded( false ),
