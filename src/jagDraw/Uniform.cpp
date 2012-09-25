@@ -107,7 +107,9 @@ TYPE_METHOD_BODIES( bool, GL_BOOL )
 TYPE_METHOD_BODIES( GLint, GL_INT )
 TYPE_METHOD_BODIES( GLuint, GL_UNSIGNED_INT )
 TYPE_METHOD_BODIES( GLfloat, GL_FLOAT )
+#ifdef GL_VERSION_4_0
 TYPE_METHOD_BODIES( GLdouble, GL_DOUBLE )
+#endif
 
 TYPE_METHOD_BODIES( gmtl::Point2i, GL_INT_VEC2 )
 TYPE_METHOD_BODIES( gmtl::Point3i, GL_INT_VEC3 )
@@ -194,7 +196,9 @@ void Uniform::operator()( DrawInfo& drawInfo, const GLint loc ) const
             CASE_CALL_UNIFORM( GL_INT, GLint, glUniform1i )
             CASE_CALL_UNIFORM( GL_UNSIGNED_INT, GLuint, glUniform1ui )
             CASE_CALL_UNIFORM( GL_FLOAT, GLfloat, glUniform1f )
+#ifdef GL_VERSION_4_0
             CASE_CALL_UNIFORM( GL_DOUBLE, GLdouble, glUniform1d )
+#endif
 
             CASE_CALL_UNIFORM_V( GL_INT_VEC2, gmtl::Point2i, glUniform2iv )
             CASE_CALL_UNIFORM_V( GL_INT_VEC3, gmtl::Point3i, glUniform3iv )

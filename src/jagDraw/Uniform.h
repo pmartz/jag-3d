@@ -139,7 +139,9 @@ public:
     UNIFORM_OF_TYPE( GLint );
     UNIFORM_OF_TYPE( GLuint );
     UNIFORM_OF_TYPE( GLfloat );
+#ifdef GL_VERSION_4_0
     UNIFORM_OF_TYPE( GLdouble );
+#endif
 
     UNIFORM_OF_TYPE( gmtl::Point2i );
     UNIFORM_OF_TYPE( gmtl::Point3i );
