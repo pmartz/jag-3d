@@ -153,9 +153,11 @@ public:
     UNIFORM_OF_TYPE( gmtl::Point3f );
     UNIFORM_OF_TYPE( gmtl::Point4f );
 
+#ifdef GL_VERSION_4_0
     UNIFORM_OF_TYPE( gmtl::Point2d );
     UNIFORM_OF_TYPE( gmtl::Point3d );
     UNIFORM_OF_TYPE( gmtl::Point4d );
+#endif
 
     UNIFORM_OF_TYPE( gmtl::Matrix22f );
     UNIFORM_OF_TYPE( gmtl::Matrix33f );
@@ -168,6 +170,7 @@ public:
     UNIFORM_OF_TYPE( gmtl::Matrix42f );
     UNIFORM_OF_TYPE( gmtl::Matrix43f );
 
+#ifdef GL_VERSION_4_0
     UNIFORM_OF_TYPE( gmtl::Matrix22d );
     UNIFORM_OF_TYPE( gmtl::Matrix33d );
     UNIFORM_OF_TYPE( gmtl::Matrix44d );
@@ -178,6 +181,7 @@ public:
     UNIFORM_OF_TYPE( gmtl::Matrix34d );
     UNIFORM_OF_TYPE( gmtl::Matrix42d );
     UNIFORM_OF_TYPE( gmtl::Matrix43d );
+#endif
 
 
 #undef UNIFORM_OF_TYPE
