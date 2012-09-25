@@ -292,7 +292,11 @@ void Uniform::setType( const GLenum type )
         ( _type == GL_SAMPLER_BUFFER ) ||
         ( _type == GL_SAMPLER_2D_MULTISAMPLE ) ||
         ( _type == GL_SAMPLER_2D_MULTISAMPLE_ARRAY ) ||
+
+#ifdef GL_VERSION_4_0
         ( _type == GL_SAMPLER_BINDING ) ||
+#endif
+
         ( _type == GL_INT_SAMPLER_1D ) ||
         ( _type == GL_INT_SAMPLER_2D ) ||
         ( _type == GL_INT_SAMPLER_3D ) ||
