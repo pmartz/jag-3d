@@ -74,6 +74,8 @@ DemoInterface* DemoInterface::create( bpo::options_description& desc )
 
 bool DrawDemo::startup( const unsigned int numContexts )
 {
+    DemoInterface::startup( numContexts );
+
     _vaop = jagDraw::VertexArrayObjectPtr( new jagDraw::VertexArrayObject );
 
     const float z = .5f;
@@ -190,6 +192,9 @@ bool DrawDemo::init()
 
 bool DrawDemo::frame( const gmtl::Matrix44f& view, const gmtl::Matrix44f& proj )
 {
+    if( !getStartupCalled() )
+        return( true );
+
     glClear( GL_COLOR_BUFFER_BIT );
 
     jagDraw::DrawInfo drawInfo;

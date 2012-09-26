@@ -35,14 +35,21 @@ class DemoInterface
 {
 public:
     DemoInterface( const std::string& logName )
-      : _logName( logName )
+      : _logName( logName ),
+        _startupCalled( false )
     {}
     virtual ~DemoInterface() {}
 
     static DemoInterface* create( boost::program_options::options_description& desc );
 
     /** Called before any contexts are created. */
-    virtual bool startup( const unsigned int numContexts ) = 0;
+    virtual bool startup( const unsigned int numContexts )
+    {
+        _startupCalled = true;
+        return( true );
+    }
+    bool getStartupCalled() { return( _startupCalled ); }
+
     /** Called after a context has been created. */
     virtual bool init() = 0;
     /** Called to render a frame. */
@@ -54,6 +61,7 @@ public:
 
 protected:
     std::string _logName;
+    bool _startupCalled;
 };
 
 

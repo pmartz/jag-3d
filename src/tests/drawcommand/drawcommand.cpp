@@ -227,6 +227,9 @@ bool DrawCommandDemo::init()
 
 bool DrawCommandDemo::frame( const gmtl::Matrix44f& view, const gmtl::Matrix44f& proj )
 {
+    if( !getStartupCalled() )
+        return( true );
+
     glClear( GL_COLOR_BUFFER_BIT );
 
     // drawInfo stores the contextID (used by many Jag objects to

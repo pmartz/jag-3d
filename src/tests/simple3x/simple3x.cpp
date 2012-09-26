@@ -130,6 +130,9 @@ bool Simple3xDemo::init()
 
 bool Simple3xDemo::frame( const gmtl::Matrix44f& view, const gmtl::Matrix44f& proj )
 {
+    if( !getStartupCalled() )
+        return( true );
+
     glClear( GL_COLOR_BUFFER_BIT );
 
     jagDraw::DrawInfo drawInfo;
