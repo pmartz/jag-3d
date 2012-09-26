@@ -50,7 +50,7 @@ GLWidget::GLWidget( const QGLFormat& format, QWidget* parent )
 void GLWidget::initializeGL()
 {
     jagDraw::ContextSupport* cs( jagDraw::ContextSupport::instance() );
-    const jagDraw::platformContextID pCtxId = reinterpret_cast< GLint >( context() );
+    const jagDraw::platformContextID pCtxId = reinterpret_cast< const jagDraw::platformContextID >( context() );
     jagDraw::jagDrawContextID contextID = cs->registerContext( pCtxId );
 
     cs->setActiveContext( contextID );
@@ -62,7 +62,7 @@ void GLWidget::initializeGL()
 void GLWidget::paintGL()
 {
     jagDraw::ContextSupport* cs( jagDraw::ContextSupport::instance() );
-    const jagDraw::platformContextID pCtxId = reinterpret_cast< GLint >( context() );
+    const jagDraw::platformContextID pCtxId = reinterpret_cast< const jagDraw::platformContextID >( context() );
     jagDraw::jagDrawContextID contextID = cs->getJagContextID( pCtxId );
 
     cs->setActiveContext( contextID );
