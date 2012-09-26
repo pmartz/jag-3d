@@ -77,6 +77,8 @@ DemoInterface* DemoInterface::create( bpo::options_description& desc )
 
 bool DrawCommandDemo::startup( const unsigned int numContexts )
 {
+    DemoInterface::startup( numContexts );
+
     const float z = .5f;
     typedef std::vector< gmtl::Point3f > Point3fArray;
     {

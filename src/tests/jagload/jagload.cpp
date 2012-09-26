@@ -87,6 +87,8 @@ DemoInterface* DemoInterface::create( bpo::options_description& desc )
 
 bool JagLoadDemo::startup( const unsigned int numContexts )
 {
+    DemoInterface::startup( numContexts );
+
     //std::string fileName( "GRINDER_WHEEL.PRT.ive" );
     //std::string fileName( "M55339.ASM.ive" );
     //std::string fileName( "USMC23_4019.ASM.ive" );
