@@ -63,6 +63,8 @@ DemoInterface* DemoInterface::create( bpo::options_description& desc )
 
 bool Simple3xDemo::startup( const unsigned int numContexts )
 {
+    DemoInterface::startup( numContexts );
+
     {
         float z = .5f;
         typedef std::vector< gmtl::Point3f > Point3fArray;

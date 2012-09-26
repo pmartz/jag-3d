@@ -68,6 +68,8 @@ DemoInterface* DemoInterface::create( bpo::options_description& desc )
 
 bool DrawableDemo::startup( const unsigned int numContexts )
 {
+    DemoInterface::startup( numContexts );
+
     const char* vShaderSource =
         "#version 130 \n"
         "uniform bool swizzle; \n"

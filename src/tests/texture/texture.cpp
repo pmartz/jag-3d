@@ -69,6 +69,8 @@ DemoInterface* DemoInterface::create( bpo::options_description& desc )
 
 bool TextureDemo::startup( const unsigned int numContexts )
 {
+    DemoInterface::startup( numContexts );
+
     const char* vShaderSource =
         "#version 130 \n"
         "in vec3 vertex; \n"
