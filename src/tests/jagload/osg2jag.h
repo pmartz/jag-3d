@@ -42,7 +42,7 @@ public:
     virtual void apply( osg::Node& node );
     virtual void apply( osg::Geode& node );
 
-    void Osg2Jag::apply( osg::Geometry* geom );
+    void apply( osg::Geometry* geom );
 
     jagDraw::DrawableVec getJagDrawableList();
 
