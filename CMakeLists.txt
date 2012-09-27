@@ -17,7 +17,6 @@
 # Boston, MA 02111-1307, USA.
 #
 #************** <auto-copyright.pl END do not edit this line> ***************
-
 cmake_minimum_required( VERSION 2.8.5 )
 project( Jag3D )
 
