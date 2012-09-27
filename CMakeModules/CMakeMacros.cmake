@@ -272,7 +272,7 @@ macro( _addVrjExecutable _category _exeName )
         ${_projectIncludes}
         ${Vrj_INCLUDE_DIRS}
         ${_includes}
-        ${CppDOM_INCLUDE_DIRS}
+        ${CPPDOM_INCLUDE_DIRS}
         ${_optionalDependencyIncludes}
         ${_requiredDependencyIncludes}
     )
@@ -283,7 +283,7 @@ macro( _addVrjExecutable _category _exeName )
     target_link_libraries( ${_localExeName}
         ${_libs}
         ${Vrj_LIBRARIES}
-        ${CppDOM_LIBRARIES}
+        ${CPPDOM_LIBRARIES}
         ${_projectLibraries}
         ${_optionalDependencyLibraries}
         ${_requiredDependencyLibraries}
