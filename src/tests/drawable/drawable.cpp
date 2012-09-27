@@ -25,6 +25,7 @@
 #include <jagBase/Version.h>
 #include <jagBase/Log.h>
 #include <jagBase/LogMacros.h>
+#include <Poco/Foundation.h>
 #include <Poco/Message.h>
 #include <boost/program_options/options_description.hpp>
 #include <gmtl/gmtl.h>
@@ -71,7 +72,12 @@ bool DrawableDemo::startup( const unsigned int numContexts )
     DemoInterface::startup( numContexts );
 
     const char* vShaderSource =
-        "#version 130 \n"
+#if( POCO_OS == POCO_OS_MAC_OS_X )
+        // In OSX 10.7/10.8, use GL 3.2 and GLSL 1.50
+        "#version 150 \n"
+#else
+        "#version 400 \n"
+#endif
         "uniform bool swizzle; \n"
         "in vec3 vertex; \n"
         "in vec3 color; \n"
@@ -89,7 +95,12 @@ bool DrawableDemo::startup( const unsigned int numContexts )
     jagDraw::ShaderProgramPtr prog;
     {
         const char* fShaderSource =
-            "#version 130 \n"
+#if( POCO_OS == POCO_OS_MAC_OS_X )
+            // In OSX 10.7/10.8, use GL 3.2 and GLSL 1.50
+            "#version 150 \n"
+#else
+            "#version 400 \n"
+#endif
             "in vec3 cOut; \n"
             "out vec4 colorOut; \n"
             "void main() { \n"
@@ -106,7 +117,12 @@ bool DrawableDemo::startup( const unsigned int numContexts )
     jagDraw::ShaderProgramPtr prog2;
     {
         const char* fShaderSource =
-            "#version 130 \n"
+#if( POCO_OS == POCO_OS_MAC_OS_X )
+            // In OSX 10.7/10.8, use GL 3.2 and GLSL 1.50
+            "#version 150 \n"
+#else
+            "#version 400 \n"
+#endif
             "uniform float scale; \n"
             "in vec3 cOut; \n"
             "out vec4 colorOut; \n"

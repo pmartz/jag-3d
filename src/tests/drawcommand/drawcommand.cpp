@@ -174,7 +174,12 @@ bool DrawCommandDemo::startup( const unsigned int numContexts )
 
     {
         const char* vShaderSource =
-            "#version 130 \n"
+#if( POCO_OS == POCO_OS_MAC_OS_X )
+            // In OSX 10.7/10.8, use GL 3.2 and GLSL 1.50
+            "#version 150 \n"
+#else
+            "#version 400 \n"
+#endif
             "in vec3 vertex; \n"
             "in vec3 color; \n"
             "out vec3 cOut; \n"
@@ -186,7 +191,12 @@ bool DrawCommandDemo::startup( const unsigned int numContexts )
         vs->addSourceString( std::string( vShaderSource ) );
 
         const char* fShaderSource =
-            "#version 130 \n"
+#if( POCO_OS == POCO_OS_MAC_OS_X )
+            // In OSX 10.7/10.8, use GL 3.2 and GLSL 1.50
+            "#version 150 \n"
+#else
+            "#version 400 \n"
+#endif
             "in vec3 cOut; \n"
             "out vec4 colorOut; \n"
             "void main() { \n"

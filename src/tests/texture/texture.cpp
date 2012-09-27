@@ -72,7 +72,12 @@ bool TextureDemo::startup( const unsigned int numContexts )
     DemoInterface::startup( numContexts );
 
     const char* vShaderSource =
-        "#version 130 \n"
+#if( POCO_OS == POCO_OS_MAC_OS_X )
+        // In OSX 10.7/10.8, use GL 3.2 and GLSL 1.50
+        "#version 150 \n"
+#else
+        "#version 400 \n"
+#endif
         "in vec3 vertex; \n"
         "in vec2 texcoord; \n"
         "out vec2 tcOut; \n"
@@ -86,7 +91,12 @@ bool TextureDemo::startup( const unsigned int numContexts )
     jagDraw::ShaderProgramPtr prog;
     {
         const char* fShaderSource =
-            "#version 130 \n"
+#if( POCO_OS == POCO_OS_MAC_OS_X )
+            // In OSX 10.7/10.8, use GL 3.2 and GLSL 1.50
+            "#version 150 \n"
+#else
+            "#version 400 \n"
+#endif
             "uniform sampler2D texture; \n"
             "in vec2 tcOut; \n"
             "out vec4 colorOut; \n"

@@ -23,6 +23,7 @@
 
 #include <demoSupport/platformFreeglut.h>
 
+#include <Poco/Foundation.h>
 #include <boost/program_options/options_description.hpp>
 #include <boost/program_options/variables_map.hpp>
 #include <boost/program_options/parsers.hpp>
@@ -83,9 +84,9 @@ void keyboard(unsigned char key, int x, int y)
 int main( int argc, char* argv[] )
 {
     bpo::options_description desc( "Options" );
-    // Add freeglut test/demo options
+    // Add test/demo options
     desc.add_options()
-        ( "version", bpo::value< double >(), "OpenGL context version. Default: 3.1." );
+        ( "version", bpo::value< double >(), "OpenGL context version. Default: 4.0." );
     desc.add_options()
         ( "nwin", bpo::value< int >(), "Number of windows. Default: 1." );
 
@@ -97,7 +98,12 @@ int main( int argc, char* argv[] )
     bpo::store( bpo::parse_command_line( argc, argv, desc ), vm );
     bpo::notify( vm );
 
-    double version( 3.1 );
+#if( POCO_OS == POCO_OS_MAC_OS_X )
+    // In OSX 10.7/10.8, use GL 3.2 and GLSL 1.50
+    double version( 3.2 );
+#else
+    double version( 4.0 );
+#endif
     if( vm.count( "version" ) > 0 )
         version = vm[ "version" ].as< double >();
     double versionMajor;
