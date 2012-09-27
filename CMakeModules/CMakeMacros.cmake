@@ -40,7 +40,7 @@ unset( _optionalDependencyLibraries )
 set( _requiredDependencyIncludes
     ${POCO_INCLUDE_DIR}
     ${Boost_INCLUDE_DIR}
-    ${GGT_INCLUDE_DIR}
+    ${GMTL_INCLUDE_DIR}
     ${GL3_INCLUDE_DIR}
     ${OPENGL_INCLUDE_DIR}
 )
@@ -270,7 +270,7 @@ macro( _addVrjExecutable _category _exeName )
     unset( _allIncludes )
     set( _allIncludes
         ${_projectIncludes}
-        ${Vrj_INCLUDE_DIRS}
+        ${VRJUGGLER30_INCLUDE_DIRS}
         ${_includes}
         ${CPPDOM_INCLUDE_DIRS}
         ${_optionalDependencyIncludes}
@@ -282,7 +282,7 @@ macro( _addVrjExecutable _category _exeName )
 
     target_link_libraries( ${_localExeName}
         ${_libs}
-        ${Vrj_LIBRARIES}
+        ${VRJUGGLER30_LIBRARIES}
         ${CPPDOM_LIBRARIES}
         ${_projectLibraries}
         ${_optionalDependencyLibraries}
@@ -301,7 +301,7 @@ macro( _addExecutable _category _exeName )
     if( QT4_FOUND AND JAG3D_USE_QT )
         _addQtExecutable( ${_category} ${_exeName} ${ARGN} )
     endif()
-    if( VRJ_FOUND AND CPPDOM_FOUND AND JAG3D_USE_VRJ )
+    if( VRJUGGLER30_FOUND AND CPPDOM_FOUND AND JAG3D_USE_VRJ )
         _addVrjExecutable( ${_category} ${_exeName} ${ARGN} )
     endif()
 endmacro()
