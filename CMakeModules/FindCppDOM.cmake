@@ -12,7 +12,10 @@
 
 # Find the main CppDOM header.
 unset( CppDOM_INCLUDE_DIRS )
-find_path( CppDOM_INCLUDE_DIRS cppdom/cppdom.h )
+find_path( CppDOM_INCLUDE_DIRS cppdom/cppdom.h
+    PATHS ${CppDOM_ROOT} ENV CppDOM_ROOT
+    PATH_SUFFIXES include
+)
 
 
 # Set CppDOM_VERSION.
@@ -44,8 +47,8 @@ unset( "CppDOM_LIBRARY" CACHE )
 set( _libName cppdom${_libVersionString} )
 find_library( CppDOM_LIBRARY
     NAMES ${_libName}
+    PATHS ${CppDOM_ROOT} ENV CppDOM_ROOT
     PATH_SUFFIXES lib64
-    ENV Vrj_ROOT
 )
 if( NOT CppDOM_LIBRARY )
     message( WARNING "Could not find library ${_libName}" )
@@ -58,8 +61,8 @@ unset( "CppDOM_LIBRARY_DEBUG" CACHE )
 set( _libName cppdom_d${_libVersionString} )
 find_library( CppDOM_LIBRARY_DEBUG
     NAMES ${_libName}
+    PATHS ${CppDOM_ROOT} ENV CppDOM_ROOT
     PATH_SUFFIXES lib64
-    ENV Vrj_ROOT
 )
 if( NOT CppDOM_LIBRARY_DEBUG )
     message( WARNING "Could not find library ${_libName}" )

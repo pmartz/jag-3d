@@ -12,7 +12,10 @@
 
 # Find the main Vrj header.
 unset( Vrj_INCLUDE_DIRS )
-find_path( Vrj_INCLUDE_DIRS vrj/vrjDefines.h )
+find_path( Vrj_INCLUDE_DIRS vrj/vrjDefines.h
+    PATHS ${Vrj_ROOT} ENV Vrj_ROOT
+    PATH_SUFFIXES include
+)
 
 
 # Error if we didn't find VRJ's GL3 branch.
@@ -95,7 +98,7 @@ foreach( lib ${_requestedComponents} )
     unset( "Vrj_${lib}_LIBRARY" CACHE )
     find_library( Vrj_${lib}_LIBRARY
         NAMES ${lib}${_versionString}
-        ENV Vrj_ROOT
+        PATHS ${Vrj_ROOT} ENV Vrj_ROOT
     )
     if( NOT Vrj_${lib}_LIBRARY )
         message( WARNING "Could not find Vrj component library ${lib}" )
@@ -107,8 +110,8 @@ foreach( lib ${_requestedComponents} )
     unset( "Vrj_${lib}_LIBRARY_DEBUG" CACHE )
     find_library( Vrj_${lib}_LIBRARY_DEBUG
         NAMES ${lib}_d${_versionString}
+        PATHS ${Vrj_ROOT} ENV Vrj_ROOT
         PATH_SUFFIXES debug
-        ENV Vrj_ROOT
     )
     if( NOT Vrj_${lib}_LIBRARY_DEBUG )
         message( WARNING "Could not find Vrj component Debug library ${lib}" )
