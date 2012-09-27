@@ -23,9 +23,9 @@
 macro( unFindCppDOM )
 #    message( STATUS "In unFindCppDOM" )
 
-    unset( "CppDOM_INCLUDE_DIRS" CACHE )
-    unset( "CppDOM_LIBRARIES" CACHE )
-    unset( "CppDOM_FOUND" CACHE )
+    unset( "CPPDOM_INCLUDE_DIRS" CACHE )
+    unset( "CPPDOM_LIBRARIES" CACHE )
+    unset( "CPPDOM_FOUND" CACHE )
 endmacro( unFindCppDOM )
 
 
