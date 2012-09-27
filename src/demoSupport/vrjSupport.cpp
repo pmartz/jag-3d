@@ -174,11 +174,15 @@ void JagDemoApp::draw()
 int main( int argc, char* argv[] )
 {
     bpo::options_description desc( "Options" );
-    // Add freeglut test/demo options
+    // Add test/demo options
+#if 0
+    // Not supported for VRJ; taken from config files.
     desc.add_options()
-        ( "version", bpo::value< double >(), "OpenGL context version. Default: 3.1." );
+        ( "version", bpo::value< double >(), "OpenGL context version. Default: 4.0." );
+    // Not supported for VRJ; taken from config files.
     desc.add_options()
         ( "nwin", bpo::value< int >(), "Number of windows. Default: 1." );
+#endif
 
     DemoInterface* di( DemoInterface::create( desc ) );
 
