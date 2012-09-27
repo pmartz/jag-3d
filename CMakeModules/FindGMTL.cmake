@@ -69,11 +69,13 @@ if(FLAGPOLL)
 	flagpoll_get_include_dirs(${_FP_PKG_NAME})
 endif()
 
-set(GMTL_ROOT_DIR
-	"${GMTL_ROOT_DIR}"
-	CACHE
-	PATH
-	"Root directory to search for GMTL")
+if( NOT DEFINED GMTL_ROOT_DIR )
+    set(GMTL_ROOT_DIR
+	    "${GMTL_ROOT_DIR}"
+	    CACHE
+	    PATH
+	    "Root directory to search for GMTL")
+endif()
 if(DEFINED VRJUGGLER22_ROOT_DIR)
 	mark_as_advanced(GMTL_ROOT_DIR)
 endif()
