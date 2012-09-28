@@ -35,6 +35,7 @@ set( _jagDrawHeaderFiles
     DrawInfo.h
     DrawCommon.h
     Error.h
+    Framebuffer.h
     Image.h
     ObjectID.h
     PerContextData.h
@@ -58,6 +59,7 @@ set( _jagDrawSourceFiles
     Drawable.cpp
     DrawInfo.cpp
     Error.cpp
+    Framebuffer.cpp
     Image.cpp
     PixelStore.cpp
     Program.cpp
