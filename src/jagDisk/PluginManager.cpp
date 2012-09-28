@@ -92,12 +92,19 @@ PluginManager::PluginManager( const int initFlags )
   : LogBase( "jag.disk.plugmgr" ),
     _activelyLoadingPlugin( NULL )
 {
+    if( initFlags != 0 )
+    {
+        JAG3D_TRACE( "PluginManager(): Plugin search path includes: " );
+    }
+
     if( ( initFlags & USE_CURRENT_DIRECTORY ) != 0 )
     {
+        JAG3D_TRACE( "\tCurrent directory" );
         addPath( Poco::Path::current(), false );
     }
     if( ( initFlags & USE_JAG3D_PLUGIN_PATH_ENV_VAR ) != 0 )
     {
+        JAG3D_TRACE( "\tJAG3D_PLUGIN_PATH env var" );
         std::string paths;
         try {
             paths = Poco::Environment::get( "JAG3D_PLUGIN_PATH" );
@@ -107,6 +114,7 @@ PluginManager::PluginManager( const int initFlags )
     }
     if( ( initFlags & USE_SYSTEM_PATH ) != 0 )
     {
+        JAG3D_TRACE( "\tPATH env var" );
         std::string paths;
         try {
             paths = Poco::Environment::get( "PATH" );
@@ -116,6 +124,7 @@ PluginManager::PluginManager( const int initFlags )
     }
     if( ( initFlags & USE_LD_LIBRARY_PATH ) != 0 )
     {
+        JAG3D_TRACE( "\tLD_LIBRARY_PATH env var" );
         std::string paths;
         try {
             paths = Poco::Environment::get( "LD_LIBRARY_PATH" );
@@ -148,12 +157,6 @@ void PluginManager::addPaths( const std::string& paths, const bool loadConfigs )
     {
         if( start != end )
         {
-            if( JAG3D_LOG_TRACE )
-            {
-                std::ostringstream ostr;
-                ostr << "Adding path: " << paths.substr( start, end-start );
-                JAG3D_TRACE( ostr.str() );
-            }
             _paths.push_back( paths.substr( start, end-start ) );
         }
         start = ( end == std::string::npos ) ? end : end+1;
