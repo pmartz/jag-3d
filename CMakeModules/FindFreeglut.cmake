@@ -4,6 +4,8 @@
 #  Freeglut_INCLUDE_DIR, where to find GL/glut.h, etc.
 #  Freeglut_LIBRARIES, the libraries to link against
 #  Freeglut_FOUND, If false, do not try to use Freeglut.
+# On Windows only:
+#  Freeglut_LIBRARY_PATH, directory path containing the freeglut libraries
 # Also defined, but not for general use are:
 #  Freeglut_glut_LIBRARY = the full path to the glut library.
 #  Freeglut_Xmu_LIBRARY  = the full path to the Xmu library.
@@ -32,6 +34,17 @@ IF (WIN32)
   endif()
   list( APPEND _freeglutNames freeglut glut glut32 )
   FIND_LIBRARY( Freeglut_glut_LIBRARY NAMES ${_freeglutNames}
+    PATHS
+    ${OPENGL_LIBRARY_DIR}
+    ${Freeglut_ROOT_PATH}/Release
+    )
+
+  set( _freeglutNames )
+  if( FREEGLUT_STATIC )
+    list( APPEND _freeglutNames freeglut_staticd )
+  endif()
+  list( APPEND _freeglutNames freeglutd glutd glut32d )
+  FIND_LIBRARY( Freeglut_glut_LIBRARY_DEBUG NAMES ${_freeglutNames}
     PATHS
     ${OPENGL_LIBRARY_DIR}
     ${Freeglut_ROOT_PATH}/Release
@@ -77,12 +90,24 @@ IF(Freeglut_INCLUDE_DIR)
   IF(Freeglut_glut_LIBRARY)
     # Is -lXi and -lXmu required on all platforms that have it?
     # If not, we need some way to figure out what platform we are on.
-    SET( Freeglut_LIBRARIES
-      ${Freeglut_glut_LIBRARY}
-      ${Freeglut_Xmu_LIBRARY}
-      ${Freeglut_Xi_LIBRARY} 
-      ${Freeglut_cocoa_LIBRARY}
-      )
+    if( Freeglut_glut_LIBRARY_DEBUG )
+      SET( Freeglut_LIBRARIES
+        "optimized"
+        ${Freeglut_glut_LIBRARY}
+        ${Freeglut_Xmu_LIBRARY}
+        ${Freeglut_Xi_LIBRARY} 
+        ${Freeglut_cocoa_LIBRARY}
+        "debug"
+        ${Freeglut_glut_LIBRARY_DEBUG}
+        )
+    else()
+      SET( Freeglut_LIBRARIES
+        ${Freeglut_glut_LIBRARY}
+        ${Freeglut_Xmu_LIBRARY}
+        ${Freeglut_Xi_LIBRARY} 
+        ${Freeglut_cocoa_LIBRARY}
+        )
+    endif()
     SET( Freeglut_FOUND "YES" )
     
   ENDIF(Freeglut_glut_LIBRARY)
