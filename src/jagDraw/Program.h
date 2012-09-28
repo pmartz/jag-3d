@@ -153,25 +153,6 @@ public:
     */
     GLuint getExplicitAttribLocation( const std::string& name ) const;
 
-    // Convenience Function
-    void fromSourceFiles( const std::string& vertexShaderFile,
-                            const std::string& fragmentShaderFile );
-
-    void fromSourceStrings( const std::string& vertexShaderString,
-                            const std::string& fragmentShaderString );
-
-    class SourceList : public std::vector<std::pair<GLenum, std::string > >
-    {
-    public:
-        void add( GLenum type, const std::string& s )
-        {
-            push_back( std::pair< GLenum, std::string >( type, s ) );
-        }
-    };
-
-    void fromSourceFileList( const SourceList & );
-    void fromSourceStringList( const SourceList & );
-
 
     typedef std::size_t HashValue;
     static HashValue createHash( const std::string& name );

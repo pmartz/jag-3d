@@ -44,8 +44,6 @@ public:
     Shader( GLenum type );
     ~Shader();
 
-    void addSourceFile( const std::string& fileName );
-
     void addSourceString( const std::string& source );
 
     /** \brief Get the OpenGL shader object ID for the specified \c contextID.
@@ -62,8 +60,6 @@ protected:
     void internalInit( const unsigned int contextID );
 
     void printInfoLog( const GLuint id );
-
-    std::string loadSource( const std::string& fileName );
 
     std::string getFullSource() const;
 

@@ -43,13 +43,6 @@ Shader::~Shader()
 //        glDeleteShader( _ids[ 0 ] );
 }
 
-void Shader::addSourceFile( const std::string& fileName )
-{
-    const std::string src = loadSource( fileName );
-    if( !src.empty() )
-        addSourceString( src );
-}
-
 void Shader::addSourceString( const std::string& source )
 {
     _sourceVec.push_back( source );
@@ -144,37 +137,6 @@ void Shader::internalInit( const unsigned int contextID )
         glDeleteShader( _ids[ contextID ] );
         _ids[ contextID ] = 0;
     }
-}
-
-std::string Shader::loadSource( const std::string& fileName )
-{
-    if( JAG3D_LOG_TRACE )
-    {
-        std::string msg( std::string( "loadSource(): \"" )
-            + fileName + std::string( "\"." ) );
-        JAG3D_TRACE( msg );
-    }
-
-    std::ifstream in( fileName.c_str() );
-    if( in.bad() )
-    {
-        std::string msg( std::string( "loadSource(): unable to load file \"" )
-            + fileName + std::string( "\"." ) );
-        JAG3D_ERROR( msg );
-        return( std::string() );
-    }
-
-    in.seekg( 0, std::ios::end );
-    unsigned long size = (unsigned long)( in.tellg() );
-    in.seekg( 0, std::ios::beg );
-    char *buff = new char[size + 1];
-    in.read( buff, size );
-    in.close();
-    buff[ size ] = 0;
-    std::string str( buff );
-    delete[] buff;
-
-    return str;
 }
 
 std::string Shader::getFullSource() const
