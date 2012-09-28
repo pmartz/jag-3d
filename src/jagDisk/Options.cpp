@@ -19,9 +19,12 @@
 *************** <auto-copyright.pl END do not edit this line> ***************/
 
 #include <jagDisk/Options.h>
+#include <jagBase/LogMacros.h>
 #include <Poco/Path.h>
 #include <Poco/File.h>
 #include <Poco/Environment.h>
+
+#include <boost/foreach.hpp>
 
 
 namespace jagDisk {
@@ -87,7 +90,20 @@ Poco::Path Options::findFile( const std::string& fileName ) const
         return( Poco::Path( fileName ) );
 
     Poco::Path pathName;
-    Poco::Path::find( _paths.begin(), _paths.end(), fileName, pathName );
+    bool found( Poco::Path::find( _paths.begin(), _paths.end(), fileName, pathName ) );
+    if( found )
+        return( pathName );
+
+    {
+        const std::string logStr( "jag.disk.opt" );
+        JAG3D_WARNING_STATIC( logStr, "findFile() could not find " + fileName );
+        JAG3D_WARNING_STATIC( logStr, "using the following search locations:" );
+        BOOST_FOREACH( std::string name, _paths )
+        {
+            JAG3D_WARNING_STATIC( logStr, "\t" + name );
+        }
+    }
+
     return( pathName );
 }
 
