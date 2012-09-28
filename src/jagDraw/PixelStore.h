@@ -54,11 +54,13 @@ struct JAGDRAW_EXPORT PixelStore
     virtual ~PixelStore();
 
     /** \brief Set the pixel store parameters in OpenGL state.
-    \details If \c unpack is true, the values are set as unpack parameters (for
-    sending pixel data to OpenGL). If \c unpack is false, the values are set as
-    pack parameters (for retrieving pixel data from OpenGL). The default for
-    \c unpack is true. */
-    void operator()( const bool unpack=true );
+    \details Call pack() to set the parameters for
+    retrieving pixel data from OpenGL. */
+    void pack();
+    /** \brief Set the pixel store parameters in OpenGL state.
+    \details Call unpack() to set the parameters for
+    sending pixel data to OpenGL. */
+    void unpack();
 
     GLboolean _swapBytes;
     GLboolean _lsbFirst;

@@ -110,7 +110,7 @@ void Texture::internalInit( const unsigned int contextID )
         // If the image has a pixel store object, send the pixel
         // store parameters to OpenGL.
         if( _image->getPixelStore() != NULL )
-            (*( _image->getPixelStore() ))();
+            _image->getPixelStore()->unpack();
 
         switch( _target )
         {
