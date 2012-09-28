@@ -33,4 +33,4 @@ add_subdirectory( texture )
 
 # Early turn-on test.
 # 
-add_subdirectory( simplegmtl )
+#add_subdirectory( simplegmtl )
