@@ -35,7 +35,12 @@ Shader::Shader( GLenum type )
     _type( type )
 {
 }
-
+Shader::Shader( const Shader& rhs )
+  : jagBase::LogBase( rhs ),
+    _type( rhs._type ),
+    _sourceVec( rhs._sourceVec )
+{
+}
 Shader::~Shader()
 {
     // TBD Handle object deletion

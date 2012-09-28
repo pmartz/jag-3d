@@ -54,7 +54,7 @@ Uniform::Uniform( const std::string& name, const GLenum type, const GLint& v )
 
 Uniform::Uniform( const Uniform& rhs )
   : DrawablePrep( rhs ),
-    jagBase::LogBase( "jag.draw.uniform" ),
+    jagBase::LogBase( rhs ),
     _name( rhs._name ),
     _indexHash( rhs._indexHash ),
     _value( rhs._value ),
