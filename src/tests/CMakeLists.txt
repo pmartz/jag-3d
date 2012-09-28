@@ -19,7 +19,6 @@
 #************** <auto-copyright.pl END do not edit this line> ***************
 
 add_subdirectory( drawable )
-add_subdirectory( drawcommand )
 add_subdirectory( jagload )
 add_subdirectory( texture )
 
@@ -28,6 +27,7 @@ add_subdirectory( texture )
 # core profile. Leave them out of the build.
 # 
 #add_subdirectory( draw )
+#add_subdirectory( drawcommand )
 #add_subdirectory( simple3x )
 #add_subdirectory( uniform )
 
