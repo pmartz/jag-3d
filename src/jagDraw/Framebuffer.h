@@ -18,15 +18,14 @@
 *
 *************** <auto-copyright.pl END do not edit this line> ***************/
 
-#ifndef __JAGDRAW_TEXTURE_H__
-#define __JAGDRAW_TEXTURE_H__ 1
+#ifndef __JAGDRAW_FRAMEBUFFER_H__
+#define __JAGDRAW_FRAMEBUFFER_H__ 1
 
 
 #include <jagDraw/Export.h>
 #include <jagDraw/PlatformOpenGL.h>
 #include <jagDraw/DrawablePrep.h>
 #include <jagDraw/ObjectID.h>
-#include <jagDraw/Image.h>
 #include <jagBase/LogBase.h>
 #include <jagBase/ptr.h>
 
@@ -34,21 +33,17 @@
 namespace jagDraw {
 
 
-/** \class Texture Texture.h <jagDraw/Texture.h>
+/** \class Framebuffer Framebuffer.h <jagDraw/Framebuffer.h>
 \brief TBD
 \details TBD
 */
-class JAGDRAW_EXPORT Texture : public DrawablePrep, public ObjectID,
-        protected jagBase::LogBase
+class JAGDRAW_EXPORT Framebuffer : public DrawablePrep,
+        public ObjectID, protected jagBase::LogBase
 {
 public:
-    /**
-    \glparam{target,section 3.8}
-    */
-    Texture();
-    Texture( const GLenum target, ImagePtr image=ImagePtr((Image*)NULL) );
-    Texture( const Texture& rhs );
-    virtual ~Texture();
+    Framebuffer();
+    Framebuffer( const Framebuffer& rhs );
+    virtual ~Framebuffer();
 
     /** \brief TBD
     Override from DrawablePrep. */
@@ -58,45 +53,19 @@ public:
     Override from DrawablePrep. */
     virtual GLuint getID( const jagDraw::jagDrawContextID contextID );
 
-#if 0 // chaskii stuff
-    virtual void callStats() { stats(); }
-
-    virtual bool operator < (DrawableAttribute &rhs ) const
-    {
-        Texture &rhs_t = dynamic_cast<Texture &>(rhs);
-        return m_id < rhs_t.m_id;
-    }
-
-    virtual bool operator > (DrawableAttribute &rhs) const
-    {
-        Texture &rhs_t = dynamic_cast<Texture &>(rhs);
-        return m_id > rhs_t.m_id;
-    }
-
-    virtual bool operator == ( DrawableAttribute &rhs ) const
-    {
-        Texture &rhs_t = dynamic_cast<Texture &>(rhs);
-        return m_id == rhs_t.m_id;
-    }
-#endif
-
 protected:
-    /** GL_TEXTURE_1D, GL_TEXTURE_2D, etc. */
     GLenum _target;
-
-    jagDraw::ImagePtr _image;
-
 
     void internalInit( const unsigned int contextID );
 };
 
-typedef jagBase::ptr< jagDraw::Texture >::shared_ptr TexturePtr;
-typedef std::vector< TexturePtr > TextureVec;
+typedef jagBase::ptr< jagDraw::Framebuffer >::shared_ptr FramebufferPtr;
+typedef std::vector< FramebufferPtr > FramebufferVec;
 
 
 // jagDraw
 }
 
 
-// __JAGDRAW_TEXTURE_H__
+// __JAGDRAW_FRAMEBUFFER_H__
 #endif
