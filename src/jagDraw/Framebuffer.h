@@ -36,6 +36,7 @@ namespace jagDraw {
 /** \class Framebuffer Framebuffer.h <jagDraw/Framebuffer.h>
 \brief TBD
 \details TBD
+\gl{section 4.4}.
 */
 class JAGDRAW_EXPORT Framebuffer : public DrawablePrep,
         public ObjectID, protected jagBase::LogBase

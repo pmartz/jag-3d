@@ -89,7 +89,7 @@ simply always sets its value. This will change in the future when
 Uniform becomes "smarter", but we must keep this scenario in mind when
 we make that change.
 
-\gl{section 2.11.4}
+\gl{section 2.11.4}.
 */
 class JAGDRAW_EXPORT Uniform : public DrawablePrep, public jagBase::LogBase,
         public SHARED_FROM_THIS(Uniform)
@@ -192,12 +192,12 @@ public:
     /** \brief TBD
     \details TBD
     Does not add this uniform to drawInfo._uniformMap.
-    \gl{section 2.11.4} */
+    \gl{section 2.11.4}. */
     void operator()( DrawInfo& drawInfo, const GLint loc ) const;
     /** \brief TBD
     \details TBD
     Adds this uniform to drawInfo._uniformMap.
-    \gl{section 2.11.4} */
+    \gl{section 2.11.4}. */
     virtual void operator()( DrawInfo& drawInfo );
 
     void setType( const GLenum type );
