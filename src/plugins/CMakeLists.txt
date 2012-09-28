@@ -18,5 +18,5 @@
 #
 #************** <auto-copyright.pl END do not edit this line> ***************
 
+add_subdirectory( image-osg )
 add_subdirectory( shader )
-add_subdirectory( image )

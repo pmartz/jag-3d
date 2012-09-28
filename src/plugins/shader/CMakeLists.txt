@@ -19,7 +19,7 @@
 #************** <auto-copyright.pl END do not edit this line> ***************
 
 # Required for ModuleInstall.cmake
-set( _libName shader )
+set( _libName jagp-shader )
 
 _addPlugin( ${_libName}
     shader.cpp
@@ -27,4 +27,4 @@ _addPlugin( ${_libName}
         jagDisk jagDraw jagBase
 )
 
-_addPluginInfo( shader.jagpi )
+_addPluginInfo( jagp-shader.jagpi )

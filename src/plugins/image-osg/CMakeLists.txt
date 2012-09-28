@@ -23,10 +23,10 @@ if( NOT OSG_FOUND )
 endif()
 
 # Required for ModuleInstall.cmake
-set( _libName image )
+set( _libName jagp-image-osg )
 
 _addPlugin( ${_libName}
-    image.cpp
+    image-osg.cpp
     JAG_LIBRARIES
         jagDisk jagDraw jagBase
     ADDITIONAL_INCLUDES
@@ -35,4 +35,4 @@ _addPlugin( ${_libName}
         ${OSG_LIBRARIES}
 )
 
-_addPluginInfo( image.jagpi )
+_addPluginInfo( jagp-image-osg.jagpi )
