@@ -30,7 +30,7 @@ Image::Image()
 {
 }
 Image::Image( const Image& rhs )
-  : LogBase( rhs )
+  : jagBase::LogBase( rhs )
 {
 }
 Image::~Image()

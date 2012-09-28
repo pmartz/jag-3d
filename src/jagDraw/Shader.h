@@ -42,6 +42,7 @@ class JAGDRAW_EXPORT Shader : public ObjectID, protected jagBase::LogBase
 {
 public:
     Shader( GLenum type );
+    Shader( const Shader& rhs );
     ~Shader();
 
     void addSourceString( const std::string& source );

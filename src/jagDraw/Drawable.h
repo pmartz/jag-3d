@@ -61,6 +61,7 @@ class JAGDRAW_EXPORT Drawable : protected jagBase::LogBase, public ObjectIDOwner
 {
 public:
     Drawable();
+    Drawable( const Drawable& rhs );
     ~Drawable();
     
 

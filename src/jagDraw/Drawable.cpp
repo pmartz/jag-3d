@@ -38,6 +38,12 @@ Drawable::Drawable()
   : jagBase::LogBase( "jag.draw.drawable" )
 {
 }
+Drawable::Drawable( const Drawable& rhs )
+  : jagBase::LogBase( rhs ),
+    _drawablePrep( rhs._drawablePrep ),
+    _drawCommands( rhs._drawCommands )
+{
+}
 Drawable::~Drawable()
 {
 }

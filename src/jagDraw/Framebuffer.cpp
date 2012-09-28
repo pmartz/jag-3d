@@ -29,12 +29,14 @@ namespace jagDraw {
 
 Framebuffer::Framebuffer()
   : DrawablePrep(),
-    jagBase::LogBase( "jag.draw.fbo" )
+    jagBase::LogBase( "jag.draw.fbo" ),
+    _target( GL_FRAMEBUFFER )
 {
 }
 Framebuffer::Framebuffer( const Framebuffer& rhs )
   : DrawablePrep( rhs ),
-    jagBase::LogBase( rhs )
+    jagBase::LogBase( rhs ),
+    _target( rhs._target )
 {
 }
 Framebuffer::~Framebuffer()
