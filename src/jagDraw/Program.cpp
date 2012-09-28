@@ -415,51 +415,6 @@ void Program::internalInit( const unsigned int contextID )
     _linkStatus[ contextID ] = GL_FALSE;
 }
 
-void Program::fromSourceFiles( const std::string &vertexShaderFile,
-                              const std::string &fragmentShaderFile )
-{
-    jagDraw::ShaderPtr vshader(new jagDraw::Shader(GL_VERTEX_SHADER ));
-    vshader->addSourceFile( vertexShaderFile );
-    attachShader( vshader );
-
-    jagDraw::ShaderPtr fshader(new jagDraw::Shader(GL_FRAGMENT_SHADER ));
-    fshader->addSourceFile( fragmentShaderFile );
-    attachShader( fshader );
-}
-
-void Program::fromSourceStrings( const std::string &vertexShaderString,
-                               const std::string &fragmentShaderString )
-{
-    jagDraw::ShaderPtr vshader(new jagDraw::Shader(GL_VERTEX_SHADER ));
-    vshader->addSourceString( vertexShaderString );
-    attachShader( vshader );
-
-    jagDraw::ShaderPtr fshader(new jagDraw::Shader(GL_FRAGMENT_SHADER ));
-    fshader->addSourceString( fragmentShaderString );
-    attachShader( fshader );
-
-}
-
-void Program::fromSourceFileList( const SourceList &l )
-{
-    for( SourceList::const_iterator p = l.begin(); p != l.end(); p++ )
-    {
-        jagDraw::ShaderPtr shader(new jagDraw::Shader( p->first ));
-        shader->addSourceFile( p->second );
-        attachShader( shader );
-    }
-}
-
-void Program::fromSourceStringList( const SourceList &l )
-{
-    for( SourceList::const_iterator p = l.begin(); p != l.end(); p++ )
-    {
-        jagDraw::ShaderPtr shader(new jagDraw::Shader( p->first ));
-        shader->addSourceString( p->second );
-        attachShader( shader );
-    }
-}
-
 
 Program::HashValue Program::createHash( const std::string& name )
 {
