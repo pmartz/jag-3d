@@ -43,7 +43,8 @@ class RttDemo : public DemoInterface
 {
 public:
     RttDemo()
-      : DemoInterface( "jag.demo.texture" )
+      : DemoInterface( "jag.demo.texture" ),
+        _frames( 0 )
     {
         _continuousRedraw = true;
     }
@@ -58,7 +59,9 @@ public:
     }
 
 protected:
-    jagDraw::DrawableVec _drawableVec;
+    jagDraw::DrawableVec _linesVec, _quadVec;
+
+    unsigned int _frames;
 };
 
 
@@ -75,26 +78,89 @@ bool RttDemo::startup( const unsigned int numContexts )
 {
     DemoInterface::startup( numContexts );
 
-    const char* vShaderSource =
-#if( POCO_OS == POCO_OS_MAC_OS_X )
-        // In OSX 10.7/10.8, use GL 3.2 and GLSL 1.50
-        "#version 150 \n"
-#else
-        "#version 400 \n"
-#endif
-        "in vec3 vertex; \n"
-        "in vec2 texcoord; \n"
-        "out vec2 tcOut; \n"
-        "void main() { \n"
-        "    gl_Position = vec4( vertex, 1. ); \n"
-        "    tcOut = texcoord; \n"
-        "}";
-    jagDraw::ShaderPtr vs( new jagDraw::Shader( GL_VERTEX_SHADER ) );
-    vs->addSourceString( std::string( vShaderSource ) );
-
-    jagDraw::ShaderProgramPtr prog;
+    // Set up for drawing lines first.
     {
-        const char* fShaderSource =
+        jagDraw::DrawablePtr drawable( new jagDraw::Drawable() );
+
+        const char* vertShader =
+#if( POCO_OS == POCO_OS_MAC_OS_X )
+            // In OSX 10.7/10.8, use GL 3.2 and GLSL 1.50
+            "#version 150 \n"
+#else
+            "#version 400 \n"
+#endif
+            "in vec3 vertex; \n"
+            "void main() { \n"
+            "    gl_Position = vec4( vertex, 1. ); \n"
+            "}";
+        jagDraw::ShaderPtr vs( new jagDraw::Shader( GL_VERTEX_SHADER ) );
+        vs->addSourceString( std::string( vertShader ) );
+
+        const char* fragShader =
+#if( POCO_OS == POCO_OS_MAC_OS_X )
+            // In OSX 10.7/10.8, use GL 3.2 and GLSL 1.50
+            "#version 150 \n"
+#else
+            "#version 400 \n"
+#endif
+            "out vec4 colorOut; \n"
+            "void main() { \n"
+            "    colorOut = vec4( 1., 1., 1., 1. ); \n"
+            "}";
+        jagDraw::ShaderPtr fs( new jagDraw::Shader( GL_FRAGMENT_SHADER ) );
+        fs->addSourceString( std::string( fragShader ) );
+
+        jagDraw::ShaderProgramPtr prog( new jagDraw::Program );
+        prog->attachShader( vs );
+        prog->attachShader( fs );
+        drawable->addDrawablePrep( prog );
+
+
+        jagDraw::VertexAttribPtr iVerts( new jagDraw::VertexAttrib(
+            "vertex", 3, GL_FLOAT, GL_FALSE, 0, 0 ) );
+        jagDraw::DrawArraysPtr drawArrays( new jagDraw::DrawArrays( GL_LINES, 0, 4 ) );
+        drawable->addDrawCommand( drawArrays );
+
+
+        const float z = .5f;
+        float vertices[] = {
+            -1., 0., z,
+            0., -1., z,
+            0., 1., z,
+            1., 0., z };
+        jagBase::BufferPtr ibp( new jagBase::Buffer( sizeof( vertices ), (void*)vertices ) );
+        jagDraw::BufferObjectPtr ibop( new jagDraw::BufferObject( GL_ARRAY_BUFFER, ibp ) );
+
+        jagDraw::VertexArrayObjectPtr vaop( new jagDraw::VertexArrayObject );
+        vaop->addVertexArrayCommand( ibop, jagDraw::VertexArrayCommand::Vertex );
+        vaop->addVertexArrayCommand( iVerts, jagDraw::VertexArrayCommand::Vertex );
+        drawable->addDrawablePrep( vaop );
+
+        _linesVec.push_back( drawable );
+    }
+
+    // Now set up for drawing the quad.
+    {
+        jagDraw::DrawablePtr drawable( new jagDraw::Drawable() );
+
+        const char* vertSource =
+#if( POCO_OS == POCO_OS_MAC_OS_X )
+            // In OSX 10.7/10.8, use GL 3.2 and GLSL 1.50
+            "#version 150 \n"
+#else
+            "#version 400 \n"
+#endif
+            "in vec3 vertex; \n"
+            "in vec2 texcoord; \n"
+            "out vec2 tcOut; \n"
+            "void main() { \n"
+            "    gl_Position = vec4( vertex, 1. ); \n"
+            "    tcOut = texcoord; \n"
+            "}";
+        jagDraw::ShaderPtr vs( new jagDraw::Shader( GL_VERTEX_SHADER ) );
+        vs->addSourceString( std::string( vertSource ) );
+
+        const char* fragSource =
 #if( POCO_OS == POCO_OS_MAC_OS_X )
             // In OSX 10.7/10.8, use GL 3.2 and GLSL 1.50
             "#version 150 \n"
@@ -105,68 +171,66 @@ bool RttDemo::startup( const unsigned int numContexts )
             "in vec2 tcOut; \n"
             "out vec4 colorOut; \n"
             "void main() { \n"
-            "    colorOut = texture2D( texture, tcOut ); \n"
-            //"    colorOut = vec4( tcOut, 0., 1. ); \n"
+            //"    colorOut = texture2D( texture, tcOut ); \n"
+            "    colorOut = vec4( tcOut, 0., 1. ); \n"
             "}";
         jagDraw::ShaderPtr fs( new jagDraw::Shader( GL_FRAGMENT_SHADER ) );
-        fs->addSourceString( std::string( fShaderSource ) );
+        fs->addSourceString( std::string( fragSource ) );
 
-        prog = jagDraw::ShaderProgramPtr( new jagDraw::Program );
+        jagDraw::ShaderProgramPtr prog( new jagDraw::Program );
         prog->attachShader( vs );
         prog->attachShader( fs );
-    }
-
-    jagDraw::UniformPtr texture( new jagDraw::Uniform( "texture", GL_SAMPLER_2D, (GLint)0 ) );
-
-
-    jagDraw::DrawablePtr drawable( new jagDraw::Drawable() );
-    const float z = .5f;
-    typedef std::vector< float > FloatArray;
-
-    const GLsizei stride = sizeof( GLfloat ) * 5;
-    jagDraw::VertexAttribPtr iVerts( new jagDraw::VertexAttrib(
-        "vertex", 3, GL_FLOAT, GL_FALSE, stride, 0 ) );
-    jagDraw::VertexAttribPtr iColor( new jagDraw::VertexAttrib(
-        "texcoord", 2, GL_FLOAT, GL_FALSE, stride, sizeof( GLfloat ) * 3 ) );
-    jagDraw::DrawArraysPtr drawArrays( new jagDraw::DrawArrays( GL_TRIANGLE_STRIP, 0, 4 ) );
-
-    {
-        drawable = jagDraw::DrawablePtr( new jagDraw::Drawable() );
-
         drawable->addDrawablePrep( prog );
-        drawable->addDrawablePrep( texture );
 
-        FloatArray i3fa;
-        i3fa.push_back( -.9f ); i3fa.push_back( -.9f ); i3fa.push_back( z );
-            i3fa.push_back( 0.f ); i3fa.push_back( 0.f );
-        i3fa.push_back( .9f ); i3fa.push_back( -.9f ); i3fa.push_back( z );
-            i3fa.push_back( 1.f ); i3fa.push_back(  0.f );
-        i3fa.push_back( -.9f ); i3fa.push_back( .9f ); i3fa.push_back( z );
-            i3fa.push_back( 0.f ); i3fa.push_back( 1.f );
-        i3fa.push_back( .9f ); i3fa.push_back( .9f ); i3fa.push_back( z );
-            i3fa.push_back( 1.f ); i3fa.push_back( 1.f );
-        jagBase::BufferPtr ibp( new jagBase::Buffer( i3fa.size() * sizeof( float ), (void*)&i3fa[0] ) );
+
+        const GLsizei stride = sizeof( GLfloat ) * 5;
+        jagDraw::VertexAttribPtr iVerts( new jagDraw::VertexAttrib(
+            "vertex", 3, GL_FLOAT, GL_FALSE, stride, 0 ) );
+        jagDraw::VertexAttribPtr iTexCoord( new jagDraw::VertexAttrib(
+            "texcoord", 2, GL_FLOAT, GL_FALSE, stride, sizeof( GLfloat ) * 3 ) );
+        jagDraw::DrawArraysPtr drawArrays( new jagDraw::DrawArrays( GL_TRIANGLE_STRIP, 0, 4 ) );
+        drawable->addDrawCommand( drawArrays );
+
+
+        const float z = .5f;
+        float vertices[] = {
+            -1., -1., z,
+            0., 0.,
+            1., -1., z,
+            1., 0.,
+            -1., 1., z,
+            0., 1.,
+            1., 1., z,
+            1., 1. };
+        jagBase::BufferPtr ibp( new jagBase::Buffer( sizeof( vertices ), (void*)vertices ) );
         jagDraw::BufferObjectPtr ibop( new jagDraw::BufferObject( GL_ARRAY_BUFFER, ibp ) );
 
         jagDraw::VertexArrayObjectPtr vaop( new jagDraw::VertexArrayObject );
         vaop->addVertexArrayCommand( ibop, jagDraw::VertexArrayCommand::Vertex );
         vaop->addVertexArrayCommand( iVerts, jagDraw::VertexArrayCommand::Vertex );
-        vaop->addVertexArrayCommand( iColor );
+        vaop->addVertexArrayCommand( iTexCoord );
         drawable->addDrawablePrep( vaop );
+
+        _quadVec.push_back( drawable );
+    }
+
+#if 0
+        jagDraw::UniformPtr texture( new jagDraw::Uniform( "texture", GL_SAMPLER_2D, (GLint)0 ) );
+        drawable->addDrawablePrep( texture );
+
 
         // Load image using jagDisk plugin interface.
         jagDraw::ImagePtr image( (jagDraw::Image*) jagDisk::read( "balloon.jpg" ) );
         jagDraw::TexturePtr tex( new jagDraw::Texture( GL_TEXTURE_2D, image ) );
         drawable->addDrawablePrep( tex );
-
-        drawable->addDrawCommand( drawArrays );
-
-        _drawableVec.push_back( drawable );
-    }
-
+#endif
 
     // Tell all Jag objects how many contexts to expect.
-    BOOST_FOREACH( const jagDraw::DrawableVec::value_type& dp, _drawableVec )
+    BOOST_FOREACH( const jagDraw::DrawableVec::value_type& dp, _linesVec )
+    {
+        dp->setMaxContexts( numContexts );
+    }
+    BOOST_FOREACH( const jagDraw::DrawableVec::value_type& dp, _quadVec )
     {
         dp->setMaxContexts( numContexts );
     }
@@ -177,7 +241,7 @@ bool RttDemo::startup( const unsigned int numContexts )
 
 bool RttDemo::init()
 {
-    glClearColor( 1.f, 0.f, 0.f, 0.f );
+    glClearColor( 0.f, 0.f, 1.f, 0.f );
 
     // Auto-log the version string.
     jagBase::getVersionString();
@@ -203,11 +267,21 @@ bool RttDemo::frame( const gmtl::Matrix44f& view, const gmtl::Matrix44f& proj )
     drawInfo._id = jagDraw::ContextSupport::instance()->getActiveContext();
 
     // Render all Drawables.
-    BOOST_FOREACH( jagDraw::DrawablePtr dp, _drawableVec )
+    if( ( ++_frames / 100 ) & 0x1 )
     {
-        (*(dp))( drawInfo );
+        BOOST_FOREACH( jagDraw::DrawablePtr dp, _linesVec )
+        {
+            (*(dp))( drawInfo );
+        }
     }
-    
+    else
+    {
+        BOOST_FOREACH( jagDraw::DrawablePtr dp, _quadVec )
+        {
+            (*(dp))( drawInfo );
+        }
+    }
+
     glFlush ();
     JAG3D_ERROR_CHECK( "RttDemo display()" );
 
