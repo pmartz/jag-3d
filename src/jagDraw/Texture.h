@@ -25,6 +25,7 @@
 #include <jagDraw/Export.h>
 #include <jagDraw/PlatformOpenGL.h>
 #include <jagDraw/DrawablePrep.h>
+#include <jagDraw/FramebufferAttachable.h>
 #include <jagDraw/ObjectID.h>
 #include <jagDraw/Image.h>
 #include <jagBase/LogBase.h>
@@ -38,7 +39,8 @@ namespace jagDraw {
 \brief TBD
 \details TBD
 */
-class JAGDRAW_EXPORT Texture : public DrawablePrep, public ObjectID,
+class JAGDRAW_EXPORT Texture : public DrawablePrep,
+        public FramebufferAttachable, public ObjectID,
         protected jagBase::LogBase
 {
 public:
@@ -55,7 +57,7 @@ public:
     virtual void operator()( DrawInfo& drawInfo );
 
     /** \brief TBD
-    Override from DrawablePrep. */
+    Override from ObjectID. */
     virtual GLuint getID( const jagDraw::jagDrawContextID contextID );
 
 #if 0 // chaskii stuff

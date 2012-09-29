@@ -27,10 +27,10 @@
 namespace jagDraw {
 
 
-Framebuffer::Framebuffer()
+Framebuffer::Framebuffer( GLenum target )
   : DrawablePrep(),
     jagBase::LogBase( "jag.draw.fbo" ),
-    _target( GL_FRAMEBUFFER )
+    _target( target )
 {
 }
 Framebuffer::Framebuffer( const Framebuffer& rhs )
@@ -50,6 +50,8 @@ void Framebuffer::operator()( DrawInfo& drawInfo )
     const unsigned int contextID( drawInfo._id );
 
     glBindFramebuffer( _target, getID( contextID ) );
+    JAG3D_FBO_ERROR_CHECK( "Framebuffer::operator()" );
+
 
     JAG3D_ERROR_CHECK( "Framebuffer::operator()" );
 }
@@ -78,10 +80,83 @@ void Framebuffer::internalInit( const unsigned int contextID )
 
     glBindFramebuffer( _target, id );
 
+    // GL_COLOR_ATTACHMENTi
+    // GL_DEPTH_ATTACHMENT
+    // GL_STENCIL_ATTACHMENT
+    // GL_DEPTH_STENCIL_ATTACHMENT
+
+    //glFramebufferRenderbuffer( _target, attachment, GL_RENDERBUFFER, rbId );
 
     glBindFramebuffer( _target, 0 );
 
     JAG3D_ERROR_CHECK( "Framebuffer::internalInit()" );
+}
+
+
+
+Renderbuffer::Renderbuffer( const GLenum internalFormat, const GLsizei width, const GLsizei height, const GLsizei samples )
+  : FramebufferAttachable( FramebufferAttachable::TYPE_RENDERBUFFER ),
+    jagBase::LogBase( "jag.draw.fbo.rb" ),
+    _samples( samples ),
+    _internalFormat( internalFormat),
+    _width( width ),
+    _height( height )
+{
+}
+Renderbuffer::Renderbuffer( const Renderbuffer& rhs )
+  : FramebufferAttachable( rhs ),
+    jagBase::LogBase( rhs ),
+    _samples( rhs._samples ),
+    _internalFormat( rhs._internalFormat),
+    _width( rhs._width ),
+    _height( rhs._height )
+{
+}
+Renderbuffer::~Renderbuffer()
+{
+    // TBD Handle object deletion
+}
+
+
+void Renderbuffer::operator()( DrawInfo& drawInfo )
+{
+    const unsigned int contextID( drawInfo._id );
+
+    glBindRenderbuffer( GL_RENDERBUFFER, getID( contextID ) );
+
+    JAG3D_ERROR_CHECK( "Renderbuffer::operator()" );
+}
+
+GLuint Renderbuffer::getID( const jagDraw::jagDrawContextID contextID )
+{
+    if( _ids[ contextID ] == 0 )
+    {
+        internalInit( contextID );
+    }
+
+    return( _ids[ contextID ] );
+}
+
+
+void Renderbuffer::internalInit( const unsigned int contextID )
+{
+    glGenRenderbuffers( 1, &( _ids[ contextID ] ) );
+    const GLint id( _ids[ contextID ] );
+
+    if( JAG3D_LOG_DEBUG )
+    {
+        _logStream->debug() << "internalInit(): ContextID: " << contextID <<
+            ", object ID: " << id << std::endl;
+    }
+
+    glBindRenderbuffer( GL_RENDERBUFFER, id );
+
+    glRenderbufferStorageMultisample( GL_RENDERBUFFER,
+        _samples, _internalFormat, _width, _height );
+
+    glBindRenderbuffer( GL_RENDERBUFFER, 0 );
+
+    JAG3D_ERROR_CHECK( "Renderbuffer::internalInit()" );
 }
 
 

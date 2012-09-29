@@ -29,12 +29,14 @@ namespace jagDraw {
 
 Texture::Texture()
   : DrawablePrep(),
+    FramebufferAttachable( FramebufferAttachable::TYPE_TEXTURE ),
     jagBase::LogBase( "jag.draw.texture" ),
     _target( 0 )
 {
 }
 Texture::Texture( const GLenum target, ImagePtr image )
   : DrawablePrep(),
+    FramebufferAttachable( FramebufferAttachable::TYPE_TEXTURE ),
     jagBase::LogBase( "jag.draw.texture" ),
     _target( target ),
     _image( image )
@@ -42,6 +44,7 @@ Texture::Texture( const GLenum target, ImagePtr image )
 }
 Texture::Texture( const Texture& rhs )
   : DrawablePrep( rhs ),
+    FramebufferAttachable( rhs ),
     jagBase::LogBase( rhs ),
     _target( rhs._target ),
     _image( rhs._image )

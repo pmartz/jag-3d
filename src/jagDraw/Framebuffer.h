@@ -25,12 +25,16 @@
 #include <jagDraw/Export.h>
 #include <jagDraw/PlatformOpenGL.h>
 #include <jagDraw/DrawablePrep.h>
+#include <jagDraw/FramebufferAttachable.h>
 #include <jagDraw/ObjectID.h>
 #include <jagBase/LogBase.h>
 #include <jagBase/ptr.h>
 
 
 namespace jagDraw {
+
+
+class Renderbuffer;
 
 
 /** \class Framebuffer Framebuffer.h <jagDraw/Framebuffer.h>
@@ -42,7 +46,7 @@ class JAGDRAW_EXPORT Framebuffer : public DrawablePrep,
         public ObjectID, protected jagBase::LogBase
 {
 public:
-    Framebuffer();
+    Framebuffer( GLenum target=GL_FRAMEBUFFER );
     Framebuffer( const Framebuffer& rhs );
     virtual ~Framebuffer();
 
@@ -51,7 +55,7 @@ public:
     virtual void operator()( DrawInfo& drawInfo );
 
     /** \brief TBD
-    Override from DrawablePrep. */
+    Override from ObjectID. */
     virtual GLuint getID( const jagDraw::jagDrawContextID contextID );
 
 protected:
@@ -62,6 +66,40 @@ protected:
 
 typedef jagBase::ptr< jagDraw::Framebuffer >::shared_ptr FramebufferPtr;
 typedef std::vector< FramebufferPtr > FramebufferVec;
+
+
+/** \class Renderbuffer Framebuffer.h <jagDraw/Framebuffer.h>
+\brief TBD
+\details TBD
+\gl{section 4.4}.
+*/
+class JAGDRAW_EXPORT Renderbuffer : public ObjectID,
+        public FramebufferAttachable, protected jagBase::LogBase
+{
+public:
+    Renderbuffer( const GLenum internalFormat=GL_NONE, const GLsizei width=0, const GLsizei height=0, const GLsizei samples=0 );
+
+    Renderbuffer( const Renderbuffer& rhs );
+    virtual ~Renderbuffer();
+
+    /** \brief TBD
+    Override from DrawablePrep. */
+    virtual void operator()( DrawInfo& drawInfo );
+
+    /** \brief TBD
+    Override from ObjectID. */
+    virtual GLuint getID( const jagDraw::jagDrawContextID contextID );
+
+protected:
+    void internalInit( const unsigned int contextID );
+
+    GLsizei _samples;
+    GLenum _internalFormat;
+    GLsizei _width, _height;
+};
+
+typedef jagBase::ptr< jagDraw::Renderbuffer >::shared_ptr RenderbufferPtr;
+typedef std::vector< RenderbufferPtr > RenderbufferVec;
 
 
 // jagDraw
