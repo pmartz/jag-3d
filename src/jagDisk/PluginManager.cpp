@@ -94,7 +94,7 @@ PluginManager::PluginManager( const int initFlags )
 {
     if( initFlags != 0 )
     {
-        JAG3D_TRACE( "PluginManager(): Plugin search path includes: " );
+        JAG3D_TRACE( "Constructor: Plugin search path includes: " );
     }
 
     if( ( initFlags & USE_CURRENT_DIRECTORY ) != 0 )
