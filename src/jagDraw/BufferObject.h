@@ -119,7 +119,7 @@ protected:
 
 
 /**
-\details One class for each buffer bind target. See \gl{table 2.8}.
+\details One class for each buffer bind target. \gl{table 2.8}.
 */
 class JAGDRAW_EXPORT ArrayBuffer: public BufferObject
 {
@@ -133,7 +133,7 @@ public:
 };
 
 /**
-\details One class for each buffer bind target. See \gl{table 2.8}.
+\details One class for each buffer bind target. \gl{table 2.8}.
 */
 class JAGDRAW_EXPORT CopyReadBuffer : public BufferObject
 {
@@ -147,7 +147,7 @@ public:
 };
 
 /**
-\details One class for each buffer bind target. See \gl{table 2.8}.
+\details One class for each buffer bind target. \gl{table 2.8}.
 */
 class JAGDRAW_EXPORT CopyWriteBuffer : public BufferObject
 {
@@ -162,7 +162,7 @@ public:
 
 #ifdef GL_VERSION_4_0
 /**
-\details One class for each buffer bind target. See \gl{table 2.8}.
+\details One class for each buffer bind target. \gl{table 2.8}.
 */
 class JAGDRAW_EXPORT DrawIndirectBuffer : public BufferObject
 {
@@ -177,7 +177,7 @@ public:
 #endif
     
 /**
-\details One class for each buffer bind target. See \gl{table 2.8}.
+\details One class for each buffer bind target. \gl{table 2.8}.
 */
 class JAGDRAW_EXPORT ElementArrayBuffer: public BufferObject
 {
@@ -191,7 +191,7 @@ public:
 };
 
 /**
-\details One class for each buffer bind target. See \gl{table 2.8}.
+\details One class for each buffer bind target. \gl{table 2.8}.
 */
 class JAGDRAW_EXPORT PixelPackBuffer: public BufferObject
 {
@@ -205,7 +205,7 @@ public:
 };
 
 /**
-\details One class for each buffer bind target. See \gl{table 2.8}.
+\details One class for each buffer bind target. \gl{table 2.8}.
 */
 class JAGDRAW_EXPORT PixelUnpackBuffer: public BufferObject
 {
@@ -219,7 +219,7 @@ public:
 };
 
 /**
-\details One class for each buffer bind target. See \gl{table 2.8}.
+\details One class for each buffer bind target. \gl{table 2.8}.
 */
 class JAGDRAW_EXPORT TextureBuffer : public BufferObject
 {
@@ -233,7 +233,7 @@ public:
 };
 
 /**
-\details One class for each buffer bind target. See \gl{table 2.8}.
+\details One class for each buffer bind target. \gl{table 2.8}.
 */
 class JAGDRAW_EXPORT TransformFeedbackBuffer : public IndexedBufferObject
 {
@@ -247,7 +247,7 @@ public:
 };
 
 /**
-\details One class for each buffer bind target. See \gl{table 2.8}.
+\details One class for each buffer bind target. \gl{table 2.8}.
 */
 class JAGDRAW_EXPORT UniformBuffer : public IndexedBufferObject
 {
