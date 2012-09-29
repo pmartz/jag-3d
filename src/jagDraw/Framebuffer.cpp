@@ -153,6 +153,7 @@ GLuint Renderbuffer::getID( const jagDraw::jagDrawContextID contextID )
 
 void Renderbuffer::attachToFBO( const jagDraw::jagDrawContextID contextID, const GLenum attachment )
 {
+    JAG3D_TRACE( "attachToFBO" );
     glFramebufferRenderbuffer( _fboTarget, attachment, GL_RENDERBUFFER, getID( contextID ) );
 }
 

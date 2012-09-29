@@ -67,6 +67,9 @@ void GLWidget::paintGL()
 
     cs->setActiveContext( contextID );
     di->frame();
+
+    if( di->getContinuousRedraw() )
+        update( rect() );
 }
 
 void GLWidget::resizeGL( int w, int h )
