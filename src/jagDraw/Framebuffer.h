@@ -60,6 +60,14 @@ public:
     Override from ObjectID. */
     virtual GLuint getID( const jagDraw::jagDrawContextID contextID );
 
+    /** \brief TBD
+    Override from ObjectID. */
+    virtual void setMaxContexts( const unsigned int numContexts );
+
+    /** \brief TBD
+    Override from ObjectID. */
+    virtual void deleteID( const jagDraw::jagDrawContextID contextID );
+
 
     typedef std::map< GLenum, FramebufferAttachablePtr > AttachmentMap;
 

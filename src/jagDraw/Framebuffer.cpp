@@ -66,6 +66,48 @@ GLuint Framebuffer::getID( const jagDraw::jagDrawContextID contextID )
     return( _ids[ contextID ] );
 }
 
+void Framebuffer::setMaxContexts( const unsigned int numContexts )
+{
+    ObjectID::setMaxContexts( numContexts );
+
+    BOOST_FOREACH( AttachmentMap::value_type pair, _attachments )
+    {
+        // FramebufferAttachable is either a Texture or a Renderbuffer,
+        // so probably derives from ObjectID. But have a check for
+        // ObjectIDOwner anyhow (for possible future OpenGL changes).
+        ObjectIDPtr objID( boost::dynamic_pointer_cast< ObjectID >( pair.second ) );
+        if( objID != NULL )
+            objID->setMaxContexts( numContexts );
+        else
+        {
+            ObjectIDOwnerPtr objIDOwner( boost::dynamic_pointer_cast< ObjectIDOwner >( pair.second ) );
+            if( objIDOwner != NULL )
+                objIDOwner->setMaxContexts( numContexts );
+        }
+    }
+}
+
+void Framebuffer::deleteID( const jagDraw::jagDrawContextID contextID )
+{
+    ObjectID::deleteID( contextID );
+
+    BOOST_FOREACH( AttachmentMap::value_type pair, _attachments )
+    {
+        // FramebufferAttachable is either a Texture or a Renderbuffer,
+        // so probably derives from ObjectID. But have a check for
+        // ObjectIDOwner anyhow (for possible future OpenGL changes).
+        ObjectIDPtr objID( boost::dynamic_pointer_cast< ObjectID >( pair.second ) );
+        if( objID != NULL )
+            objID->deleteID( contextID );
+        else
+        {
+            ObjectIDOwnerPtr objIDOwner( boost::dynamic_pointer_cast< ObjectIDOwner >( pair.second ) );
+            if( objIDOwner != NULL )
+                objIDOwner->deleteID( contextID );
+        }
+    }
+}
+
 
 void Framebuffer::addAttachment( const GLenum attachment, FramebufferAttachablePtr buffer )
 {
