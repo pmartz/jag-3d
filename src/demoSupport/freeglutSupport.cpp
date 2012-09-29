@@ -59,6 +59,9 @@ void display()
     cs->setActiveContext( contextID );
     di->frame();
     glutSwapBuffers();
+
+    if( di->getContinuousRedraw() )
+        glutPostRedisplay();
 }
 
 void reshape (int w, int h)

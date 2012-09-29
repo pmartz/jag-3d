@@ -81,6 +81,7 @@ GLuint Texture::getID( const jagDraw::jagDrawContextID contextID )
 
 void Texture::attachToFBO( const jagDraw::jagDrawContextID contextID, const GLenum attachment )
 {
+    JAG3D_TRACE( "attachToFBO" );
     glFramebufferTexture( _fboTarget, attachment, getID( contextID ), _fboTextureLevel );
 }
 

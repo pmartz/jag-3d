@@ -18,13 +18,6 @@ protected:
     virtual void paintGL();
 
     virtual void keyPressEvent( QKeyEvent* e );
-
-private:
-    bool prepareShaderProgram( const QString& vertexShaderPath,
-                               const QString& fragmentShaderPath );
-
-    QGLShaderProgram m_shader;
-    QGLBuffer m_vertexBuffer;
 };
 
 #endif // GLWIDGET_H

@@ -20,6 +20,7 @@
 
 add_subdirectory( drawable )
 add_subdirectory( jagload )
+add_subdirectory( rtt )
 add_subdirectory( texture )
 
 

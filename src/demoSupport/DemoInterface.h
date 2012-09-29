@@ -36,7 +36,8 @@ class DemoInterface
 public:
     DemoInterface( const std::string& logName )
       : _logName( logName ),
-        _startupCalled( false )
+        _startupCalled( false ),
+        _continuousRedraw( false )
     {}
     virtual ~DemoInterface() {}
 
@@ -50,6 +51,8 @@ public:
     }
     bool getStartupCalled() { return( _startupCalled ); }
 
+    bool getContinuousRedraw() { return( _continuousRedraw ); }
+
     /** Called after a context has been created. */
     virtual bool init() = 0;
     /** Called to render a frame. */
@@ -62,6 +65,8 @@ public:
 protected:
     std::string _logName;
     bool _startupCalled;
+
+    bool _continuousRedraw;
 };
 
 
