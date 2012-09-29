@@ -50,11 +50,9 @@ Framebuffer::~Framebuffer()
 void Framebuffer::operator()( DrawInfo& drawInfo )
 {
     const unsigned int contextID( drawInfo._id );
-
     glBindFramebuffer( _target, getID( contextID ) );
+
     JAG3D_FBO_ERROR_CHECK( "Framebuffer::operator()" );
-
-
     JAG3D_ERROR_CHECK( "Framebuffer::operator()" );
 }
 
@@ -100,6 +98,8 @@ void Framebuffer::internalInit( const unsigned int contextID )
     {
         pair.second->attachToFBO( contextID, pair.first );
     }
+
+    JAG3D_FBO_ERROR_CHECK( "Framebuffer::internalInit()" );
 
     glBindFramebuffer( _target, 0 );
 
