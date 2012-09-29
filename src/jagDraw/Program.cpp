@@ -409,7 +409,9 @@ void Program::internalInit( const unsigned int contextID )
     const GLuint id( glCreateProgram() );
     JAG3D_ERROR_CHECK( "Program::internalInit()" );
     if( id == 0 )
+    {
         JAG3D_ERROR( "glCreateProgram() returned program ID 0." );
+    }
 
     _ids[ contextID ] = id;
     _linkStatus[ contextID ] = GL_FALSE;

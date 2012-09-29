@@ -24,6 +24,7 @@
 
 #include <Poco/Logger.h>
 #include <Poco/LogStream.h>
+#include <Poco/NullChannel.h>
 #include <jagBase/ptr.h>
 
 
@@ -51,26 +52,21 @@ class LogBase
 {
 public:
     LogBase( const std::string& loggerName )
-#ifdef JAG3D_DISABLE_LOGGING
-      : _logStream( PocoLogStreamPtr( NULL ) )
-#else
       : _logger( Poco::Logger::get( loggerName ) ),
         _logStream( PocoLogStreamPtr( new Poco::LogStream( _logger ) ) )
+    {
+#ifdef JAG3D_DISABLE_LOGGING
+        _logger.setChannel( new Poco::NullChannel() );
 #endif
-    {}
+    }
     LogBase( const LogBase& rhs )
-      :
-#ifndef JAG3D_DISABLE_LOGGING
-        _logger( rhs._logger ),
-#endif
+      : _logger( rhs._logger ),
         _logStream( rhs._logStream )
     {}
 
     ~LogBase() {}
 
-#ifndef JAG3D_DISABLE_LOGGING
     Poco::Logger& _logger;
-#endif
     PocoLogStreamPtr _logStream;
 };
 
