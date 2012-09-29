@@ -30,6 +30,8 @@
 #include <jagBase/LogBase.h>
 #include <jagBase/ptr.h>
 
+#include <map>
+
 
 namespace jagDraw {
 
@@ -58,10 +60,25 @@ public:
     Override from ObjectID. */
     virtual GLuint getID( const jagDraw::jagDrawContextID contextID );
 
-protected:
-    GLenum _target;
 
+    typedef std::map< GLenum, FramebufferAttachablePtr > AttachmentMap;
+
+    /** \brief TBD
+    \details \c attachment can be one of:
+    \li GL_COLOR_ATTACHMENTi
+    \li GL_DEPTH_ATTACHMENT
+    \li GL_STENCIL_ATTACHMENT
+    \li GL_DEPTH_STENCIL_ATTACHMENT
+    \gl{table 4.11}.
+    */
+    void addAttachment( const GLenum attachment, FramebufferAttachablePtr buffer );
+    FramebufferAttachablePtr getAttachment( const GLenum attachment );
+
+protected:
     void internalInit( const unsigned int contextID );
+
+    GLenum _target;
+    AttachmentMap _attachments;
 };
 
 typedef jagBase::ptr< jagDraw::Framebuffer >::shared_ptr FramebufferPtr;
@@ -71,7 +88,7 @@ typedef std::vector< FramebufferPtr > FramebufferVec;
 /** \class Renderbuffer Framebuffer.h <jagDraw/Framebuffer.h>
 \brief TBD
 \details TBD
-\gl{section 4.4}.
+\gl{section 4.4.2}.
 */
 class JAGDRAW_EXPORT Renderbuffer : public ObjectID,
         public FramebufferAttachable, protected jagBase::LogBase
@@ -89,6 +106,11 @@ public:
     /** \brief TBD
     Override from ObjectID. */
     virtual GLuint getID( const jagDraw::jagDrawContextID contextID );
+
+    /** \brief TBD
+    \detauls Override from FramebufferAttachable.
+    \gl{section 4.4.2} */
+    virtual void attachToFBO( const jagDraw::jagDrawContextID contextID, const GLenum attachment );
 
 protected:
     void internalInit( const unsigned int contextID );
