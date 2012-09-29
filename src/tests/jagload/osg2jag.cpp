@@ -90,7 +90,9 @@ void Osg2Jag::apply( osg::Geometry* geom )
         ( geom->getNormalBinding() != osg::Geometry::BIND_OFF ) )
     {
         if( geom->getNormalBinding() != osg::Geometry::BIND_PER_VERTEX )
+        {
             JAG3D_NOTICE_STATIC( "jag.demo.jagload", "Only BIND_PER_VERTEX is currently supported." );
+        }
 
         osg::Matrix m = osg::computeLocalToWorld( getNodePath() );
         m.setTrans(0.,0.,0.);

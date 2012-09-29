@@ -138,7 +138,9 @@ void BufferObject::internalInit( const unsigned int contextID )
     const GLuint id( _ids[ contextID ] );
     JAG3D_ERROR_CHECK( "BufferObject::internalInit() glGenBuffers()" );
     if( id == 0 )
+    {
         JAG3D_ERROR( "glGenBuffers() generated buffer ID 0." );
+    }
 
     glBindBuffer( _target, id );
     glBufferData( _target, _buffer->getSize(), _buffer->data(), _usage );

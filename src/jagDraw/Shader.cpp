@@ -121,7 +121,9 @@ void Shader::internalInit( const unsigned int contextID )
     const GLuint id( glCreateShader( _type ) );
     JAG3D_ERROR_CHECK( "Shader::internalInit()" );
     if( id == 0 )
+    {
         JAG3D_ERROR( "glCreateShader() returned shader ID 0." );
+    }
     _ids[ contextID ] = id;
 
     if( JAG3D_LOG_TRACE )
