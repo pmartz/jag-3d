@@ -83,10 +83,9 @@ GLenum fboErrorCheck( const std::string& msg )
         enumStr = std::string( "GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT" );
 #endif
 
-    std::string outMsg( "OpenGL FBO error " );
-    outMsg.append( enumStr );
-    outMsg.append( msg );
-    JAG3D_ERROR_STATIC( "jag.draw.glerror", outMsg );
+    enumStr.append( ": " );
+    enumStr.append( msg );
+    JAG3D_ERROR_STATIC( "jag.draw.glerror.fbo", enumStr );
 
 #endif
 
