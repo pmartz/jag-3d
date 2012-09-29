@@ -23,6 +23,8 @@
 
 
 #include <jagDraw/Export.h>
+#include <jagDraw/ContextSupport.h>
+#include <jagDraw/PlatformOpenGL.h>
 #include <jagBase/ptr.h>
 
 
@@ -36,26 +38,34 @@ namespace jagDraw {
 class JAGDRAW_EXPORT FramebufferAttachable
 {
 public:
-    typedef enum {
-        TYPE_RENDERBUFFER,
-        TYPE_TEXTURE
-    } BufferType;
-
-    FramebufferAttachable( BufferType bufferType )
+    FramebufferAttachable( GLenum fboTarget=GL_FRAMEBUFFER, GLint fboTextureLevel=0 )
+      : _fboTarget( fboTarget ),
+        _fboTextureLevel( fboTextureLevel )
     {}
     FramebufferAttachable( const FramebufferAttachable& rhs )
-      : _bufferType( rhs._bufferType )
+      : _fboTextureLevel( rhs._fboTextureLevel )
     {}
     virtual ~FramebufferAttachable()
     {}
 
-    const BufferType getBufferType() const
+    /** \brief TBD
+    \details TBD */
+    virtual void attachToFBO( const jagDraw::jagDrawContextID contextID, const GLenum attachment ) = 0;
+
+    /** \brief TBD
+    \details TBD */
+    void setFBOTextureLevel( GLint fboTextureLevel )
     {
-        return( _bufferType );
+        _fboTextureLevel = fboTextureLevel;
+    }
+    const GLint getFBOTextureLevel() const
+    {
+        return( _fboTextureLevel );
     }
 
 protected:
-    BufferType _bufferType;
+    GLenum _fboTarget;
+    GLint _fboTextureLevel;
 };
 
 typedef jagBase::ptr< jagDraw::FramebufferAttachable >::shared_ptr FramebufferAttachablePtr;

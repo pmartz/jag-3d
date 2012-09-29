@@ -29,14 +29,14 @@ namespace jagDraw {
 
 Texture::Texture()
   : DrawablePrep(),
-    FramebufferAttachable( FramebufferAttachable::TYPE_TEXTURE ),
+    FramebufferAttachable(),
     jagBase::LogBase( "jag.draw.texture" ),
     _target( 0 )
 {
 }
 Texture::Texture( const GLenum target, ImagePtr image )
   : DrawablePrep(),
-    FramebufferAttachable( FramebufferAttachable::TYPE_TEXTURE ),
+    FramebufferAttachable(),
     jagBase::LogBase( "jag.draw.texture" ),
     _target( target ),
     _image( image )
@@ -77,6 +77,11 @@ GLuint Texture::getID( const jagDraw::jagDrawContextID contextID )
     }
 
     return( _ids[ contextID ] );
+}
+
+void Texture::attachToFBO( const jagDraw::jagDrawContextID contextID, const GLenum attachment )
+{
+    glFramebufferTexture( _fboTarget, attachment, getID( contextID ), _fboTextureLevel );
 }
 
 

@@ -23,6 +23,8 @@
 #include <jagDraw/Error.h>
 #include <jagBase/LogMacros.h>
 
+#include <boost/foreach.hpp>
+
 
 namespace jagDraw {
 
@@ -67,6 +69,20 @@ GLuint Framebuffer::getID( const jagDraw::jagDrawContextID contextID )
 }
 
 
+void Framebuffer::addAttachment( const GLenum attachment, FramebufferAttachablePtr buffer )
+{
+    _attachments[ attachment ] = buffer;
+}
+FramebufferAttachablePtr Framebuffer::getAttachment( const GLenum attachment )
+{
+    AttachmentMap::iterator found;
+    if( ( found = _attachments.find( attachment ) ) != _attachments.end() )
+        return( found->second );
+    else
+        return( FramebufferAttachablePtr( (FramebufferAttachable*)NULL ) );
+}
+
+
 void Framebuffer::internalInit( const unsigned int contextID )
 {
     glGenFramebuffers( 1, &( _ids[ contextID ] ) );
@@ -80,12 +96,10 @@ void Framebuffer::internalInit( const unsigned int contextID )
 
     glBindFramebuffer( _target, id );
 
-    // GL_COLOR_ATTACHMENTi
-    // GL_DEPTH_ATTACHMENT
-    // GL_STENCIL_ATTACHMENT
-    // GL_DEPTH_STENCIL_ATTACHMENT
-
-    //glFramebufferRenderbuffer( _target, attachment, GL_RENDERBUFFER, rbId );
+    BOOST_FOREACH( AttachmentMap::value_type pair, _attachments )
+    {
+        pair.second->attachToFBO( contextID, pair.first );
+    }
 
     glBindFramebuffer( _target, 0 );
 
@@ -95,7 +109,7 @@ void Framebuffer::internalInit( const unsigned int contextID )
 
 
 Renderbuffer::Renderbuffer( const GLenum internalFormat, const GLsizei width, const GLsizei height, const GLsizei samples )
-  : FramebufferAttachable( FramebufferAttachable::TYPE_RENDERBUFFER ),
+  : FramebufferAttachable(),
     jagBase::LogBase( "jag.draw.fbo.rb" ),
     _samples( samples ),
     _internalFormat( internalFormat),
@@ -137,6 +151,10 @@ GLuint Renderbuffer::getID( const jagDraw::jagDrawContextID contextID )
     return( _ids[ contextID ] );
 }
 
+void Renderbuffer::attachToFBO( const jagDraw::jagDrawContextID contextID, const GLenum attachment )
+{
+    glFramebufferRenderbuffer( _fboTarget, attachment, GL_RENDERBUFFER, getID( contextID ) );
+}
 
 void Renderbuffer::internalInit( const unsigned int contextID )
 {

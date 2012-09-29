@@ -60,6 +60,11 @@ public:
     Override from ObjectID. */
     virtual GLuint getID( const jagDraw::jagDrawContextID contextID );
 
+    /** \brief TBD
+    \details Override from FramebufferAttachable.
+    \gl{section 4.4.2} */
+    virtual void attachToFBO( const jagDraw::jagDrawContextID contextID, const GLenum attachment );
+
 #if 0 // chaskii stuff
     virtual void callStats() { stats(); }
 
