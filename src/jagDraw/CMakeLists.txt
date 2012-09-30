@@ -36,6 +36,7 @@ set( _jagDrawHeaderFiles
     DrawCommon.h
     Error.h
     Framebuffer.h
+    FramebufferAttachable.h
     Image.h
     ObjectID.h
     PerContextData.h
