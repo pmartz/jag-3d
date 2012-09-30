@@ -38,7 +38,7 @@ namespace jagDraw {
 class JAGDRAW_EXPORT FramebufferAttachable
 {
 public:
-    FramebufferAttachable( GLenum fboTarget=GL_FRAMEBUFFER, GLint fboTextureLevel=0 )
+    FramebufferAttachable( GLenum fboTarget=GL_DRAW_FRAMEBUFFER, GLint fboTextureLevel=0 )
       : _fboTarget( fboTarget ),
         _fboTextureLevel( fboTextureLevel )
     {}

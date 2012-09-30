@@ -50,7 +50,13 @@ Framebuffer::~Framebuffer()
 void Framebuffer::operator()( DrawInfo& drawInfo )
 {
     const unsigned int contextID( drawInfo._id );
-    glBindFramebuffer( _target, getID( contextID ) );
+    const GLuint id( getID( contextID )  );
+    glBindFramebuffer( _target, id );
+
+    if( id == 0 )
+        glDrawBuffer( GL_BACK );
+    else
+        glDrawBuffer( GL_COLOR_ATTACHMENT0 );
 
     JAG3D_FBO_ERROR_CHECK( "Framebuffer::operator()" );
     JAG3D_ERROR_CHECK( "Framebuffer::operator()" );
@@ -58,6 +64,12 @@ void Framebuffer::operator()( DrawInfo& drawInfo )
 
 GLuint Framebuffer::getID( const jagDraw::jagDrawContextID contextID )
 {
+    if( _attachments.empty() )
+    {
+        // Default framebuffer.
+        return( 0 );
+    }
+
     if( _ids[ contextID ] == 0 )
     {
         internalInit( contextID );

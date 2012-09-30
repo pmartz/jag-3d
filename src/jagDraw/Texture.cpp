@@ -30,14 +30,14 @@ namespace jagDraw {
 Texture::Texture()
   : DrawablePrep(),
     FramebufferAttachable(),
-    jagBase::LogBase( "jag.draw.texture" ),
-    _target( 0 )
+    jagBase::LogBase( "jag.draw.tex" ),
+    _target( GL_NONE )
 {
 }
 Texture::Texture( const GLenum target, ImagePtr image )
   : DrawablePrep(),
     FramebufferAttachable(),
-    jagBase::LogBase( "jag.draw.texture" ),
+    jagBase::LogBase( "jag.draw.tex" ),
     _target( target ),
     _image( image )
 {
@@ -88,6 +88,9 @@ void Texture::attachToFBO( const jagDraw::jagDrawContextID contextID, const GLen
 
 void Texture::internalInit( const unsigned int contextID )
 {
+    if( _image == NULL )
+        return;
+
     glGenTextures( 1, &( _ids[ contextID ] ) );
     const GLint id( _ids[ contextID ] );
 
@@ -104,39 +107,40 @@ void Texture::internalInit( const unsigned int contextID )
     glTexParameterf( _target, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
     glTexParameterf( _target, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
 
-    if( _image != NULL )
+
+    GLint level;
+    GLenum internalFormat;
+    GLsizei width, height, depth;
+    GLint border;
+    GLenum format;
+    GLenum type;
+    jagBase::BufferPtr data;
+    _image->get( level, internalFormat, width, height, depth,
+        border, format, type, data );
+
+    const void* dataAddress( ( data != NULL ) ? data->data() : NULL );
+
+    // If the image has a pixel store object, send the pixel
+    // store parameters to OpenGL.
+    if( _image->getPixelStore() != NULL )
+        _image->getPixelStore()->unpack();
+
+    switch( _target )
     {
-        GLint level;
-        GLenum internalFormat;
-        GLsizei width, height, depth;
-        GLint border;
-        GLenum format;
-        GLenum type;
-        jagBase::BufferPtr data;
-        _image->get( level, internalFormat, width, height, depth,
-            border, format, type, data );
-
-        // If the image has a pixel store object, send the pixel
-        // store parameters to OpenGL.
-        if( _image->getPixelStore() != NULL )
-            _image->getPixelStore()->unpack();
-
-        switch( _target )
-        {
-        case GL_TEXTURE_1D:
-            glTexImage1D( _target, level, internalFormat,
-                width, border, format, type, data->data() );
-            break;
-        case GL_TEXTURE_2D:
-            glTexImage2D( _target, level, internalFormat,
-                width, height, border, format, type, data->data() );
-            break;
-        case GL_TEXTURE_3D:
-            glTexImage3D( _target, level, internalFormat,
-                width, height, depth, border, format, type, data->data() );
-            break;
-        }
+    case GL_TEXTURE_1D:
+        glTexImage1D( _target, level, internalFormat,
+            width, border, format, type, dataAddress );
+        break;
+    case GL_TEXTURE_2D:
+        glTexImage2D( _target, level, internalFormat,
+            width, height, border, format, type, dataAddress );
+        break;
+    case GL_TEXTURE_3D:
+        glTexImage3D( _target, level, internalFormat,
+            width, height, depth, border, format, type, dataAddress );
+        break;
     }
+
     //glGenerateMipmap( _target );
 
     glBindTexture( _target, 0 );
