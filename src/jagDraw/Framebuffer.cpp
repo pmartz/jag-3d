@@ -53,6 +53,10 @@ void Framebuffer::operator()( DrawInfo& drawInfo )
     const GLuint id( getID( contextID )  );
     glBindFramebuffer( _target, id );
 
+    if( anyDirty( contextID ) )
+        attachAll( contextID );
+
+    // TBD need better support for this.
     if( id == 0 )
         glDrawBuffer( GL_BACK );
     else
@@ -81,6 +85,7 @@ GLuint Framebuffer::getID( const jagDraw::jagDrawContextID contextID )
 void Framebuffer::setMaxContexts( const unsigned int numContexts )
 {
     ObjectID::setMaxContexts( numContexts );
+    _dirtyAttachments._data.resize( numContexts );
 
     BOOST_FOREACH( AttachmentMap::value_type pair, _attachments )
     {
@@ -102,6 +107,7 @@ void Framebuffer::setMaxContexts( const unsigned int numContexts )
 void Framebuffer::deleteID( const jagDraw::jagDrawContextID contextID )
 {
     ObjectID::deleteID( contextID );
+    dirtyAllAttachments( contextID );
 
     BOOST_FOREACH( AttachmentMap::value_type pair, _attachments )
     {
@@ -124,6 +130,7 @@ void Framebuffer::deleteID( const jagDraw::jagDrawContextID contextID )
 void Framebuffer::addAttachment( const GLenum attachment, FramebufferAttachablePtr buffer )
 {
     _attachments[ attachment ] = buffer;
+    dirtyAttachmentForAllContexts( attachment );
 }
 FramebufferAttachablePtr Framebuffer::getAttachment( const GLenum attachment )
 {
@@ -147,18 +154,64 @@ void Framebuffer::internalInit( const unsigned int contextID )
     }
 
     glBindFramebuffer( _target, id );
-
-    BOOST_FOREACH( AttachmentMap::value_type pair, _attachments )
-    {
-        pair.second->attachToFBO( contextID, pair.first );
-    }
-
-    JAG3D_FBO_ERROR_CHECK( "Framebuffer::internalInit()" );
-
+    attachAll( contextID );
     glBindFramebuffer( _target, 0 );
 
     JAG3D_ERROR_CHECK( "Framebuffer::internalInit()" );
 }
+void Framebuffer::attachAll( const unsigned int contextID )
+{
+    BOOST_FOREACH( AttachmentMap::value_type pair, _attachments )
+    {
+        pair.second->attachToFBO( contextID, pair.first );
+    }
+    // Mark all attachments clean.
+    dirtyAllAttachments( contextID, false );
+
+    JAG3D_FBO_ERROR_CHECK( "Framebuffer::internalInit()" );
+}
+
+void Framebuffer::dirtyAttachmentForAllContexts( const GLenum attachment )
+{
+    BOOST_FOREACH( DirtyAttachmentMap& dirtyMap, _dirtyAttachments._data )
+    {
+        DirtyAttachmentMap::iterator it( dirtyMap.find( attachment ) );
+        if( it != dirtyMap.end() )
+            it->second = true;
+    }
+}
+void Framebuffer::dirtyAllAttachments( const unsigned int contextID, const bool dirty )
+{
+    if( contextID >= _dirtyAttachments._data.size() )
+    {
+        JAG3D_WARNING( "dirtyAllAttachments() got incorrect contextID." );
+        return;
+    }
+
+    DirtyAttachmentMap& dirtyMap( _dirtyAttachments._data[ contextID ] );
+    BOOST_FOREACH( DirtyAttachmentMap::value_type& data, dirtyMap )
+    {
+        data.second = dirty;
+    }
+}
+bool Framebuffer::anyDirty(  const unsigned int contextID  ) const
+{
+    if( contextID >= _dirtyAttachments._data.size() )
+    {
+        JAG3D_WARNING( "anyDirty() got incorrect contextID." );
+        return( false );
+    }
+
+    const DirtyAttachmentMap& dirty( _dirtyAttachments._data[ contextID ] );
+    BOOST_FOREACH( const DirtyAttachmentMap::value_type& data, dirty )
+    {
+        if( data.second )
+            return( true );
+    }
+    return( false );
+}
+
+
 
 
 

@@ -26,6 +26,7 @@
 #include <jagDraw/PlatformOpenGL.h>
 #include <jagDraw/DrawablePrep.h>
 #include <jagDraw/FramebufferAttachable.h>
+#include <jagDraw/PerContextData.h>
 #include <jagDraw/ObjectID.h>
 #include <jagBase/LogBase.h>
 #include <jagBase/ptr.h>
@@ -84,9 +85,18 @@ public:
 
 protected:
     void internalInit( const unsigned int contextID );
+    void attachAll( const unsigned int contextID );
+
+    void dirtyAttachmentForAllContexts( const GLenum attachment );
+    void dirtyAllAttachments( const unsigned int contextID, const bool dirty=true );
+    bool anyDirty( const unsigned int contextID ) const;
 
     GLenum _target;
     AttachmentMap _attachments;
+
+    typedef std::map< GLenum, bool > DirtyAttachmentMap;
+    typedef jagDraw::PerContextData< DirtyAttachmentMap > DirtyAttachments;
+    DirtyAttachments _dirtyAttachments;
 };
 
 typedef jagBase::ptr< jagDraw::Framebuffer >::shared_ptr FramebufferPtr;
