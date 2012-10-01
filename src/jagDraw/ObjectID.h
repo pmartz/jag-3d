@@ -33,6 +33,9 @@
 namespace jagDraw {
 
 
+/** \addtogroup OpenGLAbstraction Support for OpenGL Abstract Concepts */
+/*@{*/
+
 /** \class ObjectIDOwner ObjectID.h <jagDraw/ObjectID.h>
 \brief Base for classes that own classes derived from ObjectID ("has a" pattern).
 \details Examples of classes that own classes derived (either directly or indirectly)
@@ -56,9 +59,15 @@ public:
     virtual void deleteID( const jagDraw::jagDrawContextID contextID ) {}
 };
 
+/*@}*/
+
 typedef jagBase::ptr< jagDraw::ObjectIDOwner >::shared_ptr ObjectIDOwnerPtr;
 typedef std::vector< ObjectIDOwnerPtr > ObjectIDOwnerVec;
 
+
+
+/** \addtogroup OpenGLAbstraction Support for OpenGL Abstract Concepts */
+/*@{*/
 
 /** \class ObjectID ObjectID.h <jagDraw/ObjectID.h>
 \brief Base for classes that own OpenGL object identifiers.
@@ -109,6 +118,8 @@ public:
 protected:
     PerContextGLuint _ids;
 };
+
+/*@}*/
 
 typedef jagBase::ptr< jagDraw::ObjectID >::shared_ptr ObjectIDPtr;
 typedef std::vector< ObjectIDPtr > ObjectIDVec;

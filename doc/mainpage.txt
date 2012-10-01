@@ -20,6 +20,7 @@ Note that hardware mipmap generation is unavailable in GL4cpfc. Jag will need
 host-side image filtering code to replace this functionality.
 
 Direct OpenGL support:
+\li \ref OpenGLAbstraction "OpenGL Abstraction Support"
 \li \ref jagDrawError "OpenGL Errors"
 \li \link jagDraw::VertexAttrib Generic Vertex Attributes \endlink
 \li \link jagDraw::VertexArrayObject Vertex Array Objects \endlink
