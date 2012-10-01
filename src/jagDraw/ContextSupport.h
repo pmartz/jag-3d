@@ -39,6 +39,63 @@ typedef unsigned int jagDrawContextID;
 typedef uint64_t platformContextID;
 
 
+/** \addtogroup OpenGLAbstraction Support for Abstract OpenGL Concepts
+
+Jag supports some abstract OpenGL concepts. Some of these are mentioned in the
+spec, others simply support OpenGL usage. But in general they don't map directly
+to specific OpenGL commands.
+
+Abstract objects include the following:
+
+\section ContextSupport
+
+Base class for per-platform jagDraw::ContextSupport classes. jagDraw::ContextSupport
+allows a mapping of per-platform context IDs to \c jagDrawContextID (Jag's 0-based
+internal context ID representation), tracks the current context for a given
+thread, etc.
+
+\section FramebufferAttachable
+
+The "framebuffer-attachable" concept is defined in the spec.
+\glinline{section 4.4}. jagDraw::FramebufferAttachable is a base class for the
+two Jag classes that can be attached to a framebuffer object: jagDraw::Texture
+and jagDraw::Renderbuffer.
+
+\section Image
+
+jagDraw::Image maintains a block of image data and parameters for describing
+the format and type of that data. jagDraw::Texture holds a shared pointer to
+a jagDraw::Image, for example. In the future, jagDraw::Image might be used to
+support pixel operations other than texture mapping (such as glReadPixels).
+
+\section ObjectID
+
+Many OpenGL objects have GLuint object IDs, such as texture objects, framebuffer
+objects, and vertex array objects. jagDraw::ObjectID serves as a base class for
+such classes in Jag, stores an ID per context, and provedes methods for accessing
+and deleting the IDs.
+
+\section ObjectIDOwner
+
+Some Jag classes act as containers for class instances that have
+OpenGL object IDs. jagDraw::Drawable and jagDraw::UniformBlock, for example.
+These classes derive from ObjectIDOwner, which probides methods to allow these
+classes to maintain class instances that own object IDs.
+
+Some Jag container classes also have their own OpenGL object ID. One example
+is Framebuffer, which has an OpenGL object ID and also contains a list of
+jagDraw::FramebufferAttachable class instances. Such classes should simply
+derive from ObjectID rather than ObjectIDOwner. Deriving from both ObjectID
+and ObjectIDOwner could produce multiple inheritance issues and is not
+supported.
+
+\section PerContextData
+
+A thread-safe vector of per-context data. jagDraw::PerContextData is
+used by ObjectID to store OpenGL object IDs per-context.
+*/
+/*@{*/
+
 /** \class ContextSupport ContextSupport.h <jagDraw/ContextSupport.h>
 
 Still to-do:
@@ -120,6 +177,8 @@ protected:
 
     boost::mutex _mutex;
 };
+
+/*@}*/
 
 
 inline jagDrawContextID ContextSupport::getActiveContext() const

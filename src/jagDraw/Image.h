@@ -33,6 +33,9 @@
 namespace jagDraw {
 
 
+/** \addtogroup OpenGLAbstraction Support for OpenGL Abstract Concepts */
+/*@{*/
+
 /** \class Image Image.h <jagDraw/Image.h>
 \brief TBD
 \details TBD
@@ -68,6 +71,8 @@ protected:
 
     PixelStorePtr _pixelStore;
 };
+
+/*@}*/
 
 typedef jagBase::ptr< jagDraw::Image >::shared_ptr ImagePtr;
 typedef std::vector< ImagePtr > ImageVec;

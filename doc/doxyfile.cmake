@@ -35,6 +35,7 @@ INHERIT_DOCS           = YES
 SEPARATE_MEMBER_PAGES  = NO
 TAB_SIZE               = 8
 ALIASES                = gl{1}="\note See OpenGL specification \1"
+    ALIASES           += glinline{1}="See OpenGL specification \1"
     ALIASES           += glparam{2}="\param \1 See OpenGL specification \2"
 OPTIMIZE_OUTPUT_FOR_C  = NO
 OPTIMIZE_OUTPUT_JAVA   = NO

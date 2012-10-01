@@ -31,9 +31,13 @@
 namespace jagDraw {
 
 
+/** \addtogroup OpenGLAbstraction Support for OpenGL Abstract Concepts */
+/*@{*/
+
 /** \class FramebufferAttachable FramebufferAttachable.h <jagDraw/FramebufferAttachable.h>
 \brief TBD
 \details TBD
+\gl{section 4.4}.
 */
 class JAGDRAW_EXPORT FramebufferAttachable
 {
@@ -67,6 +71,8 @@ protected:
     GLenum _fboTarget;
     GLint _fboTextureLevel;
 };
+
+/*@}*/
 
 typedef jagBase::ptr< jagDraw::FramebufferAttachable >::shared_ptr FramebufferAttachablePtr;
 typedef std::vector< FramebufferAttachablePtr > FramebufferAttachableVec;

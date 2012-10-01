@@ -28,6 +28,9 @@
 namespace jagDraw {
 
 
+/** \addtogroup OpenGLAbstraction Support for OpenGL Abstract Concepts */
+/*@{*/
+
 /** \struct PerContextData PerContextData.h <jagDraw/PerContextData.h>
 */
 template< typename T >
@@ -57,6 +60,8 @@ struct PerContextData
 
     std::vector< T > _data;
 };
+
+/*@}*/
 
 
 // jagDraw
