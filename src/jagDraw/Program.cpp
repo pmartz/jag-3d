@@ -311,47 +311,50 @@ bool Program::link( unsigned int contextID )
         }
 
         // Query uniform block info
+        _blockInfo.clear();
         GLint numUniformBlocks;
         glGetProgramiv( id, GL_ACTIVE_UNIFORM_BLOCKS, &numUniformBlocks );
-        _blockInfo.clear();
-        GLintVec nuIdx, nuOff;
-        nuIdx.resize( namedBlockUniformIndices.size() );
-        glGetActiveUniformsiv( id, (GLsizei)namedBlockUniformIndices.size(), &(namedBlockUniformIndices[0]),
-            GL_UNIFORM_BLOCK_INDEX, &(nuIdx[0]) );
-        nuOff.resize( namedBlockUniformIndices.size() );
-        glGetActiveUniformsiv( id, (GLsizei)namedBlockUniformIndices.size(), &(namedBlockUniformIndices[0]),
-            GL_UNIFORM_OFFSET, &(nuOff[0]) );
-        for( GLuint idx = 0; idx < (GLuint)numUniformBlocks; idx++ )
+        if( numUniformBlocks > 0 )
         {
-            glUniformBlockBinding( id, idx, idx );
-            glGetActiveUniformBlockName( id, idx, maxLength, NULL, buf );
-            const std::string blockName( buf );
-            const HashValue hash( createHash( blockName ) );
-            BlockInfo& bi( _blockInfo[ hash ] );
-            bi._bindIndex = idx;
-            GLint size;
-            glGetActiveUniformBlockiv( id, idx, GL_UNIFORM_BLOCK_DATA_SIZE, &size );
-            bi._minSize = (size_t)size;
-            if( JAG3D_LOG_INFO )
-                logValues( ls, hash, idx, 0, blockName, "block name" );
-            unsigned int uidx( 0 );
-            BOOST_FOREACH( GLuint blockIdx, nuIdx )
+            GLintVec nuIdx, nuOff;
+            nuIdx.resize( namedBlockUniformIndices.size() );
+            glGetActiveUniformsiv( id, (GLsizei)namedBlockUniformIndices.size(), &(namedBlockUniformIndices[0]),
+                GL_UNIFORM_BLOCK_INDEX, &(nuIdx[0]) );
+            nuOff.resize( namedBlockUniformIndices.size() );
+            glGetActiveUniformsiv( id, (GLsizei)namedBlockUniformIndices.size(), &(namedBlockUniformIndices[0]),
+                GL_UNIFORM_OFFSET, &(nuOff[0]) );
+            for( GLuint idx = 0; idx < (GLuint)numUniformBlocks; idx++ )
             {
-                if( blockIdx == idx )
+                glUniformBlockBinding( id, idx, idx );
+                glGetActiveUniformBlockName( id, idx, maxLength, NULL, buf );
+                const std::string blockName( buf );
+                const HashValue hash( createHash( blockName ) );
+                BlockInfo& bi( _blockInfo[ hash ] );
+                bi._bindIndex = idx;
+                GLint size;
+                glGetActiveUniformBlockiv( id, idx, GL_UNIFORM_BLOCK_DATA_SIZE, &size );
+                bi._minSize = (size_t)size;
+                if( JAG3D_LOG_INFO )
+                    logValues( ls, hash, idx, 0, blockName, "block name" );
+                unsigned int uidx( 0 );
+                BOOST_FOREACH( GLuint blockIdx, nuIdx )
                 {
-                    glGetActiveUniformName( id, namedBlockUniformIndices[ uidx ], maxLength, NULL, buf );
-                    std::string nubName( buf );
-                    if( nubName.find_last_of( '[' ) != nubName.npos )
+                    if( blockIdx == idx )
                     {
-                        // Some drivers append "[...]" to end of array names. Strip this.
-                        nubName = nubName.substr( 0, nubName.find_last_of( '[' ) );
+                        glGetActiveUniformName( id, namedBlockUniformIndices[ uidx ], maxLength, NULL, buf );
+                        std::string nubName( buf );
+                        if( nubName.find_last_of( '[' ) != nubName.npos )
+                        {
+                            // Some drivers append "[...]" to end of array names. Strip this.
+                            nubName = nubName.substr( 0, nubName.find_last_of( '[' ) );
+                        }
+                        const HashValue nubHash( createHash( nubName ) );
+                        bi._offsets[ nubHash ] = nuOff[ uidx ];
+                        if( JAG3D_LOG_INFO )
+                            logValues( ls, nubHash, idx, nuOff[ uidx], nubName, "  block: " + blockName, true );
                     }
-                    const HashValue nubHash( createHash( nubName ) );
-                    bi._offsets[ nubHash ] = nuOff[ uidx ];
-                    if( JAG3D_LOG_INFO )
-                        logValues( ls, nubHash, idx, nuOff[ uidx], nubName, "  block: " + blockName, true );
+                    ++uidx;
                 }
-                ++uidx;
             }
         }
 
