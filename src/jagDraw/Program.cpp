@@ -316,11 +316,11 @@ bool Program::link( unsigned int contextID )
         _blockInfo.clear();
         GLintVec nuIdx, nuOff;
         nuIdx.resize( namedBlockUniformIndices.size() );
-        glGetActiveUniformsiv( id, (GLsizei)namedBlockUniformIndices.size(), namedBlockUniformIndices.data(),
-            GL_UNIFORM_BLOCK_INDEX, nuIdx.data() );
+        glGetActiveUniformsiv( id, (GLsizei)namedBlockUniformIndices.size(), &(namedBlockUniformIndices[0]),
+            GL_UNIFORM_BLOCK_INDEX, &(nuIdx[0]) );
         nuOff.resize( namedBlockUniformIndices.size() );
-        glGetActiveUniformsiv( id, (GLsizei)namedBlockUniformIndices.size(), namedBlockUniformIndices.data(),
-            GL_UNIFORM_OFFSET, nuOff.data() );
+        glGetActiveUniformsiv( id, (GLsizei)namedBlockUniformIndices.size(), &(namedBlockUniformIndices[0]),
+            GL_UNIFORM_OFFSET, &(nuOff[0]) );
         for( GLuint idx = 0; idx < (GLuint)numUniformBlocks; idx++ )
         {
             glUniformBlockBinding( id, idx, idx );
