@@ -6,8 +6,8 @@
 #  CPPDOM_VERSION, package version in CMake decimal version# format (e.g., 3.1.6)
 #  CPPDOM_FOUND (Note capitalization), If false, do not try to use CppDOM.
 #
-# Suppert environment variable search hint:
-#  CppDOM_ROOT, CppDOM install directory root.
+# Search hint (in CMake or as an environment variable):
+#  CppDOM_ROOT, the CppDOM install directory root.
 
 
 # Find the main CppDOM header.

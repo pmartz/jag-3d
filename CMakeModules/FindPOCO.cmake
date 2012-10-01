@@ -8,6 +8,9 @@
 #
 # Note that if specifying <version> in find_package(), use the CMake format
 # rather than the POCO format (i.e., use "1.4.2.1" instead of "1.4.2p1").
+#
+# Search hint (in CMake or as an environment variable):
+#  Poco_ROOT, the Poco install directory root.
 
 
 # Convert a single hex character (assumed lowercase) from _inHex
@@ -60,7 +63,10 @@ endfunction()
 
 # Find the main Poco header.
 set( POCO_INCLUDE_DIR )
-find_path( POCO_INCLUDE_DIR Poco/Poco.h )
+find_path( POCO_INCLUDE_DIR Poco/Poco.h
+    PATHS ${Poco_ROOT} ENV Poco_ROOT
+    PATH_SUFFIXES include
+)
 
 
 # Set POCO_VERSION in format MM.mm.vv.pp, where each component is a decimal
@@ -136,6 +142,7 @@ foreach( lib ${_requestedComponents} )
     find_library( POCO_${lib}_LIBRARY
         NAMES ${lib}${_crtSuffix}
             Poco${lib}${_crtSuffix}
+        PATHS ${Poco_ROOT} ENV Poco_ROOT
         PATH_SUFFIXES lib
     )
     if( NOT POCO_${lib}_LIBRARY )
@@ -148,6 +155,7 @@ foreach( lib ${_requestedComponents} )
     find_library( POCO_${lib}_LIBRARY_DEBUG
         NAMES ${lib}${_crtDebugSuffix}
             Poco${lib}${_crtDebugSuffix}
+        PATHS ${Poco_ROOT} ENV Poco_ROOT
         PATH_SUFFIXES lib
     )
     if( NOT POCO_${lib}_LIBRARY_DEBUG )
