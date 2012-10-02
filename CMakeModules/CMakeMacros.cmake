@@ -27,16 +27,6 @@ endif()
 unset( _optionalDependencyIncludes )
 unset( _optionalDependencyLibraries )
 
-# Using gl3w, not GLEW. See top-level CMakeLists.txt for info.
-# if( GLEW_FOUND )
-#     list( APPEND _optionalDependencyIncludes
-#         ${GLEW_INCLUDE_DIR}
-#     )
-#     list( APPEND _optionalDependencyLibraries
-#         ${GLEW_LIBRARIES}
-#     )
-# endif()
-
 set( _requiredDependencyIncludes
     ${POCO_INCLUDE_DIR}
     ${Boost_INCLUDE_DIR}

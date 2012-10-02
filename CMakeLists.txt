@@ -94,15 +94,6 @@ if(APPLE)
     find_library(COREFOUNDATION_LIBRARY CoreFoundation)
     mark_as_advanced(COREFOUNDATION_LIBRARY)
 endif(APPLE)
-#   Required for Windows only:
-#include( FindGLEWHelper )
-# NO. Currently using gl3w (https://github.com/skaslev/gl3w/wiki/)
-# to work around GLEW's lack of GL3/4 support. gl3w source is
-# embedded in include/jagDraw and src/jagDraw; no external
-# dependency requirement.
-#
-# gl3w usage is an option that default to ON for Windows and OFF
-# for other platforms.
 
 
 if( JAG3D_USE_FREEGLUT )
@@ -113,7 +104,6 @@ endif()
 #     VrjMenuSetup()
 # endif()
 # GGTMenuSetup()
-# GLEWMenuSetup()
 POCOMenuSetup()
 
 if( JAG3D_USE_FREEGLUT )
@@ -124,7 +114,6 @@ endif()
 #     VrjFinder()
 # endif()
 # GGTFinder()
-# GLEWFinder()
 POCOFinder()
 
 #
@@ -141,10 +130,6 @@ else()
         message( STATUS "Qt was not found because the qglobal.h file was not found." )
     endif()
 endif()
-
-# if( GLEW_FOUND )
-#     add_definitions( -DJAG3D_USE_GLEW )
-# endif()
 
 # Force ON. Later, remove the option altogether and always have it on.
 #option( BOOST_ALL_DYN_LINK "If set, use Boost dynamic libraries (boost_*); otherwise static (libboost_*)." OFF )
