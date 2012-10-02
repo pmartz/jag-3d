@@ -63,15 +63,15 @@ list( APPEND _boostComponents system )
 
 #
 #   At least one windowing API is required for demos/tests/examples:
-option( JAG3D_USE_FREEGLUT "If set and freeglut is found, JAG builds windowed executables with freeglut." ON )
+option( JAG3D_USE_FREEGLUT "If set and freeglut is found, Jag3D builds windowed executables with freeglut." ON )
 if( JAG3D_USE_FREEGLUT )
     include( FindFreeglutHelper )
 endif()
-option( JAG3D_USE_QT "If set and Qt is found, JAG builds windowed executables with Qt." ON )
+option( JAG3D_USE_QT "If set and Qt is found, Jag3D builds windowed executables with Qt." ON )
 if( JAG3D_USE_QT )
     find_package( Qt4 4.8.0 COMPONENTS QtCore QtGui QtOpenGL )
 endif()
-option( JAG3D_USE_VRJ "If set and VR Juggler is found, JAG builds windowed executables with VR Juggler." ON )
+option( JAG3D_USE_VRJ "If set and VR Juggler is found, Jag3D builds windowed executables with VR Juggler." ON )
 if( JAG3D_USE_VRJ )
     list( APPEND _boostComponents signals )
     find_package( CppDOM )
@@ -163,12 +163,12 @@ endif()
 
 
 
-option( JAG3D_DISABLE_ALL_ERROR_CHECKS "If set, JAG disables all internal OpenGL error checking" OFF )
+option( JAG3D_DISABLE_ALL_ERROR_CHECKS "If set, Jag3D disables all internal OpenGL error checking" OFF )
 if( JAG3D_DISABLE_ALL_ERROR_CHECKS )
     add_definitions( -DJAG3D_DISABLE_ALL_ERROR_CHECKS )
 endif()
 
-option( JAG3D_DISABLE_LOGGING "If set, JAG disables all console and log file writes." OFF )
+option( JAG3D_DISABLE_LOGGING "If set, Jag3D disables all console and log file writes." OFF )
 if( JAG3D_DISABLE_LOGGING )
     add_definitions( -DJAG3D_DISABLE_LOGGING )
     add_definitions( -DJAG3D_LOG=false )
@@ -177,7 +177,7 @@ else()
 endif()
 
 # TBD Force Boost shared pointers ON for now. Remove the option altogether later.
-#option( JAG3D_USE_BOOST_POINTERS "If set, JAG uses Boost shared pointers instead of TR1" OFF )
+#option( JAG3D_USE_BOOST_POINTERS "If set, Jag3D uses Boost shared pointers instead of TR1" OFF )
 #if( JAG3D_USE_BOOST_POINTERS AND Boost_FOUND )
     add_definitions( -DJAG3D_USE_BOOST_POINTERS )
 #endif()

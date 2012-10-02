@@ -40,7 +40,7 @@ typedef jagBase::ptr< Poco::LogStream >::shared_ptr PocoLogStreamPtr;
 
 
 /** \class LogBase LogBase.h <jagBase/LogBase.h>
-\brief Enables message logging in Jag classes.
+\brief Enables message logging in Jag3D classes.
 \details Keeps a reference to a Poco::Logger and a smart pointer to a Poco LogStream.
 Derived classes pass the Logger name as a parameter to the LogBase constructor. All
 classes using the same Logger name share a reference to that Logger.

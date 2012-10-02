@@ -41,7 +41,7 @@ typedef uint64_t platformContextID;
 
 /** \addtogroup OpenGLAbstraction Support for Abstract OpenGL Concepts
 
-Jag supports some abstract OpenGL concepts. Some of these are mentioned in the
+Jag3D supports some abstract OpenGL concepts. Some of these are mentioned in the
 spec, others simply support OpenGL usage. But in general they don't map directly
 to specific OpenGL commands.
 
@@ -50,7 +50,7 @@ Abstract objects include the following:
 \section ContextSupport
 
 Base class for per-platform jagDraw::ContextSupport classes. jagDraw::ContextSupport
-allows a mapping of per-platform context IDs to \c jagDrawContextID (Jag's 0-based
+allows a mapping of per-platform context IDs to \c jagDrawContextID (Jag3D's 0-based
 internal context ID representation), tracks the current context for a given
 thread, etc.
 
@@ -58,7 +58,7 @@ thread, etc.
 
 The "framebuffer-attachable" concept is defined in the spec.
 \glinline{section 4.4}. jagDraw::FramebufferAttachable is a base class for the
-two Jag classes that can be attached to a framebuffer object: jagDraw::Texture
+two Jag3D classes that can be attached to a framebuffer object: jagDraw::Texture
 and jagDraw::Renderbuffer.
 
 \section Image
@@ -72,17 +72,17 @@ support pixel operations other than texture mapping (such as glReadPixels).
 
 Many OpenGL objects have GLuint object IDs, such as texture objects, framebuffer
 objects, and vertex array objects. jagDraw::ObjectID serves as a base class for
-such classes in Jag, stores an ID per context, and provedes methods for accessing
+such classes in Jag3D, stores an ID per context, and provedes methods for accessing
 and deleting the IDs.
 
 \section ObjectIDOwner
 
-Some Jag classes act as containers for class instances that have
+Some Jag3D classes act as containers for class instances that have
 OpenGL object IDs. jagDraw::Drawable and jagDraw::UniformBlock, for example.
 These classes derive from ObjectIDOwner, which probides methods to allow these
 classes to maintain class instances that own object IDs.
 
-Some Jag container classes also have their own OpenGL object ID. One example
+Some Jag3D container classes also have their own OpenGL object ID. One example
 is Framebuffer, which has an OpenGL object ID and also contains a list of
 jagDraw::FramebufferAttachable class instances. Such classes should simply
 derive from ObjectID rather than ObjectIDOwner. Deriving from both ObjectID
@@ -100,7 +100,7 @@ used by ObjectID to store OpenGL object IDs per-context.
 
 Still to-do:
 \li initContext() should not be necessary. ContextSupport can easily keep a std::set
-of JAG contextIDs that have been passed as parameters to setActiveContext() and
+of Jag3D contextIDs that have been passed as parameters to setActiveContext() and
 thereby know when a context is being made active/current for the first time.
 \li multicontext test program, using modified versions of qtSupport.cpp and
 freeglutSupport.cpp that use multiple threads to open multiple windows and
@@ -114,7 +114,7 @@ public:
 
     /** \brief Call this function after creating a new context.
     \details Call this for each new context your application creates, passing
-    in the platform-specific context ID. JAG maintains a 1-to-1 mapping of
+    in the platform-specific context ID. Jag3D maintains a 1-to-1 mapping of
     platform-specific context IDs and jagDrawContextID values. This function
     creates a unique jagDrawContextID value for the given \c pCtxTd and
     returns it. If \c pCtxId has already been registered, registerContext()
@@ -141,16 +141,16 @@ public:
     */
     inline jagDrawContextID getActiveContext() const;
 
-    /** \brief Call this function prior to executing OpenGL or JAG calls.
+    /** \brief Call this function prior to executing OpenGL or Jag3D calls.
     \details After making a context current for the first time, and after
-    calling setActiveContext(), call initContext(). This allows JAG to
+    calling setActiveContext(), call initContext(). This allows Jag3D to
     perform any context-specific initialization.
     \returns True on success, false on error.
     */
     virtual bool initContext();
 
     /** \brief Return the platform-specific context ID associated with the
-    given JAG \c contextID.
+    given Jag3D \c contextID.
     */
     platformContextID getPlatformContextID( const jagDrawContextID contextID ) const;
     /** \brief Return the jagDrawContextID associated with the given

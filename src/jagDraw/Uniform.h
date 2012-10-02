@@ -80,7 +80,7 @@ changes, or if program A is re-linked.)
   }
 \endcode
 
-JAG supports multiple Uniform instances that all have the same name,
+Jag3D supports multiple Uniform instances that all have the same name,
 and therefore all map to the same GLSL uniform variable. This is the
 case in the above scenario. In such a scenario, the two separate Uniform
 instances must always call glUniform*() to set their different values.
