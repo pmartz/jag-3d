@@ -176,12 +176,6 @@ else()
     add_definitions( -DJAG3D_LOG=true )
 endif()
 
-# TBD Force Boost shared pointers ON for now. Remove the option altogether later.
-#option( JAG3D_USE_BOOST_POINTERS "If set, Jag3D uses Boost shared pointers instead of TR1" OFF )
-#if( JAG3D_USE_BOOST_POINTERS AND Boost_FOUND )
-    add_definitions( -DJAG3D_USE_BOOST_POINTERS )
-#endif()
-
 option( BUILD_SHARED_LIBS "Set to ON to build JAG3D for dynamic linking. Use OFF for static." ON )
 if( NOT BUILD_SHARED_LIBS )
     add_definitions( -DJAG3D_STATIC )

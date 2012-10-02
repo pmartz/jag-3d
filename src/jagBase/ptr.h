@@ -18,31 +18,19 @@
 *
 *************** <auto-copyright.pl END do not edit this line> ***************/
 
-#ifndef __JAGBASE_PLATFORM_POINTER_H__
-#define __JAGBASE_PLATFORM_POINTER_H__ 1
+#ifndef __JAGBASE_PTR_H__
+#define __JAGBASE_PTR_H__ 1
 
 
-#ifdef JAG3D_USE_BOOST_POINTERS
-#  include <boost/smart_ptr/shared_ptr.hpp>
-#  include <boost/smart_ptr/shared_array.hpp>
-#  include <boost/smart_ptr/enable_shared_from_this.hpp>
-#else
-#  ifdef WIN32
-#    include <memory>
-#  else
-#    include <tr1/memory>
-#  endif
-#endif
+#include <boost/smart_ptr/shared_ptr.hpp>
+#include <boost/smart_ptr/shared_array.hpp>
+#include <boost/smart_ptr/enable_shared_from_this.hpp>
 
 
 namespace jagBase {
 
 
-#ifdef JAG3D_USE_BOOST_POINTERS
-#  define SHARED_FROM_THIS(_t) boost::enable_shared_from_this<_t>
-#else
-#  define SHARED_FROM_THIS(_t) std::tr1::enable_shared_from_this<_t>
-#endif
+#define SHARED_FROM_THIS(_t) boost::enable_shared_from_this<_t>
 
     
 /** \class ptr ptr.h <jagBase/ptr.h>
@@ -51,28 +39,8 @@ namespace jagBase {
 template <typename T>
 struct ptr
 {
-#ifdef JAG3D_USE_BOOST_POINTERS
     typedef boost::shared_ptr< T > shared_ptr;
     typedef boost::shared_array< T > shared_array_ptr;
-#else
-    typedef std::tr1::shared_ptr< T > shared_ptr;
-    struct shared_array_ptr : public shared_ptr
-    { 
-        shared_array_ptr() : shared_ptr()
-        {}
-        shared_array_ptr( T *t )
-          : shared_ptr( t, ptr< T >::__array_deleter() )
-        {}
-    };
-
-    struct __array_deleter
-    {
-        void operator()( T *t )
-        {
-            delete[] t;
-        }
-    };
-#endif
 };
 
 
@@ -80,5 +48,5 @@ struct ptr
 }
 
 
-// __JAGBASE_PLATFORM_POINTER_H__
+// __JAGBASE_PTR_H__
 #endif
