@@ -82,8 +82,8 @@ development system.
 For OpenGL 3/4 on Windows,
 Jag3D uses the gl3w toolkit, so this means you'll need to download glcorearb.h from the
 <a href=http://www.opengl.org/registry/>OpenGL Extension Registry</a>. Unfortunately, OSG has
-not moved to glcorearb.h yet, so you'll need to place
-the following code in a file called gl3.h, as a wrapper:
+not moved to glcorearb.h yet, so in order to use the optional OSG dependency, you'll need to
+create a gl3.h wrappar. Place the following code in a file called gl3.h:
 \code
 #ifdef GL3_PROTOTYPES
 #  define GLCOREARB_PROTOTYPES 1
