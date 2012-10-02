@@ -46,7 +46,7 @@ namespace jagBase
 This class provides a single interface for managing message logging.
 It maintains pointers to the console and log file channels, allows specifying
 a log file name, and allows specifying Logger priority and channel destinations.
-Under the hood, it provides uniform message formatting for all Jag Loggers.
+Under the hood, it provides uniform message formatting for all Jag3D Loggers.
 */
 class JAGBASE_EXPORT Log
 {
@@ -56,7 +56,7 @@ public:
 
     /** \brief Sets the default log file name.
     \details By default, the default log file name is "jag3d.log". Change it by calling
-    this function at init time prior to invocation of any other interaction with Jag.
+    this function at init time prior to invocation of any other interaction with Jag3D.
     (Specifically, setLogFileName() must be called before creating a class derived from
     LogBase that uses LogFile as a destination.) */
     void setLogFileName( const std::string& logFileName );

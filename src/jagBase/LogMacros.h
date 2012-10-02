@@ -27,12 +27,12 @@
 
 
 /** \addtogroup jagBaseLogging Message Logging Utilities
-\details Jag's message logging system is based on
+\details Jag3D's message logging system is based on
 <a href="http://pocoproject.org/slides/110-Logging.pdf" target=null>Poco</a>
 and is modeled after
 <a href="http://www.vesuite.org/" target=null>VE-Suite's</a> message logging system.
 
-Jag's modules and classes are arranged in a heirarchy to allow message destination (console
+Jag3D's modules and classes are arranged in a heirarchy to allow message destination (console
 or log file) and verbosity on a per-module and per-class basis. The heirarchy is arranged
 as follows:
 <ul>
@@ -93,27 +93,27 @@ Set a Poco::Logger's priority and destination (console or log file) using the ja
 
 Poco Logger priority and destination inherit down the heirarchy. Your application should
 set specific priority and destinations (as in the code above) at init time, before
-Jag class constructors obtain references to subordinate Loggers.
+Jag3D class constructors obtain references to subordinate Loggers.
 
 By default, the root Logger ("jag") is configured with priority 0 (silent) and
 destination jagBase::Log::Console.
 
-The default log file name is "jag3d.log" and Jag writes it to the current directory.
+The default log file name is "jag3d.log" and Jag3D writes it to the current directory.
 You can change the default log file name with either of the following methods:
 \li Call jagBase::Log::setLogFileName( const std::string& ).
 \li Set the environment variable JAG3D_LOG_FILE_NAME to the path and file name prior
 to invoking jagBase::Log::instance().
 
-Jag internal code uses the macros defined in jagBase/logMatrix.h to display log messages at
+Jag3D internal code uses the macros defined in jagBase/logMatrix.h to display log messages at
 verious levels. When using these macros, please observe the following rules of thumb:
 \li Use the JAG3D_LOG_<prio> macros to avoid expensive message construction for messages that will not be logged due to their priority.
 \li Use the JAG3D_<prio> macros from member functions of classes that derive from jagBase::LogBase.
 \li Use the JAG3D_<prio>_STATIC macros from static functions, or from member functions of classes that don't derive from jagBase::LogBase.
 
 Note that, even with priority set to 0, there is some non-zero overhead in handling
-message logging. To eliminate all Jag message logging, set the CMake variable
+message logging. To eliminate all Jag3D message logging, set the CMake variable
 JAG3D_DISABLE_LOGGING to ON (or select its checkbox in cmake-gui). When this variable
-is on, Jag's message logging facilities become no-ops and have zero computational cost.
+is on, Jag3D's message logging facilities become no-ops and have zero computational cost.
 
 */
 /*@{*/

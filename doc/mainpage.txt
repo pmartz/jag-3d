@@ -30,7 +30,7 @@ compatible (GL4cpfc) context. (Note that Jag3D currently supports OSX 10.7,
 which is OpenGL 3.2 core profile, but this support is likely to be dropped as
 soon as OSX moves forward with a more current OpenGL version.)
 
-Note that hardware mipmap generation is unavailable in GL4cpfc. Jag will need
+Note that hardware mipmap generation is unavailable in GL4cpfc. Jag3D will need
 host-side image filtering code to replace this functionality.
 
 Direct OpenGL support:
@@ -53,6 +53,10 @@ jagSG, the scene graph module, does not currently exist.
 
 \subsection ProjectRoadmap Upcoming Work and Project Notes
 
+\li Vertex array objects and uniform blocks need to track changes. Uniform blocks,
+in particular, always copy their values into the block.
+\li See jagDraw::Uniform documentation for potential optimizations and use cases
+that Jag3D should support.
 \li "State sorting" (sorting Drawables based on the commands that configure GL for
 rendering) needs to be implemented.
 \li Need to start developing jagSG (scene graph module) and visitor pattern.

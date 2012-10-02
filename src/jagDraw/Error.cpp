@@ -77,7 +77,7 @@ GLenum fboErrorCheck( const std::string& msg )
     }
 
 #if( defined( JAG3D_USE_GLEW ) && defined( GLEW_EXT_framebuffer_object ) )
-    // Check for an outdated error code. This might be useful for early JAG
+    // Check for an outdated error code. This might be useful for early Jag3D
     // development on GL2 systems.
     if( errorEnum == GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT )
         enumStr = std::string( "GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT" );

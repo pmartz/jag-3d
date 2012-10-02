@@ -161,7 +161,7 @@ bool TextureDemo::startup( const unsigned int numContexts )
     }
 
 
-    // Tell all Jag objects how many contexts to expect.
+    // Tell all Jag3D objects how many contexts to expect.
     BOOST_FOREACH( const jagDraw::DrawableVec::value_type& dp, _drawableVec )
     {
         dp->setMaxContexts( numContexts );
@@ -192,7 +192,7 @@ bool TextureDemo::frame( const gmtl::Matrix44f& view, const gmtl::Matrix44f& pro
 
     glClear( GL_COLOR_BUFFER_BIT );
 
-    // drawInfo stores the contextID (used by many Jag objects to
+    // drawInfo stores the contextID (used by many Jag3D objects to
     // look up their object ID), and the current Program
     // (used by vertex attribs and uniforms to look up their locations).
     jagDraw::DrawInfo drawInfo;

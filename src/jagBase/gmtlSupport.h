@@ -9,7 +9,7 @@ namespace gmtl {
 
 
     // This file should be used as a placeholder for any additional GMTL
-    // functionality needed by JAG, but not yet added to GMTL proper.
+    // functionality needed by Jag3D, but not yet added to GMTL proper.
     // This file is currently unused.
 
 

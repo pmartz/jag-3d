@@ -78,7 +78,7 @@ public:
 
 
     /** \brief Tell the Drawable how many contexts to expect.
-    \details Drawable iterates over all other attached Jag objects and
+    \details Drawable iterates over all other attached Jag3D objects and
     passes \c numContexts to their setMaxContexts() member function.
     */
     virtual void setMaxContexts( const unsigned int numContexts );

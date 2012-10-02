@@ -255,7 +255,7 @@ bool RttDemo::startup( const unsigned int numContexts )
     }
 
 
-    // Tell all Jag objects how many contexts to expect.
+    // Tell all Jag3D objects how many contexts to expect.
     _textureFBO->setMaxContexts( numContexts );
     _defaultFBO->setMaxContexts( numContexts );
     BOOST_FOREACH( const jagDraw::DrawableVec::value_type& dp, _windowVec )
@@ -294,7 +294,7 @@ bool RttDemo::frame( const gmtl::Matrix44f& view, const gmtl::Matrix44f& proj )
     if( !getStartupCalled() )
         return( true );
 
-    // drawInfo stores the contextID (used by many Jag objects to
+    // drawInfo stores the contextID (used by many Jag3D objects to
     // look up their object ID), and the current Program
     // (used by vertex attribs and uniforms to look up their locations).
     jagDraw::DrawInfo drawInfo;
