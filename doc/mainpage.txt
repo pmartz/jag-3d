@@ -124,8 +124,7 @@ The following CMake variables will probably need to be set in order to find the 
 \li GL3_ROOT Set this to the parent of the GL3 directory containing the gl3.h header.
 
 For finding VRJuggler, set VJ_BASE_DIR in your environment. VRJuggler requires
-CppDOM, so you will also need to set CppDOM_ROOT, either as a CMake variagble or
-in your environment.
+CppDOM, so you will also need to set CPPDOM_ROOT_DIR as a CMake variagble.
 
 Jag3D uses CMake's built-in scripts for finding Boost, OSG, and Qt. See those
 scripts for help with finding those dependencies.
