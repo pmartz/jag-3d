@@ -75,10 +75,14 @@ hg clone http://SkewMatrix@code.google.com/p/jag-3d/
 
 \subsection BuildDependencies Dependencies
 
-Your development system must support building OpenGL 4.0 (3.2 on OSX) applications. On Windows, this means
-you'll need to download gl3.h (or glcorearb.h) from the
-<a href=http://www.opengl.org/registry/>OpenGL Extension Registry</a>.
-Currently, Jag3D requires gl3.h, so if your system has only glcorearb.h, place
+Your development system must support building OpenGL 4.0 (3.2 on OSX) applications.
+On non-Windows platforms, this means Jag3D requires GL3/gl3.h somewhere on your
+development system.
+
+For OpenGL 3/4 on Windows,
+Jag3D uses the gl3w toolkit, so this means you'll need to download glcorearb.h from the
+<a href=http://www.opengl.org/registry/>OpenGL Extension Registry</a>. Unfortunately, OSG has
+not moved to glcorearb.h yet, so you'll need to place
 the following code in a file called gl3.h, as a wrapper:
 \code
 #ifdef GL3_PROTOTYPES
@@ -88,8 +92,7 @@ the following code in a file called gl3.h, as a wrapper:
 #include <GL3/glcorearb.h>
 \endcode
 Place both gl3.h and glcorearb.h in a directory named GL3 somewhere on your development system,
-and \ref BuildCMake "point CMake at that location". (FYI: Jag3D uses GL3W internally for
-loading OpenGL function pointers on Windows platforms.)
+and \ref BuildCMake "point CMake at that location".
 
 Jag3D has the following required dependencies:
 \li <a href=http://pocoproject.org/download/index.html>Poco</a> v1.4.3p1 or newer. Get the "Basic Edition".
@@ -124,7 +127,7 @@ The following CMake variables will probably need to be set in order to find the 
 \li GL3_ROOT Set this to the parent of the GL3 directory containing the gl3.h header.
 
 For finding VRJuggler, set VJ_BASE_DIR in your environment. VRJuggler requires
-CppDOM, so you will also need to set CPPDOM_ROOT_DIR as a CMake variagble.
+CppDOM, so you will also need to set CPPDOM_ROOT_DIR as a CMake variable.
 
 Jag3D uses CMake's built-in scripts for finding Boost, OSG, and Qt. See those
 scripts for help with finding those dependencies.
