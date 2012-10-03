@@ -208,12 +208,77 @@ if( JAG3D_DOCUMENTATION )
 endif()
 
 #install pdb files for release with debug info builds
-if(MSVC)
+if( MSVC )
     install(
         DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/\${CMAKE_INSTALL_CONFIG_NAME}/
         DESTINATION lib
         USE_SOURCE_PERMISSIONS
-        COMPONENT libosgworks-dev
+        COMPONENT libjag3d
         FILES_MATCHING PATTERN "*.pdb"
     )
-endif(MSVC)
+endif()
+
+
+# Install the CMake find script
+install( FILES "extra/Findjag3d.cmake"
+    DESTINATION "share/${CMAKE_PROJECT_NAME}/extra"
+    COMPONENT libjag3d
+)
+
+
+#
+# Create and install all of the auto find tools
+# =============================================
+
+# Add all targets to the build-tree export set
+export( TARGETS jagBase jagDisk jagDraw
+  FILE "${PROJECT_BINARY_DIR}/lib/jag3dLibraryDepends.cmake" )
+
+# Export the package for use from the build-tree
+# (this registers the build-tree with a global CMake-registry)
+export( PACKAGE jag3d )
+
+# Create a jag3dBuildTreeSettings.cmake file for the use from the build tree
+configure_file( CMakeModules/jag3dBuildTreeSettings.cmake.in
+  "${PROJECT_BINARY_DIR}/lib/jag3dBuildTreeSettings.cmake" @ONLY )
+
+configure_file( CMakeModules/jag3dConfigVersion.cmake.in
+  "${PROJECT_BINARY_DIR}/lib/jag3dConfigVersion.cmake" @ONLY )
+configure_file( CMakeModules/jag3dUsejag3d.cmake.in
+  "${PROJECT_BINARY_DIR}/lib/Usejag3d.cmake" @ONLY )
+
+# Install the export set for use with the install-tree
+install( EXPORT jag3d-targets DESTINATION lib )
+
+include( CMakePackageConfigHelpers )
+# Create the jag3dConfig.cmake and jag3dConfigVersion files
+file( RELATIVE_PATH CONF_REL_INCLUDE_DIR "${CMAKE_INSTALL_PREFIX}/lib"
+   "${CMAKE_INSTALL_PREFIX}/include" )
+
+configure_package_config_file( 
+    CMakeModules/jag3dConfig.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/lib/jag3dConfig.cmake
+    INSTALL_DESTINATION lib
+    PATH_VARS CONF_REL_INCLUDE_DIR )
+
+install( FILES
+    ${CMAKE_CURRENT_BINARY_DIR}/lib/jag3dConfig.cmake 
+    ${CMAKE_CURRENT_BINARY_DIR}/lib/jag3dConfigVersion.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/lib/Usejag3d.cmake
+    DESTINATION lib )
+
+
+#
+# Setup the fpc auto detection files
+if( WIN32 )
+    set( JAG3D_FPC_LIBRARIES "/libpath:\"\${libdir}\" jagDraw.lib jagDisk.lib jagBase.lib" )
+    set( JAG3D_FPC_INCLUDES "/I\"\${includedir}\""  )
+else()
+    set( JAG3D_FPC_INCLUDES "-I\${includedir}" )
+    set( JAG3D_FPC_LIBRARIES "-L\${libdir} -ljagDraw -ljagDisk -ljagBase" )
+endif()
+
+configure_file( extra/jag3d.fpc.in
+  "${PROJECT_BINARY_DIR}/lib/flagpoll/jag3d.fpc" @ONLY )
+
+install( FILES ${CMAKE_CURRENT_BINARY_DIR}/lib/flagpoll/jag3d.fpc
+        DESTINATION lib/flagpoll )
