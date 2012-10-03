@@ -60,6 +60,7 @@ that Jag3D should support.
 \li "State sorting" (sorting Drawables based on the commands that configure GL for
 rendering) needs to be implemented.
 \li Need to start developing jagSG (scene graph module) and visitor pattern.
+\li Design for cache misses: avoid-cache-misses.pdf
 \li Need to develop a model loading plugin, initially OSG-based, but soon add one that
 uses Open Asset Import Library.
 
