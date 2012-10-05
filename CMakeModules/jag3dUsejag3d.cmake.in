@@ -4,17 +4,18 @@
 # settings to use Jag3D.
 #
 
-IF( NOT jag3d_USE_FILE_INCLUDED )
-  SET( jag3d_USE_FILE_INCLUDED 1 )
+if( NOT jag3d_USE_FILE_INCLUDED )
+    set( jag3d_USE_FILE_INCLUDED 1 )
 
-  # Add compiler flags needed to use Jag3D.
-  #SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${VTK_REQUIRED_C_FLAGS}")
-  #SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${VTK_REQUIRED_CXX_FLAGS}")
-  #SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${VTK_REQUIRED_EXE_LINKER_FLAGS}")
-  #SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${VTK_REQUIRED_SHARED_LINKER_FLAGS}")
-  #SET(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} ${VTK_REQUIRED_MODULE_LINKER_FLAGS}")
+    # Add include directories needed to use Jag3D.
+    INCLUDE_DIRECTORIES( ${jag3d_INCLUDE_DIRS} )
 
-  # Add include directories needed to use Jag3D.
-  INCLUDE_DIRECTORIES( ${jag3d_INCLUDE_DIRS} )
+    # Add GL3W definition, if needed.
+    if( @JAG3D_USE_GL3W@ )
+    add_definitions( -DJAG3D_USE_GL3W )
+    endif()
 
-ENDIF()
+    # Always use Boost dynamic libs.
+    add_definitions( -DBOOST_ALL_DYN_LINK )
+
+endif()
