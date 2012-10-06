@@ -22,16 +22,3 @@ add_subdirectory( drawable )
 add_subdirectory( jagload )
 add_subdirectory( rtt )
 add_subdirectory( texture )
-
-
-# Early turn-on tests, not compatible with
-# core profile. Leave them out of the build.
-# 
-#add_subdirectory( draw )
-#add_subdirectory( drawcommand )
-#add_subdirectory( simple3x )
-#add_subdirectory( uniform )
-
-# Early turn-on test.
-# 
-#add_subdirectory( simplegmtl )

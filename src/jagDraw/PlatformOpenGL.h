@@ -23,9 +23,7 @@
 
 
 
-#if defined( JAG3D_USE_GLEW )
-#  include <jagDraw/PlatformGLEW.h>
-#elif defined( JAG3D_USE_GL3W )
+#if defined( JAG3D_USE_GL3W )
 #  include <jagDraw/GL3/gl3w.h>
 #else
 #  ifndef GL_GLEXT_PROTOTYPES

@@ -19,8 +19,9 @@
 *************** <auto-copyright.pl END do not edit this line> ***************/
 
 #include <jagDraw/ContextSupport.h>
-#include <jagDraw/ContextSupportGLEW.h>
-#include <jagDraw/ContextSupportGl3w.h>
+#if defined( JAG3D_USE_GL3W )
+#  include <jagDraw/ContextSupportGl3w.h>
+#endif
 
 #include <jagBase/Log.h>
 #include <jagBase/LogMacros.h>
@@ -42,9 +43,7 @@ ContextSupport* ContextSupport::instance()
     // TBD need to register with singleton manager, which doesn't exist yet.
     // Note: Do registration in constructor.
     static ContextSupport* s_instance =
-#ifdef JAG3D_USE_GLEW
-        new ContextSupportGLEW;
-#elif defined( JAG3D_USE_GL3W )
+#if defined( JAG3D_USE_GL3W )
         new ContextSupportGl3w;
 #else
         new ContextSupport;
