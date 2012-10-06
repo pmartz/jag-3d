@@ -33,8 +33,9 @@ set( _jagDrawHeaderFiles
     Drawable.h
     DrawablePrep.h
     DrawCommand.h
-    DrawInfo.h
     DrawCommon.h
+    DrawInfo.h
+    DrawingGroup.h
     Error.h
     Framebuffer.h
     FramebufferAttachable.h
@@ -60,6 +61,7 @@ set( _jagDrawSourceFiles
     ContextSupport.cpp
     Drawable.cpp
     DrawInfo.cpp
+    DrawingGroup.cpp
     Error.cpp
     Framebuffer.cpp
     Image.cpp
