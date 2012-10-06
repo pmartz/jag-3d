@@ -55,7 +55,7 @@ jagDraw module client code (such as an application or loader plugin) creates a
 Drawable and adds any required commands.
 
 Both command lists can be accessed and modified directly with
-getDrawablePrepList() and getDrawCommandList().
+getDrawablePrepVec() and getDrawCommandVec().
 */
 class JAGDRAW_EXPORT Drawable : protected jagBase::LogBase, public ObjectIDOwner
 {
@@ -91,11 +91,10 @@ public:
     void insertDrawablePrep( DrawablePrepPtr dpp, unsigned int pos=0 );
 
     /** \brief TBD
-    \details TBD
-    */
-    DrawablePrepVec& getDrawablePrepList();
+    \details TBD */
+    DrawablePrepVec& getDrawablePrepVec();
     /** \overload */
-    const DrawablePrepVec& getDrawablePrepList() const;
+    const DrawablePrepVec& getDrawablePrepVec() const;
 
 
     /** \brief TBD
@@ -106,9 +105,9 @@ public:
     /** \brief TBD
     \details TBD
     */
-    DrawCommandVec& getDrawCommandList();
+    DrawCommandVec& getDrawCommandVec();
     /** \overload */
-    const DrawCommandVec& getDrawCommandList() const;
+    const DrawCommandVec& getDrawCommandVec() const;
 
 protected:
     DrawablePrepVec _drawablePrep;

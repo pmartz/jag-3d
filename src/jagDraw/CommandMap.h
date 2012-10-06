@@ -196,47 +196,47 @@ struct CommandPriorityVec : public std::vector< T >
 template< class T, class U, size_t S >
 class CommandMapSorter
 {
-    public:
-        CommandMapSorter()
-        {}
-        CommandMapSorter( const CommandPriorityVec< T >& priorityVec ):
-            _priorityVec( priorityVec )
-        {}
-        CommandMapSorter( const CommandMapSorter& rhs )
-          : _priorityVec( rhs._priorityVec )
-        {}
-        ~CommandMapSorter()
-        {}
+public:
+    CommandMapSorter()
+    {}
+    CommandMapSorter( const CommandPriorityVec< T >& priorityVec ):
+        _priorityVec( priorityVec )
+    {}
+    CommandMapSorter( const CommandMapSorter& rhs )
+        : _priorityVec( rhs._priorityVec )
+    {}
+    ~CommandMapSorter()
+    {}
 
-        bool operator()( const CommandMap< T, U, S >& lhs, const CommandMap< T, U, S >& rhs ) const
+    bool operator()( const CommandMap< T, U, S >& lhs, const CommandMap< T, U, S >& rhs ) const
+    {
+        for( typename CommandPriorityVec< T >::const_iterator p = _priorityVec.begin(); p != _priorityVec.end(); ++p )
         {
-            for( typename CommandPriorityVec< T >::const_iterator p = _priorityVec.begin(); p != _priorityVec.end(); ++p )
+            switch( (int)( lhs._bits[ *p ] ) | ( rhs._bits[ *p ] << 1 ) )
             {
-                switch( (int)( lhs._bits[ *p ] ) | ( rhs._bits[ *p ] << 1 ) )
+                case 0:
+                    continue;
+                case 1:
+                    return( true );
+                case 2:
+                    return( false );
+                case 3: 
                 {
-                    case 0:
-                        continue;
-                    case 1:
+                    const U a( lhs._data.find( *p )->second );
+                    const U b( rhs._data.find( *p )->second );
+                    if( *a < *b )
                         return( true );
-                    case 2:
+                    if( *a > *b )
                         return( false );
-                    case 3: 
-                    {
-                        const U a( lhs._data.find( *p )->second );
-                        const U b( rhs._data.find( *p )->second );
-                        if( *a < *b )
-                            return( true );
-                        if( *a > *b )
-                            return( false );
-                        break;
-                    }
+                    break;
                 }
             }
-            return( false );
         }
+        return( false );
+    }
 
-    protected:
-        CommandPriorityVec< T > _priorityVec;
+protected:
+    CommandPriorityVec< T > _priorityVec;
 };
 
 
