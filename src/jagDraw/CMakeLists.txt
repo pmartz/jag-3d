@@ -73,20 +73,6 @@ set( _jagDrawSourceFiles
     VertexArrayObject.cpp
 )
 
-# Using gl3w instead of GLEW for Windows GL3/4 support. See top-level
-# CMakeLists.txt for info.
-# unset( _jagDrawGLEWHeaderFiles )
-# unset( _jagDrawGLEWSourceFiles )
-# if( GLEW_FOUND )
-#     set( _jagDrawGLEWHeaderFiles
-#         PlatformGLEW.h
-#         ContextSupportGLEW.h
-#     )
-#     set( _jagDrawGLEWSourceFiles
-#         ContextSupportGLEW.cpp
-#     )
-# endif()
-
 unset( _jagDrawGl3wHeaderFiles )
 unset( _jagDrawGl3wSourceFiles )
 if( JAG3D_USE_GL3W )
@@ -102,10 +88,8 @@ endif()
 
 _addLibrary( ${_libName}
     ${_jagDrawHeaderFiles}
-    ${_jagDrawGLEWHeaderFiles}
     ${_jagDrawGl3wHeaderFiles}
     ${_jagDrawSourceFiles}
-    ${_jagDrawGLEWSourceFiles}
     ${_jagDrawGl3wSourceFiles}
     JAG_LIBRARIES
         jagBase

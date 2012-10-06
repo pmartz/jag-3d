@@ -76,13 +76,6 @@ GLenum fboErrorCheck( const std::string& msg )
     case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER: enumStr = std::string( "GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER" ); break;
     }
 
-#if( defined( JAG3D_USE_GLEW ) && defined( GLEW_EXT_framebuffer_object ) )
-    // Check for an outdated error code. This might be useful for early Jag3D
-    // development on GL2 systems.
-    if( errorEnum == GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT )
-        enumStr = std::string( "GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT" );
-#endif
-
     enumStr.append( ": " );
     enumStr.append( msg );
     JAG3D_ERROR_STATIC( "jag.draw.glerror.fbo", enumStr );
