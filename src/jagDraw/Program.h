@@ -210,7 +210,8 @@ private:
     BlockInfoMap _blockInfo;
 };
 
-typedef jagBase::ptr< Program >::shared_ptr ShaderProgramPtr;
+typedef jagBase::ptr< Program >::shared_ptr ProgramPtr;
+typedef std::vector< ProgramPtr > ProgramVec;
 
 
 // jagDraw
