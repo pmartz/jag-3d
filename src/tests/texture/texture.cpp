@@ -88,7 +88,7 @@ bool TextureDemo::startup( const unsigned int numContexts )
     jagDraw::ShaderPtr vs( new jagDraw::Shader( GL_VERTEX_SHADER ) );
     vs->addSourceString( std::string( vShaderSource ) );
 
-    jagDraw::ShaderProgramPtr prog;
+    jagDraw::ProgramPtr prog;
     {
         const char* fShaderSource =
 #if( POCO_OS == POCO_OS_MAC_OS_X )
@@ -107,7 +107,7 @@ bool TextureDemo::startup( const unsigned int numContexts )
         jagDraw::ShaderPtr fs( new jagDraw::Shader( GL_FRAGMENT_SHADER ) );
         fs->addSourceString( std::string( fShaderSource ) );
 
-        prog = jagDraw::ShaderProgramPtr( new jagDraw::Program );
+        prog = jagDraw::ProgramPtr( new jagDraw::Program );
         prog->attachShader( vs );
         prog->attachShader( fs );
     }

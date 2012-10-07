@@ -109,7 +109,7 @@ jagDraw::DrawablePtr RttDemo::makeSceneDrawable()
     jagDraw::ShaderPtr fs( new jagDraw::Shader( GL_FRAGMENT_SHADER ) );
     fs->addSourceString( std::string( fragShader ) );
 
-    jagDraw::ShaderProgramPtr prog( new jagDraw::Program );
+    jagDraw::ProgramPtr prog( new jagDraw::Program );
     prog->attachShader( vs );
     prog->attachShader( fs );
     drawable->addDrawablePrep( prog );
@@ -209,7 +209,7 @@ bool RttDemo::startup( const unsigned int numContexts )
         jagDraw::ShaderPtr fs( new jagDraw::Shader( GL_FRAGMENT_SHADER ) );
         fs->addSourceString( std::string( fragSource ) );
 
-        jagDraw::ShaderProgramPtr prog( new jagDraw::Program );
+        jagDraw::ProgramPtr prog( new jagDraw::Program );
         prog->attachShader( vs );
         prog->attachShader( fs );
         drawable->addDrawablePrep( prog );

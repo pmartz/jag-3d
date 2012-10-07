@@ -137,8 +137,8 @@ bool JagLoadDemo::startup( const unsigned int numContexts )
         return( false );
     }
 
-    jagDraw::ShaderProgramPtr prog;
-    prog = jagDraw::ShaderProgramPtr( new jagDraw::Program );
+    jagDraw::ProgramPtr prog;
+    prog = jagDraw::ProgramPtr( new jagDraw::Program );
     prog->attachShader( vs );
     prog->attachShader( fs );
 
