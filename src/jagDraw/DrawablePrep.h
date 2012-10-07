@@ -43,6 +43,8 @@ typedef enum {
     VertexArrayObject_t
 } CommandType;
 
+typedef std::vector< CommandType > CommandTypeVec;
+
 
 /** \class DrawablePrep DrawablePrep.h <jagDraw/DrawablePrep.h>
 \brief

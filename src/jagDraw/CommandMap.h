@@ -23,6 +23,8 @@
 
 #include <jagDraw/DrawablePrep.h>
 
+#include <jagBase/ptr.h>
+
 #include <vector>
 #include <map>
 #include <set>
@@ -189,6 +191,7 @@ public:
 };
 
 typedef CommandMapTemplate< CommandType, DrawablePrepPtr, 6 > CommandMap;
+typedef jagBase::ptr< jagDraw::CommandMap >::shared_ptr CommandMapPtr;
 
 
 
