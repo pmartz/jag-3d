@@ -22,9 +22,9 @@
 #define __JAGDRAW_DRAW_NODE_H__ 1
 
 #include <jagDraw/Export.h>
+#include <jagDraw/CommandMap.h>
 #include <jagDraw/ObjectID.h>
 #include <jagDraw/Drawable.h>
-#include <jagDraw/DrawablePrep.h>
 #include <jagBase/LogBase.h>
 #include <jagBase/ptr.h>
 
@@ -41,9 +41,16 @@ namespace jagDraw {
 class JAGDRAW_EXPORT DrawNode : protected jagBase::LogBase, public ObjectIDOwner
 {
 public:
-    DrawNode();
+    DrawNode( CommandMapPtr commands=CommandMapPtr( (CommandMap*)NULL ));
     DrawNode( const DrawNode& rhs );
     ~DrawNode();
+
+    DrawNode& operator=( const DrawNode& rhs )
+    {
+        _commands = rhs._commands;
+        _drawables = rhs._drawables;
+        return( *this );
+    }
 
     /** \brief TBD
     \details TBD */
@@ -62,36 +69,93 @@ public:
     /** \brief Add a drawable prep command, such as a uniform or a shader program.
     \details All drawable prep commands are executed by the Drawale in order, and prior to
     issuing any of the vertex array commands (see addVertexArrayCommand()). */
-    void addDrawablePrep( DrawablePrepPtr dpp );
-    void insertDrawablePrep( DrawablePrepPtr dpp, unsigned int pos=0 );
-
+    void setCommandMap( CommandMapPtr commands )
+    {
+        _commands = commands;
+    }
     /** \brief TBD
     \details TBD */
-    DrawablePrepVec& getDrawablePrepVec() { return( _drawablePrep ); }
-    /** \overload */
-    const DrawablePrepVec& getDrawablePrepVec() const { return( _drawablePrep ); }
+    const CommandMapPtr getCommandMap() const
+    {
+        return( _commands );
+    }
 
 
     /** \brief Add a drawable.
-    \details All drawables are executed after issuing all DrawablePrep commands. */
+    \details All drawables are executed after issuing all commands in \c _commands. */
     void addDrawable( DrawablePtr drawable )
     {
         _drawables.push_back( drawable );
     }
-
     /** \brief TBD
     \details TBD */
-    DrawableVec& getDrawableVec() { return( _drawables ); }
+    DrawableVec& getDrawableVec()
+    {
+        return( _drawables );
+    }
     /** \overload */
-    const DrawableVec& getDrawableVec() const { return( _drawables ); }
+    const DrawableVec& getDrawableVec() const
+    {
+        return( _drawables );
+    }
 
 protected:
-    DrawablePrepVec _drawablePrep;
+    CommandMapPtr _commands;
     DrawableVec _drawables;
 };
 
 typedef jagBase::ptr< jagDraw::DrawNode >::shared_ptr DrawNodePtr;
 typedef std::vector< DrawNodePtr > DrawNodeVec;
+typedef std::vector< DrawNode > DrawNodeSimpleVec;
+
+
+class DrawNodeCommandSorter
+{
+public:
+    DrawNodeCommandSorter()
+    {}
+    DrawNodeCommandSorter( const CommandTypeVec& priorityVec ):
+        _priorityVec( priorityVec )
+    {}
+    DrawNodeCommandSorter( const DrawNodeCommandSorter& rhs )
+        : _priorityVec( rhs._priorityVec )
+    {}
+    ~DrawNodeCommandSorter()
+    {}
+
+    bool operator()( const DrawNode& lhs, const DrawNode& rhs ) const
+    {
+        const CommandMapPtr lhsCommands( lhs.getCommandMap() );
+        const CommandMapPtr rhsCommands( rhs.getCommandMap() );
+
+        for( CommandTypeVec::const_iterator typeIter = _priorityVec.begin(); typeIter != _priorityVec.end(); ++typeIter )
+        {
+            switch( (int)( lhsCommands->_bits[ *typeIter ] ) | ( rhsCommands->_bits[ *typeIter ] << 1 ) )
+            {
+                case 0:
+                    continue;
+                case 1:
+                    return( true );
+                case 2:
+                    return( false );
+                case 3: 
+                {
+                    const DrawablePrepPtr a( lhsCommands->_data.find( *typeIter )->second );
+                    const DrawablePrepPtr b( rhsCommands->_data.find( *typeIter )->second );
+                    if( *a < *b )
+                        return( true );
+                    if( *a > *b )
+                        return( false );
+                    break;
+                }
+            }
+        }
+        return( false );
+    }
+
+protected:
+    CommandTypeVec _priorityVec;
+};
 
 
 // jagDraw

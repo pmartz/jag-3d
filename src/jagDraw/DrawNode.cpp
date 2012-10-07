@@ -19,6 +19,7 @@
 *************** <auto-copyright.pl END do not edit this line> ***************/
 
 #include <jagDraw/DrawNode.h>
+#include <jagDraw/DrawablePrep.h>
 #include <jagDraw/Error.h>
 #include <jagBase/LogMacros.h>
 
@@ -28,15 +29,16 @@
 namespace jagDraw {
 
 
-DrawNode::DrawNode()
+DrawNode::DrawNode( CommandMapPtr commands )
   : jagBase::LogBase( "jag.draw.dgrp" ),
-    ObjectIDOwner()
+    ObjectIDOwner(),
+    _commands( commands )
 {
 }
 DrawNode::DrawNode( const DrawNode& rhs )
   : jagBase::LogBase( "jag.draw.dgrp" ),
     ObjectIDOwner( rhs ),
-    _drawablePrep( rhs._drawablePrep ),
+    _commands( rhs._commands ),
     _drawables( rhs._drawables )
 {
 }
@@ -47,9 +49,10 @@ DrawNode::~DrawNode()
 
 void DrawNode::operator()( DrawInfo& drawInfo )
 {
-    BOOST_FOREACH( DrawablePrepPtr dpp, _drawablePrep )
+    typedef std::map< CommandType, DrawablePrepPtr > MyMapTBD;
+    BOOST_FOREACH( MyMapTBD::value_type dpPair, _commands->_data )
     {
-        (*dpp)( drawInfo );
+        ( *(dpPair.second) )( drawInfo );
     }
 
     BOOST_FOREACH( DrawablePtr drawable, _drawables )
@@ -57,28 +60,7 @@ void DrawNode::operator()( DrawInfo& drawInfo )
         (*drawable)( drawInfo );
     }
 
-    JAG3D_ERROR_CHECK( "DrawableGroup::operator()" );
-}
-
-
-void DrawNode::addDrawablePrep( DrawablePrepPtr dpp )
-{
-    _drawablePrep.push_back( dpp );
-}
-void DrawNode::insertDrawablePrep( DrawablePrepPtr dpp, unsigned int pos )
-{
-    if( pos >= _drawablePrep.size() )
-    {
-        _drawablePrep.resize( pos+1 );
-    }
-    else
-    {
-        _drawablePrep.resize( _drawablePrep.size()+1 );
-        size_t idx;
-        for( idx = _drawablePrep.size()-1; idx>pos; idx-- )
-            _drawablePrep[ idx ] = _drawablePrep[ idx-1 ];
-    }
-    _drawablePrep[ pos ] = dpp;
+    JAG3D_ERROR_CHECK( "DrawNode::operator()" );
 }
 
 
