@@ -57,7 +57,7 @@ void Program::printInfoLog( const GLuint id )
 }
 
 Program::Program()
-  : DrawablePrep(),
+  : DrawablePrep( Program_t ),
     ObjectID(),
     jagBase::LogBase( "jag.draw.program" )
 {

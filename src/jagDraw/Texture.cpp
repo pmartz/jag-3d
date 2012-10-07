@@ -28,14 +28,14 @@ namespace jagDraw {
 
 
 Texture::Texture()
-  : DrawablePrep(),
+  : DrawablePrep( Texture_t ),
     FramebufferAttachable(),
     jagBase::LogBase( "jag.draw.tex" ),
     _target( GL_NONE )
 {
 }
 Texture::Texture( const GLenum target, ImagePtr image )
-  : DrawablePrep(),
+  : DrawablePrep( Texture_t ),
     FramebufferAttachable(),
     jagBase::LogBase( "jag.draw.tex" ),
     _target( target ),

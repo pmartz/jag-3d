@@ -31,20 +31,20 @@ namespace jagDraw {
 
 
 Uniform::Uniform( const std::string& name )
-  : DrawablePrep(),
+  : DrawablePrep( Uniform_t ),
     jagBase::LogBase( "jag.draw.uniform" )
 {
     internalInit( name );
 }
 Uniform::Uniform( const std::string& name, const GLenum type )
-  : DrawablePrep(),
+  : DrawablePrep( Uniform_t ),
     jagBase::LogBase( "jag.draw.uniform" )
 {
     internalInit( name );
     setType( type );
 }
 Uniform::Uniform( const std::string& name, const GLenum type, const GLint& v )
-    : DrawablePrep(),
+  : DrawablePrep( Uniform_t ),
     jagBase::LogBase( "jag.draw.uniform" )
 {
     internalInit( name );
@@ -81,7 +81,7 @@ void Uniform::setSampler( const GLint& v )
 
 #define TYPE_METHOD_BODIES(__type,__typeid) \
     Uniform::Uniform( const std::string& name, const __type& v ) \
-      : DrawablePrep(), \
+      : DrawablePrep( Uniform_t ), \
         jagBase::LogBase( "jag.draw.uniform" ) \
     { \
         internalInit( name ); \
