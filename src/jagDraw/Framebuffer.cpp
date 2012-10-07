@@ -30,7 +30,7 @@ namespace jagDraw {
 
 
 Framebuffer::Framebuffer( GLenum target )
-  : DrawablePrep(),
+  : DrawablePrep( Framebuffer_t ),
     jagBase::LogBase( "jag.draw.fbo" ),
     _target( target )
 {

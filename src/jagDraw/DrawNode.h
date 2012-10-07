@@ -18,8 +18,8 @@
 *
 *************** <auto-copyright.pl END do not edit this line> ***************/
 
-#ifndef __JAGDRAW_DRAWING_GROUP_H__
-#define __JAGDRAW_DRAWING_GROUP_H__ 1
+#ifndef __JAGDRAW_DRAW_NODE_H__
+#define __JAGDRAW_DRAW_NODE_H__ 1
 
 #include <jagDraw/Export.h>
 #include <jagDraw/ObjectID.h>
@@ -34,16 +34,16 @@
 namespace jagDraw {
 
 
-/** \class DrawingGroup DrawingGroup.h <jagDraw/DrawingGroup.h>
+/** \class DrawNode DrawNode.h <jagDraw/DrawNode.h>
 \brief TBD
 \details TBD
 */
-class JAGDRAW_EXPORT DrawingGroup : protected jagBase::LogBase, public ObjectIDOwner
+class JAGDRAW_EXPORT DrawNode : protected jagBase::LogBase, public ObjectIDOwner
 {
 public:
-    DrawingGroup();
-    DrawingGroup( const DrawingGroup& rhs );
-    ~DrawingGroup();
+    DrawNode();
+    DrawNode( const DrawNode& rhs );
+    ~DrawNode();
 
     /** \brief TBD
     \details TBD */
@@ -90,13 +90,13 @@ protected:
     DrawableVec _drawables;
 };
 
-typedef jagBase::ptr< jagDraw::DrawingGroup >::shared_ptr DrawingGroupPtr;
-typedef std::vector< DrawingGroupPtr > DrawingGroupVec;
+typedef jagBase::ptr< jagDraw::DrawNode >::shared_ptr DrawNodePtr;
+typedef std::vector< DrawNodePtr > DrawNodeVec;
 
 
 // jagDraw
 }
 
 
-// __JAGDRAW_DRAWING_GROUP_H__
+// __JAGDRAW_DRAW_NODE_H__
 #endif

@@ -21,6 +21,8 @@
 #ifndef __JAGDRAW_COMMAND_MAP_H__
 #define __JAGDRAW_COMMAND_MAP_H__ 1
 
+#include <jagDraw/DrawablePrep.h>
+
 #include <vector>
 #include <map>
 #include <set>
@@ -31,20 +33,20 @@ namespace jagDraw {
 
 
 template< class T, class U, size_t S >
-class CommandMap
+class CommandMapTemplate
 {
 public:
-    CommandMap( const std::string& name=std::string("") )
+    CommandMapTemplate( const std::string& name=std::string("") )
       : _name( name )
     {}
-    CommandMap( const CommandMap& rhs )
+    CommandMapTemplate( const CommandMapTemplate& rhs )
       : _name( rhs._name ),
         _data( rhs._data ),
         _bits( rhs._bits ),
         _overrideBits( rhs._overrideBits ),
         _protectBits( rhs._protectBits )
     {}
-    ~CommandMap()
+    ~CommandMapTemplate()
     {}
 
     void insert( const std::pair< T, U >& d, bool override=false, bool protect=false )
@@ -87,7 +89,7 @@ public:
         }
     }
 
-    CommandMap< T, U, S > operator+( const CommandMap< T, U, S >& rhs ) const
+    CommandMapTemplate< T, U, S > operator+( const CommandMapTemplate< T, U, S >& rhs ) const
     {
         std::set< T > local;
         for( typename std::map< T, U >::const_iterator p = _data.begin(); p != _data.end(); ++p )
@@ -96,7 +98,7 @@ public:
         for( typename std::map< T, U >::const_iterator p = rhs._data.begin(); p != rhs._data.end(); ++p )
             local.insert( p->first );
 
-        CommandMap< T, U, S > ret;
+        CommandMapTemplate< T, U, S > ret;
         for( typename std::set< T >::iterator p = local.begin(); p != local.end(); ++p )
         {
             switch( ( rhs._bits[ *p ] << 1 ) | (int)( _bits[ *p ] ) )
@@ -123,7 +125,7 @@ public:
         * 1) it applies the rhs to the lhs 
         * 2) it returns only the deltas
         */
-    CommandMap< T, U, S > operator<<( CommandMap< T, U, S >& rhs )
+    CommandMapTemplate< T, U, S > operator<<( CommandMapTemplate< T, U, S >& rhs )
     {
         std::set< T > local;
         for( typename std::map< T, U >::const_iterator p = _data.begin(); p != _data.end(); ++p )
@@ -132,7 +134,7 @@ public:
         for( typename std::map< T, U >::const_iterator p = rhs._data.begin(); p != rhs._data.end(); ++p )
             local.insert( p->first );
 
-        CommandMap< T, U, S > ret;
+        CommandMapTemplate< T, U, S > ret;
         for( typename std::set< T >::iterator p = local.begin(); p != local.end(); ++p )
         {
             switch( ( rhs._bits[ *p ] << 1 ) | (int)( _bits[ *p ] ) )
@@ -186,6 +188,8 @@ public:
     std::bitset<S> _protectBits;
 };
 
+typedef CommandMapTemplate< CommandType, DrawablePrepPtr, 6 > CommandMap;
+
 
 
 template< class T >
@@ -208,7 +212,7 @@ public:
     ~CommandMapSorter()
     {}
 
-    bool operator()( const CommandMap< T, U, S >& lhs, const CommandMap< T, U, S >& rhs ) const
+    bool operator()( const CommandMapTemplate< T, U, S >& lhs, const CommandMapTemplate< T, U, S >& rhs ) const
     {
         for( typename CommandPriorityVec< T >::const_iterator p = _priorityVec.begin(); p != _priorityVec.end(); ++p )
         {

@@ -31,7 +31,7 @@ namespace jagDraw {
 
 
 VertexArrayObject::VertexArrayObject()
-  : DrawablePrep(),
+  : DrawablePrep( VertexArrayObject_t ),
     ObjectID()
 {}
 

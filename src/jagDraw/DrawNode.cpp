@@ -18,7 +18,7 @@
 *
 *************** <auto-copyright.pl END do not edit this line> ***************/
 
-#include <jagDraw/DrawingGroup.h>
+#include <jagDraw/DrawNode.h>
 #include <jagDraw/Error.h>
 #include <jagBase/LogMacros.h>
 
@@ -28,24 +28,24 @@
 namespace jagDraw {
 
 
-DrawingGroup::DrawingGroup()
+DrawNode::DrawNode()
   : jagBase::LogBase( "jag.draw.dgrp" ),
     ObjectIDOwner()
 {
 }
-DrawingGroup::DrawingGroup( const DrawingGroup& rhs )
+DrawNode::DrawNode( const DrawNode& rhs )
   : jagBase::LogBase( "jag.draw.dgrp" ),
     ObjectIDOwner( rhs ),
     _drawablePrep( rhs._drawablePrep ),
     _drawables( rhs._drawables )
 {
 }
-DrawingGroup::~DrawingGroup()
+DrawNode::~DrawNode()
 {
 }
 
 
-void DrawingGroup::operator()( DrawInfo& drawInfo )
+void DrawNode::operator()( DrawInfo& drawInfo )
 {
     BOOST_FOREACH( DrawablePrepPtr dpp, _drawablePrep )
     {
@@ -61,11 +61,11 @@ void DrawingGroup::operator()( DrawInfo& drawInfo )
 }
 
 
-void DrawingGroup::addDrawablePrep( DrawablePrepPtr dpp )
+void DrawNode::addDrawablePrep( DrawablePrepPtr dpp )
 {
     _drawablePrep.push_back( dpp );
 }
-void DrawingGroup::insertDrawablePrep( DrawablePrepPtr dpp, unsigned int pos )
+void DrawNode::insertDrawablePrep( DrawablePrepPtr dpp, unsigned int pos )
 {
     if( pos >= _drawablePrep.size() )
     {

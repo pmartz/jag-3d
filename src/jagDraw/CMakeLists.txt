@@ -31,11 +31,11 @@ set( _jagDrawHeaderFiles
     CommandMap.h
     ContextSupport.h
     Drawable.h
+    DrawNode.h
     DrawablePrep.h
     DrawCommand.h
     DrawCommon.h
     DrawInfo.h
-    DrawingGroup.h
     Error.h
     Framebuffer.h
     FramebufferAttachable.h
@@ -60,8 +60,8 @@ set( _jagDrawSourceFiles
     BufferObject.cpp
     ContextSupport.cpp
     Drawable.cpp
+    DrawNode.cpp
     DrawInfo.cpp
-    DrawingGroup.cpp
     Error.cpp
     Framebuffer.cpp
     Image.cpp
