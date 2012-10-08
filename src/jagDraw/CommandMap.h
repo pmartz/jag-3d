@@ -24,6 +24,7 @@
 #include <jagDraw/DrawablePrep.h>
 
 #include <jagBase/ptr.h>
+#include <boost/foreach.hpp>
 
 #include <vector>
 #include <map>
@@ -34,92 +35,92 @@
 namespace jagDraw {
 
 
-template< class T, class U, size_t S >
-class CommandMapTemplate
+class CommandMap
 {
 public:
-    CommandMapTemplate( const std::string& name=std::string("") )
+    CommandMap( const std::string& name=std::string("") )
       : _name( name )
     {}
-    CommandMapTemplate( const CommandMapTemplate& rhs )
+    CommandMap( const CommandMap& rhs )
       : _name( rhs._name ),
         _data( rhs._data ),
         _bits( rhs._bits ),
         _overrideBits( rhs._overrideBits ),
         _protectBits( rhs._protectBits )
     {}
-    ~CommandMapTemplate()
+    ~CommandMap()
     {}
 
-    void insert( const std::pair< T, U >& d, bool override=false, bool protect=false )
+    void insert( const DrawablePrepPtr drawable, bool override=false, bool protect=false )
     {
-        _bits.set( d.first );
+        const CommandType type( drawable->getCommandType() );
+        _bits.set( type );
 
-        _data[ d.first ] = d.second;
+        _data[ type ] = drawable;
 
         if( override )
-            _overrideBits.set( d.first );
+            _overrideBits.set( type );
         else
-            _overrideBits.reset( d.first );
+            _overrideBits.reset( type );
 
         if( protect )
-            _protectBits.set( d.first );
+            _protectBits.set( type );
         else
-            _protectBits.reset( d.first );
+            _protectBits.reset( type );
     }
 
-    void insert( T t, U u, bool override=false, bool protect=false )
+    DrawablePrepPtr& operator[]( const CommandType type )
     {
-        insert( std::pair< T, U >( t, u ), override, protect );
-    }
-
-    U& operator[]( const T t )
-    {
-        return( _data[ t ] );
+        return( _data[ type ] );
     }
 
     struct Callback
     {
-        virtual void operator()( U ) const = 0;
+        virtual void operator()( DrawablePrepPtr ) const = 0;
     };
+
+    typedef std::map< CommandType, DrawablePrepPtr > CommandMapType;
 
     void foreach( const Callback& callback )
     {
-        for( typename std::map< T, U >::iterator p = _data.begin(); p != _data.end(); ++p )
+        BOOST_FOREACH( CommandMapType::value_type dataPair, _data )
         {
-            callback( p->second );
+            callback( dataPair.second );
         }
     }
 
-    CommandMapTemplate< T, U, S > operator+( const CommandMapTemplate< T, U, S >& rhs ) const
+    CommandMap operator+( const CommandMap& rhs ) const
     {
-        std::set< T > local;
-        for( typename std::map< T, U >::const_iterator p = _data.begin(); p != _data.end(); ++p )
-            local.insert( p->first );
-
-        for( typename std::map< T, U >::const_iterator p = rhs._data.begin(); p != rhs._data.end(); ++p )
-            local.insert( p->first );
-
-        CommandMapTemplate< T, U, S > ret;
-        for( typename std::set< T >::iterator p = local.begin(); p != local.end(); ++p )
+        std::set< CommandType > local;
+        BOOST_FOREACH( CommandMapType::value_type dataPair, _data )
         {
-            switch( ( rhs._bits[ *p ] << 1 ) | (int)( _bits[ *p ] ) )
+            local.insert( dataPair.first );
+        }
+        BOOST_FOREACH( CommandMapType::value_type dataPair, rhs._data )
+        {
+            local.insert( dataPair.first );
+        }
+
+        CommandMap resule;
+        BOOST_FOREACH( const CommandType& type, local )
+        {
+            switch( ( rhs._bits[ type ] << 1 ) | (int)( _bits[ type ] ) )
             {
             case 0:
                 break;
             case 1:
-                ret[ *p ] = ( *_data.find( *p ) ).second;
+                resule[ type ] = ( *_data.find( type ) ).second;
                 break;
             case 2:
-                ret[ *p ] = ( *rhs._data.find(*p) ).second;
+                resule[ type ] = ( *rhs._data.find( type ) ).second;
                 break;
             case 3:
-                ret[ *p ] = ( *rhs._data.find( *p ) ).second;
+                resule[ type ] = ( *rhs._data.find( type ) ).second;
                 break; 
             }
         }
 
-        return( ret );
+        return( resule );
     }
 
     /*
@@ -127,86 +128,88 @@ public:
         * 1) it applies the rhs to the lhs 
         * 2) it returns only the deltas
         */
-    CommandMapTemplate< T, U, S > operator<<( CommandMapTemplate< T, U, S >& rhs )
+    CommandMap operator<<( CommandMap& rhs )
     {
-        std::set< T > local;
-        for( typename std::map< T, U >::const_iterator p = _data.begin(); p != _data.end(); ++p )
-            local.insert( p->first );
-
-        for( typename std::map< T, U >::const_iterator p = rhs._data.begin(); p != rhs._data.end(); ++p )
-            local.insert( p->first );
-
-        CommandMapTemplate< T, U, S > ret;
-        for( typename std::set< T >::iterator p = local.begin(); p != local.end(); ++p )
+        std::set< CommandType > local;
+        BOOST_FOREACH( CommandMapType::value_type dataPair, _data )
         {
-            switch( ( rhs._bits[ *p ] << 1 ) | (int)( _bits[ *p ] ) )
+            local.insert( dataPair.first );
+        }
+
+        BOOST_FOREACH( CommandMapType::value_type dataPair, rhs._data )
+        {
+            local.insert( dataPair.first );
+        }
+
+        CommandMap result;
+        BOOST_FOREACH( const CommandType& type, local )
+        {
+            switch( ( rhs._bits[ type ] << 1 ) | (int)( _bits[ type ] ) )
             {
                 case 0:
                 case 1:
                     break;
                 case 2: 
-                    if( _overrideBits.test( *p ) == false || rhs._protectBits.test( *p ) == true  )
+                    if( _overrideBits.test( type ) == false || rhs._protectBits.test( type ) == true  )
                     {
-                        U u = rhs._data[ *p ];
-                        insert( *p, u, rhs._overrideBits[ *p ] );
-                        ret.insert( *p, u, rhs._overrideBits[ *p ] );
+                        DrawablePrepPtr drawable( rhs._data[ type ] );
+                        insert( drawable, rhs._overrideBits[ type ] );
+                        result.insert( drawable, rhs._overrideBits[ type ] );
                     }
                     break; 
 
                 case 3: 
-                    if( *(_data[ *p ]) != *(rhs._data[ *p ]) )
+                    if( *(_data[ type ]) != *(rhs._data[ type ]) )
                     {
-                        if( _overrideBits.test( *p ) == false || rhs._protectBits.test( *p ) == true ) 
+                        if( _overrideBits.test( type ) == false || rhs._protectBits.test( type ) == true ) 
                         {
-                            U u = rhs._data[ *p ];
-                            insert( *p, u, rhs._overrideBits[ *p ] );
-                            ret.insert( *p, u, rhs._overrideBits[ *p ] );
+                            DrawablePrepPtr drawable( rhs._data[ type ] );
+                            insert( drawable, rhs._overrideBits[ type ] );
+                            result.insert( drawable, rhs._overrideBits[ type ] );
                         }
                     }
                     break;
             }
         }
-        return( ret );
+        return( result );
     }
 
-    bool contains( T t )
+    bool contains( CommandType type )
     {
-        return( _bits[ t ].test() );
+        return( _bits.test( type ) );
     }
 
-    U getData( T t ) const
+    DrawablePrepPtr getData( CommandType type ) const
     { 
-        typename std::map< T, U >::const_iterator p = _data.find(t);
+        CommandMapType::const_iterator p( _data.find( type ) );
         if( p == _data.end() )
-            return( NULL );
+            return( DrawablePrepPtr( (DrawablePrep*)NULL ) );
         return( p->second );
     }
 
 
     std::string _name;
-    std::map<T,U> _data;
-    std::bitset<S> _bits;
-    std::bitset<S> _overrideBits;
-    std::bitset<S> _protectBits;
+    CommandMapType _data;
+    std::bitset<6> _bits;
+    std::bitset<6> _overrideBits;
+    std::bitset<6> _protectBits;
 };
 
-typedef CommandMapTemplate< CommandType, DrawablePrepPtr, 6 > CommandMap;
 typedef jagBase::ptr< jagDraw::CommandMap >::shared_ptr CommandMapPtr;
 
 
 
-template< class T >
-struct CommandPriorityVec : public std::vector< T >
+template< class CommandType >
+struct CommandPriorityVec : public std::vector< CommandType >
 {
 };
 
-template< class T, class U, size_t S >
 class CommandMapSorter
 {
 public:
     CommandMapSorter()
     {}
-    CommandMapSorter( const CommandPriorityVec< T >& priorityVec ):
+    CommandMapSorter( const CommandPriorityVec< CommandType >& priorityVec ):
         _priorityVec( priorityVec )
     {}
     CommandMapSorter( const CommandMapSorter& rhs )
@@ -215,11 +218,11 @@ public:
     ~CommandMapSorter()
     {}
 
-    bool operator()( const CommandMapTemplate< T, U, S >& lhs, const CommandMapTemplate< T, U, S >& rhs ) const
+    bool operator()( const CommandMap& lhs, const CommandMap& rhs ) const
     {
-        for( typename CommandPriorityVec< T >::const_iterator p = _priorityVec.begin(); p != _priorityVec.end(); ++p )
+        BOOST_FOREACH( const CommandType& type, _priorityVec )
         {
-            switch( (int)( lhs._bits[ *p ] ) | ( rhs._bits[ *p ] << 1 ) )
+            switch( (int)( lhs._bits[ type ] ) | ( rhs._bits[ type ] << 1 ) )
             {
                 case 0:
                     continue;
@@ -229,8 +232,8 @@ public:
                     return( false );
                 case 3: 
                 {
-                    const U a( lhs._data.find( *p )->second );
-                    const U b( rhs._data.find( *p )->second );
+                    const DrawablePrepPtr a( lhs._data.find( type )->second );
+                    const DrawablePrepPtr b( rhs._data.find( type )->second );
                     if( *a < *b )
                         return( true );
                     if( *a > *b )
@@ -243,7 +246,7 @@ public:
     }
 
 protected:
-    CommandPriorityVec< T > _priorityVec;
+    CommandPriorityVec< CommandType > _priorityVec;
 };
 
 

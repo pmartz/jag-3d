@@ -45,26 +45,6 @@ public:
     DrawNode( const DrawNode& rhs );
     ~DrawNode();
 
-    DrawNode& operator=( const DrawNode& rhs )
-    {
-        _commands = rhs._commands;
-        _drawables = rhs._drawables;
-        return( *this );
-    }
-
-    /** \brief TBD
-    \details TBD */
-    virtual void operator()( DrawInfo& drawInfo );
-
-    /** \brief Tell the contained ObjectID objects how many contexts to expect.
-    \details Inherited from ObjectIDOwner. */
-    virtual void setMaxContexts( const unsigned int numContexts ) {}
-
-    /** \brief Delete the ID for the given \c contextID.
-    \details Inherited from ObjectIDOwner.
-    OpenGL object ID cleanup is not yet implemented. TBD. */
-    virtual void deleteID( const jagDraw::jagDrawContextID contextID ) {}
-
 
     /** \brief Add a drawable prep command, such as a uniform or a shader program.
     \details All drawable prep commands are executed by the Drawale in order, and prior to
@@ -98,6 +78,30 @@ public:
     {
         return( _drawables );
     }
+
+
+    /** \brief Assignment operator.
+    \details Required by std::sort(). */
+    DrawNode& operator=( const DrawNode& rhs )
+    {
+        _commands = rhs._commands;
+        _drawables = rhs._drawables;
+        return( *this );
+    }
+
+
+    /** \brief TBD
+    \details TBD */
+    virtual void operator()( DrawInfo& drawInfo );
+
+    /** \brief Tell the contained ObjectID objects how many contexts to expect.
+    \details Inherited from ObjectIDOwner. */
+    virtual void setMaxContexts( const unsigned int numContexts ) {}
+
+    /** \brief Delete the ID for the given \c contextID.
+    \details Inherited from ObjectIDOwner.
+    OpenGL object ID cleanup is not yet implemented. TBD. */
+    virtual void deleteID( const jagDraw::jagDrawContextID contextID ) {}
 
 protected:
     CommandMapPtr _commands;
