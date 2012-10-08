@@ -179,6 +179,14 @@ public:
     {
         return( _bits.test( type ) );
     }
+    void clear( CommandType type )
+    {
+        if( contains( type ) )
+        {
+            _bits.flip( type );
+            _data[ type ] = DrawablePrepPtr( (DrawablePrep*)NULL );
+        }
+    }
 
     DrawablePrepPtr getData( CommandType type ) const
     { 

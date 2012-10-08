@@ -309,11 +309,8 @@ bool DrawableDemo::frame( const gmtl::Matrix44f& view, const gmtl::Matrix44f& pr
 
     glClear( GL_COLOR_BUFFER_BIT );
 
-    // drawInfo stores the contextID (used by many Jag3D objects to
-    // look up their object ID), and the current Program
-    // (used by vertex attribs and uniforms to look up their locations).
-    jagDraw::DrawInfo drawInfo;
-    drawInfo._id = jagDraw::ContextSupport::instance()->getActiveContext();
+    const jagDraw::jagDrawContextID contextID( jagDraw::ContextSupport::instance()->getActiveContext() );
+    jagDraw::DrawInfo drawInfo( _drawInfo[ contextID ] );
 
     // Render all Drawables.
     BOOST_FOREACH( jagDraw::DrawablePtr dp, _drawableVec )
@@ -321,7 +318,7 @@ bool DrawableDemo::frame( const gmtl::Matrix44f& view, const gmtl::Matrix44f& pr
         (*(dp))( drawInfo );
     }
     
-    glFlush ();
+    glFlush();
     JAG3D_ERROR_CHECK( "DrawableDemo display()" );
 
     return( true );

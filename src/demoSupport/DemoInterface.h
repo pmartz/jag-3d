@@ -22,9 +22,11 @@
 #define __JAG3D_DEMO_SUPPORT_DEMO_INTERFACE_H__ 1
 
 
+#include <jagDraw/DrawInfo.h>
 #include <gmtl/gmtl.h>
 
 #include <boost/program_options/options_description.hpp>
+#include <boost/foreach.hpp>
 
 
 /** \class DemoInterface DemoInterface.h DemoInterface.h
@@ -47,6 +49,14 @@ public:
     virtual bool startup( const unsigned int numContexts )
     {
         _startupCalled = true;
+
+        _drawInfo._data.resize( numContexts );
+        unsigned int id( 0 );
+        BOOST_FOREACH( jagDraw::DrawInfo& drawInfo, _drawInfo._data )
+        {
+            drawInfo._id = id++;
+        }
+
         return( true );
     }
     bool getStartupCalled() { return( _startupCalled ); }
@@ -62,11 +72,18 @@ public:
     /** Called prior to exit. */
     virtual bool shutdown() = 0;
 
+    jagDraw::DrawInfo& getDrawInfo( const jagDraw::jagDrawContextID contextID )
+    {
+        return( _drawInfo._data[ contextID ] );
+    }
+
 protected:
     std::string _logName;
     bool _startupCalled;
 
     bool _continuousRedraw;
+
+    jagDraw::PerContextDrawInfo _drawInfo;
 };
 
 

@@ -188,8 +188,6 @@ bool TextureDemo::init()
 }
 
 
-jagDraw::DrawInfo drawInfo;
-
 bool TextureDemo::frame( const gmtl::Matrix44f& view, const gmtl::Matrix44f& proj )
 {
     if( !getStartupCalled() )
@@ -197,10 +195,8 @@ bool TextureDemo::frame( const gmtl::Matrix44f& view, const gmtl::Matrix44f& pro
 
     glClear( GL_COLOR_BUFFER_BIT );
 
-    // drawInfo stores the contextID (used by many Jag3D objects to
-    // look up their object ID), and the current Program
-    // (used by vertex attribs and uniforms to look up their locations).
-    drawInfo._id = jagDraw::ContextSupport::instance()->getActiveContext();
+    const jagDraw::jagDrawContextID contextID( jagDraw::ContextSupport::instance()->getActiveContext() );
+    jagDraw::DrawInfo drawInfo( _drawInfo[ contextID ] );
 
     // Render all Drawables.
     BOOST_FOREACH( jagDraw::DrawNode& drawNode, _nodes )
@@ -208,7 +204,7 @@ bool TextureDemo::frame( const gmtl::Matrix44f& view, const gmtl::Matrix44f& pro
         drawNode( drawInfo );
     }
     
-    glFlush ();
+    glFlush();
     JAG3D_ERROR_CHECK( "TextureDemo display()" );
 
     return( true );
