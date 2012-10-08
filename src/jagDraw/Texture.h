@@ -28,6 +28,7 @@
 #include <jagDraw/FramebufferAttachable.h>
 #include <jagDraw/ObjectID.h>
 #include <jagDraw/Image.h>
+#include <jagDraw/CommandMap.h>
 #include <jagBase/LogBase.h>
 #include <jagBase/ptr.h>
 
@@ -51,6 +52,11 @@ public:
     Texture( const GLenum target, ImagePtr image=ImagePtr((Image*)NULL) );
     Texture( const Texture& rhs );
     virtual ~Texture();
+
+    /** \brief TBD
+    \details Set the active texture.
+    Override from DrawablePrep. */
+    virtual void activate( const unsigned int unit );
 
     /** \brief TBD
     Override from DrawablePrep. */
@@ -99,6 +105,8 @@ protected:
 
 typedef jagBase::ptr< jagDraw::Texture >::shared_ptr TexturePtr;
 typedef std::vector< TexturePtr > TextureVec;
+
+typedef CommandSet< unsigned int, TexturePtr > TextureSet;
 
 
 // jagDraw
