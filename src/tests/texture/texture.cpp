@@ -187,6 +187,9 @@ bool TextureDemo::init()
     return( true );
 }
 
+
+jagDraw::DrawInfo drawInfo;
+
 bool TextureDemo::frame( const gmtl::Matrix44f& view, const gmtl::Matrix44f& proj )
 {
     if( !getStartupCalled() )
@@ -197,7 +200,6 @@ bool TextureDemo::frame( const gmtl::Matrix44f& view, const gmtl::Matrix44f& pro
     // drawInfo stores the contextID (used by many Jag3D objects to
     // look up their object ID), and the current Program
     // (used by vertex attribs and uniforms to look up their locations).
-    jagDraw::DrawInfo drawInfo;
     drawInfo._id = jagDraw::ContextSupport::instance()->getActiveContext();
 
     // Render all Drawables.

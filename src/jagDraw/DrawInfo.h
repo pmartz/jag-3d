@@ -23,6 +23,7 @@
 
 #include <jagDraw/Export.h>
 #include <jagDraw/ContextSupport.h>
+#include <jagDraw/CommandMap.h>
 #include <jagDraw/Program.h>
 #include <jagDraw/Uniform.h>
 #include <jagDraw/UniformBlock.h>
@@ -40,6 +41,8 @@ struct JAGDRAW_EXPORT DrawInfo
     DrawInfo();
 
     jagDrawContextID _id;
+
+    CommandMap _current;
 
     /** \brief Pointer to program currently in use.
     \details Required by VertexAttrib to query the \c index
