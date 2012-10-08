@@ -44,11 +44,6 @@ struct JAGDRAW_EXPORT DrawInfo
 
     CommandMap _current;
 
-    /** \brief Pointer to program currently in use.
-    \details Required by VertexAttrib to query the \c index
-    parameter for a generic vertex attribute. */
-    ProgramPtr _program;
-
 
     typedef std::map< Program::HashValue, ConstUniformPtr > UniformMap;
 

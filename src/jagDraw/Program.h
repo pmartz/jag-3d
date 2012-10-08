@@ -71,7 +71,7 @@ public:
 
     /** \brief Make this program the current program.
     \details Implicitly calls link() if necessary for this context,
-    then calls glUseProgram(). Also records itself in drawInfo._program
+    then calls glUseProgram(). Also records itself in DrawInfo
     for later location queries by vertex attribs and uniforms.
 
     This function also iterates over its list of active uniforms and

@@ -86,7 +86,7 @@ void Program::operator()( DrawInfo& drawInfo )
     // Record the currently used program in DrawInfo.
     // Downstream vertex attribs and uniforms will query
     // this for location values.
-    drawInfo._program = shared_from_this();
+    drawInfo._current.insert( shared_from_this() );
 
     const unsigned int contextID( ( unsigned int )( drawInfo._id ) );
     const GLuint id( getID( contextID ) );
