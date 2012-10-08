@@ -96,7 +96,7 @@ public:
 
     /** \brief Tell the contained ObjectID objects how many contexts to expect.
     \details Inherited from ObjectIDOwner. */
-    virtual void setMaxContexts( const unsigned int numContexts ) {}
+    virtual void setMaxContexts( const unsigned int numContexts );
 
     /** \brief Delete the ID for the given \c contextID.
     \details Inherited from ObjectIDOwner.

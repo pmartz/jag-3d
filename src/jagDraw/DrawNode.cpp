@@ -22,6 +22,7 @@
 #include <jagDraw/DrawablePrep.h>
 #include <jagDraw/Error.h>
 #include <jagBase/LogMacros.h>
+#include <jagBase/ptr.h>
 
 #include <boost/foreach.hpp>
 
@@ -61,6 +62,28 @@ void DrawNode::operator()( DrawInfo& drawInfo )
     }
 
     JAG3D_ERROR_CHECK( "DrawNode::operator()" );
+}
+
+void DrawNode::setMaxContexts( const unsigned int numContexts )
+{
+    typedef std::map< CommandType, DrawablePrepPtr > MyMapTBD;
+    BOOST_FOREACH( MyMapTBD::value_type dpPair, _commands->_data )
+    {
+        ObjectIDPtr objID( boost::dynamic_pointer_cast< ObjectID >( dpPair.second ) );
+        if( objID != NULL )
+            objID->setMaxContexts( numContexts );
+        else
+        {
+            ObjectIDOwnerPtr objIDOwner( boost::dynamic_pointer_cast< ObjectIDOwner >( dpPair.second ) );
+            if( objIDOwner != NULL )
+                objIDOwner->setMaxContexts( numContexts );
+        }
+    }
+
+    BOOST_FOREACH( DrawablePtr drawable, _drawables )
+    {
+        drawable->setMaxContexts( numContexts );
+    }
 }
 
 

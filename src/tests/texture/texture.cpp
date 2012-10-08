@@ -26,7 +26,6 @@
 #include <jagBase/Log.h>
 #include <jagBase/LogMacros.h>
 #include <jagDisk/ReadWrite.h>
-#include <Poco/Message.h>
 #include <boost/program_options/options_description.hpp>
 #include <gmtl/gmtl.h>
 
@@ -57,6 +56,7 @@ public:
 
 protected:
     jagDraw::DrawableVec _drawableVec;
+    jagDraw::DrawNodeSimpleVec _nodes;
 };
 
 
@@ -70,6 +70,12 @@ DemoInterface* DemoInterface::create( bpo::options_description& desc )
 bool TextureDemo::startup( const unsigned int numContexts )
 {
     DemoInterface::startup( numContexts );
+
+    jagDraw::CommandMapPtr commands( new jagDraw::CommandMap() );
+
+    _nodes.resize( 1 );
+    jagDraw::DrawNode& drawNode( _nodes[ 0 ] );
+
 
     const char* vShaderSource =
 #if( POCO_OS == POCO_OS_MAC_OS_X )
@@ -88,31 +94,34 @@ bool TextureDemo::startup( const unsigned int numContexts )
     jagDraw::ShaderPtr vs( new jagDraw::Shader( GL_VERTEX_SHADER ) );
     vs->addSourceString( std::string( vShaderSource ) );
 
-    jagDraw::ProgramPtr prog;
-    {
-        const char* fShaderSource =
+    const char* fShaderSource =
 #if( POCO_OS == POCO_OS_MAC_OS_X )
-            // In OSX 10.7/10.8, use GL 3.2 and GLSL 1.50
-            "#version 150 \n"
+        // In OSX 10.7/10.8, use GL 3.2 and GLSL 1.50
+        "#version 150 \n"
 #else
-            "#version 400 \n"
+        "#version 400 \n"
 #endif
-            "uniform sampler2D texture; \n"
-            "in vec2 tcOut; \n"
-            "out vec4 colorOut; \n"
-            "void main() { \n"
-            "    colorOut = texture2D( texture, tcOut ); \n"
-            //"    colorOut = vec4( tcOut, 0., 1. ); \n"
-            "}";
-        jagDraw::ShaderPtr fs( new jagDraw::Shader( GL_FRAGMENT_SHADER ) );
-        fs->addSourceString( std::string( fShaderSource ) );
+        "uniform sampler2D texture; \n"
+        "in vec2 tcOut; \n"
+        "out vec4 colorOut; \n"
+        "void main() { \n"
+        "    colorOut = texture2D( texture, tcOut ); \n"
+        //"    colorOut = vec4( tcOut, 0., 1. ); \n"
+        "}";
+    jagDraw::ShaderPtr fs( new jagDraw::Shader( GL_FRAGMENT_SHADER ) );
+    fs->addSourceString( std::string( fShaderSource ) );
 
-        prog = jagDraw::ProgramPtr( new jagDraw::Program );
-        prog->attachShader( vs );
-        prog->attachShader( fs );
-    }
+    jagDraw::ProgramPtr prog;
+    prog = jagDraw::ProgramPtr( new jagDraw::Program );
+    prog->attachShader( vs );
+    prog->attachShader( fs );
 
-    jagDraw::UniformPtr texture( new jagDraw::Uniform( "texture", GL_SAMPLER_2D, (GLint)0 ) );
+    commands->insert( prog );
+
+
+    jagDraw::UniformPtr textureUniform( new jagDraw::Uniform( "texture", GL_SAMPLER_2D, (GLint)0 ) );
+
+    commands->insert( textureUniform );
 
 
     jagDraw::DrawablePtr drawable( new jagDraw::Drawable() );
@@ -127,11 +136,6 @@ bool TextureDemo::startup( const unsigned int numContexts )
     jagDraw::DrawArraysPtr drawArrays( new jagDraw::DrawArrays( GL_TRIANGLE_STRIP, 0, 4 ) );
 
     {
-        drawable = jagDraw::DrawablePtr( new jagDraw::Drawable() );
-
-        drawable->addDrawablePrep( prog );
-        drawable->addDrawablePrep( texture );
-
         FloatArray i3fa;
         i3fa.push_back( -.9f ); i3fa.push_back( -.9f ); i3fa.push_back( z );
             i3fa.push_back( 0.f ); i3fa.push_back( 0.f );
@@ -148,23 +152,24 @@ bool TextureDemo::startup( const unsigned int numContexts )
         vaop->addVertexArrayCommand( ibop, jagDraw::VertexArrayCommand::Vertex );
         vaop->addVertexArrayCommand( iVerts, jagDraw::VertexArrayCommand::Vertex );
         vaop->addVertexArrayCommand( iColor );
-        drawable->addDrawablePrep( vaop );
+        commands->insert( vaop );
 
         // Load image using jagDisk plugin interface.
         jagDraw::ImagePtr image( (jagDraw::Image*) jagDisk::read( "balloon.jpg" ) );
         jagDraw::TexturePtr tex( new jagDraw::Texture( GL_TEXTURE_2D, image ) );
-        drawable->addDrawablePrep( tex );
+        commands->insert( tex );
 
         drawable->addDrawCommand( drawArrays );
 
-        _drawableVec.push_back( drawable );
+        drawNode.setCommandMap( commands );
+        drawNode.addDrawable( drawable );
     }
 
 
     // Tell all Jag3D objects how many contexts to expect.
-    BOOST_FOREACH( const jagDraw::DrawableVec::value_type& dp, _drawableVec )
+    BOOST_FOREACH( jagDraw::DrawNode& drawNode, _nodes )
     {
-        dp->setMaxContexts( numContexts );
+        drawNode.setMaxContexts( numContexts );
     }
 
 
@@ -199,9 +204,9 @@ bool TextureDemo::frame( const gmtl::Matrix44f& view, const gmtl::Matrix44f& pro
     drawInfo._id = jagDraw::ContextSupport::instance()->getActiveContext();
 
     // Render all Drawables.
-    BOOST_FOREACH( jagDraw::DrawablePtr dp, _drawableVec )
+    BOOST_FOREACH( jagDraw::DrawNode& drawNode, _nodes )
     {
-        (*(dp))( drawInfo );
+        drawNode( drawInfo );
     }
     
     glFlush ();
