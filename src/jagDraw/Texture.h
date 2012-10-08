@@ -106,7 +106,8 @@ protected:
 typedef jagBase::ptr< jagDraw::Texture >::shared_ptr TexturePtr;
 typedef std::vector< TexturePtr > TextureVec;
 
-typedef CommandSet< unsigned int, TexturePtr > TextureSet;
+typedef CommandSet< TextureSet_t, unsigned int, TexturePtr > TextureSet;
+typedef jagBase::ptr< jagDraw::TextureSet >::shared_ptr TextureSetPtr;
 
 
 // jagDraw

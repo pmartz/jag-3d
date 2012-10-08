@@ -71,11 +71,6 @@ bool TextureDemo::startup( const unsigned int numContexts )
 {
     DemoInterface::startup( numContexts );
 
-    jagDraw::CommandMapPtr commands( new jagDraw::CommandMap() );
-
-    _nodes.resize( 1 );
-    jagDraw::DrawNode& drawNode( _nodes[ 0 ] );
-
 
     const char* vShaderSource =
 #if( POCO_OS == POCO_OS_MAC_OS_X )
@@ -116,17 +111,22 @@ bool TextureDemo::startup( const unsigned int numContexts )
     prog->attachShader( vs );
     prog->attachShader( fs );
 
+    jagDraw::CommandMapPtr commands( new jagDraw::CommandMap() );
     commands->insert( prog );
 
 
     jagDraw::UniformPtr textureUniform( new jagDraw::Uniform( "texture", GL_SAMPLER_2D, (GLint)0 ) );
-
     commands->insert( textureUniform );
+
+    // Load image using jagDisk plugin interface.
+    jagDraw::ImagePtr image( (jagDraw::Image*) jagDisk::read( "balloon.jpg" ) );
+    jagDraw::TexturePtr tex( new jagDraw::Texture( GL_TEXTURE_2D, image ) );
+    jagDraw::TextureSetPtr texSet( new jagDraw::TextureSet() );
+    (*texSet)[ GL_TEXTURE0 ] = tex;
+    commands->insert( texSet );
 
 
     jagDraw::DrawablePtr drawable( new jagDraw::Drawable() );
-    const float z = .5f;
-    typedef std::vector< float > FloatArray;
 
     const GLsizei stride = sizeof( GLfloat ) * 5;
     jagDraw::VertexAttribPtr iVerts( new jagDraw::VertexAttrib(
@@ -134,8 +134,11 @@ bool TextureDemo::startup( const unsigned int numContexts )
     jagDraw::VertexAttribPtr iColor( new jagDraw::VertexAttrib(
         "texcoord", 2, GL_FLOAT, GL_FALSE, stride, sizeof( GLfloat ) * 3 ) );
     jagDraw::DrawArraysPtr drawArrays( new jagDraw::DrawArrays( GL_TRIANGLE_STRIP, 0, 4 ) );
+    drawable->addDrawCommand( drawArrays );
 
     {
+        const float z = .5f;
+        typedef std::vector< float > FloatArray;
         FloatArray i3fa;
         i3fa.push_back( -.9f ); i3fa.push_back( -.9f ); i3fa.push_back( z );
             i3fa.push_back( 0.f ); i3fa.push_back( 0.f );
@@ -154,15 +157,9 @@ bool TextureDemo::startup( const unsigned int numContexts )
         vaop->addVertexArrayCommand( iColor );
         commands->insert( vaop );
 
-        // Load image using jagDisk plugin interface.
-        jagDraw::ImagePtr image( (jagDraw::Image*) jagDisk::read( "balloon.jpg" ) );
-        jagDraw::TexturePtr tex( new jagDraw::Texture( GL_TEXTURE_2D, image ) );
-        commands->insert( tex );
-
-        drawable->addDrawCommand( drawArrays );
-
-        drawNode.setCommandMap( commands );
+        jagDraw::DrawNode drawNode( commands );
         drawNode.addDrawable( drawable );
+        _nodes.push_back( drawNode );
     }
 
 
