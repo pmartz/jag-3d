@@ -22,6 +22,7 @@
 #include <jagBase/LogMacros.h>
 #include <string>
 #include <sstream>
+#include <iomanip>
 
 #include <boost/version.hpp>
 #include <Poco/Version.h>
@@ -45,11 +46,12 @@ std::string getVersionString()
     if( s_jag3d_version.empty() )
     {
         std::ostringstream oStr;
+        oStr.fill( '0' );
         oStr << std::string( "Jag3D version " ) <<
-            JAG3D_MAJOR_VERSION << "." <<
-            JAG3D_MINOR_VERSION << "." <<
-            JAG3D_SUB_VERSION << " (" <<
-            getVersionNumber() << ").";
+            std::setw( 1 ) << JAG3D_MAJOR_VERSION << "." <<
+            std::setw( 2 ) << JAG3D_MINOR_VERSION << "." <<
+            std::setw( 2 ) << JAG3D_SUB_VERSION << " (" <<
+            std::setw( 5 ) << getVersionNumber() << ").";
         s_jag3d_version = oStr.str();
         JAG3D_INFO_STATIC( "jag.base.version", s_jag3d_version );
 
