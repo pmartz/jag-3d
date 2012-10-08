@@ -59,11 +59,17 @@ public:
         // Program::use() must be called prior to VertexAttrib::operator().
         // Note this is different from Uniform::operator(). This means we can simply
         // look up the vertex attrib hash index without bothering to check for
-        // ( drawInfo._program != NULL ) first.
+        // ( drawInfo._current[ Program_t ] != NULL ) first.
+
+        // TBD We must support the following use case. Imagine a DrawNode that sets a program
+        // and a VAO (and does some drawing), following by another DrawNode that
+        // changes only the program (and does some drawing). In this case, the old VAO
+        // would be in effect. Would this render correctly?
 
         // TBD need an "explicit" mode where the location is set by the app
         // (because it uses glBindAttribLocation). This would avoid the table lookup.
-        GLint index( drawInfo._program->getVertexAttribLocation( _indexHash ) );
+        ProgramPtr prog( boost::dynamic_pointer_cast< Program >( drawInfo._current[ Program_t ] ) );
+        GLint index( prog->getVertexAttribLocation( _indexHash ) );
 
         // Note that we do NOT check for index == -1. Inactive vertex attribs
         // are not centerline usage. OpenGL will ignore these calls if
@@ -103,7 +109,8 @@ public:
     {
         // TBD need an "explicit" mode where the location is set by the app
         // (because it uses glBindAttribLocation). This would avoid the table lookup.
-        GLint index( drawInfo._program->getVertexAttribLocation( _indexHash ) );
+        ProgramPtr prog( boost::dynamic_pointer_cast< Program >( drawInfo._current[ Program_t ] ) );
+        GLint index( prog->getVertexAttribLocation( _indexHash ) );
 
         // Note that we do NOT check for index == -1. Inactive vertex attribs
         // are not centerline usage. OpenGL will ignore these calls if

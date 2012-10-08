@@ -124,9 +124,10 @@ void UniformBlock::operator()( DrawInfo& drawInfo )
 
     // UniformBlock::operator() could execute before Program::operator(),
     // so only look up uniform block info if a Program is available.
-    if( drawInfo._program != NULL )
+    if( drawInfo._current.contains( Program_t ) )
     {
-        Program::BlockInfo blockInfo( drawInfo._program->getUniformBlockInfo( _nameHash ) );
+        ProgramPtr prog( boost::dynamic_pointer_cast< Program >( drawInfo._current[ Program_t ] ) );
+        Program::BlockInfo blockInfo( prog->getUniformBlockInfo( _nameHash ) );
         operator()( drawInfo, blockInfo );
     }
 }

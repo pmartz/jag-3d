@@ -264,9 +264,10 @@ void Uniform::operator()( DrawInfo& drawInfo )
 
     // Uniform::operator() could execute before Program::operator(),
     // so only look up uniform location if a Program is available.
-    if( drawInfo._program != NULL )
+    if( drawInfo._current.contains( Program_t ) )
     {
-        GLint index( drawInfo._program->getUniformLocation( _indexHash ) );
+        ProgramPtr prog( boost::dynamic_pointer_cast< Program >( drawInfo._current[ Program_t ] ) );
+        GLint index( prog->getUniformLocation( _indexHash ) );
         operator()( drawInfo, index );
     }
 }
