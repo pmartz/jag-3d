@@ -26,11 +26,13 @@
 #include <jagDraw/Version.h>
 
 #include <jagDraw/BufferObject.h>
+#include <jagDraw/CommandMap.h>
 #include <jagDraw/ContextSupport.h>
 #include <jagDraw/Drawable.h>
 #include <jagDraw/DrawablePrep.h>
 #include <jagDraw/DrawCommand.h>
 #include <jagDraw/DrawInfo.h>
+#include <jagDraw/DrawNode.h>
 #include <jagDraw/Error.h>
 #include <jagDraw/Framebuffer.h>
 #include <jagDraw/Image.h>
