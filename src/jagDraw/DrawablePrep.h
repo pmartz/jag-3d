@@ -37,10 +37,12 @@ struct DrawInfo;
 typedef enum {
     Framebuffer_t,
     Program_t,
-    Texture_t,
+    TextureSet_t,
     Uniform_t,
     UniformBlock_t,
-    VertexArrayObject_t
+    VertexArrayObject_t,
+
+    Texture_t
 } CommandType;
 
 typedef std::vector< CommandType > CommandTypeVec;
@@ -62,6 +64,11 @@ public:
         _uniqueID( UniqueID::instance()->generate( rhs._type ) )
     {}
     ~DrawablePrep() {}
+
+    /** \brief Activate the DrawablePrep prior to executing operator().
+    \details DrawablePrep objects usually do not require activation, so this is a no-op.
+    However, Texture uses activate() to set the active texture. */
+    virtual void activate( const unsigned int unit ) {}
 
     /** \brief TBD
     \details TBD */

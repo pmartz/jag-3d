@@ -56,13 +56,17 @@ Texture::~Texture()
 }
 
 
+void Texture::activate( const unsigned int unit )
+{
+    GLenum localUnit( ( unit >= GL_TEXTURE0 ) ? unit : GL_TEXTURE0 + unit );
+    glActiveTexture( localUnit );
+}
+
 void Texture::operator()( DrawInfo& drawInfo )
 {
     const unsigned int contextID( drawInfo._id );
 
-    // TBD need to get this from somewhere, but it doesn't make sense to
-    // store it internally in the Texture object.
-    glActiveTexture( GL_TEXTURE0 );
+    activate( 0 );
 
     glBindTexture( _target, getID( contextID ) );
 

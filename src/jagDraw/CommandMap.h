@@ -21,6 +21,7 @@
 #ifndef __JAGDRAW_COMMAND_MAP_H__
 #define __JAGDRAW_COMMAND_MAP_H__ 1
 
+#include <jagDraw/ObjectID.h>
 #include <jagDraw/DrawablePrep.h>
 
 #include <jagBase/ptr.h>
@@ -190,9 +191,9 @@ public:
 
     std::string _name;
     CommandMapType _data;
-    std::bitset<6> _bits;
-    std::bitset<6> _overrideBits;
-    std::bitset<6> _protectBits;
+    std::bitset<7> _bits;
+    std::bitset<7> _overrideBits;
+    std::bitset<7> _protectBits;
 };
 
 typedef jagBase::ptr< jagDraw::CommandMap >::shared_ptr CommandMapPtr;
@@ -247,6 +248,67 @@ public:
 
 protected:
     CommandPriorityVec< CommandType > _priorityVec;
+};
+
+
+
+template< class K, class D >
+class CommandSet : public DrawablePrep, public ObjectIDOwner
+{
+public:
+    CommandSet( CommandType type )
+      : DrawablePrep( type ),
+        ObjectIDOwner()
+    {}
+    CommandSet( const CommandSet< K, D >& rhs )
+      : DrawablePrep( rhs ),
+        ObjectIDOwner( rhs )
+    {}
+    ~CommandSet()
+    {}
+
+    D& operator[]( const K& key )
+    {
+        return( _set[ key ] );
+    }
+
+
+    typedef std::set< K, D > InternalSetType;
+
+    /** \brief TBD
+    \details Override method from DrawablePrep. */
+    virtual void operator()( DrawInfo& drawInfo )
+    {
+        BOOST_FOREACH( const InternalSetType::value_type& dataPair, _set )
+        {
+            DrawablePrep drawPrep( *(dataPair.second) );
+            if( K == Texture_t )
+                drawPrep.activate( dataPair.first );
+            drawPrep( drawInfo );
+        }
+    }
+
+    /** \brief TBD
+    \details Override method from ObjectIDOwner */
+    virtual void setMaxContexts( const unsigned int numContexts )
+    {
+        BOOST_FOREACH( const InternalSetType::value_type& dataPair, _set )
+        {
+            dataPair.second->setMaxContexts( numContexts );
+        }
+    }
+    /** \brief TBD
+    \details Override method from ObjectIDOwner */
+    virtual void deleteID( const jagDraw::jagDrawContextID contextID )
+    {
+        BOOST_FOREACH( const InternalSetType::value_type& dataPair, _set )
+        {
+            dataPair.second->deleteID( contextID );
+        }
+    }
+
+protected:
+    InternalSetType _set;
 };
 
 
