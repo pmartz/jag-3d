@@ -200,11 +200,8 @@ bool JagLoadDemo::frame( const gmtl::Matrix44f& view, const gmtl::Matrix44f& pro
 
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
-    // drawInfo stores the contextID (used by many Jag3D objects to
-    // look up their object ID), and the current Program
-    // (used by vertex attribs and uniforms to look up their locations).
-    jagDraw::DrawInfo drawInfo;
-    drawInfo._id = jagDraw::ContextSupport::instance()->getActiveContext();
+    const jagDraw::jagDrawContextID contextID( jagDraw::ContextSupport::instance()->getActiveContext() );
+    jagDraw::DrawInfo drawInfo( _drawInfo[ contextID ] );
 
     // Systems such as VRJ will pass view and projection matrices.
     if( view.mState != gmtl::Matrix44f::IDENTITY || proj.mState != gmtl::Matrix44f::IDENTITY )
@@ -232,7 +229,7 @@ bool JagLoadDemo::frame( const gmtl::Matrix44f& view, const gmtl::Matrix44f& pro
         (*(dp))( drawInfo );
     }
 
-    glFlush ();
+    glFlush();
 
     JAG3D_ERROR_CHECK( "jagload display()" );
 

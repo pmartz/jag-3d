@@ -24,7 +24,8 @@
 #include <jagDraw/Export.h>
 #include <jagDraw/ContextSupport.h>
 #include <jagDraw/CommandMap.h>
-#include <jagDraw/Program.h>
+#include <jagDraw/PerContextData.h>
+
 #include <jagDraw/Uniform.h>
 #include <jagDraw/UniformBlock.h>
 
@@ -64,6 +65,8 @@ struct JAGDRAW_EXPORT DrawInfo
     */
     UniformBlockMap _uniformBlockMap;
 };
+
+typedef PerContextData< DrawInfo > PerContextDrawInfo;
 
 
 // jagDraw

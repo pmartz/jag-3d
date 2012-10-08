@@ -294,11 +294,8 @@ bool RttDemo::frame( const gmtl::Matrix44f& view, const gmtl::Matrix44f& proj )
     if( !getStartupCalled() )
         return( true );
 
-    // drawInfo stores the contextID (used by many Jag3D objects to
-    // look up their object ID), and the current Program
-    // (used by vertex attribs and uniforms to look up their locations).
-    jagDraw::DrawInfo drawInfo;
-    drawInfo._id = jagDraw::ContextSupport::instance()->getActiveContext();
+    const jagDraw::jagDrawContextID contextID( jagDraw::ContextSupport::instance()->getActiveContext() );
+    jagDraw::DrawInfo drawInfo( _drawInfo[ contextID ] );
 
     // Render all Drawables.
     if( ( ( ++_frames / 100 ) & 0x1 ) == 0 )
@@ -343,7 +340,7 @@ bool RttDemo::frame( const gmtl::Matrix44f& view, const gmtl::Matrix44f& proj )
         JAG3D_ERROR_CHECK( "Display texture on quad" );
     }
 
-    glFlush ();
+    glFlush();
     JAG3D_ERROR_CHECK( "RttDemo display()" );
 
     return( true );

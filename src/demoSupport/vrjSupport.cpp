@@ -165,6 +165,10 @@ void JagDemoApp::draw()
         vrjFrustum[ Frustum::VJ_RIGHT ], vrjFrustum[ Frustum::VJ_BOTTOM ], 
         vrjFrustum[ Frustum::VJ_NEAR ], vrjFrustum[ Frustum::VJ_FAR ] );
 
+    // VRJ does its own drawing, so we need to tell Jag that some
+    // commands have been issued. I.e., we need to "dirty state".
+    jagDraw::DrawInfo& drawInfo( _di->getDrawInfo( contextID ) );
+    drawInfo._current.clear( jagDraw::Program_t );
 
     _di->frame( project->getViewMatrix(), proj );
 }
