@@ -20,6 +20,7 @@
 
 #include <jagDraw/DrawNode.h>
 #include <jagDraw/DrawablePrep.h>
+#include <jagDraw/DrawInfo.h>
 #include <jagDraw/Error.h>
 #include <jagBase/LogMacros.h>
 #include <jagBase/ptr.h>
@@ -50,8 +51,10 @@ DrawNode::~DrawNode()
 
 void DrawNode::operator()( DrawInfo& drawInfo )
 {
+    CommandMap delta( drawInfo._current << (*_commands) );
+
     typedef std::map< CommandType, DrawablePrepPtr > MyMapTBD;
-    BOOST_FOREACH( MyMapTBD::value_type dpPair, _commands->_data )
+    BOOST_FOREACH( MyMapTBD::value_type dpPair, delta._data )
     {
         ( *(dpPair.second) )( drawInfo );
     }
