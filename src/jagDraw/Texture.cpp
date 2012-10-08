@@ -66,8 +66,6 @@ void Texture::operator()( DrawInfo& drawInfo )
 {
     const unsigned int contextID( drawInfo._id );
 
-    activate( 0 );
-
     glBindTexture( _target, getID( contextID ) );
 
     JAG3D_ERROR_CHECK( "Texture::operator()" );

@@ -252,39 +252,39 @@ protected:
 
 
 
-template< class K, class D >
+template< CommandType T, class K, class D >
 class CommandSet : public DrawablePrep, public ObjectIDOwner
 {
 public:
-    CommandSet( CommandType type )
-      : DrawablePrep( type ),
+    CommandSet()
+      : DrawablePrep( T ),
         ObjectIDOwner()
     {}
-    CommandSet( const CommandSet< K, D >& rhs )
+    CommandSet( const CommandSet< T, K, D >& rhs )
       : DrawablePrep( rhs ),
         ObjectIDOwner( rhs )
     {}
     ~CommandSet()
     {}
 
-    D& operator[]( const K& key )
+    D& operator[]( const K key )
     {
-        return( _set[ key ] );
+        return( _map[ key ] );
     }
 
 
-    typedef std::set< K, D > InternalSetType;
+    typedef std::map< K, D > InternalMapType;
 
     /** \brief TBD
     \details Override method from DrawablePrep. */
     virtual void operator()( DrawInfo& drawInfo )
     {
-        BOOST_FOREACH( const InternalSetType::value_type& dataPair, _set )
+        BOOST_FOREACH( const InternalMapType::value_type& dataPair, _map )
         {
-            DrawablePrep drawPrep( *(dataPair.second) );
-            if( K == Texture_t )
-                drawPrep.activate( dataPair.first );
-            drawPrep( drawInfo );
+            DrawablePrepPtr drawPrep( dataPair.second );
+            if( T == TextureSet_t )
+                drawPrep->activate( dataPair.first );
+            (*drawPrep)( drawInfo );
         }
     }
 
@@ -292,7 +292,7 @@ public:
     \details Override method from ObjectIDOwner */
     virtual void setMaxContexts( const unsigned int numContexts )
     {
-        BOOST_FOREACH( const InternalSetType::value_type& dataPair, _set )
+        BOOST_FOREACH( const InternalMapType::value_type& dataPair, _map )
         {
             dataPair.second->setMaxContexts( numContexts );
         }
@@ -301,14 +301,14 @@ public:
     \details Override method from ObjectIDOwner */
     virtual void deleteID( const jagDraw::jagDrawContextID contextID )
     {
-        BOOST_FOREACH( const InternalSetType::value_type& dataPair, _set )
+        BOOST_FOREACH( const InternalMapType::value_type& dataPair, _map )
         {
             dataPair.second->deleteID( contextID );
         }
     }
 
 protected:
-    InternalSetType _set;
+    InternalMapType _map;
 };
 
 
