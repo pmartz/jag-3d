@@ -21,6 +21,7 @@
 #include <demoSupport/DemoInterface.h>
 
 #include <jagDraw/DrawCommon.h>
+#include <jagDraw/PerContextData.h>
 #include <jagBase/Version.h>
 #include <jagBase/Log.h>
 #include <jagBase/LogMacros.h>
@@ -70,7 +71,8 @@ protected:
 
     jagDraw::DrawableVec _drawableVec;
 
-    gmtl::Matrix44f _proj;
+    typedef jagDraw::PerContextData< gmtl::Matrix44f > PerContextMatrix44f;
+    PerContextMatrix44f _proj;
     osg::BoundingSphere _bs;
 
     jagDraw::PerContextData< jagDraw::UniformPtr > _viewProjUniform;
@@ -158,7 +160,12 @@ bool JagLoadDemo::startup( const unsigned int numContexts )
     firstDrawable->insertDrawablePrep( jagDraw::UniformPtr(
         new jagDraw::Uniform( "ecLightDir", lightVec ) ) );
 
-    _proj = computeProjection( 1. );
+
+    // We keep a different project matrix per context (to support different
+    // window sizes). Initialize them all to a reasonable default.
+    const gmtl::Matrix44f defaultProjMat( computeProjection( 1. ) );
+    for( unsigned int idx( 0 ); idx<numContexts; ++idx )
+        _proj._data.push_back( defaultProjMat );
 
 
     // Tell all Jag3D objects how many contexts to expect.
@@ -201,7 +208,7 @@ bool JagLoadDemo::frame( const gmtl::Matrix44f& view, const gmtl::Matrix44f& pro
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
     const jagDraw::jagDrawContextID contextID( jagDraw::ContextSupport::instance()->getActiveContext() );
-    jagDraw::DrawInfo drawInfo( _drawInfo[ contextID ] );
+    jagDraw::DrawInfo drawInfo( getDrawInfo( contextID ) );
 
     // Systems such as VRJ will pass view and projection matrices.
     if( view.mState != gmtl::Matrix44f::IDENTITY || proj.mState != gmtl::Matrix44f::IDENTITY )
@@ -216,7 +223,7 @@ bool JagLoadDemo::frame( const gmtl::Matrix44f& view, const gmtl::Matrix44f& pro
         gmtl::Matrix44f viewMat;
         gmtl::Matrix33f normalMat;
         makeViewMatrices( viewMat, normalMat );
-        const gmtl::Matrix44f viewProj( _proj * viewMat );
+        const gmtl::Matrix44f viewProj( _proj._data[ contextID ] * viewMat );
         _viewProjUniform[ drawInfo._id ]->set( viewProj );
         _normalUniform[ drawInfo._id ]->set( normalMat );
     }
@@ -238,7 +245,8 @@ bool JagLoadDemo::frame( const gmtl::Matrix44f& view, const gmtl::Matrix44f& pro
 
 void JagLoadDemo::reshape( const int w, const int h )
 {
-    _proj = computeProjection( (float)w/(float)h );
+    const jagDraw::jagDrawContextID contextID( jagDraw::ContextSupport::instance()->getActiveContext() );
+    _proj._data[ contextID ] = computeProjection( (float)w/(float)h );
 }
 
 gmtl::Matrix44f JagLoadDemo::computeProjection( float aspect )

@@ -295,7 +295,7 @@ bool RttDemo::frame( const gmtl::Matrix44f& view, const gmtl::Matrix44f& proj )
         return( true );
 
     const jagDraw::jagDrawContextID contextID( jagDraw::ContextSupport::instance()->getActiveContext() );
-    jagDraw::DrawInfo drawInfo( _drawInfo[ contextID ] );
+    jagDraw::DrawInfo drawInfo( getDrawInfo( contextID ) );
 
     // Render all Drawables.
     if( ( ( ++_frames / 100 ) & 0x1 ) == 0 )
