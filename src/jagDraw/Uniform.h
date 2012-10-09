@@ -27,6 +27,7 @@
 #include <jagDraw/DrawablePrep.h>
 #include <jagDraw/Program.h>
 #include <jagBase/LogBase.h>
+#include <jagDraw/CommandMap.h>
 #include <jagBase/ptr.h>
 #include <gmtl/gmtl.h>
 
@@ -224,6 +225,44 @@ protected:
 typedef jagBase::ptr< jagDraw::Uniform >::shared_ptr UniformPtr;
 typedef jagBase::ptr< const jagDraw::Uniform >::shared_ptr ConstUniformPtr;
 typedef std::vector< UniformPtr > UniformVec;
+
+
+
+class UniformSet : public DrawablePrep
+{
+public:
+    UniformSet()
+      : DrawablePrep( UniformSet_t )
+    {}
+    UniformSet( const UniformSet& rhs )
+      : DrawablePrep( rhs )
+    {}
+    ~UniformSet()
+    {}
+
+    UniformPtr& operator[]( const Program::HashValue& key )
+    {
+        return( _map[ key ] );
+    }
+
+
+    typedef std::map< Program::HashValue, UniformPtr > InternalMapType;
+
+    /** \brief TBD
+    \details Override method from DrawablePrep. */
+    virtual void operator()( DrawInfo& drawInfo )
+    {
+        BOOST_FOREACH( const InternalMapType::value_type& dataPair, _map )
+        {
+            (*(dataPair.second))( drawInfo );
+        }
+    }
+
+protected:
+    InternalMapType _map;
+};
+
+typedef jagBase::ptr< jagDraw::UniformSet >::shared_ptr UniformSetPtr;
 
 
 // jagDraw

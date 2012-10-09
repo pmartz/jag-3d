@@ -30,7 +30,7 @@
 #include <jagBase/LogBase.h>
 #include <jagDraw/ObjectID.h>
 #include <jagDraw/Shader.h>
-#include <jagDraw/PerContextData.h>
+#include <jagDraw/CommandMap.h>
 #include <jagBase/ptr.h>
 
 #include <map>
@@ -93,6 +93,65 @@ protected:
 typedef jagBase::ptr< jagDraw::UniformBlock >::shared_ptr UniformBlockPtr;
 typedef jagBase::ptr< const jagDraw::UniformBlock >::shared_ptr ConstUniformBlockPtr;
 typedef std::vector< UniformBlockPtr > UniformBlockVec;
+
+
+
+class UniformBlockSet : public DrawablePrep, public ObjectIDOwner
+{
+public:
+    UniformBlockSet()
+      : DrawablePrep( UniformBlockSet_t ),
+        ObjectIDOwner()
+    {}
+    UniformBlockSet( const UniformBlockSet& rhs )
+      : DrawablePrep( rhs ),
+        ObjectIDOwner( rhs )
+    {}
+    ~UniformBlockSet()
+    {}
+
+    UniformBlockPtr& operator[]( const Program::HashValue& key )
+    {
+        return( _map[ key ] );
+    }
+
+
+    typedef std::map< Program::HashValue, UniformBlockPtr > InternalMapType;
+
+    /** \brief TBD
+    \details Override method from DrawablePrep. */
+    virtual void operator()( DrawInfo& drawInfo )
+    {
+        BOOST_FOREACH( const InternalMapType::value_type& dataPair, _map )
+        {
+            (*(dataPair.second))( drawInfo );
+        }
+    }
+
+    /** \brief TBD
+    \details Override method from ObjectIDOwner */
+    virtual void setMaxContexts( const unsigned int numContexts )
+    {
+        BOOST_FOREACH( const InternalMapType::value_type& dataPair, _map )
+        {
+            dataPair.second->setMaxContexts( numContexts );
+        }
+    }
+    /** \brief TBD
+    \details Override method from ObjectIDOwner */
+    virtual void deleteID( const jagDraw::jagDrawContextID contextID )
+    {
+        BOOST_FOREACH( const InternalMapType::value_type& dataPair, _map )
+        {
+            dataPair.second->deleteID( contextID );
+        }
+    }
+
+protected:
+    InternalMapType _map;
+};
+
+typedef jagBase::ptr< jagDraw::UniformBlockSet >::shared_ptr UniformBlockSetPtr;
 
 
 // jagDraw

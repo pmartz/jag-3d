@@ -38,11 +38,13 @@ typedef enum {
     Framebuffer_t,
     Program_t,
     TextureSet_t,
-    Uniform_t,
-    UniformBlock_t,
+    UniformSet_t,
+    UniformBlockSet_t,
     VertexArrayObject_t,
 
-    Texture_t
+    Texture_t,
+    Uniform_t,
+    UniformBlock_t
 } CommandType;
 
 typedef std::vector< CommandType > CommandTypeVec;
