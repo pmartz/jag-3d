@@ -199,9 +199,9 @@ public:
 
     std::string _name;
     CommandMapType _data;
-    std::bitset<7> _bits;
-    std::bitset<7> _overrideBits;
-    std::bitset<7> _protectBits;
+    std::bitset<9> _bits;
+    std::bitset<9> _overrideBits;
+    std::bitset<9> _protectBits;
 };
 
 typedef jagBase::ptr< jagDraw::CommandMap >::shared_ptr CommandMapPtr;
