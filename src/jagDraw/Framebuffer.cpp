@@ -32,13 +32,27 @@ namespace jagDraw {
 Framebuffer::Framebuffer( GLenum target )
   : DrawablePrep( Framebuffer_t ),
     jagBase::LogBase( "jag.draw.fbo" ),
-    _target( target )
+    _target( target ),
+    _viewport( false ),
+    _clear( false ),
+    _vpX( 0 ),
+    _vpY( 0 ),
+    _vpWidth( 0 ),
+    _vpHeight( 0 ),
+    _clearMask( 0 )
 {
 }
 Framebuffer::Framebuffer( const Framebuffer& rhs )
   : DrawablePrep( rhs ),
     jagBase::LogBase( rhs ),
-    _target( rhs._target )
+    _target( rhs._target ),
+    _viewport( rhs._viewport ),
+    _clear( rhs._clear ),
+    _vpX( rhs._vpX ),
+    _vpY( rhs._vpY ),
+    _vpWidth( rhs._vpWidth ),
+    _vpHeight( rhs._vpHeight ),
+    _clearMask( rhs._clearMask )
 {
 }
 Framebuffer::~Framebuffer()
@@ -61,6 +75,11 @@ void Framebuffer::operator()( DrawInfo& drawInfo )
         glDrawBuffer( GL_BACK );
     else
         glDrawBuffer( GL_COLOR_ATTACHMENT0 );
+
+    if( _viewport )
+        glViewport( _vpX, _vpY, _vpWidth, _vpHeight );
+    if( _clear )
+        glClear( _clearMask );
 
     JAG3D_FBO_ERROR_CHECK( "Framebuffer::operator()" );
     JAG3D_ERROR_CHECK( "Framebuffer::operator()" );
@@ -124,6 +143,21 @@ void Framebuffer::deleteID( const jagDraw::jagDrawContextID contextID )
                 objIDOwner->deleteID( contextID );
         }
     }
+}
+
+
+void Framebuffer::setViewport( const GLint x, const GLint y, const GLsizei width, const GLsizei height, const bool enable )
+{
+    _vpX = x;
+    _vpY = y;
+    _vpWidth = width;
+    _vpHeight = height;
+    _viewport = enable;
+}
+void Framebuffer::setClear( const GLbitfield mask, const bool enable )
+{
+    _clearMask = mask;
+    _clear = enable;
 }
 
 

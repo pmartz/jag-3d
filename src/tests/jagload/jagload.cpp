@@ -208,7 +208,7 @@ bool JagLoadDemo::frame( const gmtl::Matrix44f& view, const gmtl::Matrix44f& pro
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
     const jagDraw::jagDrawContextID contextID( jagDraw::ContextSupport::instance()->getActiveContext() );
-    jagDraw::DrawInfo drawInfo( getDrawInfo( contextID ) );
+    jagDraw::DrawInfo& drawInfo( getDrawInfo( contextID ) );
 
     // Systems such as VRJ will pass view and projection matrices.
     if( view.mState != gmtl::Matrix44f::IDENTITY || proj.mState != gmtl::Matrix44f::IDENTITY )
@@ -245,6 +245,9 @@ bool JagLoadDemo::frame( const gmtl::Matrix44f& view, const gmtl::Matrix44f& pro
 
 void JagLoadDemo::reshape( const int w, const int h )
 {
+    if( !getStartupCalled() )
+        return;
+
     const jagDraw::jagDrawContextID contextID( jagDraw::ContextSupport::instance()->getActiveContext() );
     _proj._data[ contextID ] = computeProjection( (float)w/(float)h );
 }

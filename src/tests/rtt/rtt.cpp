@@ -153,6 +153,7 @@ bool RttDemo::startup( const unsigned int numContexts )
 
     // Create an FBO for the default framebuffer (the window)
     _defaultFBO = jagDraw::FramebufferPtr( new jagDraw::Framebuffer( GL_DRAW_FRAMEBUFFER ) );
+    _defaultFBO->setViewport( 0, 0, 300, 300 );
 
     jagDraw::CommandMapPtr commands( jagDraw::CommandMapPtr( new jagDraw::CommandMap() ) );
     commands->insert( prog );
@@ -173,6 +174,8 @@ bool RttDemo::startup( const unsigned int numContexts )
 
     // Create an FBO and attach the texture.
     _textureFBO = jagDraw::FramebufferPtr( new jagDraw::Framebuffer( GL_DRAW_FRAMEBUFFER ) );
+    _textureFBO->setViewport( 0, 0, _texWidth, _texHeight );
+    _textureFBO->setClear( GL_COLOR_BUFFER_BIT );
     _textureFBO->addAttachment( GL_COLOR_ATTACHMENT0, tex );
 
     // Render the lines first.
@@ -315,7 +318,7 @@ bool RttDemo::frame( const gmtl::Matrix44f& view, const gmtl::Matrix44f& proj )
         return( true );
 
     const jagDraw::jagDrawContextID contextID( jagDraw::ContextSupport::instance()->getActiveContext() );
-    jagDraw::DrawInfo drawInfo( getDrawInfo( contextID ) );
+    jagDraw::DrawInfo& drawInfo( getDrawInfo( contextID ) );
 
     // Render all Drawables.
     if( ( ( ++_frames / 100 ) & 0x1 ) == 0 )
@@ -334,24 +337,11 @@ bool RttDemo::frame( const gmtl::Matrix44f& view, const gmtl::Matrix44f& proj )
     {
         // Render lines to the FBO, then display the texture with a quad.
 
-        // Bind the texture FBO
-        (*_textureFBO)( drawInfo );
-        // Change the viewport
-        glViewport( 0, 0, _texWidth, _texHeight );
-
-        glClear( GL_COLOR_BUFFER_BIT );
-
         BOOST_FOREACH( jagDraw::DrawNode& drawNode, _rttNodes )
         {
             drawNode( drawInfo );
         }
         JAG3D_ERROR_CHECK( "Render to FBO" );
-
-        // Bind the default FBO
-        (*_defaultFBO)( drawInfo );
-        // Restore the viewport
-        glViewport( 0, 0, 300, 300 );
-        // No clear is necessary
 
         BOOST_FOREACH( jagDraw::DrawNode& drawNode, _quadNodes )
         {

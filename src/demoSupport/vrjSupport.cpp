@@ -169,6 +169,7 @@ void JagDemoApp::draw()
     // commands have been issued. I.e., we need to "dirty state".
     jagDraw::DrawInfo& drawInfo( _di->getDrawInfo( contextID ) );
     drawInfo._current.clear( jagDraw::Program_t );
+    drawInfo._current.clear( jagDraw::VertexArrayObject_t );
 
     _di->frame( project->getViewMatrix(), proj );
 }
