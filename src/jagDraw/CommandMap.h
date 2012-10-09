@@ -259,67 +259,6 @@ protected:
 };
 
 
-
-template< CommandType T, class K, class D >
-class CommandSet : public DrawablePrep, public ObjectIDOwner
-{
-public:
-    CommandSet()
-      : DrawablePrep( T ),
-        ObjectIDOwner()
-    {}
-    CommandSet( const CommandSet< T, K, D >& rhs )
-      : DrawablePrep( rhs ),
-        ObjectIDOwner( rhs )
-    {}
-    ~CommandSet()
-    {}
-
-    D& operator[]( const K key )
-    {
-        return( _map[ key ] );
-    }
-
-
-    typedef std::map< K, D > InternalMapType;
-
-    /** \brief TBD
-    \details Override method from DrawablePrep. */
-    virtual void operator()( DrawInfo& drawInfo )
-    {
-        BOOST_FOREACH( const InternalMapType::value_type& dataPair, _map )
-        {
-            DrawablePrepPtr drawPrep( dataPair.second );
-            if( T == TextureSet_t )
-                drawPrep->activate( dataPair.first );
-            (*drawPrep)( drawInfo );
-        }
-    }
-
-    /** \brief TBD
-    \details Override method from ObjectIDOwner */
-    virtual void setMaxContexts( const unsigned int numContexts )
-    {
-        BOOST_FOREACH( const InternalMapType::value_type& dataPair, _map )
-        {
-            dataPair.second->setMaxContexts( numContexts );
-        }
-    }
-    /** \brief TBD
-    \details Override method from ObjectIDOwner */
-    virtual void deleteID( const jagDraw::jagDrawContextID contextID )
-    {
-        BOOST_FOREACH( const InternalMapType::value_type& dataPair, _map )
-        {
-            dataPair.second->deleteID( contextID );
-        }
-    }
-
-protected:
-    InternalMapType _map;
-};
-
-
 // jagDraw
 }
 

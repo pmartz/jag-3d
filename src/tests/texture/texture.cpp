@@ -116,7 +116,9 @@ bool TextureDemo::startup( const unsigned int numContexts )
 
 
     jagDraw::UniformPtr textureUniform( new jagDraw::Uniform( "texture", GL_SAMPLER_2D, (GLint)0 ) );
-    commands->insert( textureUniform );
+    jagDraw::UniformSetPtr uniformSet( new jagDraw::UniformSet() );
+    (*uniformSet)[ textureUniform->getNameHash() ] = textureUniform;
+    commands->insert( uniformSet );
 
     // Load image using jagDisk plugin interface.
     jagDraw::ImagePtr image( (jagDraw::Image*) jagDisk::read( "balloon.jpg" ) );

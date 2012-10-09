@@ -106,7 +106,65 @@ protected:
 typedef jagBase::ptr< jagDraw::Texture >::shared_ptr TexturePtr;
 typedef std::vector< TexturePtr > TextureVec;
 
-typedef CommandSet< TextureSet_t, unsigned int, TexturePtr > TextureSet;
+
+
+class TextureSet : public DrawablePrep, public ObjectIDOwner
+{
+public:
+    TextureSet()
+      : DrawablePrep( TextureSet_t ),
+        ObjectIDOwner()
+    {}
+    TextureSet( const TextureSet& rhs )
+      : DrawablePrep( rhs ),
+        ObjectIDOwner( rhs )
+    {}
+    ~TextureSet()
+    {}
+
+    TexturePtr& operator[]( const unsigned int key )
+    {
+        return( _map[ key ] );
+    }
+
+
+    typedef std::map< unsigned int, TexturePtr > InternalMapType;
+
+    /** \brief TBD
+    \details Override method from DrawablePrep. */
+    virtual void operator()( DrawInfo& drawInfo )
+    {
+        BOOST_FOREACH( const InternalMapType::value_type& dataPair, _map )
+        {
+            TexturePtr texture( dataPair.second );
+            texture->activate( dataPair.first );
+            (*texture)( drawInfo );
+        }
+    }
+
+    /** \brief TBD
+    \details Override method from ObjectIDOwner */
+    virtual void setMaxContexts( const unsigned int numContexts )
+    {
+        BOOST_FOREACH( const InternalMapType::value_type& dataPair, _map )
+        {
+            dataPair.second->setMaxContexts( numContexts );
+        }
+    }
+    /** \brief TBD
+    \details Override method from ObjectIDOwner */
+    virtual void deleteID( const jagDraw::jagDrawContextID contextID )
+    {
+        BOOST_FOREACH( const InternalMapType::value_type& dataPair, _map )
+        {
+            dataPair.second->deleteID( contextID );
+        }
+    }
+
+protected:
+    InternalMapType _map;
+};
+
 typedef jagBase::ptr< jagDraw::TextureSet >::shared_ptr TextureSetPtr;
 
 
