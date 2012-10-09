@@ -55,7 +55,6 @@ public:
     }
 
 protected:
-    jagDraw::DrawableVec _drawableVec;
     jagDraw::DrawNodeSimpleVec _nodes;
 };
 
@@ -106,8 +105,7 @@ bool TextureDemo::startup( const unsigned int numContexts )
     jagDraw::ShaderPtr fs( new jagDraw::Shader( GL_FRAGMENT_SHADER ) );
     fs->addSourceString( std::string( fShaderSource ) );
 
-    jagDraw::ProgramPtr prog;
-    prog = jagDraw::ProgramPtr( new jagDraw::Program );
+    jagDraw::ProgramPtr prog( jagDraw::ProgramPtr( new jagDraw::Program ) );
     prog->attachShader( vs );
     prog->attachShader( fs );
 

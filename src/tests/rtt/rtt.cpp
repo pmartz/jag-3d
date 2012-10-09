@@ -56,10 +56,12 @@ public:
         return( true );
     }
 
-    jagDraw::DrawablePtr makeSceneDrawable();
-
 protected:
-    jagDraw::DrawableVec _windowVec, _rttVec, _quadVec;
+    jagDraw::DrawablePtr RttDemo::makeSceneDrawable(
+            jagDraw::ProgramPtr& prog, jagDraw::VertexArrayObjectPtr& vaop );
+
+
+    jagDraw::DrawNodeSimpleVec _windowNodes, _rttNodes, _quadNodes;
     jagDraw::FramebufferPtr _textureFBO, _defaultFBO;
 
     const GLsizei _texWidth, _texHeight;
@@ -77,10 +79,9 @@ DemoInterface* DemoInterface::create( bpo::options_description& desc )
 }
 
 
-jagDraw::DrawablePtr RttDemo::makeSceneDrawable()
+jagDraw::DrawablePtr RttDemo::makeSceneDrawable(
+        jagDraw::ProgramPtr& prog, jagDraw::VertexArrayObjectPtr& vaop )
 {
-    jagDraw::DrawablePtr drawable( new jagDraw::Drawable() );
-
     const char* vertShader =
 #if( POCO_OS == POCO_OS_MAC_OS_X )
         // In OSX 10.7/10.8, use GL 3.2 and GLSL 1.50
@@ -109,10 +110,9 @@ jagDraw::DrawablePtr RttDemo::makeSceneDrawable()
     jagDraw::ShaderPtr fs( new jagDraw::Shader( GL_FRAGMENT_SHADER ) );
     fs->addSourceString( std::string( fragShader ) );
 
-    jagDraw::ProgramPtr prog( new jagDraw::Program );
+    prog = jagDraw::ProgramPtr( new jagDraw::Program() );
     prog->attachShader( vs );
     prog->attachShader( fs );
-    drawable->addDrawablePrep( prog );
 
 
     const float z = .5f;
@@ -127,11 +127,12 @@ jagDraw::DrawablePtr RttDemo::makeSceneDrawable()
     jagDraw::VertexAttribPtr iVerts( new jagDraw::VertexAttrib(
         "vertex", 3, GL_FLOAT, GL_FALSE, 0, 0 ) );
 
-    jagDraw::VertexArrayObjectPtr vaop( new jagDraw::VertexArrayObject );
+    vaop = jagDraw::VertexArrayObjectPtr( new jagDraw::VertexArrayObject() );
     vaop->addVertexArrayCommand( ibop, jagDraw::VertexArrayCommand::Vertex );
     vaop->addVertexArrayCommand( iVerts, jagDraw::VertexArrayCommand::Vertex );
-    drawable->addDrawablePrep( vaop );
 
+
+    jagDraw::DrawablePtr drawable( new jagDraw::Drawable() );
     jagDraw::DrawArraysPtr drawArrays( new jagDraw::DrawArrays( GL_LINES, 0, 4 ) );
     drawable->addDrawCommand( drawArrays );
 
@@ -145,10 +146,21 @@ bool RttDemo::startup( const unsigned int numContexts )
 
     // Drawable for rendering lines, same Drawable whether we
     // render to window or to texture.
-    jagDraw::DrawablePtr linesDrawable( makeSceneDrawable() );
+    jagDraw::ProgramPtr prog( new jagDraw::Program() );
+    jagDraw::VertexArrayObjectPtr vaop( new jagDraw::VertexArrayObject() );
+    jagDraw::DrawablePtr linesDrawable( makeSceneDrawable( prog, vaop ) );
 
-    // DrawableVec for rendering to window
-    _windowVec.push_back( linesDrawable );
+
+    // Create an FBO for the default framebuffer (the window)
+    _defaultFBO = jagDraw::FramebufferPtr( new jagDraw::Framebuffer( GL_DRAW_FRAMEBUFFER ) );
+
+    jagDraw::CommandMapPtr commands( jagDraw::CommandMapPtr( new jagDraw::CommandMap() ) );
+    commands->insert( prog );
+    commands->insert( vaop );
+    commands->insert( _defaultFBO );
+    jagDraw::DrawNode drawNode( commands );
+    drawNode.addDrawable( linesDrawable );
+    _windowNodes.push_back( drawNode );
 
 
     // Now set up to render the lines to a texture.
@@ -159,21 +171,19 @@ bool RttDemo::startup( const unsigned int numContexts )
         jagBase::BufferPtr( (jagBase::Buffer*) NULL ) );
     jagDraw::TexturePtr tex( new jagDraw::Texture( GL_TEXTURE_2D, image ) );
 
-    // Create and FBO and attach the texture.
+    // Create an FBO and attach the texture.
     _textureFBO = jagDraw::FramebufferPtr( new jagDraw::Framebuffer( GL_DRAW_FRAMEBUFFER ) );
     _textureFBO->addAttachment( GL_COLOR_ATTACHMENT0, tex );
 
-    // Create an FBO for the default framebuffer (the window)
-    _defaultFBO = jagDraw::FramebufferPtr( new jagDraw::Framebuffer( GL_DRAW_FRAMEBUFFER ) );
-
-
     // Render the lines first.
-    _rttVec.push_back( linesDrawable );
+    jagDraw::CommandMapPtr rttCommands( jagDraw::CommandMapPtr( new jagDraw::CommandMap( *commands ) ) );
+    rttCommands->insert( _textureFBO );
+    jagDraw::DrawNode rttDrawNode( rttCommands );
+    rttDrawNode.addDrawable( linesDrawable );
+    _rttNodes.push_back( rttDrawNode );
 
     // Now set up for drawing a textured quad.
     {
-        jagDraw::DrawablePtr drawable( new jagDraw::Drawable() );
-
         const char* vertSource =
 #if( POCO_OS == POCO_OS_MAC_OS_X )
             // In OSX 10.7/10.8, use GL 3.2 and GLSL 1.50
@@ -212,7 +222,6 @@ bool RttDemo::startup( const unsigned int numContexts )
         jagDraw::ProgramPtr prog( new jagDraw::Program );
         prog->attachShader( vs );
         prog->attachShader( fs );
-        drawable->addDrawablePrep( prog );
 
 
         const float z = .5f;
@@ -238,37 +247,48 @@ bool RttDemo::startup( const unsigned int numContexts )
         vaop->addVertexArrayCommand( ibop, jagDraw::VertexArrayCommand::Vertex );
         vaop->addVertexArrayCommand( iVerts, jagDraw::VertexArrayCommand::Vertex );
         vaop->addVertexArrayCommand( iTexCoord );
-        drawable->addDrawablePrep( vaop );
 
+        jagDraw::DrawablePtr drawable( new jagDraw::Drawable() );
         jagDraw::DrawArraysPtr drawArrays( new jagDraw::DrawArrays( GL_TRIANGLE_STRIP, 0, 4 ) );
         drawable->addDrawCommand( drawArrays );
 
-
-        // This is the texture we rendered the lines into.
-        drawable->addDrawablePrep( tex );
-
         // And a uniform for the sampler / texture unit.
         jagDraw::UniformPtr textureUniform( new jagDraw::Uniform( "texture", GL_SAMPLER_2D, (GLint)0 ) );
-        drawable->addDrawablePrep( textureUniform );
 
-        _quadVec.push_back( drawable );
+
+
+        jagDraw::UniformSetPtr uniformSet( jagDraw::UniformSetPtr( new jagDraw::UniformSet() ) );
+        (*uniformSet)[ textureUniform->getNameHash() ] = textureUniform;
+
+        jagDraw::TextureSetPtr textureSet( jagDraw::TextureSetPtr( new jagDraw::TextureSet() ) );
+        (*textureSet)[ GL_TEXTURE0 ] = tex;
+
+        jagDraw::CommandMapPtr quadCommands( jagDraw::CommandMapPtr( new jagDraw::CommandMap() ) );
+        quadCommands->insert( prog );
+        quadCommands->insert( vaop );
+        quadCommands->insert( _defaultFBO );
+        quadCommands->insert( textureSet );
+        quadCommands->insert( uniformSet );
+        jagDraw::DrawNode quadDrawNode( quadCommands );
+        quadDrawNode.addDrawable( drawable );
+        _quadNodes.push_back( quadDrawNode );
     }
 
 
     // Tell all Jag3D objects how many contexts to expect.
     _textureFBO->setMaxContexts( numContexts );
     _defaultFBO->setMaxContexts( numContexts );
-    BOOST_FOREACH( const jagDraw::DrawableVec::value_type& dp, _windowVec )
+    BOOST_FOREACH( jagDraw::DrawNodeSimpleVec::value_type& dp, _windowNodes )
     {
-        dp->setMaxContexts( numContexts );
+        dp.setMaxContexts( numContexts );
     }
-    BOOST_FOREACH( const jagDraw::DrawableVec::value_type& dp, _rttVec )
+    BOOST_FOREACH( jagDraw::DrawNodeSimpleVec::value_type& dp, _rttNodes )
     {
-        dp->setMaxContexts( numContexts );
+        dp.setMaxContexts( numContexts );
     }
-    BOOST_FOREACH( const jagDraw::DrawableVec::value_type& dp, _quadVec )
+    BOOST_FOREACH( jagDraw::DrawNodeSimpleVec::value_type& dp, _quadNodes )
     {
-        dp->setMaxContexts( numContexts );
+        dp.setMaxContexts( numContexts );
     }
 
 
@@ -304,9 +324,9 @@ bool RttDemo::frame( const gmtl::Matrix44f& view, const gmtl::Matrix44f& proj )
 
         glClear( GL_COLOR_BUFFER_BIT );
 
-        BOOST_FOREACH( jagDraw::DrawablePtr dp, _windowVec )
+        BOOST_FOREACH( jagDraw::DrawNode& drawNode, _windowNodes )
         {
-            (*(dp))( drawInfo );
+            drawNode( drawInfo );
         }
         JAG3D_ERROR_CHECK( "Line rendering" );
     }
@@ -321,9 +341,9 @@ bool RttDemo::frame( const gmtl::Matrix44f& view, const gmtl::Matrix44f& proj )
 
         glClear( GL_COLOR_BUFFER_BIT );
 
-        BOOST_FOREACH( jagDraw::DrawablePtr dp, _rttVec )
+        BOOST_FOREACH( jagDraw::DrawNode& drawNode, _rttNodes )
         {
-            (*(dp))( drawInfo );
+            drawNode( drawInfo );
         }
         JAG3D_ERROR_CHECK( "Render to FBO" );
 
@@ -333,9 +353,9 @@ bool RttDemo::frame( const gmtl::Matrix44f& view, const gmtl::Matrix44f& proj )
         glViewport( 0, 0, 300, 300 );
         // No clear is necessary
 
-        BOOST_FOREACH( jagDraw::DrawablePtr dp, _quadVec )
+        BOOST_FOREACH( jagDraw::DrawNode& drawNode, _quadNodes )
         {
-            (*(dp))( drawInfo );
+            drawNode( drawInfo );
         }
         JAG3D_ERROR_CHECK( "Display texture on quad" );
     }
