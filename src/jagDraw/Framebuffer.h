@@ -70,6 +70,9 @@ public:
     virtual void deleteID( const jagDraw::jagDrawContextID contextID );
 
 
+    void setViewport( const GLint x, const GLint y, const GLsizei width, const GLsizei height, const bool enable=true );
+    void setClear( const GLbitfield mask, const bool enable=true );
+
     typedef std::map< GLenum, FramebufferAttachablePtr > AttachmentMap;
 
     /** \brief TBD
@@ -97,6 +100,12 @@ protected:
     typedef std::map< GLenum, bool > DirtyAttachmentMap;
     typedef jagDraw::PerContextData< DirtyAttachmentMap > DirtyAttachments;
     DirtyAttachments _dirtyAttachments;
+
+
+    bool _viewport, _clear;
+    GLint _vpX, _vpY;
+    GLsizei _vpWidth, _vpHeight;
+    GLbitfield _clearMask;
 };
 
 typedef jagBase::ptr< jagDraw::Framebuffer >::shared_ptr FramebufferPtr;

@@ -196,7 +196,7 @@ bool TextureDemo::frame( const gmtl::Matrix44f& view, const gmtl::Matrix44f& pro
     glClear( GL_COLOR_BUFFER_BIT );
 
     const jagDraw::jagDrawContextID contextID( jagDraw::ContextSupport::instance()->getActiveContext() );
-    jagDraw::DrawInfo drawInfo( getDrawInfo( contextID ) );
+    jagDraw::DrawInfo& drawInfo( getDrawInfo( contextID ) );
 
     // Render all Drawables.
     BOOST_FOREACH( jagDraw::DrawNode& drawNode, _nodes )
