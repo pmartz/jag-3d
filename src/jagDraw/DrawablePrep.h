@@ -133,17 +133,17 @@ protected:
         unsigned int generate( CommandType type )
         {
             boost::mutex::scoped_lock lock( _mutex );
-            const int typeInt( (int)type );
-            if( typeInt >= _ids.size() )
+            const unsigned int typeUInt( (int)type );
+            if( typeUInt >= _ids.size() )
             {
-                while( typeInt >= _ids.size() )
+                while( typeUInt >= _ids.size() )
                 {
                     _ids.resize( _ids.size()+1 );
                     _ids[ _ids.size()-1 ] = 0;
                 }
             }
-            unsigned int id( _ids[ typeInt ] );
-            ++( _ids[ typeInt ] );
+            unsigned int id( _ids[ typeUInt ] );
+            ++( _ids[ typeUInt ] );
             return( id );
         }
 
