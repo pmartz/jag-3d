@@ -57,7 +57,7 @@ public:
     }
 
 protected:
-    jagDraw::DrawablePtr RttDemo::makeSceneDrawable(
+    jagDraw::DrawablePtr makeSceneDrawable(
             jagDraw::ProgramPtr& prog, jagDraw::VertexArrayObjectPtr& vaop );
 
 
