@@ -240,6 +240,10 @@ public:
     ~UniformSet()
     {}
 
+    void insert( UniformPtr uniform )
+    {
+        _map[ uniform->getNameHash() ] = uniform;
+    }
     UniformPtr& operator[]( const Program::HashValue& key )
     {
         return( _map[ key ] );
