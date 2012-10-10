@@ -57,6 +57,7 @@ public:
 
 protected:
     jagDraw::DrawableVec _drawableVec;
+    jagDraw::CommandMapVec _commandVec;
 };
 
 
@@ -143,13 +144,16 @@ bool DrawableDemo::startup( const unsigned int numContexts )
 
 
     jagDraw::DrawablePtr drawable( new jagDraw::Drawable() );
+    jagDraw::CommandMapPtr commands( new jagDraw::CommandMap() );
     const float z = .5f;
     typedef std::vector< gmtl::Point3f > Point3fArray;
 
     // Define first drawable: tri strip on the left.
     {
-        drawable->addDrawablePrep( prog );
-        drawable->addDrawablePrep( swizzleOff );
+        commands->insert( prog );
+        jagDraw::UniformSetPtr uniformSet( jagDraw::UniformSetPtr( new jagDraw::UniformSet() ) );
+        uniformSet->insert( swizzleOff );
+        commands->insert( uniformSet );
 
         Point3fArray v3fa;
         v3fa.push_back( gmtl::Point3f( -.9f, -.9f, z ) );
@@ -183,7 +187,7 @@ bool DrawableDemo::startup( const unsigned int numContexts )
             "color", 3, GL_FLOAT, GL_FALSE, 0, 0 ) );
         vaop->addVertexArrayCommand( color );
 
-        drawable->addDrawablePrep( vaop );
+        commands->insert( vaop );
 
         jagDraw::GLubyteVec elements;
         unsigned int idx;
@@ -194,6 +198,7 @@ bool DrawableDemo::startup( const unsigned int numContexts )
         jagDraw::DrawElementsPtr drawElements( new jagDraw::DrawElements( GL_TRIANGLE_STRIP, (const GLsizei) elements.size(), GL_UNSIGNED_BYTE, 0, elbop ) );
         drawable->addDrawCommand( drawElements );
 
+        _commandVec.push_back( commands );
         _drawableVec.push_back( drawable );
     }
 
@@ -208,8 +213,11 @@ bool DrawableDemo::startup( const unsigned int numContexts )
     // Define second drawable (middle)
     {
         drawable = jagDraw::DrawablePtr( new jagDraw::Drawable() );
+        commands = jagDraw::CommandMapPtr( new jagDraw::CommandMap );
 
-        drawable->addDrawablePrep( swizzleOn );
+        jagDraw::UniformSetPtr uniformSet( jagDraw::UniformSetPtr( new jagDraw::UniformSet() ) );
+        uniformSet->insert( swizzleOn );
+        commands->insert( uniformSet );
 
         Point3fArray i3fa;
         i3fa.push_back( gmtl::Point3f( -.3f, -.9f, z ) );
@@ -231,19 +239,21 @@ bool DrawableDemo::startup( const unsigned int numContexts )
         vaop->addVertexArrayCommand( ibop, jagDraw::VertexArrayCommand::Vertex );
         vaop->addVertexArrayCommand( iVerts, jagDraw::VertexArrayCommand::Vertex );
         vaop->addVertexArrayCommand( iColor );
-        drawable->addDrawablePrep( vaop );
+        commands->insert( vaop );
 
         drawable->addDrawCommand( drawArrays );
 
+        _commandVec.push_back( commands );
         _drawableVec.push_back( drawable );
     }
 
     // Define third drawable (on the right)
     {
         drawable = jagDraw::DrawablePtr( new jagDraw::Drawable() );
+        commands = jagDraw::CommandMapPtr( new jagDraw::CommandMap() );
 
-        drawable->addDrawablePrep( prog2 );
-        drawable->addDrawablePrep( scale );
+        commands->insert( prog2 );
+        commands->insert( scale );
 
         Point3fArray i3fa;
         i3fa.push_back( gmtl::Point3f( .3f, -.9f, z ) );
@@ -270,15 +280,35 @@ bool DrawableDemo::startup( const unsigned int numContexts )
         // Enable and specify the "color" vertex attrib.
         vaop->addVertexArrayCommand( iColor );
 
-        drawable->addDrawablePrep( vaop );
+        commands->insert( vaop );
 
         drawable->addDrawCommand( drawArrays );
 
+        _commandVec.push_back( commands );
         _drawableVec.push_back( drawable );
     }
 
 
     // Tell all Jag3D objects how many contexts to expect.
+    for( unsigned int idx=0; idx<_drawableVec.size(); ++idx )
+    {
+        jagDraw::CommandMapPtr commands( _commandVec[ idx ] );
+        BOOST_FOREACH( jagDraw::CommandMap::CommandMapType::value_type dpPair, commands->_data )
+        {
+            jagDraw::ObjectIDPtr objID( boost::dynamic_pointer_cast< jagDraw::ObjectID >( dpPair.second ) );
+            if( objID != NULL )
+                objID->setMaxContexts( numContexts );
+            else
+            {
+                jagDraw::ObjectIDOwnerPtr objIDOwner( boost::dynamic_pointer_cast< jagDraw::ObjectIDOwner >( dpPair.second ) );
+                if( objIDOwner != NULL )
+                    objIDOwner->setMaxContexts( numContexts );
+            }
+        }
+
+        _drawableVec[ idx ]->setMaxContexts( numContexts );
+             
+    }
     BOOST_FOREACH( const jagDraw::DrawableVec::value_type& dp, _drawableVec )
     {
         dp->setMaxContexts( numContexts );
@@ -313,9 +343,10 @@ bool DrawableDemo::frame( const gmtl::Matrix44f& view, const gmtl::Matrix44f& pr
     jagDraw::DrawInfo& drawInfo( getDrawInfo( contextID ) );
 
     // Render all Drawables.
-    BOOST_FOREACH( jagDraw::DrawablePtr dp, _drawableVec )
+    for( unsigned int idx=0; idx<_drawableVec.size(); ++idx )
     {
-        (*(dp))( drawInfo );
+        _commandVec[ idx ]->execute( drawInfo );
+        (*_drawableVec[ idx ])( drawInfo );
     }
     
     glFlush();

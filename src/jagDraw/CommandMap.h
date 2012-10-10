@@ -23,6 +23,7 @@
 
 #include <jagDraw/ObjectID.h>
 #include <jagDraw/DrawablePrep.h>
+//#include <jagDraw/DrawInfo.h>
 
 #include <jagBase/ptr.h>
 #include <boost/foreach.hpp>
@@ -81,6 +82,14 @@ public:
     };
 
     typedef std::map< CommandType, DrawablePrepPtr > CommandMapType;
+
+    void execute( DrawInfo& drawInfo )
+    {
+        BOOST_FOREACH( CommandMapType::value_type dataPair, _data )
+        {
+            (*dataPair.second)( drawInfo );
+        }
+    }
 
     void foreach( const Callback& callback )
     {
@@ -205,6 +214,7 @@ public:
 };
 
 typedef jagBase::ptr< jagDraw::CommandMap >::shared_ptr CommandMapPtr;
+typedef std::vector< jagDraw::CommandMapPtr > CommandMapVec;
 
 
 
