@@ -32,12 +32,17 @@ namespace jagSG {
 
 Node::Node()
   : jagBase::LogBase( "jag.sg.node" ),
-    ObjectIDOwner()
+    ObjectIDOwner(),
+    _matrix( gmtl::MAT_IDENTITY44D )
 {
 }
 Node::Node( const Node& rhs )
   : jagBase::LogBase( "jag.sg.node" ),
-    ObjectIDOwner( rhs )
+    ObjectIDOwner( rhs ),
+    _matrix( rhs._matrix ),
+    _commands( rhs._commands ),
+    _drawables( rhs._drawables ),
+    _children( rhs._children )
 {
 }
 Node::~Node()
@@ -45,18 +50,137 @@ Node::~Node()
 }
 
 
+void Node::traverse()
+{
+    JAG3D_TRACE( "traverse()" );
+    JAG3D_ERROR( "traverse() not yet implemented" );
+}
+
 void Node::execute( jagDraw::DrawInfo& drawInfo )
 {
     JAG3D_TRACE( "execute()" );
 
+    _commands->execute( drawInfo );
+
+    BOOST_FOREACH( jagDraw::DrawablePtr& drawable, _drawables )
+    {
+        drawable->execute( drawInfo );
+    }
+
+    BOOST_FOREACH( NodePtr& node, _children )
+    {
+        node->execute( drawInfo );
+    }
+
     JAG3D_ERROR_CHECK( "Node::execute()" );
 }
 
+
+void Node::setTransform( const gmtl::Matrix44d& matrix )
+{
+    _matrix = matrix;
+}
+gmtl::Matrix44d& Node::getTransform()
+{
+    return( _matrix );
+}
+const gmtl::Matrix44d& Node::getTransform() const
+{
+    return( _matrix );
+}
+
+
+void Node::getBound()
+{
+    JAG3D_ERROR( "getBound() not yet implemented." );
+}
+
+
+void Node::setCommandMap( jagDraw::CommandMapPtr commands )
+{
+    _commands = commands;
+}
+jagDraw::CommandMapPtr Node::getCommandMap()
+{
+    return( _commands );
+}
+const jagDraw::CommandMapPtr Node::getCommandMap() const
+{
+    return( _commands );
+}
+
+
+void Node::addDrawables( jagDraw::DrawablePtr node )
+{
+    _drawables.push_back( node );
+}
+unsigned int Node::getNumDrawables() const
+{
+    return( (unsigned int) _drawables.size() );
+}
+jagDraw::DrawablePtr Node::getDrawable( const unsigned int idx )
+{
+    if( idx >= getNumDrawables() )
+        return( jagDraw::DrawablePtr( (jagDraw::Drawable*)NULL ) );
+    return( _drawables[ idx ] );
+}
+const jagDraw::DrawablePtr Node::getDrawable( const unsigned int idx ) const
+{
+    if( idx >= getNumDrawables() )
+        return( jagDraw::DrawablePtr( (jagDraw::Drawable*)NULL ) );
+    return( _drawables[ idx ] );
+}
+
+    
+void Node::addChild( NodePtr node )
+{
+    _children.push_back( node );
+}
+unsigned int Node::getNumChildren() const
+{
+    return( (unsigned int) _children.size() );
+}
+NodePtr Node::getChild( const unsigned int idx )
+{
+    if( idx >= getNumChildren() )
+        return( NodePtr( (Node*)NULL ) );
+    return( _children[ idx ] );
+}
+const NodePtr Node::getChild( const unsigned int idx ) const
+{
+    if( idx >= getNumChildren() )
+        return( NodePtr( (Node*)NULL ) );
+    return( _children[ idx ] );
+}
+
+
 void Node::setMaxContexts( const unsigned int numContexts )
 {
+    _commands->setMaxContexts( numContexts );
+
+    BOOST_FOREACH( jagDraw::DrawablePtr& drawable, _drawables )
+    {
+        drawable->setMaxContexts( numContexts );
+    }
+
+    BOOST_FOREACH( NodePtr& node, _children )
+    {
+        node->setMaxContexts( numContexts );
+    }
 }
 void Node::deleteID( const jagDraw::jagDrawContextID contextID )
 {
+    _commands->deleteID( contextID );
+
+    BOOST_FOREACH( jagDraw::DrawablePtr& drawable, _drawables )
+    {
+        drawable->deleteID( contextID );
+    }
+
+    BOOST_FOREACH( NodePtr& node, _children )
+    {
+        node->deleteID( contextID );
+    }
 }
 
 
