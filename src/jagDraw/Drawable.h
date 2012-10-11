@@ -84,19 +84,6 @@ public:
     virtual void setMaxContexts( const unsigned int numContexts );
 
 
-    /** \brief Add a drawable prep command, such as a uniform or a shader program.
-    \details All drawable prep commands are executed by the Drawale in order, and prior to
-    issuing any of the vertex array commands (see addVertexArrayCommand()). */
-    void addDrawablePrep( DrawablePrepPtr dpp );
-    void insertDrawablePrep( DrawablePrepPtr dpp, unsigned int pos=0 );
-
-    /** \brief TBD
-    \details TBD */
-    DrawablePrepVec& getDrawablePrepVec();
-    /** \overload */
-    const DrawablePrepVec& getDrawablePrepVec() const;
-
-
     /** \brief TBD
     \details TBD
     */
@@ -110,7 +97,6 @@ public:
     const DrawCommandVec& getDrawCommandVec() const;
 
 protected:
-    DrawablePrepVec _drawablePrep;
     DrawCommandVec _drawCommands;
 };
 

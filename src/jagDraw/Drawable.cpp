@@ -40,7 +40,6 @@ Drawable::Drawable()
 }
 Drawable::Drawable( const Drawable& rhs )
   : jagBase::LogBase( rhs ),
-    _drawablePrep( rhs._drawablePrep ),
     _drawCommands( rhs._drawCommands )
 {
 }
@@ -52,11 +51,6 @@ Drawable::~Drawable()
 void Drawable::execute( DrawInfo& drawInfo )
 {
     JAG3D_TRACE( "execute()" );
-
-    BOOST_FOREACH( DrawablePrepPtr dpp, _drawablePrep )
-    {
-        dpp->execute( drawInfo );
-    }
 
     BOOST_FOREACH( DrawCommandPtr dcp, _drawCommands )
     {
@@ -73,55 +67,10 @@ void Drawable::getBound()
 
 void Drawable::setMaxContexts( const unsigned int numContexts )
 {
-    BOOST_FOREACH( DrawablePrepPtr dpp, _drawablePrep )
-    {
-        // Some DrawablePrep objects are ObjectIDs or ObjectIDOwners,
-        // but some are not (such as Uniforms, which don't have an ID).
-        ObjectIDPtr objID( boost::dynamic_pointer_cast< ObjectID >( dpp ) );
-        if( objID != NULL )
-            objID->setMaxContexts( numContexts );
-        else
-        {
-            ObjectIDOwnerPtr objIDOwner( boost::dynamic_pointer_cast< ObjectIDOwner >( dpp ) );
-            if( objIDOwner != NULL )
-                objIDOwner->setMaxContexts( numContexts );
-        }
-    }
-
     BOOST_FOREACH( DrawCommandPtr dcp, _drawCommands )
     {
         dcp->setMaxContexts( numContexts );
     }
-}
-
-
-void Drawable::addDrawablePrep( DrawablePrepPtr dpp )
-{
-    _drawablePrep.push_back( dpp );
-}
-void Drawable::insertDrawablePrep( DrawablePrepPtr dpp, unsigned int pos )
-{
-    if( pos >= _drawablePrep.size() )
-    {
-        _drawablePrep.resize( pos+1 );
-    }
-    else
-    {
-        _drawablePrep.resize( _drawablePrep.size()+1 );
-        size_t idx;
-        for( idx = _drawablePrep.size()-1; idx>pos; idx-- )
-            _drawablePrep[ idx ] = _drawablePrep[ idx-1 ];
-    }
-    _drawablePrep[ pos ] = dpp;
-}
-
-DrawablePrepVec& Drawable::getDrawablePrepVec()
-{
-    return( _drawablePrep );
-}
-const DrawablePrepVec& Drawable::getDrawablePrepVec() const
-{
-    return( _drawablePrep );
 }
 
 
