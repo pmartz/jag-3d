@@ -292,22 +292,8 @@ bool DrawableDemo::startup( const unsigned int numContexts )
     // Tell all Jag3D objects how many contexts to expect.
     for( unsigned int idx=0; idx<_drawableVec.size(); ++idx )
     {
-        jagDraw::CommandMapPtr commands( _commandVec[ idx ] );
-        BOOST_FOREACH( jagDraw::CommandMap::CommandMapType::value_type dpPair, commands->_data )
-        {
-            jagDraw::ObjectIDPtr objID( boost::dynamic_pointer_cast< jagDraw::ObjectID >( dpPair.second ) );
-            if( objID != NULL )
-                objID->setMaxContexts( numContexts );
-            else
-            {
-                jagDraw::ObjectIDOwnerPtr objIDOwner( boost::dynamic_pointer_cast< jagDraw::ObjectIDOwner >( dpPair.second ) );
-                if( objIDOwner != NULL )
-                    objIDOwner->setMaxContexts( numContexts );
-            }
-        }
-
+        _commandVec[ idx ]->setMaxContexts( numContexts );
         _drawableVec[ idx ]->setMaxContexts( numContexts );
-             
     }
     BOOST_FOREACH( const jagDraw::DrawableVec::value_type& dp, _drawableVec )
     {

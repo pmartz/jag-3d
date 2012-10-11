@@ -101,7 +101,7 @@ public:
     /** \brief Delete the ID for the given \c contextID.
     \details Inherited from ObjectIDOwner.
     OpenGL object ID cleanup is not yet implemented. TBD. */
-    virtual void deleteID( const jagDraw::jagDrawContextID contextID ) {}
+    virtual void deleteID( const jagDraw::jagDrawContextID contextID );
 
 protected:
     CommandMapPtr _commands;
