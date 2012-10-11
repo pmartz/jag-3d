@@ -32,13 +32,13 @@ namespace jagDraw {
 
 
 DrawNode::DrawNode( CommandMapPtr commands )
-  : jagBase::LogBase( "jag.draw.dgrp" ),
+  : jagBase::LogBase( "jag.draw.dnode" ),
     ObjectIDOwner(),
     _commands( commands )
 {
 }
 DrawNode::DrawNode( const DrawNode& rhs )
-  : jagBase::LogBase( "jag.draw.dgrp" ),
+  : jagBase::LogBase( "jag.draw.dnode" ),
     ObjectIDOwner( rhs ),
     _commands( rhs._commands ),
     _drawables( rhs._drawables )

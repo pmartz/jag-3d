@@ -63,7 +63,7 @@ protected:
 
 DemoInterface* DemoInterface::create( bpo::options_description& desc )
 {
-    jagBase::Log::instance()->setPriority( jagBase::Log::PrioTrace, jagBase::Log::Console );
+    jagBase::Log::instance()->setPriority( jagBase::Log::PrioDebug, jagBase::Log::Console );
 
     return( new DrawableDemo );
 }
