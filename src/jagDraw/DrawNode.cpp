@@ -49,10 +49,11 @@ DrawNode::~DrawNode()
 }
 
 
-void DrawNode::operator()( DrawInfo& drawInfo )
+void DrawNode::execute( DrawInfo& drawInfo )
 {
-    CommandMap delta( drawInfo._current << (*_commands) );
+    JAG3D_TRACE( "execute()" );
 
+    CommandMap delta( drawInfo._current << (*_commands) );
     delta.execute( drawInfo );
 
     BOOST_FOREACH( DrawablePtr drawable, _drawables )
@@ -60,7 +61,7 @@ void DrawNode::operator()( DrawInfo& drawInfo )
         (*drawable)( drawInfo );
     }
 
-    JAG3D_ERROR_CHECK( "DrawNode::operator()" );
+    JAG3D_ERROR_CHECK( "DrawNode::execute()" );
 }
 
 void DrawNode::setMaxContexts( const unsigned int numContexts )

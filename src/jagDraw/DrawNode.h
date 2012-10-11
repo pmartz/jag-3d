@@ -92,7 +92,7 @@ public:
 
     /** \brief TBD
     \details TBD */
-    virtual void operator()( DrawInfo& drawInfo );
+    virtual void execute( DrawInfo& drawInfo );
 
     /** \brief Tell the contained ObjectID objects how many contexts to expect.
     \details Inherited from ObjectIDOwner. */
