@@ -110,7 +110,7 @@ const jagDraw::CommandMapPtr Node::getCommandMap() const
 }
 
 
-void Node::addDrawables( jagDraw::DrawablePtr node )
+void Node::addDrawable( jagDraw::DrawablePtr node )
 {
     _drawables.push_back( node );
 }

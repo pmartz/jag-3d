@@ -97,7 +97,7 @@ public:
 
     /** \brief Drawables
     \details TBD */
-    void addDrawables( jagDraw::DrawablePtr node );
+    void addDrawable( jagDraw::DrawablePtr node );
     /** \brief TBD
     \details TBD */
     unsigned int getNumDrawables() const;

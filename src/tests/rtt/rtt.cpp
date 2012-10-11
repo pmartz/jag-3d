@@ -39,7 +39,7 @@ class RttDemo : public DemoInterface
 {
 public:
     RttDemo()
-      : DemoInterface( "jag.demo.texture" ),
+      : DemoInterface( "jag.demo.rtt" ),
         _frames( 0 ),
         _texWidth( 80 ),
         _texHeight( 80 )
