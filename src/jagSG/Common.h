@@ -18,32 +18,12 @@
 *
 *************** <auto-copyright.pl END do not edit this line> ***************/
 
-#ifndef __JAGDRAW_DRAW_COMMON_H__
-#define __JAGDRAW_DRAW_COMMON_H__ 1
+#ifndef __JAGSG_COMMON_H__
+#define __JAGSG_COMMON_H__ 1
 
 
-#include <jagDraw/PlatformOpenGL.h>
-#include <jagDraw/Version.h>
-
-#include <jagDraw/BufferObject.h>
-#include <jagDraw/CommandMap.h>
-#include <jagDraw/ContextSupport.h>
-#include <jagDraw/Drawable.h>
-#include <jagDraw/DrawablePrep.h>
-#include <jagDraw/DrawCommand.h>
-#include <jagDraw/DrawInfo.h>
-#include <jagDraw/DrawNode.h>
-#include <jagDraw/Error.h>
-#include <jagDraw/Framebuffer.h>
-#include <jagDraw/Image.h>
-#include <jagDraw/Program.h>
-#include <jagDraw/Shader.h>
-#include <jagDraw/Texture.h>
-#include <jagDraw/Uniform.h>
-#include <jagDraw/UniformBlock.h>
-#include <jagDraw/VertexArrayObject.h>
-#include <jagDraw/VertexAttrib.h>
+#include <jagSG/Node.h>
 
 
-// __JAGDRAW_DRAW_COMMON_H__
+// __JAGSG_COMMON_H__
 #endif

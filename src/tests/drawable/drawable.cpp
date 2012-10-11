@@ -20,13 +20,12 @@
 
 #include <demoSupport/DemoInterface.h>
 
-#include <jagDraw/DrawCommon.h>
+#include <jagDraw/Common.h>
 #include <jagDraw/types.h>
 #include <jagBase/Version.h>
 #include <jagBase/Log.h>
 #include <jagBase/LogMacros.h>
 #include <Poco/Foundation.h>
-#include <Poco/Message.h>
 #include <boost/program_options/options_description.hpp>
 #include <gmtl/gmtl.h>
 

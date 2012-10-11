@@ -27,6 +27,7 @@ endif()
 
 set( _jagSGHeaderFiles
     Export.h
+    Common.h
     Node.h
 )
 

@@ -29,12 +29,12 @@ set( _jagDrawHeaderFiles
     Export.h
     BufferObject.h
     CommandMap.h
+    Common.h
     ContextSupport.h
     Drawable.h
     DrawNode.h
     DrawablePrep.h
     DrawCommand.h
-    DrawCommon.h
     DrawInfo.h
     Error.h
     Framebuffer.h
