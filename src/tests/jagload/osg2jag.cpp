@@ -23,6 +23,9 @@
 #include <osg/Geode>
 #include <osg/Geometry>
 
+#include <jagDraw/DrawNode.h>
+#include <jagDraw/CommandMap.h>
+#include <jagDraw/Drawable.h>
 #include <jagDraw/BufferObject.h>
 #include <jagDraw/VertexAttrib.h>
 #include <jagDraw/VertexArrayObject.h>
@@ -71,7 +74,7 @@ void Osg2Jag::apply( osg::Geometry* geom )
     }
 
     jagDraw::DrawablePtr draw( jagDraw::DrawablePtr( new jagDraw::Drawable ) );
-    _jagDrawables.push_back( draw );
+    jagDraw::CommandMapPtr commands( jagDraw::CommandMapPtr( new jagDraw::CommandMap() ) );
 
     jagDraw::VertexArrayObjectPtr vaop( new jagDraw::VertexArrayObject );
 
@@ -106,7 +109,7 @@ void Osg2Jag::apply( osg::Geometry* geom )
     }
     // TBD tex coords
 
-    draw->addDrawablePrep( vaop );
+    commands->insert( vaop );
 
     unsigned int idx;
     for( idx=0; idx<geom->getNumPrimitiveSets(); idx++ )
@@ -197,11 +200,15 @@ void Osg2Jag::apply( osg::Geometry* geom )
         }
         }
     }
+
+    jagDraw::DrawNode drawNode( commands );
+    drawNode.addDrawable( draw );
+    _jagDrawNodes.push_back( drawNode );
 }
 
-jagDraw::DrawableVec Osg2Jag::getJagDrawableList()
+jagDraw::DrawNodeSimpleVec Osg2Jag::getJagDrawNodeVec()
 {
-    return( _jagDrawables );
+    return( _jagDrawNodes );
 }
 
 
