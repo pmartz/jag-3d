@@ -89,7 +89,7 @@ void BufferObject::setUsage( const GLenum usage )
     _usage = usage; 
 }
 
-void BufferObject::operator()( DrawInfo& drawInfo )
+void BufferObject::execute( DrawInfo& drawInfo )
 {
     const GLuint id( getID( drawInfo._id ) );
     glBindBuffer( _target, id );
@@ -170,7 +170,7 @@ IndexedBufferObject::~IndexedBufferObject()
 {
 }
 
-void IndexedBufferObject::operator()( DrawInfo& drawInfo )
+void IndexedBufferObject::execute( DrawInfo& drawInfo )
 {
     const GLuint id( getID( drawInfo._id ) );
     glBindBufferBase( _target, _index, id );

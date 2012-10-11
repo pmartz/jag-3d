@@ -194,12 +194,12 @@ public:
     \details TBD
     Does not add this uniform to drawInfo._uniformMap.
     \gl{section 2.11.4}. */
-    void operator()( DrawInfo& drawInfo, const GLint loc ) const;
+    void execute( DrawInfo& drawInfo, const GLint loc ) const;
     /** \brief TBD
     \details TBD
     Adds this uniform to drawInfo._uniformMap.
     \gl{section 2.11.4}. */
-    virtual void operator()( DrawInfo& drawInfo );
+    virtual void execute( DrawInfo& drawInfo );
 
     void setType( const GLenum type );
     GLenum getType() { return( _type ); }
@@ -254,11 +254,11 @@ public:
 
     /** \brief TBD
     \details Override method from DrawablePrep. */
-    virtual void operator()( DrawInfo& drawInfo )
+    virtual void execute( DrawInfo& drawInfo )
     {
         BOOST_FOREACH( const InternalMapType::value_type& dataPair, _map )
         {
-            (*(dataPair.second))( drawInfo );
+            dataPair.second->execute( drawInfo );
         }
     }
 

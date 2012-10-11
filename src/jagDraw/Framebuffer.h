@@ -55,7 +55,7 @@ public:
 
     /** \brief TBD
     Override from DrawablePrep. */
-    virtual void operator()( DrawInfo& drawInfo );
+    virtual void execute( DrawInfo& drawInfo );
 
     /** \brief TBD
     Override from ObjectID. */
@@ -128,7 +128,7 @@ public:
 
     /** \brief TBD
     Override from DrawablePrep. */
-    virtual void operator()( DrawInfo& drawInfo );
+    virtual void execute( DrawInfo& drawInfo );
 
     /** \brief TBD
     Override from ObjectID. */

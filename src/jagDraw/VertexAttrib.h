@@ -54,7 +54,7 @@ public:
     virtual ~VertexAttrib()
     {}
 
-    virtual void operator()( DrawInfo& drawInfo )
+    virtual void execute( DrawInfo& drawInfo )
     {
         // Program::use() must be called prior to VertexAttrib::operator().
         // Note this is different from Uniform::operator(). This means we can simply

@@ -66,7 +66,7 @@ void UniformBlock::addUniform( UniformPtr uniform )
 }
 
 
-void UniformBlock::operator()( DrawInfo& drawInfo, const Program::BlockInfo& blockInfo ) const
+void UniformBlock::execute( DrawInfo& drawInfo, const Program::BlockInfo& blockInfo ) const
 {
     if( JAG3D_LOG_TRACE )
     {
@@ -112,9 +112,9 @@ void UniformBlock::operator()( DrawInfo& drawInfo, const Program::BlockInfo& blo
 
     // bind 
     _bufferObject->setIndex( blockInfo._bindIndex );
-    (*_bufferObject)( drawInfo );
+    _bufferObject->execute( drawInfo );
 }
-void UniformBlock::operator()( DrawInfo& drawInfo )
+void UniformBlock::execute( DrawInfo& drawInfo )
 {
     JAG3D_TRACE( "operator(): " + _name );
 
@@ -128,7 +128,7 @@ void UniformBlock::operator()( DrawInfo& drawInfo )
     {
         ProgramPtr prog( boost::dynamic_pointer_cast< Program >( drawInfo._current[ Program_t ] ) );
         Program::BlockInfo blockInfo( prog->getUniformBlockInfo( _nameHash ) );
-        operator()( drawInfo, blockInfo );
+        execute( drawInfo, blockInfo );
     }
 }
 

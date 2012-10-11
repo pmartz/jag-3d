@@ -154,7 +154,7 @@ TYPE_METHOD_BODIES( gmtl::Matrix43d, GL_DOUBLE_MAT4x3 )
 #endif
 
 
-void Uniform::operator()( DrawInfo& drawInfo, const GLint loc ) const
+void Uniform::execute( DrawInfo& drawInfo, const GLint loc ) const
 {
     // This should NOT be necessary, as we should only be here if this
     // uniform is already in the drawInfo._uniformMap.
@@ -256,7 +256,7 @@ void Uniform::operator()( DrawInfo& drawInfo, const GLint loc ) const
     }
 }
 
-void Uniform::operator()( DrawInfo& drawInfo )
+void Uniform::execute( DrawInfo& drawInfo )
 {
     // Add this uniform to the pool of potentially active uniforms
     // for the current frame and draw thread.
@@ -268,7 +268,7 @@ void Uniform::operator()( DrawInfo& drawInfo )
     {
         ProgramPtr prog( boost::dynamic_pointer_cast< Program >( drawInfo._current[ Program_t ] ) );
         GLint index( prog->getUniformLocation( _indexHash ) );
-        operator()( drawInfo, index );
+        execute( drawInfo, index );
     }
 }
 

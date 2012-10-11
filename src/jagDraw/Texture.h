@@ -60,7 +60,7 @@ public:
 
     /** \brief TBD
     Override from DrawablePrep. */
-    virtual void operator()( DrawInfo& drawInfo );
+    virtual void execute( DrawInfo& drawInfo );
 
     /** \brief TBD
     Override from ObjectID. */
@@ -132,13 +132,13 @@ public:
 
     /** \brief TBD
     \details Override method from DrawablePrep. */
-    virtual void operator()( DrawInfo& drawInfo )
+    virtual void execute( DrawInfo& drawInfo )
     {
         BOOST_FOREACH( const InternalMapType::value_type& dataPair, _map )
         {
             TexturePtr texture( dataPair.second );
             texture->activate( dataPair.first );
-            (*texture)( drawInfo );
+            texture->execute( drawInfo );
         }
     }
 

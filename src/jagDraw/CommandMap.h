@@ -119,7 +119,7 @@ public:
     {
         BOOST_FOREACH( CommandMapType::value_type dataPair, _data )
         {
-            (*dataPair.second)( drawInfo );
+            dataPair.second->execute( drawInfo );
         }
     }
 

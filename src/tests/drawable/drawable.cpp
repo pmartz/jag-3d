@@ -332,7 +332,7 @@ bool DrawableDemo::frame( const gmtl::Matrix44f& view, const gmtl::Matrix44f& pr
     for( unsigned int idx=0; idx<_drawableVec.size(); ++idx )
     {
         _commandVec[ idx ]->execute( drawInfo );
-        (*_drawableVec[ idx ])( drawInfo );
+        _drawableVec[ idx ]->execute( drawInfo );
     }
     
     glFlush();

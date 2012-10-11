@@ -227,13 +227,13 @@ bool JagLoadDemo::frame( const gmtl::Matrix44f& view, const gmtl::Matrix44f& pro
         _viewProjUniform[ drawInfo._id ]->set( viewProj );
         _normalUniform[ drawInfo._id ]->set( normalMat );
     }
-    (*_viewProjUniform[ drawInfo._id ])( drawInfo );
-    (*_normalUniform[ drawInfo._id ])( drawInfo );
+    _viewProjUniform[ drawInfo._id ]->execute( drawInfo );
+    _normalUniform[ drawInfo._id ]->execute( drawInfo );
 
     // Render all Drawables.
     BOOST_FOREACH( const jagDraw::DrawableVec::value_type& dp, _drawableVec )
     {
-        (*(dp))( drawInfo );
+        dp->execute( drawInfo );
     }
 
     glFlush();

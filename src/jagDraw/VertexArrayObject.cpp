@@ -47,7 +47,7 @@ VertexArrayObject::~VertexArrayObject()
 }
 
 
-void VertexArrayObject::operator()( DrawInfo& drawInfo )
+void VertexArrayObject::execute( DrawInfo& drawInfo )
 {
     const unsigned int contextID( drawInfo._id );
 
@@ -58,7 +58,7 @@ void VertexArrayObject::operator()( DrawInfo& drawInfo )
     {
         BOOST_FOREACH( VertexArrayCommandPtr& vac, _commands )
         {
-            (*vac)( drawInfo );
+            vac->execute( drawInfo );
         }
         initialized = GL_TRUE;
     }

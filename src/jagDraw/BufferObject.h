@@ -74,7 +74,7 @@ public:
     void setUsage( const GLenum usage );
     GLenum getUsage() { return( _usage ); }
 
-    virtual void operator()( DrawInfo& drawInfo );
+    virtual void execute( DrawInfo& drawInfo );
 
     // TBD need to get context ID, probably as a param?
     void subData( GLsizeiptr offset, GLsizeiptr size, const GLvoid * );
@@ -107,7 +107,7 @@ public:
     IndexedBufferObject( const IndexedBufferObject& rhs );
     virtual ~IndexedBufferObject();
 
-    virtual void operator()( DrawInfo& drawInfo );
+    virtual void execute( DrawInfo& drawInfo );
 
     void setIndex( GLuint index ) { _index = index; }
     GLuint getIndex() const { return( _index ); }
