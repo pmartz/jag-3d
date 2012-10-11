@@ -80,7 +80,7 @@ public:
     This allows uniforms to be specified in the draw list prior to shader
     programs.
     \gl{section 2.11.2}. */
-    virtual void operator()( DrawInfo& drawInfo );
+    virtual void execute( DrawInfo& drawInfo );
 
     /** \brief Get the OpenGL program object ID for the specified \c contextID.
     \details If an ID hasn't already been created for \c contextID, getId() calls

@@ -50,7 +50,7 @@ public:
     VertexArrayObject( const VertexArrayObject& rhs );
     virtual ~VertexArrayObject();
 
-    virtual void operator()( DrawInfo& drawInfo );
+    virtual void execute( DrawInfo& drawInfo );
 
     /** \brief TBD
     \details TBD

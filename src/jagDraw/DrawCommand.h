@@ -99,7 +99,7 @@ public:
 
     /**
     */
-    virtual void operator()( DrawInfo& ) = 0;
+    virtual void execute( DrawInfo& ) = 0;
 
 
     /**
@@ -317,7 +317,7 @@ public:
     virtual ~DrawArrays()
     {}
 
-    virtual void operator()( DrawInfo& drawInfo )
+    virtual void execute( DrawInfo& drawInfo )
     {
         glDrawArrays( _mode, _first, _count );
     }
@@ -345,7 +345,7 @@ public:
     virtual ~DrawArraysInstanced()
     {}
 
-    virtual void operator()( DrawInfo& drawInfo )
+    virtual void execute( DrawInfo& drawInfo )
     {
         glDrawArraysInstanced( _mode, _first, _count, _primcount );
     }
@@ -387,10 +387,10 @@ public:
     */
     virtual void deleteID( const jagDraw::jagDrawContextID contextID ) {}
 
-    virtual void operator()( DrawInfo& drawInfo )
+    virtual void execute( DrawInfo& drawInfo )
     {
         if( _indirectBuffer != NULL )
-            (*_indirectBuffer)( drawInfo );
+            _indirectBuffer->execute( drawInfo );
         glDrawArraysIndirect( _mode, _indirect );
     }
 };
@@ -420,7 +420,7 @@ public:
     virtual ~MultiDrawArrays()
     {}
 
-    virtual void operator()( DrawInfo& drawInfo )
+    virtual void execute( DrawInfo& drawInfo )
     {
         glMultiDrawArrays( _mode, _firstArray.get(), _countArray.get(), _primcount );
     }
@@ -467,10 +467,10 @@ public:
     */
     virtual void deleteID( const jagDraw::jagDrawContextID contextID ) {}
 
-    virtual void operator()( DrawInfo& drawInfo )
+    virtual void execute( DrawInfo& drawInfo )
     {
         if( _elementBuffer != NULL )
-            (*_elementBuffer)( drawInfo );
+            _elementBuffer->execute( drawInfo );
         glDrawElements( _mode, _count, _type, _indices );
     }
 };
@@ -516,10 +516,10 @@ public:
     */
     virtual void deleteID( const jagDraw::jagDrawContextID contextID ) {}
 
-    virtual void operator()( DrawInfo& drawInfo )
+    virtual void execute( DrawInfo& drawInfo )
     {
         if( _elementBuffer != NULL )
-            (*_elementBuffer)( drawInfo );
+            _elementBuffer->execute( drawInfo );
         glDrawElementsInstanced( _mode, _count, _type, _indices, _primcount );
     }
 };
@@ -567,10 +567,10 @@ public:
     */
     virtual void deleteID( const jagDraw::jagDrawContextID contextID ) {}
 
-    virtual void operator()( DrawInfo& drawInfo )
+    virtual void execute( DrawInfo& drawInfo )
     {
         if( _elementBuffer != NULL )
-            (*_elementBuffer)( drawInfo );
+            _elementBuffer->execute( drawInfo );
         glMultiDrawElements( _mode, _countArray.get(), _type, (const GLvoid**)( _indicesArray.get() ), _primcount );
     }
 };
@@ -618,10 +618,10 @@ public:
     */
     virtual void deleteID( const jagDraw::jagDrawContextID contextID ) {}
 
-    virtual void operator()( DrawInfo& drawInfo )
+    virtual void execute( DrawInfo& drawInfo )
     {
         if( _elementBuffer != NULL )
-            (*_elementBuffer)( drawInfo );
+            _elementBuffer->execute( drawInfo );
         glDrawRangeElements( _mode, _start, _end, _count, _type, _indices );
     }
 };
@@ -669,10 +669,10 @@ public:
     */
     virtual void deleteID( const jagDraw::jagDrawContextID contextID ) {}
 
-    virtual void operator()( DrawInfo& drawInfo )
+    virtual void execute( DrawInfo& drawInfo )
     {
         if( _elementBuffer != NULL )
-            (*_elementBuffer)( drawInfo );
+            _elementBuffer->execute( drawInfo );
         glDrawElementsBaseVertex( _mode, _count, _type, _indices, _baseVertex );
     }
 };
@@ -722,10 +722,10 @@ public:
     */
     virtual void deleteID( const jagDraw::jagDrawContextID contextID ) {}
 
-    virtual void operator()( DrawInfo& drawInfo )
+    virtual void execute( DrawInfo& drawInfo )
     {
         if( _elementBuffer != NULL )
-            (*_elementBuffer)( drawInfo );
+            _elementBuffer->execute( drawInfo );
         glDrawRangeElementsBaseVertex( _mode, _start, _end, _count, _type, _indices, _baseVertex );
     }
 };
@@ -773,10 +773,10 @@ public:
     */
     virtual void deleteID( const jagDraw::jagDrawContextID contextID ) {}
 
-    virtual void operator()( DrawInfo& drawInfo )
+    virtual void execute( DrawInfo& drawInfo )
     {
         if( _elementBuffer != NULL )
-            (*_elementBuffer)( drawInfo );
+            _elementBuffer->execute( drawInfo );
         glDrawElementsInstancedBaseVertex( _mode, _count, _type, _indices, _primcount, _baseVertex );
     }
 };
@@ -823,12 +823,12 @@ public:
     */
     virtual void deleteID( const jagDraw::jagDrawContextID contextID ) {}
 
-    virtual void operator()( DrawInfo& drawInfo )
+    virtual void execute( DrawInfo& drawInfo )
     {
         if( _elementBuffer != NULL )
-            (*_elementBuffer)( drawInfo );
+            _elementBuffer->execute( drawInfo );
         if( _indirectBuffer != NULL )
-            (*_indirectBuffer)( drawInfo );
+            _indirectBuffer->execute( drawInfo );
         glDrawElementsIndirect( _mode, _type, _indirect );
     }
 };
@@ -879,10 +879,10 @@ public:
     */
     virtual void deleteID( const jagDraw::jagDrawContextID contextID ) {}
 
-    virtual void operator()( DrawInfo& drawInfo )
+    virtual void execute( DrawInfo& drawInfo )
     {
         if( _elementBuffer != NULL )
-            (*_elementBuffer)( drawInfo );
+            _elementBuffer->execute( drawInfo );
         glMultiDrawElementsBaseVertex( _mode, _countArray.get(), _type, (const GLvoid**)( _indicesArray.get() ),
             _primcount, _basevertexArray.get() );
     }
@@ -915,7 +915,7 @@ public:
     virtual ~PrimitiveRestart()
     {}
 
-    virtual void operator()( DrawInfo& )
+    virtual void execute( DrawInfo& )
     {
         if( _enable )
         {

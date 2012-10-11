@@ -61,7 +61,7 @@ Framebuffer::~Framebuffer()
 }
 
 
-void Framebuffer::operator()( DrawInfo& drawInfo )
+void Framebuffer::execute( DrawInfo& drawInfo )
 {
     const unsigned int contextID( drawInfo._id );
     const GLuint id( getID( contextID )  );
@@ -273,7 +273,7 @@ Renderbuffer::~Renderbuffer()
 }
 
 
-void Renderbuffer::operator()( DrawInfo& drawInfo )
+void Renderbuffer::execute( DrawInfo& drawInfo )
 {
     const unsigned int contextID( drawInfo._id );
 

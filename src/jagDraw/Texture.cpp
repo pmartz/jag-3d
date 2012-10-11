@@ -62,7 +62,7 @@ void Texture::activate( const unsigned int unit )
     glActiveTexture( localUnit );
 }
 
-void Texture::operator()( DrawInfo& drawInfo )
+void Texture::execute( DrawInfo& drawInfo )
 {
     const unsigned int contextID( drawInfo._id );
 

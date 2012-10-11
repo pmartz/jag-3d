@@ -44,7 +44,7 @@ struct DrawInfo;
 \li DrawablePrep objects. These are objects like Program, Uniform, Texture, and VertexArrayObjects.
 \li DrawCommand objects. These are commands for rendering, such as glDrawArrays, glDrawElements, and others.
 
-Drawable::operator()( DrawInfo& ) executes the two groups of commands in the order
+Drawable::execute( DrawInfo& ) executes the two groups of commands in the order
 above, and each command within a given group is executed sequentially.
 
 Note that BufferObject can't be added directly to a Drawable. In a typical use case, buffer objects
@@ -68,7 +68,7 @@ public:
     /** \brief TBD
     \details TBD
     */
-    virtual void operator()( DrawInfo& drawInfo );
+    virtual void execute( DrawInfo& drawInfo );
 
 
     /** \brief Compute (if necessary) and return the bounding volume.

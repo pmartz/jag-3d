@@ -70,7 +70,7 @@ public:
 
     Type getType() const { return( _type ); }
 
-    virtual void operator()( DrawInfo& drawInfo ) = 0;
+    virtual void execute( DrawInfo& drawInfo ) = 0;
 
 protected:
     Type _type;

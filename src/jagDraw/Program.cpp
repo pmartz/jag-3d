@@ -81,7 +81,7 @@ void Program::attachShader( ShaderPtr shader )
     _shaders.push_back( shader );
 }
 
-void Program::operator()( DrawInfo& drawInfo )
+void Program::execute( DrawInfo& drawInfo )
 {
     // Record the currently used program in DrawInfo.
     // Downstream vertex attribs and uniforms will query
@@ -116,7 +116,7 @@ void Program::operator()( DrawInfo& drawInfo )
         const HashValue& hash( it.first );
         DrawInfo::UniformMap::iterator uIt( drawInfo._uniformMap.find( hash ) );
         if( uIt != drawInfo._uniformMap.end() )
-            (*( uIt->second ))( drawInfo, it.second );
+            uIt->second->execute( drawInfo, it.second );
     }
 
     // Iterate over active uniform blocks. If an active uniform block matches a uniform
@@ -126,7 +126,7 @@ void Program::operator()( DrawInfo& drawInfo )
         const HashValue& hash( it.first );
         DrawInfo::UniformBlockMap::iterator ubIt( drawInfo._uniformBlockMap.find( hash ) );
         if( ubIt != drawInfo._uniformBlockMap.end() )
-            (*( ubIt->second ))( drawInfo, it.second );
+            ubIt->second->execute( drawInfo, it.second );
     }
 }
 

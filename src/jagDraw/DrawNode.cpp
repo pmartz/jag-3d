@@ -58,7 +58,7 @@ void DrawNode::execute( DrawInfo& drawInfo )
 
     BOOST_FOREACH( DrawablePtr drawable, _drawables )
     {
-        (*drawable)( drawInfo );
+        drawable->execute( drawInfo );
     }
 
     JAG3D_ERROR_CHECK( "DrawNode::execute()" );

@@ -49,19 +49,21 @@ Drawable::~Drawable()
 }
 
 
-void Drawable::operator()( DrawInfo& drawInfo )
+void Drawable::execute( DrawInfo& drawInfo )
 {
+    JAG3D_TRACE( "execute()" );
+
     BOOST_FOREACH( DrawablePrepPtr dpp, _drawablePrep )
     {
-        (*dpp)( drawInfo );
+        dpp->execute( drawInfo );
     }
 
     BOOST_FOREACH( DrawCommandPtr dcp, _drawCommands )
     {
-        (*dcp)( drawInfo );
+        dcp->execute( drawInfo );
     }
 
-    JAG3D_ERROR_CHECK( "Drawable::operator()" );
+    JAG3D_ERROR_CHECK( "Drawable::execute()" );
 }
 
 void Drawable::getBound()

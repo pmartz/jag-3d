@@ -70,11 +70,11 @@ public:
     /** \brief TBD
     \details TBD
     Does not add this uniform block to drawInfo._uniformBlockMap. */
-    void operator()( DrawInfo& drawInfo, const Program::BlockInfo& blockInfo ) const;
+    void execute( DrawInfo& drawInfo, const Program::BlockInfo& blockInfo ) const;
     /** \brief TBD
     \details Override methods from DrawablePrep.
     Adds this uniform to drawInfo._uniformBlockMap. */
-    virtual void operator()( DrawInfo& drawInfo );
+    virtual void execute( DrawInfo& drawInfo );
 
     /** Override methods from ObjectIDOwner */
     virtual void setMaxContexts( const unsigned int numContexts );
@@ -120,11 +120,11 @@ public:
 
     /** \brief TBD
     \details Override method from DrawablePrep. */
-    virtual void operator()( DrawInfo& drawInfo )
+    virtual void execute( DrawInfo& drawInfo )
     {
         BOOST_FOREACH( const InternalMapType::value_type& dataPair, _map )
         {
-            (*(dataPair.second))( drawInfo );
+            dataPair.second->execute( drawInfo );
         }
     }
 

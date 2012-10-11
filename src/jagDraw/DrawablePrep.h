@@ -74,7 +74,7 @@ public:
 
     /** \brief TBD
     \details TBD */
-    virtual void operator()( DrawInfo& ) = 0;
+    virtual void execute( DrawInfo& ) = 0;
 
 
     // TBD remove, replace with general purpose user data infrastructure.
