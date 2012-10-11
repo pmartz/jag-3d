@@ -1,3 +1,0 @@
-include .depend/DefaultFont.cpp
-include .depend/PixelBuffer.cpp
-include .depend/Text2D.cpp
