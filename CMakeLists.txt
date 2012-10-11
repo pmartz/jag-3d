@@ -228,7 +228,7 @@ install( FILES "extra/Findjag3d.cmake"
 # =============================================
 
 # Add all targets to the build-tree export set
-export( TARGETS jagBase jagDisk jagDraw
+export( TARGETS jagSG jagDraw jagDisk jagBase
   FILE "${PROJECT_BINARY_DIR}/lib/jag3dLibraryDepends.cmake" )
 
 # Export the package for use from the build-tree
@@ -267,11 +267,11 @@ install( FILES
 #
 # Setup the fpc auto detection files
 if( WIN32 )
-    set( JAG3D_FPC_LIBRARIES "/libpath:\"\${libdir}\" jagDraw.lib jagDisk.lib jagBase.lib" )
+    set( JAG3D_FPC_LIBRARIES "/libpath:\"\${libdir}\" jagSG.lib jagDraw.lib jagDisk.lib jagBase.lib" )
     set( JAG3D_FPC_INCLUDES "/I\"\${includedir}\""  )
 else()
     set( JAG3D_FPC_INCLUDES "-I\${includedir}" )
-    set( JAG3D_FPC_LIBRARIES "-L\${libdir} -ljagDraw -ljagDisk -ljagBase" )
+    set( JAG3D_FPC_LIBRARIES "-L\${libdir} -ljagSG -ljagDraw -ljagDisk -ljagBase" )
 endif()
 
 configure_file( extra/jag3d.fpc.in

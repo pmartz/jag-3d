@@ -18,27 +18,37 @@
 #
 #************** <auto-copyright.pl END do not edit this line> ***************
 
+set( _libName jagSG )
 
-add_subdirectory( jagBase )
-add_subdirectory( jagDisk )
-add_subdirectory( jagDraw )
-add_subdirectory( jagSG )
-
-
-if( JAG3D_BUILD_PLUGINS )
-    add_subdirectory( plugins )
+if( BUILD_SHARED_LIBS )
+    add_definitions( -DJAGSG_LIBRARY )
 endif()
 
-if( JAG3D_BUILD_TESTS )
-    enable_testing()
-    add_definitions( -DJAG3D_BUILD_TESTS )
-    add_subdirectory( tests )
-endif()
 
-if( JAG3D_BUILD_APPS )
-    add_subdirectory( apps )
-endif()
+set( _jagSGHeaderFiles
+    Export.h
+    Node.h
+)
 
-if( JAG3D_BUILD_EXAMPLES )
-    add_subdirectory( examples )
-endif()
+set( _jagSGSourceFiles
+    Node.cpp
+)
+
+_addLibrary( ${_libName}
+    ${_jagSGHeaderFiles}
+    ${_jagSGSourceFiles}
+    JAG_LIBRARIES
+        jagDraw jagBase
+)
+
+install(
+    DIRECTORY .
+    DESTINATION include/jagSG
+    USE_SOURCE_PERMISSIONS
+    FILES_MATCHING 
+    PATTERN "*.h"
+    PATTERN ".hg" EXCLUDE
+    PATTERN ".txt" EXCLUDE
+    PATTERN ".cpp" EXCLUDE
+    PATTERN ".cxx" EXCLUDE
+)
