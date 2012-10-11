@@ -329,7 +329,7 @@ bool RttDemo::frame( const gmtl::Matrix44f& view, const gmtl::Matrix44f& proj )
 
         BOOST_FOREACH( jagDraw::DrawNode& drawNode, _windowNodes )
         {
-            drawNode( drawInfo );
+            drawNode.execute( drawInfo );
         }
         JAG3D_ERROR_CHECK( "Line rendering" );
     }
@@ -339,13 +339,13 @@ bool RttDemo::frame( const gmtl::Matrix44f& view, const gmtl::Matrix44f& proj )
 
         BOOST_FOREACH( jagDraw::DrawNode& drawNode, _rttNodes )
         {
-            drawNode( drawInfo );
+            drawNode.execute( drawInfo );
         }
         JAG3D_ERROR_CHECK( "Render to FBO" );
 
         BOOST_FOREACH( jagDraw::DrawNode& drawNode, _quadNodes )
         {
-            drawNode( drawInfo );
+            drawNode.execute( drawInfo );
         }
         JAG3D_ERROR_CHECK( "Display texture on quad" );
     }

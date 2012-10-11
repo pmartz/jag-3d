@@ -201,7 +201,7 @@ bool TextureDemo::frame( const gmtl::Matrix44f& view, const gmtl::Matrix44f& pro
     // Render all Drawables.
     BOOST_FOREACH( jagDraw::DrawNode& drawNode, _nodes )
     {
-        drawNode( drawInfo );
+        drawNode.execute( drawInfo );
     }
     
     glFlush();
