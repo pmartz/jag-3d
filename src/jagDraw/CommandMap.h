@@ -37,7 +37,7 @@
 namespace jagDraw {
 
 
-class CommandMap
+class CommandMap : public ObjectIDOwner
 {
 public:
     CommandMap( const std::string& name=std::string("") )
@@ -82,6 +82,38 @@ public:
     };
 
     typedef std::map< CommandType, DrawablePrepPtr > CommandMapType;
+
+    virtual void setMaxContexts( const unsigned int numContexts )
+    {
+        BOOST_FOREACH( jagDraw::CommandMap::CommandMapType::value_type dpPair, _data )
+        {
+            jagDraw::ObjectIDPtr objID( boost::dynamic_pointer_cast< jagDraw::ObjectID >( dpPair.second ) );
+            if( objID != NULL )
+                objID->setMaxContexts( numContexts );
+            else
+            {
+                jagDraw::ObjectIDOwnerPtr objIDOwner( boost::dynamic_pointer_cast< jagDraw::ObjectIDOwner >( dpPair.second ) );
+                if( objIDOwner != NULL )
+                    objIDOwner->setMaxContexts( numContexts );
+            }
+        }
+    }
+    virtual void deleteID( const jagDraw::jagDrawContextID contextID )
+    {
+        BOOST_FOREACH( jagDraw::CommandMap::CommandMapType::value_type dpPair, _data )
+        {
+            jagDraw::ObjectIDPtr objID( boost::dynamic_pointer_cast< jagDraw::ObjectID >( dpPair.second ) );
+            if( objID != NULL )
+                objID->deleteID( contextID );
+            else
+            {
+                jagDraw::ObjectIDOwnerPtr objIDOwner( boost::dynamic_pointer_cast< jagDraw::ObjectIDOwner >( dpPair.second ) );
+                if( objIDOwner != NULL )
+                    objIDOwner->deleteID( contextID );
+            }
+        }
+    }
+
 
     void execute( DrawInfo& drawInfo )
     {

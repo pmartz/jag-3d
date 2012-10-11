@@ -54,11 +54,6 @@ void DrawNode::operator()( DrawInfo& drawInfo )
     CommandMap delta( drawInfo._current << (*_commands) );
 
     delta.execute( drawInfo );
-    //typedef std::map< CommandType, DrawablePrepPtr > MyMapTBD;
-    //BOOST_FOREACH( MyMapTBD::value_type dpPair, delta._data )
-    //{
-        //( *(dpPair.second) )( drawInfo );
-    //}
 
     BOOST_FOREACH( DrawablePtr drawable, _drawables )
     {
@@ -70,22 +65,20 @@ void DrawNode::operator()( DrawInfo& drawInfo )
 
 void DrawNode::setMaxContexts( const unsigned int numContexts )
 {
-    BOOST_FOREACH( CommandMap::CommandMapType::value_type dpPair, _commands->_data )
-    {
-        ObjectIDPtr objID( boost::dynamic_pointer_cast< ObjectID >( dpPair.second ) );
-        if( objID != NULL )
-            objID->setMaxContexts( numContexts );
-        else
-        {
-            ObjectIDOwnerPtr objIDOwner( boost::dynamic_pointer_cast< ObjectIDOwner >( dpPair.second ) );
-            if( objIDOwner != NULL )
-                objIDOwner->setMaxContexts( numContexts );
-        }
-    }
+    _commands->setMaxContexts( numContexts );
 
     BOOST_FOREACH( DrawablePtr drawable, _drawables )
     {
         drawable->setMaxContexts( numContexts );
+    }
+}
+void DrawNode::deleteID( const jagDraw::jagDrawContextID contextID )
+{
+    _commands->deleteID( contextID );
+
+    BOOST_FOREACH( DrawablePtr drawable, _drawables )
+    {
+        drawable->deleteID( contextID );
     }
 }
 
