@@ -23,9 +23,13 @@
 
 #include <jagSG/Export.h>
 #include <jagDraw/ObjectID.h>
+#include <jagDraw/Drawable.h>
+#include <jagDraw/CommandMap.h>
 #include <jagDraw/ContextSupport.h>
 #include <jagBase/LogBase.h>
 #include <jagBase/ptr.h>
+
+#include <gmtl/gmtl.h>
 
 #include <vector>
 
@@ -35,6 +39,12 @@ namespace jagDraw {
 }
 
 namespace jagSG {
+
+
+class Node;
+typedef jagBase::ptr< jagSG::Node >::shared_ptr NodePtr;
+typedef std::vector< NodePtr > NodeVec;
+typedef std::vector< Node > NodeSimpleVec;
 
 
 /** \class Node Node.h <jagSG/DrawNode.h>
@@ -49,11 +59,68 @@ public:
     ~Node();
 
 
-
-
     /** \brief TBD
     \details TBD */
+    virtual void traverse();
+
+    /** \brief For immediate rendering.
+    \details Requires a current context. */
     virtual void execute( jagDraw::DrawInfo& drawInfo );
+
+
+    /** \brief Transform
+    \details
+    TBD Make this virtual, and have two derived classes,
+    one for matrices and one for quats. */
+    void setTransform( const gmtl::Matrix44d& matrix );
+    /** \brief TBD
+    \details TBD */
+    gmtl::Matrix44d& getTransform();
+    /** \overload */
+    const gmtl::Matrix44d& getTransform() const;
+
+
+    /** \brief Bound
+    \details TBD Not yet implemented. */
+    virtual void getBound();
+
+
+    /** \brief CommandMap
+    \details TBD */
+    void setCommandMap( jagDraw::CommandMapPtr commands );
+    /** \brief TBD
+    \details TBD */
+    jagDraw::CommandMapPtr getCommandMap();
+    /** \overload */
+    const jagDraw::CommandMapPtr getCommandMap() const;
+
+
+    /** \brief Drawables
+    \details TBD */
+    void addDrawables( jagDraw::DrawablePtr node );
+    /** \brief TBD
+    \details TBD */
+    unsigned int getNumDrawables() const;
+    /** \brief TBD
+    \details TBD */
+    jagDraw::DrawablePtr getDrawable( const unsigned int idx );
+    /** \overload */
+    const jagDraw::DrawablePtr getDrawable( const unsigned int idx ) const;
+
+
+    /** \brief Children
+    \details TBD */
+    void addChild( NodePtr node );
+    /** \brief TBD
+    \details TBD */
+    unsigned int getNumChildren() const;
+    /** \brief TBD
+    \details TBD */
+    NodePtr getChild( const unsigned int idx );
+    /** \overload */
+    const NodePtr getChild( const unsigned int idx ) const;
+
+
 
     /** \brief Tell the contained ObjectID objects how many contexts to expect.
     \details Inherited from ObjectIDOwner. */
@@ -65,11 +132,11 @@ public:
     virtual void deleteID( const jagDraw::jagDrawContextID contextID );
 
 protected:
+    gmtl::Matrix44d _matrix;
+    jagDraw::CommandMapPtr _commands;
+    jagDraw::DrawableVec _drawables;
+    NodeVec _children;
 };
-
-typedef jagBase::ptr< jagSG::Node >::shared_ptr NodePtr;
-typedef std::vector< NodePtr > NodeVec;
-typedef std::vector< Node > NodeSimpleVec;
 
 
 // jagSG
