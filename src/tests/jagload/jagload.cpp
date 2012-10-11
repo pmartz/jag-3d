@@ -69,7 +69,7 @@ protected:
     void makeViewMatrices( gmtl::Matrix44f& view, gmtl::Matrix33f& normal );
     gmtl::Matrix33f computeNormalMatrix( const gmtl::Matrix44f& in );
 
-    jagDraw::DrawableVec _drawableVec;
+    jagDraw::DrawNodeSimpleVec _drawNodes;
 
     typedef jagDraw::PerContextData< gmtl::Matrix44f > PerContextMatrix44f;
     PerContextMatrix44f _proj;
@@ -121,15 +121,15 @@ bool JagLoadDemo::startup( const unsigned int numContexts )
 
         Osg2Jag osg2JagConverter;
         root->accept( osg2JagConverter );
-        _drawableVec = osg2JagConverter.getJagDrawableList();
+        _drawNodes = osg2JagConverter.getJagDrawNodeVec();
     }
-    if( _drawableVec.size() == 0 )
+    if( _drawNodes.size() == 0 )
     {
-        JAG3D_FATAL_STATIC( _logName, "No Drawables from OSG conversion." );
+        JAG3D_FATAL_STATIC( _logName, "No DrawNodes from OSG conversion." );
         return( false );
     }
 
-    jagDraw::DrawablePtr firstDrawable( _drawableVec[ 0 ] );
+    jagDraw::DrawNode& firstDrawNode( _drawNodes[ 0 ] );
 
     jagDraw::ShaderPtr vs( (jagDraw::Shader*) jagDisk::read( "jagload.vert" ) );
     jagDraw::ShaderPtr fs( (jagDraw::Shader*) jagDisk::read( "jagload.frag" ) );
@@ -144,7 +144,13 @@ bool JagLoadDemo::startup( const unsigned int numContexts )
     prog->attachShader( vs );
     prog->attachShader( fs );
 
-    firstDrawable->insertDrawablePrep( prog );
+    jagDraw::CommandMapPtr commands( firstDrawNode.getCommandMap() );
+    if( commands == NULL )
+    {
+        commands = jagDraw::CommandMapPtr( new jagDraw::CommandMap() );
+        firstDrawNode.setCommandMap( commands );
+    }
+    commands->insert( prog );
 
     // Test uniform blocks
     jagDraw::UniformBlockPtr ubp( jagDraw::UniformBlockPtr(
@@ -153,11 +159,11 @@ bool JagLoadDemo::startup( const unsigned int numContexts )
         new jagDraw::Uniform( "ambientScene", .2f ) ) );
     ubp->addUniform( jagDraw::UniformPtr(
         new jagDraw::Uniform( "diffuseMat", gmtl::Point3f( 0.f, .7f, 0.9f ) ) ) );
-    firstDrawable->insertDrawablePrep( ubp );
+    commands->insert( ubp );
 
     gmtl::Vec3f lightVec( 0.5, .7, 1. );
     gmtl::normalize( lightVec );
-    firstDrawable->insertDrawablePrep( jagDraw::UniformPtr(
+    commands->insert( jagDraw::UniformPtr(
         new jagDraw::Uniform( "ecLightDir", lightVec ) ) );
 
 
@@ -169,9 +175,9 @@ bool JagLoadDemo::startup( const unsigned int numContexts )
 
 
     // Tell all Jag3D objects how many contexts to expect.
-    BOOST_FOREACH( const jagDraw::DrawableVec::value_type& dp, _drawableVec )
+    BOOST_FOREACH( jagDraw::DrawNode& dp, _drawNodes )
     {
-        dp->setMaxContexts( numContexts );
+        dp.setMaxContexts( numContexts );
     }
     for( unsigned int idx=0; idx<numContexts; ++idx )
     {
@@ -231,9 +237,9 @@ bool JagLoadDemo::frame( const gmtl::Matrix44f& view, const gmtl::Matrix44f& pro
     _normalUniform[ drawInfo._id ]->execute( drawInfo );
 
     // Render all Drawables.
-    BOOST_FOREACH( const jagDraw::DrawableVec::value_type& dp, _drawableVec )
+    BOOST_FOREACH( jagDraw::DrawNode& dp, _drawNodes )
     {
-        dp->execute( drawInfo );
+        dp.execute( drawInfo );
     }
 
     glFlush();
