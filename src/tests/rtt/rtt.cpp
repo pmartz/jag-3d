@@ -159,7 +159,7 @@ bool RttDemo::startup( const unsigned int numContexts )
     commands->insert( prog );
     commands->insert( vaop );
     commands->insert( _defaultFBO );
-    jagDraw::DrawNode drawNode( commands );
+    jagDraw::Node drawNode( commands );
     drawNode.addDrawable( linesDrawable );
     _windowNodes.push_back( drawNode );
 
@@ -181,7 +181,7 @@ bool RttDemo::startup( const unsigned int numContexts )
     // Render the lines first.
     jagDraw::CommandMapPtr rttCommands( jagDraw::CommandMapPtr( new jagDraw::CommandMap( *commands ) ) );
     rttCommands->insert( _textureFBO );
-    jagDraw::DrawNode rttDrawNode( rttCommands );
+    jagDraw::Node rttDrawNode( rttCommands );
     rttDrawNode.addDrawable( linesDrawable );
     _rttNodes.push_back( rttDrawNode );
 
@@ -272,7 +272,7 @@ bool RttDemo::startup( const unsigned int numContexts )
         quadCommands->insert( _defaultFBO );
         quadCommands->insert( textureSet );
         quadCommands->insert( uniformSet );
-        jagDraw::DrawNode quadDrawNode( quadCommands );
+        jagDraw::Node quadDrawNode( quadCommands );
         quadDrawNode.addDrawable( drawable );
         _quadNodes.push_back( quadDrawNode );
     }
@@ -327,7 +327,7 @@ bool RttDemo::frame( const gmtl::Matrix44f& view, const gmtl::Matrix44f& proj )
 
         glClear( GL_COLOR_BUFFER_BIT );
 
-        BOOST_FOREACH( jagDraw::DrawNode& drawNode, _windowNodes )
+        BOOST_FOREACH( jagDraw::Node& drawNode, _windowNodes )
         {
             drawNode.execute( drawInfo );
         }
@@ -337,13 +337,13 @@ bool RttDemo::frame( const gmtl::Matrix44f& view, const gmtl::Matrix44f& proj )
     {
         // Render lines to the FBO, then display the texture with a quad.
 
-        BOOST_FOREACH( jagDraw::DrawNode& drawNode, _rttNodes )
+        BOOST_FOREACH( jagDraw::Node& drawNode, _rttNodes )
         {
             drawNode.execute( drawInfo );
         }
         JAG3D_ERROR_CHECK( "Render to FBO" );
 
-        BOOST_FOREACH( jagDraw::DrawNode& drawNode, _quadNodes )
+        BOOST_FOREACH( jagDraw::Node& drawNode, _quadNodes )
         {
             drawNode.execute( drawInfo );
         }

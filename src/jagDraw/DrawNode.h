@@ -18,8 +18,8 @@
 *
 *************** <auto-copyright.pl END do not edit this line> ***************/
 
-#ifndef __JAGDRAW_DRAW_NODE_H__
-#define __JAGDRAW_DRAW_NODE_H__ 1
+#ifndef __JAGDRAW_NODE_H__
+#define __JAGDRAW_NODE_H__ 1
 
 #include <jagDraw/Export.h>
 #include <jagDraw/CommandMap.h>
@@ -34,16 +34,16 @@
 namespace jagDraw {
 
 
-/** \class DrawNode DrawNode.h <jagDraw/DrawNode.h>
+/** \class Node Node.h <jagDraw/Node.h>
 \brief TBD
 \details TBD
 */
-class JAGDRAW_EXPORT DrawNode : protected jagBase::LogBase, public ObjectIDOwner
+class JAGDRAW_EXPORT Node : protected jagBase::LogBase, public ObjectIDOwner
 {
 public:
-    DrawNode( CommandMapPtr commands=CommandMapPtr( (CommandMap*)NULL ));
-    DrawNode( const DrawNode& rhs );
-    ~DrawNode();
+    Node( CommandMapPtr commands=CommandMapPtr( (CommandMap*)NULL ));
+    Node( const Node& rhs );
+    ~Node();
 
 
     /** \brief Add a drawable prep command, such as a uniform or a shader program.
@@ -82,7 +82,7 @@ public:
 
     /** \brief Assignment operator.
     \details Required by std::sort(). */
-    DrawNode& operator=( const DrawNode& rhs )
+    Node& operator=( const Node& rhs )
     {
         _commands = rhs._commands;
         _drawables = rhs._drawables;
@@ -108,9 +108,9 @@ protected:
     DrawableVec _drawables;
 };
 
-typedef jagBase::ptr< jagDraw::DrawNode >::shared_ptr DrawNodePtr;
+typedef jagBase::ptr< jagDraw::Node >::shared_ptr DrawNodePtr;
 typedef std::vector< DrawNodePtr > DrawNodeVec;
-typedef std::vector< DrawNode > DrawNodeSimpleVec;
+typedef std::vector< Node > DrawNodeSimpleVec;
 
 
 class DrawNodeCommandSorter
@@ -127,7 +127,7 @@ public:
     ~DrawNodeCommandSorter()
     {}
 
-    bool operator()( const DrawNode& lhs, const DrawNode& rhs ) const
+    bool operator()( const Node& lhs, const Node& rhs ) const
     {
         const CommandMapPtr lhsCommands( lhs.getCommandMap() );
         const CommandMapPtr rhsCommands( rhs.getCommandMap() );
@@ -166,5 +166,5 @@ protected:
 }
 
 
-// __JAGDRAW_DRAW_NODE_H__
+// __JAGDRAW_NODE_H__
 #endif

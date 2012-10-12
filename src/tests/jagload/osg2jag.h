@@ -23,7 +23,7 @@
 
 #include <osg/NodeVisitor>
 #include <jagDraw/Drawable.h>
-#include <jagDraw/DrawNode.h>
+#include <jagDraw/Node.h>
 #include <jagBase/Buffer.h>
 
 #include <osg/PrimitiveSet>
