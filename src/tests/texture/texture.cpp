@@ -157,14 +157,14 @@ bool TextureDemo::startup( const unsigned int numContexts )
         vaop->addVertexArrayCommand( iColor );
         commands->insert( vaop );
 
-        jagDraw::DrawNode drawNode( commands );
+        jagDraw::Node drawNode( commands );
         drawNode.addDrawable( drawable );
         _nodes.push_back( drawNode );
     }
 
 
     // Tell all Jag3D objects how many contexts to expect.
-    BOOST_FOREACH( jagDraw::DrawNode& drawNode, _nodes )
+    BOOST_FOREACH( jagDraw::Node& drawNode, _nodes )
     {
         drawNode.setMaxContexts( numContexts );
     }
@@ -199,7 +199,7 @@ bool TextureDemo::frame( const gmtl::Matrix44f& view, const gmtl::Matrix44f& pro
     jagDraw::DrawInfo& drawInfo( getDrawInfo( contextID ) );
 
     // Render all Drawables.
-    BOOST_FOREACH( jagDraw::DrawNode& drawNode, _nodes )
+    BOOST_FOREACH( jagDraw::Node& drawNode, _nodes )
     {
         drawNode.execute( drawInfo );
     }

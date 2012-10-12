@@ -128,7 +128,7 @@ bool JagLoadDemo::startup( const unsigned int numContexts )
         return( false );
     }
 
-    jagDraw::DrawNode& firstDrawNode( _drawNodes[ 0 ] );
+    jagDraw::Node& firstDrawNode( _drawNodes[ 0 ] );
 
     jagDraw::ShaderPtr vs( (jagDraw::Shader*) jagDisk::read( "jagload.vert" ) );
     jagDraw::ShaderPtr fs( (jagDraw::Shader*) jagDisk::read( "jagload.frag" ) );
@@ -174,7 +174,7 @@ bool JagLoadDemo::startup( const unsigned int numContexts )
 
 
     // Tell all Jag3D objects how many contexts to expect.
-    BOOST_FOREACH( jagDraw::DrawNode& dp, _drawNodes )
+    BOOST_FOREACH( jagDraw::Node& dp, _drawNodes )
     {
         dp.setMaxContexts( numContexts );
     }
@@ -236,7 +236,7 @@ bool JagLoadDemo::frame( const gmtl::Matrix44f& view, const gmtl::Matrix44f& pro
     _normalUniform[ drawInfo._id ]->execute( drawInfo );
 
     // Render all Drawables.
-    BOOST_FOREACH( jagDraw::DrawNode& dp, _drawNodes )
+    BOOST_FOREACH( jagDraw::Node& dp, _drawNodes )
     {
         dp.execute( drawInfo );
     }

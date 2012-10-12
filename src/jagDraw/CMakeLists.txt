@@ -32,7 +32,6 @@ set( _jagDrawHeaderFiles
     Common.h
     ContextSupport.h
     Drawable.h
-    DrawNode.h
     DrawablePrep.h
     DrawCommand.h
     DrawInfo.h
@@ -40,6 +39,7 @@ set( _jagDrawHeaderFiles
     Framebuffer.h
     FramebufferAttachable.h
     Image.h
+    Node.h
     ObjectID.h
     PerContextData.h
     PixelStore.h
@@ -60,11 +60,11 @@ set( _jagDrawSourceFiles
     BufferObject.cpp
     ContextSupport.cpp
     Drawable.cpp
-    DrawNode.cpp
     DrawInfo.cpp
     Error.cpp
     Framebuffer.cpp
     Image.cpp
+    Node.cpp
     PixelStore.cpp
     Program.cpp
     Shader.cpp

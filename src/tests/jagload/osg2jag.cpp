@@ -23,7 +23,7 @@
 #include <osg/Geode>
 #include <osg/Geometry>
 
-#include <jagDraw/DrawNode.h>
+#include <jagDraw/Node.h>
 #include <jagDraw/CommandMap.h>
 #include <jagDraw/Drawable.h>
 #include <jagDraw/BufferObject.h>
@@ -201,7 +201,7 @@ void Osg2Jag::apply( osg::Geometry* geom )
         }
     }
 
-    jagDraw::DrawNode drawNode( commands );
+    jagDraw::Node drawNode( commands );
     drawNode.addDrawable( draw );
     _jagDrawNodes.push_back( drawNode );
 }

@@ -32,7 +32,7 @@
 #include <jagDraw/DrawablePrep.h>
 #include <jagDraw/DrawCommand.h>
 #include <jagDraw/DrawInfo.h>
-#include <jagDraw/DrawNode.h>
+#include <jagDraw/Node.h>
 #include <jagDraw/Error.h>
 #include <jagDraw/Framebuffer.h>
 #include <jagDraw/Image.h>

@@ -18,7 +18,7 @@
 *
 *************** <auto-copyright.pl END do not edit this line> ***************/
 
-#include <jagDraw/DrawNode.h>
+#include <jagDraw/Node.h>
 #include <jagDraw/DrawablePrep.h>
 #include <jagDraw/DrawInfo.h>
 #include <jagDraw/Error.h>
@@ -31,25 +31,25 @@
 namespace jagDraw {
 
 
-DrawNode::DrawNode( CommandMapPtr commands )
+Node::Node( CommandMapPtr commands )
   : jagBase::LogBase( "jag.draw.dnode" ),
     ObjectIDOwner(),
     _commands( commands )
 {
 }
-DrawNode::DrawNode( const DrawNode& rhs )
+Node::Node( const Node& rhs )
   : jagBase::LogBase( "jag.draw.dnode" ),
     ObjectIDOwner( rhs ),
     _commands( rhs._commands ),
     _drawables( rhs._drawables )
 {
 }
-DrawNode::~DrawNode()
+Node::~Node()
 {
 }
 
 
-void DrawNode::execute( DrawInfo& drawInfo )
+void Node::execute( DrawInfo& drawInfo )
 {
     JAG3D_TRACE( "execute()" );
 
@@ -61,10 +61,10 @@ void DrawNode::execute( DrawInfo& drawInfo )
         drawable->execute( drawInfo );
     }
 
-    JAG3D_ERROR_CHECK( "DrawNode::execute()" );
+    JAG3D_ERROR_CHECK( "Node::execute()" );
 }
 
-void DrawNode::setMaxContexts( const unsigned int numContexts )
+void Node::setMaxContexts( const unsigned int numContexts )
 {
     _commands->setMaxContexts( numContexts );
 
@@ -73,7 +73,7 @@ void DrawNode::setMaxContexts( const unsigned int numContexts )
         drawable->setMaxContexts( numContexts );
     }
 }
-void DrawNode::deleteID( const jagDraw::jagDrawContextID contextID )
+void Node::deleteID( const jagDraw::jagDrawContextID contextID )
 {
     _commands->deleteID( contextID );
 
