@@ -25,6 +25,7 @@
 #include <jagBase/ptr.h>
 #include <vector>
 #include <string>
+#include <gmtl/gmtl.h>
 
 
 namespace jagBase {
@@ -34,6 +35,9 @@ typedef jagBase::ptr< unsigned char >::shared_array_ptr UCharArray;
 typedef jagBase::ptr< unsigned int >::shared_ptr UIntPtr;
 
 typedef std::vector< std::string > StringVec;
+
+typedef std::vector< gmtl::Point3f > Point3fVec;
+typedef jagBase::ptr< gmtl::Point3f >::shared_array_ptr Point3fArray;
 
 
 // jagBase

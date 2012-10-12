@@ -59,7 +59,7 @@ public:
     }
 
 protected:
-    jagSG::NodePtr makeScene();
+    jagSG::NodePtr makeScene( const gmtl::Point3f& offset );
 
     gmtl::Matrix44f computeProjection( float aspect );
     void makeViewMatrices( gmtl::Matrix44f& view, gmtl::Matrix33f& normal );
@@ -78,36 +78,36 @@ protected:
 
 DemoInterface* DemoInterface::create( bpo::options_description& desc )
 {
-    jagBase::Log::instance()->setPriority( jagBase::Log::PrioDebug, jagBase::Log::Console );
+    jagBase::Log::instance()->setPriority( jagBase::Log::PrioTrace, jagBase::Log::Console );
 
     return( new NodesDemo );
 }
 
-jagSG::NodePtr NodesDemo::makeScene()
+jagSG::NodePtr NodesDemo::makeScene( const gmtl::Point3f& offset )
 {
     jagDraw::CommandMapPtr commands( jagDraw::CommandMapPtr( new jagDraw::CommandMap() ) );
     jagDraw::DrawablePtr drawable( jagDraw::DrawablePtr( new jagDraw::Drawable() ) );
     jagSG::NodePtr node( jagSG::NodePtr( new jagSG::Node() ) );
 
-    const float z = .5f;
-    float vertsNorms[] = {
-        -1.f, -1.f, z,
-            0.f, 0.f, 1.f,
-        1.f, -1.f, z,
-            0.f, 0.f, 1.f,
-        -1.f, 1.f, z,
-            0.f, 0.f, 1.f,
-        1.f, 1.f, z,
-            0.f, 0.f, 1.f };
-    jagBase::BufferPtr ibp( new jagBase::Buffer( sizeof( vertsNorms ), (void*)vertsNorms ) );
+    // Interleaved vertices and normals.
+    jagBase::Point3fVec data;
+    data.push_back( gmtl::Point3f( -1.f, -1.f, 0.f ) + offset );
+    data.push_back( gmtl::Point3f( 0.f, 0.f, 1.f ) );
+    data.push_back( gmtl::Point3f( 1.f, -1.f, 0.f ) + offset );
+    data.push_back( gmtl::Point3f( 0.f, 0.f, 1.f ) );
+    data.push_back( gmtl::Point3f( -1.f, 1.f, 0.f ) + offset );
+    data.push_back( gmtl::Point3f( 0.f, 0.f, 1.f ) );
+    data.push_back( gmtl::Point3f( 1.f, 1.f, 0.f ) + offset );
+    data.push_back( gmtl::Point3f( 0.f, 0.f, 1.f ) );
+    jagBase::BufferPtr ibp( new jagBase::Buffer( data.size() * sizeof( gmtl::Point3f ), (void*)&(data[0]) ) );
     jagDraw::BufferObjectPtr ibop( new jagDraw::BufferObject( GL_ARRAY_BUFFER, ibp ) );
 
     const GLsizei stride( sizeof( float ) * 6 );
     jagDraw::VertexAttribPtr verts( new jagDraw::VertexAttrib(
         "vertex", 3, GL_FLOAT, GL_FALSE, stride, 0 ) );
-    const GLsizei offset( sizeof( float ) * 3 );
+    const GLsizei startOffset( sizeof( float ) * 3 );
     jagDraw::VertexAttribPtr norms( new jagDraw::VertexAttrib(
-        "normal", 3, GL_FLOAT, GL_FALSE, stride, offset ) );
+        "normal", 3, GL_FLOAT, GL_FALSE, stride, startOffset ) );
 
     jagDraw::VertexArrayObjectPtr vaop = jagDraw::VertexArrayObjectPtr( new jagDraw::VertexArrayObject() );
     vaop->addVertexArrayCommand( ibop, jagDraw::VertexArrayCommand::Vertex );
@@ -130,7 +130,9 @@ bool NodesDemo::startup( const unsigned int numContexts )
     _bSphere.setCenter( gmtl::Point3f( 0., 0., 0. ) );
     _bSphere.setRadius( 3.f );
 
-    _scene = makeScene();
+    _scene = makeScene( gmtl::Point3f( 0.f, 1.f, .5f ) );
+    _scene->addChild( makeScene( gmtl::Point3f( -1.f, 0.f, 0.f ) ) );
+    _scene->addChild( makeScene( gmtl::Point3f( 1.1f, -.25f, 0.f ) ) );
 
 
     jagDraw::CommandMapPtr commands( _scene->getCommandMap() );
