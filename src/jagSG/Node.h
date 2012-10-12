@@ -47,7 +47,7 @@ typedef std::vector< NodePtr > NodeVec;
 typedef std::vector< Node > NodeSimpleVec;
 
 
-/** \class Node Node.h <jagSG/DrawNode.h>
+/** \class Node Node.h <jagSG/Node.h>
 \brief TBD
 \details TBD
 */
