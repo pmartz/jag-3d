@@ -78,10 +78,19 @@ public:
         glVertexAttribPointer( index, _size, _type, _normalized, _stride, (GLvoid *)(_offset ) );
     }
 
+    void get( GLint& size, GLenum& type, GLboolean& normalized, GLsizei& stride, GLuint& offset )
+    {
+        size = _size;
+        type = _type;
+        normalized = _normalized;
+        stride = _stride;
+        offset = _offset;
+    }
+
 protected:
     std::string _name;
     Program::HashValue _indexHash;
-    GLint  _size;
+    GLint _size;
     GLenum _type;
     GLboolean _normalized;
     GLsizei _stride;

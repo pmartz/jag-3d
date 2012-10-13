@@ -69,20 +69,51 @@ public:
     virtual void execute( DrawInfo& drawInfo );
 
 
+    /** \name Bound computation
+    \details TBD */
+    /*@{*/
+
     /** \brief Compute (if necessary) and return the bounding volume.
     \details TBD
     \param commands The CommandMap, containing information necessary to compute
-    the bound, such as VertexArrayObjects.
-    */
+    the bound, such as VertexArrayObjects. */
     virtual BoundPtr getBound( const CommandMapPtr commands );
 
+    /** \brief TBD
+    \details TBD */
+    void setBoundDirty( const CommandMapPtr commands, const bool dirty=true );
+    /** \brief TBD
+    \details TBD */
+    bool getBoundDirty( const CommandMapPtr commands ) const;
 
-    /** \brief Tell the Drawable how many contexts to expect.
-    \details Drawable iterates over all other attached Jag3D objects and
-    passes \c numContexts to their setMaxContexts() member function.
-    */
-    virtual void setMaxContexts( const unsigned int numContexts );
+    /** \brief TBD
+    \details TBD */
+    void computeBounds( BoundPtr _bound, const CommandMapPtr commands );
 
+    struct ComputeBoundCallback {
+        virtual void operator()( BoundPtr _bound, const CommandMapPtr commands ) = 0;
+    };
+    typedef jagBase::ptr< ComputeBoundCallback >::shared_ptr ComputeBoundCallbackPtr;
+
+    /** \brief TBD
+    \details TBD */
+    void setComputeBoundCallback( ComputeBoundCallbackPtr computeBoundCallback )
+    {
+        _computeBoundCallback = computeBoundCallback;
+    }
+    /** \brief TBD
+    \details TBD */
+    ComputeBoundCallbackPtr getComputeBoundCallback() const
+    {
+        return( _computeBoundCallback );
+    }
+
+    /**@}*/
+
+
+    /** \name Draw commands
+    \details TBD */
+    /*@{*/
 
     /** \brief TBD
     \details TBD
@@ -96,10 +127,36 @@ public:
     /** \overload */
     const DrawCommandVec& getDrawCommandVec() const;
 
+    /**@}*/
+
+
+    /** \name OpenGL ID management
+    \details TBD */
+    /*@{*/
+
+    /** \brief Tell the Drawable how many contexts to expect.
+    \details Drawable iterates over all other attached Jag3D objects and
+    passes \c numContexts to their setMaxContexts() member function.
+    
+    Override from ObjectIDOwner. */
+    virtual void setMaxContexts( const unsigned int numContexts );
+
+    /** \brief Delete the ID for the Drawable's objects.
+    \details OpenGL object ID cleanup is not yet implemented. TBD.
+
+    Override from ObjectIDOwner. */
+    virtual void deleteID( const jagDraw::jagDrawContextID contextID );
+
+    /**@}*/
+
+
 protected:
     DrawCommandVec _drawCommands;
 
     BoundPtr _bound;
+    bool _boundDirty;
+
+    ComputeBoundCallbackPtr _computeBoundCallback;
 };
 
 typedef jagBase::ptr< jagDraw::Drawable >::shared_ptr DrawablePtr;

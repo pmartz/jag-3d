@@ -35,13 +35,16 @@ namespace jagDraw {
 
 
 Drawable::Drawable()
-  : jagBase::LogBase( "jag.draw.drawable" )
+  : jagBase::LogBase( "jag.draw.drawable" ),
+    _boundDirty( true )
 {
 }
 Drawable::Drawable( const Drawable& rhs )
   : jagBase::LogBase( rhs ),
     _drawCommands( rhs._drawCommands ),
-    _bound( rhs._bound )
+    _bound( rhs._bound ),
+    _boundDirty( rhs._boundDirty ),
+    _computeBoundCallback( rhs._computeBoundCallback )
 {
 }
 Drawable::~Drawable()
@@ -64,15 +67,34 @@ void Drawable::execute( DrawInfo& drawInfo )
 BoundPtr Drawable::getBound( const CommandMapPtr commands )
 {
     JAG3D_NOTICE( "Drawable::getBound() is currently not implemented." );
-    _bound = BoundPtr( new BoundAABox() );
+
+    if( getBoundDirty( commands ) )
+    {
+        if( _bound == NULL )
+            _bound = BoundPtr( new BoundAABox() );
+        if( _computeBoundCallback != NULL )
+            (*_computeBoundCallback)( _bound, commands );
+        else
+            computeBounds( _bound, commands );
+    }
+
     return( _bound );
 }
 
-void Drawable::setMaxContexts( const unsigned int numContexts )
+void Drawable::setBoundDirty( const CommandMapPtr commands, const bool dirty )
+{
+    _boundDirty = dirty;
+}
+bool Drawable::getBoundDirty( const CommandMapPtr commands ) const
+{
+    return( _boundDirty );
+}
+
+void Drawable::computeBounds( BoundPtr _bound, const CommandMapPtr commands )
 {
     BOOST_FOREACH( DrawCommandPtr dcp, _drawCommands )
     {
-        dcp->setMaxContexts( numContexts );
+        //dcp->setMaxContexts( numContexts );
     }
 }
 
@@ -89,6 +111,22 @@ DrawCommandVec& Drawable::getDrawCommandVec()
 const DrawCommandVec& Drawable::getDrawCommandVec() const
 {
     return( _drawCommands );
+}
+
+
+void Drawable::setMaxContexts( const unsigned int numContexts )
+{
+    BOOST_FOREACH( DrawCommandPtr dcp, _drawCommands )
+    {
+        dcp->setMaxContexts( numContexts );
+    }
+}
+void Drawable::deleteID( const jagDraw::jagDrawContextID contextID )
+{
+    BOOST_FOREACH( DrawCommandPtr dcp, _drawCommands )
+    {
+        dcp->deleteID( contextID );
+    }
 }
 
 
