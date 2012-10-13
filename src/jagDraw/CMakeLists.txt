@@ -27,6 +27,7 @@ endif()
 
 set( _jagDrawHeaderFiles
     Export.h
+    Bound.h
     BufferObject.h
     CommandMap.h
     Common.h

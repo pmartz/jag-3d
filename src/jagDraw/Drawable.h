@@ -24,7 +24,8 @@
 #include <jagDraw/Export.h>
 #include <jagBase/LogBase.h>
 #include <jagDraw/ObjectID.h>
-#include <jagDraw/DrawablePrep.h>
+#include <jagDraw/Bound.h>
+#include <jagDraw/CommandMap.h>
 #include <jagDraw/VertexArrayCommand.h>
 #include <jagDraw/DrawCommand.h>
 #include <jagBase/ptr.h>
@@ -39,23 +40,20 @@ struct DrawInfo;
 
 
 /** \class Drawable Drawable.h <jagDraw/Drawable.h>
-\brief A grouping of objects for rendering geometry.
-\details Drawable stores two separate lists of jag objects:
-\li DrawablePrep objects. These are objects like Program, Uniform, Texture, and VertexArrayObjects.
-\li DrawCommand objects. These are commands for rendering, such as glDrawArrays, glDrawElements, and others.
+\brief A collection of DrawCommands for rendering geometry.
+\details Drawable stores a list of DrawCommand objects. These are commands for
+endering, such as glDrawArrays, glDrawElements, and others.
 
-Drawable::execute( DrawInfo& ) executes the two groups of commands in the order
-above, and each command within a given group is executed sequentially.
+Drawable::execute(DrawInfo&) executes the DrawCommands sequentially. Access
+the list directly with getDrawCommandVec().
 
-Note that BufferObject can't be added directly to a Drawable. In a typical use case, buffer objects
-bound to GL_ARRAY_BUFFER are attached to a VertexArrayObject, and buffer objects bound to GL_ELEMENT_BUFFER
-are attached to DrawElements commands.
+Note that Drawables contain only DrawCommands, and not the traditional vertex,
+normal, and texture coordinate information. Such information is stored in a
+VertexArrayObject, located in CommandMap. One VertexArrayObject can contain the
+geometric data for several Drawables, which reduces bind calls.
 
 jagDraw module client code (such as an application or loader plugin) creates a
 Drawable and adds any required commands.
-
-Both command lists can be accessed and modified directly with
-getDrawablePrepVec() and getDrawCommandVec().
 */
 class JAGDRAW_EXPORT Drawable : protected jagBase::LogBase, public ObjectIDOwner
 {
@@ -72,9 +70,11 @@ public:
 
 
     /** \brief Compute (if necessary) and return the bounding volume.
-    \details This function is not yet implemented.
+    \details TBD
+    \param commands The CommandMap, containing information necessary to compute
+    the bound, such as VertexArrayObjects.
     */
-    void getBound();
+    virtual BoundPtr getBound( const CommandMapPtr commands );
 
 
     /** \brief Tell the Drawable how many contexts to expect.
@@ -98,6 +98,8 @@ public:
 
 protected:
     DrawCommandVec _drawCommands;
+
+    BoundPtr _bound;
 };
 
 typedef jagBase::ptr< jagDraw::Drawable >::shared_ptr DrawablePtr;

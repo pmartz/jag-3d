@@ -40,7 +40,8 @@ Drawable::Drawable()
 }
 Drawable::Drawable( const Drawable& rhs )
   : jagBase::LogBase( rhs ),
-    _drawCommands( rhs._drawCommands )
+    _drawCommands( rhs._drawCommands ),
+    _bound( rhs._bound )
 {
 }
 Drawable::~Drawable()
@@ -60,9 +61,11 @@ void Drawable::execute( DrawInfo& drawInfo )
     JAG3D_ERROR_CHECK( "Drawable::execute()" );
 }
 
-void Drawable::getBound()
+BoundPtr Drawable::getBound( const CommandMapPtr commands )
 {
     JAG3D_NOTICE( "Drawable::getBound() is currently not implemented." );
+    _bound = BoundPtr( new BoundAABox() );
+    return( _bound );
 }
 
 void Drawable::setMaxContexts( const unsigned int numContexts )
