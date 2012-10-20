@@ -43,6 +43,7 @@
 #include <jagDraw/UniformBlock.h>
 #include <jagDraw/VertexArrayObject.h>
 #include <jagDraw/VertexAttrib.h>
+#include <jagDraw/VertexAttribContainer.h>
 
 
 // __JAGDRAW_COMMON_H__

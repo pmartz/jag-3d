@@ -115,6 +115,21 @@ public:
     void setPrimcount( const GLsizei primcount ) { _primcount = primcount; }
     GLsizei getPrimcount() const { return( _primcount ); }
 
+
+    /** \name Element Access
+    \details Used by BufferIterator to access elements of a BufferObject used by a VertexAttrib.
+    */
+    /**@{*/
+    virtual int getIndex( const unsigned int counter ) const
+    {
+        return( counter );
+    }
+    virtual unsigned int getNumIndices() const
+    {
+        return( _count );
+    }
+    /**@}*/
+
 protected:
     DrawCommandType _drawCommandType;
 

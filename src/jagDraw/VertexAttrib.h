@@ -51,6 +51,16 @@ public:
         _stride( stride ),
         _offset( offset )
     {}
+    VertexAttrib( const VertexAttrib& rhs )
+      : VertexArrayCommand( rhs ),
+        _name( rhs._name ),
+        _indexHash( rhs._indexHash ),
+        _size( rhs._size ),
+        _type( rhs._type ),
+        _normalized( rhs._normalized ),
+        _stride( rhs._stride ),
+        _offset( rhs._offset )
+    {}
     virtual ~VertexAttrib()
     {}
 
@@ -110,6 +120,9 @@ class /*JAGDRAW_EXPORT*/ VertexAttribI : public VertexAttrib
 public:
     VertexAttribI( const std::string& name, GLint size, GLenum type, GLsizei stride, GLuint offset )
       : VertexAttrib( name, size, type, false, stride, offset )
+    {}
+    VertexAttribI( const VertexAttribI& rhs )
+      : VertexAttrib( rhs )
     {}
     virtual ~VertexAttribI()
     {}

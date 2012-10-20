@@ -55,6 +55,7 @@ set( _jagDrawHeaderFiles
     VertexArrayCommand.h
     VertexArrayObject.h
     VertexAttrib.h
+    VertexAttribContainer.h
 )
 
 set( _jagDrawSourceFiles
