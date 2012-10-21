@@ -336,6 +336,11 @@ public:
     {
         glDrawArrays( _mode, _first, _count );
     }
+
+    virtual int getIndex( const unsigned int counter ) const
+    {
+        return( _first + counter );
+    }
 };
 
 typedef jagBase::ptr< jagDraw::DrawArrays >::shared_ptr DrawArraysPtr;
@@ -363,6 +368,11 @@ public:
     virtual void execute( DrawInfo& drawInfo )
     {
         glDrawArraysInstanced( _mode, _first, _count, _primcount );
+    }
+
+    virtual int getIndex( const unsigned int counter ) const
+    {
+        return( _first + counter );
     }
 };
 
@@ -408,6 +418,45 @@ public:
             _indirectBuffer->execute( drawInfo );
         glDrawArraysIndirect( _mode, _indirect );
     }
+
+    virtual int getIndex( const unsigned int counter ) const
+    {
+        GLuint first;
+        if( _indirectBuffer != NULL )
+        {
+            const DrawArraysIndirectCommand* data( ( const DrawArraysIndirectCommand* )
+                _indirectBuffer->getBuffer()->ptr() );
+            first = data->first;
+        }
+        else
+        {
+            first = 0;
+        }
+        return( first + counter );
+    }
+    virtual unsigned int getNumIndices() const
+    {
+        GLuint count;
+        if( _indirectBuffer != NULL )
+        {
+            const DrawArraysIndirectCommand* data( ( const DrawArraysIndirectCommand* )
+                _indirectBuffer->getBuffer()->ptr() );
+            count = data->count;
+        }
+        else
+        {
+            count = 0;
+        }
+        return( count );
+    }
+
+protected:
+    typedef struct {
+        GLuint count;
+        GLuint primCount;
+        GLuint first;
+        GLuint reservedMustBeZero;
+    } DrawArraysIndirectCommand;
 };
 
 typedef jagBase::ptr< jagDraw::DrawArraysIndirect >::shared_ptr DrawArraysIndirectPtr;
@@ -438,6 +487,29 @@ public:
     virtual void execute( DrawInfo& drawInfo )
     {
         glMultiDrawArrays( _mode, _firstArray.get(), _countArray.get(), _primcount );
+    }
+
+    virtual int getIndex( const unsigned int counter ) const
+    {
+        unsigned int localCounter( counter );
+        for( unsigned int idx=0; idx < _primcount; ++idx )
+        {
+            if( localCounter >= _countArray[ idx ] )
+                localCounter -= _countArray[ idx ];
+            else
+                return( _firstArray[ idx ] + localCounter );
+        }
+        // TBD Went off the end of the array. I wonder if this might seg fault...
+        return( _firstArray[ _primcount - 1 ] + _countArray[ _primcount - 1 ] + 1 );
+    }
+    virtual unsigned int getNumIndices() const
+    {
+        unsigned int total( 0 );
+        for( unsigned int idx=0; idx < _primcount; ++idx )
+        {
+            total += _countArray[ idx ];
+        }
+        return( total );
     }
 
 protected:
@@ -488,6 +560,21 @@ public:
             _elementBuffer->execute( drawInfo );
         glDrawElements( _mode, _count, _type, _indices );
     }
+
+    virtual int getIndex( const unsigned int counter ) const
+    {
+        if( _elementBuffer != NULL )
+        {
+            const unsigned char* ptr( ( const unsigned char* ) _elementBuffer->getBuffer()->ptr() + (int)_indices );
+            switch( _type ) {
+                case GL_UNSIGNED_BYTE: return( ptr[ counter ] ); break;
+                case GL_UNSIGNED_SHORT: return( ((unsigned short*)ptr)[ counter ] ); break;
+                case GL_UNSIGNED_INT: return( ((unsigned int*)ptr)[ counter ] ); break;
+                default: return( -1 );
+            }
+        }
+        return( -1 );
+    }
 };
 
 typedef jagBase::ptr< jagDraw::DrawElements >::shared_ptr DrawElementsPtr;
@@ -536,6 +623,21 @@ public:
         if( _elementBuffer != NULL )
             _elementBuffer->execute( drawInfo );
         glDrawElementsInstanced( _mode, _count, _type, _indices, _primcount );
+    }
+
+    virtual int getIndex( const unsigned int counter ) const
+    {
+        if( _elementBuffer != NULL )
+        {
+            const unsigned char* ptr( ( const unsigned char* ) _elementBuffer->getBuffer()->ptr() + (int)_indices );
+            switch( _type ) {
+                case GL_UNSIGNED_BYTE: return( ptr[ counter ] ); break;
+                case GL_UNSIGNED_SHORT: return( ((unsigned short*)ptr)[ counter ] ); break;
+                case GL_UNSIGNED_INT: return( ((unsigned int*)ptr)[ counter ] ); break;
+                default: return( -1 );
+            }
+        }
+        return( -1 );
     }
 };
 

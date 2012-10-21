@@ -45,19 +45,9 @@ public:
     \details TBD
     */
     typedef enum {
-        BufferObjectType,
-        VertexAttribType
+        BufferObject_t,
+        VertexAttrib_t
     } Type;
-
-    /** \brief TBD
-    \details TBD
-    */
-    typedef enum {
-        Unspecified,
-        Vertex,
-        Normal,
-        TexCoord
-    } UsageHint;
 
     VertexArrayCommand( const Type type )
       : _type( type )

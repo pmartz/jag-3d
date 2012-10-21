@@ -42,7 +42,7 @@ class /*JAGDRAW_EXPORT*/ VertexAttrib : public VertexArrayCommand
 {
 public:
     VertexAttrib( const std::string& name, GLint size, GLenum type, GLboolean normalized, GLsizei stride, GLuint offset )
-      : VertexArrayCommand( VertexArrayCommand::VertexAttribType ),
+      : VertexArrayCommand( VertexArrayCommand::VertexAttrib_t ),
         _name( name ),
         _indexHash( Program::createHash( name ) ),
         _size( size ),
@@ -88,13 +88,18 @@ public:
         glVertexAttribPointer( index, _size, _type, _normalized, _stride, (GLvoid *)(_offset ) );
     }
 
-    void get( GLint& size, GLenum& type, GLboolean& normalized, GLsizei& stride, GLuint& offset )
+    void getAll( GLint& size, GLenum& type, GLboolean& normalized, GLsizei& stride, GLuint& offset )
     {
         size = _size;
         type = _type;
         normalized = _normalized;
         stride = _stride;
         offset = _offset;
+    }
+    void getSizeType( GLint& size, GLenum& type )
+    {
+        size = _size;
+        type = _type;
     }
 
 protected:

@@ -31,7 +31,7 @@ namespace jagDraw {
 BufferObject::BufferObject( const GLenum target )
   : jagBase::LogBase( "jag.draw.bufobj" ),
     ObjectID(),
-    VertexArrayCommand( VertexArrayCommand::BufferObjectType ),
+    VertexArrayCommand( VertexArrayCommand::BufferObject_t ),
     _target( target ),
     _usage( GL_STATIC_DRAW )
 {}
@@ -39,7 +39,7 @@ BufferObject::BufferObject( const GLenum target )
 BufferObject::BufferObject( const GLenum target, const jagBase::BufferPtr b, const GLenum usage )
   : jagBase::LogBase( "jag.draw.bufobj" ),
     ObjectID(),
-    VertexArrayCommand( VertexArrayCommand::BufferObjectType ),
+    VertexArrayCommand( VertexArrayCommand::BufferObject_t ),
     _target( target ),
     _usage( usage ),
     _buffer( b )
