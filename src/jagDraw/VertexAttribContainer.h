@@ -89,7 +89,7 @@ public:
             return( *_pos );
         }
 
-        reference operator++() // prefix inc
+        T& operator++() // prefix inc
         {
             int byteDistance( _vaCont.deltaByteCount( _counter++, _counter ) );
             _pos = (T*)( (unsigned char*)( _pos ) + byteDistance );
@@ -101,7 +101,7 @@ public:
             ++( *this );
             return( result );
         }
-        reference operator--() // prefix dec
+        T& operator--() // prefix dec
         {
             int byteDistance( _vaCont.deltaByteCount( _counter--, _counter ) );
             _pos = (T*)( (unsigned char*)( _pos ) + byteDistance );
@@ -132,14 +132,14 @@ public:
         }
 
     protected:
-        iterator( VertexAttribContainer<T>& vaCont, pointer pos, unsigned int counter )
+        iterator( VertexAttribContainer<T>& vaCont, T* pos, unsigned int counter )
           : _pos( pos ),
             _counter( counter ),
             _vaCont( vaCont )
         {
         }
 
-        pointer _pos;
+        T* _pos;
         unsigned int _counter;
 
         VertexAttribContainer<T>& _vaCont;

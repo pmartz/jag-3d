@@ -565,7 +565,7 @@ public:
     {
         if( _elementBuffer != NULL )
         {
-            const unsigned char* ptr( ( const unsigned char* ) _elementBuffer->getBuffer()->ptr() + (int)_indices );
+            const unsigned char* ptr( ( const unsigned char* ) _elementBuffer->getBuffer()->ptr() + (ptrdiff_t) _indices );
             switch( _type ) {
                 case GL_UNSIGNED_BYTE: return( ptr[ counter ] ); break;
                 case GL_UNSIGNED_SHORT: return( ((unsigned short*)ptr)[ counter ] ); break;
@@ -629,7 +629,7 @@ public:
     {
         if( _elementBuffer != NULL )
         {
-            const unsigned char* ptr( ( const unsigned char* ) _elementBuffer->getBuffer()->ptr() + (int)_indices );
+            const unsigned char* ptr( ( const unsigned char* ) _elementBuffer->getBuffer()->ptr() + (ptrdiff_t)_indices );
             switch( _type ) {
                 case GL_UNSIGNED_BYTE: return( ptr[ counter ] ); break;
                 case GL_UNSIGNED_SHORT: return( ((unsigned short*)ptr)[ counter ] ); break;

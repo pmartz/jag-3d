@@ -143,12 +143,12 @@ public:
         double r( _bound.getRadius );
         if( r == 0. )
         {
-            return( gmtl::AABox( c, c ) );
+            return( gmtl::AABoxd( c, c ) );
         }
         else
         {
             const gmtl::Point3d rad( r, r, r );
-            return( gmtl::AABoxd box( c-rad, c+rad ) );
+            return( gmtl::AABoxd( c-rad, c+rad ) );
         }
     }
     virtual gmtl::Sphered asSphere() const
@@ -168,11 +168,11 @@ public:
 
     virtual void setEmpty( const bool empty=true )
     {
-        _bound.setEmpty( empty );
+        //_bound.setEmpty( empty );
     }
     virtual bool getEmpty() const
     {
-        return( _bound.isEmpty() );
+        return( false );//_bound.isEmpty() );
     }
 
 protected:
