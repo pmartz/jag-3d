@@ -18,8 +18,8 @@
 *
 *************** <auto-copyright.pl END do not edit this line> ***************/
 
-#ifndef __JAGDRAW_VERTEX_ATTRIB_ITERATOR_H__
-#define __JAGDRAW_VERTEX_ATTRIB_ITERATOR_H__ 1
+#ifndef __JAGDRAW_VERTEX_ATTRIB_CONTAINER_H__
+#define __JAGDRAW_VERTEX_ATTRIB_CONTAINER_H__ 1
 
 
 #include <jagBase/Buffer.h>
@@ -28,6 +28,7 @@
 #include <jagDraw/DrawCommand.h>
 
 #include <iterator>
+#include <iostream>
 
 
 namespace jagDraw {
@@ -91,25 +92,27 @@ public:
 
         T& operator++() // prefix inc
         {
-            int byteDistance( _vaCont.deltaByteCount( _counter++, _counter ) );
+            const ptrdiff_t byteDistance( _vaCont.deltaByteCount( _counter, _counter+1 ) );
+            ++_counter;
             _pos = (T*)( (unsigned char*)( _pos ) + byteDistance );
             return( *_pos );
         }
         T operator++( int ) // postfix inc
         {
-            T result( *this );
+            const T result( *this );
             ++( *this );
             return( result );
         }
         T& operator--() // prefix dec
         {
-            int byteDistance( _vaCont.deltaByteCount( _counter--, _counter ) );
+            const ptrdiff_t byteDistance( _vaCont.deltaByteCount( _counter, _counter-1 ) );
+            --_counter;
             _pos = (T*)( (unsigned char*)( _pos ) + byteDistance );
             return( *_pos );
         }
         T operator--( int ) // postfix dec
         {
-            T result( *this );
+            const T result( *this );
             --( *this );
             return( result );
         }
@@ -147,11 +150,11 @@ public:
 
 
 
-    int deltaByteCount( const unsigned int from, const unsigned int to ) const
+    ptrdiff_t deltaByteCount( const unsigned int from, const unsigned int to ) const
     {
         const int indexFrom( _dcp->getIndex( from ) );
         const int indexTo( _dcp->getIndex( to ) );
-        return( ( indexTo - indexFrom ) * (int)_step );
+        return( (ptrdiff_t)( ( indexTo - indexFrom ) * _step ) );
     }
 
     iterator begin()
@@ -218,5 +221,5 @@ protected:
 }
 
 
-// __JAGDRAW_VERTEX_ATTRIB_ITERATOR_H__
+// __JAGDRAW_VERTEX_ATTRIB_CONTAINER_H__
 #endif
