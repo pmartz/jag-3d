@@ -22,7 +22,6 @@
 #define __JAGDRAW_VERTEX_ATTRIB_ITERATOR_H__ 1
 
 
-#include <jagDraw/Export.h>
 #include <jagBase/Buffer.h>
 #include <jagDraw/BufferObject.h>
 #include <jagDraw/VertexAttrib.h>
@@ -125,7 +124,7 @@ public:
             return( !( *this == rhs ) );
         }
 
-        value_type operator=( const iterator& rhs )
+        iterator& operator=( const iterator& rhs )
         {
             _pos = rhs._pos;
             _counter = rhs._counter;
@@ -182,7 +181,7 @@ protected:
         GLboolean normalized;
         GLsizei stride;
         GLuint offset;
-        _vap->get( size, type, normalized, stride, offset );
+        _vap->getAll( size, type, normalized, stride, offset );
         _offset = (size_t) offset;
 
         if( stride != 0 )

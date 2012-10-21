@@ -152,8 +152,8 @@ bool TextureDemo::startup( const unsigned int numContexts )
         jagDraw::BufferObjectPtr ibop( new jagDraw::BufferObject( GL_ARRAY_BUFFER, ibp ) );
 
         jagDraw::VertexArrayObjectPtr vaop( new jagDraw::VertexArrayObject );
-        vaop->addVertexArrayCommand( ibop, jagDraw::VertexArrayCommand::Vertex );
-        vaop->addVertexArrayCommand( iVerts, jagDraw::VertexArrayCommand::Vertex );
+        vaop->addVertexArrayCommand( ibop, jagDraw::VertexArrayObject::Vertex );
+        vaop->addVertexArrayCommand( iVerts, jagDraw::VertexArrayObject::Vertex );
         vaop->addVertexArrayCommand( iColor );
         commands->insert( vaop );
 

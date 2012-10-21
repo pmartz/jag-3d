@@ -128,8 +128,8 @@ jagDraw::DrawablePtr RttDemo::makeSceneDrawable(
         "vertex", 3, GL_FLOAT, GL_FALSE, 0, 0 ) );
 
     vaop = jagDraw::VertexArrayObjectPtr( new jagDraw::VertexArrayObject() );
-    vaop->addVertexArrayCommand( ibop, jagDraw::VertexArrayCommand::Vertex );
-    vaop->addVertexArrayCommand( iVerts, jagDraw::VertexArrayCommand::Vertex );
+    vaop->addVertexArrayCommand( ibop, jagDraw::VertexArrayObject::Vertex );
+    vaop->addVertexArrayCommand( iVerts, jagDraw::VertexArrayObject::Vertex );
 
 
     jagDraw::DrawablePtr drawable( new jagDraw::Drawable() );
@@ -247,8 +247,8 @@ bool RttDemo::startup( const unsigned int numContexts )
             "texcoord", 2, GL_FLOAT, GL_FALSE, stride, sizeof( GLfloat ) * 3 ) );
 
         jagDraw::VertexArrayObjectPtr vaop( new jagDraw::VertexArrayObject );
-        vaop->addVertexArrayCommand( ibop, jagDraw::VertexArrayCommand::Vertex );
-        vaop->addVertexArrayCommand( iVerts, jagDraw::VertexArrayCommand::Vertex );
+        vaop->addVertexArrayCommand( ibop, jagDraw::VertexArrayObject::Vertex );
+        vaop->addVertexArrayCommand( iVerts, jagDraw::VertexArrayObject::Vertex );
         vaop->addVertexArrayCommand( iTexCoord );
 
         jagDraw::DrawablePtr drawable( new jagDraw::Drawable() );

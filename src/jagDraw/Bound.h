@@ -22,10 +22,10 @@
 #define __JAGDRAW_BOUND_H__ 1
 
 
-#include <jagDraw/Export.h>
 #include <jagBase/ptr.h>
 #include <gmtl/AABox.h>
 #include <gmtl/Sphere.h>
+#include <gmtl/Containment.h>
 #include <gmtl/VecOps.h>
 
 
@@ -36,7 +36,7 @@ namespace jagDraw {
 \brief TBD
 \details TBD
 */
-class JAGDRAW_EXPORT Bound : public SHARED_FROM_THIS(Bound)
+class Bound : public SHARED_FROM_THIS(Bound)
 {
 public:
     Bound()
@@ -60,6 +60,9 @@ public:
         expand( gmtl::Point3d( point[0], point[1], point[2] ) );
     }
     virtual void expand( const gmtl::Point3d& point ) = 0;
+
+    virtual void setEmpty( const bool empty=true ) = 0;
+    virtual bool getEmpty() const = 0;
 };
 
 typedef jagBase::ptr< jagDraw::Bound >::shared_ptr BoundPtr;
@@ -100,6 +103,16 @@ public:
 
     virtual void expand( const gmtl::Point3d& point )
     {
+        gmtl::extendVolume( _bound, point );
+    }
+
+    virtual void setEmpty( const bool empty=true )
+    {
+        _bound.setEmpty( empty );
+    }
+    virtual bool getEmpty() const
+    {
+        return( _bound.isEmpty() );
     }
 
 protected:
@@ -150,6 +163,16 @@ public:
 
     virtual void expand( const gmtl::Point3d& point )
     {
+        gmtl::extendVolume( _bound, point );
+    }
+
+    virtual void setEmpty( const bool empty=true )
+    {
+        _bound.setEmpty( empty );
+    }
+    virtual bool getEmpty() const
+    {
+        return( _bound.isEmpty() );
     }
 
 protected:

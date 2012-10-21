@@ -24,11 +24,15 @@
 #include <jagDraw/VertexArrayObject.h>
 #include <jagDraw/BufferObject.h>
 #include <jagDraw/DrawCommand.h>
+#include <jagDraw/VertexArrayObject.h>
+#include <jagDraw/VertexAttribContainer.h>
 #include <jagBase/LogMacros.h>
 #include <jagDraw/DrawInfo.h>
 #include <jagDraw/Error.h>
 
 #include <boost/foreach.hpp>
+
+#include <sstream>
 
 
 namespace jagDraw {
@@ -66,8 +70,6 @@ void Drawable::execute( DrawInfo& drawInfo )
 
 BoundPtr Drawable::getBound( const CommandMapPtr commands )
 {
-    JAG3D_NOTICE( "Drawable::getBound() is currently not implemented." );
-
     if( getBoundDirty( commands ) )
     {
         if( _bound == NULL )
@@ -76,6 +78,7 @@ BoundPtr Drawable::getBound( const CommandMapPtr commands )
             (*_computeBoundCallback)( _bound, commands );
         else
             computeBounds( _bound, commands );
+        setBoundDirty( commands, false );
     }
 
     return( _bound );
@@ -92,9 +95,53 @@ bool Drawable::getBoundDirty( const CommandMapPtr commands ) const
 
 void Drawable::computeBounds( BoundPtr _bound, const CommandMapPtr commands )
 {
+    VertexArrayObjectPtr vaop( boost::dynamic_pointer_cast< VertexArrayObject >(
+        (*commands)[ VertexArrayObject_t ] ) );
+    if( vaop == NULL )
+    {
+        JAG3D_WARNING( "computeBounds() encountered NULL vertex array object." );
+        return;
+    }
+
+    BufferObjectPtr bop( boost::dynamic_pointer_cast< BufferObject >(
+        vaop->getVertexArrayCommand( VertexArrayCommand::BufferObject_t, VertexArrayObject::Vertex ) ) );
+    VertexAttribPtr verts( boost::dynamic_pointer_cast< VertexAttrib >(
+        vaop->getVertexArrayCommand( VertexArrayCommand::VertexAttrib_t, VertexArrayObject::Vertex ) ) );
+    if( ( bop == NULL ) || ( verts == NULL ) )
+    {
+        JAG3D_WARNING( "computeBounds(): NULL buffer object or vertex attrib (VAO has no vertex data)." );
+        return;
+    }
+
+    GLint size;
+    GLenum type;
+    verts->getSizeType( size, type );
+    typedef std::pair< GLint, GLenum > IntEnum;
+    const IntEnum vertType( size, type );
+
     BOOST_FOREACH( DrawCommandPtr dcp, _drawCommands )
     {
-        //dcp->setMaxContexts( numContexts );
+        if( vertType == IntEnum( 3, GL_FLOAT ) )
+        {
+            VertexAttribContainer< gmtl::Point3f > vac( bop, verts, dcp );
+            VertexAttribContainer< gmtl::Point3f >::iterator pointIter( vac );
+            for( pointIter = vac.begin(); pointIter != vac.end(); ++pointIter )
+                _bound->expand( *pointIter );
+        }
+        else if( vertType == IntEnum( 3, GL_DOUBLE ) )
+        {
+            VertexAttribContainer< gmtl::Point3d > vac( bop, verts, dcp );
+            VertexAttribContainer< gmtl::Point3d >::iterator pointIter( vac );
+            for( pointIter = vac.begin(); pointIter != vac.end(); ++pointIter )
+                _bound->expand( *pointIter );
+        }
+        else
+        {
+            std::ostringstream ostr;
+            ostr << "computeBounds(): Unsupported VertexAttrib type/size combination.\n";
+            ostr << "\tType: " << std::hex << type << ", size: " << std::dec << size;
+            JAG3D_ERROR( ostr.str() );
+        }
     }
 }
 

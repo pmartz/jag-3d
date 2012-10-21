@@ -110,8 +110,8 @@ jagSG::NodePtr NodesDemo::makeScene( const gmtl::Point3f& offset )
         "normal", 3, GL_FLOAT, GL_FALSE, stride, startOffset ) );
 
     jagDraw::VertexArrayObjectPtr vaop = jagDraw::VertexArrayObjectPtr( new jagDraw::VertexArrayObject() );
-    vaop->addVertexArrayCommand( ibop, jagDraw::VertexArrayCommand::Vertex );
-    vaop->addVertexArrayCommand( verts, jagDraw::VertexArrayCommand::Vertex );
+    vaop->addVertexArrayCommand( ibop, jagDraw::VertexArrayObject::Vertex );
+    vaop->addVertexArrayCommand( verts, jagDraw::VertexArrayObject::Vertex );
     vaop->addVertexArrayCommand( norms );
     commands->insert( vaop );
 

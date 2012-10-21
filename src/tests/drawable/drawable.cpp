@@ -165,11 +165,11 @@ bool DrawableDemo::startup( const unsigned int numContexts )
         jagDraw::BufferObjectPtr vbop( new jagDraw::BufferObject( GL_ARRAY_BUFFER, vbp ) );
 
         jagDraw::VertexArrayObjectPtr vaop( new jagDraw::VertexArrayObject );
-        vaop->addVertexArrayCommand( vbop, jagDraw::VertexArrayCommand::Vertex );
+        vaop->addVertexArrayCommand( vbop, jagDraw::VertexArrayObject::Vertex );
 
         jagDraw::VertexAttribPtr verts( new jagDraw::VertexAttrib(
             "vertex", 3, GL_FLOAT, GL_FALSE, 0, 0 ) );
-        vaop->addVertexArrayCommand( verts, jagDraw::VertexArrayCommand::Vertex );
+        vaop->addVertexArrayCommand( verts, jagDraw::VertexArrayObject::Vertex );
 
         Point3fArray c3fa;
         c3fa.push_back( gmtl::Point3f( 1.f, 0.f, 0.f ) );
@@ -235,8 +235,8 @@ bool DrawableDemo::startup( const unsigned int numContexts )
         jagDraw::BufferObjectPtr ibop( new jagDraw::BufferObject( GL_ARRAY_BUFFER, ibp ) );
 
         jagDraw::VertexArrayObjectPtr vaop( new jagDraw::VertexArrayObject );
-        vaop->addVertexArrayCommand( ibop, jagDraw::VertexArrayCommand::Vertex );
-        vaop->addVertexArrayCommand( iVerts, jagDraw::VertexArrayCommand::Vertex );
+        vaop->addVertexArrayCommand( ibop, jagDraw::VertexArrayObject::Vertex );
+        vaop->addVertexArrayCommand( iVerts, jagDraw::VertexArrayObject::Vertex );
         vaop->addVertexArrayCommand( iColor );
         commands->insert( vaop );
 
@@ -273,9 +273,9 @@ bool DrawableDemo::startup( const unsigned int numContexts )
         jagDraw::VertexArrayObjectPtr vaop( new jagDraw::VertexArrayObject );
         // Bind the GL_ARRAY_BUFFER for interleaved vertices and colors
         // (different from _ibop dur to vertex positions).
-        vaop->addVertexArrayCommand( ibop2, jagDraw::VertexArrayCommand::Vertex );
+        vaop->addVertexArrayCommand( ibop2, jagDraw::VertexArrayObject::Vertex );
         // Enable and specify the "vertex" vertex attrib.
-        vaop->addVertexArrayCommand( iVerts, jagDraw::VertexArrayCommand::Vertex );
+        vaop->addVertexArrayCommand( iVerts, jagDraw::VertexArrayObject::Vertex );
         // Enable and specify the "color" vertex attrib.
         vaop->addVertexArrayCommand( iColor );
 
@@ -298,6 +298,12 @@ bool DrawableDemo::startup( const unsigned int numContexts )
     {
         dp->setMaxContexts( numContexts );
     }
+
+    jagDraw::BoundPtr bound( drawable->getBound( commands ) );
+    gmtl::AABoxd box( bound->asAABox() );
+    std::ostringstream ostr;
+    ostr << "Min: " << box.mMin << "  Max: " << box.mMax;
+    JAG3D_INFO_STATIC( _logName, "Bounding box: " + ostr.str() );
 
 
     return( true );

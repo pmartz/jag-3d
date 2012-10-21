@@ -96,7 +96,7 @@ void VertexArrayObject::setMaxContexts( const unsigned int numContexts )
     }
 }
 
-void VertexArrayObject::addVertexArrayCommand( VertexArrayCommandPtr vacp, const VertexArrayCommand::UsageHint& usage )
+void VertexArrayObject::addVertexArrayCommand( VertexArrayCommandPtr vacp, const UsageHint& usage )
 {
     _commands.push_back( vacp );
 
@@ -106,11 +106,32 @@ void VertexArrayObject::addVertexArrayCommand( VertexArrayCommandPtr vacp, const
         _initialized[ idx ] = false;
     }
 
-    if( usage == VertexArrayCommand::Vertex )
+    if( usage == Vertex )
     {
         _vertices.push_back( vacp );
     }
 }
+VertexArrayCommandPtr VertexArrayObject::getVertexArrayCommand( const VertexArrayCommand::Type& type, const UsageHint& usage )
+{
+    if( usage == Vertex )
+    {
+        BOOST_FOREACH( VertexArrayCommandPtr vacp, _vertices )
+        {
+            if( vacp->getType() == type )
+                return( vacp );
+        }
+    }
+    else
+    {
+        BOOST_FOREACH( VertexArrayCommandPtr vacp, _commands )
+        {
+            if( vacp->getType() == type )
+                return( vacp );
+        }
+    }
+    return( VertexArrayCommandPtr( (VertexArrayCommand*)NULL ) );
+}
+
 VertexArrayCommandVec& VertexArrayObject::getVertexArrayCommandList()
 {
     return( _commands );

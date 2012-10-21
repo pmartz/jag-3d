@@ -69,8 +69,28 @@ public:
     virtual void deleteID( const jagDraw::jagDrawContextID contextID ) {}
 
 
-    void addVertexArrayCommand( VertexArrayCommandPtr vacp, const VertexArrayCommand::UsageHint& usage=VertexArrayCommand::Unspecified );
+    /** \brief TBD
+    \details TBD
+    */
+    typedef enum {
+        Unspecified,
+        Vertex,
+        Normal,
+        TexCoord
+    } UsageHint;
+
+    /** \brief TBD
+    \details TBD */
+    void addVertexArrayCommand( VertexArrayCommandPtr vacp, const UsageHint& usage=Unspecified );
+    /** \brief TBD
+    \details TBD */
+    VertexArrayCommandPtr getVertexArrayCommand( const VertexArrayCommand::Type& type, const UsageHint& usage );
+
+    /** \brief TBD
+    \details TBD */
     VertexArrayCommandVec& getVertexArrayCommandList();
+    /** \brief TBD
+    \details TBD */
     const VertexArrayCommandVec& getVertexArrayCommandList() const;
 
 protected:

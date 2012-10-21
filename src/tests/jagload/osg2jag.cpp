@@ -83,11 +83,11 @@ void Osg2Jag::apply( osg::Geometry* geom )
         osg::Matrix m = osg::computeLocalToWorld( getNodePath() );
         ArrayInfo info( asJagArray( geom->getVertexArray(), m ) );
         jagDraw::BufferObjectPtr bop( new jagDraw::BufferObject( GL_ARRAY_BUFFER, info._buffer ) );
-        vaop->addVertexArrayCommand( bop, jagDraw::VertexArrayCommand::Vertex );
+        vaop->addVertexArrayCommand( bop, jagDraw::VertexArrayObject::Vertex );
 
         jagDraw::VertexAttribPtr attrib( new jagDraw::VertexAttrib(
             "vertex", info._componentsPerElement, info._type, GL_FALSE, 0, 0 ) );
-        vaop->addVertexArrayCommand( attrib, jagDraw::VertexArrayCommand::Vertex );
+        vaop->addVertexArrayCommand( attrib, jagDraw::VertexArrayObject::Vertex );
     }
     if( ( geom->getNormalArray() != NULL ) &&
         ( geom->getNormalBinding() != osg::Geometry::BIND_OFF ) )
@@ -101,11 +101,11 @@ void Osg2Jag::apply( osg::Geometry* geom )
         m.setTrans(0.,0.,0.);
         ArrayInfo info( asJagArray( geom->getNormalArray(), m ) );
         jagDraw::BufferObjectPtr bop( new jagDraw::BufferObject( GL_ARRAY_BUFFER, info._buffer ) );
-        vaop->addVertexArrayCommand( bop, jagDraw::VertexArrayCommand::Normal );
+        vaop->addVertexArrayCommand( bop, jagDraw::VertexArrayObject::Normal );
 
         jagDraw::VertexAttribPtr attrib( new jagDraw::VertexAttrib(
             "normal", info._componentsPerElement, info._type, GL_FALSE, 0, 0 ) );
-        vaop->addVertexArrayCommand( attrib, jagDraw::VertexArrayCommand::Normal );
+        vaop->addVertexArrayCommand( attrib, jagDraw::VertexArrayObject::Normal );
     }
     // TBD tex coords
 
