@@ -98,7 +98,7 @@ public:
 
     virtual bool contains( const gmtl::Point3d& point )
     {
-        return( false );
+        return( gmtl::isInVolume( _bound, point ) );
     }
 
     virtual void expand( const gmtl::Point3d& point )
@@ -147,8 +147,9 @@ public:
         }
         else
         {
-            const gmtl::Point3d rad( r, r, r );
-            return( gmtl::AABoxd( c-rad, c+rad ) );
+            gmtl::AABoxd box;
+            gmtl::makeVolume( box, _bound );
+            return( box );
         }
     }
     virtual gmtl::Sphered asSphere() const
@@ -158,7 +159,7 @@ public:
 
     virtual bool contains( const gmtl::Point3d& point )
     {
-        return( false );
+        return( gmtl::isInVolume( _bound, point ) );
     }
 
     virtual void expand( const gmtl::Point3d& point )
