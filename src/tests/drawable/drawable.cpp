@@ -299,7 +299,7 @@ bool DrawableDemo::startup( const unsigned int numContexts )
         dp->setMaxContexts( numContexts );
     }
 
-    jagDraw::BoundPtr bound( drawable->getBound( commands ) );
+    jagDraw::BoundPtr bound( drawable->getBound( *commands ) );
     gmtl::AABoxd box( bound->asAABox() );
     std::ostringstream ostr;
     ostr << "Min: " << box.mMin << "  Max: " << box.mMax;

@@ -53,12 +53,12 @@ public:
     ~CommandMap()
     {}
 
-    void insert( const DrawablePrepPtr drawable, bool override=false, bool protect=false )
+    void insert( const DrawablePrepPtr drawablePrep, bool override=false, bool protect=false )
     {
-        const CommandType type( drawable->getCommandType() );
+        const CommandType type( drawablePrep->getCommandType() );
         _bits.set( type );
 
-        _data[ type ] = drawable;
+        _data[ type ] = drawablePrep;
 
         if( override )
             _overrideBits.set( type );
@@ -76,12 +76,18 @@ public:
         return( _data[ type ] );
     }
 
-    struct Callback
-    {
-        virtual void operator()( DrawablePrepPtr ) const = 0;
-    };
-
     typedef std::map< CommandType, DrawablePrepPtr > CommandMapType;
+
+    DrawablePrepPtr operator[]( const CommandType type ) const
+    {
+        CommandMapType::const_iterator it( _data.find( type ) );
+        if( it == _data.end() )
+            return( DrawablePrepPtr( (DrawablePrep*)NULL ) );
+        else
+        {
+            return( it->second );
+        }
+    }
 
     virtual void setMaxContexts( const unsigned int numContexts )
     {
@@ -123,6 +129,11 @@ public:
         }
     }
 
+    struct Callback
+    {
+        virtual void operator()( DrawablePrepPtr ) const = 0;
+    };
+
     void foreach( const Callback& callback )
     {
         BOOST_FOREACH( CommandMapType::value_type dataPair, _data )
@@ -143,7 +154,7 @@ public:
             local.insert( dataPair.first );
         }
 
-        CommandMap resule;
+        CommandMap result;
         BOOST_FOREACH( const CommandType& type, local )
         {
             switch( ( rhs._bits[ type ] << 1 ) | (int)( _bits[ type ] ) )
@@ -151,18 +162,18 @@ public:
             case 0:
                 break;
             case 1:
-                resule[ type ] = ( *_data.find( type ) ).second;
+                result[ type ] = ( *_data.find( type ) ).second;
                 break;
             case 2:
-                resule[ type ] = ( *rhs._data.find( type ) ).second;
+                result[ type ] = ( *rhs._data.find( type ) ).second;
                 break;
             case 3:
-                resule[ type ] = ( *rhs._data.find( type ) ).second;
+                result[ type ] = ( *rhs._data.find( type ) ).second;
                 break; 
             }
         }
 
-        return( resule );
+        return( result );
     }
 
     /*
@@ -216,7 +227,7 @@ public:
         return( result );
     }
 
-    bool contains( CommandType type )
+    bool contains( CommandType type ) const
     {
         return( _bits.test( type ) );
     }

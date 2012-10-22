@@ -25,6 +25,7 @@
 #include <jagDraw/ObjectID.h>
 #include <jagDraw/Drawable.h>
 #include <jagDraw/CommandMap.h>
+#include <jagDraw/Bound.h>
 #include <jagDraw/ContextSupport.h>
 #include <jagBase/LogBase.h>
 #include <jagBase/ptr.h>
@@ -80,9 +81,9 @@ public:
     const gmtl::Matrix44d& getTransform() const;
 
 
-    /** \brief Bound
-    \details TBD Not yet implemented. */
-    virtual void getBound();
+    /** \brief TBD Bound
+    \details TBD */
+    virtual jagDraw::BoundPtr getBound( const jagDraw::CommandMap& commands );
 
 
     /** \brief CommandMap
@@ -136,6 +137,7 @@ protected:
     jagDraw::CommandMapPtr _commands;
     jagDraw::DrawableVec _drawables;
     NodeVec _children;
+    jagDraw::BoundPtr _bound;
 };
 
 
