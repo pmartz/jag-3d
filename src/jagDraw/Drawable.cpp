@@ -68,7 +68,7 @@ void Drawable::execute( DrawInfo& drawInfo )
     JAG3D_ERROR_CHECK( "Drawable::execute()" );
 }
 
-BoundPtr Drawable::getBound( const CommandMapPtr commands )
+BoundPtr Drawable::getBound( const CommandMap& commands )
 {
     if( getBoundDirty( commands ) )
     {
@@ -84,24 +84,24 @@ BoundPtr Drawable::getBound( const CommandMapPtr commands )
     return( _bound );
 }
 
-void Drawable::setBoundDirty( const CommandMapPtr commands, const bool dirty )
+void Drawable::setBoundDirty( const CommandMap& commands, const bool dirty )
 {
     _boundDirty = dirty;
 }
-bool Drawable::getBoundDirty( const CommandMapPtr commands ) const
+bool Drawable::getBoundDirty( const CommandMap& commands ) const
 {
     return( _boundDirty );
 }
 
-void Drawable::computeBounds( BoundPtr _bound, const CommandMapPtr commands )
+void Drawable::computeBounds( BoundPtr _bound, const CommandMap& commands )
 {
-    VertexArrayObjectPtr vaop( boost::dynamic_pointer_cast< VertexArrayObject >(
-        (*commands)[ VertexArrayObject_t ] ) );
-    if( vaop == NULL )
+    if( ! commands.contains( VertexArrayObject_t ) )
     {
         JAG3D_WARNING( "computeBounds() encountered NULL vertex array object." );
         return;
     }
+    DrawablePrepPtr& drawablePrep( commands[ VertexArrayObject_t ] );
+    const VertexArrayObjectPtr vaop( boost::dynamic_pointer_cast< VertexArrayObject >( drawablePrep ) );
 
     BufferObjectPtr bop( boost::dynamic_pointer_cast< BufferObject >(
         vaop->getVertexArrayCommand( VertexArrayCommand::BufferObject_t, VertexArrayObject::Vertex ) ) );

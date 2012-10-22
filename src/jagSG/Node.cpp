@@ -42,7 +42,8 @@ Node::Node( const Node& rhs )
     _matrix( rhs._matrix ),
     _commands( rhs._commands ),
     _drawables( rhs._drawables ),
-    _children( rhs._children )
+    _children( rhs._children ),
+    _bound( rhs._bound )
 {
 }
 Node::~Node()
@@ -90,9 +91,24 @@ const gmtl::Matrix44d& Node::getTransform() const
 }
 
 
-void Node::getBound()
+jagDraw::BoundPtr Node::getBound( const jagDraw::CommandMap& commands )
 {
-    JAG3D_ERROR( "getBound() not yet implemented." );
+    if( _bound == NULL )
+        _bound = jagDraw::BoundPtr( new jagDraw::BoundSphere() );
+
+    const jagDraw::CommandMap newCommands( ( _commands != NULL ) ? commands + *_commands : commands );
+
+    BOOST_FOREACH( jagDraw::DrawablePtr& drawable, _drawables )
+    {
+        _bound->expand( *( drawable->getBound( newCommands ) ) );
+    }
+
+    BOOST_FOREACH( NodePtr& node, _children )
+    {
+        _bound->expand( *( node->getBound( newCommands ) ) );
+    }
+
+    return( _bound );
 }
 
 

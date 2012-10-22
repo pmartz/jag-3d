@@ -39,9 +39,18 @@ namespace jagDraw {
 class Bound : public SHARED_FROM_THIS(Bound)
 {
 public:
-    Bound()
+    typedef enum {
+        Box_t,
+        Sphere_t
+    } BaseType;
+    BaseType getType() const { return( _type ); }
+
+
+    Bound( const BaseType type )
+      : _type( type )
     {}
     Bound( const Bound& rhs )
+      : _type( rhs._type )
     {}
     ~Bound()
     {}
@@ -60,9 +69,13 @@ public:
         expand( gmtl::Point3d( point[0], point[1], point[2] ) );
     }
     virtual void expand( const gmtl::Point3d& point ) = 0;
+    virtual void expand( const Bound& rhs ) = 0;
 
     virtual void setEmpty( const bool empty=true ) = 0;
     virtual bool getEmpty() const = 0;
+
+protected:
+    BaseType _type;
 };
 
 typedef jagBase::ptr< jagDraw::Bound >::shared_ptr BoundPtr;
@@ -76,6 +89,7 @@ class BoundAABox : public Bound
 {
 public:
     BoundAABox()
+      : Bound( Box_t )
     {}
     BoundAABox( const BoundAABox& rhs )
       : Bound( rhs ),
@@ -105,6 +119,15 @@ public:
     {
         gmtl::extendVolume( _bound, point );
     }
+    virtual void expand( const Bound& rhs )
+    {
+        if( rhs.getType() == Sphere_t )
+        {
+            //gmtl::extendVolume( _bound, rhs.asSphere() );
+        }
+        else
+            gmtl::extendVolume( _bound, rhs.asAABox() );
+    }
 
     virtual void setEmpty( const bool empty=true )
     {
@@ -124,11 +147,11 @@ protected:
 \brief TBD
 \details TBD
 */
-template< typename T >
 class BoundSphere : public Bound
 {
 public:
     BoundSphere()
+      : Bound( Sphere_t )
     {}
     BoundSphere( const BoundSphere& rhs )
       : Bound( rhs ),
@@ -139,8 +162,8 @@ public:
 
     virtual gmtl::AABoxd asAABox() const
     {
-        gmtl::Point3d& c( _bound.getCenter() );
-        double r( _bound.getRadius );
+        const gmtl::Point3d& c( _bound.getCenter() );
+        const double r( _bound.getRadius() );
         if( r == 0. )
         {
             return( gmtl::AABoxd( c, c ) );
@@ -165,6 +188,16 @@ public:
     virtual void expand( const gmtl::Point3d& point )
     {
         gmtl::extendVolume( _bound, point );
+    }
+    virtual void expand( const Bound& rhs )
+    {
+        if( rhs.getType() == Sphere_t )
+            gmtl::extendVolume( _bound, rhs.asSphere() );
+        else
+        {
+            gmtl::extendVolume( _bound, rhs.asAABox().mMin );
+            gmtl::extendVolume( _bound, rhs.asAABox().mMax );
+        }
     }
 
     virtual void setEmpty( const bool empty=true )

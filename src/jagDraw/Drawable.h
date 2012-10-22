@@ -77,21 +77,21 @@ public:
     \details TBD
     \param commands The CommandMap, containing information necessary to compute
     the bound, such as VertexArrayObjects. */
-    virtual BoundPtr getBound( const CommandMapPtr commands );
+    virtual BoundPtr getBound( const CommandMap& commands );
 
     /** \brief TBD
     \details TBD */
-    void setBoundDirty( const CommandMapPtr commands, const bool dirty=true );
+    void setBoundDirty( const CommandMap& commands, const bool dirty=true );
     /** \brief TBD
     \details TBD */
-    bool getBoundDirty( const CommandMapPtr commands ) const;
+    bool getBoundDirty( const CommandMap& commands ) const;
 
     /** \brief TBD
     \details TBD */
-    void computeBounds( BoundPtr _bound, const CommandMapPtr commands );
+    void computeBounds( BoundPtr _bound, const CommandMap& commands );
 
     struct ComputeBoundCallback {
-        virtual void operator()( BoundPtr _bound, const CommandMapPtr commands ) = 0;
+        virtual void operator()( BoundPtr _bound, const CommandMap& commands ) = 0;
     };
     typedef jagBase::ptr< ComputeBoundCallback >::shared_ptr ComputeBoundCallbackPtr;
 
