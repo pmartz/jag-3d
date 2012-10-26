@@ -163,12 +163,12 @@ public:
                 break;
             case 1:
                 result[ type ] = ( *_data.find( type ) ).second;
+                result._bits.set( type );
                 break;
             case 2:
-                result[ type ] = ( *rhs._data.find( type ) ).second;
-                break;
             case 3:
                 result[ type ] = ( *rhs._data.find( type ) ).second;
+                result._bits.set( type );
                 break; 
             }
         }

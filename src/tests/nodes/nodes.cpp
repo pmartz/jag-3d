@@ -142,6 +142,22 @@ bool NodesDemo::startup( const unsigned int numContexts )
         _scene->setCommandMap( commands );
     }
 
+    // Test bounding sphere computation.
+    {
+        gmtl::Sphered s( _scene->getBound( *commands )->asSphere() );
+
+        if( !( s.isInitialized() ) )
+        {
+            JAG3D_INFO_STATIC( _logName, "Bound: Uninitialized." );
+        }
+        else
+        {
+            std::ostringstream ostr;
+            ostr << "Bound: " << s.mCenter << " " << s.mRadius;
+            JAG3D_INFO_STATIC( _logName, ostr.str() );
+        }
+    }
+
     jagDraw::ShaderPtr vs( (jagDraw::Shader*) jagDisk::read( "nodes.vert" ) );
     jagDraw::ShaderPtr fs( (jagDraw::Shader*) jagDisk::read( "nodes.frag" ) );
     if( ( vs == NULL ) || ( fs == NULL ) )
