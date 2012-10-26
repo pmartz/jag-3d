@@ -23,6 +23,7 @@
 
 
 #include <jagBase/ptr.h>
+#include <jagBase/gmtlSupport.h>
 #include <gmtl/AABox.h>
 #include <gmtl/Sphere.h>
 #include <gmtl/Containment.h>
@@ -104,6 +105,9 @@ public:
     }
     virtual gmtl::Sphered asSphere() const
     {
+        if( !( _bound.isInitialized() ) )
+            return( gmtl::Sphered() );
+
         const gmtl::Vec3d extent( _bound.mMax - _bound.mMin );
         const gmtl::Point3d& c( extent * .5 + _bound.mMin );
         const double r( gmtl::length( extent ) * .5 );
@@ -162,6 +166,9 @@ public:
 
     virtual gmtl::AABoxd asAABox() const
     {
+        if( !( _bound.isInitialized() ) )
+            return( gmtl::AABoxd() );
+
         const gmtl::Point3d& c( _bound.getCenter() );
         const double r( _bound.getRadius() );
         if( r == 0. )
@@ -194,10 +201,7 @@ public:
         if( rhs.getType() == Sphere_t )
             gmtl::extendVolume( _bound, rhs.asSphere() );
         else
-        {
-            gmtl::extendVolume( _bound, rhs.asAABox().mMin );
-            gmtl::extendVolume( _bound, rhs.asAABox().mMax );
-        }
+            gmtl::extendVolume( _bound, rhs.asAABox() );
     }
 
     virtual void setEmpty( const bool empty=true )
