@@ -98,14 +98,16 @@ jagDraw::BoundPtr Node::getBound( const jagDraw::CommandMap& commands )
 
     const jagDraw::CommandMap newCommands( ( _commands != NULL ) ? commands + *_commands : commands );
 
-    BOOST_FOREACH( jagDraw::DrawablePtr& drawable, _drawables )
-    {
-        _bound->expand( *( drawable->getBound( newCommands ) ) );
-    }
-
     BOOST_FOREACH( NodePtr& node, _children )
     {
         _bound->expand( *( node->getBound( newCommands ) ) );
+    }
+
+    // Expand by Drawable bounds after expanding by child Node bounds
+    // to increase precision.
+    BOOST_FOREACH( jagDraw::DrawablePtr& drawable, _drawables )
+    {
+        _bound->expand( *( drawable->getBound( newCommands ) ) );
     }
 
     return( _bound );
