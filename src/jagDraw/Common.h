@@ -25,6 +25,7 @@
 #include <jagDraw/PlatformOpenGL.h>
 #include <jagDraw/Version.h>
 
+#include <jagDraw/Bound.h>
 #include <jagDraw/BufferObject.h>
 #include <jagDraw/CommandMap.h>
 #include <jagDraw/ContextSupport.h>
