@@ -100,7 +100,7 @@ void Drawable::computeBounds( BoundPtr _bound, const CommandMap& commands )
         JAG3D_WARNING( "computeBounds() encountered NULL vertex array object." );
         return;
     }
-    DrawablePrepPtr& drawablePrep( commands[ VertexArrayObject_t ] );
+    const DrawablePrepPtr& drawablePrep( commands[ VertexArrayObject_t ] );
     const VertexArrayObjectPtr vaop( boost::dynamic_pointer_cast< VertexArrayObject >( drawablePrep ) );
 
     BufferObjectPtr bop( boost::dynamic_pointer_cast< BufferObject >(
