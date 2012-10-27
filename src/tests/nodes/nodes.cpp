@@ -69,7 +69,7 @@ protected:
 
     typedef jagDraw::PerContextData< gmtl::Matrix44f > PerContextMatrix44f;
     PerContextMatrix44f _proj;
-    gmtl::Spheref _bSphere;
+    jagDraw::BoundPtr _bSphere;
 
     jagDraw::PerContextData< jagDraw::UniformPtr > _viewProjUniform;
     jagDraw::PerContextData< jagDraw::UniformPtr > _normalUniform;
@@ -126,10 +126,6 @@ jagSG::NodePtr NodesDemo::makeScene( const gmtl::Point3f& offset )
 
 bool NodesDemo::startup( const unsigned int numContexts )
 {
-    // TBD need to compute this from scene graph bounds.
-    _bSphere.setCenter( gmtl::Point3f( 0., 0., 0. ) );
-    _bSphere.setRadius( 3.f );
-
     _scene = makeScene( gmtl::Point3f( 0.f, 1.f, .5f ) );
     _scene->addChild( makeScene( gmtl::Point3f( -1.f, 0.f, 0.f ) ) );
     _scene->addChild( makeScene( gmtl::Point3f( 1.1f, -.25f, 0.f ) ) );
@@ -144,7 +140,8 @@ bool NodesDemo::startup( const unsigned int numContexts )
 
     // Test bounding sphere computation.
     {
-        gmtl::Sphered s( _scene->getBound( *commands )->asSphere() );
+        _bSphere = _scene->getBound( *commands );
+        const gmtl::Sphered s( _bSphere->asSphere() );
 
         if( !( s.isInitialized() ) )
         {
@@ -275,21 +272,27 @@ void NodesDemo::reshape( const int w, const int h )
 
 gmtl::Matrix44f NodesDemo::computeProjection( float aspect )
 {
-    if( _bSphere.getRadius() <= 0.f )
+    const gmtl::Sphered s( _bSphere->asSphere() );
+
+    if( s.getRadius() <= 0.f )
         return( gmtl::MAT_IDENTITY44F );
 
     gmtl::Matrix44f proj;
-    float zNear = 3.5f * _bSphere.getRadius();
-    float zFar = 5.75f * _bSphere.getRadius();
-    gmtl::setPerspective< float >( proj, 30.f, aspect, zNear, zFar );
+    const double zNear = 3.5 * s.getRadius();
+    const double zFar = 5.75 * s.getRadius();
+    gmtl::setPerspective< float >( proj, 30.f, aspect, (float)zNear, (float)zFar );
 
     return( proj );
 }
 
 void NodesDemo::makeViewMatrices( gmtl::Matrix44f& view, gmtl::Matrix33f& normal )
 {
-    const gmtl::Point3f eye( _bSphere.getCenter() + ( gmtl::Point3f( 0.f, -4.f, 1.5f ) * _bSphere.getRadius() ) );
-    const gmtl::Point3f center( _bSphere.getCenter() );
+    const gmtl::Sphered s( _bSphere->asSphere() );
+    const gmtl::Point3d c( s.getCenter() );
+    const gmtl::Point3f center( (float)c[0], (float)c[1], (float)c[2] );
+    const float radius( (float)s.getRadius() );
+
+    const gmtl::Point3f eye( center + ( gmtl::Point3f( 1.5f, -4.f, 1.5f ) * radius ) );
     const gmtl::Vec3f up( 0.f, 0.f, 1.f );
 
     gmtl::setLookAt( view, eye, center, up );
