@@ -29,6 +29,7 @@ set( _jagSGHeaderFiles
     Export.h
     Common.h
     Node.h
+    Visitor.h
 )
 
 set( _jagSGSourceFiles
