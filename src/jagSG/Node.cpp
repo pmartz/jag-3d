@@ -19,6 +19,7 @@
 *************** <auto-copyright.pl END do not edit this line> ***************/
 
 #include <jagSG/Node.h>
+#include <jagSG/Visitor.h>
 #include <jagDraw/DrawInfo.h>
 #include <jagDraw/Error.h>
 #include <jagBase/LogMacros.h>
@@ -51,10 +52,28 @@ Node::~Node()
 }
 
 
-void Node::traverse()
+void Node::accept( jagSG::VisitorBase& visitor )
+{
+    JAG3D_TRACE( "accept()" );
+    visitor.visit( *this );
+}
+void Node::traverse( jagSG::VisitorBase& visitor )
 {
     JAG3D_TRACE( "traverse()" );
-    JAG3D_ERROR( "traverse() not yet implemented" );
+
+    BOOST_FOREACH( NodePtr& node, _children )
+    {
+        node->traverse( visitor );
+    }
+}
+
+void Node::setTraverseCallback( const CallbackPtr traverseCallback )
+{
+    _traverseCallback = traverseCallback;
+}
+const Node::CallbackPtr Node::getTraverseCallback() const
+{
+    return( _traverseCallback );
 }
 
 void Node::execute( jagDraw::DrawInfo& drawInfo )

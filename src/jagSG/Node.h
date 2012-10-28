@@ -47,6 +47,8 @@ typedef jagBase::ptr< jagSG::Node >::shared_ptr NodePtr;
 typedef std::vector< NodePtr > NodeVec;
 typedef std::vector< Node > NodeSimpleVec;
 
+class VisitorBase;
+
 
 /** \class Node Node.h <jagSG/Node.h>
 \brief TBD
@@ -60,13 +62,40 @@ public:
     ~Node();
 
 
+    /** \name Visitor Support */
+    /**@{*/
+
     /** \brief TBD
     \details TBD */
-    virtual void traverse();
+    void accept( jagSG::VisitorBase& visitor );
+    /** \brief TBD
+    \details TBD */
+    virtual void traverse( jagSG::VisitorBase& visitor );
+
+    /** \struct Callback
+    \brief TBD
+    \details TBD */
+    struct Callback {
+        /** \brief TBD
+        \details TBD */
+        virtual void operator()( jagSG::VisitorBase& visitor ) const;
+    };
+    typedef jagBase::ptr< Callback >::shared_ptr CallbackPtr;
+
+    /** \brief TBD
+    \details TBD */
+    void setTraverseCallback( const CallbackPtr traverseCallback );
+    /** \brief TBD
+    \details TBD */
+    const CallbackPtr getTraverseCallback() const;
+
 
     /** \brief For immediate rendering.
-    \details Requires a current context. */
+    \details Requires a current context.
+    TBD remove this and replace it with an ExecuteVisitor. */
     virtual void execute( jagDraw::DrawInfo& drawInfo );
+
+    /**@}*/
 
 
     /** \brief Transform
@@ -138,6 +167,8 @@ protected:
     jagDraw::DrawableVec _drawables;
     NodeVec _children;
     jagDraw::BoundPtr _bound;
+
+    CallbackPtr _traverseCallback;
 };
 
 
