@@ -32,6 +32,7 @@
 #include <map>
 #include <set>
 #include <bitset>
+#include <deque>
 
 
 namespace jagDraw {
@@ -258,6 +259,8 @@ public:
 
 typedef jagBase::ptr< jagDraw::CommandMap >::shared_ptr CommandMapPtr;
 typedef std::vector< jagDraw::CommandMapPtr > CommandMapVec;
+
+typedef std::deque< jagDraw::CommandMap > CommandMapDeque;
 
 
 

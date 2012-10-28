@@ -63,7 +63,7 @@ void Node::traverse( jagSG::VisitorBase& visitor )
 
     BOOST_FOREACH( NodePtr& node, _children )
     {
-        node->traverse( visitor );
+        node->accept( visitor );
     }
 }
 
@@ -80,16 +80,9 @@ void Node::execute( jagDraw::DrawInfo& drawInfo )
 {
     JAG3D_TRACE( "execute()" );
 
-    _commands->execute( drawInfo );
-
     BOOST_FOREACH( jagDraw::DrawablePtr& drawable, _drawables )
     {
         drawable->execute( drawInfo );
-    }
-
-    BOOST_FOREACH( NodePtr& node, _children )
-    {
-        node->execute( drawInfo );
     }
 
     JAG3D_ERROR_CHECK( "Node::execute()" );

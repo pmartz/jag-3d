@@ -22,6 +22,7 @@
 
 #include <jagDraw/Common.h>
 #include <jagSG/Common.h>
+#include <jagSG/ExecuteVisitor.h>
 #include <jagDraw/PerContextData.h>
 #include <jagDisk/ReadWrite.h>
 #include <jagBase/Version.h>
@@ -78,7 +79,7 @@ protected:
 
 DemoInterface* DemoInterface::create( bpo::options_description& desc )
 {
-    jagBase::Log::instance()->setPriority( jagBase::Log::PrioTrace, jagBase::Log::Console );
+    jagBase::Log::instance()->setPriority( jagBase::Log::PrioInfo, jagBase::Log::Console );
 
     return( new NodesDemo );
 }
@@ -231,6 +232,8 @@ bool NodesDemo::frame( const gmtl::Matrix44f& view, const gmtl::Matrix44f& proj 
     const jagDraw::jagDrawContextID contextID( jagDraw::ContextSupport::instance()->getActiveContext() );
     jagDraw::DrawInfo& drawInfo( getDrawInfo( contextID ) );
 
+    jagSG::ExecuteVisitor execVisitor( drawInfo );
+
     // Systems such as VRJ will pass view and projection matrices.
     if( view.mState != gmtl::Matrix44f::IDENTITY || proj.mState != gmtl::Matrix44f::IDENTITY )
     {
@@ -252,7 +255,7 @@ bool NodesDemo::frame( const gmtl::Matrix44f& view, const gmtl::Matrix44f& proj 
     _normalUniform[ drawInfo._id ]->execute( drawInfo );
 
     // Render all Drawables.
-    _scene->execute( drawInfo );
+    _scene->accept( execVisitor );
 
     glFlush();
 

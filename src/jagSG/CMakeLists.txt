@@ -27,12 +27,14 @@ endif()
 
 set( _jagSGHeaderFiles
     Export.h
+    ExecuteVisitor.h
     Common.h
     Node.h
     Visitor.h
 )
 
 set( _jagSGSourceFiles
+    ExecuteVisitor.cpp
     Node.cpp
 )
 

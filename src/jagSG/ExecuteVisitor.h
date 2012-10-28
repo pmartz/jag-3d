@@ -18,13 +18,51 @@
 *
 *************** <auto-copyright.pl END do not edit this line> ***************/
 
-#ifndef __JAGSG_COMMON_H__
-#define __JAGSG_COMMON_H__ 1
+#ifndef __JAGSG_EXECUTE_VISITOR_H__
+#define __JAGSG_EXECUTE_VISITOR_H__ 1
 
-
-#include <jagSG/Node.h>
+#include <jagSG/Export.h>
 #include <jagSG/Visitor.h>
+#include <jagDraw/CommandMap.h>
+#include <jagBase/ptr.h>
 
 
-// __JAGSG_COMMON_H__
+namespace jagSG {
+
+
+/** \class ExecuteVisitor ExecuteVisitor.h <jagSG/ExecuteVisitor.h>
+\brief TBD
+\details TBD
+*/
+class JAGSG_EXPORT ExecuteVisitor : public Visitor
+{
+public:
+    ExecuteVisitor( jagDraw::DrawInfo& drawInfo );
+    ExecuteVisitor( jagDraw::DrawInfo& drawInfo, jagSG::Node& node );
+    ExecuteVisitor( const ExecuteVisitor& rhs );
+    virtual ~ExecuteVisitor();
+
+
+    /** \brief TBD
+    \details TBD */
+    void reset();
+
+    /** \brief TBD
+    \details TBD */
+    virtual void visit( jagSG::Node& node );
+
+protected:
+    jagDraw::DrawInfo& _drawInfo;
+
+    jagDraw::CommandMapDeque _commandStack;
+};
+
+typedef jagBase::ptr< jagSG::ExecuteVisitor >::shared_ptr ExecuteVisitorPtr;
+
+
+// jagSG
+}
+
+
+// __JAGSG_EXECUTE_VISITOR_H__
 #endif
