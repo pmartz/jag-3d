@@ -68,8 +68,8 @@ public:
     /** \brief TBD
     \details TBD */
     void accept( jagSG::VisitorBase& visitor );
-    /** \brief TBD
-    \details TBD */
+    /** \brief Call accept() on all child Nodes.
+    \details Normally this is only invoked if a traverse callback is not attached. */
     virtual void traverse( jagSG::VisitorBase& visitor );
 
     /** \struct Callback
@@ -89,10 +89,11 @@ public:
     \details TBD */
     const CallbackPtr getTraverseCallback() const;
 
+    /** \brief Calls execute on all attached Drawables.
+    \details Primarily for "immediate mode" (no cull traversal) rendering.
+    See the ExecuteVisitor.
 
-    /** \brief For immediate rendering.
-    \details Requires a current context.
-    TBD remove this and replace it with an ExecuteVisitor. */
+    Requires a current context. */
     virtual void execute( jagDraw::DrawInfo& drawInfo );
 
     /**@}*/

@@ -81,7 +81,7 @@ typedef jagBase::ptr< jagSG::VisitorBase >::shared_ptr VisitorBasePtr;
 \brief TBD
 \details TBD
 */
-class /*JAGSG_EXPORT*/ Visitor : protected VisitorBase
+class /*JAGSG_EXPORT*/ Visitor : public VisitorBase
 {
 public:
     Visitor( const std::string& logName )
@@ -94,7 +94,7 @@ public:
     {
     }
 
-    Visitor( const VisitorBase& rhs )
+    Visitor( const Visitor& rhs )
       : VisitorBase( rhs )
     {
     }
