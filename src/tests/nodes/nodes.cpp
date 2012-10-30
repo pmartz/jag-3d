@@ -146,13 +146,13 @@ bool NodesDemo::startup( const unsigned int numContexts )
 
         if( !( s.isInitialized() ) )
         {
-            JAG3D_INFO_STATIC( _logName, "Bound: Uninitialized." );
+            JAG3D_CRITICAL_STATIC( _logName, "Bound: Uninitialized." );
         }
         else
         {
             std::ostringstream ostr;
-            ostr << "Bound: " << s.mCenter << " " << s.mRadius;
-            JAG3D_INFO_STATIC( _logName, ostr.str() );
+            ostr << "Bound: " << s;
+            JAG3D_CRITICAL_STATIC( _logName, ostr.str() );
         }
     }
 

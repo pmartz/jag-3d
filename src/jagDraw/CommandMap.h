@@ -162,12 +162,12 @@ public:
             {
             case 0:
                 break;
-            case 1:
+            case 1: // lhs has it
                 result[ type ] = ( *_data.find( type ) ).second;
                 result._bits.set( type );
                 break;
-            case 2:
-            case 3:
+            case 2: // rhs has it
+            case 3: // both have it
                 result[ type ] = ( *rhs._data.find( type ) ).second;
                 result._bits.set( type );
                 break; 
@@ -201,9 +201,9 @@ public:
             switch( ( rhs._bits[ type ] << 1 ) | (int)( _bits[ type ] ) )
             {
                 case 0:
-                case 1:
+                case 1: // lhs has it
                     break;
-                case 2: 
+                case 2: // rhs has it
                     if( _overrideBits.test( type ) == false || rhs._protectBits.test( type ) == true  )
                     {
                         DrawablePrepPtr drawable( rhs._data[ type ] );
@@ -212,7 +212,7 @@ public:
                     }
                     break; 
 
-                case 3: 
+                case 3: // both have it
                     if( *(_data[ type ]) != *(rhs._data[ type ]) )
                     {
                         if( _overrideBits.test( type ) == false || rhs._protectBits.test( type ) == true ) 
@@ -291,11 +291,11 @@ public:
             {
                 case 0:
                     continue;
-                case 1:
+                case 1: // lhs has it
                     return( true );
-                case 2:
+                case 2: // rhs has it
                     return( false );
-                case 3: 
+                case 3: // both have it
                 {
                     const DrawablePrepPtr a( lhs._data.find( type )->second );
                     const DrawablePrepPtr b( rhs._data.find( type )->second );
