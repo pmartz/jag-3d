@@ -23,7 +23,6 @@
 
 #include <jagSG/Export.h>
 #include <jagSG/Visitor.h>
-#include <jagDraw/CommandMap.h>
 #include <jagBase/ptr.h>
 
 
@@ -53,8 +52,6 @@ public:
 
 protected:
     jagDraw::DrawInfo& _drawInfo;
-
-    jagDraw::CommandMapDeque _commandStack;
 };
 
 typedef jagBase::ptr< jagSG::ExecuteVisitor >::shared_ptr ExecuteVisitorPtr;
