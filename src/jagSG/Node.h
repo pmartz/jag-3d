@@ -51,7 +51,7 @@ class VisitorBase;
 
 
 /** \class Node Node.h <jagSG/Node.h>
-\brief TBD
+\brief Scene graph element. "element" component of the %Visitor design pattern.
 \details TBD
 */
 class JAGSG_EXPORT Node : protected jagBase::LogBase, public jagDraw::ObjectIDOwner

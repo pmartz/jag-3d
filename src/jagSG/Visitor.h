@@ -31,8 +31,47 @@ namespace jagSG {
 
 
 /** \class VisitorBase Visitor.h <jagSG/Visitor.h>
-\brief TBD
-\details TBD
+\brief %Visitor design pattern, "visitor" component: base class.
+\details See http://en.wikipedia.org/wiki/Visitor_pattern
+
+VisitorBase visits all nodes in a scene graph. See also: Visitor, which
+provides control over visited children using Node::getTraverseCallback().
+
+To begin traversal on a hierarchy, call Node::accept() on the root node, passing
+a class derived from VisitorBase as the parameter. This results in the following
+recursive call sequence:
+<table border="0">
+  <tr>
+    <th><b>Node</b></th>
+	<th><b>VisitorBase</b></th>
+  </tr>
+  <tr>
+    <td>Node::accept()</td>
+	<td></td>
+  </tr>
+  <tr>
+	<td></td>
+	<td>VisitorBase::visit()</td>
+  </tr>
+  <tr>
+	<td>Node::traverse()</td>
+	<td></td>
+  </tr>
+  <tr>
+	<td>Node::accept()</td>
+	<td>etc...</td>
+  </tr>
+</table>
+
+Classes that derive from VisitorBase should override visit() to perform per-Node tasks.
+This function also controls continued traversal. The easiest way to do this is to
+call VisitorBase::visit(), which traverses all children.
+
+Nodes often contain a traversal callback to determine whyich children are traversed.
+See the Visitor class. The Visitor::visit() function uses a Node's traversal callback
+if present, and calls Node::traverse() otherwise. Typically, application classes
+should derive from Visitor to take advantage of this, unless they explicitly need to
+visit all children.
 */
 class /*JAGSG_EXPORT*/ VisitorBase : protected jagBase::LogBase
 {
@@ -58,16 +97,20 @@ public:
     }
 
 
-    /** \brief TBD
-    \details TBD */
+    /** \brief Function for per-Node tasks and continued traversal.
+    \details Derived classes should override this function to perform per-Node tasks
+    and continue traversal if desired. Calling Node::traverse() will traverse all
+    child Nodes. */
     virtual void visit( jagSG::Node& node )
     {
         node.traverse( *this );
-        // or:
-        // if( node.getTraverseCallback() != NULL )
-        //     node.traverseCallback( *this );
-        // else
-        //     node.traverse( *this );
+
+        // Often, the following is a more useful implementation (as is
+        // done in Visitor::visit() ).
+        //   if( node.getTraverseCallback() != NULL )
+        //       node.traverseCallback( *this );
+        //   else
+        //       node.traverse( *this );
     }
 
 protected:
@@ -78,9 +121,15 @@ typedef jagBase::ptr< jagSG::VisitorBase >::shared_ptr VisitorBasePtr;
 
 
 /** \class Visitor Visitor.h <jagSG/Visitor.h>
-\brief TBD
-\details TBD
-*/
+\brief %Visitor design pattern, %Visitor component base class.
+\details Allows the Node's traversal callback to determine continued traversal.
+
+Custom visitor classes should derive from VisitorBase to visit all Nodes, but should
+derive from Visitor to use the Node's traversal callback to determine child traversal
+(as for switch and sequence functionality).
+
+Derived classes should override Visitor::visit(), perform any pre-traversal tasks,
+call Visitor::visit() to effect traversal, then perform any post-traversal tasks. */
 class /*JAGSG_EXPORT*/ Visitor : public VisitorBase
 {
 public:
