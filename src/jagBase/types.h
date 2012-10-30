@@ -24,6 +24,7 @@
 
 #include <jagBase/ptr.h>
 #include <vector>
+#include <deque>
 #include <string>
 #include <gmtl/gmtl.h>
 
@@ -39,6 +40,7 @@ typedef std::vector< std::string > StringVec;
 typedef std::vector< gmtl::Point3f > Point3fVec;
 typedef jagBase::ptr< gmtl::Point3f >::shared_array_ptr Point3fArray;
 
+typedef std::deque< gmtl::Matrix44d > Matrix44dDeque;
 
 // jagBase
 }

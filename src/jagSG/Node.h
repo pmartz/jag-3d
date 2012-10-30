@@ -54,7 +54,8 @@ class VisitorBase;
 \brief Scene graph element. "element" component of the %Visitor design pattern.
 \details TBD
 */
-class JAGSG_EXPORT Node : protected jagBase::LogBase, public jagDraw::ObjectIDOwner
+class JAGSG_EXPORT Node : protected jagBase::LogBase,
+        public jagDraw::ObjectIDOwner, public SHARED_FROM_THIS(Node)
 {
 public:
     Node();

@@ -23,8 +23,6 @@
 #include <jagDraw/Error.h>
 #include <jagBase/LogMacros.h>
 
-#include <sstream>
-
 
 namespace jagSG {
 
@@ -55,8 +53,8 @@ void ExecuteVisitor::reset()
 {
     JAG3D_TRACE( "reset()" );
 
-    _commandStack.clear();
-    _commandStack.push_back( jagDraw::CommandMap() );
+    resetCommandMap();
+    resetMatrix();
 }
 
 
@@ -64,27 +62,17 @@ void ExecuteVisitor::visit( jagSG::Node& node )
 {
     JAG3D_TRACE( "visit()" );
 
-    // Push commands on stack.
-    jagDraw::CommandMapPtr commands( node.getCommandMap() );
-    jagDraw::CommandMap newTop( ( commands != NULL ) ?
-        _commandStack.back() + *commands : _commandStack.back() );
-    _commandStack.push_back( newTop );
-
-    if( JAG3D_LOG_DEBUG )
-    {
-        std::ostringstream ostr;
-        ostr << "\tCommand stack depth: " << _commandStack.size();
-        JAG3D_DEBUG( ostr.str() );
-    }
-
-    newTop.execute( _drawInfo );
+    pushMatrix( node.getTransform() );
+    pushCommandMap( node.getCommandMap() );
+    _commandStack.back().execute( _drawInfo );
 
     // Execute the drawables
     node.execute( _drawInfo );
 
     Visitor::visit( node );
 
-    _commandStack.pop_back();
+    popCommandMap();
+    popMatrix();
 }
 
 

@@ -22,9 +22,13 @@
 #define __JAGSG_VISITOR_H__ 1
 
 //#include <jagSG/Export.h>
+#include <jagBase/types.h>
 #include <jagSG/Node.h>
+#include <jagDraw/CommandMap.h>
 #include <jagBase/LogBase.h>
 #include <jagBase/ptr.h>
+
+#include <sstream>
 
 
 namespace jagSG {
@@ -72,6 +76,24 @@ See the Visitor class. The Visitor::visit() function uses a Node's traversal cal
 if present, and calls Node::traverse() otherwise. Typically, application classes
 should derive from Visitor to take advantage of this, unless they explicitly need to
 visit all children.
+
+VisitorBase contains support for jagSG::Node, matrix, and jagDraw::CommandMap stacks.
+Not all visitors will need these stacks, so using them is the responsibility of the
+derived class. As an example, a derived class might override visit() as follows:
+\code
+    virtual void visit( jagSG::Node& node )
+    {
+        pushNode( node.shared_from_this() );
+        pushMatrix( node.getTransform() );
+        pushCommandMap( node.getCommandMap() );
+
+        node.traverse( *this );
+
+        popCommandMap();
+        popMatrix();
+        popNode();
+    }
+\endcode
 */
 class /*JAGSG_EXPORT*/ VisitorBase : protected jagBase::LogBase
 {
@@ -103,17 +125,87 @@ public:
     child Nodes. */
     virtual void visit( jagSG::Node& node )
     {
+        // Push stacks, if desired.
+        //pushNode( node.shared_from_this() );
+        //pushMatrix( node.getTransform() );
+        //pushCommandMap( node.getCommandMap() );
+
         node.traverse( *this );
+
+        // If stack was pushed, execute corresponding pop.
+        //popCommandMap();
+        //popMatrix();
+        //popNode();
+
 
         // Often, the following is a more useful implementation (as is
         // done in Visitor::visit() ).
+        //   push stacks
         //   if( node.getTraverseCallback() != NULL )
         //       node.traverseCallback( *this );
         //   else
         //       node.traverse( *this );
+        //   pop stacks
+    }
+
+
+    void pushNode( jagSG::NodePtr node )
+    {
+        _nodeStack.push_back( node );
+    }
+    void popNode()
+    {
+        _nodeStack.pop_back();
+    }
+    void resetNode()
+    {
+        _nodeStack.clear();
+    }
+
+    void pushMatrix( const gmtl::Matrix44d& matrix )
+    {
+        const gmtl::Matrix44d newTop( _matrixStack.empty() ? matrix : matrix * _matrixStack.back() );
+        _matrixStack.push_back( newTop );
+    }
+    void popMatrix()
+    {
+        _matrixStack.pop_back();
+    }
+    void resetMatrix()
+    {
+        _matrixStack.clear();
+    }
+
+    void pushCommandMap( const jagDraw::CommandMapPtr commands )
+    {
+        if( commands != NULL )
+        {
+            if( !( _commandStack.empty() ) )
+                _commandStack.push_back( _commandStack.back() + *commands );
+            else
+                _commandStack.push_back( *commands );
+        }
+        else
+        {
+            if( !( _commandStack.empty() ) )
+                _commandStack.push_back( _commandStack.back() );
+            else
+                _commandStack.push_back( jagDraw::CommandMap() );
+        }
+    }
+    void popCommandMap()
+    {
+        _commandStack.pop_back();
+    }
+    void resetCommandMap()
+    {
+        _commandStack.clear();
     }
 
 protected:
+    NodeVec _nodeStack;
+    jagBase::Matrix44dDeque _matrixStack;
+    jagDraw::CommandMapDeque _commandStack;
 };
 
 typedef jagBase::ptr< jagSG::VisitorBase >::shared_ptr VisitorBasePtr;
@@ -157,10 +249,14 @@ public:
     \details TBD */
     virtual void visit( jagSG::Node& node )
     {
+        // push stacks, if desired
+
         if( node.getTraverseCallback() != NULL )
             (*node.getTraverseCallback())( *this );
         else
             node.traverse( *this );
+
+        // If stack was pushed, execute corresponding pop.
     }
 
 protected:
