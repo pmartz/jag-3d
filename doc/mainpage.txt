@@ -122,9 +122,11 @@ the bottom of the source file.
 Jag3D requires CMake v2.8.5 or newer.
 
 The following CMake variables will probably need to be set in order to find the dependencies:
+\li BOOST_ROOT
 \li Poco_ROOT
 \li GMTL_ROOT_DIR
 \li Freeglut_ROOT_PATH
+\li FREEGLUT_STATIC Create as a BOOL and set to true, if you are using static freeglut libraries.
 \li GL3_ROOT Set this to the parent of the GL3 directory containing the gl3.h header.
 
 For finding VRJuggler, set VJ_BASE_DIR in your environment. VRJuggler requires

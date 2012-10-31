@@ -36,6 +36,7 @@ IF (WIN32)
   FIND_LIBRARY( Freeglut_glut_LIBRARY NAMES ${_freeglutNames}
     PATHS
     ${OPENGL_LIBRARY_DIR}
+    ${Freeglut_ROOT_PATH}/lib
     ${Freeglut_ROOT_PATH}/Release
     )
 
@@ -47,6 +48,8 @@ IF (WIN32)
   FIND_LIBRARY( Freeglut_glut_LIBRARY_DEBUG NAMES ${_freeglutNames}
     PATHS
     ${OPENGL_LIBRARY_DIR}
+    ${Freeglut_ROOT_PATH}/lib
+    ${Freeglut_ROOT_PATH}/Debug
     ${Freeglut_ROOT_PATH}/Release
     )
 ELSE (WIN32)
