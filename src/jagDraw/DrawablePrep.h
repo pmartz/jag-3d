@@ -74,7 +74,7 @@ public:
 
     /** \brief TBD
     \details TBD */
-    virtual void execute( DrawInfo& ) {};
+    virtual void execute( DrawInfo& ) = 0;
 
 
     // TBD remove, replace with general purpose user data infrastructure.
@@ -114,13 +114,6 @@ public:
     bool operator> ( const DrawablePrep& rhs ) const
     {
         return( _uniqueID > rhs._uniqueID );
-    }
-
-    DrawablePrep operator=( const DrawablePrep& rhs )
-    {
-        _type = rhs._type;
-        _uniqueID = rhs._uniqueID;
-        return( *this );
     }
 
 protected:
