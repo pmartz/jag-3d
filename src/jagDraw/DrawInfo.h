@@ -46,7 +46,7 @@ struct JAGDRAW_EXPORT DrawInfo
     CommandMap _current;
 
 
-    typedef std::map< Program::HashValue, ConstUniformPtr > UniformMap;
+    typedef std::map< Program::HashValue, Uniform > UniformMap;
 
     /** \brief List of active uniforms during draw.
     \details When a new Program is used, it iterates over its

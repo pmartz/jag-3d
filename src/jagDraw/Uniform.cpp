@@ -158,7 +158,7 @@ void Uniform::execute( DrawInfo& drawInfo, const GLint loc ) const
 {
     // This should NOT be necessary, as we should only be here if this
     // uniform is already in the drawInfo._uniformMap.
-    //drawInfo._uniformMap[ _indexHash ] = shared_from_this();
+    //drawInfo._uniformMap[ _indexHash ] = *this;
 
     if( _isSampler )
     {
@@ -260,7 +260,7 @@ void Uniform::execute( DrawInfo& drawInfo )
 {
     // Add this uniform to the pool of potentially active uniforms
     // for the current frame and draw thread.
-    drawInfo._uniformMap[ _indexHash ] = shared_from_this();
+    drawInfo._uniformMap[ _indexHash ] = *this;
 
     // Uniform::operator() could execute before Program::operator(),
     // so only look up uniform location if a Program is available.
