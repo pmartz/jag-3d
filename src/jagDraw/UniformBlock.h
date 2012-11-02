@@ -105,7 +105,8 @@ public:
     {}
     UniformBlockSet( const UniformBlockSet& rhs )
       : DrawablePrep( rhs ),
-        ObjectIDOwner( rhs )
+        ObjectIDOwner( rhs ),
+        _map( rhs._map )
     {}
     ~UniformBlockSet()
     {}

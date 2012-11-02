@@ -235,7 +235,8 @@ public:
       : DrawablePrep( UniformSet_t )
     {}
     UniformSet( const UniformSet& rhs )
-      : DrawablePrep( rhs )
+      : DrawablePrep( rhs ),
+        _map( rhs._map )
     {}
     ~UniformSet()
     {}
@@ -247,6 +248,15 @@ public:
     UniformPtr& operator[]( const Program::HashValue& key )
     {
         return( _map[ key ] );
+    }
+
+    UniformSet operator+( const UniformSet& rhs )
+    {
+        // std::map::insert does NOT overwrite, so put rhs in result first,
+        // then insert the values held in this.
+        UniformSet result( rhs );
+        result._map.insert( _map.begin(), _map.end() );
+        return( result );
     }
 
 
