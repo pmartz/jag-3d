@@ -18,29 +18,5 @@
 #
 #************** <auto-copyright.pl END do not edit this line> ***************
 
-
-add_subdirectory( jagBase )
-add_subdirectory( jagDisk )
-add_subdirectory( jagDraw )
-add_subdirectory( jagSG )
-
-
-if( JAG3D_BUILD_PLUGINS )
-    add_subdirectory( plugins )
-endif()
-
-if( JAG3D_BUILD_TESTS )
-    add_subdirectory( tests )
-endif()
-
-if( JAG3D_BUILD_UNITTESTS )
-    add_subdirectory( unittests )
-endif()
-
-if( JAG3D_BUILD_APPS )
-    add_subdirectory( apps )
-endif()
-
-if( JAG3D_BUILD_EXAMPLES )
-    add_subdirectory( examples )
-endif()
+# Tests for jagDraw interface
+add_subdirectory( uniformsetadd )

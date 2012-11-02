@@ -169,8 +169,14 @@ include( CMakeMacros )
 
 option( JAG3D_BUILD_PLUGINS "Enable to build plugins" ON )
 option( JAG3D_BUILD_TESTS "Enable to build test code" ON )
+option( JAG3D_BUILD_UNITTESTS "Enable to build unit test code" OFF )
 option( JAG3D_BUILD_APPS "Enable to build applications" OFF )
 option( JAG3D_BUILD_EXAMPLES "Enable to build example code" OFF )
+
+if( JAG3D_BUILD_UNITTESTS )
+    # CMake kludge: enable_testing() must be in source directory root.
+    enable_testing()
+endif()
 
 
 add_subdirectory( src )
