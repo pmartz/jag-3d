@@ -116,7 +116,7 @@ void Program::execute( DrawInfo& drawInfo )
         const HashValue& hash( it.first );
         DrawInfo::UniformMap::iterator uIt( drawInfo._uniformMap.find( hash ) );
         if( uIt != drawInfo._uniformMap.end() )
-            uIt->second.execute( drawInfo, it.second );
+            uIt->second->execute( drawInfo, it.second );
     }
 
     // Iterate over active uniform blocks. If an active uniform block matches a uniform
