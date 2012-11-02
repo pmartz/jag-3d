@@ -261,7 +261,7 @@ bool RttDemo::startup( const unsigned int numContexts )
 
 
         jagDraw::UniformSetPtr uniformSet( jagDraw::UniformSetPtr( new jagDraw::UniformSet() ) );
-        (*uniformSet)[ textureUniform->getNameHash() ] = textureUniform;
+        (*uniformSet)[ textureUniform->getNameHash() ] = *textureUniform;
 
         jagDraw::TextureSetPtr textureSet( jagDraw::TextureSetPtr( new jagDraw::TextureSet() ) );
         (*textureSet)[ GL_TEXTURE0 ] = tex;

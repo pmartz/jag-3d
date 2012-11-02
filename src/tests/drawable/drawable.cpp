@@ -151,7 +151,7 @@ bool DrawableDemo::startup( const unsigned int numContexts )
     {
         commands->insert( prog );
         jagDraw::UniformSetPtr uniformSet( jagDraw::UniformSetPtr( new jagDraw::UniformSet() ) );
-        uniformSet->insert( swizzleOff );
+        uniformSet->insert( *swizzleOff );
         commands->insert( uniformSet );
 
         Point3fArray v3fa;
@@ -215,7 +215,7 @@ bool DrawableDemo::startup( const unsigned int numContexts )
         commands = jagDraw::CommandMapPtr( new jagDraw::CommandMap );
 
         jagDraw::UniformSetPtr uniformSet( jagDraw::UniformSetPtr( new jagDraw::UniformSet() ) );
-        uniformSet->insert( swizzleOn );
+        uniformSet->insert( *swizzleOn );
         commands->insert( uniformSet );
 
         Point3fArray i3fa;

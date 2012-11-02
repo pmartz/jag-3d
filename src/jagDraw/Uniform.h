@@ -92,13 +92,12 @@ we make that change.
 
 \gl{section 2.11.4}.
 */
-class JAGDRAW_EXPORT Uniform : public DrawablePrep, public jagBase::LogBase,
-        public SHARED_FROM_THIS(Uniform)
+class JAGDRAW_EXPORT Uniform : public DrawablePrep, public jagBase::LogBase
 {
 public:
-    /** \brief Constructor, specified uniform name. */
-    Uniform( const std::string& name );
-    /** \brief Constructor, specified uniform name and type.
+    /** \brief Constructor, specifies uniform name (or NULL string for UniformSet). */
+    Uniform( const std::string& name=std::string("") );
+    /** \brief Constructor, specifies uniform name and type.
     \details \param type from OpenGL spec table 2.10. */
     Uniform( const std::string& name, const GLenum type );
     /** \brief Constructor, specifically for creation of sampler uniforms.
@@ -209,6 +208,20 @@ public:
 
     const Program::HashValue getNameHash() const { return( _indexHash ); }
 
+    Uniform operator=( const Uniform& rhs )
+    {
+        DrawablePrep::operator=( rhs );
+
+        _name = rhs._name;
+        _indexHash = rhs._indexHash;
+        _value = rhs._value;
+        _type = rhs._type;
+        _isSampler = rhs._isSampler;
+        _transpose = rhs._transpose;
+
+        return( *this );
+    }
+
 protected:
     void internalInit( const std::string& name );
 
@@ -240,25 +253,32 @@ public:
     ~UniformSet()
     {}
 
-    void insert( UniformPtr uniform )
+    void insert( const Uniform uniform )
     {
-        _map[ uniform->getNameHash() ] = uniform;
+        _map[ uniform.getNameHash() ] = uniform;
     }
-    UniformPtr& operator[]( const Program::HashValue& key )
+    Uniform& operator[]( const Program::HashValue& key )
     {
         return( _map[ key ] );
     }
 
+    UniformSet operator+( const UniformSet& rhs ) const
+    {
+        UniformSet result( *this );
+        //_map.insert( rhs._map.begin(), rhs._map.end() );
+        return( result );
+    }
 
-    typedef std::map< Program::HashValue, UniformPtr > InternalMapType;
+
+    typedef std::map< Program::HashValue, Uniform > InternalMapType;
 
     /** \brief TBD
     \details Override method from DrawablePrep. */
     virtual void execute( DrawInfo& drawInfo )
     {
-        BOOST_FOREACH( const InternalMapType::value_type& dataPair, _map )
+        BOOST_FOREACH( InternalMapType::value_type& dataPair, _map )
         {
-            dataPair.second->execute( drawInfo );
+            dataPair.second.execute( drawInfo );
         }
     }
 
