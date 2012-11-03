@@ -33,6 +33,20 @@ using gmtl::Matrix44d;
 bool test()
 {
     Transform44f xform0;
+    Matrix44f viewf;
+    gmtl::setLookAt( viewf, gmtl::Point3f( 3., 2., 1. ), gmtl::Point3f( 0., 0., 0. ), gmtl::Vec3f( 0., 0., 1. ) );
+    xform0.setView( viewf );
+    xform0.setProj( gmtl::MAT_IDENTITY44F );
+    if( xform0.getViewProj() != viewf )
+        return( false );
+
+    Transform44d xform1;
+    Matrix44d viewd;
+    gmtl::setLookAt( viewd, gmtl::Point3d( 3., 2., 1. ), gmtl::Point3d( 0., 0., 0. ), gmtl::Vec3d( 0., 0., 1. ) );
+    xform1.setView( viewd );
+    xform1.setProj( gmtl::MAT_IDENTITY44D );
+    if( xform1.getViewProj() != viewd )
+        return( false );
 
     return( true );
 }

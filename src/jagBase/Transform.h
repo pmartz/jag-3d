@@ -40,13 +40,26 @@ class Transform
 {
 public:
     Transform()
-      : _dirty( 0 )
+      : _dirty( ALL_DIRTY )
     {
     }
     Transform( const Transform& rhs )
       : _proj( rhs._proj ),
         _view( rhs._view ),
         _model( rhs._model ),
+
+        _viewProj( rhs._viewProj ),
+        _modelViewProj( rhs._modelViewProj ),
+        _modelView( rhs._modelView ),
+        _modelViewInvTrans( rhs._modelViewInvTrans ),
+
+        _projInv( rhs._projInv ),
+        _viewInv( rhs._viewInv ),
+        _modelInv( rhs._modelInv ),
+        _viewProjInv( rhs._viewProjInv ),
+        _modelViewProjInv( rhs._modelViewProjInv ),
+        _modelViewInv( rhs._modelViewInv ),
+
         _dirty( rhs._dirty )
     {
     }
@@ -70,6 +83,7 @@ public:
         _model = model;
         _dirty |= ALL_MODEL_DIRTY;
     }
+
 
     const MXTYPE& getProj()
     {
@@ -97,7 +111,7 @@ public:
     {
         if( _dirty & MODEL_VIEW_PROJ_DIRTY )
         {
-            const MXTYPE vp( getViewProj() );
+            const MXTYPE& vp( getViewProj() );
             _modelViewProj = vp * _model;
             _dirty &= ~MODEL_VIEW_PROJ_DIRTY;
         }
@@ -116,8 +130,8 @@ public:
     {
         if( _dirty & MODEL_VIEW_INV_TRANS_DIRTY )
         {
-            const MXTYPE mvInv( getModelViewInv() );
-            _modelViewInvTrans = gmtl::transpose( mvInv );
+            _modelViewInvTrans = getModelViewInv();
+            gmtl::transpose( _modelViewInvTrans );
             _dirty &= ~MODEL_VIEW_INV_TRANS_DIRTY;
         }
         return( _modelViewInvTrans );
@@ -227,7 +241,11 @@ protected:
                             MODEL_VIEW_INV_TRANS_DIRTY |
                             MODEL_INV_DIRTY |
                             MODEL_VIEW_PROJ_INV_DIRTY |
-                            MODEL_VIEW_INV_DIRTY )
+                            MODEL_VIEW_INV_DIRTY ),
+
+        ALL_DIRTY = ( ALL_PROJ_DIRTY |
+                      ALL_VIEW_DIRTY |
+                      ALL_MODEL_DIRTY )
     };
 
     unsigned int _dirty;
