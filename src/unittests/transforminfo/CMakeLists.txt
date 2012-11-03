@@ -1,4 +1,4 @@
-set( _exeName uniformsetadd )
+set( _exeName transforminfo )
 
 _addNonWindowedExecutable( UnitTest ${_exeName}
     ${_exeName}.cpp
