@@ -36,6 +36,7 @@ set( _jagBaseHeaderFiles
     LogBase.h
     LogMacros.h
     ptr.h
+    Transform.h
     types.h
     Version.h
 )

@@ -18,5 +18,8 @@
 #
 #************** <auto-copyright.pl END do not edit this line> ***************
 
+# Tests for jagBase interface
+add_subdirectory( transforminfo )
+
 # Tests for jagDraw interface
 add_subdirectory( uniformsetadd )
