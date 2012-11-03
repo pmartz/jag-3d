@@ -32,6 +32,10 @@ namespace jagBase {
 \details Utility for storing the traditional OpenGL FFP model, view, and projection
 matrices, as well as matrices derived from them (concatenation, inverse, normal, etc).
 
+The class also tracks a viewing frustum based on the view and projection matrices.
+In the future, this class should also store a viewport so that it can compute
+pixel sizes from world coordinate metrics.
+
 This class is not thread safe. When used for rendering, one Transform instance should
 be created per rendering thread.
 */
@@ -39,6 +43,7 @@ template< typename T >
 class Transform
 {
 protected:
+    typedef gmtl::Frustum< T > FTYPE;
     typedef gmtl::Matrix< T, 3, 3 > M3TYPE;
     typedef gmtl::Matrix< T, 4, 4 > M4TYPE;
 
@@ -48,7 +53,9 @@ public:
     {
     }
     Transform( const Transform& rhs )
-      : _proj( rhs._proj ),
+      : _frustum( rhs._frustum ),
+
+        _proj( rhs._proj ),
         _view( rhs._view ),
         _model( rhs._model ),
 
@@ -75,11 +82,13 @@ public:
     void setProj( const M4TYPE& proj )
     {
         _proj = proj;
+        _frustum.extractPlanes( _view, _proj );
         _dirty |= ALL_PROJ_DIRTY;
     }
     void setView( const M4TYPE& view )
     {
         _view = view;
+        _frustum.extractPlanes( _view, _proj );
         _dirty |= ALL_VIEW_DIRTY;
     }
     void setModel( const M4TYPE& model )
@@ -89,6 +98,10 @@ public:
     }
 
 
+    const FTYPE& getFrustum()
+    {
+        return( _frustum );
+    }
     const M4TYPE& getProj()
     {
         return( _proj );
@@ -200,6 +213,8 @@ public:
     }
 
 protected:
+    FTYPE _frustum;
+
     M4TYPE _proj;
     M4TYPE _view;
     M4TYPE _model;
