@@ -35,9 +35,13 @@ matrices, as well as matrices derived from them (concatenation, inverse, normal,
 This class is not thread safe. When used for rendering, one Transform instance should
 be created per rendering thread.
 */
-template< class MXTYPE >
+template< typename T >
 class Transform
 {
+protected:
+    typedef gmtl::Matrix< T, 3, 3 > M3TYPE;
+    typedef gmtl::Matrix< T, 4, 4 > M4TYPE;
+
 public:
     Transform()
       : _dirty( ALL_DIRTY )
@@ -68,37 +72,37 @@ public:
     }
 
 
-    void setProj( const MXTYPE& proj )
+    void setProj( const M4TYPE& proj )
     {
         _proj = proj;
         _dirty |= ALL_PROJ_DIRTY;
     }
-    void setView( const MXTYPE& view )
+    void setView( const M4TYPE& view )
     {
         _view = view;
         _dirty |= ALL_VIEW_DIRTY;
     }
-    void setModel( const MXTYPE& model )
+    void setModel( const M4TYPE& model )
     {
         _model = model;
         _dirty |= ALL_MODEL_DIRTY;
     }
 
 
-    const MXTYPE& getProj()
+    const M4TYPE& getProj()
     {
         return( _proj );
     }
-    const MXTYPE& getView()
+    const M4TYPE& getView()
     {
         return( _view );
     }
-    const MXTYPE& getModel()
+    const M4TYPE& getModel()
     {
         return( _model );
     }
 
-    const MXTYPE& getViewProj()
+    const M4TYPE& getViewProj()
     {
         if( _dirty & VIEW_PROJ_DIRTY )
         {
@@ -107,17 +111,17 @@ public:
         }
         return( _viewProj );
     }
-    const MXTYPE& getModelViewProj()
+    const M4TYPE& getModelViewProj()
     {
         if( _dirty & MODEL_VIEW_PROJ_DIRTY )
         {
-            const MXTYPE& vp( getViewProj() );
+            const M4TYPE& vp( getViewProj() );
             _modelViewProj = vp * _model;
             _dirty &= ~MODEL_VIEW_PROJ_DIRTY;
         }
         return( _modelViewProj );
     }
-    const MXTYPE& getModelView()
+    const M4TYPE& getModelView()
     {
         if( _dirty & MODEL_VIEW_DIRTY )
         {
@@ -126,18 +130,21 @@ public:
         }
         return( _modelView );
     }
-    const MXTYPE& getModelViewInvTrans()
+    const M3TYPE& getModelViewInvTrans()
     {
         if( _dirty & MODEL_VIEW_INV_TRANS_DIRTY )
         {
-            _modelViewInvTrans = getModelViewInv();
-            gmtl::transpose( _modelViewInvTrans );
+            M4TYPE m( getModelViewInv() );
+            // Transpose during set():
+            _modelViewInvTrans.set(  m( 0, 0 ),  m( 1, 0 ),  m( 2, 0 ),
+                                     m( 0, 1 ),  m( 1, 1 ),  m( 2, 1 ),
+                                     m( 0, 2 ),  m( 1, 2 ),  m( 2, 2 )  );
             _dirty &= ~MODEL_VIEW_INV_TRANS_DIRTY;
         }
         return( _modelViewInvTrans );
     }
 
-    const MXTYPE& getProjInv()
+    const M4TYPE& getProjInv()
     {
         if( _dirty & PROJ_INV_DIRTY )
         {
@@ -146,7 +153,7 @@ public:
         }
         return( _projInv );
     }
-    const MXTYPE& getViewInv()
+    const M4TYPE& getViewInv()
     {
         if( _dirty & VIEW_INV_DIRTY )
         {
@@ -155,7 +162,7 @@ public:
         }
         return( _viewInv );
     }
-    const MXTYPE& getModelInv()
+    const M4TYPE& getModelInv()
     {
         if( _dirty & MODEL_INV_DIRTY )
         {
@@ -164,7 +171,7 @@ public:
         }
         return( _modelInv );
     }
-    const MXTYPE& getViewProjInv()
+    const M4TYPE& getViewProjInv()
     {
         if( _dirty & VIEW_PROJ_INV_DIRTY )
         {
@@ -173,7 +180,7 @@ public:
         }
         return( _viewProjInv );
     }
-    const MXTYPE& getModelViewProjInv()
+    const M4TYPE& getModelViewProjInv()
     {
         if( _dirty & MODEL_VIEW_PROJ_INV_DIRTY )
         {
@@ -182,7 +189,7 @@ public:
         }
         return( _modelViewProjInv );
     }
-    const MXTYPE& getModelViewInv()
+    const M4TYPE& getModelViewInv()
     {
         if( _dirty & MODEL_VIEW_INV_DIRTY )
         {
@@ -193,21 +200,21 @@ public:
     }
 
 protected:
-    MXTYPE _proj;
-    MXTYPE _view;
-    MXTYPE _model;
+    M4TYPE _proj;
+    M4TYPE _view;
+    M4TYPE _model;
 
-    MXTYPE _viewProj;
-    MXTYPE _modelViewProj;
-    MXTYPE _modelView;
-    MXTYPE _modelViewInvTrans;
+    M4TYPE _viewProj;
+    M4TYPE _modelViewProj;
+    M4TYPE _modelView;
+    M3TYPE _modelViewInvTrans;
 
-    MXTYPE _projInv;
-    MXTYPE _viewInv;
-    MXTYPE _modelInv;
-    MXTYPE _viewProjInv;
-    MXTYPE _modelViewProjInv;
-    MXTYPE _modelViewInv;
+    M4TYPE _projInv;
+    M4TYPE _viewInv;
+    M4TYPE _modelInv;
+    M4TYPE _viewProjInv;
+    M4TYPE _modelViewProjInv;
+    M4TYPE _modelViewInv;
 
     enum {
         VIEW_PROJ_DIRTY = 0x1 << 0,
@@ -251,8 +258,8 @@ protected:
     unsigned int _dirty;
 };
 
-typedef Transform< gmtl::Matrix44f > Transform44f;
-typedef Transform< gmtl::Matrix44d > Transform44d;
+typedef Transform< float > TransformF;
+typedef Transform< double > TransformD;
 
 
 // jagBase
