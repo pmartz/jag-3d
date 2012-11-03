@@ -40,12 +40,22 @@ bool test()
     if( xform0.getViewProj() != viewf )
         return( false );
 
+    const float floatEps( 0.00001f );
+    const Matrix44f& identf( xform0.getViewInv() * viewf );
+    if( !( gmtl::isEqual( identf, gmtl::MAT_IDENTITY44F, floatEps ) ) )
+        return( false );
+
     Transform44d xform1;
     Matrix44d viewd;
     gmtl::setLookAt( viewd, gmtl::Point3d( 3., 2., 1. ), gmtl::Point3d( 0., 0., 0. ), gmtl::Vec3d( 0., 0., 1. ) );
     xform1.setView( viewd );
     xform1.setProj( gmtl::MAT_IDENTITY44D );
     if( xform1.getViewProj() != viewd )
+        return( false );
+
+    const double doubleEps( 0.0000001 );
+    const Matrix44d& identd( xform1.getViewInv() * viewd );
+    if( !( gmtl::isEqual( identd, gmtl::MAT_IDENTITY44D, doubleEps ) ) )
         return( false );
 
     return( true );
