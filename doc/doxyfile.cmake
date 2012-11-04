@@ -109,7 +109,7 @@ INPUT                  = "${PROJECT_SOURCE_DIR}/src/jagBase" \
                          "${PROJECT_SOURCE_DIR}/src/plugins" \
                          "${PROJECT_SOURCE_DIR}/doc"
 INPUT_ENCODING         = UTF-8
-FILE_PATTERNS          = *.h *.txt
+FILE_PATTERNS          = *.cpp *.h *.txt
 RECURSIVE              = YES
 EXCLUDE                = */.svn
 EXCLUDE_SYMLINKS       = NO
