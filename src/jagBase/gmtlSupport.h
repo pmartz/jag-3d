@@ -116,6 +116,26 @@ void extendVolume( Sphere<DATA_TYPE>& container,
    }
 }
 
+
+
+/** TBD */
+template <unsigned ROWS, unsigned COLS>
+void convert( gmtl::Matrix< double, ROWS, COLS >& result, const gmtl::Matrix< float, ROWS, COLS >& rhs )
+{
+    for (unsigned int x = 0; x < ROWS * COLS; ++x)
+        result.mData[x] = (double)rhs.mData[x];
+    result.mState = rhs.mState;
+}
+/** TBD */
+template <unsigned ROWS, unsigned COLS>
+void convert( gmtl::Matrix< float, ROWS, COLS >& result, const gmtl::Matrix< double, ROWS, COLS >& rhs )
+{
+    for (unsigned int x = 0; x < ROWS * COLS; ++x)
+        result.mData[x] = (float)rhs.mData[x];
+    result.mState = rhs.mState;
+}
+
+
 // gmtl
 }
 
