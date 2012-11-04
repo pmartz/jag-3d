@@ -33,6 +33,13 @@ using namespace jagDraw;
 using namespace jagDisk;
 
 
+/** \addtogroup PluginSupport Plugin Support
+*/
+/**@{*/
+
+/** \class ShaderRW
+\brief Loads shader source code from file.
+*/
 class ShaderRW : public ReaderWriter
 {
 public:
@@ -120,6 +127,9 @@ protected:
 
     mutable GLenum _type;
 };
+
+/**@}*/
+
 
 // Register the ShaderRW class with the PluginManager.
 // This macro declares a static object initialized when the plugin is loaded.

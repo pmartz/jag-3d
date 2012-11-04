@@ -39,6 +39,13 @@ using namespace jagDraw;
 using namespace jagDisk;
 
 
+/** \addtogroup PluginSupport Plugin Support
+*/
+/**@{*/
+
+/** \class ImageRW
+\brief OSG-based image data loader.
+*/
 class ImageRW : public ReaderWriter
 {
 public:
@@ -149,6 +156,9 @@ protected:
         return( NULL );
     }
 };
+
+/**@}*/
+
 
 // Register the ShaderRW class with the PluginManager.
 // This macro declares a static object initialized when the plugin is loaded.
