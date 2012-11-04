@@ -48,7 +48,7 @@ public:
 
     virtual bool startup( const unsigned int numContexts );
     virtual bool init();
-    virtual bool frame( const gmtl::Matrix44f& view, const gmtl::Matrix44f& proj );
+    virtual bool frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj );
     virtual bool shutdown()
     {
         return( true );
@@ -323,7 +323,7 @@ bool DrawableDemo::init()
     return( true );
 }
 
-bool DrawableDemo::frame( const gmtl::Matrix44f& view, const gmtl::Matrix44f& proj )
+bool DrawableDemo::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj )
 {
     if( !getStartupCalled() )
         return( true );

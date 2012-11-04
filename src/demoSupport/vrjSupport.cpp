@@ -20,6 +20,7 @@
 
 
 #include <demoSupport/DemoInterface.h>
+#include <jagBase/gmtlSupport.h>
 #include <jagDraw/PlatformOpenGL.h>
 #include <jagDraw/ContextSupport.h>
 
@@ -160,7 +161,7 @@ void JagDemoApp::draw()
 
     ProjectionPtr project( user_data->getProjection() );
     const Frustum& vrjFrustum( project->getFrustum() );
-    gmtl::Matrix44f proj; gmtl::setFrustum< float >( proj,
+    gmtl::Matrix44d proj; gmtl::setFrustum< double >( proj,
         vrjFrustum[ Frustum::VJ_LEFT ], vrjFrustum[ Frustum::VJ_TOP ],
         vrjFrustum[ Frustum::VJ_RIGHT ], vrjFrustum[ Frustum::VJ_BOTTOM ], 
         vrjFrustum[ Frustum::VJ_NEAR ], vrjFrustum[ Frustum::VJ_FAR ] );
@@ -171,7 +172,9 @@ void JagDemoApp::draw()
     drawInfo._current.clear( jagDraw::Program_t );
     drawInfo._current.clear( jagDraw::VertexArrayObject_t );
 
-    _di->frame( project->getViewMatrix(), proj );
+    gmtl::Matrix44d viewd;
+    gmtl::convert( viewd, project->getViewMatrix() );
+    _di->frame( viewd, proj );
 }
 
 

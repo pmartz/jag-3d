@@ -24,6 +24,7 @@
 #include <jagSG/Common.h>
 #include <jagSG/ExecuteVisitor.h>
 #include <jagDraw/PerContextData.h>
+#include <jagBase/Transform.h>
 #include <jagDisk/ReadWrite.h>
 #include <jagBase/Version.h>
 #include <jagBase/Log.h>
@@ -52,7 +53,7 @@ public:
 
     virtual bool startup( const unsigned int numContexts );
     virtual bool init();
-    virtual bool frame( const gmtl::Matrix44f& view, const gmtl::Matrix44f& proj );
+    virtual bool frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj );
     virtual void reshape( const int w, const int h );
     virtual bool shutdown()
     {
@@ -62,14 +63,13 @@ public:
 protected:
     jagSG::NodePtr makeScene( const gmtl::Point3f& offset );
 
-    gmtl::Matrix44f computeProjection( float aspect );
-    void makeViewMatrices( gmtl::Matrix44f& view, gmtl::Matrix33f& normal );
-    gmtl::Matrix33f computeNormalMatrix( const gmtl::Matrix44f& in );
+    gmtl::Matrix44d computeProjection( double aspect );
+    gmtl::Matrix44d computeView();
 
     jagSG::NodePtr _scene;
 
-    typedef jagDraw::PerContextData< gmtl::Matrix44f > PerContextMatrix44f;
-    PerContextMatrix44f _proj;
+    typedef jagDraw::PerContextData< gmtl::Matrix44d > PerContextMatrix44d;
+    PerContextMatrix44d _proj;
     jagDraw::BoundPtr _bSphere;
 
     jagDraw::PerContextData< jagDraw::UniformPtr > _viewProjUniform;
@@ -188,7 +188,7 @@ bool NodesDemo::startup( const unsigned int numContexts )
 
     // We keep a different project matrix per context (to support different
     // window sizes). Initialize them all to a reasonable default.
-    const gmtl::Matrix44f defaultProjMat( computeProjection( 1. ) );
+    const gmtl::Matrix44d defaultProjMat( computeProjection( 1. ) );
     for( unsigned int idx( 0 ); idx<numContexts; ++idx )
         _proj._data.push_back( defaultProjMat );
 
@@ -222,7 +222,7 @@ bool NodesDemo::init()
     return( true );
 }
 
-bool NodesDemo::frame( const gmtl::Matrix44f& view, const gmtl::Matrix44f& proj )
+bool NodesDemo::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj )
 {
     if( !getStartupCalled() )
         return( true );
@@ -235,23 +235,24 @@ bool NodesDemo::frame( const gmtl::Matrix44f& view, const gmtl::Matrix44f& proj 
     jagSG::ExecuteVisitor execVisitor( drawInfo );
 
     // Systems such as VRJ will pass view and projection matrices.
+    jagBase::TransformD transformInfo;
     if( view.mState != gmtl::Matrix44f::IDENTITY || proj.mState != gmtl::Matrix44f::IDENTITY )
     {
-        const gmtl::Matrix44f viewProj( proj * view );
-        _viewProjUniform[ drawInfo._id ]->set( viewProj );
-        gmtl::Matrix33f normalMat( computeNormalMatrix( view ) );
-        _normalUniform[ drawInfo._id ]->set( normalMat );
+        transformInfo.setProj( proj );
+        transformInfo.setView( view );
     }
     else
     {
-        gmtl::Matrix44f viewMat;
-        gmtl::Matrix33f normalMat;
-        makeViewMatrices( viewMat, normalMat );
-        const gmtl::Matrix44f viewProj( _proj._data[ contextID ] * viewMat );
-        _viewProjUniform[ drawInfo._id ]->set( viewProj );
-        _normalUniform[ drawInfo._id ]->set( normalMat );
+        transformInfo.setProj( _proj._data[ contextID ] );
+        transformInfo.setView( computeView() );
     }
+    gmtl::Matrix44f tempMat4;
+    gmtl::convert( tempMat4, transformInfo.getViewProj() );
+    _viewProjUniform[ drawInfo._id ]->set( tempMat4 );
     _viewProjUniform[ drawInfo._id ]->execute( drawInfo );
+    gmtl::Matrix33f tempMat3;
+    gmtl::convert( tempMat3, transformInfo.getModelViewInvTrans() );
+    _normalUniform[ drawInfo._id ]->set( tempMat3 );
     _normalUniform[ drawInfo._id ]->execute( drawInfo );
 
     // Render all Drawables.
@@ -270,53 +271,35 @@ void NodesDemo::reshape( const int w, const int h )
         return;
 
     const jagDraw::jagDrawContextID contextID( jagDraw::ContextSupport::instance()->getActiveContext() );
-    _proj._data[ contextID ] = computeProjection( (float)w/(float)h );
+    _proj._data[ contextID ] = computeProjection( (double)w/(double)h );
 }
 
-gmtl::Matrix44f NodesDemo::computeProjection( float aspect )
+gmtl::Matrix44d NodesDemo::computeProjection( double aspect )
 {
     const gmtl::Sphered s( _bSphere->asSphere() );
 
     if( s.getRadius() <= 0.f )
-        return( gmtl::MAT_IDENTITY44F );
+        return( gmtl::MAT_IDENTITY44D );
 
-    gmtl::Matrix44f proj;
+    gmtl::Matrix44d proj;
     const double zNear = 3.5 * s.getRadius();
     const double zFar = 5.75 * s.getRadius();
-    gmtl::setPerspective< float >( proj, 30.f, aspect, (float)zNear, (float)zFar );
+    gmtl::setPerspective< double >( proj, 30., aspect, zNear, zFar );
 
     return( proj );
 }
 
-void NodesDemo::makeViewMatrices( gmtl::Matrix44f& view, gmtl::Matrix33f& normal )
+gmtl::Matrix44d NodesDemo::computeView()
 {
     const gmtl::Sphered s( _bSphere->asSphere() );
     const gmtl::Point3d c( s.getCenter() );
-    const gmtl::Point3f center( (float)c[0], (float)c[1], (float)c[2] );
-    const float radius( (float)s.getRadius() );
+    const gmtl::Point3d center( (float)c[0], (float)c[1], (float)c[2] );
+    const double radius( (float)s.getRadius() );
 
-    const gmtl::Point3f eye( center + ( gmtl::Point3f( 1.5f, -4.f, 1.5f ) * radius ) );
-    const gmtl::Vec3f up( 0.f, 0.f, 1.f );
+    const gmtl::Point3d eye( center + ( gmtl::Point3d( 1.5, -4., 1.5 ) * radius ) );
+    const gmtl::Vec3d up( 0.f, 0.f, 1.f );
 
+    gmtl::Matrix44d view;
     gmtl::setLookAt( view, eye, center, up );
-    normal = computeNormalMatrix( view );
-}
-
-gmtl::Matrix33f NodesDemo::computeNormalMatrix( const gmtl::Matrix44f& in )
-{
-    gmtl::Matrix33f tempIn;
-    for( unsigned int r=0; r<3; r++ )
-        for( unsigned int c=0; c<3; c++ )
-            tempIn( r, c ) = in( r, c );
-
-#if 0
-    // TBD
-    // Normals convert to eye coords using the inversetranspose
-    // of the upper left 3x3 of the modelview matrix.
-    gmtl::Matrix33f invIn, result;
-    gmtl::invert( invIn, tempIn );
-    gmtl::transpose( result, invIn );
-#endif
-
-    return( tempIn );
+    return( view );
 }

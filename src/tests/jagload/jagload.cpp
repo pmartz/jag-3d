@@ -22,6 +22,7 @@
 
 #include <jagDraw/Common.h>
 #include <jagDraw/PerContextData.h>
+#include <jagBase/Transform.h>
 #include <jagBase/Version.h>
 #include <jagBase/Log.h>
 #include <jagBase/LogMacros.h>
@@ -56,7 +57,7 @@ public:
 
     virtual bool startup( const unsigned int numContexts );
     virtual bool init();
-    virtual bool frame( const gmtl::Matrix44f& view, const gmtl::Matrix44f& proj );
+    virtual bool frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj );
     virtual void reshape( const int w, const int h );
     virtual bool shutdown()
     {
@@ -64,14 +65,13 @@ public:
     }
 
 protected:
-    gmtl::Matrix44f computeProjection( float aspect );
-    void makeViewMatrices( gmtl::Matrix44f& view, gmtl::Matrix33f& normal );
-    gmtl::Matrix33f computeNormalMatrix( const gmtl::Matrix44f& in );
+    gmtl::Matrix44d computeProjection( double aspect );
+    gmtl::Matrix44d computeView();
 
     jagDraw::DrawNodeSimpleVec _drawNodes;
 
-    typedef jagDraw::PerContextData< gmtl::Matrix44f > PerContextMatrix44f;
-    PerContextMatrix44f _proj;
+    typedef jagDraw::PerContextData< gmtl::Matrix44d > PerContextMatrix44d;
+    PerContextMatrix44d _proj;
     osg::BoundingSphere _bs;
 
     jagDraw::PerContextData< jagDraw::UniformPtr > _viewProjUniform;
@@ -168,7 +168,7 @@ bool JagLoadDemo::startup( const unsigned int numContexts )
 
     // We keep a different project matrix per context (to support different
     // window sizes). Initialize them all to a reasonable default.
-    const gmtl::Matrix44f defaultProjMat( computeProjection( 1. ) );
+    const gmtl::Matrix44d defaultProjMat( computeProjection( 1. ) );
     for( unsigned int idx( 0 ); idx<numContexts; ++idx )
         _proj._data.push_back( defaultProjMat );
 
@@ -205,7 +205,7 @@ bool JagLoadDemo::init()
     return( true );
 }
 
-bool JagLoadDemo::frame( const gmtl::Matrix44f& view, const gmtl::Matrix44f& proj )
+bool JagLoadDemo::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj )
 {
     if( !getStartupCalled() )
         return( true );
@@ -216,29 +216,30 @@ bool JagLoadDemo::frame( const gmtl::Matrix44f& view, const gmtl::Matrix44f& pro
     jagDraw::DrawInfo& drawInfo( getDrawInfo( contextID ) );
 
     // Systems such as VRJ will pass view and projection matrices.
+    jagBase::TransformD transformInfo;
     if( view.mState != gmtl::Matrix44f::IDENTITY || proj.mState != gmtl::Matrix44f::IDENTITY )
     {
-        const gmtl::Matrix44f viewProj( proj * view );
-        _viewProjUniform[ drawInfo._id ]->set( viewProj );
-        gmtl::Matrix33f normalMat( computeNormalMatrix( view ) );
-        _normalUniform[ drawInfo._id ]->set( normalMat );
+        transformInfo.setProj( proj );
+        transformInfo.setView( view );
     }
     else
     {
-        gmtl::Matrix44f viewMat;
-        gmtl::Matrix33f normalMat;
-        makeViewMatrices( viewMat, normalMat );
-        const gmtl::Matrix44f viewProj( _proj._data[ contextID ] * viewMat );
-        _viewProjUniform[ drawInfo._id ]->set( viewProj );
-        _normalUniform[ drawInfo._id ]->set( normalMat );
+        transformInfo.setProj( _proj._data[ contextID ] );
+        transformInfo.setView( computeView() );
     }
+    gmtl::Matrix44f tempMat4;
+    gmtl::convert( tempMat4, transformInfo.getViewProj() );
+    _viewProjUniform[ drawInfo._id ]->set( tempMat4 );
     _viewProjUniform[ drawInfo._id ]->execute( drawInfo );
+    gmtl::Matrix33f tempMat3;
+    gmtl::convert( tempMat3, transformInfo.getModelViewInvTrans() );
+    _normalUniform[ drawInfo._id ]->set( tempMat3 );
     _normalUniform[ drawInfo._id ]->execute( drawInfo );
 
     // Render all Drawables.
-    BOOST_FOREACH( jagDraw::Node& dp, _drawNodes )
+    BOOST_FOREACH( jagDraw::Node& node, _drawNodes )
     {
-        dp.execute( drawInfo );
+        node.execute( drawInfo );
     }
 
     glFlush();
@@ -254,48 +255,30 @@ void JagLoadDemo::reshape( const int w, const int h )
         return;
 
     const jagDraw::jagDrawContextID contextID( jagDraw::ContextSupport::instance()->getActiveContext() );
-    _proj._data[ contextID ] = computeProjection( (float)w/(float)h );
+    _proj._data[ contextID ] = computeProjection( (double)w/(double)h );
 }
 
-gmtl::Matrix44f JagLoadDemo::computeProjection( float aspect )
+gmtl::Matrix44d JagLoadDemo::computeProjection( double aspect )
 {
     if( !( _bs.valid() ) )
-        return( gmtl::MAT_IDENTITY44F );
+        return( gmtl::MAT_IDENTITY44D );
 
-    gmtl::Matrix44f proj;
-    float zNear = 3.5 * _bs.radius();
-    float zFar = 5.75 * _bs.radius();
-    gmtl::setPerspective< float >( proj, 30., aspect, zNear, zFar );
+    gmtl::Matrix44d proj;
+    const double zNear = 3.5 * _bs.radius();
+    const double zFar = 5.75 * _bs.radius();
+    gmtl::setPerspective< double >( proj, 30., aspect, zNear, zFar );
 
     return( proj );
 }
 
-void JagLoadDemo::makeViewMatrices( gmtl::Matrix44f& view, gmtl::Matrix33f& normal )
+gmtl::Matrix44d JagLoadDemo::computeView()
 {
     const osg::Vec3 osgEye( _bs.center() + ( osg::Vec3( 0., -4., 1.5 ) * _bs.radius() ) );
-    const gmtl::Point3f eye( osgEye[ 0 ], osgEye[ 1 ], osgEye[ 2 ] );
-    const gmtl::Point3f center( _bs.center()[ 0 ], _bs.center()[ 1 ], _bs.center()[ 2 ] );
-    const gmtl::Vec3f up( 0.f, 0.f, 1.f );
+    const gmtl::Point3d eye( osgEye[ 0 ], osgEye[ 1 ], osgEye[ 2 ] );
+    const gmtl::Point3d center( _bs.center()[ 0 ], _bs.center()[ 1 ], _bs.center()[ 2 ] );
+    const gmtl::Vec3d up( 0., 0., 1. );
 
+    gmtl::Matrix44d view;
     gmtl::setLookAt( view, eye, center, up );
-    normal = computeNormalMatrix( view );
-}
-
-gmtl::Matrix33f JagLoadDemo::computeNormalMatrix( const gmtl::Matrix44f& in )
-{
-    gmtl::Matrix33f tempIn;
-    for( unsigned int r=0; r<3; r++ )
-        for( unsigned int c=0; c<3; c++ )
-            tempIn( r, c ) = in( r, c );
-
-#if 0
-    // TBD
-    // Normals convert to eye coords using the inversetranspose
-    // of the upper left 3x3 of the modelview matrix.
-    gmtl::Matrix33f invIn, result;
-    gmtl::invert( invIn, tempIn );
-    gmtl::transpose( result, invIn );
-#endif
-
-    return( tempIn );
+    return( view );
 }
