@@ -10,14 +10,22 @@
 
 \section JagOverview Overview
 
+
 \subsection jagBase
 
-\li \ref jagBaseVersion "Version Utilities"
+\li \link jagBase::Transform Utility for model, view, and projection matrices \endlink
+\li \ref jagVersion "Version Utilities"
 \li \ref jagBaseLogging "Message Logging Utilities"
+
 
 \subsection jagDisk
 
-Documentation TBD.
+This module provides a plugin infrastructure to support writing and loading
+data to and from various formats. The architecture is inspired by OpenSceneGraph's
+analogous system, but uses Poco for platform-independent plugin loading.
+
+\li \ref PluginSupport "Plugin Interface and Utilities"
+
 
 \subsection jagDraw
 
@@ -30,10 +38,9 @@ compatible (GL4cpfc) context. (Note that Jag3D currently supports OSX 10.7,
 which is OpenGL 3.2 core profile, but this support is likely to be dropped as
 soon as OSX moves forward with a more current OpenGL version.)
 
-Note that hardware mipmap generation is unavailable in GL4cpfc. Jag3D will need
-host-side image filtering code to replace this functionality.
-
 Direct OpenGL support:
+\li \ref jagVersion "OpenGL V
+ersion Queries"
 \li \ref OpenGLAbstraction "OpenGL Abstraction Support"
 \li \ref jagDrawError "OpenGL Errors"
 \li \link jagDraw::VertexAttrib Generic Vertex Attributes \endlink
@@ -43,26 +50,46 @@ Direct OpenGL support:
 \li \link jagDraw::Shader Shader Objects \endlink
 \li \link jagDraw::Program Program Objects \endlink
 \li \link jagDraw::Uniform Uniform Variables \endlink
+\li \link jagDraw::UniformBlock Uniform Blocks \endlink
+\li \link jagDraw::Framebuffer Framebuffer Objects \endlink
+\li \link jagDraw::Texture Texture Objects \endlink
 
 Higher level constructs:
 \li \link jagDraw::Drawable Drawable Objects \endlink
+\li \link jagDraw::CommandMap Support for storing and sorting collections of commands \endlink
+\li \link jagDraw::DrawInfo Render-time management \endlink
+\li \link jagDraw::Node Association of DrawablePrep objects and Drawables \endlink
+
 
 \subsection jagSG
 
-jagSG, the scene graph module, does not currently exist.
+This module provides scene graph functionality layered on top of jagDraw and jagBase.
+Scene graphs can be created programmatically, or by using a jagDisk plugin
+to create a scene graph from a loaded model file.
+
+\li \link jagSG::Node Scene graph data structure element \endlink
+\li \link jagSG::VisitorBase Base class to support Visitor design pattern. \endlink
+\li \link jagSG::Visitor Visitor with child Node traversal control \endlink
+\li \link jagSG::ExecuteVisitor Immediate mode traverse-and-render \endlink
+\li jagSG::CullVisitor - Not yet implemented; under development
+
 
 \subsection ProjectRoadmap Upcoming Work and Project Notes
 
+For inclusion in v0.00.03 tag:
+\li Need to implement CullVisitor.
+\li "State sorting" (sorting Drawables based on the commands that configure GL for
+rendering) is implemented but currently untested.
+\li Need to develop a model loading plugin, initially OSG-based, but soon add one that
+uses Open Asset Import Library.
+
+Beyond v0.00.03:
 \li Vertex array objects and uniform blocks need to track changes. Uniform blocks,
 in particular, always copy their values into the block.
 \li See jagDraw::Uniform documentation for potential optimizations and use cases
 that Jag3D should support.
-\li "State sorting" (sorting Drawables based on the commands that configure GL for
-rendering) needs to be implemented.
-\li Need to start developing jagSG (scene graph module) and visitor pattern.
 \li Design for cache misses: avoid-cache-misses.pdf
-\li Need to develop a model loading plugin, initially OSG-based, but soon add one that
-uses Open Asset Import Library.
+\li Add software mipmap generation. Hardware support for this is unavailable in GL4cpfc.
 
 
 \section JagBuild Building Jag3D
@@ -143,7 +170,7 @@ found during CMake configuration.
 
 The variable JAG3D_USE_GL3W must be ON for Windows builds and OFF for all other platforms.
 
-\subsection BuildBuilding Building Jag3D from Source
+\subsection BuildBuilding Build Jag3D
 
 After CMake is completely configured, build the entire project. For Windows, enter
 Visual Studio and do a batch build. For Unix/Linix/OSX makefiles, use the \c make command.
@@ -154,6 +181,13 @@ Visual Studio and do a batch build. For Unix/Linix/OSX makefiles, use the \c mak
 After a successful build, you should be able to perform a simple test by executing the
 \c drawable test. The name of the executable will have the windowing toolkit appended. For
 example, \c drawable-freeglut, \c drawable-vrj, or \c drawable-qt.
+
+If you have checked the CMake variable JAG3D_BUILD_UNITTESTS, you can also run the test
+suite. If using Visual Studio in Windows, right-click RUN_TESTS and select Build. If
+using Makefiles, issue this command:
+\code
+make tests
+\endcode
 
 Other examples and tests require you to set environment variables:
 \li JAG3D_PLUGIN_PATH should be set to the directory containing Jag3D's plugin libraries

@@ -34,6 +34,10 @@ namespace jagDisk {
 class Options;
 
 
+/** \addtogroup PluginSupport Plugin Support
+*/
+/**@{*/
+
 /** \brief
 \details
 */
@@ -43,6 +47,8 @@ JAGDISK_EXPORT void* read( const std::string& fileName, const Options* options=N
 \details
 */
 JAGDISK_EXPORT bool write( const std::string& fileName, const void* data, const Options* options=NULL );
+
+/**@}*/
 
 
 // jagDisk
