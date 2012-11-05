@@ -1,7 +1,8 @@
 #version 140
 
-uniform mat4 viewProjectionMatrix;
-uniform mat3 normalMatrix;
+uniform mat4 jagModelViewProjMatrix;
+uniform mat3 jagModelViewInvTransMatrix;
+
 uniform vec3 ecLightDir;
 uniform blockTest {
     float ambientScene;
@@ -14,9 +15,9 @@ out vec4 color;
 
 void main()
 {
-    vec3 ecNormal = normalize( normalMatrix * normal );
+    vec3 ecNormal = normalize( jagModelViewInvTransMatrix * normal );
     float diffuse = max( dot( ecLightDir, ecNormal ), 0. );
     color = vec4( ambientScene ) + vec4( diffuseMat * diffuse, 1. );
 
-    gl_Position = viewProjectionMatrix * vertex;
+    gl_Position = jagModelViewProjMatrix * vertex;
 } 

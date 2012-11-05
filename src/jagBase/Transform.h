@@ -79,6 +79,55 @@ public:
     }
 
 
+    enum {
+        VIEW_PROJ_DIRTY = 0x1 << 0,
+        MODEL_VIEW_PROJ_DIRTY = 0x1 << 1,
+        MODEL_VIEW_DIRTY = 0x1 << 2,
+        MODEL_VIEW_INV_TRANS_DIRTY = 0x1 << 3,
+        PROJ_INV_DIRTY = 0x1 << 4,
+        VIEW_INV_DIRTY = 0x1 << 5,
+        MODEL_INV_DIRTY = 0x1 << 6,
+        VIEW_PROJ_INV_DIRTY = 0x1 << 7,
+        MODEL_VIEW_PROJ_INV_DIRTY = 0x1 << 8,
+        MODEL_VIEW_INV_DIRTY = 0x1 << 9,
+
+        ALL_PROJ_DIRTY = ( VIEW_PROJ_DIRTY |
+                           MODEL_VIEW_PROJ_DIRTY |
+                           PROJ_INV_DIRTY |
+                           VIEW_PROJ_INV_DIRTY |
+                           MODEL_VIEW_PROJ_INV_DIRTY ),
+
+        ALL_VIEW_DIRTY = ( VIEW_PROJ_DIRTY |
+                           MODEL_VIEW_PROJ_DIRTY |
+                           MODEL_VIEW_DIRTY |
+                           MODEL_VIEW_INV_TRANS_DIRTY |
+                           VIEW_INV_DIRTY |
+                           VIEW_PROJ_INV_DIRTY |
+                           MODEL_VIEW_PROJ_INV_DIRTY |
+                           MODEL_VIEW_INV_DIRTY ),
+
+        ALL_MODEL_DIRTY = ( MODEL_VIEW_PROJ_DIRTY |
+                            MODEL_VIEW_DIRTY |
+                            MODEL_VIEW_INV_TRANS_DIRTY |
+                            MODEL_INV_DIRTY |
+                            MODEL_VIEW_PROJ_INV_DIRTY |
+                            MODEL_VIEW_INV_DIRTY ),
+
+        ALL_DIRTY = ( ALL_PROJ_DIRTY |
+                      ALL_VIEW_DIRTY |
+                      ALL_MODEL_DIRTY )
+    };
+
+    unsigned int getDirty()
+    {
+        return( _dirty );
+    }
+    void setDirty( unsigned int dirty=ALL_DIRTY )
+    {
+        _dirty = dirty;
+    }
+
+
     void setProj( const M4TYPE& proj )
     {
         _proj = proj;
@@ -230,45 +279,6 @@ protected:
     M4TYPE _viewProjInv;
     M4TYPE _modelViewProjInv;
     M4TYPE _modelViewInv;
-
-    enum {
-        VIEW_PROJ_DIRTY = 0x1 << 0,
-        MODEL_VIEW_PROJ_DIRTY = 0x1 << 1,
-        MODEL_VIEW_DIRTY = 0x1 << 2,
-        MODEL_VIEW_INV_TRANS_DIRTY = 0x1 << 3,
-        PROJ_INV_DIRTY = 0x1 << 4,
-        VIEW_INV_DIRTY = 0x1 << 5,
-        MODEL_INV_DIRTY = 0x1 << 6,
-        VIEW_PROJ_INV_DIRTY = 0x1 << 7,
-        MODEL_VIEW_PROJ_INV_DIRTY = 0x1 << 8,
-        MODEL_VIEW_INV_DIRTY = 0x1 << 9,
-
-        ALL_PROJ_DIRTY = ( VIEW_PROJ_DIRTY |
-                           MODEL_VIEW_PROJ_DIRTY |
-                           PROJ_INV_DIRTY |
-                           VIEW_PROJ_INV_DIRTY |
-                           MODEL_VIEW_PROJ_INV_DIRTY ),
-
-        ALL_VIEW_DIRTY = ( VIEW_PROJ_DIRTY |
-                           MODEL_VIEW_PROJ_DIRTY |
-                           MODEL_VIEW_DIRTY |
-                           MODEL_VIEW_INV_TRANS_DIRTY |
-                           VIEW_INV_DIRTY |
-                           VIEW_PROJ_INV_DIRTY |
-                           MODEL_VIEW_PROJ_INV_DIRTY |
-                           MODEL_VIEW_INV_DIRTY ),
-
-        ALL_MODEL_DIRTY = ( MODEL_VIEW_PROJ_DIRTY |
-                            MODEL_VIEW_DIRTY |
-                            MODEL_VIEW_INV_TRANS_DIRTY |
-                            MODEL_INV_DIRTY |
-                            MODEL_VIEW_PROJ_INV_DIRTY |
-                            MODEL_VIEW_INV_DIRTY ),
-
-        ALL_DIRTY = ( ALL_PROJ_DIRTY |
-                      ALL_VIEW_DIRTY |
-                      ALL_MODEL_DIRTY )
-    };
 
     unsigned int _dirty;
 };

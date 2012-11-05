@@ -23,6 +23,8 @@
 
 #include <jagSG/Export.h>
 #include <jagSG/Visitor.h>
+#include <jagBase/Transform.h>
+#include <jagDraw/Uniform.h>
 #include <jagBase/ptr.h>
 
 
@@ -44,6 +46,10 @@ public:
 
     /** \brief TBD
     \details TBD */
+    void setViewProj( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj );
+
+    /** \brief TBD
+    \details TBD */
     void reset();
 
     /** \brief TBD
@@ -51,7 +57,10 @@ public:
     virtual void visit( jagSG::Node& node );
 
 protected:
+    void updateTransformUniforms();
+
     jagDraw::DrawInfo& _drawInfo;
+    jagBase::TransformD _transform;
 };
 
 typedef jagBase::ptr< jagSG::ExecuteVisitor >::shared_ptr ExecuteVisitorPtr;

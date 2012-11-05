@@ -20,6 +20,7 @@
 
 #include <jagSG/ExecuteVisitor.h>
 #include <jagDraw/DrawInfo.h>
+#include <jagBase/gmtlSupport.h>
 #include <jagDraw/Error.h>
 #include <jagBase/LogMacros.h>
 
@@ -41,11 +42,19 @@ ExecuteVisitor::ExecuteVisitor( jagDraw::DrawInfo& drawInfo, jagSG::Node& node )
 }
 ExecuteVisitor::ExecuteVisitor( const ExecuteVisitor& rhs )
   : Visitor( rhs ),
-    _drawInfo( rhs._drawInfo )
+    _drawInfo( rhs._drawInfo ),
+    _transform( rhs._transform )
 {
 }
 ExecuteVisitor::~ExecuteVisitor()
 {
+}
+
+
+void ExecuteVisitor::setViewProj( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj )
+{
+    _transform.setView( view );
+    _transform.setProj( proj );
 }
 
 
@@ -62,8 +71,18 @@ void ExecuteVisitor::visit( jagSG::Node& node )
 {
     JAG3D_TRACE( "visit()" );
 
-    pushMatrix( node.getTransform() );
     pushCommandMap( node.getCommandMap() );
+
+    const bool modelDirty( node.getTransform() != gmtl::MAT_IDENTITY44D );
+    if( modelDirty )
+    {
+        pushMatrix( node.getTransform() );
+        _transform.setModel( _matrixStack.back() );
+    }
+    if( _transform.getDirty() != 0 )
+        updateTransformUniforms();
+
+
     _commandStack.back().execute( _drawInfo );
 
     // Execute the drawables
@@ -71,8 +90,35 @@ void ExecuteVisitor::visit( jagSG::Node& node )
 
     Visitor::visit( node );
 
+
+    if( modelDirty )
+        popMatrix();
+
     popCommandMap();
-    popMatrix();
+}
+
+
+void ExecuteVisitor::updateTransformUniforms()
+{
+    jagDraw::UniformSetPtr usp( new jagDraw::UniformSet() );
+
+    if( _transform.getDirty() & jagBase::TransformD::MODEL_VIEW_PROJ_DIRTY )
+    {
+        gmtl::Matrix44f mvpMat;
+        gmtl::convert( mvpMat, _transform.getModelViewProj() );
+        jagDraw::UniformPtr modelViewProj( new jagDraw::Uniform( "jagModelViewProjMatrix", mvpMat ) );
+        usp->insert( modelViewProj );
+    }
+    if( _transform.getDirty() & jagBase::TransformD::MODEL_VIEW_INV_TRANS_DIRTY )
+    {
+        gmtl::Matrix33f mvitMat;
+        gmtl::convert( mvitMat, _transform.getModelViewInvTrans() );
+        jagDraw::UniformPtr modelViewInvTrans( new jagDraw::Uniform( "jagModelViewInvTransMatrix", mvitMat ) );
+        usp->insert( modelViewInvTrans );
+    }
+    _commandStack.back().insert( usp, true );
+
+    _transform.setDirty( 0 );
 }
 
 

@@ -61,7 +61,7 @@ public:
     }
 
 protected:
-    jagSG::NodePtr makeScene( const gmtl::Point3f& offset );
+    jagSG::NodePtr makeScene( const gmtl::Point3f& offset, const gmtl::Matrix44d& trans=gmtl::MAT_IDENTITY44D );
 
     gmtl::Matrix44d computeProjection( double aspect );
     gmtl::Matrix44d computeView();
@@ -84,7 +84,7 @@ DemoInterface* DemoInterface::create( bpo::options_description& desc )
     return( new NodesDemo );
 }
 
-jagSG::NodePtr NodesDemo::makeScene( const gmtl::Point3f& offset )
+jagSG::NodePtr NodesDemo::makeScene( const gmtl::Point3f& offset, const gmtl::Matrix44d& trans )
 {
     jagDraw::CommandMapPtr commands( jagDraw::CommandMapPtr( new jagDraw::CommandMap() ) );
     jagDraw::DrawablePtr drawable( jagDraw::DrawablePtr( new jagDraw::Drawable() ) );
@@ -122,6 +122,8 @@ jagSG::NodePtr NodesDemo::makeScene( const gmtl::Point3f& offset )
     node->setCommandMap( commands );
     node->addDrawable( drawable );
 
+    node->setTransform( trans );
+
     return( node );
 }
 
@@ -129,7 +131,10 @@ bool NodesDemo::startup( const unsigned int numContexts )
 {
     _scene = makeScene( gmtl::Point3f( 0.f, 1.f, .5f ) );
     _scene->addChild( makeScene( gmtl::Point3f( -1.f, 0.f, 0.f ) ) );
-    _scene->addChild( makeScene( gmtl::Point3f( 1.1f, -.25f, 0.f ) ) );
+
+    gmtl::Matrix44d mat;
+    mat = gmtl::make( gmtl::AxisAngled( 1., 1., 0., 0. ), gmtl::Type2Type< gmtl::Matrix44d >() );
+    _scene->addChild( makeScene( gmtl::Point3f( 1.1f, -.25f, 0.f ), mat ) );
 
 
     jagDraw::CommandMapPtr commands( _scene->getCommandMap() );
@@ -240,20 +245,23 @@ bool NodesDemo::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj 
     {
         transformInfo.setProj( proj );
         transformInfo.setView( view );
+        execVisitor.setViewProj( view, proj );
     }
     else
     {
         transformInfo.setProj( _proj._data[ contextID ] );
         transformInfo.setView( computeView() );
+        execVisitor.setViewProj( computeView(), _proj._data[ contextID ] );
     }
     gmtl::Matrix44f tempMat4;
     gmtl::convert( tempMat4, transformInfo.getViewProj() );
     _viewProjUniform[ drawInfo._id ]->set( tempMat4 );
-    _viewProjUniform[ drawInfo._id ]->execute( drawInfo );
+    //_viewProjUniform[ drawInfo._id ]->execute( drawInfo );
     gmtl::Matrix33f tempMat3;
     gmtl::convert( tempMat3, transformInfo.getModelViewInvTrans() );
     _normalUniform[ drawInfo._id ]->set( tempMat3 );
-    _normalUniform[ drawInfo._id ]->execute( drawInfo );
+    //_normalUniform[ drawInfo._id ]->execute( drawInfo );
+
 
     // Render all Drawables.
     _scene->accept( execVisitor );
