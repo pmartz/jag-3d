@@ -63,7 +63,7 @@ Requires efficiency enhancements. Consider the following scenarios:
   }
 \endcode
 
-In the above scenario, Uniform::operator() should result in a
+In the above scenario, Uniform::execute() should result in a
 call to glUniform*() only in the first frame, but not subsequent
 frames because the uniform value is automatically restored when
 program A is re-bound.
@@ -85,7 +85,7 @@ Jag3D supports multiple Uniform instances that all have the same name,
 and therefore all map to the same GLSL uniform variable. This is the
 case in the above scenario. In such a scenario, the two separate Uniform
 instances must always call glUniform*() to set their different values.
-Currently this already happens, becahse Uniform::operator() is dumb and
+Currently this already happens, becahse Uniform::execute() is dumb and
 simply always sets its value. This will change in the future when
 Uniform becomes "smarter", but we must keep this scenario in mind when
 we make that change.
@@ -100,7 +100,7 @@ public:
     Uniform( const std::string& name );
     /** \brief Constructor, specified uniform name and type.
     \details \param type from OpenGL spec table 2.10. */
-    Uniform( const std::string& name, const GLenum type );
+    explicit Uniform( const std::string& name, const GLenum type );
     /** \brief Constructor, specifically for creation of sampler uniforms.
     \detauls \param type from OpenGL spec table 2.10.
     \param v Sampler texture unit. */

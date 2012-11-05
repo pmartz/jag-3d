@@ -67,7 +67,7 @@ public:
     virtual void execute( DrawInfo& drawInfo )
     {
         // Program::use() must be called prior to VertexAttrib::operator().
-        // Note this is different from Uniform::operator(). This means we can simply
+        // Note this is different from Uniform::execute(). This means we can simply
         // look up the vertex attrib hash index without bothering to check for
         // ( drawInfo._current[ Program_t ] != NULL ) first.
 

@@ -249,7 +249,7 @@ void Uniform::execute( DrawInfo& drawInfo, const GLint loc ) const
         }
     }
 
-    const GLenum errorEnum( JAG3D_ERROR_CHECK( "Uniform::operator()" ) );
+    const GLenum errorEnum( JAG3D_ERROR_CHECK( "Uniform::execute()" ) );
     if( JAG3D_LOG_CRITICAL && ( errorEnum == GL_INVALID_OPERATION ) )
     {
         JAG3D_CRITICAL( "\tVariable \"" + _name + "\": Possible type mismatch between host and shader." );
@@ -262,7 +262,7 @@ void Uniform::execute( DrawInfo& drawInfo )
     // for the current frame and draw thread.
     drawInfo._uniformMap[ _indexHash ] = shared_from_this();
 
-    // Uniform::operator() could execute before Program::operator(),
+    // Uniform::execute() could execute before Program::operator(),
     // so only look up uniform location if a Program is available.
     if( drawInfo._current.contains( Program_t ) )
     {
