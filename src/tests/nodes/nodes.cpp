@@ -71,9 +71,6 @@ protected:
     typedef jagDraw::PerContextData< gmtl::Matrix44d > PerContextMatrix44d;
     PerContextMatrix44d _proj;
     jagDraw::BoundPtr _bSphere;
-
-    jagDraw::PerContextData< jagDraw::UniformPtr > _viewProjUniform;
-    jagDraw::PerContextData< jagDraw::UniformPtr > _normalUniform;
 };
 
 
@@ -185,7 +182,7 @@ bool NodesDemo::startup( const unsigned int numContexts )
         new jagDraw::Uniform( "diffuseMat", gmtl::Point3f( 0.f, .7f, 0.9f ) ) ) );
     commands->insert( ubp );
 
-    gmtl::Vec3f lightVec( 0.5f, .7f, 1.f );
+    gmtl::Vec3f lightVec( .5f, .7f, 1.f );
     gmtl::normalize( lightVec );
     commands->insert( jagDraw::UniformPtr(
         new jagDraw::Uniform( "ecLightDir", lightVec ) ) );
@@ -200,13 +197,6 @@ bool NodesDemo::startup( const unsigned int numContexts )
 
     // Tell all Jag3D objects how many contexts to expect.
     _scene->setMaxContexts( numContexts );
-    for( unsigned int idx=0; idx<numContexts; ++idx )
-    {
-        _viewProjUniform._data.push_back( jagDraw::UniformPtr(
-            new jagDraw::Uniform( "viewProjectionMatrix", gmtl::MAT_IDENTITY44F ) ) );
-        _normalUniform._data.push_back( jagDraw::UniformPtr(
-            new jagDraw::Uniform( "normalMatrix", gmtl::MAT_IDENTITY33F ) ) );
-    }
 
 
     return( DemoInterface::startup( numContexts ) );
@@ -240,27 +230,10 @@ bool NodesDemo::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj 
     jagSG::ExecuteVisitor execVisitor( drawInfo );
 
     // Systems such as VRJ will pass view and projection matrices.
-    jagBase::TransformD transformInfo;
     if( view.mState != gmtl::Matrix44f::IDENTITY || proj.mState != gmtl::Matrix44f::IDENTITY )
-    {
-        transformInfo.setProj( proj );
-        transformInfo.setView( view );
         execVisitor.setViewProj( view, proj );
-    }
     else
-    {
-        transformInfo.setProj( _proj._data[ contextID ] );
-        transformInfo.setView( computeView() );
         execVisitor.setViewProj( computeView(), _proj._data[ contextID ] );
-    }
-    gmtl::Matrix44f tempMat4;
-    gmtl::convert( tempMat4, transformInfo.getViewProj() );
-    _viewProjUniform[ drawInfo._id ]->set( tempMat4 );
-    //_viewProjUniform[ drawInfo._id ]->execute( drawInfo );
-    gmtl::Matrix33f tempMat3;
-    gmtl::convert( tempMat3, transformInfo.getModelViewInvTrans() );
-    _normalUniform[ drawInfo._id ]->set( tempMat3 );
-    //_normalUniform[ drawInfo._id ]->execute( drawInfo );
 
 
     // Render all Drawables.

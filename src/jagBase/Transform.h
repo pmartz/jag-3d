@@ -177,8 +177,7 @@ public:
     {
         if( _dirty & MODEL_VIEW_PROJ_DIRTY )
         {
-            const M4TYPE& vp( getViewProj() );
-            _modelViewProj = vp * _model;
+            _modelViewProj = _proj * getModelView();
             _dirty &= ~MODEL_VIEW_PROJ_DIRTY;
         }
         return( _modelViewProj );
@@ -196,7 +195,7 @@ public:
     {
         if( _dirty & MODEL_VIEW_INV_TRANS_DIRTY )
         {
-            M4TYPE m( getModelViewInv() );
+            const M4TYPE& m( getModelViewInv() );
             // Transpose during set():
             _modelViewInvTrans.set(  m( 0, 0 ),  m( 1, 0 ),  m( 2, 0 ),
                                      m( 0, 1 ),  m( 1, 1 ),  m( 2, 1 ),
