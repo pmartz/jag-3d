@@ -134,7 +134,7 @@ protected:
 // Register the ShaderRW class with the PluginManager.
 // This macro declares a static object initialized when the plugin is loaded.
 REGISTER_READERWRITER(
-    new ShaderRW(),   // Create an instance of MyMask.
+    new ShaderRW(),   // Create an instance of ShaderRW.
     ShaderRW,         // Class name -- NOT a string.
     "ReaderWriter",   // Base class name as a string.
     "Read and write shaders to disk."  // Description text.

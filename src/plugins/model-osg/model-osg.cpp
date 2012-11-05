@@ -43,30 +43,29 @@ using namespace jagDisk;
 */
 /**@{*/
 
-/** \class ImageRW
-\brief OSG-based image data loader.
+/** \class ModelRW
+\brief OSG-based model data loader.
 */
-class ImageRW : public ReaderWriter
+class ModelRW : public ReaderWriter
 {
 public:
-    ImageRW()
-      : ReaderWriter( "image" )
+    ModelRW()
+      : ReaderWriter( "model" )
     {}
-    virtual ~ImageRW()
+    virtual ~ModelRW()
     {}
 
     virtual bool supportsExtension( const std::string& extension )
     {
         const std::string allLower( Poco::toLower( extension ) );
         return( ( extension == "gif" ) ||
-            ( extension == "jpg" ) ||
-            ( extension == "jpeg" ) ||
-            ( extension == "tif" ) ||
-            ( extension == "tiff" ) ||
-            ( extension == "bmp" ) ||
-            ( extension == "png" ) ||
-            ( extension == "rgb" ) ||
-            ( extension == "rgba" )
+            ( extension == "osg" ) ||
+            ( extension == "osgt" ) ||
+            ( extension == "ive" ) ||
+            ( extension == "osgb" ) ||
+            ( extension == "flt" ) ||
+            ( extension == "3ds" ) ||
+            ( extension == "obj" )
             );
     }
 
@@ -163,15 +162,15 @@ protected:
 // Register the ShaderRW class with the PluginManager.
 // This macro declares a static object initialized when the plugin is loaded.
 REGISTER_READERWRITER(
-    new ImageRW(),   // Create an instance of ImageRW.
-    ImageRW,         // Class name -- NOT a string.
+    new ModelRW(),   // Create an instance of ModelRW.
+    ModelRW,         // Class name -- NOT a string.
     "ReaderWriter",   // Base class name as a string.
-    "Read and write images to disk using OSG dependency."  // Description text.
+    "Read and write models to disk using OSG dependency."  // Description text.
 );
 
 
 // Poco ClassLibrary manifest registration. Add a POCO_EXPORT_CLASS
 // for each ReaderWriter class in the plugin.
 POCO_BEGIN_MANIFEST( ReaderWriter )
-    POCO_EXPORT_CLASS( ImageRW )
+    POCO_EXPORT_CLASS( ModelRW )
 POCO_END_MANIFEST
