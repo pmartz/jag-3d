@@ -8,7 +8,7 @@
 : ReaderWriter, list all extensions here. Separate extensions
 : with a semicolon, and do not include periods.
 
-Extensions = *
+Extensions = jpg;jpeg;tif;tiff;bmp;gif;png
 
 
 
