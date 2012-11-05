@@ -66,7 +66,7 @@ public:
 
     virtual void execute( DrawInfo& drawInfo )
     {
-        // Program::use() must be called prior to VertexAttrib::operator().
+        // Program::use() must be called prior to VertexAttrib::execute().
         // Note this is different from Uniform::execute(). This means we can simply
         // look up the vertex attrib hash index without bothering to check for
         // ( drawInfo._current[ Program_t ] != NULL ) first.
@@ -132,7 +132,7 @@ public:
     virtual ~VertexAttribI()
     {}
 
-    virtual void operator()( jagDraw::DrawInfo& drawInfo )
+    virtual void execute( DrawInfo& drawInfo )
     {
         // TBD need an "explicit" mode where the location is set by the app
         // (because it uses glBindAttribLocation). This would avoid the table lookup.

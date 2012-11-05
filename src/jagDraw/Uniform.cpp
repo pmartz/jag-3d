@@ -244,7 +244,7 @@ void Uniform::execute( DrawInfo& drawInfo, const GLint loc ) const
 
 
             default:
-                JAG3D_ERROR( "operator(): Type unsupported." );
+                JAG3D_ERROR( "execute(): Type unsupported." );
                 break;
         }
     }
@@ -262,7 +262,7 @@ void Uniform::execute( DrawInfo& drawInfo )
     // for the current frame and draw thread.
     drawInfo._uniformMap[ _indexHash ] = shared_from_this();
 
-    // Uniform::execute() could execute before Program::operator(),
+    // Uniform::execute() could execute before Program::execute(),
     // so only look up uniform location if a Program is available.
     if( drawInfo._current.contains( Program_t ) )
     {

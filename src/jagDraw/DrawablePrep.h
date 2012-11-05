@@ -67,7 +67,7 @@ public:
     {}
     ~DrawablePrep() {}
 
-    /** \brief Activate the DrawablePrep prior to executing operator().
+    /** \brief Activate the DrawablePrep prior to calling execute().
     \details DrawablePrep objects usually do not require activation, so this is a no-op.
     However, Texture uses activate() to set the active texture. */
     virtual void activate( const unsigned int unit ) {}
