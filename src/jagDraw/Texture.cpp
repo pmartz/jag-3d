@@ -68,7 +68,7 @@ void Texture::execute( DrawInfo& drawInfo )
 
     glBindTexture( _target, getID( contextID ) );
 
-    JAG3D_ERROR_CHECK( "Texture::operator()" );
+    JAG3D_ERROR_CHECK( "Texture::execute()" );
 }
 
 GLuint Texture::getID( const jagDraw::jagDrawContextID contextID )

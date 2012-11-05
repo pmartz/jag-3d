@@ -72,7 +72,7 @@ void UniformBlock::execute( DrawInfo& drawInfo, const Program::BlockInfo& blockI
     {
         std::ostringstream ostr;
         ostr << blockInfo._bindIndex;
-        JAG3D_TRACE( "operator(): " + _name + ", bindIndex: " + ostr.str() );
+        JAG3D_TRACE( "execute(): " + _name + ", bindIndex: " + ostr.str() );
     }
 
     if( _buffer->size() < blockInfo._minSize )
@@ -101,7 +101,8 @@ void UniformBlock::execute( DrawInfo& drawInfo, const Program::BlockInfo& blockI
             HANDLE_CASE( GL_FLOAT, GLfloat )
             HANDLE_CASE( GL_FLOAT_VEC3, gmtl::Point3f )
             default:
-                JAG3D_ERROR( "operator(): Unsupported uniform type." );
+                // TBD We need to support more uniform types.
+                JAG3D_ERROR( "execute(): Unsupported uniform type." );
                 break;
             }
 
@@ -116,13 +117,13 @@ void UniformBlock::execute( DrawInfo& drawInfo, const Program::BlockInfo& blockI
 }
 void UniformBlock::execute( DrawInfo& drawInfo )
 {
-    JAG3D_TRACE( "operator(): " + _name );
+    JAG3D_TRACE( "execute(): " + _name );
 
     // Add this uniform block to the pool of potentially active uniform blocks
     // for the current frame and draw thread.
     drawInfo._uniformBlockMap[ _nameHash ] = shared_from_this();
 
-    // UniformBlock::operator() could execute before Program::operator(),
+    // UniformBlock::execute() could execute before Program::execute(),
     // so only look up uniform block info if a Program is available.
     if( drawInfo._current.contains( Program_t ) )
     {

@@ -81,8 +81,8 @@ void Framebuffer::execute( DrawInfo& drawInfo )
     if( _clear )
         glClear( _clearMask );
 
-    JAG3D_FBO_ERROR_CHECK( "Framebuffer::operator()" );
-    JAG3D_ERROR_CHECK( "Framebuffer::operator()" );
+    JAG3D_FBO_ERROR_CHECK( "Framebuffer::execute()" );
+    JAG3D_ERROR_CHECK( "Framebuffer::execute()" );
 }
 
 GLuint Framebuffer::getID( const jagDraw::jagDrawContextID contextID )
@@ -279,7 +279,7 @@ void Renderbuffer::execute( DrawInfo& drawInfo )
 
     glBindRenderbuffer( GL_RENDERBUFFER, getID( contextID ) );
 
-    JAG3D_ERROR_CHECK( "Renderbuffer::operator()" );
+    JAG3D_ERROR_CHECK( "Renderbuffer::execute()" );
 }
 
 GLuint Renderbuffer::getID( const jagDraw::jagDrawContextID contextID )

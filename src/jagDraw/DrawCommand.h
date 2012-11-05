@@ -44,7 +44,7 @@ To implement a new type of draw command:
 \li Add a new value to DrawCommandType (or use one of the existing UserDefined*
 values).
 \li Derive a class from DrawCommand.
-\li Override and define the pure virtual operator() member function.
+\li Override and define the pure virtual execute() member function.
 */
 class DrawCommand : public ObjectIDOwner
 {

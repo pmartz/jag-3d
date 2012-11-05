@@ -36,8 +36,8 @@ namespace jagDraw {
 \brief glPixelStore parameter container for sending or retrieving pixel data.
 \details The glPixelStore pack and unpack parameters differ only by the \c pname
 parameter to the glPixelStore function call. This class contains all the
-parameters, and the operator() sets them as either pack or unpack parameters
-based on the value of the specified \c unpack boolean.
+parameters, and the pack() and unpack() functions set them as either pack or
+unpack parameters respectively.
 
 The jagDraw::Image class contains a PixelStorePtr member variable. Prior to
 calling glTexImage*D(), jagDraw::Texture uses the Image PixelStore object to
