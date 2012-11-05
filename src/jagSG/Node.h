@@ -112,9 +112,16 @@ public:
     const gmtl::Matrix44d& getTransform() const;
 
 
-    /** \brief TBD Bound
-    \details TBD */
+    /** \brief Get the bound from any node based on \c commands
+    \details \c commands contains jagDraw::VertexArrayObjects, which contain
+    the vertex data required to compute the bound. */
     virtual jagDraw::BoundPtr getBound( const jagDraw::CommandMap& commands );
+    /** \brief Get bound from root node.
+    \details Assumes no default state. */
+    jagDraw::BoundPtr getBound()
+    {
+        return( getBound( jagDraw::CommandMap() ) );
+    }
 
 
     /** \brief CommandMap
