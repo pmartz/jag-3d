@@ -186,7 +186,8 @@ const NodePtr Node::getChild( const unsigned int idx ) const
 
 void Node::setMaxContexts( const unsigned int numContexts )
 {
-    _commands->setMaxContexts( numContexts );
+    if( _commands != NULL )
+        _commands->setMaxContexts( numContexts );
 
     BOOST_FOREACH( jagDraw::DrawablePtr& drawable, _drawables )
     {
@@ -200,7 +201,8 @@ void Node::setMaxContexts( const unsigned int numContexts )
 }
 void Node::deleteID( const jagDraw::jagDrawContextID contextID )
 {
-    _commands->deleteID( contextID );
+    if( _commands != NULL )
+        _commands->deleteID( contextID );
 
     BOOST_FOREACH( jagDraw::DrawablePtr& drawable, _drawables )
     {
