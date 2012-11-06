@@ -22,13 +22,15 @@
 #define __OSG_2_JAG_H__ 1
 
 #include <osg/NodeVisitor>
-#include <jagDraw/Drawable.h>
-#include <jagDraw/Node.h>
+#include <osg/Matrix>
 #include <jagBase/Buffer.h>
-
+#include <jagSG/Node.h>
 #include <osg/PrimitiveSet>
 
+
 namespace osg {
+    class Node;
+    class MatrixTransform;
     class Geometry;
     class Array;
 }
@@ -40,12 +42,24 @@ public:
     Osg2Jag();
     ~Osg2Jag();
 
-    virtual void apply( osg::Node& node );
-    virtual void apply( osg::Geode& node );
+    virtual void apply( osg::Node& osgNode );
+    virtual void apply( osg::MatrixTransform& osgNode );
 
+    virtual void apply( osg::Geode& osgNode );
+
+    jagSG::Node* getJagScene();
+
+
+protected:
     void apply( osg::Geometry* geom );
 
-    jagDraw::DrawNodeSimpleVec getJagDrawNodeVec();
+    void preTraverse( const gmtl::Matrix44d& m=gmtl::MAT_IDENTITY44D );
+    void postTraverse();
+
+
+    jagSG::Node* _jagScene;
+    jagSG::Node* _current;
+    std::vector< jagSG::Node* > _nodeStack;
 
 
     struct ArrayInfo {
@@ -61,8 +75,8 @@ public:
     ArrayInfo asJagArray( const osg::VectorGLushort* arrayIn );
     ArrayInfo asJagArray( const osg::VectorGLuint* arrayIn );
 
-protected:
-    jagDraw::DrawNodeSimpleVec _jagDrawNodes;
+    static gmtl::Matrix44d asGmtlMatrix( const osg::Matrixd& m );
+    static gmtl::Matrix44d asGmtlMatrix( const osg::Matrixf& m );
 };
 
 
