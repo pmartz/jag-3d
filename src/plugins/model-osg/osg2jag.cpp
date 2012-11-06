@@ -20,8 +20,12 @@
 
 #include "osg2jag.h"
 
+#include <osg/Node>
+#include <osg/MatrixTransform>
 #include <osg/Geode>
 #include <osg/Geometry>
+#include <osg/Array>
+#include <osg/Vec3>
 
 #include <jagDraw/Node.h>
 #include <jagDraw/CommandMap.h>
@@ -36,51 +40,96 @@
 #include <sstream>
 
 
+using namespace jagDraw;
+
+
 Osg2Jag::Osg2Jag()
-  : osg::NodeVisitor( osg::NodeVisitor::TRAVERSE_ALL_CHILDREN )
+  : osg::NodeVisitor( osg::NodeVisitor::TRAVERSE_ALL_CHILDREN ),
+    _jagScene( NULL ),
+    _current( NULL )
 {
 }
 Osg2Jag::~Osg2Jag()
 {
 }
 
-void Osg2Jag::apply( osg::Node& node )
+void Osg2Jag::apply( osg::Node& osgNode )
 {
-    JAG3D_TRACE_STATIC( "jag.demo.jagload", "Node" );
-    traverse( node );
+    JAG3D_TRACE_STATIC( "jag.plugin.model.jagload", "apply( Node& )" );
+
+    preTraverse();
+    traverse( osgNode );
+    postTraverse();
 }
-void Osg2Jag::apply( osg::Geode& node )
+void Osg2Jag::apply( osg::MatrixTransform& osgNode )
 {
-    JAG3D_TRACE_STATIC( "jag.demo.jagload", "Geode" );
+    JAG3D_TRACE_STATIC( "jag.plugin.model.jagload", "apply( Transform& )" );
+
+    preTraverse( asGmtlMatrix( osgNode.getMatrix() ) );
+    traverse( osgNode );
+    postTraverse();
+}
+void Osg2Jag::apply( osg::Geode& osgNode )
+{
+    JAG3D_TRACE_STATIC( "jag.plugin.model.jagload", "apply( Geode& )" );
+
+    preTraverse();
 
     unsigned int idx;
-    for( idx=0; idx<node.getNumDrawables(); idx++ )
+    for( idx=0; idx<osgNode.getNumDrawables(); idx++ )
     {
-        if( node.getDrawable( idx )->asGeometry() != NULL )
-            apply( node.getDrawable( idx )->asGeometry() );
+        if( osgNode.getDrawable( idx )->asGeometry() != NULL )
+            apply( osgNode.getDrawable( idx )->asGeometry() );
     }
 
-    traverse( node );
+    traverse( osgNode );
+    postTraverse();
 }
+
+void Osg2Jag::preTraverse( const gmtl::Matrix44d& m )
+{
+    if( _jagScene == NULL )
+    {
+        _jagScene = new jagSG::Node();
+        _current = _jagScene;
+    }
+    else
+    {
+        jagSG::NodePtr np( new jagSG::Node() );
+        _current->addChild( np );
+        _current = np.get();
+    }
+    _nodeStack.push_back( _current );
+
+    _current->setTransform( m );
+}
+void Osg2Jag::postTraverse()
+{
+    _nodeStack.pop_back();
+    _current = ( _nodeStack.empty() ? NULL : _nodeStack.back() );
+}
+
 
 void Osg2Jag::apply( osg::Geometry* geom )
 {
-    JAG3D_TRACE_STATIC( "jag.demo.jagload", "Geometry" );
+    JAG3D_TRACE_STATIC( "jag.plugin.model.jagload", "Geometry" );
 
     if( geom->getVertexArray() == NULL )
     {
-        JAG3D_WARNING_STATIC( "jag.demo.jagload", "Geometry has no vertex array. Skipping." );
+        JAG3D_WARNING_STATIC( "jag.plugin.model.jagload", "Geometry has no vertex array. Skipping." );
         return;
     }
 
-    jagDraw::DrawablePtr draw( jagDraw::DrawablePtr( new jagDraw::Drawable ) );
+    preTraverse();
+
+    DrawablePtr draw( DrawablePtr( new Drawable ) );
     jagDraw::CommandMapPtr commands( jagDraw::CommandMapPtr( new jagDraw::CommandMap() ) );
 
     jagDraw::VertexArrayObjectPtr vaop( new jagDraw::VertexArrayObject );
 
     const unsigned int numVertices( geom->getVertexArray()->getNumElements() );
     {
-        osg::Matrix m = osg::computeLocalToWorld( getNodePath() );
+        osg::Matrix m;// = osg::computeLocalToWorld( getNodePath() );
         ArrayInfo info( asJagArray( geom->getVertexArray(), m ) );
         jagDraw::BufferObjectPtr bop( new jagDraw::BufferObject( GL_ARRAY_BUFFER, info._buffer ) );
         vaop->addVertexArrayCommand( bop, jagDraw::VertexArrayObject::Vertex );
@@ -94,7 +143,7 @@ void Osg2Jag::apply( osg::Geometry* geom )
     {
         if( geom->getNormalBinding() != osg::Geometry::BIND_PER_VERTEX )
         {
-            JAG3D_NOTICE_STATIC( "jag.demo.jagload", "Only BIND_PER_VERTEX is currently supported." );
+            JAG3D_NOTICE_STATIC( "jag.plugin.model.jagload", "Only BIND_PER_VERTEX is currently supported." );
         }
 
         osg::Matrix m = osg::computeLocalToWorld( getNodePath() );
@@ -119,7 +168,7 @@ void Osg2Jag::apply( osg::Geometry* geom )
         {
         case osg::PrimitiveSet::DrawArraysPrimitiveType:
         {
-            JAG3D_TRACE_STATIC( "jag.demo.jagload", "DrawArrays" );
+            JAG3D_TRACE_STATIC( "jag.plugin.model.jagload", "DrawArrays" );
 
             const osg::DrawArrays* da( static_cast< const osg::DrawArrays* >( ps ) );
             jagDraw::DrawArraysPtr drawcom( new jagDraw::DrawArrays(
@@ -129,7 +178,7 @@ void Osg2Jag::apply( osg::Geometry* geom )
         }
         case osg::PrimitiveSet::DrawArrayLengthsPrimitiveType:
         {
-            JAG3D_TRACE_STATIC( "jag.demo.jagload", "DrawArrayLengths" );
+            JAG3D_TRACE_STATIC( "jag.plugin.model.jagload", "DrawArrayLengths" );
 
             const osg::DrawArrayLengths* dal( static_cast< const osg::DrawArrayLengths* >( ps ) );
             const unsigned int size( dal->size() );
@@ -156,7 +205,7 @@ void Osg2Jag::apply( osg::Geometry* geom )
         }
         case osg::PrimitiveSet::DrawElementsUBytePrimitiveType:
         {
-            JAG3D_TRACE_STATIC( "jag.demo.jagload", "DrawElementsUByte" );
+            JAG3D_TRACE_STATIC( "jag.plugin.model.jagload", "DrawElementsUByte" );
 
             const osg::DrawElementsUByte* deub( static_cast< const osg::DrawElementsUByte* >( ps ) );
             ArrayInfo info( asJagArray( deub ) );
@@ -169,7 +218,7 @@ void Osg2Jag::apply( osg::Geometry* geom )
         }
         case osg::PrimitiveSet::DrawElementsUShortPrimitiveType:
         {
-            JAG3D_TRACE_STATIC( "jag.demo.jagload", "DrawElementsUShort" );
+            JAG3D_TRACE_STATIC( "jag.plugin.model.jagload", "DrawElementsUShort" );
 
             const osg::DrawElementsUShort* deus( static_cast< const osg::DrawElementsUShort* >( ps ) );
             ArrayInfo info( asJagArray( deus ) );
@@ -182,7 +231,7 @@ void Osg2Jag::apply( osg::Geometry* geom )
         }
         case osg::PrimitiveSet::DrawElementsUIntPrimitiveType:
         {
-            JAG3D_TRACE_STATIC( "jag.demo.jagload", "DrawElementsUInt" );
+            JAG3D_TRACE_STATIC( "jag.plugin.model.jagload", "DrawElementsUInt" );
 
             const osg::DrawElementsUInt* deui( static_cast< const osg::DrawElementsUInt* >( ps ) );
             ArrayInfo info( asJagArray( deui ) );
@@ -195,20 +244,21 @@ void Osg2Jag::apply( osg::Geometry* geom )
         }
         default:
         {
-            JAG3D_ERROR_STATIC( "jag.demo.jagload", "Osg2Jag::apply(Geometry&): Unsupported osg::PrimitiveSet::Type." );
+            JAG3D_ERROR_STATIC( "jag.plugin.model.jagload", "Osg2Jag::apply(Geometry&): Unsupported osg::PrimitiveSet::Type." );
             break;
         }
         }
     }
 
-    jagDraw::Node drawNode( commands );
-    drawNode.addDrawable( draw );
-    _jagDrawNodes.push_back( drawNode );
+    _current->setCommandMap( commands );
+    _current->addDrawable( draw );
+
+    postTraverse();
 }
 
-jagDraw::DrawNodeSimpleVec Osg2Jag::getJagDrawNodeVec()
+jagSG::Node* Osg2Jag::getJagScene()
 {
-    return( _jagDrawNodes );
+    return( _jagScene );
 }
 
 
@@ -247,14 +297,14 @@ Osg2Jag::ArrayInfo Osg2Jag::asJagArray( const osg::Array* arrayIn, const osg::Ma
     }
     default:
     {
-        JAG3D_ERROR_STATIC( "jag.demo.jagload", "Osg2Jag::asJagArray(): Unsupported osg::Array::Type." );
+        JAG3D_ERROR_STATIC( "jag.plugin.model.jagload", "Osg2Jag::asJagArray(): Unsupported osg::Array::Type." );
         break;
     }
     }
 
     std::ostringstream ostr;
     ostr << "Processed array of size " << info._numElements;
-    JAG3D_INFO_STATIC( "jag.demo.jagload", std::string(ostr.str()) );
+    JAG3D_INFO_STATIC( "jag.plugin.model.jagload", std::string(ostr.str()) );
 
     return( info );
 }
@@ -317,4 +367,16 @@ Osg2Jag::ArrayInfo Osg2Jag::asJagArray( const osg::VectorGLuint* arrayIn )
     jagBase::BufferPtr bp( new jagBase::Buffer( size * sizeof( GLuint ), (void*)&out[0] ) );
     info._buffer = bp;
     return( info );
+}
+
+gmtl::Matrix44d Osg2Jag::asGmtlMatrix( const osg::Matrixd& m )
+{
+    gmtl::Matrix44d result;
+    result.set( m.ptr() );
+    return( result );
+}
+gmtl::Matrix44d Osg2Jag::asGmtlMatrix( const osg::Matrixf& m )
+{
+    osg::Matrixd md( m );
+    return( asGmtlMatrix( md ) );
 }

@@ -20,22 +20,20 @@
 
 #include <jagDisk/PluginManager.h>
 #include <jagDisk/ReaderWriter.h>
+#include <jagSG/Node.h>
 #include <Poco/ClassLibrary.h>
 #include <Poco/Path.h>
 #include <Poco/String.h>
 
-#include <jagBase/Buffer.h>
-#include <jagDraw/Image.h>
-#include <jagDraw/PixelStore.h>
+#include "osg2jag.h"
 
 #include <osgDB/ReadFile>
 #include <osgDB/WriteFile>
-#include <osg/Image>
+#include <osg/Node>
 
 #include <fstream>
 
 
-using namespace jagDraw;
 using namespace jagDisk;
 
 
@@ -71,8 +69,13 @@ public:
 
     virtual void* read( const std::string& fileName ) const
     {
-        osg::ref_ptr< osg::Image > osgImage( osgDB::readImageFile( fileName ) );
-        return( convertFromOsgImage( osgImage.get() ) );
+        osg::ref_ptr< osg::Node > osgNode( osgDB::readNodeFile( fileName ) );
+        if( !( osgNode.valid() ) )
+            return( NULL );
+
+        Osg2Jag osg2Jag;
+        osgNode->accept( osg2Jag );
+        return( osg2Jag.getJagScene() );
     }
     virtual void* read( std::istream& iStr ) const
     {
@@ -81,8 +84,8 @@ public:
 
     virtual bool write( const std::string& fileName, const void* data ) const
     {
-        osg::ref_ptr< osg::Image > osgImage( convertToOsgImage( (Image*)data ) );
-        return( osgDB::writeImageFile( *osgImage, fileName ) );
+        osg::ref_ptr< osg::Node > osgNode( convertToOsgNode( (jagSG::Node*)data ) );
+        return( osgDB::writeNodeFile( *osgNode, fileName ) );
     }
     virtual bool write( std::ostream& oStr, const void* data ) const
     {
@@ -90,67 +93,7 @@ public:
     }
 
 protected:
-    Image* convertFromOsgImage( osg::Image* osgImage ) const
-    {
-        if( osgImage == NULL ) return( NULL );
-
-        const unsigned int size( osgImage->getTotalSizeInBytes() );
-        jagBase::BufferPtr buffer( new jagBase::Buffer( size, osgImage->getDataPointer() ) );
-
-        // Check for deprecated internal formats and change to valid ones.
-        GLenum intFormat;
-        switch( osgImage->getInternalTextureFormat() )
-        {
-        case 1:
-        case GL_ALPHA:
-        case GL_LUMINANCE:
-            intFormat = GL_RED;
-            break;
-        case 2:
-        case GL_LUMINANCE_ALPHA:
-            intFormat = GL_RG;
-            break;
-        case 3:
-            intFormat = GL_RGB;
-            break;
-        case 4:
-            intFormat = GL_RGBA;
-            break;
-        default:
-            intFormat = osgImage->getInternalTextureFormat();
-            break;
-        }
-
-        // Also check for deprecated formats.
-        GLenum format;
-        switch( osgImage->getPixelFormat() )
-        {
-        case GL_ALPHA:
-        case GL_LUMINANCE:
-            format = GL_RED;
-            break;
-        case GL_LUMINANCE_ALPHA:
-            format = GL_RG;
-            break;
-        default:
-            format = osgImage->getPixelFormat();
-            break;
-        }
-
-        Image* newImage( new Image() );
-        newImage->set( 0, intFormat,
-            osgImage->s(), osgImage->t(), osgImage->r(), 0,
-            format, osgImage->getDataType(),
-            buffer );
-
-        PixelStorePtr pixelStore( new PixelStore() );
-        pixelStore->_alignment = osgImage->getPacking();
-        newImage->setPixelStore( pixelStore );
-
-        return( newImage );
-    }
-
-    osg::Image* convertToOsgImage( Image* jagImage ) const
+    osg::Node* convertToOsgNode( jagSG::Node* jagNode ) const
     {
         return( NULL );
     }

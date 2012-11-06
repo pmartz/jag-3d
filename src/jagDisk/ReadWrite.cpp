@@ -44,6 +44,7 @@ void* read( const std::string& fileName, const Options* options )
     }
     const std::string fullName( pathName.toString() );
     JAG3D_TRACE_STATIC( logStr, "\tFound: \"" + fullName + "\"." );
+    const std::string extension( pathName.getExtension() );
 
     PluginManager* pm( PluginManager::instance() );
 
@@ -51,8 +52,11 @@ void* read( const std::string& fileName, const Options* options )
     const ReaderWriterInfoVec& rwVec( pm->getLoadedReaderWriters() );
     BOOST_FOREACH( const ReaderWriterInfo& rwInfo, rwVec )
     {
-        JAG3D_TRACE_STATIC( logStr, "\tTrying loaded ReaderWriter subclass " + rwInfo._className );
         ReaderWriterPtr rw( rwInfo._rwInstance );
+        if( !( rw->supportsExtension( extension ) ) )
+            continue;
+
+        JAG3D_TRACE_STATIC( logStr, "\tTrying loaded ReaderWriter subclass " + rwInfo._className );
         void* data( rw->read( fullName ) );
         if( data != NULL )
         {
@@ -62,7 +66,6 @@ void* read( const std::string& fileName, const Options* options )
     }
 
     // Get a PluginInfo for each plugin that advertizes support for this extension.
-    const std::string extension( pathName.getExtension() );
     PluginManager::PluginInfoPtrVec plugins( pm->getPluginsForExtension( extension ) );
 
     BOOST_FOREACH( PluginManager::PluginInfo* pi, plugins )
@@ -98,12 +101,18 @@ bool write( const std::string& fileName, const void* data, const Options* option
     const std::string logStr( "jag.disk.rw" );
     JAG3D_TRACE_STATIC( logStr, "write() for: " + fileName );
 
+    Poco::Path pathName( fileName );
+    const std::string extension( pathName.getExtension() );
+
     // Try loaded ReaderWriters first.
     const ReaderWriterInfoVec& rwVec( pm->getLoadedReaderWriters() );
     BOOST_FOREACH( const ReaderWriterInfo& rwInfo, rwVec )
     {
-        JAG3D_TRACE_STATIC( logStr, "\tTrying loaded ReaderWriter subclass " + rwInfo._className );
         ReaderWriterPtr rw( rwInfo._rwInstance );
+        if( !( rw->supportsExtension( extension ) ) )
+            continue;
+
+        JAG3D_TRACE_STATIC( logStr, "\tTrying loaded ReaderWriter subclass " + rwInfo._className );
         if( rw->write( fileName, data ) )
         {
             JAG3D_TRACE_STATIC( logStr, "\twrite(): Success." );
@@ -111,10 +120,7 @@ bool write( const std::string& fileName, const void* data, const Options* option
         }
     }
 
-    Poco::Path pathName( fileName );
-
     // Get a PluginInfo for each plugin that advertizes support for this extension.
-    const std::string extension( pathName.getExtension() );
     PluginManager::PluginInfoPtrVec plugins( pm->getPluginsForExtension( extension ) );
 
     BOOST_FOREACH( PluginManager::PluginInfo* pi, plugins )

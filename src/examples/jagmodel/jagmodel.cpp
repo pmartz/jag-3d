@@ -33,6 +33,7 @@
 #include <gmtl/gmtl.h>
 
 #include <boost/foreach.hpp>
+#include <boost/make_shared.hpp>
 
 #include <string>
 #include <sstream>
@@ -72,7 +73,7 @@ protected:
 
 DemoInterface* DemoInterface::create( bpo::options_description& desc )
 {
-    jagBase::Log::instance()->setPriority( jagBase::Log::PrioDebug, jagBase::Log::Console );
+    jagBase::Log::instance()->setPriority( jagBase::Log::PrioInfo, jagBase::Log::Console );
 
     return( new JagModel );
 }
@@ -100,7 +101,8 @@ bool JagModel::startup( const unsigned int numContexts )
     }
 
 
-    _root = jagSG::NodePtr( (jagSG::Node*) jagDisk::read( fileName ) );
+    _root = boost::make_shared< jagSG::Node >(
+        *(jagSG::Node*) jagDisk::read( fileName ) );
     if( _root == NULL )
     {
         JAG3D_FATAL_STATIC( _logName, "Can't load \"" + fileName + "\"." );
@@ -227,8 +229,7 @@ gmtl::Matrix44d JagModel::computeProjection( double aspect )
 gmtl::Matrix44d JagModel::computeView()
 {
     const gmtl::Sphered s( _root->getBound()->asSphere() );
-    const gmtl::Point3d c( s.getCenter() );
-    const gmtl::Point3d center( (float)c[0], (float)c[1], (float)c[2] );
+    const gmtl::Point3d center( s.getCenter() );
     const double radius( (float)s.getRadius() );
 
     const gmtl::Point3d eye( center + ( gmtl::Point3d( 1.5, -4., 1.5 ) * radius ) );
