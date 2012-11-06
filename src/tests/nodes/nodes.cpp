@@ -273,8 +273,7 @@ gmtl::Matrix44d NodesDemo::computeProjection( double aspect )
 gmtl::Matrix44d NodesDemo::computeView()
 {
     const gmtl::Sphered s( _bSphere->asSphere() );
-    const gmtl::Point3d c( s.getCenter() );
-    const gmtl::Point3d center( (float)c[0], (float)c[1], (float)c[2] );
+    const gmtl::Point3d center( s.getCenter() );
     const double radius( (float)s.getRadius() );
 
     const gmtl::Point3d eye( center + ( gmtl::Point3d( 1.5, -4., 1.5 ) * radius ) );
