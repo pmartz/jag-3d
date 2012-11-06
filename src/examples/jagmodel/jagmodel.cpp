@@ -73,7 +73,7 @@ protected:
 
 DemoInterface* DemoInterface::create( bpo::options_description& desc )
 {
-    jagBase::Log::instance()->setPriority( jagBase::Log::PrioInfo, jagBase::Log::Console );
+    jagBase::Log::instance()->setPriority( jagBase::Log::PrioWarning, jagBase::Log::Console );
 
     return( new JagModel );
 }
@@ -89,9 +89,9 @@ bool JagModel::startup( const unsigned int numContexts )
 
     //std::string fileName( "fountain.osg" );
     //std::string fileName( "glider.osg" );
-    //std::string fileName( "cow.osg" );
+    std::string fileName( "cow.osg" );
     //std::string fileName( "dumptruck.osg" );
-    std::string fileName( "teapot.osg" );
+    //std::string fileName( "teapot.osg" );
     JAG3D_INFO_STATIC( _logName, fileName );
 
     if( fileName.empty() )
@@ -110,8 +110,8 @@ bool JagModel::startup( const unsigned int numContexts )
     }
 
 
-    jagDraw::ShaderPtr vs( (jagDraw::Shader*) jagDisk::read( "jagload.vert" ) );
-    jagDraw::ShaderPtr fs( (jagDraw::Shader*) jagDisk::read( "jagload.frag" ) );
+    jagDraw::ShaderPtr vs( (jagDraw::Shader*) jagDisk::read( "jagmodel.vert" ) );
+    jagDraw::ShaderPtr fs( (jagDraw::Shader*) jagDisk::read( "jagmodel.frag" ) );
     if( ( vs == NULL ) || ( fs == NULL ) )
     {
         JAG3D_INFO_STATIC( _logName, "Unable to load shaders. Set JAG3D_DATA_PATH in the environment." );
