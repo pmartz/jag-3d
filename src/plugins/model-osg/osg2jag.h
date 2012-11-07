@@ -69,7 +69,7 @@ protected:
         unsigned int _componentsPerElement;
     };
 
-    ArrayInfo asJagArray( const osg::Array* arrayIn, const osg::Matrix& m );
+    ArrayInfo asJagArray( const osg::Array* arrayIn );
 
     ArrayInfo asJagArray( const osg::VectorGLubyte* arrayIn );
     ArrayInfo asJagArray( const osg::VectorGLushort* arrayIn );
