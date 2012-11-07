@@ -92,7 +92,11 @@ void ExecuteVisitor::visit( jagSG::Node& node )
 
 
     if( modelDirty )
+    {
         popMatrix();
+        _transform.setModel( _matrixStack.empty() ?
+            gmtl::MAT_IDENTITY44D : _matrixStack.back() );
+    }
 
     popCommandMap();
 }

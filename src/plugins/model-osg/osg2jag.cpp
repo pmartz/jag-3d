@@ -129,8 +129,7 @@ void Osg2Jag::apply( osg::Geometry* geom )
 
     const unsigned int numVertices( geom->getVertexArray()->getNumElements() );
     {
-        osg::Matrix m;// = osg::computeLocalToWorld( getNodePath() );
-        ArrayInfo info( asJagArray( geom->getVertexArray(), m ) );
+        ArrayInfo info( asJagArray( geom->getVertexArray() ) );
         jagDraw::BufferObjectPtr bop( new jagDraw::BufferObject( GL_ARRAY_BUFFER, info._buffer ) );
         vaop->addVertexArrayCommand( bop, jagDraw::VertexArrayObject::Vertex );
 
@@ -146,9 +145,7 @@ void Osg2Jag::apply( osg::Geometry* geom )
             JAG3D_NOTICE_STATIC( "jag.plugin.model.jagload", "Only BIND_PER_VERTEX is currently supported." );
         }
 
-        osg::Matrix m = osg::computeLocalToWorld( getNodePath() );
-        m.setTrans(0.,0.,0.);
-        ArrayInfo info( asJagArray( geom->getNormalArray(), m ) );
+        ArrayInfo info( asJagArray( geom->getNormalArray() ) );
         jagDraw::BufferObjectPtr bop( new jagDraw::BufferObject( GL_ARRAY_BUFFER, info._buffer ) );
         vaop->addVertexArrayCommand( bop, jagDraw::VertexArrayObject::Normal );
 
@@ -262,7 +259,7 @@ jagSG::Node* Osg2Jag::getJagScene()
 }
 
 
-Osg2Jag::ArrayInfo Osg2Jag::asJagArray( const osg::Array* arrayIn, const osg::Matrix& m=osg::Matrix::identity() )
+Osg2Jag::ArrayInfo Osg2Jag::asJagArray( const osg::Array* arrayIn )
 {
     ArrayInfo info;
 
@@ -284,7 +281,7 @@ Osg2Jag::ArrayInfo Osg2Jag::asJagArray( const osg::Array* arrayIn, const osg::Ma
         unsigned int idx;
         for( idx=0; idx<size; idx++ )
         {
-            const osg::Vec3 v( (*array)[ idx ] * m );
+            const osg::Vec3& v( (*array)[ idx ] );
             gmtl::Point3f& p( out[ idx ] );
             p[ 0 ] = v[ 0 ];
             p[ 1 ] = v[ 1 ];

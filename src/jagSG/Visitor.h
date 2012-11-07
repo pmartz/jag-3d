@@ -21,7 +21,6 @@
 #ifndef __JAGSG_VISITOR_H__
 #define __JAGSG_VISITOR_H__ 1
 
-//#include <jagSG/Export.h>
 #include <jagBase/types.h>
 #include <jagSG/Node.h>
 #include <jagDraw/CommandMap.h>
@@ -95,7 +94,7 @@ derived class. As an example, a derived class might override visit() as follows:
     }
 \endcode
 */
-class /*JAGSG_EXPORT*/ VisitorBase : protected jagBase::LogBase
+class VisitorBase : protected jagBase::LogBase
 {
 public:
     VisitorBase( const std::string& logName )
@@ -161,6 +160,10 @@ public:
     {
         _nodeStack.clear();
     }
+    const jagSG::NodeVec& getNodes() const
+    {
+        return( _nodeStack );
+    }
 
     void pushMatrix( const gmtl::Matrix44d& matrix )
     {
@@ -174,6 +177,10 @@ public:
     void resetMatrix()
     {
         _matrixStack.clear();
+    }
+    const jagBase::Matrix44dDeque& getMatrices() const
+    {
+        return( _matrixStack );
     }
 
     void pushCommandMap( const jagDraw::CommandMapPtr commands )
@@ -201,6 +208,10 @@ public:
     {
         _commandStack.clear();
     }
+    const jagDraw::CommandMapDeque& getCommands() const
+    {
+        return( _commandStack );
+    }
 
 protected:
     NodeVec _nodeStack;
@@ -222,7 +233,7 @@ derive from Visitor to use the Node's traversal callback to determine child trav
 
 Derived classes should override Visitor::visit(), perform any pre-traversal tasks,
 call Visitor::visit() to effect traversal, then perform any post-traversal tasks. */
-class /*JAGSG_EXPORT*/ Visitor : public VisitorBase
+class Visitor : public VisitorBase
 {
 public:
     Visitor( const std::string& logName )
