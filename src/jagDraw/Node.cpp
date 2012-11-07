@@ -53,11 +53,8 @@ void Node::execute( DrawInfo& drawInfo )
 {
     JAG3D_TRACE( "execute()" );
 
-    if( _commands != NULL )
-    {
-        CommandMap delta( drawInfo._current << (*_commands) );
-        delta.execute( drawInfo );
-    }
+    CommandMap delta( drawInfo._current << (*_commands) );
+    delta.execute( drawInfo );
 
     BOOST_FOREACH( DrawablePtr drawable, _drawables )
     {
@@ -69,8 +66,14 @@ void Node::execute( DrawInfo& drawInfo )
 
 void Node::setMaxContexts( const unsigned int numContexts )
 {
-    if( _commands != NULL )
+    if( _commands == NULL )
+    {
+        JAG3D_ERROR( "setMaxContexts(): jagDraw::Node must have non-NULL _commands." );
+    }
+    else
+    {
         _commands->setMaxContexts( numContexts );
+    }
 
     BOOST_FOREACH( DrawablePtr drawable, _drawables )
     {
@@ -79,8 +82,7 @@ void Node::setMaxContexts( const unsigned int numContexts )
 }
 void Node::deleteID( const jagDraw::jagDrawContextID contextID )
 {
-    if( _commands != NULL )
-        _commands->deleteID( contextID );
+    _commands->deleteID( contextID );
 
     BOOST_FOREACH( DrawablePtr drawable, _drawables )
     {
