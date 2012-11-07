@@ -135,6 +135,79 @@ void convert( gmtl::Matrix< float, ROWS, COLS >& result, const gmtl::Matrix< dou
     result.mState = rhs.mState;
 }
 
+/** TBD */
+template< typename T, unsigned ROWS, unsigned COLS >
+gmtl::Sphere<T>
+transform( const gmtl::Matrix<T,ROWS,COLS>& m, const gmtl::Sphere<T>& src )
+{
+    gmtlASSERT( COLS >= 3 );
+
+    gmtl::Point<T,3> xdashIn = src.getCenter();
+    xdashIn[0] += src.getRadius();
+    gmtl::Point<T,3> xdash;
+    if( COLS == 3 )
+        xdash = m * xdashIn;
+    else
+    {
+        gmtl::Point<T,4> temp;
+        temp = m * gmtl::Point<T,4>( xdashIn[0], xdashIn[1], xdashIn[2], 1. );
+        xdash.set( temp[0], temp[1], temp[2] );
+    }
+
+    gmtl::Point<T,3> ydashIn = src.getCenter();
+    ydashIn[1] += src.getRadius();
+    gmtl::Point<T,3> ydash;
+    if( COLS == 3 )
+        ydash = m * ydashIn;
+    else
+    {
+        gmtl::Point<T,4> temp;
+        temp = m * gmtl::Point<T,4>( ydashIn[0], ydashIn[1], ydashIn[2], 1. );
+        ydash.set( temp[0], temp[1], temp[2] );
+    }
+
+    gmtl::Point<T,3> zdashIn = src.getCenter();
+    zdashIn[2] += src.getRadius();
+    gmtl::Point<T,3> zdash;
+    if( COLS == 3 )
+        zdash = m * zdashIn;
+    else
+    {
+        gmtl::Point<T,4> temp;
+        temp = m * gmtl::Point<T,4>( zdashIn[0], zdashIn[1], zdashIn[2], 1. );
+        zdash.set( temp[0], temp[1], temp[2] );
+    }
+
+    gmtl::Sphere<T> newSphere;
+    if( COLS == 3 )
+        newSphere.setCenter( m * src.getCenter() );
+    else
+    {
+        gmtl::Point<T,4> temp;
+        temp = m * gmtl::Point<T,4>( src.getCenter()[0], src.getCenter()[1], src.getCenter()[2], 1. );
+        newSphere.setCenter( gmtl::Point<T,3>( temp[0], temp[1], temp[2] ) );
+    }
+    
+
+    xdash -= newSphere.getCenter();
+    T len_xdash = gmtl::length( gmtl::Vec<T,3>( xdash ) );
+
+    ydash -= newSphere.getCenter();
+    T len_ydash = gmtl::length( gmtl::Vec<T,3>( ydash ) );
+
+    zdash -= newSphere.getCenter();
+    T len_zdash = gmtl::length( gmtl::Vec<T,3>( zdash ) );
+
+    newSphere.setRadius( len_xdash );
+    if( newSphere.getRadius() < len_ydash )
+        newSphere.setRadius( len_ydash );
+    if( newSphere.getRadius() < len_zdash )
+        newSphere.setRadius( len_zdash );
+
+    newSphere.setInitialized();
+    return( newSphere );
+}
+
 
 // gmtl
 }

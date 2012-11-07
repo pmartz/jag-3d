@@ -25,6 +25,9 @@
 #include <jagBase/LogMacros.h>
 #include <jagBase/ptr.h>
 
+#include <gmtl/gmtl.h>
+#include <jagBase/gmtlSupport.h>
+
 #include <boost/foreach.hpp>
 
 
@@ -105,22 +108,25 @@ const gmtl::Matrix44d& Node::getTransform() const
 
 jagDraw::BoundPtr Node::getBound( const jagDraw::CommandMap& commands )
 {
-    if( _bound == NULL )
-        _bound = jagDraw::BoundPtr( new jagDraw::BoundSphere() );
-
     const jagDraw::CommandMap newCommands( ( _commands != NULL ) ? commands + *_commands : commands );
 
+    jagDraw::BoundSphere b;
     BOOST_FOREACH( NodePtr& node, _children )
     {
-        _bound->expand( *( node->getBound( newCommands ) ) );
+        b.expand( *( node->getBound( newCommands ) ) );
     }
 
     // Expand by Drawable bounds after expanding by child Node bounds
     // to increase precision.
     BOOST_FOREACH( jagDraw::DrawablePtr& drawable, _drawables )
     {
-        _bound->expand( *( drawable->getBound( newCommands ) ) );
+        b.expand( *( drawable->getBound( newCommands ) ) );
     }
+
+    // Transform
+    gmtl::Sphered newSphere = gmtl::transform( _matrix, b.asSphere() );
+    // TBD ugly and expensive.
+    _bound = jagDraw::BoundPtr( new jagDraw::BoundSphere( newSphere ) );
 
     return( _bound );
 }
