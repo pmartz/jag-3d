@@ -273,7 +273,7 @@ gmtl::Matrix44d JagLoadDemo::computeProjection( double aspect )
 
 gmtl::Matrix44d JagLoadDemo::computeView()
 {
-    const osg::Vec3 osgEye( _bs.center() + ( osg::Vec3( 0., -4., 1.5 ) * _bs.radius() ) );
+    const osg::Vec3 osgEye( _bs.center() + ( osg::Vec3( 1.5, -4., 1.5 ) * _bs.radius() ) );
     const gmtl::Point3d eye( osgEye[ 0 ], osgEye[ 1 ], osgEye[ 2 ] );
     const gmtl::Point3d center( _bs.center()[ 0 ], _bs.center()[ 1 ], _bs.center()[ 2 ] );
     const gmtl::Vec3d up( 0., 0., 1. );
