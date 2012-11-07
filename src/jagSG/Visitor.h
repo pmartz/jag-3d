@@ -167,7 +167,7 @@ public:
 
     void pushMatrix( const gmtl::Matrix44d& matrix )
     {
-        const gmtl::Matrix44d newTop( _matrixStack.empty() ? matrix : matrix * _matrixStack.back() );
+        const gmtl::Matrix44d newTop( _matrixStack.empty() ? matrix : _matrixStack.back() * matrix );
         _matrixStack.push_back( newTop );
     }
     void popMatrix()
