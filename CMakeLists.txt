@@ -21,7 +21,7 @@ cmake_minimum_required( VERSION 2.8.5 )
 project( Jag3D )
 
 
-set( JAG3D_VERSION 0.00.03 )
+set( JAG3D_VERSION 0.00.04 )
 set( JAG3D_MAJOR_VERSION 0 )
 set( JAG3D_MINOR_VERSION 0 )
 set( JAG3D_SUB_VERSION 4 )
