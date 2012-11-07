@@ -96,6 +96,10 @@ public:
       : Bound( rhs ),
         _bound( rhs._bound )
     {}
+    BoundAABox( const gmtl::AABoxd& box )
+      : Bound( Sphere_t ),
+        _bound( box )
+    {}
     ~BoundAABox()
     {}
 
@@ -160,6 +164,10 @@ public:
     BoundSphere( const BoundSphere& rhs )
       : Bound( rhs ),
         _bound( rhs._bound )
+    {}
+    BoundSphere( const gmtl::Sphered& sphere )
+      : Bound( Sphere_t ),
+        _bound( sphere )
     {}
     ~BoundSphere()
     {}
