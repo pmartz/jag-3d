@@ -77,18 +77,24 @@ to create a scene graph from a loaded model file.
 \subsection ProjectRoadmap Upcoming Work and Project Notes
 
 For inclusion in v0.00.04:
+\li OSG-based model loading plugin.
+
+For inclusion in v0.00.06:
 \li Need to implement CullVisitor.
 \li "State sorting" (sorting Drawables based on the commands that configure GL for
 rendering) is implemented but currently untested.
-\li Need to develop a model loading plugin, initially OSG-based, but soon add one that
-uses Open Asset Import Library.
 
-Beyond v0.00.04:
+For inclusion in v0.00.08:
+\li Attachable user data.
+\li debug text export plugin.
+
+Beyond v0.00.08:
+\li Open Asset Import model loading plugin.
 \li Vertex array objects and uniform blocks need to track changes. Uniform blocks,
 in particular, always copy their values into the block.
 \li See jagDraw::Uniform documentation for potential optimizations and use cases
 that Jag3D should support.
-\li Design for cache misses: avoid-cache-misses.pdf
+\li Design for cache misses: avoid-cache-misses.pdf.
 \li Add software mipmap generation. Hardware support for this is unavailable in GL4cpfc.
 
 
