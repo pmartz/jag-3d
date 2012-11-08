@@ -333,11 +333,11 @@ endmacro()
 macro( _addLibrary _libName )
     _addLibraryInternal( Lib SHARED ${_libName} ${ARGN} )
     set_target_properties( ${_libName} PROPERTIES VERSION ${JAG3D_VERSION} )
+    set_target_properties( ${_libName} PROPERTIES SOVERSION ${JAG3D_VERSION} )
 endmacro()
 
 macro( _addPlugin _libName )
     _addLibraryInternal( Plugin MODULE ${_libName} ${ARGN} )
-    set_target_properties( ${_libName} PROPERTIES SOVERSION ${JAG3D_VERSION} )
 endmacro()
 
 
