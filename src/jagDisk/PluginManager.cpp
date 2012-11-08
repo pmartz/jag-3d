@@ -290,9 +290,22 @@ void PluginManager::loadConfigFiles()
                 }
             }
 
+            // Create a platform-specific plugin name. Note that
+            // Poco has SharedLibrary::suffix(), which seems useful,
+            // except it returns ".dylib" on OSX instead of ".so".
+            // For this reason, we must roll our own...
             pi._path = path;
-            pi._path.setFileName( Poco::Path( jagpiFileName ).getBaseName()
-                + Poco::SharedLibrary::suffix() );
+            std::string debugSuffix( "" );
+#ifdef _DEBUG
+            debugSuffix = "d";
+#endif
+            std::string platformPluginName;
+#if( POCO_OS == POCO_OS_WINDOWS_NT )
+            platformPluginName = Poco::Path( jagpiFileName ).getBaseName() + debugSuffix + ".dll";
+#else
+            platformPluginName = "lib" + Poco::Path( jagpiFileName ).getBaseName() + debugSuffix + ".so";
+#endif
+            pi._path.setFileName( platformPluginName );
             if( !( Poco::File( pi._path ).exists() ) )
                 continue;
 
