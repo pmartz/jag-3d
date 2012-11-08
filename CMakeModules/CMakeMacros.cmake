@@ -299,7 +299,7 @@ endmacro()
 
 
 
-macro( _addLibraryInternal _category _libName )
+macro( _addLibraryInternal _category _type _libName )
     _subList( "" JAG_LIBRARIES _sources ${ARGN} )
     _subList( JAG_LIBRARIES ADDITIONAL_INCLUDES _jagLibs ${ARGN} )
     _subList( ADDITIONAL_INCLUDES ADDITIONAL_LIBRARIES _includes ${ARGN} )
@@ -313,9 +313,9 @@ macro( _addLibraryInternal _category _libName )
     )
 
     if( BUILD_SHARED_LIBS )
-        add_library( ${_libName} SHARED ${_sources} )
+        add_library( ${_libName} ${_type} ${_sources} )
     else()
-        add_library( ${_libName} ${_sources} )
+        add_library( ${_libName} STATIC ${_sources} )
     endif()
 
     target_link_libraries( ${_libName}
@@ -333,11 +333,11 @@ macro( _addLibraryInternal _category _libName )
 endmacro()
 
 macro( _addLibrary _libName )
-    _addLibraryInternal( Lib ${_libName} ${ARGN} )
+    _addLibraryInternal( Lib SHARED ${_libName} ${ARGN} )
 endmacro()
 
 macro( _addPlugin _libName )
-    _addLibraryInternal( Plugin ${_libName} ${ARGN} )
+    _addLibraryInternal( Plugin MODULE ${_libName} ${ARGN} )
 endmacro()
 
 
