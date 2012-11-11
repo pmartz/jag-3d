@@ -53,6 +53,7 @@ DrawCommand supports all OpenGL rendering operations. This includes:
 \li Clearing operations (\glshort{4.2.3}).
 
 \specTableBegin
+\specLog{DrawCommand does not use jagBase::LogBase}
 \specThread{Context Safe}
 \specGL{See derived classes}
 \specDepend{See derived classes}

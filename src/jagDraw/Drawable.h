@@ -40,20 +40,57 @@ struct DrawInfo;
 
 
 /** \class Drawable Drawable.h <jagDraw/Drawable.h>
-\brief A collection of DrawCommands for rendering geometry.
-\details Drawable stores a list of DrawCommand objects. These are commands for
-endering, such as glDrawArrays, glDrawElements, and others.
+\brief A collection of DrawCommand objects for rendering geometry.
+\details Stores zero or more DrawCommand objects, and provides an interface for
+accessing and computing a bounding volume based on the DrawCommands and
+vertex attribute data.
 
-Drawable::execute(DrawInfo&) executes the DrawCommands sequentially. Access
-the list directly with getDrawCommandVec().
+Note that Drawable objects contain only DrawCommands. Vertex information
+is stored in a VertexArrayObject, located in CommandMap. One VertexArrayObject
+can contain the geometric data for several Drawables, which reduces bind calls.
 
-Note that Drawables contain only DrawCommands, and not the traditional vertex,
-normal, and texture coordinate information. Such information is stored in a
-VertexArrayObject, located in CommandMap. One VertexArrayObject can contain the
-geometric data for several Drawables, which reduces bind calls.
+\specBegin
 
-jagDraw module client code (such as an application or loader plugin) creates a
-Drawable and adds any required commands.
+Drawable supports the following functionality:
+\li Storage for zero or more DrawCommand objects.
+\li Bounding volume computation.
+\li Object ID management.
+
+Each Drawable instance stores the following information:
+\li A vector of shared pointers to DrawCommand objects.
+\li A shared pointer to a Bound object.
+\li A boolean flag to indicate the bound dirty state.
+\li A shared pointer to a Drawable::ComputeBoundCallback.
+
+The computed bounding volume could be unintialized. See computeBounds().
+
+\specTableBegin
+\specLog{jag.draw.drawable}
+\specThread{Unsafe}
+\specGL{None}
+\specDepend{DrawCommand\, Bound}
+\specUsage{Client code instantiates a Drawable\, then attaches one or more
+DrawCommands. Optionally\, client code can also attach a
+Drawable::ComputeBoundCallback.
+
+Once the Drawable objects are instantiated and configured\, jagDraw-based
+client code adds the Drawable objects to jagDraw::Node objects.
+
+jagSG-based client code adds the Drawable objects to jagSG::Node objects.
+The jagSG::CullVisitor queries the bounding volume and stores references
+to the Drawables in jagDraw::Node objects. }
+\specViolations{None}
+\specTableEnd
+
+See member functions for additional specification requirements.
+
+\specIssue{The fact that Drawable objects don't contain vertex data impacts
+bound computation. A Drawable could be shared by multiple jagDraw::Node
+objects\, producing different bound values depending on which
+VertexArrayObject is associates with the jagDraw::Node CommandMap.}
+
+\specEnd
+
 */
 class JAGDRAW_EXPORT Drawable : protected jagBase::LogBase, public ObjectIDOwner
 {
@@ -65,32 +102,109 @@ public:
 
     /** \brief TBD
     \details TBD
+Drawable::execute(DrawInfo&) executes the DrawCommands sequentially. Access
+the list directly with getDrawCommandVec().
+
+
+    \specFuncBegin
+    \specTableBegin
+    \specDepend{DrawInfo}
+    \specTableEnd
+    \specFuncEnd
     */
     virtual void execute( DrawInfo& drawInfo );
 
 
-    /** \name Bound computation
-    \details TBD */
+    /** \name Bound Query and Computation
+    \details 
+    */
     /*@{*/
 
-    /** \brief Compute (if necessary) and return the bounding volume.
-    \details TBD
+    /** \brief Returns a bounding volume.
+    \details 
     \param commands The CommandMap, containing information necessary to compute
-    the bound, such as VertexArrayObjects. */
+    the bound, such as VertexArrayObjects.
+
+    \specFuncBegin
+
+    If Drawable::_boundDirty is true, this function performs the following operations:
+    - If Drawable::_bound is NULL, this function allocates a new bound and stores it in Drawable::_bound.
+    - If Drawable::_computeBoundCallback() is non-NULL, this function executes the callback.
+      Otherwise, this function calls computeBounds().
+    - Drawable::_boundDirty is set to false by calling setBoundDirty().
+
+    Regardless of whether Drawable::_boundDirty was initially true or false, this function
+    returns the value of Drawable::_bound.
+
+    If Drawable::_computeBoundCallback == NULL and the bound is <em>uncomputable</em>,
+    the return value will always be uninitialized. If Drawable::_computeBoundCallback
+    is non-NULL, Drawable::_computeBoundCallback is entirely responsible for determining
+    the return value.
+
+    \specTableBegin
+    \specDepend{CommandMap}
+    \specTableEnd
+    \specFuncEnd
+    */
     virtual BoundPtr getBound( const CommandMap& commands );
 
     /** \brief TBD
-    \details TBD */
+    \details TBD
+
+    \specFuncBegin
+    \specTableBegin
+    \specDepend{CommandMap}
+    \specTableEnd
+    \specFuncEnd
+    */
     void setBoundDirty( const CommandMap& commands, const bool dirty=true );
     /** \brief TBD
-    \details TBD */
+    \details TBD
+
+    \specFuncBegin
+    \specTableBegin
+    \specDepend{CommandMap}
+    \specTableEnd
+    \specFuncEnd
+    */
     bool getBoundDirty( const CommandMap& commands ) const;
 
-    /** \brief TBD
-    \details TBD */
+    /** \brief Computes a bounding volume.
+    \details
+    
+    \specFuncBegin
+
+    Computes the bounding volume based on Drawable::_drawCommands,
+    Drawable::_computeBoundCallback, and the VertexArrayObject stored in
+    \c commands.
+
+    If any of the following conditions are true, the bound is
+
+    <em>uncomputable</em>:
+    \li \c commands does not contain a VertexArrayObject.
+    \li The VertexArrayObject does not contain a non-NULL BufferObjectPtr marked as VertexArrayObject::Vertex.
+    \li The VertexArrayObject does not contain a non-NULL VertexAttribPtr marked as VertexArrayObject::Vertex.
+    \li Drawable::_drawCommands.size() == 0.
+
+    \specTableBegin
+    \specDepend{Bound\, CommandMap
+
+        Jag3D uses VertexAttribContainer to compute the bound\, but this is not a
+        JAG specification requirement. }
+    \specTableEnd
+    \specFuncEnd
+    */
     void computeBounds( BoundPtr _bound, const CommandMap& commands );
 
     struct ComputeBoundCallback {
+        /**
+
+        \specFuncBegin
+        \specTableBegin
+        \specDepend{CommandMap}
+        \specTableEnd
+        \specFuncEnd
+        */
         virtual void operator()( BoundPtr _bound, const CommandMap& commands ) = 0;
     };
     typedef jagBase::ptr< ComputeBoundCallback >::shared_ptr ComputeBoundCallbackPtr;
@@ -111,7 +225,7 @@ public:
     /**@}*/
 
 
-    /** \name Draw commands
+    /** \name Draw Commands
     \details TBD */
     /*@{*/
 
@@ -130,7 +244,7 @@ public:
     /**@}*/
 
 
-    /** \name OpenGL ID management
+    /** \name OpenGL ID Management
     \details TBD */
     /*@{*/
 
@@ -144,18 +258,29 @@ public:
     /** \brief Delete the ID for the Drawable's objects.
     \details OpenGL object ID cleanup is not yet implemented. TBD.
 
-    Override from ObjectIDOwner. */
+    Override from ObjectIDOwner.
+
+    \specFuncBegin
+    \specTableBegin
+    \specDepend{jagDrawContextID}
+    \specTableEnd
+    \specFuncEnd
+    */
     virtual void deleteID( const jagDraw::jagDrawContextID contextID );
 
     /**@}*/
 
 
 protected:
+    /** Default value: _drawCommands = jagDraw::DrawCommandVec() */
     DrawCommandVec _drawCommands;
 
+    /** Default value: _bound = jagDraw::BoundPtr() */
     BoundPtr _bound;
+    /** Default value: _boundDirty = true */
     bool _boundDirty;
 
+    /** Default value: _computeBoundCallback = ComputeBoundCallbackPtr() */
     ComputeBoundCallbackPtr _computeBoundCallback;
 };
 
