@@ -25,7 +25,6 @@
 #include <jagBase/Buffer.h>
 #include <jagDraw/BufferObject.h>
 #include <jagDraw/VertexAttrib.h>
-#include <jagDraw/DrawCommand.h>
 
 #include <iterator>
 #include <iostream>
