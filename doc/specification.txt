@@ -56,6 +56,7 @@ be interpreted as a specification requirement.
 
 The reference material for each class and member function contains the following
 specifications:
+\li Log handle.
 \li Thread-safety requirements.
 \li OpenGL footprint requirements (if applicable).
 \li Dependency requirements.

@@ -42,6 +42,8 @@ ALIASES                = gl{1}="\note See OpenGL specification \1"
 
     ALIASES           += specBegin="<hr><h2>Specification Requirements</h2>"
     ALIASES           += specTableBegin="<table cellspacing=0 cellpadding=4>"
+    ALIASES           += specLog{1}="<tr valign=top bgcolor=#dddddd> <td><b>Log Handle</b></td>    <td>\1</td></tr>"
+    ALIASES           += specLogBase{1}="specLog{ See \1}"
     ALIASES           += specThread{1}="<tr valign=top bgcolor=#bbbbbb> <td><b>Thread Safety</b></td>    <td>\1 <small>(\ref ThreadDefinitions")</small></td></tr>"
     ALIASES           += specThreadBase{1}="<tr valign=top bgcolor=#bbbbbb> <td><b>Thread Safety</b></td>    <td>See \1</td></tr>"
     ALIASES           += specGL{1}="<tr valign=top bgcolor=#dddddd>     <td><b>OpenGL Footprint</b></td> <td>\1</td></tr>"
@@ -57,6 +59,8 @@ ALIASES                = gl{1}="\note See OpenGL specification \1"
 
     ALIASES           += specFuncBegin="<h4>Function Specification Requirements</h4>"
     ALIASES           += specFuncEnd=""
+
+    ALIASES           += specIssue{1}="<dl class="note"><dt><b>Specification ISSUE:</b></dt><dd>\1</dd></dl>"
 
 OPTIMIZE_OUTPUT_FOR_C  = NO
 OPTIMIZE_OUTPUT_JAVA   = NO
@@ -210,7 +214,7 @@ FORMULA_FONTSIZE       = 10
 FORMULA_TRANSPARENT    = YES
 USE_MATHJAX            = NO
 MATHJAX_RELPATH        = http://www.mathjax.org/mathjax
-SEARCHENGINE           = NO
+SEARCHENGINE           = YES
 SERVER_BASED_SEARCH    = NO
 
 #---------------------------------------------------------------------------
