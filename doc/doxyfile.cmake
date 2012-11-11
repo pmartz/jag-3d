@@ -34,9 +34,19 @@ MULTILINE_CPP_IS_BRIEF = NO
 INHERIT_DOCS           = YES
 SEPARATE_MEMBER_PAGES  = NO
 TAB_SIZE               = 8
+
 ALIASES                = gl{1}="\note See OpenGL specification \1"
     ALIASES           += glinline{1}="See OpenGL specification \1"
     ALIASES           += glparam{2}="\param \1 See OpenGL specification \2"
+
+    ALIASES           += specBegin="<table cellspacing=0 cellpadding=4><tr align=left> <th>Specification</th> <th></th></tr>"
+    ALIASES           += specThread{1}="<tr valign=top bgcolor=#bbbbbb> <td><b>Thread Safety</b></td>    <td>\1</td></tr>"
+    ALIASES           += specGL{1}="<tr valign=top bgcolor=#dddddd>     <td><b>OpenGL Footprint</b></td> <td>\1</td></tr>"
+    ALIASES           += specDepend{1}="<tr valign=top bgcolor=#bbbbbb> <td><b>Dependencies</b></td>     <td>\1</td></tr>"
+    ALIASES           += specUsage{1}="<tr valign=top bgcolor=#dddddd>  <td><b>Intended Usage</b></td>   <td>\1</td></tr>"
+    ALIASES           += specViolations{1}="<tr valign=top bgcolor=#bbbbbb> <td><b>Known Violations</b></td> <td>\1</td></tr>"
+    ALIASES           += specEnd="</table>"
+
 OPTIMIZE_OUTPUT_FOR_C  = NO
 OPTIMIZE_OUTPUT_JAVA   = NO
 OPTIMIZE_FOR_FORTRAN   = NO

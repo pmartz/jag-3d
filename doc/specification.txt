@@ -1,0 +1,67 @@
+/**
+
+\page JagSpecification JAG Specification
+
+\section SpexIntroduction Introduction
+
+JAG specifies the behavior of an OpenGL-based rendering toolkit. JAG does not specify
+function or class names or a language binding. There could be multiple JAG-compliant
+toolkit implementations, of which Jag3D is one. It is not a requirement that code written
+for one JAG-compliant toolkit will port directly, or even easily, to another JAG-compliant
+toolkit.
+
+
+\section SpecComponenets Specification Components
+
+The specification is composed of two parts: this \a Introduction document,
+and the <a href="annotated.html">Doxygen-generated class reference</a>
+from the Jag3D source code.
+
+The reference material for each class and member function contains the following
+specifications:
+\li Thread-safety requirements.
+\li OpenGL footprint requirements (if applicable).
+\li Dependency requirements.
+\li Variable default values, if applicable.
+\li Intended usage.
+\li Known specification violations.
+
+
+\subsection SpecThread Thread-safety Requirements
+\li Thread Safe: The code employes explicit locking.
+\li Context Safe: The code is thread safe when executed by a
+context-specific thread. Multiple context threads must have
+thread-specific instances of any C++ objects marked as "Context Safe". 
+\li Read-Only: The code is thread safe because it does not modify
+any shared memory.
+\li Unsafe: The code is not thread safe.
+
+
+\subsection SpecOpenGL OpenGL Footprint Requirements
+
+for functions that issue OpenGL commands, this spec documents
+what commands are issued and under which circumstances.
+
+
+\subsection SpecDependency Dependency Requirements
+
+<table border=1 cellpadding=4>
+  <tr align=CENTER bgcolor=#d0d0d0>
+    <th></th>            <th>Scene Graph</th>  <th>Draw</th>  <th>Disk</th>  <th>OpenGL</th>  <th>Math</th>  <th>Logging</th>   <th>Smart Pointers</th>
+  </tr>
+  <tr align=CENTER>
+    <td>Scene Graph</td> <td></td>             <td>X</td>     <td></td>      <td></td>        <td>X</td>     <td>X</td>         <td>X</td>
+  </tr>
+  <tr align=CENTER>
+    <td>Draw</td>        <td></td>             <td></td>      <td></td>      <td>X</td>       <td>X</td>     <td>X</td>         <td>X</td>
+  </tr>
+  <tr align=CENTER>
+    <td>Disk</td>        <td></td>             <td></td>      <td></td>      <td></td>        <td></td>      <td>X</td>         <td>X</td>
+  </tr>
+  <tr align=CENTER>
+    <td>Plugins</td>     <td>X</td>            <td>X</td>     <td>X</td>     <td></td>        <td>X</td>     <td>X</td>         <td>X</td>
+  </tr>
+</table>
+
+
+*/
