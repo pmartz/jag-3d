@@ -37,15 +37,26 @@ TAB_SIZE               = 8
 
 ALIASES                = gl{1}="\note See OpenGL specification \1"
     ALIASES           += glinline{1}="See OpenGL specification \1"
+    ALIASES           += glshort{1}="OpenGL specification \1"
     ALIASES           += glparam{2}="\param \1 See OpenGL specification \2"
 
-    ALIASES           += specBegin="<table cellspacing=0 cellpadding=4><tr align=left> <th>Specification</th> <th></th></tr>"
-    ALIASES           += specThread{1}="<tr valign=top bgcolor=#bbbbbb> <td><b>Thread Safety</b></td>    <td>\1</td></tr>"
+    ALIASES           += specBegin="<hr><h2>Specification Requirements</h2>"
+    ALIASES           += specTableBegin="<table cellspacing=0 cellpadding=4>"
+    ALIASES           += specThread{1}="<tr valign=top bgcolor=#bbbbbb> <td><b>Thread Safety</b></td>    <td>\1 <small>(\ref ThreadDefinitions")</small></td></tr>"
+    ALIASES           += specThreadBase{1}="<tr valign=top bgcolor=#bbbbbb> <td><b>Thread Safety</b></td>    <td>See \1</td></tr>"
     ALIASES           += specGL{1}="<tr valign=top bgcolor=#dddddd>     <td><b>OpenGL Footprint</b></td> <td>\1</td></tr>"
+    ALIASES           += specGLBase{1}="\specGL{See \1}"
     ALIASES           += specDepend{1}="<tr valign=top bgcolor=#bbbbbb> <td><b>Dependencies</b></td>     <td>\1</td></tr>"
+    ALIASES           += specDependBase{1}="\specDepend{See \1}"
     ALIASES           += specUsage{1}="<tr valign=top bgcolor=#dddddd>  <td><b>Intended Usage</b></td>   <td>\1</td></tr>"
+    ALIASES           += specUsageBase{1}="\specUsage{See \1}"
     ALIASES           += specViolations{1}="<tr valign=top bgcolor=#bbbbbb> <td><b>Known Violations</b></td> <td>\1</td></tr>"
-    ALIASES           += specEnd="</table>"
+    ALIASES           += specViolationsBase{1}="\specViolations{See \1}"
+    ALIASES           += specTableEnd="</table>"
+    ALIASES           += specEnd="<hr>"
+
+    ALIASES           += specFuncBegin="<h4>Function Specification Requirements</h4>"
+    ALIASES           += specFuncEnd=""
 
 OPTIMIZE_OUTPUT_FOR_C  = NO
 OPTIMIZE_OUTPUT_JAVA   = NO
