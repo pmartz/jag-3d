@@ -49,8 +49,11 @@ class JAGDRAW_EXPORT BufferObject : protected jagBase::LogBase,
 public:
     /**
     \glparam{target,table 2.8}
+    \param target defaults to \c GL_NONE only when GL_VERSION_4_0 is not defined
+    and DrawIndirectBuffer is instantiated.
+    and .
     */
-    BufferObject( const GLenum target );
+    BufferObject( const GLenum target=GL_NONE );
     /**
     \glparam{target,table 2.8}
     \param b BufferPtr
@@ -160,21 +163,21 @@ public:
     {}
 };
 
-#ifdef GL_VERSION_4_0
 /**
 \details One class for each buffer bind target. \gl{table 2.8}.
 */
 class JAGDRAW_EXPORT DrawIndirectBuffer : public BufferObject
 {
 public:
-    DrawIndirectBuffer():
+#ifdef GL_VERSION_4_0
+    DrawIndirectBuffer() :
         BufferObject( GL_DRAW_INDIRECT_BUFFER )
     {}
     DrawIndirectBuffer( const jagBase::BufferPtr b, const GLenum usage=GL_STATIC_DRAW ):
         BufferObject( GL_DRAW_INDIRECT_BUFFER, b, usage )
     {}
-};
 #endif
+};
     
 /**
 \details One class for each buffer bind target. \gl{table 2.8}.

@@ -10,6 +10,21 @@
 
 \section JagOverview Overview
 
+\a JAG is a \ref JagSpecification "specification" for an OpenGL-based rendering toolkit.
+\a Jag3D is a sample implementation of the JAG specifiction.
+You are reading Doxygen documentation generated from the Jag3D source. This documentation
+also comprises the JAG specification itself.
+
+Jag3D consists of the following components:
+\li jagBase: Logging, pointer, version, math, and other shared components.
+\li jagDisk: File loading interface.
+\li jagDraw: OpenGL-based rendering module, supporting multiple rendering contexts
+and retained mode rendering.
+\li jagSG: Scene graph support.
+\li Plugins: Support for a variety of data file formats.
+\li Examples: Examples of typical usage.
+\li Unit tests: Regression test suite.
+
 
 \subsection jagBase
 

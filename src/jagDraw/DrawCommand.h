@@ -37,7 +37,7 @@ struct DrawInfo;
 
 
 /** \class DrawCommand DrawCommand.h <jagDraw/DrawCommand.h>
-\brief
+\brief Retains and executes OpenGL drawing commands.
 \details \gl{section 2.8.3}.
 
 To implement a new type of draw command:
@@ -45,6 +45,15 @@ To implement a new type of draw command:
 values).
 \li Derive a class from DrawCommand.
 \li Override and define the pure virtual execute() member function.
+
+\specBegin
+\specThread{ }
+\specGL{ }
+\specDepend{ }
+\specUsage{ }
+\specViolations{ }
+\specEnd
+
 */
 class DrawCommand : public ObjectIDOwner
 {
@@ -142,6 +151,19 @@ typedef jagBase::ptr< jagDraw::DrawCommand >::shared_ptr DrawCommandPtr;
 typedef std::vector< DrawCommandPtr > DrawCommandVec;
 
 
+/** \class DrawArraysBase DrawCommand.h <jagDraw/DrawCommand.h>
+\brief Base class for DrawCommands that issue glDrawArrays*() commands.
+\details
+
+\specBegin
+\specThread{ }
+\specGL{ }
+\specDepend{ }
+\specUsage{ }
+\specViolations{ }
+\specEnd
+
+*/
 class DrawArraysBase
 {
 public:
@@ -161,6 +183,19 @@ protected:
     GLint _first;
 };
 
+/** \class DrawElementsBase DrawCommand.h <jagDraw/DrawCommand.h>
+\brief Base class for DrawCommands that issue glDrawElements*().
+\details
+
+\specBegin
+\specThread{ }
+\specGL{ }
+\specDepend{ }
+\specUsage{ }
+\specViolations{ }
+\specEnd
+
+*/
 class DrawElementsBase
 {
 public:
@@ -199,6 +234,19 @@ protected:
     jagDraw::BufferObjectPtr _elementBuffer;
 };
 
+/** \class BaseVertexBase DrawCommand.h <jagDraw/DrawCommand.h>
+\brief Base class for DrawCommands that issue gl*BaseVertex().
+\details
+
+\specBegin
+\specThread{ }
+\specGL{ }
+\specDepend{ }
+\specUsage{ }
+\specViolations{ }
+\specEnd
+
+*/
 class BaseVertexBase
 {
 public:
@@ -218,6 +266,18 @@ protected:
     GLint _baseVertex;
 };
 
+/** \class RangeBase DrawCommand.h <jagDraw/DrawCommand.h>
+\brief Base class for DrawCommands that issue glDrawRange*().
+
+\specBegin
+\specThread{ }
+\specGL{ }
+\specDepend{ }
+\specUsage{ }
+\specViolations{ }
+\specEnd
+
+*/
 class RangeBase
 {
 public:
@@ -242,6 +302,18 @@ protected:
     GLuint _start, _end;
 };
 
+/** \class MultiArrayBase DrawCommand.h <jagDraw/DrawCommand.h>
+\brief Base class for DrawCommands that issue glMultiDraw*().
+
+\specBegin
+\specThread{ }
+\specGL{ }
+\specDepend{ }
+\specUsage{ }
+\specViolations{ }
+\specEnd
+
+*/
 class MultiArrayBase
 {
 public:
@@ -277,7 +349,19 @@ protected:
     jagDraw::GLvoidPtrArray _indicesArray;
 };
 
-#ifdef GL_VERSION_4_0
+
+/** \class IndirectBase DrawCommand.h <jagDraw/DrawCommand.h>
+\brief Base class for DrawCommands that issue glDraw*Indirect().
+
+\specBegin
+\specThread{ }
+\specGL{ }
+\specDepend{ }
+\specUsage{ }
+\specViolations{ }
+\specEnd
+
+*/
 class IndirectBase
 {
 public:
@@ -310,12 +394,25 @@ protected:
 
     jagDraw::BufferObjectPtr _indirectBuffer;
 };
-#endif
+
+
 
 
 /** \class DrawArrays DrawCommand.h <jagDraw/DrawCommand.h>
-\brief
+\brief Retained storage for the glDrawArrays() command.
 \details
+
+\specBegin
+\specThread{Context Safe}
+\specGL{On each call to execute():
+    \code
+    glDrawArrays( _mode\, _first\, _count );
+    \endcode }
+\specDepend{None}
+\specUsage{Nominal}
+\specViolations{None}
+\specEnd
+
 */
 class DrawArrays : public DrawCommand,
             public DrawArraysBase
@@ -332,6 +429,7 @@ public:
     virtual ~DrawArrays()
     {}
 
+    /** \brief TBD */
     virtual void execute( DrawInfo& drawInfo )
     {
         glDrawArrays( _mode, _first, _count );
@@ -347,8 +445,20 @@ typedef jagBase::ptr< jagDraw::DrawArrays >::shared_ptr DrawArraysPtr;
 
 
 /** \class DrawArraysInstanced DrawCommand.h <jagDraw/DrawCommand.h>
-\brief
+\brief Retained storage for the glDrawArraysInstance() command.
 \details
+
+\specBegin
+\specThread{Context Safe}
+\specGL{On each call to execute():
+    \code
+    glDrawArraysInstanced( _mode\, _first\, _count\, _primcount );
+    \endcode }
+\specDepend{None}
+\specUsage{Nominal}
+\specViolations{None}
+\specEnd
+
 */
 class DrawArraysInstanced : public DrawCommand,
             public DrawArraysBase
@@ -365,6 +475,7 @@ public:
     virtual ~DrawArraysInstanced()
     {}
 
+    /** \brief TBD */
     virtual void execute( DrawInfo& drawInfo )
     {
         glDrawArraysInstanced( _mode, _first, _count, _primcount );
@@ -379,10 +490,22 @@ public:
 typedef jagBase::ptr< jagDraw::DrawArraysInstanced >::shared_ptr DrawArraysInstancedPtr;
 
 
-#ifdef GL_VERSION_4_0
 /** \class DrawArraysIndirect DrawCommand.h <jagDraw/DrawCommand.h>
-\brief
+\brief Retained storage for the glDrawArraysIndirect() command.
 \details
+
+\specBegin
+\specThread{Context Safe}
+\specGL{On each call to execute():
+    \code
+    // GL_INDIRECT_BUFFER bind (if necessary; see DrawIndirectBuffer).
+    glDrawArraysIndirect( _mode\, _indirect );
+    \endcode }
+\specDepend{DrawIndirectBuffer}
+\specUsage{Nominal}
+\specViolations{None}
+\specEnd
+
 */
 class DrawArraysIndirect : public DrawCommand,
             public IndirectBase
@@ -414,9 +537,11 @@ public:
 
     virtual void execute( DrawInfo& drawInfo )
     {
+#ifdef GL_VERSION_4_0
         if( _indirectBuffer != NULL )
             _indirectBuffer->execute( drawInfo );
         glDrawArraysIndirect( _mode, _indirect );
+#endif
     }
 
     virtual int getIndex( const unsigned int counter ) const
@@ -460,11 +585,23 @@ protected:
 };
 
 typedef jagBase::ptr< jagDraw::DrawArraysIndirect >::shared_ptr DrawArraysIndirectPtr;
-#endif
+
 
 /** \class MultiDrawArrays DrawCommand.h <jagDraw/DrawCommand.h>
-\brief
+\brief Retained storage for the glMultiDrawArrays() command.
 \details
+
+\specBegin
+\specThread{Context Safe}
+\specGL{On each call to execute():
+    \code
+    glMultiDrawArrays( _mode\, _firstArray.get()\, _countArray.get()\, _primcount );
+    \endcode }
+\specDepend{DrawIndirectBuffer}
+\specUsage{Nominal}
+\specViolations{None}
+\specEnd
+
 */
 class MultiDrawArrays : public DrawCommand,
             public MultiArrayBase
@@ -520,13 +657,27 @@ typedef jagBase::ptr< jagDraw::MultiDrawArrays >::shared_ptr MultiDrawArraysPtr;
 
 
 /** \class DrawElements DrawCommand.h <jagDraw/DrawCommand.h>
-\brief
+\brief Retained storage for the glDrawElements() command.
 \details
 
 All DrawElements commands must be used with GL_ELEMENT_ARRAY_BUFFER (OpenGL v4.0
 core profile spec). If an instance of this object is created with \c indices == NULL,
 it is the calling code's responsibility to ensure that the active VertexArrayObject
-has a buffer object bound to GL_ELEMENT_ARRAY_BUFFER. */
+has a buffer object bound to GL_ELEMENT_ARRAY_BUFFER.
+
+\specBegin
+\specThread{Context Safe}
+\specGL{On each call to execute():
+    \code
+    // GL_ELEMENT_ARRAY_BUFFER bind (if necessary; see ElementArrayBuffer).
+    glDrawElements( _mode\, _count\, _type\, _indices );
+    \endcode }
+\specDepend{ElementArrayBuffer}
+\specUsage{Nominal}
+\specViolations{None}
+\specEnd
+
+*/
 class DrawElements : public DrawCommand,
             public DrawElementsBase
 {
@@ -581,13 +732,27 @@ typedef jagBase::ptr< jagDraw::DrawElements >::shared_ptr DrawElementsPtr;
 
 
 /** \class DrawElementsInstanced DrawCommand.h <jagDraw/DrawCommand.h>
-\brief
+\brief Retained storage for the glDrawElementsInstanced() command.
 \details
 
 All DrawElements commands must be used with GL_ELEMENT_ARRAY_BUFFER (OpenGL v4.0
 core profile spec). If an instance of this object is created with \c indices == NULL,
 it is the calling code's responsibility to ensure that the active VertexArrayObject
-has a buffer object bound to GL_ELEMENT_ARRAY_BUFFER. */
+has a buffer object bound to GL_ELEMENT_ARRAY_BUFFER.
+
+\specBegin
+\specThread{Context Safe}
+\specGL{On each call to execute():
+    \code
+    // GL_ELEMENT_ARRAY_BUFFER bind (if necessary; see ElementArrayBuffer).
+    glDrawElementsInstanced( _mode\, _count\, _type\, _indices\, _primcount );
+    \endcode }
+\specDepend{ElementArrayBuffer}
+\specUsage{Nominal}
+\specViolations{None}
+\specEnd
+
+*/
 class DrawElementsInstanced : public DrawCommand,
             public DrawElementsBase
 {
@@ -645,13 +810,27 @@ typedef jagBase::ptr< jagDraw::DrawElementsInstanced >::shared_ptr DrawElementsI
 
 
 /** \class MultiDrawElements DrawCommand.h <jagDraw/DrawCommand.h>
-\brief
+\brief Retained storage for the glMultiDrawElements() command.
 \details
 
 All DrawElements commands must be used with GL_ELEMENT_ARRAY_BUFFER (OpenGL v4.0
 core profile spec). If an instance of this object is created with \c indices == NULL,
 it is the calling code's responsibility to ensure that the active VertexArrayObject
-has a buffer object bound to GL_ELEMENT_ARRAY_BUFFER. */
+has a buffer object bound to GL_ELEMENT_ARRAY_BUFFER.
+
+\specBegin
+\specThread{Context Safe}
+\specGL{On each call to execute():
+    \code
+    // GL_ELEMENT_ARRAY_BUFFER bind (if necessary; see ElementArrayBuffer).
+    glMultiDrawElements( _mode\, _countArray.get()\, _type\, (const GLvoid**)( _indicesArray.get() )\, _primcount );
+    \endcode }
+\specDepend{ElementArrayBuffer}
+\specUsage{Nominal}
+\specViolations{None}
+\specEnd
+
+*/
 class MultiDrawElements : public DrawCommand,
             public DrawElementsBase, public MultiArrayBase
 {
@@ -696,13 +875,27 @@ typedef jagBase::ptr< jagDraw::MultiDrawElements >::shared_ptr MultiDrawElements
 
 
 /** \class DrawRangeElements DrawCommand.h <jagDraw/DrawCommand.h>
-\brief
+\brief Retained storage for the glDrawRangeElements() command.
 \details
 
 All DrawElements commands must be used with GL_ELEMENT_ARRAY_BUFFER (OpenGL v4.0
 core profile spec). If an instance of this object is created with \c indices == NULL,
 it is the calling code's responsibility to ensure that the active VertexArrayObject
-has a buffer object bound to GL_ELEMENT_ARRAY_BUFFER. */
+has a buffer object bound to GL_ELEMENT_ARRAY_BUFFER.
+
+\specBegin
+\specThread{Context Safe}
+\specGL{On each call to execute():
+    \code
+    // GL_ELEMENT_ARRAY_BUFFER bind (if necessary; see ElementArrayBuffer).
+    glDrawRangeElements( _mode\, _start\, _end\, _count\, _type\, _indices );
+    \endcode }
+\specDepend{ElementArrayBuffer}
+\specUsage{Nominal}
+\specViolations{None}
+\specEnd
+
+*/
 class DrawRangeElements : public DrawCommand,
             public DrawElementsBase, public RangeBase
 {
@@ -747,13 +940,27 @@ typedef jagBase::ptr< jagDraw::DrawRangeElements >::shared_ptr DrawRangeElements
 
 
 /** \class DrawElementsBaseVertex DrawCommand.h <jagDraw/DrawCommand.h>
-\brief
+\brief Retained storage for the glDrawElementsBaseVertex() command.
 \details
 
 All DrawElements commands must be used with GL_ELEMENT_ARRAY_BUFFER (OpenGL v4.0
 core profile spec). If an instance of this object is created with \c indices == NULL,
 it is the calling code's responsibility to ensure that the active VertexArrayObject
-has a buffer object bound to GL_ELEMENT_ARRAY_BUFFER. */
+has a buffer object bound to GL_ELEMENT_ARRAY_BUFFER.
+
+\specBegin
+\specThread{Context Safe}
+\specGL{On each call to execute():
+    \code
+    // GL_ELEMENT_ARRAY_BUFFER bind (if necessary; see ElementArrayBuffer).
+    glDrawElementsBaseVertex( _mode\, _count\, _type\, _indices\, _baseVertex );
+    \endcode }
+\specDepend{ElementArrayBuffer}
+\specUsage{Nominal}
+\specViolations{None}
+\specEnd
+
+*/
 class DrawElementsBaseVertex : public DrawCommand,
             public DrawElementsBase, public BaseVertexBase
 {
@@ -798,13 +1005,27 @@ typedef jagBase::ptr< jagDraw::DrawElementsBaseVertex >::shared_ptr DrawElements
 
 
 /** \class DrawRangeElementsBaseVertex DrawCommand.h <jagDraw/DrawCommand.h>
-\brief
+\brief Retained storage for the glDrawRangeElementsBaseVertex() command.
 \details
 
 All DrawElements commands must be used with GL_ELEMENT_ARRAY_BUFFER (OpenGL v4.0
 core profile spec). If an instance of this object is created with \c indices == NULL,
 it is the calling code's responsibility to ensure that the active VertexArrayObject
-has a buffer object bound to GL_ELEMENT_ARRAY_BUFFER. */
+has a buffer object bound to GL_ELEMENT_ARRAY_BUFFER.
+
+\specBegin
+\specThread{Context Safe}
+\specGL{On each call to execute():
+    \code
+    // GL_ELEMENT_ARRAY_BUFFER bind (if necessary; see ElementArrayBuffer).
+    glDrawRangeElementsBaseVertex( _mode\, _start\, _end\, _count\, _type\, _indices\, _baseVertex );
+    \endcode }
+\specDepend{ElementArrayBuffer}
+\specUsage{Nominal}
+\specViolations{None}
+\specEnd
+
+*/
 class DrawRangeElementsBaseVertex : public DrawCommand,
             public DrawElementsBase, public RangeBase, public BaseVertexBase
 {
@@ -851,13 +1072,27 @@ typedef jagBase::ptr< jagDraw::DrawRangeElementsBaseVertex >::shared_ptr DrawRan
 
 
 /** \class DrawElementsInstancedBaseVertex DrawCommand.h <jagDraw/DrawCommand.h>
-\brief
+\brief Retained storage for the glDrawElementsInstancedBaseVertex() command.
 \details
 
 All DrawElements commands must be used with GL_ELEMENT_ARRAY_BUFFER (OpenGL v4.0
 core profile spec). If an instance of this object is created with \c indices == NULL,
 it is the calling code's responsibility to ensure that the active VertexArrayObject
-has a buffer object bound to GL_ELEMENT_ARRAY_BUFFER. */
+has a buffer object bound to GL_ELEMENT_ARRAY_BUFFER.
+
+\specBegin
+\specThread{Context Safe}
+\specGL{On each call to execute():
+    \code
+    // GL_ELEMENT_ARRAY_BUFFER bind (if necessary; see ElementArrayBuffer).
+    glDrawElementsInstancedBaseVertex( _mode\, _count\, _type\, _indices\, _primcount\, _baseVertex );
+    \endcode }
+\specDepend{ElementArrayBuffer}
+\specUsage{Nominal}
+\specViolations{None}
+\specEnd
+
+*/
 class DrawElementsInstancedBaseVertex : public DrawCommand,
             public DrawElementsBase, public BaseVertexBase
 {
@@ -901,10 +1136,23 @@ public:
 typedef jagBase::ptr< jagDraw::DrawElementsInstancedBaseVertex >::shared_ptr DrawElementsInstancedBaseVertexPtr;
 
 
-#ifdef GL_VERSION_4_0
 /** \class DrawElementsIndirect DrawCommand.h <jagDraw/DrawCommand.h>
-\brief
+\brief Retained storage for the glDrawElementsIndirect() command.
 \details
+
+\specBegin
+\specThread{Context Safe}
+\specGL{On each call to execute():
+    \code
+    // GL_ELEMENT_ARRAY_BUFFER bind (if necessary; see ElementArrayBuffer).
+    // GL_INDIRECT_BUFFER bind (if necessary; see DrawIndirectBuffer).
+    glDrawElementsIndirect( _mode\, _type\, _indirect );
+    \endcode }
+\specDepend{ElementArrayBuffer\, DrawIndirectBuffer}
+\specUsage{Nominal}
+\specViolations{None}
+\specEnd
+
 */
 class DrawElementsIndirect : public DrawCommand,
             public DrawElementsBase, public IndirectBase
@@ -942,25 +1190,42 @@ public:
 
     virtual void execute( DrawInfo& drawInfo )
     {
+#ifdef GL_VERSION_4_0
         if( _elementBuffer != NULL )
             _elementBuffer->execute( drawInfo );
         if( _indirectBuffer != NULL )
             _indirectBuffer->execute( drawInfo );
         glDrawElementsIndirect( _mode, _type, _indirect );
+#endif
     }
 };
 
 typedef jagBase::ptr< jagDraw::DrawElementsIndirect >::shared_ptr DrawElementsIndirectPtr;
-#endif
+
 
 /** \class MultiDrawElementsBaseVertex DrawCommand.h <jagDraw/DrawCommand.h>
-\brief
+\brief Retained storage for the glMultiDrawElementsBaseVertex() command.
 \details
 
 All DrawElements commands must be used with GL_ELEMENT_ARRAY_BUFFER (OpenGL v4.0
 core profile spec). If an instance of this object is created with \c indices == NULL,
 it is the calling code's responsibility to ensure that the active VertexArrayObject
-has a buffer object bound to GL_ELEMENT_ARRAY_BUFFER. */
+has a buffer object bound to GL_ELEMENT_ARRAY_BUFFER.
+
+\specBegin
+\specThread{Context Safe}
+\specGL{On each call to execute():
+    \code
+    // GL_ELEMENT_ARRAY_BUFFER bind (if necessary; see ElementArrayBuffer).
+    glMultiDrawElementsBaseVertex( _mode\, _countArray.get()\, _type\, (const GLvoid**)( _indicesArray.get() )\,
+            _primcount\, _basevertexArray.get() );
+    \endcode }
+\specDepend{ElementArrayBuffer}
+\specUsage{Nominal}
+\specViolations{None}
+\specEnd
+
+*/
 class MultiDrawElementsBaseVertex : public DrawCommand,
             public DrawElementsBase, public MultiArrayBase
 {
@@ -1012,9 +1277,27 @@ typedef jagBase::ptr< jagDraw::MultiDrawElementsBaseVertex >::shared_ptr MultiDr
 
 
 /** \class PrimitiveRestart DrawCommand.h <jagDraw/DrawCommand.h>
-\brief
+\brief Retained storage for the glPrimitiveRestart() command.
 \details
 \gl{section 2.8.1}.
+
+\specBegin
+\specThread{Context Safe}
+\specGL{On each call to execute():<br>
+If enabled:
+    \code
+    glEnable( GL_PRIMITIVE_RESTART );
+    glPrimitiveRestartIndex( _index );
+    \endcode
+If disabled:
+    \code
+    glDisable( GL_PRIMITIVE_RESTART );
+    \endcode }
+\specDepend{None}
+\specUsage{Nominal}
+\specViolations{None}
+\specEnd
+
 */
 class PrimitiveRestart : public DrawCommand
 {
