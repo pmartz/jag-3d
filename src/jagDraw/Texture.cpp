@@ -42,12 +42,22 @@ Texture::Texture( const GLenum target, ImagePtr image )
     _image( image )
 {
 }
+Texture::Texture( const GLenum target, ImagePtr image, SamplerPtr sampler )
+  : DrawablePrep( Texture_t ),
+    FramebufferAttachable(),
+    jagBase::LogBase( "jag.draw.tex" ),
+    _target( target ),
+    _image( image ),
+    _sampler( sampler )
+{
+}
 Texture::Texture( const Texture& rhs )
   : DrawablePrep( rhs ),
     FramebufferAttachable( rhs ),
     jagBase::LogBase( rhs ),
     _target( rhs._target ),
-    _image( rhs._image )
+    _image( rhs._image ),
+    _sampler( rhs._sampler )
 {
 }
 Texture::~Texture()
@@ -56,19 +66,53 @@ Texture::~Texture()
 }
 
 
-void Texture::activate( const unsigned int unit )
+void Texture::setImage( ImagePtr image )
 {
+    _image = image;
+}
+ImagePtr Texture::getImage() const
+{
+    return( _image );
+}
+
+void Texture::setSampler( SamplerPtr sampler )
+{
+    _sampler = sampler;
+}
+SamplerPtr Texture::getSampler() const
+{
+    return( _sampler );
+}
+
+
+
+void Texture::activate( DrawInfo& drawInfo, const unsigned int unit )
+{
+    JAG3D_TRACE( "activate" );
+
     GLenum localUnit( ( unit >= GL_TEXTURE0 ) ? unit : GL_TEXTURE0 + unit );
     glActiveTexture( localUnit );
+
+#ifdef GL_VERSION_3_3
+    if( _sampler != NULL )
+        _sampler->executeSampler( drawInfo._id, localUnit - GL_TEXTURE0 );
+#endif
 }
 
 void Texture::execute( DrawInfo& drawInfo )
 {
+    JAG3D_TRACE( "execute" );
+
     const unsigned int contextID( drawInfo._id );
 
     glBindTexture( _target, getID( contextID ) );
 
     JAG3D_ERROR_CHECK( "Texture::execute()" );
+
+#ifndef GL_VERSION_3_3
+    if( _sampler != NULL )
+        _sampler->executeTexture( _target );
+#endif
 }
 
 GLuint Texture::getID( const jagDraw::jagDrawContextID contextID )
@@ -79,6 +123,18 @@ GLuint Texture::getID( const jagDraw::jagDrawContextID contextID )
     }
 
     return( _ids[ contextID ] );
+}
+void Texture::setMaxContexts( const unsigned int numContexts )
+{
+    ObjectID::setMaxContexts( numContexts );
+    if( _sampler != NULL )
+        _sampler->setMaxContexts( numContexts );
+}
+void Texture::deleteID( const jagDraw::jagDrawContextID contextID )
+{
+    deleteID( contextID );
+    if( _sampler != NULL )
+        _sampler->deleteID( contextID );
 }
 
 void Texture::attachToFBO( const jagDraw::jagDrawContextID contextID, const GLenum attachment )
@@ -93,6 +149,8 @@ void Texture::internalInit( const unsigned int contextID )
     if( _image == NULL )
         return;
 
+    JAG3D_TRACE( "internalInit" );
+
     glGenTextures( 1, &( _ids[ contextID ] ) );
     const GLint id( _ids[ contextID ] );
 
@@ -104,10 +162,16 @@ void Texture::internalInit( const unsigned int contextID )
 
     glBindTexture( _target, id );
 
+#ifndef GL_VERSION_3_3
+    if( _sampler != NULL )
+        _sampler->executeTexture( _target );
+#endif
+    /*
     glTexParameterf( _target, GL_TEXTURE_WRAP_S,     GL_CLAMP_TO_EDGE );
     glTexParameterf( _target, GL_TEXTURE_WRAP_T,     GL_CLAMP_TO_EDGE );
     glTexParameterf( _target, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
     glTexParameterf( _target, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+    */
 
 
     GLint level;

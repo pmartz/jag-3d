@@ -38,6 +38,7 @@
 #include <jagDraw/Framebuffer.h>
 #include <jagDraw/Image.h>
 #include <jagDraw/Program.h>
+#include <jagDraw/Sampler.h>
 #include <jagDraw/Shader.h>
 #include <jagDraw/Texture.h>
 #include <jagDraw/Uniform.h>
