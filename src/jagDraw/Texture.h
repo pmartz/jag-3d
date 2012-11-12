@@ -28,6 +28,7 @@
 #include <jagDraw/FramebufferAttachable.h>
 #include <jagDraw/ObjectID.h>
 #include <jagDraw/Image.h>
+#include <jagDraw/Sampler.h>
 #include <jagDraw/CommandMap.h>
 #include <jagBase/LogBase.h>
 #include <jagBase/ptr.h>
@@ -50,13 +51,29 @@ public:
     */
     Texture();
     Texture( const GLenum target, ImagePtr image=ImagePtr((Image*)NULL) );
+    Texture( const GLenum target, ImagePtr image, SamplerPtr sampler );
     Texture( const Texture& rhs );
     virtual ~Texture();
 
     /** \brief TBD
+    \detauls TBD */
+    void setImage( ImagePtr image );
+    /** \brief TBD
+    \detauls TBD */
+    ImagePtr getImage() const;
+
+    /** \brief TBD
+    \detauls TBD */
+    void setSampler( SamplerPtr sampler );
+    /** \brief TBD
+    \detauls TBD */
+    SamplerPtr getSampler() const;
+
+
+    /** \brief TBD
     \details Set the active texture.
     Override from DrawablePrep. */
-    virtual void activate( const unsigned int unit );
+    virtual void activate( DrawInfo& drawInfo, const unsigned int unit );
 
     /** \brief TBD
     Override from DrawablePrep. */
@@ -65,39 +82,27 @@ public:
     /** \brief TBD
     Override from ObjectID. */
     virtual GLuint getID( const jagDraw::jagDrawContextID contextID );
+    /** \brief TBD
+    Override from ObjectID. */
+    virtual void setMaxContexts( const unsigned int numContexts );
+    /** \brief TBD
+    Override from ObjectID. */
+    virtual void deleteID( const jagDraw::jagDrawContextID contextID );
 
     /** \brief TBD
     \details Override from FramebufferAttachable.
     \gl{section 4.4.2} */
     virtual void attachToFBO( const jagDraw::jagDrawContextID contextID, const GLenum attachment );
 
-#if 0 // chaskii stuff
-    virtual void callStats() { stats(); }
-
-    virtual bool operator < (DrawableAttribute &rhs ) const
-    {
-        Texture &rhs_t = dynamic_cast<Texture &>(rhs);
-        return m_id < rhs_t.m_id;
-    }
-
-    virtual bool operator > (DrawableAttribute &rhs) const
-    {
-        Texture &rhs_t = dynamic_cast<Texture &>(rhs);
-        return m_id > rhs_t.m_id;
-    }
-
-    virtual bool operator == ( DrawableAttribute &rhs ) const
-    {
-        Texture &rhs_t = dynamic_cast<Texture &>(rhs);
-        return m_id == rhs_t.m_id;
-    }
-#endif
-
 protected:
-    /** GL_TEXTURE_1D, GL_TEXTURE_2D, etc. */
+    /** GL_TEXTURE_1D, GL_TEXTURE_2D, etc.<br>
+    Initial Value: GL_NONE */
     GLenum _target;
 
-    jagDraw::ImagePtr _image;
+    /** Imitial value: jagDraw::ImagePtr() */
+    ImagePtr _image;
+    /** Imitial value: jagDraw::SamplerPtr() */
+    SamplerPtr _sampler;
 
 
     void internalInit( const unsigned int contextID );
@@ -137,7 +142,7 @@ public:
         BOOST_FOREACH( const InternalMapType::value_type& dataPair, _map )
         {
             TexturePtr texture( dataPair.second );
-            texture->activate( dataPair.first );
+            texture->activate( drawInfo, dataPair.first );
             texture->execute( drawInfo );
         }
     }

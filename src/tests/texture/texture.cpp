@@ -120,7 +120,9 @@ bool TextureDemo::startup( const unsigned int numContexts )
 
     // Load image using jagDisk plugin interface.
     jagDraw::ImagePtr image( (jagDraw::Image*) jagDisk::read( "balloon.jpg" ) );
-    jagDraw::TexturePtr tex( new jagDraw::Texture( GL_TEXTURE_2D, image ) );
+    jagDraw::TexturePtr tex( new jagDraw::Texture( GL_TEXTURE_2D, image,
+        jagDraw::SamplerPtr( new jagDraw::Sampler() ) ) );
+    tex->getSampler()->getSamplerState()->_minFilter = GL_LINEAR;
     jagDraw::TextureSetPtr texSet( new jagDraw::TextureSet() );
     (*texSet)[ GL_TEXTURE0 ] = tex;
     commands->insert( texSet );

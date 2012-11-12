@@ -46,6 +46,7 @@ set( _jagDrawHeaderFiles
     PixelStore.h
     PlatformOpenGL.h
     Program.h
+    Sampler.h
     Shader.h
     Texture.h
     types.h
@@ -69,6 +70,7 @@ set( _jagDrawSourceFiles
     Node.cpp
     PixelStore.cpp
     Program.cpp
+    Sampler.cpp
     Shader.cpp
     Texture.cpp
     Uniform.cpp
