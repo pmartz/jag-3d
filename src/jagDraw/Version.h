@@ -43,11 +43,11 @@ int JAGDRAW_EXPORT getOpenGLVersionNumber();
 /** \brief OpenGL version number as a string
 \details Returns the GL_VERSION string.
 
-This function automatically logs OpenGL version information to the
+If \c silent is false, this function automatically logs OpenGL version information to the
 Logger named "jag.draw.version" at priority "info".
 
 NOTE: This function requires a current context. */
-std::string JAGDRAW_EXPORT getOpenGLVersionString();
+std::string JAGDRAW_EXPORT getOpenGLVersionString( const bool silent=false );
 
 /*@}*/
 

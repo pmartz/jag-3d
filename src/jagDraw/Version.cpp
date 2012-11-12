@@ -47,7 +47,7 @@ int getOpenGLVersionNumber()
 }
 
 
-std::string getOpenGLVersionString()
+std::string getOpenGLVersionString( const bool silent )
 {
     const std::string version( (char*) glGetString( GL_VERSION ) );
     if( version.empty() )
@@ -63,11 +63,14 @@ std::string getOpenGLVersionString()
     std::ostringstream ostr;
     ostr << getOpenGLVersionNumber();
 
-    JAG3D_INFO_STATIC( "jag.draw.version",
-        "GL_VERSION: " + version + " (" + ostr.str() + ")\n" +
-        "GL_VENDOR: " + vendor + "\n" +
-        "GL_RENDERER: " + renderer + "\n" +
-        "GL_SHADING_LANGUAGE_VERSION: " + glslVersion );
+    if( !silent )
+    {
+        JAG3D_INFO_STATIC( "jag.draw.version",
+            "GL_VERSION: " + version + " (" + ostr.str() + ")\n" +
+            "GL_VENDOR: " + vendor + "\n" +
+            "GL_RENDERER: " + renderer + "\n" +
+            "GL_SHADING_LANGUAGE_VERSION: " + glslVersion );
+    }
 
     return( version );
 }
