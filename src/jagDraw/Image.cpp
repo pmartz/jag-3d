@@ -26,11 +26,35 @@ namespace jagDraw {
 
 
 Image::Image()
-  : jagBase::LogBase( "jag.draw.image" )
+  : jagBase::LogBase( "jag.draw.image" ),
+    _level( 0 ),
+    _internalFormat( GL_NONE ),
+    _width( 0 ),
+    _height( 0 ),
+    _depth( 0 ),
+    _border( 0 ),
+    _format( GL_NONE ),
+    _type( GL_NONE ),
+    _imageSize( 0 ),
+    _compressed( false ),
+    _data( jagBase::BufferPtr( (jagBase::Buffer*)NULL ) ),
+    _pixelStore( PixelStorePtr( (PixelStore*)NULL ) )
 {
 }
 Image::Image( const Image& rhs )
-  : jagBase::LogBase( rhs )
+  : jagBase::LogBase( rhs ),
+    _level( rhs._level ),
+    _internalFormat( rhs._internalFormat ),
+    _width( rhs._width ),
+    _height( rhs._height ),
+    _depth( rhs._depth ),
+    _border( rhs._border ),
+    _format( rhs._format ),
+    _type( rhs._type ),
+    _imageSize( rhs._imageSize ),
+    _compressed( rhs._compressed ),
+    _data( rhs._data ),
+    _pixelStore( rhs._pixelStore )
 {
 }
 Image::~Image()
@@ -68,6 +92,39 @@ void Image::get( GLint& level, GLenum& internalFormat,
     type = _type;
     data = _data;
 }
+
+
+void Image::setCompressed( const GLint level, const GLenum internalFormat,
+    const GLsizei width, const GLsizei height, const GLsizei depth,
+    const GLint border, const GLsizei imageSize,
+    jagBase::BufferPtr data )
+{
+    _level = level;
+    _internalFormat = internalFormat;
+    _width = width;
+    _height = height;
+    _depth = depth;
+    _border = border;
+    _imageSize = imageSize;
+    _data = data;
+
+    _compressed = true;
+}
+void Image::getCompressed( GLint& level, GLenum& internalFormat,
+    GLsizei& width, GLsizei& height, GLsizei& depth,
+    GLint& border, GLsizei& imageSize,
+    jagBase::BufferPtr& data )
+{
+    level = _level;
+    internalFormat = _internalFormat;
+    width = _width;
+    height = _height;
+    depth = _depth;
+    border = _border;
+    imageSize = _imageSize;
+    data = _data;
+}
+
 
 void Image::setPixelStore( PixelStorePtr pixelStore )
 {
