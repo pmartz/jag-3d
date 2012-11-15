@@ -120,7 +120,11 @@ void ExecuteVisitor::updateTransformUniforms()
         jagDraw::UniformPtr modelViewInvTrans( new jagDraw::Uniform( "jagModelViewInvTransMatrix", mvitMat ) );
         usp->insert( modelViewInvTrans );
     }
-    _commandStack.back().insert( usp, true );
+    jagDraw::CommandMap& commands( _commandStack.back() );
+    if( commands[ jagDraw::UniformSet_t ] == NULL )
+        commands.insert( usp );
+    else
+        commands[ jagDraw::UniformSet_t ]->combine( *usp );
 
     _transform.setDirty( 0 );
 }

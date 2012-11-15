@@ -23,7 +23,7 @@
 
 #include <jagDraw/ObjectID.h>
 #include <jagDraw/DrawablePrep.h>
-//#include <jagDraw/DrawInfo.h>
+#include <jagBase/LogMacros.h>
 
 #include <jagBase/ptr.h>
 #include <boost/foreach.hpp>
@@ -56,6 +56,14 @@ public:
 
     void insert( const DrawablePrepPtr drawablePrep, bool override=false, bool protect=false )
     {
+        if( ( drawablePrep->getCommandType() == Texture_t ) ||
+            ( drawablePrep->getCommandType() == Uniform_t ) ||
+            ( drawablePrep->getCommandType() == UniformBlock_t ) )
+        {
+            JAG3D_CRITICAL_STATIC( "jag.draw.commandmap", "Unsupported command type." );
+            exit( 1 );
+        }
+
         const CommandType type( drawablePrep->getCommandType() );
         _bits.set( type );
 
@@ -170,7 +178,13 @@ public:
             case 3: // both have it
                 result[ type ] = ( *rhs._data.find( type ) ).second;
                 result._bits.set( type );
-                break; 
+                break;
+                /*
+            case 3: // both have it
+                result[ type ]->combine( *rhs._data.find( type )->second );
+                result._bits.set( type );
+                break;
+                */
             }
         }
 
@@ -252,9 +266,9 @@ public:
 
     std::string _name;
     CommandMapType _data;
-    std::bitset<9> _bits;
-    std::bitset<9> _overrideBits;
-    std::bitset<9> _protectBits;
+    std::bitset< MaxCommandType > _bits;
+    std::bitset< MaxCommandType > _overrideBits;
+    std::bitset< MaxCommandType > _protectBits;
 };
 
 typedef jagBase::ptr< jagDraw::CommandMap >::shared_ptr CommandMapPtr;

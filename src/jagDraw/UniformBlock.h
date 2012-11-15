@@ -65,6 +65,15 @@ public:
     UniformBlock( const UniformBlock& rhs );
     virtual ~UniformBlock();
 
+    /** \brief TBD
+    \details TBD */
+    std::string getName() const;
+    /** \brief TBD
+    \details TBD */
+    Program::HashValue getNameHash() const;
+
+    /** \brief TBD
+    \details TBD */
     void addUniform( UniformPtr uniform );
 
     /** \brief TBD
@@ -114,6 +123,13 @@ public:
     UniformBlockPtr& operator[]( const Program::HashValue& key )
     {
         return( _map[ key ] );
+    }
+
+    /** \brief TBD
+    \details TBD */
+    void insert( UniformBlockPtr ubp )
+    {
+        _map[ ubp->getNameHash() ] = ubp;
     }
 
 
