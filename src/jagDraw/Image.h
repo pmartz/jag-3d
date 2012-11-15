@@ -56,6 +56,19 @@ public:
         GLint& border, GLenum& format, GLenum& type,
         jagBase::BufferPtr& data );
 
+    void setCompressed( const GLint level, const GLenum internalFormat,
+        const GLsizei width, const GLsizei height, const GLsizei depth,
+        const GLint border, const GLsizei imageSize,
+        jagBase::BufferPtr data );
+    void getCompressed( GLint& level, GLenum& internalFormat,
+        GLsizei& width, GLsizei& height, GLsizei& depth,
+        GLint& border, GLsizei& imageSize,
+        jagBase::BufferPtr& data );
+    bool getCompressed() const
+    {
+        return( _compressed );
+    }
+
     void setPixelStore( PixelStorePtr pixelStore );
     PixelStorePtr getPixelStore();
 
@@ -66,6 +79,9 @@ protected:
     GLint _border;
     GLenum _format;
     GLenum _type;
+
+    GLsizei _imageSize;
+    bool _compressed;
 
     jagBase::BufferPtr _data;
 
