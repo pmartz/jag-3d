@@ -41,16 +41,16 @@ using namespace jagDisk;
 */
 /**@{*/
 
-/** \class ModelRW
+/** \class OSGModelRW
 \brief OSG-based model data loader.
 */
-class ModelRW : public ReaderWriter
+class OSGModelRW : public ReaderWriter
 {
 public:
-    ModelRW()
-      : ReaderWriter( "model" )
+    OSGModelRW()
+      : ReaderWriter( "osg-model" )
     {}
-    virtual ~ModelRW()
+    virtual ~OSGModelRW()
     {}
 
     virtual bool supportsExtension( const std::string& extension )
@@ -105,8 +105,8 @@ protected:
 // Register the ShaderRW class with the PluginManager.
 // This macro declares a static object initialized when the plugin is loaded.
 REGISTER_READERWRITER(
-    new ModelRW(),   // Create an instance of ModelRW.
-    ModelRW,         // Class name -- NOT a string.
+    new OSGModelRW(),   // Create an instance of ModelRW.
+    OSGModelRW,         // Class name -- NOT a string.
     "ReaderWriter",   // Base class name as a string.
     "Read and write models to disk using OSG dependency."  // Description text.
 );
@@ -115,5 +115,5 @@ REGISTER_READERWRITER(
 // Poco ClassLibrary manifest registration. Add a POCO_EXPORT_CLASS
 // for each ReaderWriter class in the plugin.
 POCO_BEGIN_MANIFEST( ReaderWriter )
-    POCO_EXPORT_CLASS( ModelRW )
+    POCO_EXPORT_CLASS( OSGModelRW )
 POCO_END_MANIFEST

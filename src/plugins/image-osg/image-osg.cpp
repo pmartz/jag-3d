@@ -43,16 +43,16 @@ using namespace jagDisk;
 */
 /**@{*/
 
-/** \class ImageRW
+/** \class OSGImageRW
 \brief OSG-based image data loader.
 */
-class ImageRW : public ReaderWriter
+class OSGImageRW : public ReaderWriter
 {
 public:
-    ImageRW()
-      : ReaderWriter( "image" )
+    OSGImageRW()
+      : ReaderWriter( "osg-image" )
     {}
-    virtual ~ImageRW()
+    virtual ~OSGImageRW()
     {}
 
     virtual bool supportsExtension( const std::string& extension )
@@ -96,7 +96,7 @@ protected:
         if( osgImage == NULL ) return( NULL );
 
         const unsigned int size( osgImage->getTotalSizeInBytes() );
-        jagBase::BufferPtr buffer( new jagBase::Buffer( size, osgImage->getDataPointer() ) );
+        osgImage->setAllocationMode( osg::Image::NO_DELETE );
 
         // Check for deprecated internal formats and change to valid ones.
         GLenum intFormat;
@@ -142,7 +142,8 @@ protected:
         newImage->set( 0, intFormat,
             osgImage->s(), osgImage->t(), osgImage->r(), 0,
             format, osgImage->getDataType(),
-            buffer );
+            const_cast< unsigned char* >(
+                (const unsigned char*)osgImage->getDataPointer() ) );
 
         PixelStorePtr pixelStore( new PixelStore() );
         pixelStore->_alignment = osgImage->getPacking();
@@ -163,8 +164,8 @@ protected:
 // Register the ShaderRW class with the PluginManager.
 // This macro declares a static object initialized when the plugin is loaded.
 REGISTER_READERWRITER(
-    new ImageRW(),   // Create an instance of ImageRW.
-    ImageRW,         // Class name -- NOT a string.
+    new OSGImageRW(),   // Create an instance of ImageRW.
+    OSGImageRW,         // Class name -- NOT a string.
     "ReaderWriter",   // Base class name as a string.
     "Read and write images to disk using OSG dependency."  // Description text.
 );
@@ -173,5 +174,5 @@ REGISTER_READERWRITER(
 // Poco ClassLibrary manifest registration. Add a POCO_EXPORT_CLASS
 // for each ReaderWriter class in the plugin.
 POCO_BEGIN_MANIFEST( ReaderWriter )
-    POCO_EXPORT_CLASS( ImageRW )
+    POCO_EXPORT_CLASS( OSGImageRW )
 POCO_END_MANIFEST

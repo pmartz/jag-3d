@@ -103,7 +103,7 @@ public:
     \details \param type from OpenGL spec table 2.10. */
     explicit Uniform( const std::string& name, const GLenum type );
     /** \brief Constructor, specifically for creation of sampler uniforms.
-    \detauls \param type from OpenGL spec table 2.10.
+    \details \param type from OpenGL spec table 2.10.
     \param v Sampler texture unit. */
     explicit Uniform( const std::string& name, const GLenum type, const GLint& v );
     /** \brief Copy constructor. */

@@ -135,7 +135,7 @@ public:
     virtual GLuint getID( const jagDraw::jagDrawContextID contextID );
 
     /** \brief TBD
-    \detauls Override from FramebufferAttachable.
+    \details Override from FramebufferAttachable.
     \gl{section 4.4.2} */
     virtual void attachToFBO( const jagDraw::jagDrawContextID contextID, const GLenum attachment );
 
