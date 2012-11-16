@@ -38,18 +38,20 @@ Texture::Texture( const GLenum target, ImagePtr image )
   : DrawablePrep( Texture_t ),
     FramebufferAttachable(),
     jagBase::LogBase( "jag.draw.tex" ),
-    _target( target ),
-    _image( image )
+    _target( target )
 {
+    _image.resize( 1 );
+    _image[ 0 ] = image;
 }
 Texture::Texture( const GLenum target, ImagePtr image, SamplerPtr sampler )
   : DrawablePrep( Texture_t ),
     FramebufferAttachable(),
     jagBase::LogBase( "jag.draw.tex" ),
     _target( target ),
-    _image( image ),
     _sampler( sampler )
 {
+    _image.resize( 1 );
+    _image[ 0 ] = image;
 }
 Texture::Texture( const Texture& rhs )
   : DrawablePrep( rhs ),
@@ -89,13 +91,43 @@ bool Texture::isProxy() const
 }
 
 
-void Texture::setImage( ImagePtr image )
+void Texture::setImage( ImagePtr image, const GLenum cubeTarget )
 {
-    _image = image;
+    if( cubeTarget == GL_NONE )
+    {
+        _image.resize( 1 );
+        _image[ 0 ] = image;
+        return;
+    }
+
+    _image.resize( 6 );
+    // Assume cube target enum values are sequential starting with
+    // GL_TEXTURE_CUBE_MAP_POSITIVE_X. This is not in the spec, but
+    // was in the extension spec and they are defined sequentially in
+    // glcorearb.h.
+    int index( (int)cubeTarget - (int)GL_TEXTURE_CUBE_MAP_POSITIVE_X );
+    if( ( index >= 0 ) && ( index < 6 ) )
+    {
+        _image[ index ] = image;
+        return;
+    }
+
+    JAG3D_ERROR( "setImage: Invalid cubeTarget parameter." );
 }
-ImagePtr Texture::getImage() const
+ImagePtr Texture::getImage( const GLenum cubeTarget ) const
 {
-    return( _image );
+    if( ( cubeTarget == GL_NONE ) && ( _image.size() == 1 ) )
+        return( _image[ 0 ] );
+
+    // Assume cube target enum values are sequential starting with
+    // GL_TEXTURE_CUBE_MAP_POSITIVE_X. This is not in the spec, but
+    // was in the extension spec and they are defined sequentially in
+    // glcorearb.h.
+    int index( (int)cubeTarget - (int)GL_TEXTURE_CUBE_MAP_POSITIVE_X );
+    if( ( index >= 0 ) && ( index < 6 ) && ( _image.size() == 6 ) )
+        return( _image[ index ] );
+
+    return( ImagePtr( (Image*)NULL ) );
 }
 
 void Texture::setSampler( SamplerPtr sampler )
@@ -169,7 +201,7 @@ void Texture::attachToFBO( const jagDraw::jagDrawContextID contextID, const GLen
 
 void Texture::internalInit( const unsigned int contextID )
 {
-    if( _image == NULL )
+    if( _image.empty() )
         return;
 
     JAG3D_TRACE( "internalInit" );
@@ -190,7 +222,36 @@ void Texture::internalInit( const unsigned int contextID )
         _sampler->executeTexture( _target );
 #endif
 
+    if( ( _target != GL_TEXTURE_CUBE_MAP ) &&
+        ( _target != GL_PROXY_TEXTURE_CUBE_MAP ) )
+    {
+        internalSpecifyTexImage( _target, _image[ 0 ] );
+    }
+    else
+    {
+        for( unsigned int idx=0; idx<6; idx++ )
+        {
+            GLenum target;
+            switch( idx )
+            {
+            case 0: target = GL_TEXTURE_CUBE_MAP_POSITIVE_X; break;
+            case 1: target = GL_TEXTURE_CUBE_MAP_NEGATIVE_X; break;
+            case 2: target = GL_TEXTURE_CUBE_MAP_POSITIVE_Y; break;
+            case 3: target = GL_TEXTURE_CUBE_MAP_NEGATIVE_Y; break;
+            case 4: target = GL_TEXTURE_CUBE_MAP_POSITIVE_Z; break;
+            case 5: target = GL_TEXTURE_CUBE_MAP_NEGATIVE_Z; break;
+            }
+            internalSpecifyTexImage( target, _image[ 0 ] );
+        }
+    }
 
+    glBindTexture( _target, 0 );
+
+    JAG3D_ERROR_CHECK( "Texture::internalInit()" );
+}
+
+void Texture::internalSpecifyTexImage( const GLenum target, ImagePtr image )
+{
     GLint level( 0 );
     GLenum internalFormat( GL_NONE );
     GLsizei width( 0 ), height( 0 ), depth( 0 );
@@ -198,89 +259,80 @@ void Texture::internalInit( const unsigned int contextID )
     GLenum format( GL_NONE );
     GLenum type( GL_NONE );
     GLsizei imageSize( 0 );
-    jagBase::BufferPtr data;
-    const bool compressed( _image->getCompressed() );
+    unsigned char* data;
+    const bool compressed( image->getCompressed() );
     if( compressed )
-        _image->getCompressed( level, internalFormat, width, height, depth,
-            border, imageSize, data );
+        image->getCompressed( level, internalFormat, width, height, depth,
+            border, imageSize, &data );
     else
-        _image->get( level, internalFormat, width, height, depth,
-            border, format, type, data );
-
-    const void* dataAddress( ( data != NULL ) ? data->data() : NULL );
+        image->get( level, internalFormat, width, height, depth,
+            border, format, type, &data );
 
     // If the image has a pixel store object, send the pixel
     // store parameters to OpenGL.
-    if( _image->getPixelStore() != NULL )
+    if( image->getPixelStore() != NULL )
         // TBD support for pixel unpack buffer objects.
-        _image->getPixelStore()->unpack();
+        image->getPixelStore()->unpack();
 
-    switch( _target )
+    switch( target )
     {
     case GL_TEXTURE_1D:
     case GL_PROXY_TEXTURE_1D:
         if( compressed )
-            glCompressedTexImage1D( _target, level, internalFormat,
-                width, border, imageSize, dataAddress );
+            glCompressedTexImage1D( target, level, internalFormat,
+                width, border, imageSize, data );
         else
-            glTexImage1D( _target, level, internalFormat,
-                width, border, format, type, dataAddress );
+            glTexImage1D( target, level, internalFormat,
+                width, border, format, type, data );
         break;
 
     case GL_TEXTURE_RECTANGLE:
         if( compressed )
         {
-            JAG3D_WARNING( "internalInit(): OpenGL prohibits compressed GL_TEXTURE_RECTANGLE textures." );
+            JAG3D_WARNING( "internalSpecifyTexImage(): OpenGL prohibits compressed GL_TEXTURE_RECTANGLE textures." );
         }
         // No 'break': Intentional fall-through.
     case GL_TEXTURE_2D:
     case GL_TEXTURE_1D_ARRAY:
+    case GL_TEXTURE_CUBE_MAP_POSITIVE_X:
+    case GL_TEXTURE_CUBE_MAP_NEGATIVE_X:
+    case GL_TEXTURE_CUBE_MAP_POSITIVE_Y:
+    case GL_TEXTURE_CUBE_MAP_NEGATIVE_Y:
+    case GL_TEXTURE_CUBE_MAP_POSITIVE_Z:
+    case GL_TEXTURE_CUBE_MAP_NEGATIVE_Z:
     case GL_PROXY_TEXTURE_2D:
     case GL_PROXY_TEXTURE_1D_ARRAY:
     case GL_PROXY_TEXTURE_RECTANGLE:
-    case GL_PROXY_TEXTURE_CUBE_MAP:
         if( compressed )
-            glCompressedTexImage2D( _target, level, internalFormat,
-                width, height, border, imageSize, dataAddress );
+            glCompressedTexImage2D( target, level, internalFormat,
+                width, height, border, imageSize, data );
         else
-            glTexImage2D( _target, level, internalFormat,
-                width, height, border, format, type, dataAddress );
-        break;
-
-    case GL_TEXTURE_CUBE_MAP:
-        JAG3D_ERROR( "internalInit: GL_TEXTURE_CUBE_MAP not yet implemented." );
-        JAG3D_ERROR( "\tProbably should allow Image to be a 6-element array." );
+            glTexImage2D( target, level, internalFormat,
+                width, height, border, format, type, data );
         break;
 
     case GL_TEXTURE_3D:
     case GL_TEXTURE_2D_ARRAY:
-    case GL_PROXY_TEXTURE_3D:
-    case GL_PROXY_TEXTURE_2D_ARRAY:
-        if( compressed )
-            glCompressedTexImage3D( _target, level, internalFormat,
-                width, height, depth, border, imageSize, dataAddress );
-        else
-            glTexImage3D( _target, level, internalFormat,
-                width, height, depth, border, format, type, dataAddress );
-        break;
 #ifdef GL_VERSION_4_0
     case GL_TEXTURE_CUBE_MAP_ARRAY:
-    case GL_PROXY_TEXTURE_CUBE_MAP_ARRAY:
-        glTexImage3D( _target, level, internalFormat,
-            width, height, depth, border, format, type, dataAddress );
-        break;
 #endif
+    case GL_PROXY_TEXTURE_3D:
+    case GL_PROXY_TEXTURE_2D_ARRAY:
+#ifdef GL_VERSION_4_0
+    case GL_PROXY_TEXTURE_CUBE_MAP_ARRAY:
+#endif
+        if( compressed )
+            glCompressedTexImage3D( target, level, internalFormat,
+                width, height, depth, border, imageSize, data );
+        else
+            glTexImage3D( target, level, internalFormat,
+                width, height, depth, border, format, type, data );
+        break;
 
     default:
-        JAG3D_ERROR( "internalInit: Invalid or unsupported texture target." );
+        JAG3D_ERROR( "internalSpecifyTexImage: Invalid or unsupported texture target." );
         break;
     }
-
-    //glGenerateMipmap( _target );
-
-    glBindTexture( _target, 0 );
-
-    JAG3D_ERROR_CHECK( "Texture::internalInit()" );
 }
 
 

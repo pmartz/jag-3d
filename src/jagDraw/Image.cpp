@@ -37,7 +37,8 @@ Image::Image()
     _type( GL_NONE ),
     _imageSize( 0 ),
     _compressed( false ),
-    _data( jagBase::BufferPtr( (jagBase::Buffer*)NULL ) ),
+    _allocMode( USE_NEW_DELETE ),
+    _data( NULL ),
     _pixelStore( PixelStorePtr( (PixelStore*)NULL ) )
 {
 }
@@ -53,19 +54,28 @@ Image::Image( const Image& rhs )
     _type( rhs._type ),
     _imageSize( rhs._imageSize ),
     _compressed( rhs._compressed ),
+    _allocMode( rhs._allocMode ),
     _data( rhs._data ),
     _pixelStore( rhs._pixelStore )
 {
 }
 Image::~Image()
 {
+    if( _data != NULL )
+    {
+        if( _allocMode == USE_NEW_DELETE )
+            delete [] _data;
+        else if( _allocMode == USE_MALLOC_FREE )
+            ::free( _data );
+        _data = NULL;
+    }
 }
 
 
 void Image::set( const GLint level, const GLenum internalFormat,
     const GLsizei width, const GLsizei height, const GLsizei depth,
     const GLint border, const GLenum format, const GLenum type,
-    jagBase::BufferPtr data )
+    unsigned char* data )
 {
     _level = level;
     _internalFormat = internalFormat;
@@ -80,7 +90,7 @@ void Image::set( const GLint level, const GLenum internalFormat,
 void Image::get( GLint& level, GLenum& internalFormat,
     GLsizei& width, GLsizei& height, GLsizei& depth,
     GLint& border, GLenum& format, GLenum& type,
-    jagBase::BufferPtr& data )
+    unsigned char** data )
 {
     level = _level;
     internalFormat = _internalFormat;
@@ -90,14 +100,14 @@ void Image::get( GLint& level, GLenum& internalFormat,
     border = _border;
     format = _format;
     type = _type;
-    data = _data;
+    *data = _data;
 }
 
 
 void Image::setCompressed( const GLint level, const GLenum internalFormat,
     const GLsizei width, const GLsizei height, const GLsizei depth,
     const GLint border, const GLsizei imageSize,
-    jagBase::BufferPtr data )
+    unsigned char* data )
 {
     _level = level;
     _internalFormat = internalFormat;
@@ -113,7 +123,7 @@ void Image::setCompressed( const GLint level, const GLenum internalFormat,
 void Image::getCompressed( GLint& level, GLenum& internalFormat,
     GLsizei& width, GLsizei& height, GLsizei& depth,
     GLint& border, GLsizei& imageSize,
-    jagBase::BufferPtr& data )
+    unsigned char** data )
 {
     level = _level;
     internalFormat = _internalFormat;
@@ -122,7 +132,7 @@ void Image::getCompressed( GLint& level, GLenum& internalFormat,
     depth = _depth;
     border = _border;
     imageSize = _imageSize;
-    data = _data;
+    *data = _data;
 }
 
 

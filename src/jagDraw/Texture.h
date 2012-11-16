@@ -56,28 +56,45 @@ public:
     virtual ~Texture();
 
     /** \brief TBD
-    \detauls TBD */
+    \details TBD */
     void setTarget( const GLenum target );
     /** \brief TBD
-    \detauls TBD */
+    \details TBD */
     GLenum getTarget() const;
     /** \brief TBD
-    \detauls TBD */
+    \details TBD */
     bool isProxy() const;
 
 
     /** \brief TBD
-    \detauls TBD */
-    void setImage( ImagePtr image );
+    \details
+    If \c _target is GL_TEXTURE_CUBE_MAP, use the \c cubeTarget
+    parameter to indicate the cube map face, one of
+    GL_TEXTURE_CUBE_MAP_POSITIVE_X, GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
+    GL_TEXTURE_CUBE_MAP_POSITIVE_Y, GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
+    GL_TEXTURE_CUBE_MAP_POSITIVE_Z, or GL_TEXTURE_CUBE_MAP_NEGATIVE_Z.
+    */
+    void setImage( ImagePtr image, const GLenum cubeTarget=GL_NONE );
     /** \brief TBD
-    \detauls TBD */
+    \details TBD */
     ImagePtr getImage() const;
+    /** \brief TBD
+    \details If \c cubeTarget is not specified, this function returns
+    the image stored in _image[ 0 ]. If \c cibeTarget is one of
+    GL_TEXTURE_CUBE_MAP_POSITIVE_X, GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
+    GL_TEXTURE_CUBE_MAP_POSITIVE_Y, GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
+    GL_TEXTURE_CUBE_MAP_POSITIVE_Z, or GL_TEXTURE_CUBE_MAP_NEGATIVE_Z,
+    the Image corresponding to the cube map face is returned.
+
+    If \c cubeTarget is specified but is not a valid cube map target,
+    NULL is returned. */
+    ImagePtr getImage( const GLenum cubeTarget=GL_NONE ) const;
 
     /** \brief TBD
-    \detauls TBD */
+    \details TBD */
     void setSampler( SamplerPtr sampler );
     /** \brief TBD
-    \detauls TBD */
+    \details TBD */
     SamplerPtr getSampler() const;
 
 
@@ -110,13 +127,14 @@ protected:
     Initial Value: GL_NONE */
     GLenum _target;
 
-    /** Imitial value: jagDraw::ImagePtr() */
-    ImagePtr _image;
+    /** Imitial value: empty() == true */
+    ImageVec _image;
     /** Imitial value: jagDraw::SamplerPtr() */
     SamplerPtr _sampler;
 
 
     void internalInit( const unsigned int contextID );
+    void internalSpecifyTexImage( const GLenum target, ImagePtr image );
 };
 
 typedef jagBase::ptr< jagDraw::Texture >::shared_ptr TexturePtr;

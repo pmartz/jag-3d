@@ -24,7 +24,6 @@
 
 #include <jagDraw/Export.h>
 #include <jagDraw/PlatformOpenGL.h>
-#include <jagBase/Buffer.h>
 #include <jagDraw/PixelStore.h>
 #include <jagBase/LogBase.h>
 #include <jagBase/ptr.h>
@@ -47,29 +46,52 @@ public:
     Image( const Image& rhs );
     virtual ~Image();
 
+    typedef enum {
+        NO_DELETE,
+        USE_NEW_DELETE,
+        USE_MALLOC_FREE
+    } AllocationMode;
+
+    /** \brief TBD
+    \details TBD */
+    void setAllocationMode( const AllocationMode mode ) { _allocMode = mode; }
+    AllocationMode getAllocationMode() const { return( _allocMode ); }
+
+    /** \brief TBD
+    \details TBD */
     void set( const GLint level, const GLenum internalFormat,
         const GLsizei width, const GLsizei height, const GLsizei depth,
         const GLint border, const GLenum format, const GLenum type,
-        jagBase::BufferPtr data );
+        unsigned char* data );
+    /** \brief TBD
+    \details TBD */
     void get( GLint& level, GLenum& internalFormat,
         GLsizei& width, GLsizei& height, GLsizei& depth,
         GLint& border, GLenum& format, GLenum& type,
-        jagBase::BufferPtr& data );
+        unsigned char** data );
 
+    /** \brief TBD
+    \details TBD */
     void setCompressed( const GLint level, const GLenum internalFormat,
         const GLsizei width, const GLsizei height, const GLsizei depth,
         const GLint border, const GLsizei imageSize,
-        jagBase::BufferPtr data );
+        unsigned char* data );
+    /** \brief TBD
+    \details TBD */
     void getCompressed( GLint& level, GLenum& internalFormat,
         GLsizei& width, GLsizei& height, GLsizei& depth,
         GLint& border, GLsizei& imageSize,
-        jagBase::BufferPtr& data );
-    bool getCompressed() const
-    {
-        return( _compressed );
-    }
+        unsigned char** data );
 
+    /** \brief TBD
+    \details TBD */
+    bool getCompressed() const { return( _compressed ); }
+
+    /** \brief TBD
+    \details TBD */
     void setPixelStore( PixelStorePtr pixelStore );
+    /** \brief TBD
+    \details TBD */
     PixelStorePtr getPixelStore();
 
 protected:
@@ -83,7 +105,9 @@ protected:
     GLsizei _imageSize;
     bool _compressed;
 
-    jagBase::BufferPtr _data;
+    /** Initial value: USE_NEW_DELETE */
+    AllocationMode _allocMode;
+    unsigned char* _data;
 
     PixelStorePtr _pixelStore;
 };
