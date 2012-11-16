@@ -158,12 +158,16 @@ bool JagLoadDemo::startup( const unsigned int numContexts )
         new jagDraw::Uniform( "ambientScene", .2f ) ) );
     ubp->addUniform( jagDraw::UniformPtr(
         new jagDraw::Uniform( "diffuseMat", gmtl::Point3f( 0.f, .7f, 0.9f ) ) ) );
-    commands->insert( ubp );
+    jagDraw::UniformBlockSetPtr ubsp( new jagDraw::UniformBlockSet() );
+    ubsp->insert( ubp );
+    commands->insert( ubsp );
 
     gmtl::Vec3f lightVec( 0.5, .7, 1. );
     gmtl::normalize( lightVec );
-    commands->insert( jagDraw::UniformPtr(
+    jagDraw::UniformSetPtr usp( new jagDraw::UniformSet() );
+    usp->insert( jagDraw::UniformPtr(
         new jagDraw::Uniform( "ecLightDir", lightVec ) ) );
+    commands->insert( usp );
 
 
     // We keep a different project matrix per context (to support different

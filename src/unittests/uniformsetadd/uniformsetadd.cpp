@@ -60,19 +60,19 @@ bool test()
     if( intVal != 11 )
         return( false );
 
-    UniformSet addResult = us0 + us1;
+    us0.combine( us1 );
 
     Program::HashValue hashVal;
     hashVal = Program::createHash( "a" );
-    addResult[ hashVal ]->get( intVal );
+    us0[ hashVal ]->get( intVal );
     if( intVal != 1 )
         return( false );
     hashVal = Program::createHash( "b" );
-    addResult[ hashVal ]->get( intVal );
+    us0[ hashVal ]->get( intVal );
     if( intVal != 10 )
         return( false );
     hashVal = Program::createHash( "c" );
-    addResult[ hashVal ]->get( intVal );
+    us0[ hashVal ]->get( intVal );
     if( intVal != 11 )
         return( false );
 

@@ -32,6 +32,7 @@
 #include <gmtl/gmtl.h>
 
 #include <boost/any.hpp>
+#include <boost/foreach.hpp>
 
 #include <vector>
 #include <string>
@@ -250,13 +251,14 @@ public:
         return( _map[ key ] );
     }
 
-    UniformSet operator+( const UniformSet& rhs )
+    virtual void combine( const DrawablePrep& rhs )
     {
         // std::map::insert does NOT overwrite, so put rhs in result first,
         // then insert the values held in this.
-        UniformSet result( rhs );
-        result._map.insert( _map.begin(), _map.end() );
-        return( result );
+        InternalMapType tempMap( _map );
+        const UniformSet* uniformSet( dynamic_cast< const UniformSet* >( &rhs ) );
+        _map = uniformSet->_map;
+        _map.insert( tempMap.begin(), tempMap.end() );
     }
 
 

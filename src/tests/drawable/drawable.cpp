@@ -138,8 +138,16 @@ bool DrawableDemo::startup( const unsigned int numContexts )
     }
 
     jagDraw::UniformPtr swizzleOff( new jagDraw::Uniform( "swizzle", false ) );
+    jagDraw::UniformSetPtr swizzleOffSet( new jagDraw::UniformSet() );
+    swizzleOffSet->insert( swizzleOff );
+
     jagDraw::UniformPtr swizzleOn( new jagDraw::Uniform( "swizzle", true ) );
+    jagDraw::UniformSetPtr swizzleOnSet( new jagDraw::UniformSet() );
+    swizzleOffSet->insert( swizzleOn );
+
     jagDraw::UniformPtr scale( new jagDraw::Uniform( "scale", 0.75f ) );
+    jagDraw::UniformSetPtr scaleSet( new jagDraw::UniformSet() );
+    swizzleOffSet->insert( scale );
 
 
     jagDraw::DrawablePtr drawable( new jagDraw::Drawable() );
@@ -150,9 +158,7 @@ bool DrawableDemo::startup( const unsigned int numContexts )
     // Define first drawable: tri strip on the left.
     {
         commands->insert( prog );
-        jagDraw::UniformSetPtr uniformSet( jagDraw::UniformSetPtr( new jagDraw::UniformSet() ) );
-        uniformSet->insert( swizzleOff );
-        commands->insert( uniformSet );
+        commands->insert( swizzleOffSet );
 
         Point3fArray v3fa;
         v3fa.push_back( gmtl::Point3f( -.9f, -.9f, z ) );
@@ -214,9 +220,7 @@ bool DrawableDemo::startup( const unsigned int numContexts )
         drawable = jagDraw::DrawablePtr( new jagDraw::Drawable() );
         commands = jagDraw::CommandMapPtr( new jagDraw::CommandMap );
 
-        jagDraw::UniformSetPtr uniformSet( jagDraw::UniformSetPtr( new jagDraw::UniformSet() ) );
-        uniformSet->insert( swizzleOn );
-        commands->insert( uniformSet );
+        commands->insert( swizzleOnSet );
 
         Point3fArray i3fa;
         i3fa.push_back( gmtl::Point3f( -.3f, -.9f, z ) );
@@ -252,7 +256,7 @@ bool DrawableDemo::startup( const unsigned int numContexts )
         commands = jagDraw::CommandMapPtr( new jagDraw::CommandMap() );
 
         commands->insert( prog2 );
-        commands->insert( scale );
+        commands->insert( scaleSet );
 
         Point3fArray i3fa;
         i3fa.push_back( gmtl::Point3f( .3f, -.9f, z ) );

@@ -35,12 +35,18 @@ struct DrawInfo;
 
 
 typedef enum {
-    Framebuffer_t,
     Program_t,
+    VertexArrayObject_t,
     TextureSet_t,
     UniformSet_t,
     UniformBlockSet_t,
-    VertexArrayObject_t,
+
+    BufferObjectSet_t, // TBD not yet implemented
+    SamplerSet_t, // TBD not yet implemented
+
+    Framebuffer_t,
+
+    MaxCommandType,
 
     Texture_t,
     Uniform_t,
@@ -48,6 +54,10 @@ typedef enum {
 } CommandType;
 
 typedef std::vector< CommandType > CommandTypeVec;
+
+
+class DrawablePrep;
+typedef jagBase::ptr< jagDraw::DrawablePrep >::shared_ptr DrawablePrepPtr;
 
 
 /** \class DrawablePrep DrawablePrep.h <jagDraw/DrawablePrep.h>
@@ -75,6 +85,10 @@ public:
     /** \brief TBD
     \details TBD */
     virtual void execute( DrawInfo& ) = 0;
+
+    /** \brief TBD
+    \details TBD */
+    virtual void combine( const DrawablePrep& rhs ) {}
 
 
     // TBD remove, replace with general purpose user data infrastructure.
@@ -156,7 +170,6 @@ protected:
     };
 };
 
-typedef jagBase::ptr< jagDraw::DrawablePrep >::shared_ptr DrawablePrepPtr;
 typedef std::vector< DrawablePrepPtr > DrawablePrepVec;
 
 

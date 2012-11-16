@@ -60,6 +60,14 @@ UniformBlock::~UniformBlock()
 }
 
 
+std::string UniformBlock::getName() const
+{
+    return( _name );
+}
+Program::HashValue UniformBlock::getNameHash() const
+{
+    return( _nameHash );
+}
 void UniformBlock::addUniform( UniformPtr uniform )
 {
     _uniforms.push_back( uniform );
