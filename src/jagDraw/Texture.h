@@ -57,6 +57,17 @@ public:
 
     /** \brief TBD
     \detauls TBD */
+    void setTarget( const GLenum target );
+    /** \brief TBD
+    \detauls TBD */
+    GLenum getTarget() const;
+    /** \brief TBD
+    \detauls TBD */
+    bool isProxy() const;
+
+
+    /** \brief TBD
+    \detauls TBD */
     void setImage( ImagePtr image );
     /** \brief TBD
     \detauls TBD */
