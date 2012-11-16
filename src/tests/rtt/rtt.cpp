@@ -168,8 +168,7 @@ bool RttDemo::startup( const unsigned int numContexts )
 
     // Create a texture to render into.
     jagDraw::ImagePtr image( new jagDraw::Image() );
-    image->set( 0, GL_RGBA, _texWidth, _texHeight, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE,
-        jagBase::BufferPtr( (jagBase::Buffer*) NULL ) );
+    image->set( 0, GL_RGBA, _texWidth, _texHeight, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL );
     jagDraw::TexturePtr tex( new jagDraw::Texture( GL_TEXTURE_2D, image,
         jagDraw::SamplerPtr( new jagDraw::Sampler() ) ) );
     tex->getSampler()->getSamplerState()->_minFilter = GL_LINEAR;
