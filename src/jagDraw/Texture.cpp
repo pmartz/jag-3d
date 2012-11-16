@@ -259,16 +259,14 @@ void Texture::internalSpecifyTexImage( const GLenum target, ImagePtr image )
     GLenum format( GL_NONE );
     GLenum type( GL_NONE );
     GLsizei imageSize( 0 );
-    jagBase::BufferPtr data;
+    unsigned char* data;
     const bool compressed( image->getCompressed() );
     if( compressed )
         image->getCompressed( level, internalFormat, width, height, depth,
-            border, imageSize, data );
+            border, imageSize, &data );
     else
         image->get( level, internalFormat, width, height, depth,
-            border, format, type, data );
-
-    const void* dataAddress( ( data != NULL ) ? data->data() : NULL );
+            border, format, type, &data );
 
     // If the image has a pixel store object, send the pixel
     // store parameters to OpenGL.
@@ -282,10 +280,10 @@ void Texture::internalSpecifyTexImage( const GLenum target, ImagePtr image )
     case GL_PROXY_TEXTURE_1D:
         if( compressed )
             glCompressedTexImage1D( target, level, internalFormat,
-                width, border, imageSize, dataAddress );
+                width, border, imageSize, data );
         else
             glTexImage1D( target, level, internalFormat,
-                width, border, format, type, dataAddress );
+                width, border, format, type, data );
         break;
 
     case GL_TEXTURE_RECTANGLE:
@@ -307,10 +305,10 @@ void Texture::internalSpecifyTexImage( const GLenum target, ImagePtr image )
     case GL_PROXY_TEXTURE_RECTANGLE:
         if( compressed )
             glCompressedTexImage2D( target, level, internalFormat,
-                width, height, border, imageSize, dataAddress );
+                width, height, border, imageSize, data );
         else
             glTexImage2D( target, level, internalFormat,
-                width, height, border, format, type, dataAddress );
+                width, height, border, format, type, data );
         break;
 
     case GL_TEXTURE_3D:
@@ -325,10 +323,10 @@ void Texture::internalSpecifyTexImage( const GLenum target, ImagePtr image )
 #endif
         if( compressed )
             glCompressedTexImage3D( target, level, internalFormat,
-                width, height, depth, border, imageSize, dataAddress );
+                width, height, depth, border, imageSize, data );
         else
             glTexImage3D( target, level, internalFormat,
-                width, height, depth, border, format, type, dataAddress );
+                width, height, depth, border, format, type, data );
         break;
 
     default:

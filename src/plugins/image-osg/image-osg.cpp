@@ -96,7 +96,7 @@ protected:
         if( osgImage == NULL ) return( NULL );
 
         const unsigned int size( osgImage->getTotalSizeInBytes() );
-        jagBase::BufferPtr buffer( new jagBase::Buffer( size, osgImage->getDataPointer() ) );
+        osgImage->setAllocationMode( osg::Image::NO_DELETE );
 
         // Check for deprecated internal formats and change to valid ones.
         GLenum intFormat;
@@ -142,7 +142,8 @@ protected:
         newImage->set( 0, intFormat,
             osgImage->s(), osgImage->t(), osgImage->r(), 0,
             format, osgImage->getDataType(),
-            buffer );
+            const_cast< unsigned char* >(
+                (const unsigned char*)osgImage->getDataPointer() ) );
 
         PixelStorePtr pixelStore( new PixelStore() );
         pixelStore->_alignment = osgImage->getPacking();
