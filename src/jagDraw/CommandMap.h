@@ -175,16 +175,13 @@ public:
                 result._bits.set( type );
                 break;
             case 2: // rhs has it
-            case 3: // both have it
                 result[ type ] = ( *rhs._data.find( type ) ).second;
                 result._bits.set( type );
                 break;
-                /*
             case 3: // both have it
                 result[ type ]->combine( *rhs._data.find( type )->second );
                 result._bits.set( type );
                 break;
-                */
             }
         }
 
