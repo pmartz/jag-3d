@@ -79,15 +79,16 @@ public:
     \details TBD */
     ImagePtr getImage() const;
     /** \brief TBD
-    \details If there was no previous call to setImage() to set a cube map
-    face, this function returns a NULL pointer. Otherwise, the function
-    returns the cube map face image corresponging to \c cubeTarget, which
-    must be one of
+    \details If \c cubeTarget is not specified, this function returns
+    the image stored in _image[ 0 ]. If \c cibeTarget is one of
     GL_TEXTURE_CUBE_MAP_POSITIVE_X, GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
     GL_TEXTURE_CUBE_MAP_POSITIVE_Y, GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
-    GL_TEXTURE_CUBE_MAP_POSITIVE_Z, or GL_TEXTURE_CUBE_MAP_NEGATIVE_Z.
-    */
-    ImagePtr getImage( const GLenum cubeTarget ) const;
+    GL_TEXTURE_CUBE_MAP_POSITIVE_Z, or GL_TEXTURE_CUBE_MAP_NEGATIVE_Z,
+    the Image corresponding to the cube map face is returned.
+
+    If \c cubeTarget is specified but is not a valid cube map target,
+    NULL is returned. */
+    ImagePtr getImage( const GLenum cubeTarget=GL_NONE ) const;
 
     /** \brief TBD
     \details TBD */

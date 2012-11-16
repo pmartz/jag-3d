@@ -93,66 +93,41 @@ bool Texture::isProxy() const
 
 void Texture::setImage( ImagePtr image, const GLenum cubeTarget )
 {
-    if( ( cubeTarget != GL_NONE ) && ( _image.size() != 6 ) )
-        _image.resize( 6 );
-
-    switch( cubeTarget )
+    if( cubeTarget == GL_NONE )
     {
-    case GL_NONE:
-    case GL_TEXTURE_CUBE_MAP_POSITIVE_X:
+        _image.resize( 1 );
         _image[ 0 ] = image;
-        break;
-    case GL_TEXTURE_CUBE_MAP_NEGATIVE_X:
-        _image[ 1 ] = image;
-        break;
-    case GL_TEXTURE_CUBE_MAP_POSITIVE_Y:
-        _image[ 2 ] = image;
-        break;
-    case GL_TEXTURE_CUBE_MAP_NEGATIVE_Y:
-        _image[ 3 ] = image;
-        break;
-    case GL_TEXTURE_CUBE_MAP_POSITIVE_Z:
-        _image[ 4 ] = image;
-        break;
-    case GL_TEXTURE_CUBE_MAP_NEGATIVE_Z:
-        _image[ 5 ] = image;
-        break;
-    default:
-        JAG3D_ERROR( "setImage: Invalid cubeTarget parameter." );
-        break;
+        return;
     }
-}
-ImagePtr Texture::getImage() const
-{
-    if( _image.empty() )
-        return( ImagePtr( (Image*)NULL ) );
-    else
-        return( _image[ 0 ] );
+
+    _image.resize( 6 );
+    // Assume cube target enum values are sequential starting with
+    // GL_TEXTURE_CUBE_MAP_POSITIVE_X. This is not in the spec, but
+    // was in the extension spec and they are defined sequentially in
+    // glcorearb.h.
+    int index( (int)cubeTarget - (int)GL_TEXTURE_CUBE_MAP_POSITIVE_X );
+    if( ( index >= 0 ) && ( index < 6 ) )
+    {
+        _image[ index ] = image;
+        return;
+    }
+
+    JAG3D_ERROR( "setImage: Invalid cubeTarget parameter." );
 }
 ImagePtr Texture::getImage( const GLenum cubeTarget ) const
 {
-    if( _image.size() != 6 )
-        return( ImagePtr( (Image*)NULL ) );
-
-    switch( cubeTarget )
-    {
-    case GL_TEXTURE_CUBE_MAP_POSITIVE_X:
+    if( ( cubeTarget == GL_NONE ) && ( _image.size() == 1 ) )
         return( _image[ 0 ] );
-    case GL_TEXTURE_CUBE_MAP_NEGATIVE_X:
-        return( _image[ 1 ] );
-    case GL_TEXTURE_CUBE_MAP_POSITIVE_Y:
-        return( _image[ 2 ] );
-    case GL_TEXTURE_CUBE_MAP_NEGATIVE_Y:
-        return( _image[ 3 ] );
-    case GL_TEXTURE_CUBE_MAP_POSITIVE_Z:
-        return( _image[ 4 ] );
-    case GL_TEXTURE_CUBE_MAP_NEGATIVE_Z:
-        return( _image[ 5 ] );
-    default:
-        JAG3D_ERROR( "getImage: Invalid cubeTarget parameter." );
-        return( ImagePtr( (Image*)NULL ) );
-        break;
-    }
+
+    // Assume cube target enum values are sequential starting with
+    // GL_TEXTURE_CUBE_MAP_POSITIVE_X. This is not in the spec, but
+    // was in the extension spec and they are defined sequentially in
+    // glcorearb.h.
+    int index( (int)cubeTarget - (int)GL_TEXTURE_CUBE_MAP_POSITIVE_X );
+    if( ( index >= 0 ) && ( index < 6 ) && ( _image.size() == 6 ) )
+        return( _image[ index ] );
+
+    return( ImagePtr( (Image*)NULL ) );
 }
 
 void Texture::setSampler( SamplerPtr sampler )
