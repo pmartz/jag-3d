@@ -37,7 +37,10 @@ VertexArrayObject::VertexArrayObject()
 
 VertexArrayObject::VertexArrayObject( const VertexArrayObject& rhs )
   : DrawablePrep( rhs ),
-    ObjectID( rhs )
+    ObjectID( rhs ),
+    _initialized( rhs._initialized ),
+    _commands( rhs._commands ),
+    _vertices( rhs._vertices )
 {}
 
 
