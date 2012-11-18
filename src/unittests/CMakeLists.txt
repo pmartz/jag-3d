@@ -22,4 +22,5 @@
 add_subdirectory( transforminfo )
 
 # Tests for jagDraw interface
+add_subdirectory( commandmapops )
 add_subdirectory( uniformsetadd )
