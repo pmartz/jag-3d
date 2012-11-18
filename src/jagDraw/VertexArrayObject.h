@@ -37,6 +37,8 @@ namespace jagDraw {
 
 struct DrawInfo;
 
+class VertexArrayObject;
+typedef jagBase::ptr< jagDraw::VertexArrayObject >::shared_ptr VertexArrayObjectPtr;
 
 /** \class VertexArrayObject VertexArrayObject.h <jagDraw/VertexArrayObject.h>
 \brief A context-safe wrapper for OpenGL vertex array objects.
@@ -50,6 +52,12 @@ public:
     VertexArrayObject( const VertexArrayObject& rhs );
     virtual ~VertexArrayObject();
 
+    /** \brief TBD
+    \details TBD */
+    virtual DrawablePrepPtr clone() { return( VertexArrayObjectPtr( new VertexArrayObject( *this ) ) ); }
+
+    /** \brief TBD
+    \details TBD */
     virtual void execute( DrawInfo& drawInfo );
 
     /** \brief TBD
@@ -105,7 +113,6 @@ protected:
     VertexArrayCommandVec _vertices;
 };
 
-typedef jagBase::ptr< jagDraw::VertexArrayObject >::shared_ptr VertexArrayObjectPtr;
 typedef std::vector< VertexArrayObjectPtr > VertexArrayObjectVec;
 
 

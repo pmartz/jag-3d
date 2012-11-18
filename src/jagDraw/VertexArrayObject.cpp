@@ -41,7 +41,8 @@ VertexArrayObject::VertexArrayObject( const VertexArrayObject& rhs )
     _initialized( rhs._initialized ),
     _commands( rhs._commands ),
     _vertices( rhs._vertices )
-{}
+{
+}
 
 
 VertexArrayObject::~VertexArrayObject() 

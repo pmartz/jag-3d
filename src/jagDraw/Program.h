@@ -39,6 +39,9 @@ namespace jagDraw {
 
 struct DrawInfo;
 
+class Program;
+typedef jagBase::ptr< Program >::shared_ptr ProgramPtr;
+
 
 /** \class Program Program.h <jagDraw/Program.h>
 \brief
@@ -68,6 +71,10 @@ public:
     \gl{section 2.11.2}.
     */
     void attachShader( ShaderPtr shader );
+
+    /** \brief TBD
+    \details TBD */
+    virtual DrawablePrepPtr clone() { return( ProgramPtr( new Program( *this ) ) ); }
 
     /** \brief Make this program the current program.
     \details Implicitly calls link() if necessary for this context,
@@ -210,7 +217,6 @@ private:
     BlockInfoMap _blockInfo;
 };
 
-typedef jagBase::ptr< Program >::shared_ptr ProgramPtr;
 typedef std::vector< ProgramPtr > ProgramVec;
 
 

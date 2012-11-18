@@ -118,7 +118,7 @@ class DrawNodeCommandSorter
 public:
     DrawNodeCommandSorter()
     {}
-    DrawNodeCommandSorter( const CommandTypeVec& priorityVec ):
+    DrawNodeCommandSorter( const DrawablePrep::CommandTypeVec& priorityVec ):
         _priorityVec( priorityVec )
     {}
     DrawNodeCommandSorter( const DrawNodeCommandSorter& rhs )
@@ -132,7 +132,7 @@ public:
         const CommandMapPtr lhsCommands( lhs.getCommandMap() );
         const CommandMapPtr rhsCommands( rhs.getCommandMap() );
 
-        for( CommandTypeVec::const_iterator typeIter = _priorityVec.begin(); typeIter != _priorityVec.end(); ++typeIter )
+        for( DrawablePrep::CommandTypeVec::const_iterator typeIter = _priorityVec.begin(); typeIter != _priorityVec.end(); ++typeIter )
         {
             switch( (int)( lhsCommands->_bits[ *typeIter ] ) | ( rhsCommands->_bits[ *typeIter ] << 1 ) )
             {
@@ -158,7 +158,7 @@ public:
     }
 
 protected:
-    CommandTypeVec _priorityVec;
+    DrawablePrep::CommandTypeVec _priorityVec;
 };
 
 

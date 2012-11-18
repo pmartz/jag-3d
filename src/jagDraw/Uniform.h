@@ -43,6 +43,9 @@ namespace jagDraw {
 
 struct DrawInfo;
 
+class Uniform;
+typedef jagBase::ptr< jagDraw::Uniform >::shared_ptr UniformPtr;
+
 
 /** \class Uniform Uniform.h <jagDraw\Uniform.h>
 \brief Support for setting GLSL uniform variables.
@@ -192,6 +195,10 @@ public:
 
 
     /** \brief TBD
+    \details TBD */
+    virtual DrawablePrepPtr clone() { return( UniformPtr( new Uniform( *this ) ) ); }
+
+    /** \brief TBD
     \details TBD
     Does not add this uniform to drawInfo._uniformMap.
     \gl{section 2.11.4}. */
@@ -223,12 +230,18 @@ protected:
     bool _transpose;
 };
 
-typedef jagBase::ptr< jagDraw::Uniform >::shared_ptr UniformPtr;
 typedef jagBase::ptr< const jagDraw::Uniform >::shared_ptr ConstUniformPtr;
 typedef std::vector< UniformPtr > UniformVec;
 
 
 
+class UniformSet;
+typedef jagBase::ptr< jagDraw::UniformSet >::shared_ptr UniformSetPtr;
+
+
+/** \class UniformSet Uniform.h <jagDraw/Uniform.h>
+\brief TBD
+\details TBD */
 class UniformSet : public DrawablePrep
 {
 public:
@@ -251,14 +264,16 @@ public:
         return( _map[ key ] );
     }
 
-    virtual void combine( const DrawablePrep& rhs )
+    virtual DrawablePrepPtr clone() { return( UniformSetPtr( new UniformSet( *this ) ) ); }
+
+    virtual DrawablePrepPtr combine( DrawablePrepPtr rhs )
     {
         // std::map::insert does NOT overwrite, so put rhs in result first,
         // then insert the values held in this.
-        InternalMapType tempMap( _map );
-        const UniformSet* uniformSet( dynamic_cast< const UniformSet* >( &rhs ) );
-        _map = uniformSet->_map;
-        _map.insert( tempMap.begin(), tempMap.end() );
+        UniformSet* uniformSet( dynamic_cast< UniformSet* >( rhs.get() ) );
+        UniformSetPtr result( new UniformSet( *uniformSet ) );
+        result->_map.insert( _map.begin(), _map.end() );
+        return( result );
     }
 
 
@@ -277,8 +292,6 @@ public:
 protected:
     InternalMapType _map;
 };
-
-typedef jagBase::ptr< jagDraw::UniformSet >::shared_ptr UniformSetPtr;
 
 
 // jagDraw

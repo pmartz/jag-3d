@@ -39,6 +39,9 @@ namespace jagDraw {
 
 class Renderbuffer;
 
+class Framebuffer;
+typedef jagBase::ptr< jagDraw::Framebuffer >::shared_ptr FramebufferPtr;
+
 
 /** \class Framebuffer Framebuffer.h <jagDraw/Framebuffer.h>
 \brief TBD
@@ -52,6 +55,10 @@ public:
     Framebuffer( GLenum target=GL_FRAMEBUFFER );
     Framebuffer( const Framebuffer& rhs );
     virtual ~Framebuffer();
+
+    /** \brief TBD
+    \details TBD */
+    virtual DrawablePrepPtr clone() { return( FramebufferPtr( new Framebuffer( *this ) ) ); }
 
     /** \brief TBD
     Override from DrawablePrep. */
@@ -108,7 +115,6 @@ protected:
     GLbitfield _clearMask;
 };
 
-typedef jagBase::ptr< jagDraw::Framebuffer >::shared_ptr FramebufferPtr;
 typedef std::vector< FramebufferPtr > FramebufferVec;
 
 
