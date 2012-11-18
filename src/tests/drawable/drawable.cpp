@@ -143,11 +143,11 @@ bool DrawableDemo::startup( const unsigned int numContexts )
 
     jagDraw::UniformPtr swizzleOn( new jagDraw::Uniform( "swizzle", true ) );
     jagDraw::UniformSetPtr swizzleOnSet( new jagDraw::UniformSet() );
-    swizzleOffSet->insert( swizzleOn );
+    swizzleOnSet->insert( swizzleOn );
 
     jagDraw::UniformPtr scale( new jagDraw::Uniform( "scale", 0.75f ) );
     jagDraw::UniformSetPtr scaleSet( new jagDraw::UniformSet() );
-    swizzleOffSet->insert( scale );
+    scaleSet->insert( scale );
 
 
     jagDraw::DrawablePtr drawable( new jagDraw::Drawable() );

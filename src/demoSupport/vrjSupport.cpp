@@ -169,8 +169,8 @@ void JagDemoApp::draw()
     // VRJ does its own drawing, so we need to tell Jag that some
     // commands have been issued. I.e., we need to "dirty state".
     jagDraw::DrawInfo& drawInfo( _di->getDrawInfo( contextID ) );
-    drawInfo._current.clear( jagDraw::Program_t );
-    drawInfo._current.clear( jagDraw::VertexArrayObject_t );
+    drawInfo._current.clear( jagDraw::DrawablePrep::Program_t );
+    drawInfo._current.clear( jagDraw::DrawablePrep::VertexArrayObject_t );
 
     gmtl::Matrix44d viewd;
     gmtl::convert( viewd, project->getViewMatrix() );

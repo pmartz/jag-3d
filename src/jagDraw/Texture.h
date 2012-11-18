@@ -37,6 +37,10 @@
 namespace jagDraw {
 
 
+class Texture;
+typedef jagBase::ptr< jagDraw::Texture >::shared_ptr TexturePtr;
+
+
 /** \class Texture Texture.h <jagDraw/Texture.h>
 \brief TBD
 \details TBD
@@ -76,9 +80,6 @@ public:
     */
     void setImage( ImagePtr image, const GLenum cubeTarget=GL_NONE );
     /** \brief TBD
-    \details TBD */
-    ImagePtr getImage() const;
-    /** \brief TBD
     \details If \c cubeTarget is not specified, this function returns
     the image stored in _image[ 0 ]. If \c cibeTarget is one of
     GL_TEXTURE_CUBE_MAP_POSITIVE_X, GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
@@ -97,6 +98,10 @@ public:
     \details TBD */
     SamplerPtr getSampler() const;
 
+
+    /** \brief TBD
+    \details TBD */
+    virtual DrawablePrepPtr clone() { return( TexturePtr( new Texture( *this ) ) ); }
 
     /** \brief TBD
     \details Set the active texture.
@@ -137,11 +142,16 @@ protected:
     void internalSpecifyTexImage( const GLenum target, ImagePtr image );
 };
 
-typedef jagBase::ptr< jagDraw::Texture >::shared_ptr TexturePtr;
 typedef std::vector< TexturePtr > TextureVec;
 
 
 
+class TextureSet;
+typedef jagBase::ptr< jagDraw::TextureSet >::shared_ptr TextureSetPtr;
+
+/** \class TextureSet Texture.h <jagDraw/Texture.h>
+\brief TBD
+\details TBD */
 class TextureSet : public DrawablePrep, public ObjectIDOwner
 {
 public:
@@ -163,6 +173,10 @@ public:
 
 
     typedef std::map< unsigned int, TexturePtr > InternalMapType;
+
+    /** \brief TBD
+    \details TBD */
+    virtual DrawablePrepPtr clone() { return( TextureSetPtr( new TextureSet( *this ) ) ); }
 
     /** \brief TBD
     \details Override method from DrawablePrep. */
@@ -198,8 +212,6 @@ public:
 protected:
     InternalMapType _map;
 };
-
-typedef jagBase::ptr< jagDraw::TextureSet >::shared_ptr TextureSetPtr;
 
 
 // jagDraw

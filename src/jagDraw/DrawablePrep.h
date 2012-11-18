@@ -33,29 +33,6 @@ namespace jagDraw {
 
 struct DrawInfo;
 
-
-typedef enum {
-    Program_t,
-    VertexArrayObject_t,
-    TextureSet_t,
-    UniformSet_t,
-    UniformBlockSet_t,
-
-    BufferObjectSet_t, // TBD not yet implemented
-    SamplerSet_t, // TBD not yet implemented
-
-    Framebuffer_t,
-
-    MaxCommandType,
-
-    Texture_t,
-    Uniform_t,
-    UniformBlock_t
-} CommandType;
-
-typedef std::vector< CommandType > CommandTypeVec;
-
-
 class DrawablePrep;
 typedef jagBase::ptr< jagDraw::DrawablePrep >::shared_ptr DrawablePrepPtr;
 
@@ -67,15 +44,72 @@ typedef jagBase::ptr< jagDraw::DrawablePrep >::shared_ptr DrawablePrepPtr;
 class DrawablePrep
 {
 public:
+    // TBD temp, eventually have std::map< boost::any, boost::any >.
+    std::string _nametbd;
+
+    typedef enum {
+        Program_t,
+        VertexArrayObject_t,
+        BufferObjectSet_t, // TBD not yet implemented
+        TextureSet_t,
+        SamplerSet_t, // TBD not yet implemented
+        UniformSet_t,
+        UniformBlockSet_t,
+        Framebuffer_t,
+
+        MaxCommandType,
+
+        BufferObject_t,
+        Texture_t,
+        Sampler_t,
+        Uniform_t,
+        UniformBlock_t
+    } CommandType;
+    typedef std::vector< CommandType > CommandTypeVec;
+
+
     DrawablePrep( const CommandType type )
       : _type( type ),
         _uniqueID( UniqueID::instance()->generate( type ) )
     {}
     DrawablePrep( const DrawablePrep& rhs )
-      : _type( rhs._type ),
+      : _nametbd( rhs._nametbd ),
+        _type( rhs._type ),
         _uniqueID( UniqueID::instance()->generate( rhs._type ) )
     {}
     ~DrawablePrep() {}
+
+
+    /** \brief TBD
+    \details TBD */
+    CommandType getCommandType() const { return( _type ); }
+    /** \brief TBD
+    \details TBD */
+    static std::string getCommandTypeString( const CommandType& commandType )
+    {
+        switch( commandType )
+        {
+            case Program_t: return( "Program" );
+            case VertexArrayObject_t: return( "VertexArrayObject" );
+            case BufferObjectSet_t: return( "BufferObjectSet" );
+            case TextureSet_t: return( "TextureSet" );
+            case SamplerSet_t: return( "SamplerSet" );
+            case UniformSet_t: return( "UniformSet" );
+            case UniformBlockSet_t: return( "UniformBlockSet" );
+            case Framebuffer_t: return( "Framebuffer" );
+            case BufferObject_t: return( "BufferObject" );
+            case Texture_t: return( "Texture" );
+            case Sampler_t: return( "Sampler" );
+            case Uniform_t: return( "Uniform" );
+            case UniformBlock_t: return( "UniformBlock" );
+            default: return( "ERROR" ); break;
+        }
+    }
+
+
+    /** \brief TBD
+    \details TBD */
+    virtual DrawablePrepPtr clone() = 0;
 
     /** \brief Activate the DrawablePrep prior to calling execute().
     \details DrawablePrep objects usually do not require activation, so this is a no-op.
@@ -88,28 +122,9 @@ public:
 
     /** \brief TBD
     \details TBD */
-    virtual void combine( const DrawablePrep& rhs ) {}
-
-
-    // TBD remove, replace with general purpose user data infrastructure.
-    std::string _nametbd;
-
-    CommandType getCommandType() const
+    virtual DrawablePrepPtr combine( DrawablePrepPtr rhs )
     {
-        return( _type );
-    }
-    std::string getCommandTypeString() const
-    {
-        switch( _type )
-        {
-            case Framebuffer_t: return( "Framebuffer" );
-            case Program_t: return( "Program" );
-            case Texture_t: return( "Texture" );
-            case Uniform_t: return( "Uniform" );
-            case UniformBlock_t: return( "UniformBlock" );
-            case VertexArrayObject_t: return( "VertexArrayObject" );
-            default: return( "ERROR" ); break;
-        }
+        return( rhs );
     }
 
     bool operator== ( const DrawablePrep& rhs ) const

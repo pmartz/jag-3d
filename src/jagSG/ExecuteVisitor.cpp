@@ -121,10 +121,15 @@ void ExecuteVisitor::updateTransformUniforms()
         usp->insert( modelViewInvTrans );
     }
     jagDraw::CommandMap& commands( _commandStack.back() );
-    if( commands[ jagDraw::UniformSet_t ] == NULL )
+    jagDraw::DrawablePrepPtr& uniformSet( commands[ jagDraw::DrawablePrep::UniformSet_t ] );
+    if( uniformSet == NULL )
+    {
         commands.insert( usp );
+    }
     else
-        commands[ jagDraw::UniformSet_t ]->combine( *usp );
+    {
+        uniformSet = uniformSet->combine( usp );
+    }
 
     _transform.setDirty( 0 );
 }

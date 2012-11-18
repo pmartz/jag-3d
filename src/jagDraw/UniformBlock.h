@@ -42,6 +42,8 @@ namespace jagDraw {
 
 struct DrawInfo;
 
+class UniformBlock;
+typedef jagBase::ptr< jagDraw::UniformBlock >::shared_ptr UniformBlockPtr;
 
 /** \class UniformBlock UniformBlock.h <jagDraw/UniformBlock.h>
 \brief Support for GLSL interface blocks / named uniform blocks.
@@ -77,6 +79,10 @@ public:
     void addUniform( UniformPtr uniform );
 
     /** \brief TBD
+    \details TBD */
+    virtual DrawablePrepPtr clone() { return( UniformBlockPtr( new UniformBlock( *this ) ) ); }
+
+    /** \brief TBD
     \details TBD
     Does not add this uniform block to drawInfo._uniformBlockMap. */
     void execute( DrawInfo& drawInfo, const Program::BlockInfo& blockInfo ) const;
@@ -99,12 +105,17 @@ protected:
     jagBase::BufferPtr _buffer;
 };
 
-typedef jagBase::ptr< jagDraw::UniformBlock >::shared_ptr UniformBlockPtr;
 typedef jagBase::ptr< const jagDraw::UniformBlock >::shared_ptr ConstUniformBlockPtr;
 typedef std::vector< UniformBlockPtr > UniformBlockVec;
 
 
 
+class UniformBlockSet;
+typedef jagBase::ptr< jagDraw::UniformBlockSet >::shared_ptr UniformBlockSetPtr;
+
+/** \class UniformBlockSet UniformBlockSet.h <jagDraw/UniformBlockSet.h>
+\brief TBD
+\details TBD */
 class UniformBlockSet : public DrawablePrep, public ObjectIDOwner
 {
 public:
@@ -134,6 +145,10 @@ public:
 
 
     typedef std::map< Program::HashValue, UniformBlockPtr > InternalMapType;
+
+    /** \brief TBD
+    \details TBD */
+    virtual DrawablePrepPtr clone() { return( UniformBlockSetPtr( new UniformBlockSet( *this ) ) ); }
 
     /** \brief TBD
     \details Override method from DrawablePrep. */
@@ -167,8 +182,6 @@ public:
 protected:
     InternalMapType _map;
 };
-
-typedef jagBase::ptr< jagDraw::UniformBlockSet >::shared_ptr UniformBlockSetPtr;
 
 
 // jagDraw

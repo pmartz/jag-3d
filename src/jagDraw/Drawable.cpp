@@ -95,12 +95,12 @@ bool Drawable::getBoundDirty( const CommandMap& commands ) const
 
 void Drawable::computeBounds( BoundPtr _bound, const CommandMap& commands )
 {
-    if( ! commands.contains( VertexArrayObject_t ) )
+    if( ! commands.contains( DrawablePrep::VertexArrayObject_t ) )
     {
         JAG3D_WARNING( "computeBounds() encountered NULL vertex array object." );
         return;
     }
-    const DrawablePrepPtr& drawablePrep( commands[ VertexArrayObject_t ] );
+    const DrawablePrepPtr& drawablePrep( commands[ DrawablePrep::VertexArrayObject_t ] );
     const VertexArrayObjectPtr vaop( boost::dynamic_pointer_cast< VertexArrayObject >( drawablePrep ) );
 
     BufferObjectPtr bop( boost::dynamic_pointer_cast< BufferObject >(
