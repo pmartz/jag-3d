@@ -35,8 +35,17 @@ namespace jagDraw {
 
 
 /** VertexAttribContainer iterator.h <jagDraw/iterator.h>
-\brief TBD
-\details TBD */
+\brief Iteration over vertex attribute data
+\details Given a buffer of data, a vertex attribute describing that data,
+and an OpenGL drawing command, this class provides an iterator interface
+for the contained vertex attribute data. Useful for enumerating vertices
+to compute a bounding volume, for example. 
+
+Future work:
+
+There's no need for this class to be dependent on Jag3D. It should
+provide a second constructor that takes equivalent OpenGL parameters.
+*/
 template< typename T >
 class VertexAttribContainer
 {

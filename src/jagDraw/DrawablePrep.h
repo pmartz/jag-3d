@@ -49,10 +49,10 @@ public:
 
     typedef enum {
         Program_t,
-        VertexArrayObject_t,
         BufferObjectSet_t, // TBD not yet implemented
+        VertexArrayObject_t,
         TextureSet_t,
-        SamplerSet_t, // TBD not yet implemented
+        SamplerSet_t,
         UniformSet_t,
         UniformBlockSet_t,
         Framebuffer_t,
