@@ -20,6 +20,7 @@
 
 #include <jagDraw/Sampler.h>
 #include <jagDraw/PlatformOpenGL.h>
+#include <jagDraw/DrawInfo.h>
 #include <jagDraw/Error.h>
 #include <jagBase/LogMacros.h>
 #include <jagDraw/Version.h>
@@ -31,19 +32,66 @@ namespace jagDraw {
 
 
 Sampler::Sampler()
-  : ObjectID(),
+  : DrawablePrep( DrawablePrep::Sampler_t ),
+    ObjectID(),
     jagBase::LogBase( "jag.draw.sampler" ),
     _samplerState( SamplerStatePtr( new SamplerState() ) )
 {
 }
 Sampler::Sampler( const Sampler& rhs )
-  : ObjectID( rhs ),
+  : DrawablePrep( rhs ),
+    ObjectID( rhs ),
     jagBase::LogBase( rhs ),
     _samplerState( rhs._samplerState )
 {
 }
 Sampler::~Sampler()
 {
+}
+
+
+void Sampler::activate( DrawInfo& drawInfo, const unsigned int unit )
+{
+#ifdef GL_VERSION_3_3
+    JAG3D_TRACE( "activate" );
+
+    GLuint localUnit( ( unit >= GL_TEXTURE0 ) ? unit - GL_TEXTURE0 : unit );
+    const GLuint id( getID( drawInfo._id ) );
+    glBindSampler( localUnit, id );
+
+    JAG3D_ERROR_CHECK( "Sampler::activate()" );
+#endif
+}
+
+void Sampler::execute( DrawInfo& drawInfo )
+{
+#ifdef GL_VERSION_3_3
+    const GLuint id( getID( drawInfo._id ) );
+
+    SamplerState& state( *_samplerState );
+    if( state.getDirty() )
+    {
+        glSamplerParameteri( id, GL_TEXTURE_WRAP_S, state._wrapS );
+        glSamplerParameteri( id, GL_TEXTURE_WRAP_T, state._wrapT );
+        glSamplerParameteri( id, GL_TEXTURE_WRAP_R, state._wrapR );
+
+        glSamplerParameteri( id, GL_TEXTURE_MIN_FILTER, state._minFilter );
+        glSamplerParameteri( id, GL_TEXTURE_MAG_FILTER, state._magFilter );
+
+        glSamplerParameterfv( id, GL_TEXTURE_BORDER_COLOR, state._borderColor );
+
+        glSamplerParameterf( id, GL_TEXTURE_MIN_LOD, state._minLOD );
+        glSamplerParameterf( id, GL_TEXTURE_MAX_LOD, state._maxLOD );
+        glSamplerParameteri( id, GL_TEXTURE_LOD_BIAS, state._lodBias );
+
+        glSamplerParameteri( id, GL_TEXTURE_COMPARE_MODE, state._compareMode );
+        glSamplerParameteri( id, GL_TEXTURE_COMPARE_FUNC, state._compareFunc );
+
+        state.setDirty( false );
+    }
+
+    JAG3D_ERROR_CHECK( "Sampler::execute()" );
+#endif
 }
 
 

@@ -55,6 +55,7 @@ public:
     */
     Texture();
     Texture( const GLenum target, ImagePtr image=ImagePtr((Image*)NULL) );
+    /** TBD Sampler should be orthogonal to Texture and should be in SamplerSet. */
     Texture( const GLenum target, ImagePtr image, SamplerPtr sampler );
     Texture( const Texture& rhs );
     virtual ~Texture();
@@ -92,10 +93,10 @@ public:
     ImagePtr getImage( const GLenum cubeTarget=GL_NONE ) const;
 
     /** \brief TBD
-    \details TBD */
+    \details TBD Sampler should be orthogonal to Texture and should be in SamplerSet. */
     void setSampler( SamplerPtr sampler );
     /** \brief TBD
-    \details TBD */
+    \details TBD Sampler should be orthogonal to Texture and should be in SamplerSet. */
     SamplerPtr getSampler() const;
 
 
@@ -134,7 +135,8 @@ protected:
 
     /** Imitial value: empty() == true */
     ImageVec _image;
-    /** Imitial value: jagDraw::SamplerPtr() */
+    /** Imitial value: jagDraw::SamplerPtr().
+    TBD Sampler should be orthogonal to Texture and should be in SamplerSet. */
     SamplerPtr _sampler;
 
 
@@ -188,6 +190,18 @@ public:
             texture->activate( drawInfo, dataPair.first );
             texture->execute( drawInfo );
         }
+    }
+
+    /** \brief TBD
+    \details TBD */
+    virtual DrawablePrepPtr combine( DrawablePrepPtr rhs )
+    {
+        // std::map::insert does NOT overwrite, so put rhs in result first,
+        // then insert the values held in this.
+        TextureSet* textureSet( dynamic_cast< TextureSet* >( rhs.get() ) );
+        TextureSetPtr result( new TextureSet( *textureSet ) );
+        result->_map.insert( _map.begin(), _map.end() );
+        return( result );
     }
 
     /** \brief TBD
