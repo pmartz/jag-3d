@@ -82,8 +82,8 @@ void ExecuteVisitor::visit( jagSG::Node& node )
     if( _transform.getDirty() != 0 )
         updateTransformUniforms();
 
-
-    _commandStack.back().execute( _drawInfo );
+    jagDraw::CommandMap delta( _drawInfo._current << _commandStack.back() );
+    delta.execute( _drawInfo );
 
     // Execute the drawables
     node.execute( _drawInfo );
