@@ -85,7 +85,9 @@ bool Texture::isProxy() const
         ( _target == GL_PROXY_TEXTURE_1D_ARRAY ) ||
         ( _target == GL_PROXY_TEXTURE_2D_ARRAY ) ||
         ( _target == GL_PROXY_TEXTURE_RECTANGLE ) ||
+#ifdef GL_VERSION_4_0
         ( _target == GL_PROXY_TEXTURE_CUBE_MAP_ARRAY ) ||
+#endif
         ( _target == GL_PROXY_TEXTURE_2D_MULTISAMPLE ) ||
         ( _target == GL_PROXY_TEXTURE_2D_MULTISAMPLE_ARRAY ) );
 }
