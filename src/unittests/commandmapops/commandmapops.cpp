@@ -99,6 +99,84 @@ bool test()
         }
     }
 
+    {
+        CommandMap cmA, cmB, cmC, current, delta;
+
+        ProgramPtr progA( ProgramPtr( new Program() ) );
+        progA->_nametbd = "progA";
+        cmA.insert( progA );
+
+        VertexArrayObjectPtr vaoA( VertexArrayObjectPtr( new VertexArrayObject() ) );
+        vaoA->_nametbd = "vaoA";
+        cmB.insert( vaoA );
+        VertexArrayObjectPtr vaoB( VertexArrayObjectPtr( new VertexArrayObject() ) );
+        vaoB->_nametbd = "vaoB";
+        cmC.insert( vaoB );
+
+        delta = current << cmA;
+        if( !delta.contains( DrawablePrep::Program_t ) )
+        {
+            std::cerr << "delta.contains( DrawablePrep::Program_t ) is false." << std::endl;
+            return( false );
+        }
+        if( delta[ DrawablePrep::Program_t ]->_nametbd != "progA" )
+        {
+            std::cerr << "delta[ DrawablePrep::Program_t ]->_nametbd != \"progA\"." << std::endl;
+            return( false );
+        }
+        if( delta.contains( DrawablePrep::VertexArrayObject_t ) )
+        {
+            std::cerr << "delta should not contain VertexArrayObject_t." << std::endl;
+            return( false );
+        }
+
+        delta = current << cmB;
+        if( delta.contains( DrawablePrep::Program_t ) )
+        {
+            std::cerr << "delta should not contain Program_t." << std::endl;
+            return( false );
+        }
+        if( !delta.contains( DrawablePrep::VertexArrayObject_t ) )
+        {
+            std::cerr << "delta.contains( DrawablePrep::VertexArrayObject_t ) is false." << std::endl;
+            return( false );
+        }
+        if( delta[ DrawablePrep::VertexArrayObject_t ]->_nametbd != "vaoA" )
+        {
+            std::cerr << "delta[ DrawablePrep::VertexArrayObject_t ]->_nametbd != \"vaoA\"." << std::endl;
+            return( false );
+        }
+
+        delta = current << cmC;
+        if( delta.contains( DrawablePrep::Program_t ) )
+        {
+            std::cerr << "delta should not contain Program_t." << std::endl;
+            return( false );
+        }
+        if( !delta.contains( DrawablePrep::VertexArrayObject_t ) )
+        {
+            std::cerr << "delta.contains( DrawablePrep::VertexArrayObject_t ) is false." << std::endl;
+            return( false );
+        }
+        if( delta[ DrawablePrep::VertexArrayObject_t ]->_nametbd != "vaoB" )
+        {
+            std::cerr << "delta[ DrawablePrep::VertexArrayObject_t ]->_nametbd != \"vaoB\"." << std::endl;
+            return( false );
+        }
+
+        delta = current << cmA;
+        if( delta.contains( DrawablePrep::Program_t ) )
+        {
+            std::cerr << "delta should not contain Program_t." << std::endl;
+            return( false );
+        }
+        if( delta.contains( DrawablePrep::VertexArrayObject_t ) )
+        {
+            std::cerr << "delta should not contain VertexArrayObject_t." << std::endl;
+            return( false );
+        }
+    }
+
     return( true );
 }
 
