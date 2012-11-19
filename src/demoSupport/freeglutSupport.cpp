@@ -119,7 +119,7 @@ int main( int argc, char* argv[] )
 
 
     glutInit( &argc, argv );
-    glutInitDisplayMode( GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH );
+    glutInitDisplayMode( GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_MULTISAMPLE );
     if( version >= 3.0 )
     {
         glutInitContextVersion( int( versionMajor ), int( versionMinor ) );

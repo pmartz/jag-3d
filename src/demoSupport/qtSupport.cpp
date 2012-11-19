@@ -132,7 +132,7 @@ int main( int argc, char** argv )
 
     QApplication app( argc, argv );
 
-    QGLFormat glFormat( QGL::DoubleBuffer | QGL::Rgba );
+    QGLFormat glFormat( QGL::DoubleBuffer | QGL::Rgba | QGL::DepthBuffer | QGL::SampleBuffers );
     if( version >= 3.0 )
     {
         glFormat.setVersion( int( versionMajor ), int( versionMinor ) );
