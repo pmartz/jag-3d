@@ -59,6 +59,7 @@ set( _boostComponents )
 list( APPEND _boostComponents thread )
 list( APPEND _boostComponents program_options )
 list( APPEND _boostComponents date_time )
+list( APPEND _boostComponents chrono )
 list( APPEND _boostComponents system )
 
 #
