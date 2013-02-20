@@ -151,6 +151,7 @@ Jag3D has the following required dependencies:
 Jag3D has the following optional dependencies:
 \li <a href=http://www.openscenegraph.org/projects/osg>OpenSceneGraph (OSG)</a> v3.0.1 or newer (v3.1.3 recommended).
 Must be built for GL3 compatibility.
+\li <a href=http://www.stack.nl/~dimitri/doxygen/download.html >Doxygen</a>.
 
 Furthermore, in order to run any of the examples, you'll need one or more
 windowing toolkits. Jag3D's build infrastructure currently supports the
