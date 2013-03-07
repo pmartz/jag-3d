@@ -76,7 +76,7 @@ static ReaderWriterInfo staticRWRegistration_##_className( \
 
 
 
-/** \class PluginManager PluginManager.h <latticefx/core/PluginManager.h>
+/** \class PluginManager PluginManager.h <jagDisk/PluginManager.h>
 \brief A singleton for managing plugins, plugin search paths, and plugin contents.
 \details The PluginManager provides an interface for finding plugins, loading them,
 and creating instances of classes contained in plugin.
@@ -84,7 +84,7 @@ and creating instances of classes contained in plugin.
 PluginManager is a singleton, so the first access to PluginManager::instance()
 creates the single instance. instance() takes parameter to indicate default plugin
 search paths. By default, the current directory, and all directories listed in the
-environment variable LATTICEFX_PLUGIN_PATH, are added to the list of search paths.
+environment variable JAG3D_PLUGIN_PATH, are added to the list of search paths.
 Additional paths can be added using addPath() and addPaths().
 
 The PluginManager doesn't search for plugins (shared libraries) directly. Instead,
