@@ -25,12 +25,14 @@
 #include <Poco/String.h>
 
 #include <jagBase/Buffer.h>
+#include <jagBase/LogMacros.h>
 #include <jagDraw/Image.h>
 #include <jagDraw/PixelStore.h>
 
 #include <osgDB/ReadFile>
 #include <osgDB/WriteFile>
 #include <osg/Image>
+#include <osg/Version>
 
 #include <fstream>
 
@@ -72,6 +74,9 @@ public:
 
     virtual void* read( const std::string& fileName ) const
     {
+        JAG3D_INFO_STATIC( "jag.plugin.image",
+            std::string( "Using OSG v" ) + std::string( osgGetVersion() ) );
+
         osg::ref_ptr< osg::Image > osgImage( osgDB::readImageFile( fileName ) );
         return( convertFromOsgImage( osgImage.get() ) );
     }
@@ -82,6 +87,9 @@ public:
 
     virtual bool write( const std::string& fileName, const void* data ) const
     {
+        JAG3D_INFO_STATIC( "jag.plugin.image",
+            std::string( "Using OSG v" ) + std::string( osgGetVersion() ) );
+
         osg::ref_ptr< osg::Image > osgImage( convertToOsgImage( (Image*)data ) );
         return( osgDB::writeImageFile( *osgImage, fileName ) );
     }

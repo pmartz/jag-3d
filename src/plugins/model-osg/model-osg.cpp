@@ -21,6 +21,8 @@
 #include <jagDisk/PluginManager.h>
 #include <jagDisk/ReaderWriter.h>
 #include <jagSG/Node.h>
+#include <jagBase/LogMacros.h>
+
 #include <Poco/ClassLibrary.h>
 #include <Poco/Path.h>
 #include <Poco/String.h>
@@ -30,6 +32,7 @@
 #include <osgDB/ReadFile>
 #include <osgDB/WriteFile>
 #include <osg/Node>
+#include <osg/Version>
 
 #include <fstream>
 
@@ -69,6 +72,9 @@ public:
 
     virtual void* read( const std::string& fileName ) const
     {
+        JAG3D_INFO_STATIC( "jag.plugin.model",
+            std::string( "Using OSG v" ) + std::string( osgGetVersion() ) );
+
         osg::ref_ptr< osg::Node > osgNode( osgDB::readNodeFile( fileName ) );
         if( !( osgNode.valid() ) )
             return( NULL );
