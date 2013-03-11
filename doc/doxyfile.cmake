@@ -62,6 +62,8 @@ ALIASES                = gl{1}="\note See OpenGL specification \1"
 
     ALIASES           += specIssue{1}="<dl class="note"><dt><b>Specification ISSUE:</b></dt><dd>\1</dd></dl>"
 
+    ALIASES           += "envvar=\xrefitem jag3denvvars \"Environment Variables\" \"Environment Variables\""
+
 OPTIMIZE_OUTPUT_FOR_C  = NO
 OPTIMIZE_OUTPUT_JAVA   = NO
 OPTIMIZE_FOR_FORTRAN   = NO
