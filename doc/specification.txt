@@ -116,8 +116,28 @@ The modules themselves are described in the following section.
 \section SpecModules Module Requirements
 
 \subsection SpecModulePointer Smart Pointers
+
+The JAG implementation must support boost- or TR1-compatible pointers for
+reference counted memory.
+
 \subsection SpecModuleLogging Logging
+
+The JAG implementation must support a logging mechanism with the following features:
+\li Direct output to the console or a log file.
+\li Set logging verbosity per class and per logical grouping of like classes.
+
 \subsection SpecModuleMath Math
+
+The Jag implementation must support a math library containing data types
+compatible with OpenGL. The math library must support the following features:
+\li matrix-matrix concatenation
+\li matrix inversion
+\li matrix-vector multiplication
+\li common matrix construction utilities (frustum, perspective, rotate, etc)
+\li vector cross and dot product
+\li vector normalization, scale, modulation, addition, and subtraction
+\li arrays of matrices and vectors
+
 \subsection SpecModuleOpenGL OpenGL
 
 OpenGL is not a JAG module. However, a JAG-compliant implementation must

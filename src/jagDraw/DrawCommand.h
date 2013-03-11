@@ -46,7 +46,8 @@ values).
 \li Derive a class from DrawCommand.
 \li Override and define the pure virtual execute() member function.
 
-\specBegin
+\specBegin DrawCommand
+
 DrawCommand supports all OpenGL rendering operations. This includes:
 \li Traditional drawing commands (\glshort{2.8.3});
 \li Primitive restart functionality (\glshort{2.8.1});
@@ -282,7 +283,8 @@ protected:
 \brief Base class for DrawCommands that issue gl*BaseVertex().
 \details
 
-\specBegin
+\specBegin BaseVertexBase
+
 \specTableBegin
 \specThread{ }
 \specGL{ }
@@ -315,7 +317,8 @@ protected:
 /** \class RangeBase DrawCommand.h <jagDraw/DrawCommand.h>
 \brief Base class for DrawCommands that issue glDrawRange*().
 
-\specBegin
+\specBegin RangeBase
+
 \specTableBegin
 \specThread{ }
 \specGL{ }
@@ -353,7 +356,8 @@ protected:
 /** \class MultiArrayBase DrawCommand.h <jagDraw/DrawCommand.h>
 \brief Base class for DrawCommands that issue glMultiDraw*().
 
-\specBegin
+\specBegin MultiArrayBase
+
 \specTableBegin
 \specThread{ }
 \specGL{ }
@@ -403,7 +407,8 @@ protected:
 /** \class IndirectBase DrawCommand.h <jagDraw/DrawCommand.h>
 \brief Base class for DrawCommands that issue glDraw*Indirect().
 
-\specBegin
+\specBegin IndirectBase
+
 \specTableBegin
 \specThread{ }
 \specGL{ }
@@ -454,7 +459,8 @@ protected:
 \brief Retained storage for the glDrawArrays() command.
 \details
 
-\specBegin
+\specBegin DrawArrays
+
 \specTableBegin
 \specThreadBase{DrawCommand}
 \specGL{On each call to execute():
@@ -502,7 +508,8 @@ typedef jagBase::ptr< jagDraw::DrawArrays >::shared_ptr DrawArraysPtr;
 \brief Retained storage for the glDrawArraysInstance() command.
 \details
 
-\specBegin
+\specBegin DrawArraysInstanced
+
 \specTableBegin
 \specThreadBase{DrawCommand}
 \specGL{On each call to execute():
@@ -550,7 +557,8 @@ typedef jagBase::ptr< jagDraw::DrawArraysInstanced >::shared_ptr DrawArraysInsta
 \brief Retained storage for the glDrawArraysIndirect() command.
 \details
 
-\specBegin
+\specBegin DrawArraysIndirect
+
 \specTableBegin
 \specThreadBase{DrawCommand}
 \specGL{On each call to execute():
@@ -649,7 +657,8 @@ typedef jagBase::ptr< jagDraw::DrawArraysIndirect >::shared_ptr DrawArraysIndire
 \brief Retained storage for the glMultiDrawArrays() command.
 \details
 
-\specBegin
+\specBegin MultiDrawArrays
+
 \specTableBegin
 \specThreadBase{DrawCommand}
 \specGL{On each call to execute():
@@ -725,7 +734,8 @@ core profile spec). If an instance of this object is created with \c indices == 
 it is the calling code's responsibility to ensure that the active VertexArrayObject
 has a buffer object bound to GL_ELEMENT_ARRAY_BUFFER.
 
-\specBegin
+\specBegin DrawElements
+
 \specTableBegin
 \specThreadBase{DrawCommand}
 \specGL{On each call to execute():
@@ -802,7 +812,8 @@ core profile spec). If an instance of this object is created with \c indices == 
 it is the calling code's responsibility to ensure that the active VertexArrayObject
 has a buffer object bound to GL_ELEMENT_ARRAY_BUFFER.
 
-\specBegin
+\specBegin DrawElementsInstanced
+
 \specTableBegin
 \specThreadBase{DrawCommand}
 \specGL{On each call to execute():
@@ -882,7 +893,8 @@ core profile spec). If an instance of this object is created with \c indices == 
 it is the calling code's responsibility to ensure that the active VertexArrayObject
 has a buffer object bound to GL_ELEMENT_ARRAY_BUFFER.
 
-\specBegin
+\specBegin MultiDrawElements
+
 \specTableBegin
 \specThreadBase{DrawCommand}
 \specGL{On each call to execute():
@@ -949,7 +961,8 @@ core profile spec). If an instance of this object is created with \c indices == 
 it is the calling code's responsibility to ensure that the active VertexArrayObject
 has a buffer object bound to GL_ELEMENT_ARRAY_BUFFER.
 
-\specBegin
+\specBegin DrawRangeElements
+
 \specTableBegin
 \specThreadBase{DrawCommand}
 \specGL{On each call to execute():
@@ -1016,7 +1029,8 @@ core profile spec). If an instance of this object is created with \c indices == 
 it is the calling code's responsibility to ensure that the active VertexArrayObject
 has a buffer object bound to GL_ELEMENT_ARRAY_BUFFER.
 
-\specBegin
+\specBegin DrawElementsBaseVertex
+
 \specTableBegin
 \specThreadBase{DrawCommand}
 \specGL{On each call to execute():
@@ -1083,7 +1097,8 @@ core profile spec). If an instance of this object is created with \c indices == 
 it is the calling code's responsibility to ensure that the active VertexArrayObject
 has a buffer object bound to GL_ELEMENT_ARRAY_BUFFER.
 
-\specBegin
+\specBegin DrawRangeElementsBaseVertex
+
 \specTableBegin
 \specThreadBase{DrawCommand}
 \specGL{On each call to execute():
@@ -1152,7 +1167,8 @@ core profile spec). If an instance of this object is created with \c indices == 
 it is the calling code's responsibility to ensure that the active VertexArrayObject
 has a buffer object bound to GL_ELEMENT_ARRAY_BUFFER.
 
-\specBegin
+\specBegin DrawElementsInstancedBaseVertex
+
 \specTableBegin
 \specThreadBase{DrawCommand}
 \specGL{On each call to execute():
@@ -1214,7 +1230,8 @@ typedef jagBase::ptr< jagDraw::DrawElementsInstancedBaseVertex >::shared_ptr Dra
 \brief Retained storage for the glDrawElementsIndirect() command.
 \details
 
-\specBegin
+\specBegin DrawElementsIndirect
+
 \specTableBegin
 \specThreadBase{DrawCommand}
 \specGL{On each call to execute():
@@ -1288,7 +1305,8 @@ core profile spec). If an instance of this object is created with \c indices == 
 it is the calling code's responsibility to ensure that the active VertexArrayObject
 has a buffer object bound to GL_ELEMENT_ARRAY_BUFFER.
 
-\specBegin
+\specBegin MultiDrawElementsBaseVertex
+
 \specTableBegin
 \specThreadBase{DrawCommand}
 \specGL{On each call to execute():
@@ -1359,7 +1377,8 @@ typedef jagBase::ptr< jagDraw::MultiDrawElementsBaseVertex >::shared_ptr MultiDr
 \details
 \gl{section 2.8.1}.
 
-\specBegin
+\specBegin PrimitiveRestart
+
 \specTableBegin
 \specThreadBase{DrawCommand}
 \specGL{On each call to execute():<br>

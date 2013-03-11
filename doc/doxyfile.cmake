@@ -40,7 +40,7 @@ ALIASES                = gl{1}="\note See OpenGL specification \1"
     ALIASES           += glshort{1}="OpenGL specification \1"
     ALIASES           += glparam{2}="\param \1 See OpenGL specification \2"
 
-    ALIASES           += specBegin="<hr><h2>Specification Requirements</h2>"
+    ALIASES           += "specBegin=<hr><h2>Specification</h2>\xrefitem jag3dspec \"spec table\" \"JAG Specification\"" 
     ALIASES           += specTableBegin="<table cellspacing=0 cellpadding=4>"
     ALIASES           += specLog{1}="<tr valign=top bgcolor=#dddddd> <td><b>Log Handle</b></td>    <td>\1</td></tr>"
     ALIASES           += specLogBase{1}="specLog{ See \1}"
