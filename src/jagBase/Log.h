@@ -73,10 +73,17 @@ public:
         PrioTrace = Poco::Message::PRIO_TRACE
     };
 
-    /** \brief TBD
-    \details TBD
+    /** \brief Set the logging priority.
+    \details
     \param prio Logging verbosity. 0 is silent, 8 is verbose. These values
-    map directly to the Poco logging priorities in Poco/Message.h. */
+    map directly to the Poco logging priorities in Poco/Message.h. If
+    setPriority() is never called, the default logging priority for all
+    Jag3D modules is PrioWarning.
+    \param logName Specifies the jag modules or class to have logging set
+    at \c prio.
+
+    Note: The default priority for the global logger is PrioWarning. The default
+    can be changed using the JAG3D_LOG_PRIORITY environment variable. */
     void setPriority( int prio, const std::string& logName="jag" );
 
     /** \brief TBD
@@ -87,15 +94,25 @@ public:
         LogFile
     } DestinationType;
 
-    /** \brief TBD
+    /** \brief Set the logging priority and logging destination.
     \details TBD
     \param prio Logging verbosity. 0 is silent, 8 is verbose. These values
-    map directly to the Poco logging priorities in Poco/Message.h. */
+    map directly to the Poco logging priorities in Poco/Message.h. If
+    setPriority() is never called, the default logging priority for all
+    Jag3D modules is PrioWarning.
+    \param dest Logging destination, either \c Console or \c LogFile.
+    Specify the file name for \c LogFile using setLogFileName().
+    \param logName Specifies the jag modules or class to have logging set
+    at \c prio.
+
+    Note: The default priority for the global logger is PrioWarning. The default
+    can be changed using the JAG3D_LOG_PRIORITY environment variable. */
     void setPriority( int prio, const DestinationType dest, const std::string& logName="jag" );
 
 protected:
     Log();
     ~Log();
+    static Log* _s_instance;
 
     std::string _logFileName;
 
