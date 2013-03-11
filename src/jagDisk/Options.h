@@ -51,15 +51,31 @@ public:
         USE_JAG3D_DATA_PATH_ENV_VAR = ( 1 << 0x1 )
     } InitFlags;
 
+    /** \brief Options class constructor
+    \details Constructs an instance of the Options object.
+    \param initFlags Specifies an initial list of directories to use when
+    searching for data files to load. By default, Options loads its directory
+    search path list \c _paths from the value of the JAG3D_DATA_PATH
+    environment variable. If this variable is not set, the \c _paths will be
+    empty and only the current working directory will be searched.
+
+    To separate multiple directories in JAG3D_DATA_PATH, use the platform-
+    specific path separator (";" on Windows, ":" on Linux, etc).
+    \envvar JAG3D_DATA_PATH */
     Options( const int initFlags=USE_JAG3D_DATA_PATH_ENV_VAR );
     Options( const Options& rhs );
     ~Options();
 
+    /** \brief Add an individual search path. */
     void addPath( const std::string& path );
+    /** \brief Add multiple search paths separated by the platform-specific directory separator. */
     void addPaths( const std::string& paths );
+    /** \brief Clear the list of directory search paths. */
     void clearPaths();
+    /** \brief Get a list of all directory search paths. */
     const Poco::Path::StringVec& getPaths() const;
 
+    /** \brief Search the directory path list for \c fileName and return the full path. */
     Poco::Path findFile( const std::string& fileName ) const;
 
 protected:

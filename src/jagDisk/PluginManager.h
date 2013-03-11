@@ -86,6 +86,7 @@ creates the single instance. instance() takes parameter to indicate default plug
 search paths. By default, the current directory, and all directories listed in the
 environment variable JAG3D_PLUGIN_PATH, are added to the list of search paths.
 Additional paths can be added using addPath() and addPaths().
+\envvar JAG3D_PLUGIN_PATH
 
 The PluginManager doesn't search for plugins (shared libraries) directly. Instead,
 it searches for plugin description files with the extension *.ini. These files use

@@ -55,10 +55,13 @@ public:
 
 
     /** \brief Sets the default log file name.
-    \details By default, the default log file name is "jag3d.log". Change it by calling
-    this function at init time prior to invocation of any other interaction with Jag3D.
-    (Specifically, setLogFileName() must be called before creating a class derived from
-    LogBase that uses LogFile as a destination.) */
+    \details By default, the default log file name is "jag3d.log". You can change this
+    default with the JAG3D_LOG_FILE_NAME environment variable, and change the name at
+    run-time by calling this function prior to invocation of any other interaction with
+    Jag3D. (Specifically, setLogFileName() must be called before creating a class
+    derived from LogBase that uses LogFile as a destination.)
+
+    \envvar JAG3D_LOG_FILE_NAME */
     void setLogFileName( const std::string& logFileName );
 
     typedef enum {
@@ -73,19 +76,6 @@ public:
         PrioTrace = Poco::Message::PRIO_TRACE
     };
 
-    /** \brief Set the logging priority.
-    \details
-    \param prio Logging verbosity. 0 is silent, 8 is verbose. These values
-    map directly to the Poco logging priorities in Poco/Message.h. If
-    setPriority() is never called, the default logging priority for all
-    Jag3D modules is PrioWarning.
-    \param logName Specifies the jag modules or class to have logging set
-    at \c prio.
-
-    Note: The default priority for the global logger is PrioWarning. The default
-    can be changed using the JAG3D_LOG_PRIORITY environment variable. */
-    void setPriority( int prio, const std::string& logName="jag" );
-
     /** \brief TBD
     \details TBD
     */
@@ -95,7 +85,7 @@ public:
     } DestinationType;
 
     /** \brief Set the logging priority and logging destination.
-    \details TBD
+    \details
     \param prio Logging verbosity. 0 is silent, 8 is verbose. These values
     map directly to the Poco logging priorities in Poco/Message.h. If
     setPriority() is never called, the default logging priority for all
@@ -105,9 +95,21 @@ public:
     \param logName Specifies the jag modules or class to have logging set
     at \c prio.
 
-    Note: The default priority for the global logger is PrioWarning. The default
-    can be changed using the JAG3D_LOG_PRIORITY environment variable. */
+    \envvar JAG3D_LOG_PRIORITY
+    \envvar JAG3D_LOG_DESTINATION
+
+    Note: The default priority for the global "jag" logger is PrioWarning, and the
+    default destination is Console. The default can be changed using the
+    JAG3D_LOG_PRIORITY and JAG3D_LOG_DESTINATION environment variables. For example:
+    \code
+    export JAG3D_LOG_PRIORITY=info
+    export JAG3D_LOG_DESTINATION=logfile
+    \endcode */
     void setPriority( int prio, const DestinationType dest, const std::string& logName="jag" );
+    /** \overload
+    Use this convenience overload to set the priority of a logger without
+    modifying the DestinationType. */
+    void setPriority( int prio, const std::string& logName="jag" );
 
 protected:
     Log();
