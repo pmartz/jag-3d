@@ -49,7 +49,7 @@ Note that Drawable objects contain only DrawCommands. Vertex information
 is stored in a VertexArrayObject, located in CommandMap. One VertexArrayObject
 can contain the geometric data for several Drawables, which reduces bind calls.
 
-\specBegin
+\specBegin Drawable
 
 Drawable supports the following functionality:
 \li Storage for zero or more DrawCommand objects.
