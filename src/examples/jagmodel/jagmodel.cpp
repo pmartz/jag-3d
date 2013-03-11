@@ -73,8 +73,6 @@ protected:
 
 DemoInterface* DemoInterface::create( bpo::options_description& desc )
 {
-    jagBase::Log::instance()->setPriority( jagBase::Log::PrioWarning, jagBase::Log::Console );
-
     return( new JagModel );
 }
 
