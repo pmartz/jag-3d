@@ -44,9 +44,36 @@ typedef jagBase::ptr< jagDraw::Framebuffer >::shared_ptr FramebufferPtr;
 
 
 /** \class Framebuffer Framebuffer.h <jagDraw/Framebuffer.h>
-\brief TBD
-\details TBD
+\brief Support for OpenGL Framebuffer objects
+\details
 \gl{section 4.4}.
+
+\specBegin Framebuffer
+
+Framebuffer supports the following functionality:
+\li Framebuffer object ID management.
+\li Stores Framebuffer attachments (FramebufferAttachable).
+\li Object ID management.
+
+Each Framebuffer instance stores the following information:
+\li A bind target (\a target parameter to glBindFramebuffer() ).
+\li A list of buffers and their associated attachment points.
+\li Viewport parameters and a viewport enable flag.
+\li Clear mask bits and a clear enable flag.
+
+\specTableBegin
+\specLog{jag.draw.fbo}
+\specThread{Unsafe}
+\specGL{See execute()}
+\specDepend{FramebufferAttachable}
+\specUsage{TBD}
+\specViolations{None}
+\specTableEnd
+
+See member functions for additional specification requirements.
+
+\specEnd
+
 */
 class JAGDRAW_EXPORT Framebuffer : public DrawablePrep,
         public ObjectID, protected jagBase::LogBase
@@ -60,8 +87,31 @@ public:
     \details TBD */
     virtual DrawablePrepPtr clone() { return( FramebufferPtr( new Framebuffer( *this ) ) ); }
 
-    /** \brief TBD
-    Override from DrawablePrep. */
+    /** \brief Bind the framebuffer ID.
+    \details This function is an override from DrawablePrep.
+
+    This function obtains the per-context ID from getID(), which could issue OpenGL
+    commands if necessary. After obtaining the ID, this function binds the Framebuffer
+    ID, and attaches buffers if necessary. Then it optionally sets a viewport and
+    clears, according to setViewport() and setClear().
+
+    \specFuncBegin
+    \specTableBegin
+    \specThread{Context safe}
+    \specGL{
+    \code
+    glBindFramebuffer();
+    If viewport enabled:
+        glViewport();
+    If clear enabled:
+        glClear();
+    \endcode
+    Other OpenGL commands might be issued indirectly via calls to
+    getID() and attachAll().}
+    \specViolations{glDrawBuffer() control is not yet specified.}
+    \specTableEnd
+    \specFuncEnd
+    */
     virtual void execute( DrawInfo& drawInfo );
 
     /** \brief TBD
@@ -77,20 +127,76 @@ public:
     virtual void deleteID( const jagDraw::jagDrawContextID contextID );
 
 
+    /** \brief Specify a viewport
+    \details If the viewport is enabled with the \c enable parameter, execute()
+    issues a glViewport() call after binding the framebuffer.
+
+    \specFuncBegin
+    \specTableBegin
+    \specGL{When enabled\, on each call to execute():
+    \code
+    glViewport( _vpX\, _vpY\, _vpWidth\, _vpHeight );
+    \endcode }
+    \specTableEnd
+
+    Member variable defaults:
+    \li Framebuffer::_viewport = false (viewport not enabled)
+    \li Framebuffer::_vpX = 0
+    \li Framebuffer::_vpY = 0
+    \li Framebuffer::_vpWidth = 0
+    \li Framebuffer::_vpHeight = 0
+
+    \specFuncEnd
+    */
     void setViewport( const GLint x, const GLint y, const GLsizei width, const GLsizei height, const bool enable=true );
+    /** \brief Specify clearing behavior.
+    \details If clearing is enabled with the \c enable parameter, execute()
+    issues a glClear() call after binding the framebuffer.
+
+    \specFuncBegin
+    \specTableBegin
+    \specGL{When enabled\, on each call to execute():
+    \code
+    glClear( _clearMask );
+    \endcode }
+    \specTableEnd
+
+    Member variable defaults:
+    \li Framebuffer::_clear = false (clearing not enabled)
+    \li Framebuffer::_clearMask = 0
+
+    \specFuncEnd
+    */
     void setClear( const GLbitfield mask, const bool enable=true );
+
 
     typedef std::map< GLenum, FramebufferAttachablePtr > AttachmentMap;
 
-    /** \brief TBD
-    \details \c attachment can be one of:
+    /** \brief Specify Framebuffer object attachments.
+    \details Associate a buffer with an attachment point.
+
+    \c attachment can be one of:
     \li GL_COLOR_ATTACHMENTi
     \li GL_DEPTH_ATTACHMENT
     \li GL_STENCIL_ATTACHMENT
     \li GL_DEPTH_STENCIL_ATTACHMENT
+
     \gl{table 4.11}.
+
+    \specFuncBegin
+    All buffers are attached to their attachments points when the
+    Framebuffer object ID is generated per context. Buffers are
+    reattached as necessary (for example, if jagDraw client code
+    calls setAttachment(), the following execute() call will
+    effect this attachment change).
+
+    \specTableBegin
+    \specDepend{FramebufferArrachable}
+    \specTableEnd
+    \specFuncEnd
     */
     void addAttachment( const GLenum attachment, FramebufferAttachablePtr buffer );
+    /** \brief Get Framebuffer object attachments. */
     FramebufferAttachablePtr getAttachment( const GLenum attachment );
 
 protected:
