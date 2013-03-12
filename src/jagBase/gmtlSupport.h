@@ -118,7 +118,7 @@ void extendVolume( Sphere<DATA_TYPE>& container,
 
 
 
-/** TBD */
+/** \brief Converts a single precision matrix to a double precision matrix. */
 template <unsigned ROWS, unsigned COLS>
 void convert( gmtl::Matrix< double, ROWS, COLS >& result, const gmtl::Matrix< float, ROWS, COLS >& rhs )
 {
@@ -126,7 +126,7 @@ void convert( gmtl::Matrix< double, ROWS, COLS >& result, const gmtl::Matrix< fl
         result.mData[x] = (double)rhs.mData[x];
     result.mState = rhs.mState;
 }
-/** TBD */
+/** \brief Converts a double precision matrix to a single precision matrix. */
 template <unsigned ROWS, unsigned COLS>
 void convert( gmtl::Matrix< float, ROWS, COLS >& result, const gmtl::Matrix< double, ROWS, COLS >& rhs )
 {
@@ -135,7 +135,7 @@ void convert( gmtl::Matrix< float, ROWS, COLS >& result, const gmtl::Matrix< dou
     result.mState = rhs.mState;
 }
 
-/** TBD */
+/** \brief Transform a Sphere by a matrix. */
 template< typename T, unsigned ROWS, unsigned COLS >
 gmtl::Sphere<T>
 transform( const gmtl::Matrix<T,ROWS,COLS>& m, const gmtl::Sphere<T>& src )
