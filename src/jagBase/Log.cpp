@@ -79,33 +79,42 @@ Log::Log()
     } catch (...) {}
     if( !globalPriority.empty() )
     {
-        globalPriority = Poco::toLower( globalPriority );
-        int prio( PrioWarning );
-        if( globalPriority == "silent" )
-            prio = PrioSilent;
-        else if( globalPriority == "fatal" )
-            prio = PrioFatal;
-        else if( globalPriority == "critical" )
-            prio = PrioCritical;
-        else if( globalPriority == "error" )
-            prio = PrioError;
-        else if( globalPriority == "warning" )
+        int prio( parsePriority( globalPriority ) );
+        if( prio < 0 )
             prio = PrioWarning;
-        else if( globalPriority == "notice" )
-            prio = PrioNotice;
-        else if( globalPriority == "info" )
-            prio = PrioInfo;
-        else if( globalPriority == "debug" )
-            prio = PrioDebug;
-        else if( globalPriority == "trace" )
-            prio = PrioTrace;
-        else
-            std::cerr << "JAG3D_LOG_LEVEL=" << globalPriority << ": Unsupported log priority." << std::endl;
-
         setPriority( prio, dest );
     }
     else
         setPriority( PrioWarning, dest );
+
+
+    std::string priorities;
+    try {
+        priorities = Poco::Environment::get( "JAG3D_LOG_PRIORITIES" );
+    } catch (...) {}
+    while( !priorities.empty() )
+    {
+        size_t commaPos( priorities.find_first_of( ',' ) );
+        std::string logPrioPair;
+        if( commaPos != std::string::npos )
+        {
+            logPrioPair = priorities.substr( 0, commaPos );
+            priorities = priorities.substr( commaPos+1 );
+        }
+        else
+        {
+            logPrioPair = priorities;
+            priorities = "";
+        }
+
+        size_t spacePos( logPrioPair.find_first_of( ' ' ) );
+        std::string logName( logPrioPair.substr( 0, spacePos ) );
+        std::string priority( logPrioPair.substr( spacePos+1 ) );
+        int prio( parsePriority( priority ) );
+        if( prio < 0 )
+            prio = PrioSilent;
+        setPriority( prio, logName );
+    }
 }
 Log::~Log()
 {
@@ -151,6 +160,53 @@ void Log::setPriority( int prio, const DestinationType dest, const std::string& 
         logger.setChannel( _file );
     }
 }
+
+
+std::string Log::parsePriority( const int prio )
+{
+    std::string returnVal;
+    switch( prio )
+    {
+    case PrioSilent: returnVal = "silent"; break;
+    case PrioFatal: returnVal = "fatal"; break;
+    case PrioCritical: returnVal = "critical"; break;
+    case PrioError: returnVal = "error"; break;
+    case PrioWarning: returnVal = "warning"; break;
+    case PrioNotice: returnVal = "notice"; break;
+    case PrioInfo: returnVal = "info"; break;
+    case PrioDebug: returnVal = "debug"; break;
+    case PrioTrace: returnVal = "trace"; break;
+    default: std::cerr << prio << ": Unsupported log priority." << std::endl;
+    }
+    return( returnVal );
+}
+int Log::parsePriority( const std::string& prio )
+{
+    int returnVal( -1 );
+    const std::string lcPrio = Poco::toLower( prio );
+    if( lcPrio == "silent" )
+        returnVal = PrioSilent;
+    else if( lcPrio == "fatal" )
+        returnVal = PrioFatal;
+    else if( lcPrio == "critical" )
+        returnVal = PrioCritical;
+    else if( lcPrio == "error" )
+        returnVal = PrioError;
+    else if( lcPrio == "warning" )
+        returnVal = PrioWarning;
+    else if( lcPrio == "notice" )
+        returnVal = PrioNotice;
+    else if( lcPrio == "info" )
+        returnVal = PrioInfo;
+    else if( lcPrio == "debug" )
+        returnVal = PrioDebug;
+    else if( lcPrio == "trace" )
+        returnVal = PrioTrace;
+    else
+        std::cerr << prio << ": Unsupported log priority." << std::endl;
+    return( returnVal );
+}
+
 
 
 // jagBase

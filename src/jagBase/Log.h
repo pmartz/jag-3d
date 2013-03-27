@@ -96,6 +96,7 @@ public:
     at \c prio.
 
     \envvar JAG3D_LOG_PRIORITY
+    \envvar JAG3D_LOG_PRIORITIES
     \envvar JAG3D_LOG_DESTINATION
 
     Note: The default priority for the global "jag" logger is PrioWarning, and the
@@ -108,8 +109,22 @@ public:
     void setPriority( int prio, const DestinationType dest, const std::string& logName="jag" );
     /** \overload
     Use this convenience overload to set the priority of a logger without
-    modifying the DestinationType. */
+    modifying the DestinationType.
+
+    \envvar JAG3D_LOG_PRIORITIES
+
+    The default priority for any Logger comes from the global 'jag" Logger.
+    The default for a specific Logger can changes using the JAG3D_LOG_PRIORITIES
+    environment variable. JAG3D_LOG_PRIORITIES takes a comma-separated list of
+    logger name / priority pairs. For example:
+    \code
+    export JAG3D_LOG_PRIORITIES=jag.base.version info,jag.draw.ctx debug,jag.disk critical
+    \endcode
+    */
     void setPriority( int prio, const std::string& logName="jag" );
+
+    static std::string parsePriority( const int prio );
+    static int parsePriority( const std::string& prio );
 
 protected:
     Log();
