@@ -139,6 +139,8 @@ macro( _addNonWindowedExecutable _category _exeName )
     _exeInstall( ${_category} ${_exeName} )
 
     set_target_properties( ${_exeName} PROPERTIES PROJECT_LABEL "${_category} ${_exeName}" )
+
+    set_property( TARGET ${_exeName} PROPERTY FOLDER "${_category}")
 endmacro()
 
 macro( _addFreeglutExecutable _category _exeName )
@@ -183,6 +185,8 @@ macro( _addFreeglutExecutable _category _exeName )
     _exeInstall( ${_category} ${_localExeName} )
 
     set_target_properties( ${_localExeName} PROPERTIES PROJECT_LABEL "${_category} ${_localExeName}" )
+
+    set_property( TARGET ${_localExeName} PROPERTY FOLDER "${_category}/FreeGlut")
 endmacro()
 
 macro( _addQtExecutable _category _exeName )
@@ -237,6 +241,8 @@ macro( _addQtExecutable _category _exeName )
     _exeInstall( ${_category} ${_localExeName} )
 
     set_target_properties( ${_localExeName} PROPERTIES PROJECT_LABEL "${_category} ${_localExeName}" )
+
+    set_property( TARGET ${_localExeName} PROPERTY FOLDER "${_category}/Qt")
 endmacro()
 
 macro( _addVrjExecutable _category _exeName )
@@ -283,6 +289,8 @@ macro( _addVrjExecutable _category _exeName )
     _exeInstall( ${_category} ${_localExeName} )
 
     set_target_properties( ${_localExeName} PROPERTIES PROJECT_LABEL "${_category} ${_localExeName}" )
+
+    set_property( TARGET ${_localExeName} PROPERTY FOLDER "${_category}/VRJ")
 endmacro()
 
 macro( _addExecutable _category _exeName )
@@ -338,6 +346,8 @@ endmacro()
 
 macro( _addPlugin _libName )
     _addLibraryInternal( Plugin MODULE ${_libName} ${ARGN} )
+
+    set_property( TARGET ${_libName} PROPERTY FOLDER "Plugin")
 endmacro()
 
 
