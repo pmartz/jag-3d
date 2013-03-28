@@ -112,8 +112,8 @@ verious levels. When using these macros, please observe the following rules of t
 
 Note that, even with priority set to 0, there is some non-zero overhead in handling
 message logging. To eliminate all Jag3D message logging, set the CMake variable
-JAG3D_DISABLE_LOGGING to ON (or select its checkbox in cmake-gui). When this variable
-is on, Jag3D's message logging facilities become no-ops and have zero computational cost.
+JAG3D_ENABLE_LOGGING to OFF (or deselect its checkbox in cmake-gui). When this variable
+is off, Jag3D's message logging facilities become no-ops and have zero computational cost.
 
 */
 /*@{*/
@@ -124,8 +124,8 @@ is on, Jag3D's message logging facilities become no-ops and have zero computatio
 \details Internal macro for efficient message logging for classes derived
 from jagBase::LogBase. (Assumes member or local variables \c _logger and \c _logStream.)
 
-This function is a no-op if JAG3D_DISABLE_LOGGING is defined. The definition of
-JAG3D_DISABLE_LOGGING is controlled using CMake.
+This function is a no-op if JAG3D_ENABLE_LOGGING is not defined. The definition of
+JAG3D_ENABLE_LOGGING is controlled using CMake.
 \param prio Message priority based on Poco/Message.h.
 \param msg Written to the \c _logStream if the \c _logger's priority is <= \c prio.
 */
@@ -134,13 +134,13 @@ JAG3D_DISABLE_LOGGING is controlled using CMake.
 \details Internal macro for message logging within static functions or classes
 not derived from jagBase::LogBase.
 
-This function is a no-op if JAG3D_DISABLE_LOGGING is defined. The definition of
-JAG3D_DISABLE_LOGGING is controlled using CMake.
+This function is a no-op if JAG3D_ENABLE_LOGGING is not defined. The definition of
+JAG3D_ENABLE_LOGGING is controlled using CMake.
 \param prio Message priority based on Poco/Message.h.
 \param name Poco::Logger name.
 \param msg Written to named Logger if the Logger's priority is <= \c prio.
 */
-#ifdef JAG3D_DISABLE_LOGGING
+#ifndef JAG3D_ENABLE_LOGGING
 #  define __JAG3D_LOG( prio, msg )
 #  define __JAG3D_LOG_STATIC( prio, name, msg )
 #else
@@ -166,7 +166,7 @@ operation involving string concatenation, std::ostringstream writes, and other s
 manipulation. Use this macro to check the Poco::Logger priority and avoid log message
 construction when the log level would prevent display of the message.
 
-If JAG3D_DISABLE_LOGGING is defined, JAG3D_LOG_FATAL is a runtime constane \c false. An optimizing
+If JAG3D_ENABLE_LOGGING is not defined, JAG3D_LOG_FATAL is a runtime constane \c false. An optimizing
 compiler will recognize and eliminate log message construction as dead code. For example:
 \code
     if( JAG3D_LOG_FATAL )
@@ -197,7 +197,7 @@ becomes this:
 \see JAG3D_LOG_FATAL */
 /** \def JAG3D_LOG_TRACE
 \see JAG3D_LOG_FATAL */
-#ifdef JAG3D_DISABLE_LOGGING
+#ifndef JAG3D_ENABLE_LOGGING
 
 #  define JAG3D_LOG_FATAL     false
 #  define JAG3D_LOG_CRITICAL  false

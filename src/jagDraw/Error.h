@@ -35,18 +35,18 @@ namespace jagDraw
 /** \defgroup jagDrawError Error Utilities */
 /*@{*/
 
-#ifdef JAG3D_DISABLE_ALL_ERROR_CHECKS
+#ifndef JAG3D_ENABLE_ERROR_CHECKS
 #  define JAG3D_ERROR_CHECK(msg) GL_NO_ERROR
 #  define JAG3D_FBO_ERROR_CHECK(msg) GL_FRAMEBUFFER_COMPLETE
 #else
     /** \brief Error macro.
     \details By default, this macro calls errorCheck().
-    If JAG3D_DISABLE_ALL_ERROR_CHECKS is defined, this macro is a no-op.
+    If JAG3D_ENABLE_ERROR_CHECKS is not defined, this macro is a no-op.
     */
 #  define JAG3D_ERROR_CHECK(msg) jagDraw::errorCheck( msg )
     /** \brief FBO status macro.
     \details By default, this macro calls fboErrorCheck().
-    If JAG3D_DISABLE_ALL_ERROR_CHECKS is defined, this macro is a no-op.
+    If JAG3D_ENABLE_ERROR_CHECKS is not defined, this macro is a no-op.
     */
 #  define JAG3D_FBO_ERROR_CHECK(msg) jagDraw::fboErrorCheck( msg )
 #endif
@@ -54,14 +54,14 @@ namespace jagDraw
 
 /** \brief Check for an OpenGL error using glGetError().
 \details Use JAG3D_ERROR_CHECK instead, which supports compile time
-error check elimination with JAG3D_DISABLE_ALL_ERROR_CHECKS.
-*/
+error check elimination when the CMake variable JAG3D_ENABLE_ERROR_CHECKS
+is set to OFF. */
 JAGDRAW_EXPORT GLenum errorCheck( const std::string& msg );
 
 /** \brief Check the FBO status using glCheckFramebufferStatus().
 \details Use JAG3D_FBO_ERROR_CHECK instead, which supports compile time
-error check elimination with JAG3D_DISABLE_ALL_ERROR_CHECKS.
-*/
+error check elimination when the CMake variable JAG3D_ENABLE_ERROR_CHECKS
+is set to OFF. */
 JAGDRAW_EXPORT GLenum fboErrorCheck( const std::string& msg );
 
 /*@}*/
