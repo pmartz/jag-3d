@@ -147,17 +147,19 @@ endif()
 
 
 
-option( JAG3D_DISABLE_ALL_ERROR_CHECKS "If set, Jag3D disables all internal OpenGL error checking" OFF )
-if( JAG3D_DISABLE_ALL_ERROR_CHECKS )
-    add_definitions( -DJAG3D_DISABLE_ALL_ERROR_CHECKS )
+option( JAG3D_ENABLE_ERROR_CHECKS "If set, Jag3D enables internal OpenGL error checking" ON )
+if( JAG3D_ENABLE_ERROR_CHECKS )
+    add_definitions( -DJAG3D_ENABLE_ERROR_CHECKS )
 endif()
 
-option( JAG3D_DISABLE_LOGGING "If set, Jag3D disables all console and log file writes." OFF )
-if( JAG3D_DISABLE_LOGGING )
-    add_definitions( -DJAG3D_DISABLE_LOGGING )
-    add_definitions( -DJAG3D_LOG=false )
-else()
-    add_definitions( -DJAG3D_LOG=true )
+option( JAG3D_ENABLE_LOGGING "If set, Jag3D enables console and/or log file writes." ON )
+if( JAG3D_ENABLE_LOGGING )
+    add_definitions( -DJAG3D_ENABLE_LOGGING )
+endif()
+
+option( JAG3D_ENABLE_PROFILING "If set, Jag3D enables profiling" OFF )
+if( JAG3D_ENABLE_PROFILING )
+    add_definitions( -DJAG3D_ENABLE_PROFILING )
 endif()
 
 option( BUILD_SHARED_LIBS "Set to ON to build JAG3D for dynamic linking. Use OFF for static." ON )

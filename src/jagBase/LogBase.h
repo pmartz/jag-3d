@@ -55,7 +55,7 @@ public:
       : _logger( Poco::Logger::get( loggerName ) ),
         _logStream( PocoLogStreamPtr( new Poco::LogStream( _logger ) ) )
     {
-#ifdef JAG3D_DISABLE_LOGGING
+#ifndef JAG3D_ENABLE_LOGGING
         _logger.setChannel( new Poco::NullChannel() );
 #endif
     }

@@ -34,7 +34,7 @@ GLenum errorCheck( const std::string& msg )
 {
     const GLenum errorEnum = glGetError();
 
-#ifndef JAG3D_DISABLE_LOGGING
+#ifdef JAG3D_ENABLE_LOGGING
 
     if( errorEnum == GL_NO_ERROR )
         return( errorEnum );
@@ -62,7 +62,7 @@ GLenum fboErrorCheck( const std::string& msg )
 {
     const GLenum errorEnum( glCheckFramebufferStatus( GL_DRAW_FRAMEBUFFER ) );
 
-#ifndef JAG3D_DISABLE_LOGGING
+#ifdef JAG3D_ENABLE_LOGGING
 
     if( errorEnum == GL_FRAMEBUFFER_COMPLETE )
         return( errorEnum );
