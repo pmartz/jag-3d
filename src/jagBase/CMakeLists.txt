@@ -35,6 +35,7 @@ set( _jagBaseHeaderFiles
     Log.h
     LogBase.h
     LogMacros.h
+    Profile.h
     ptr.h
     Transform.h
     types.h
@@ -43,6 +44,7 @@ set( _jagBaseHeaderFiles
 
 set( _jagBaseSourceFiles
     Log.cpp
+    Profile.cpp
     Version.cpp
 )
 

@@ -147,7 +147,7 @@ endif()
 
 
 
-option( JAG3D_ENABLE_ERROR_CHECKS "If set, Jag3D enables internal OpenGL error checking" ON )
+option( JAG3D_ENABLE_ERROR_CHECKS "If set, Jag3D enables internal OpenGL error checking." ON )
 if( JAG3D_ENABLE_ERROR_CHECKS )
     add_definitions( -DJAG3D_ENABLE_ERROR_CHECKS )
 endif()
@@ -157,7 +157,7 @@ if( JAG3D_ENABLE_LOGGING )
     add_definitions( -DJAG3D_ENABLE_LOGGING )
 endif()
 
-option( JAG3D_ENABLE_PROFILING "If set, Jag3D enables profiling" OFF )
+option( JAG3D_ENABLE_PROFILING "If set, Jag3D enables profiling." OFF )
 if( JAG3D_ENABLE_PROFILING )
     add_definitions( -DJAG3D_ENABLE_PROFILING )
 endif()
