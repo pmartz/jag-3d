@@ -23,6 +23,8 @@
 
 
 #include <jagBase/Export.h>
+#include <jagBase/ptr.h>
+#include <boost/date_time/posix_time/posix_time.hpp>
 #include <string>
 
 
@@ -31,8 +33,23 @@ namespace jagBase
 {
 
 
-/** \addtogroup jagBaseProfile Performance Profiling Utilities
-\details Documentation is TBD.
+/** \defgroup jagBaseProfile Performance Profiling Utilities
+\details The Jag3D profiling system is inspired by and somewhat
+based on the Bullet physics profiling system
+(http://bullet.googlecode.com).
+
+Note: Although Jag3D's profiling system is relatively efficient,
+profiling has an inherent overhead. Profiling should be used during
+development, but disabled for maximum performance. To disable all
+profiling, set the CMake variable JAG3D_ENABLE_PROFILING to OFF.
+
+To profile (time) a block of code, use the JAG3D_PROFILE macro.
+This macros constructs a ProfileSample object that begins timing in
+the constructor and ends timing in the destructor.
+
+In addition, ProfileSample adds a ProfileNode to a tree managed by
+the singleton ProfileManager. This system of nested nodes supports
+timing called functions and code sub-blocks.
 */
 /*@{*/
 
@@ -40,14 +57,24 @@ namespace jagBase
 
 #ifdef JAG3D_ENABLE_PROFILING
 
-/** \class ProfileManager ProfileManager.h <jagBase/Profile.h>
+
+// Forward declarations
+struct ProfileNode;
+typedef jagBase::ptr< jagBase::ProfileNode >::shared_ptr ProfileNodePtr;
+typedef std::vector< ProfileNodePtr > ProfileNodeVec;
+
+
+/** \class ProfileManager Profile.h <jagBase/Profile.h>
 \brief TBD
 \details TBD
 */
 class JAGBASE_EXPORT ProfileManager
 {
 public:
-    static ProfileManager* instance();
+    static ProfileManager* instance()
+    {
+        return( _s_instance );
+    }
 
     void startProfile( const char* name );
     void stopProfile();
@@ -56,10 +83,13 @@ protected:
     ProfileManager();
     ~ProfileManager();
     static ProfileManager* _s_instance;
+
+    ProfileNodePtr _root;
+    ProfileNodePtr _current;
 };
 
 
-/** \class ProfileManager ProfileManager.h <jagBase/Profile.h>
+/** \class ProfileManager Profile.h <jagBase/Profile.h>
 \brief TBD
 \details TBD
 */
@@ -78,7 +108,38 @@ public:
 };
 
 
-#define	JAG3D_PROFILE( name )			CProfileSample __profile( name )
+
+/** \struct ProfileNode Profile.h <jagBase/Profile.h>
+\brief TBD
+\details TBD
+*/
+struct ProfileNode : public SHARED_FROM_THIS(ProfileNode)
+{
+    ProfileNode( const char* name );
+    ~ProfileNode();
+
+    void startCall();
+    bool endCall();
+
+    ProfileNodePtr findChild( const char* name );
+
+    void reset();
+
+    std::string _name;
+
+    ProfileNodePtr _parent;
+    ProfileNodeVec _children;
+
+    int _totalCalls;
+    int _recursiveCount;
+    boost::posix_time::ptime _totalTime;
+    boost::posix_time::ptime _lastStart, _lastEnd;
+};
+
+
+
+
+#define	JAG3D_PROFILE( name ) jagBase::ProfileSample __profile( name )
 
 // JAG3D_ENABLE_PROFILING
 #else
@@ -87,6 +148,7 @@ public:
 
 // JAG3D_ENABLE_PROFILING
 #endif
+
 
 
 /*@}*/

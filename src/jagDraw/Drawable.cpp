@@ -26,9 +26,10 @@
 #include <jagDraw/DrawCommand.h>
 #include <jagDraw/VertexArrayObject.h>
 #include <jagDraw/VertexAttribContainer.h>
-#include <jagBase/LogMacros.h>
 #include <jagDraw/DrawInfo.h>
 #include <jagDraw/Error.h>
+#include <jagBase/LogMacros.h>
+#include <jagBase/Profile.h>
 
 #include <boost/foreach.hpp>
 
@@ -59,6 +60,8 @@ Drawable::~Drawable()
 void Drawable::execute( DrawInfo& drawInfo )
 {
     JAG3D_TRACE( "execute()" );
+
+    JAG3D_PROFILE( "execute()" );
 
     BOOST_FOREACH( DrawCommandPtr dcp, _drawCommands )
     {

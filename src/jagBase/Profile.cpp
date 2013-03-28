@@ -20,6 +20,12 @@
 
 #include <jagBase/Profile.h>
 
+#include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/foreach.hpp>
+
+#include <vector>
+
+
 
 namespace jagBase
 {
@@ -28,16 +34,14 @@ namespace jagBase
 #ifdef JAG3D_ENABLE_PROFILING
 
 
+
 // TBD Need singleton manager to cleanup/delete singletons.
 ProfileManager* ProfileManager::_s_instance( new jagBase::ProfileManager() );
 
-ProfileManager* ProfileManager::instance()
-{
-    return( _s_instance );
-}
-
 
 ProfileManager::ProfileManager()
+    : _root( new ProfileNode( "jag" ) ),
+      _current( _root )
 {
 }
 ProfileManager::~ProfileManager()
@@ -46,10 +50,78 @@ ProfileManager::~ProfileManager()
 
 void ProfileManager::startProfile( const char* name )
 {
+    if( name != _current->_name )
+        _current = _current->findChild( name );
+    _current->startCall();
 }
 void ProfileManager::stopProfile()
 {
+    if( _current->endCall() )
+        _current = _current->_parent;
 }
+
+
+
+ProfileNode::ProfileNode( const char* name )
+    : _name( std::string( name ) ),
+      _totalCalls( 0 ),
+      _recursiveCount( 0 ),
+      _totalTime(),
+      _lastStart(),
+      _lastEnd()
+
+{
+}
+ProfileNode::~ProfileNode()
+{
+}
+
+void ProfileNode::startCall()
+{
+    ++_totalCalls;
+    if( _recursiveCount++ == 0 )
+        _lastStart = boost::posix_time::microsec_clock::local_time();
+}
+bool ProfileNode::endCall()
+{
+    if( --_recursiveCount == 0 )
+    {
+        _lastEnd = boost::posix_time::microsec_clock::local_time();
+        _totalTime += ( _lastEnd - _lastStart );
+        return( true );
+    }
+    else
+        return( false );
+}
+
+ProfileNodePtr ProfileNode::findChild( const char* name )
+{
+    std::string target( name );
+    BOOST_FOREACH( ProfileNodePtr child, _children )
+    {
+        if( child->_name == target )
+            return( child );
+    }
+
+    ProfileNodePtr newChild( new ProfileNode( name ) );
+    _children.resize( _children.size() + 1 );
+    _children[ _children.size() - 1 ] = newChild;
+    newChild->_parent = shared_from_this();
+    return( newChild );
+}
+
+void ProfileNode::reset()
+{
+    _totalCalls = 0;
+    _recursiveCount = 0;
+    _lastStart = _lastEnd = _totalTime = boost::posix_time::ptime();
+
+    BOOST_FOREACH( ProfileNodePtr child, _children )
+    {
+        child->reset();
+    }
+}
+
 
 
 // JAG3D_ENABLE_PROFILING
