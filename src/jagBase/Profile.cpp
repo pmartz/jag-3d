@@ -19,6 +19,8 @@
 *************** <auto-copyright.pl END do not edit this line> ***************/
 
 #include <jagBase/Profile.h>
+#include <jagBase/Log.h>
+#include <jagBase/LogMacros.h>
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/foreach.hpp>
@@ -114,13 +116,64 @@ void ProfileNode::reset()
 {
     _totalCalls = 0;
     _recursiveCount = 0;
-    _lastStart = _lastEnd = _totalTime = boost::posix_time::ptime();
+    _totalTime = boost::posix_time::time_duration();
+    _lastStart = _lastEnd = boost::posix_time::ptime();
 
     BOOST_FOREACH( ProfileNodePtr child, _children )
     {
         child->reset();
     }
 }
+
+
+
+ProfileVisitor::ProfileVisitor()
+{
+}
+ProfileVisitor::~ProfileVisitor()
+{
+}
+
+void ProfileVisitor::traverse( ProfileNodePtr node )
+{
+    if( node != NULL )
+    {
+        BOOST_FOREACH( ProfileNodePtr child, node->_children )
+        {
+            visit( child );
+        }
+    }
+}
+
+
+ProfileDump::ProfileDump()
+    : ProfileVisitor(),
+      jagBase::LogBase( "jag.prof" ),
+      _depth( 0 )
+{
+}
+ProfileDump::~ProfileDump()
+{
+}
+
+void ProfileDump::visit( ProfileNodePtr node )
+{
+    const double totalTime( (double)( node->_totalTime.total_milliseconds() ) );
+    if( JAG3D_LOG_INFO )
+    {
+        Poco::LogStream logstream( _logger );
+
+        for( unsigned int idx=0; idx<_depth; ++idx )
+            logstream.information() << "  ";
+
+        logstream.information() << node->_name << ": " << totalTime << "ms" << std::endl;
+    }
+
+    ++_depth;
+    traverse( node );
+    --_depth;
+}
+
 
 
 

@@ -88,6 +88,9 @@ Log::Log()
         setPriority( PrioWarning, dest );
 
 
+    // Special default priority for profiling.
+    Log::instance()->setPriority( Log::PrioInfo, "jag.prof" );
+
     std::string priorities;
     try {
         priorities = Poco::Environment::get( "JAG3D_LOG_PRIORITIES" );

@@ -21,6 +21,7 @@
 
 #include <demoSupport/DemoInterface.h>
 #include <jagBase/gmtlSupport.h>
+#include <jagBase/Profile.h>
 #include <jagDraw/PlatformOpenGL.h>
 #include <jagDraw/ContextSupport.h>
 
@@ -175,6 +176,11 @@ void JagDemoApp::draw()
     gmtl::Matrix44d viewd;
     gmtl::convert( viewd, project->getViewMatrix() );
     _di->frame( viewd, proj );
+
+#ifdef JAG3D_ENABLE_PROFILING
+    jagBase::ProfileDump dumper;
+    dumper.visit( jagBase::ProfileManager::instance()->getRoot() );
+#endif
 }
 
 
