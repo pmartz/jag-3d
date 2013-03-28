@@ -23,6 +23,7 @@
 
 
 #include <jagBase/Export.h>
+#include <jagBase/LogBase.h>
 #include <jagBase/ptr.h>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <string>
@@ -79,6 +80,11 @@ public:
     void startProfile( const char* name );
     void stopProfile();
 
+    ProfileNodePtr getRoot()
+    {
+        return( _root );
+    }
+
 protected:
     ProfileManager();
     ~ProfileManager();
@@ -113,7 +119,7 @@ public:
 \brief TBD
 \details TBD
 */
-struct ProfileNode : public SHARED_FROM_THIS(ProfileNode)
+struct JAGBASE_EXPORT ProfileNode : public SHARED_FROM_THIS(ProfileNode)
 {
     ProfileNode( const char* name );
     ~ProfileNode();
@@ -132,10 +138,46 @@ struct ProfileNode : public SHARED_FROM_THIS(ProfileNode)
 
     int _totalCalls;
     int _recursiveCount;
-    boost::posix_time::ptime _totalTime;
+    boost::posix_time::time_duration _totalTime;
     boost::posix_time::ptime _lastStart, _lastEnd;
 };
 
+
+
+/** \struct ProfileVisitor Profile.h <jagBase/Profile.h>
+\brief TBD
+\details TBD
+*/
+class JAGBASE_EXPORT ProfileVisitor
+{
+public:
+    ProfileVisitor();
+    ~ProfileVisitor();
+
+    virtual void visit( ProfileNodePtr node )
+    {
+        traverse( node );
+    }
+
+    void traverse( ProfileNodePtr node );
+};
+
+
+/** \struct ProfileDump Profile.h <jagBase/Profile.h>
+\brief TBD
+\details TBD
+*/
+class JAGBASE_EXPORT ProfileDump : public ProfileVisitor, public jagBase::LogBase
+{
+public:
+    ProfileDump();
+    ~ProfileDump();
+
+    virtual void visit( ProfileNodePtr node );
+
+protected:
+    int _depth;
+};
 
 
 

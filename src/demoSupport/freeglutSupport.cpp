@@ -20,6 +20,7 @@
 
 #include <demoSupport/DemoInterface.h>
 #include <jagDraw/ContextSupport.h>
+#include <jagBase/Profile.h>
 
 #include <demoSupport/platformFreeglut.h>
 
@@ -59,6 +60,11 @@ void display()
     cs->setActiveContext( contextID );
     di->frame();
     glutSwapBuffers();
+
+#ifdef JAG3D_ENABLE_PROFILING
+    jagBase::ProfileDump dumper;
+    dumper.visit( jagBase::ProfileManager::instance()->getRoot() );
+#endif
 
     if( di->getContinuousRedraw() )
         glutPostRedisplay();

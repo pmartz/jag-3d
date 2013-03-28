@@ -20,6 +20,7 @@
 
 #include <demoSupport/DemoInterface.h>
 #include <jagDraw/ContextSupport.h>
+#include <jagBase/Profile.h>
 
 #include <demoSupport/qtGlWidget.h>
 #include <QApplication>
@@ -67,6 +68,11 @@ void GLWidget::paintGL()
 
     cs->setActiveContext( contextID );
     di->frame();
+
+#ifdef JAG3D_ENABLE_PROFILING
+    jagBase::ProfileDump dumper;
+    dumper.visit( jagBase::ProfileManager::instance()->getRoot() );
+#endif
 
     if( di->getContinuousRedraw() )
         update( rect() );

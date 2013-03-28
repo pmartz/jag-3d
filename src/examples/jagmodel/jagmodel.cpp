@@ -25,6 +25,7 @@
 #include <jagSG/ExecuteVisitor.h>
 #include <jagSG/Node.h>
 #include <jagDisk/ReadWrite.h>
+#include <jagBase/Profile.h>
 #include <jagBase/Version.h>
 #include <jagBase/Log.h>
 #include <jagBase/LogMacros.h>
@@ -183,6 +184,8 @@ bool JagModel::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj )
 {
     if( !getStartupCalled() )
         return( true );
+
+    JAG3D_PROFILE( "frame" );
 
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
