@@ -64,6 +64,7 @@ void display()
 #ifdef JAG3D_ENABLE_PROFILING
     jagBase::ProfileDump dumper;
     dumper.visit( jagBase::ProfileManager::instance()->getRoot() );
+    jagBase::ProfileManager::instance()->getRoot()->reset();
 #endif
 
     if( di->getContinuousRedraw() )
