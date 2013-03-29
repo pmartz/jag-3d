@@ -25,6 +25,7 @@
 #include <iomanip>
 
 #include <boost/version.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
 #include <Poco/Version.h>
 #include <Poco/Environment.h>
 #include <gmtl/Version.h>
@@ -47,6 +48,9 @@ std::string getVersionString()
     {
         std::ostringstream oStr;
         oStr.fill( '0' );
+
+        oStr << to_simple_string( boost::posix_time::second_clock::universal_time() ) << " UTC" << std::endl;
+
         oStr << std::string( "Jag3D version " ) <<
             std::setw( 1 ) << JAG3D_MAJOR_VERSION << "." <<
             std::setw( 2 ) << JAG3D_MINOR_VERSION << "." <<
@@ -62,7 +66,14 @@ std::string getVersionString()
 
         oStr2 << "\tBoost: " << BOOST_VERSION / 100000 << "." <<
             BOOST_VERSION / 100 % 100 << "." << BOOST_VERSION % 100 <<
-            " (" << BOOST_VERSION << ")\n";
+            " (" << BOOST_VERSION << "), ";
+#if defined( BOOST_DATE_TIME_HAS_NANOSECONDS )
+        oStr2 << "time config: nanoseconds\n";
+#elif defined( BOOST_DATE_TIME_HAS_MICROSECONDS )
+        oStr2 << "time config: microseconds\n";
+#elif defined( BOOST_DATE_TIME_HAS_MILLISECONDS )
+        oStr2 << "time config: milliseconds\n";
+#endif
 
         oStr2 << "\tPoco: " << ((POCO_VERSION >> 24) & 0xff) << "." <<
             ((POCO_VERSION >> 16) & 0xff) << "." << ((POCO_VERSION >> 8) & 0xff) << "." <<
