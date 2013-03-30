@@ -26,6 +26,7 @@
 #include <boost/foreach.hpp>
 
 #include <vector>
+#include <sstream>
 
 
 
@@ -48,6 +49,15 @@ ProfileManager::ProfileManager()
 }
 ProfileManager::~ProfileManager()
 {
+}
+
+void ProfileManager::dumpAll( const bool reset )
+{
+    ProfileDump dumper;
+    dumper.visit( _root );
+
+    if( reset )
+        _root->reset();
 }
 
 void ProfileManager::startProfile( const char* name )
@@ -156,17 +166,49 @@ ProfileDump::~ProfileDump()
 {
 }
 
+#define AS_DBL_MS(__t) \
+    ( (double)( __t.total_microseconds() ) * .001 )
+
 void ProfileDump::visit( ProfileNodePtr node )
 {
-    const double totalTime( (double)( node->_totalTime.total_milliseconds() ) );
+    const double myTime( AS_DBL_MS(node->_totalTime) );
     if( JAG3D_LOG_INFO )
     {
         Poco::LogStream logstream( _logger );
 
+        std::ostringstream indent;
         for( unsigned int idx=0; idx<_depth; ++idx )
-            logstream.information() << "  ";
+            indent << ". ";
 
-        logstream.information() << node->_name << ": " << totalTime << "ms" << std::endl;
+        const std::streamsize oldPrec( logstream.precision( 3 ) );
+
+        logstream.information() << indent.str() << "------------" << std::endl;
+        logstream.information() << indent.str() << node->_name << ": " << myTime << "ms" << std::endl;
+
+        if( node->_children.size() > 0 )
+        {
+            double runningTotal( 0. );
+            unsigned int idx;
+            for( idx=0; idx< node->_children.size(); ++idx )
+            {
+                ProfileNodePtr child( node->_children[ idx ] );
+                const double childTime( AS_DBL_MS(child->_totalTime) );
+                const double percent( ( myTime > 0.) ? childTime / myTime * 100. : 0. );
+                runningTotal += childTime;
+                logstream.information()<< indent.str() << idx << " - " <<
+                    child->_name << ": " <<
+                    childTime << " (" <<
+                    percent << "%)" << std::endl;
+            }
+            const double unprofiled( myTime - runningTotal );
+            const double percent( ( myTime > 0.) ? unprofiled / myTime * 100. : 0. );
+            logstream.information()<< indent.str() <<
+                "Unprofiled: " <<
+                unprofiled << " (" <<
+                percent << "%)" << std::endl;
+        }
+        
+        logstream.precision( oldPrec );
     }
 
     ++_depth;
