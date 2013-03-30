@@ -22,7 +22,6 @@
 #include <jagBase/Log.h>
 #include <jagBase/LogMacros.h>
 
-#include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/foreach.hpp>
 
 #include <vector>
@@ -97,13 +96,21 @@ void ProfileNode::startCall()
 {
     ++_totalCalls;
     if( _recursiveCount++ == 0 )
+#if defined( USE_POSIX_TIME )
         _lastStart = boost::posix_time::microsec_clock::local_time();
+#elif defined( USE_CHRONO )
+        _lastStart = boost::chrono::high_resolution_clock::now();
+#endif
 }
 bool ProfileNode::endCall()
 {
     if( --_recursiveCount == 0 )
     {
+#if defined( USE_POSIX_TIME )
         _lastEnd = boost::posix_time::microsec_clock::local_time();
+#elif defined( USE_CHRONO )
+        _lastEnd = boost::chrono::high_resolution_clock::now();
+#endif
         _totalTime += ( _lastEnd - _lastStart );
         return( true );
     }
@@ -131,8 +138,12 @@ void ProfileNode::reset()
 {
     _totalCalls = 0;
     _recursiveCount = 0;
+#if defined( USE_POSIX_TIME )
     _totalTime = boost::posix_time::time_duration();
     _lastStart = _lastEnd = boost::posix_time::ptime();
+#elif defined( USE_CHRONO )
+    _totalTime = boost::chrono::microseconds( 0 );
+#endif
 
     BOOST_FOREACH( ProfileNodePtr child, _children )
     {
@@ -172,8 +183,13 @@ ProfileDump::~ProfileDump()
 }
 
 
-#define AS_DBL_MS(__t) \
+#if defined( USE_POSIX_TIME )
+#  define AS_DBL_MS(__t) \
     ( (double)( __t.total_microseconds() ) * .001 )
+#elif defined( USE_CHRONO )
+#  define AS_DBL_MS(__t) \
+    ( (double)( __t.count() ) * .000001 )
+#endif
 
 void ProfileDump::visit( ProfileNodePtr node )
 {

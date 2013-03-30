@@ -59,7 +59,11 @@ void display()
 
     cs->setActiveContext( contextID );
     di->frame();
-    glutSwapBuffers();
+
+    {
+        JAG3D_PROFILE( "swap" );
+        glutSwapBuffers();
+    }
 
 #ifdef JAG3D_ENABLE_PROFILING
     jagBase::ProfileManager::instance()->dumpAll();
