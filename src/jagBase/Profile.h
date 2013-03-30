@@ -77,6 +77,8 @@ public:
         return( _s_instance );
     }
 
+    void dumpAll( const bool reset=true );
+
     void startProfile( const char* name );
     void stopProfile();
 
