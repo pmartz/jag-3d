@@ -46,6 +46,7 @@ ProfileManager::ProfileManager()
     : _root( new ProfileNode( "jag" ) ),
       _current( _root )
 {
+    startProfile( "jag" );
 }
 ProfileManager::~ProfileManager()
 {
@@ -53,11 +54,15 @@ ProfileManager::~ProfileManager()
 
 void ProfileManager::dumpAll( const bool reset )
 {
+    stopProfile();
+
     ProfileDump dumper;
     dumper.visit( _root );
 
     if( reset )
         _root->reset();
+
+    startProfile( "jag" );
 }
 
 void ProfileManager::startProfile( const char* name )
@@ -68,7 +73,7 @@ void ProfileManager::startProfile( const char* name )
 }
 void ProfileManager::stopProfile()
 {
-    if( _current->endCall() )
+    if( _current->endCall() && ( _current->_parent != NULL ) )
         _current = _current->_parent;
 }
 
@@ -166,6 +171,7 @@ ProfileDump::~ProfileDump()
 {
 }
 
+
 #define AS_DBL_MS(__t) \
     ( (double)( __t.total_microseconds() ) * .001 )
 
@@ -180,7 +186,7 @@ void ProfileDump::visit( ProfileNodePtr node )
         for( unsigned int idx=0; idx<_depth; ++idx )
             indent << ". ";
 
-        const std::streamsize oldPrec( logstream.precision( 3 ) );
+        const std::streamsize oldPrec( logstream.precision( 4 ) );
 
         logstream.information() << indent.str() << "------------" << std::endl;
         logstream.information() << indent.str() << node->_name << ": " << myTime << "ms" << std::endl;
@@ -197,14 +203,14 @@ void ProfileDump::visit( ProfileNodePtr node )
                 runningTotal += childTime;
                 logstream.information()<< indent.str() << idx << " - " <<
                     child->_name << ": " <<
-                    childTime << " (" <<
+                    childTime << "ms (" <<
                     percent << "%)" << std::endl;
             }
             const double unprofiled( myTime - runningTotal );
             const double percent( ( myTime > 0.) ? unprofiled / myTime * 100. : 0. );
             logstream.information()<< indent.str() <<
                 "Unprofiled: " <<
-                unprofiled << " (" <<
+                unprofiled << "ms (" <<
                 percent << "%)" << std::endl;
         }
         
