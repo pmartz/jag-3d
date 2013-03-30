@@ -25,8 +25,17 @@
 #include <jagBase/Export.h>
 #include <jagBase/LogBase.h>
 #include <jagBase/ptr.h>
-#include <boost/date_time/posix_time/posix_time.hpp>
 #include <string>
+
+//#define USE_POSIX_TIME 1
+#define USE_CHRONO 1
+#if defined( USE_POSIX_TIME )
+#  include <boost/date_time/posix_time/posix_time.hpp>
+#elif defined( USE_CHRONO )
+#  include <boost/chrono/chrono.hpp>
+#  include <boost/chrono/time_point.hpp>
+#  include <boost/chrono/duration.hpp>
+#endif
 
 
 
@@ -140,8 +149,13 @@ struct JAGBASE_EXPORT ProfileNode : public SHARED_FROM_THIS(ProfileNode)
 
     int _totalCalls;
     int _recursiveCount;
+#if defined( USE_POSIX_TIME )
     boost::posix_time::time_duration _totalTime;
     boost::posix_time::ptime _lastStart, _lastEnd;
+#elif defined( USE_CHRONO )
+    boost::chrono::high_resolution_clock::duration _totalTime;
+    boost::chrono::high_resolution_clock::time_point _lastStart, _lastEnd;
+#endif
 };
 
 
