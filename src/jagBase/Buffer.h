@@ -25,7 +25,7 @@
 #include <jagBase/ptr.h>
 #include <jagBase/types.h>
 
-#include <string.h> // for memset
+#include <cstring>
 #include <assert.h>
 
 
@@ -82,17 +82,17 @@ public:
 
     void copy( const void* ptr )
     {
-        memcpy( _buffer.get(), ptr, _size );
+        std::memcpy( _buffer.get(), ptr, _size );
     }
 
     void copy( void* ptr, size_t size )
     {
-        memcpy( _buffer.get(), ptr, _size );
+        std::memcpy( _buffer.get(), ptr, _size );
     }
 
     void copy( void* ptr, size_t size, size_t off )
     {
-        memcpy( offset( off ), ptr, size );
+        std::memcpy( offset( off ), ptr, size );
     }
 
 private:

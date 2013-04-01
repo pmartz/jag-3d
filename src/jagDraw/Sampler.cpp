@@ -26,6 +26,7 @@
 #include <jagDraw/Version.h>
 
 #include <sstream>
+#include <string>
 
 
 namespace jagDraw {
@@ -228,7 +229,7 @@ SamplerState::SamplerState( const SamplerState& rhs )
     _compareFunc( rhs._compareFunc ),
     _dirty( rhs._dirty )
 {
-    memcpy( _borderColor, rhs._borderColor, sizeof( _borderColor ) );
+    std::memcpy( _borderColor, rhs._borderColor, sizeof( _borderColor ) );
 }
 SamplerState::~SamplerState()
 {
