@@ -29,6 +29,8 @@
 #include <boost/foreach.hpp>
 #include <boost/functional/hash.hpp>
 
+#include <cstring>
+
 
 namespace jagDraw {
 
@@ -100,7 +102,7 @@ void UniformBlock::execute( DrawInfo& drawInfo, const Program::BlockInfo& blockI
             { \
                 __type value; \
                 uniform->get( value ); \
-                memcpy( _buffer->offset( offsetValue ), &value, sizeof( __type ) ); \
+                std::memcpy( _buffer->offset( offsetValue ), &value, sizeof( __type ) ); \
                 break; \
             }
 

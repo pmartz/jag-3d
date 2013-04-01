@@ -27,6 +27,7 @@
 #include <jagDraw/Shader.h>
 
 #include <fstream>
+#include <string>
 
 
 using namespace jagDraw;
@@ -95,7 +96,7 @@ public:
         char* buff( new char[ totalSize ] );
         // Don't know where the trailing '\0' goes, so fill the whole
         // block with '0'.
-        memset( buff, '\0', totalSize );
+        std::memset( buff, '\0', totalSize );
 
         iStr.read( buff, size );
 
