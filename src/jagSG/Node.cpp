@@ -21,8 +21,11 @@
 #include <jagSG/Node.h>
 #include <jagSG/Visitor.h>
 #include <jagDraw/DrawInfo.h>
+#include <jagDraw/DrawablePrep.h>
+#include <jagDraw/VertexArrayObject.h>
 #include <jagDraw/Error.h>
 #include <jagBase/LogMacros.h>
+#include <jagBase/Profile.h>
 #include <jagBase/ptr.h>
 
 #include <gmtl/gmtl.h>
@@ -108,6 +111,8 @@ const gmtl::Matrix44d& Node::getTransform() const
 
 jagDraw::BoundPtr Node::getBound( const jagDraw::CommandMap& commands )
 {
+    JAG3D_PROFILE( "SGNode::getBound" );
+
     const jagDraw::CommandMap newCommands( ( _commands != NULL ) ? commands + *_commands : commands );
 
     jagDraw::BoundSphere b;
@@ -118,10 +123,9 @@ jagDraw::BoundPtr Node::getBound( const jagDraw::CommandMap& commands )
 
     // Expand by Drawable bounds after expanding by child Node bounds
     // to increase precision.
-    BOOST_FOREACH( jagDraw::DrawablePtr& drawable, _drawables )
-    {
-        b.expand( *( drawable->getBound( newCommands ) ) );
-    }
+    const jagDraw::DrawablePrepPtr& drawablePrep( newCommands[ jagDraw::DrawablePrep::VertexArrayObject_t ] );
+    const jagDraw::VertexArrayObjectPtr vaop( boost::dynamic_pointer_cast< jagDraw::VertexArrayObject >( drawablePrep ) );
+    b.expand( *( getDrawableBound( vaop ) ) );
 
     // Transform
     gmtl::Sphered newSphere = gmtl::transform( _matrix, b.asSphere() );
@@ -130,6 +134,18 @@ jagDraw::BoundPtr Node::getBound( const jagDraw::CommandMap& commands )
 
     return( _bound );
 }
+jagDraw::BoundPtr Node::getDrawableBound( const jagDraw::VertexArrayObjectPtr vaop )
+{
+    JAG3D_PROFILE( "SGNode::getDrawableBound" );
+
+    jagDraw::BoundSphere b;
+    BOOST_FOREACH( jagDraw::DrawablePtr& drawable, _drawables )
+    {
+        b.expand( *( drawable->getBound( vaop ) ) );
+    }
+    return( jagDraw::BoundPtr( new jagDraw::BoundSphere( b ) ) );
+}
+
 
 
 void Node::setCommandMap( jagDraw::CommandMapPtr commands )

@@ -25,7 +25,7 @@
 #include <jagBase/LogBase.h>
 #include <jagDraw/ObjectID.h>
 #include <jagDraw/Bound.h>
-#include <jagDraw/CommandMap.h>
+#include <jagDraw/VertexArrayObject.h>
 #include <jagDraw/VertexArrayCommand.h>
 #include <jagDraw/DrawCommand.h>
 #include <jagBase/ptr.h>
@@ -46,7 +46,7 @@ accessing and computing a bounding volume based on the DrawCommands and
 vertex attribute data.
 
 Note that Drawable objects contain only DrawCommands. Vertex information
-is stored in a VertexArrayObject, located in CommandMap. One VertexArrayObject
+is stored in a VertexArrayObject (located in CommandMap). One VertexArrayObject
 can contain the geometric data for several Drawables, which reduces bind calls.
 
 \specBegin Drawable
@@ -87,7 +87,7 @@ See member functions for additional specification requirements.
 \specIssue{The fact that Drawable objects don't contain vertex data impacts
 bound computation. A Drawable could be shared by multiple jagDraw::Node
 objects\, producing different bound values depending on which
-VertexArrayObject is associates with the jagDraw::Node CommandMap.}
+VertexArrayObject is associated with the jagDraw::Node CommandMap.}
 
 \specEnd
 
@@ -122,8 +122,7 @@ the list directly with getDrawCommandVec().
 
     /** \brief Returns a bounding volume.
     \details 
-    \param commands The CommandMap, containing information necessary to compute
-    the bound, such as VertexArrayObjects.
+    \param vaop The VertexArrayObject required for bound computation.
 
     \specFuncBegin
 
@@ -142,32 +141,32 @@ the list directly with getDrawCommandVec().
     the return value.
 
     \specTableBegin
-    \specDepend{CommandMap}
+    \specDepend{VertexArrayObject}
     \specTableEnd
     \specFuncEnd
     */
-    virtual BoundPtr getBound( const CommandMap& commands );
+    virtual BoundPtr getBound( const VertexArrayObjectPtr vaop );
 
     /** \brief TBD
     \details TBD
 
     \specFuncBegin
     \specTableBegin
-    \specDepend{CommandMap}
+    \specDepend{VertexArrayObjectPtr}
     \specTableEnd
     \specFuncEnd
     */
-    void setBoundDirty( const CommandMap& commands, const bool dirty=true );
+    void setBoundDirty( const VertexArrayObjectPtr vaop, const bool dirty=true );
     /** \brief TBD
     \details TBD
 
     \specFuncBegin
     \specTableBegin
-    \specDepend{CommandMap}
+    \specDepend{VertexArrayObjectPtr}
     \specTableEnd
     \specFuncEnd
     */
-    bool getBoundDirty( const CommandMap& commands ) const;
+    bool getBoundDirty( const VertexArrayObjectPtr vaop ) const;
 
     /** \brief Computes a bounding volume.
     \details
@@ -175,37 +174,36 @@ the list directly with getDrawCommandVec().
     \specFuncBegin
 
     Computes the bounding volume based on Drawable::_drawCommands,
-    Drawable::_computeBoundCallback, and the VertexArrayObject stored in
-    \c commands.
+    Drawable::_computeBoundCallback, and the specified VertexArrayObject
+    \c vaop.
 
     If any of the following conditions are true, the bound is
-
     <em>uncomputable</em>:
-    \li \c commands does not contain a VertexArrayObject.
-    \li The VertexArrayObject does not contain a non-NULL BufferObjectPtr marked as VertexArrayObject::Vertex.
-    \li The VertexArrayObject does not contain a non-NULL VertexAttribPtr marked as VertexArrayObject::Vertex.
+    \li \c vaop is NULL.
+    \li \c vaop does not contain a non-NULL BufferObjectPtr marked as VertexArrayObject::Vertex.
+    \li \c vaop does not contain a non-NULL VertexAttribPtr marked as VertexArrayObject::Vertex.
     \li Drawable::_drawCommands.size() == 0.
 
     \specTableBegin
-    \specDepend{Bound\, CommandMap
+    \specDepend{Bound\, VertexArrayObject
 
         Jag3D uses VertexAttribContainer to compute the bound\, but this is not a
         JAG specification requirement. }
     \specTableEnd
     \specFuncEnd
     */
-    void computeBounds( BoundPtr _bound, const CommandMap& commands );
+    void computeBounds( BoundPtr _bound, const VertexArrayObjectPtr vaop );
 
     struct ComputeBoundCallback {
         /**
 
         \specFuncBegin
         \specTableBegin
-        \specDepend{CommandMap}
+        \specDepend{VertexArrayObject}
         \specTableEnd
         \specFuncEnd
         */
-        virtual void operator()( BoundPtr _bound, const CommandMap& commands ) = 0;
+        virtual void operator()( BoundPtr _bound, const VertexArrayObjectPtr vaop ) = 0;
     };
     typedef jagBase::ptr< ComputeBoundCallback >::shared_ptr ComputeBoundCallbackPtr;
 
