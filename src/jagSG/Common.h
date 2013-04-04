@@ -24,6 +24,7 @@
 
 #include <jagSG/Node.h>
 #include <jagSG/Visitor.h>
+#include <jagSG/CollectionVisitor.h>
 
 
 // __JAGSG_COMMON_H__

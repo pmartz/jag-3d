@@ -27,6 +27,7 @@ endif()
 
 set( _jagSGHeaderFiles
     Export.h
+    CollectionVisitor.h
     ExecuteVisitor.h
     Common.h
     Node.h
@@ -34,6 +35,7 @@ set( _jagSGHeaderFiles
 )
 
 set( _jagSGSourceFiles
+    CollectionVisitor.cpp
     ExecuteVisitor.cpp
     Node.cpp
 )
