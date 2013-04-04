@@ -77,7 +77,7 @@ Once the Drawable objects are instantiated and configured\, jagDraw-based
 client code adds the Drawable objects to jagDraw::Node objects.
 
 jagSG-based client code adds the Drawable objects to jagSG::Node objects.
-The jagSG::CullVisitor queries the bounding volume and stores references
+The jagSG::CollectionVisitor queries the bounding volume and stores references
 to the Drawables in jagDraw::Node objects. }
 \specViolations{None}
 \specTableEnd

@@ -78,6 +78,12 @@ public:
     {
         return( _drawables );
     }
+    /** \brief TBD
+    \details TBD */
+    unsigned int getNumDrawables() const
+    {
+        return( (unsigned int) _drawables.size() );
+    }
 
 
     /** \brief Assignment operator.

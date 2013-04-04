@@ -18,84 +18,81 @@
 *
 *************** <auto-copyright.pl END do not edit this line> ***************/
 
+#include <jagSG/Node.h>
+#include <jagSG/CollectionVisitor.h>
+#include <jagDraw/Node.h>
 #include <jagDraw/Uniform.h>
 #include <jagDraw/Program.h>
+
+#include <boost/foreach.hpp>
 
 #include <iostream>
 
 
+using jagSG::Node;
+using jagSG::NodePtr;
+using jagSG::CollectionVisitor;
+
+using jagDraw::CommandMap;
+using jagDraw::CommandMapPtr;
 using jagDraw::Uniform;
 using jagDraw::UniformPtr;
 using jagDraw::UniformSet;
 using jagDraw::UniformSetPtr;
+using jagDraw::Drawable;
+using jagDraw::DrawablePtr;
+using jagDraw::DrawNodeSimpleVec;
 using jagDraw::Program;
 
 
 bool test()
 {
+    NodePtr root( new Node() );
+    CollectionVisitor cv;
+    root->accept( cv );
+    if( cv.getDrawGraph().size() > 0 )
+    {
+        std::cerr << "Empty scene graph returns non-NULL draw graph." << std::endl;
+        return( false );
+    }
+
+
+    cv.reset();
+    CommandMapPtr commands( new CommandMap );
     UniformPtr u0 = UniformPtr( new Uniform( "a", (GLint)1 ) );
     UniformPtr u1 = UniformPtr( new Uniform( "b", (GLint)2 ) );
     UniformSetPtr us0( new UniformSet() );
     us0->insert( u0 );
     us0->insert( u1 );
-
-    GLint intVal;
-    (*us0)[ u0->getNameHash() ]->get( intVal );
-    if( intVal != 1 )
+    commands->insert( us0 );
+    DrawablePtr draw( new Drawable );
+    root->setCommandMap( commands );
+    root->addDrawable( draw );
+    root->accept( cv );
+    const DrawNodeSimpleVec& drawGraph( cv.getDrawGraph() );
+    size_t size( drawGraph.size() );
+    if( size != 1 )
     {
-        std::cerr << "Looking for value 1, found " << intVal << "." << std::endl;
+        std::cerr << "Draw graph size " << size << " != 1." << std::endl;
         return( false );
     }
-    (*us0)[ u1->getNameHash() ]->get( intVal );
-    if( intVal != 2 )
+    const jagDraw::Node& node( drawGraph[ 0 ] );
+    if( node.getCommandMap() != commands )
     {
-        std::cerr << "Looking for value 2, found " << intVal << "." << std::endl;
+        std::cerr << "Wrong CommandMap." << std::endl;
+        //return( false );
+    }
+    if( node.getNumDrawables() != 1 )
+    {
+        std::cerr << "Node num drawables " << node.getNumDrawables() << " != 1." << std::endl;
         return( false );
     }
-
-    UniformPtr u2 = UniformPtr( new Uniform( "b", (GLint)10 ) );
-    UniformPtr u3 = UniformPtr( new Uniform( "c", (GLint)11 ) );
-    UniformSetPtr us1( new UniformSet() );
-    us1->insert( u2 );
-    us1->insert( u3 );
-
-    (*us1)[ u2->getNameHash() ]->get( intVal );
-    if( intVal != 10 )
+    if( node.getDrawableVec()[ 0 ] != draw )
     {
-        std::cerr << "Looking for value 10, found " << intVal << "." << std::endl;
-        return( false );
-    }
-    (*us1)[ u3->getNameHash() ]->get( intVal );
-    if( intVal != 11 )
-    {
-        std::cerr << "Looking for value 11, found " << intVal << "." << std::endl;
+        std::cerr << "Drawable address mismatch." << std::endl;
         return( false );
     }
 
-    us0 = boost::dynamic_pointer_cast< UniformSet >( us0->combine( us1 ) );
-
-    Program::HashValue hashVal;
-    hashVal = Program::createHash( "a" );
-    (*us0)[ hashVal ]->get( intVal );
-    if( intVal != 1 )
-    {
-        std::cerr << "Add result: uniform 'a' is " << intVal << ", should be 1." << std::endl;
-        return( false );
-    }
-    hashVal = Program::createHash( "b" );
-    (*us0)[ hashVal ]->get( intVal );
-    if( intVal != 10 )
-    {
-        std::cerr << "Add result: uniform 'b' is " << intVal << ", should be 10." << std::endl;
-        return( false );
-    }
-    hashVal = Program::createHash( "c" );
-    (*us0)[ hashVal ]->get( intVal );
-    if( intVal != 11 )
-    {
-        std::cerr << "Add result: uniform 'c' is " << intVal << ", should be 11." << std::endl;
-        return( false );
-    }
 
     return( true );
 }
