@@ -122,6 +122,10 @@ public:
     {
         return( getBound( jagDraw::CommandMap() ) );
     }
+    /** \brief Get the bound of attached jagDraw::Drawable objects.
+    \details \c vaop is the jagDraw::VertexArrayObjects containing
+    the vertex data to compute the bound from. */
+    virtual jagDraw::BoundPtr getDrawableBound( const jagDraw::VertexArrayObjectPtr vaop );
 
 
     /** \brief CommandMap

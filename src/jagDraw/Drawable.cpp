@@ -59,7 +59,7 @@ Drawable::~Drawable()
 
 void Drawable::execute( DrawInfo& drawInfo )
 {
-    JAG3D_TRACE( "execute()" );
+    JAG3D_TRACE( "Drawable::execute" );
 
     JAG3D_PROFILE( "execute()" );
 
@@ -71,40 +71,38 @@ void Drawable::execute( DrawInfo& drawInfo )
     JAG3D_ERROR_CHECK( "Drawable::execute()" );
 }
 
-BoundPtr Drawable::getBound( const CommandMap& commands )
+BoundPtr Drawable::getBound( const VertexArrayObjectPtr vaop )
 {
-    if( getBoundDirty( commands ) )
+    if( getBoundDirty( vaop ) )
     {
         if( _bound == NULL )
             _bound = BoundPtr( new BoundAABox() );
         if( _computeBoundCallback != NULL )
-            (*_computeBoundCallback)( _bound, commands );
+            (*_computeBoundCallback)( _bound, vaop );
         else
-            computeBounds( _bound, commands );
-        setBoundDirty( commands, false );
+            computeBounds( _bound, vaop );
+        setBoundDirty( vaop, false );
     }
 
     return( _bound );
 }
 
-void Drawable::setBoundDirty( const CommandMap& commands, const bool dirty )
+void Drawable::setBoundDirty( const VertexArrayObjectPtr vaop, const bool dirty )
 {
     _boundDirty = dirty;
 }
-bool Drawable::getBoundDirty( const CommandMap& commands ) const
+bool Drawable::getBoundDirty( const VertexArrayObjectPtr vaop ) const
 {
     return( _boundDirty );
 }
 
-void Drawable::computeBounds( BoundPtr _bound, const CommandMap& commands )
+void Drawable::computeBounds( BoundPtr _bound, const VertexArrayObjectPtr vaop )
 {
-    if( ! commands.contains( DrawablePrep::VertexArrayObject_t ) )
+    if( vaop == NULL )
     {
         JAG3D_WARNING( "computeBounds() encountered NULL vertex array object." );
         return;
     }
-    const DrawablePrepPtr& drawablePrep( commands[ DrawablePrep::VertexArrayObject_t ] );
-    const VertexArrayObjectPtr vaop( boost::dynamic_pointer_cast< VertexArrayObject >( drawablePrep ) );
 
     BufferObjectPtr bop( boost::dynamic_pointer_cast< BufferObject >(
         vaop->getVertexArrayCommand( VertexArrayCommand::BufferObject_t, VertexArrayObject::Vertex ) ) );
