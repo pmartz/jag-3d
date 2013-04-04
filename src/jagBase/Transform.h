@@ -124,7 +124,7 @@ public:
     }
     void setDirty( unsigned int dirty=ALL_DIRTY )
     {
-        _dirty = dirty;
+        _dirty |= dirty;
     }
 
 
