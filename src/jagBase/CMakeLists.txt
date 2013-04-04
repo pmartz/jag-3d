@@ -27,6 +27,9 @@ endif()
 configure_file( "Version.h.in"
     "${PROJECT_SOURCE_DIR}/src/jagBase/Version.h" @ONLY )
 
+configure_file( "LogEnable.h.in"
+    "${PROJECT_SOURCE_DIR}/src/jagBase/LogEnable.h" @ONLY )
+
 
 set( _jagBaseHeaderFiles
     Export.h
@@ -34,6 +37,7 @@ set( _jagBaseHeaderFiles
     gmtlSupport.h
     Log.h
     LogBase.h
+    LogEnable.h
     LogMacros.h
     Profile.h
     ptr.h

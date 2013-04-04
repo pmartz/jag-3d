@@ -154,7 +154,9 @@ endif()
 
 option( JAG3D_ENABLE_LOGGING "If set, Jag3D enables console and/or log file writes." ON )
 if( JAG3D_ENABLE_LOGGING )
-    add_definitions( -DJAG3D_ENABLE_LOGGING )
+    set( JAG3D_LOG_ENABLE_DEFINITION "#define JAG3D_ENABLE_LOGGING 1" )
+else()
+    set( JAG3D_LOG_ENABLE_DEFINITION "#undef JAG3D_ENABLE_LOGGING" )
 endif()
 
 option( JAG3D_ENABLE_PROFILING "If set, Jag3D enables profiling." OFF )
