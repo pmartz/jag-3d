@@ -22,6 +22,7 @@
 #define __JAGBASE_LOG_MACROS_H__ 1
 
 
+#include <jagBase/LogEnable.h>
 #include <Poco/Logger.h>
 #include <Poco/LogStream.h>
 
@@ -114,6 +115,13 @@ Note that, even with priority set to 0, there is some non-zero overhead in handl
 message logging. To eliminate all Jag3D message logging, set the CMake variable
 JAG3D_ENABLE_LOGGING to OFF (or deselect its checkbox in cmake-gui). When this variable
 is off, Jag3D's message logging facilities become no-ops and have zero computational cost.
+Jag3d-dependent downstream projects can determine whether logging is enabled using
+the LogEnable.h header:
+\code
+#include <jagBase/LogEnable.h>
+\endcode
+This file defines, or undefines, the JAG3D_ENABLE_LOGGING CPP variable as appropriate
+based on how CMake was configured when Jag3d was built.
 
 */
 /*@{*/
