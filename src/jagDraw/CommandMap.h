@@ -138,10 +138,10 @@ public:
 
     struct Callback
     {
-        virtual void operator()( DrawablePrepPtr ) const = 0;
+        virtual void operator()( DrawablePrepPtr ) = 0;
     };
 
-    void foreach( const Callback& callback )
+    void foreach( Callback& callback )
     {
         BOOST_FOREACH( CommandMapType::value_type dataPair, _data )
         {
