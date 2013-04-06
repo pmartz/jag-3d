@@ -23,6 +23,7 @@
 
 
 #include <jagDraw/DrawInfo.h>
+#include <jagSG/CollectionVisitor.h>
 #include <gmtl/gmtl.h>
 
 #include <boost/program_options/options_description.hpp>
@@ -76,6 +77,10 @@ public:
     {
         return( _drawInfo._data[ contextID ] );
     }
+    jagSG::CollectionVisitor& getCollectionVisitor()
+    {
+        return( _collectionVisitor );
+    }
 
 protected:
     std::string _logName;
@@ -84,6 +89,7 @@ protected:
     bool _continuousRedraw;
 
     jagDraw::PerContextDrawInfo _drawInfo;
+    jagSG::CollectionVisitor _collectionVisitor;
 };
 
 
