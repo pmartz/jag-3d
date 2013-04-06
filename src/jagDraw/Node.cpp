@@ -22,8 +22,8 @@
 #include <jagDraw/DrawablePrep.h>
 #include <jagDraw/DrawInfo.h>
 #include <jagDraw/Error.h>
+#include <jagBase/Profile.h>
 #include <jagBase/LogMacros.h>
-#include <jagBase/ptr.h>
 
 #include <boost/foreach.hpp>
 
@@ -52,6 +52,8 @@ Node::~Node()
 void Node::execute( DrawInfo& drawInfo )
 {
     JAG3D_TRACE( "execute()" );
+
+    JAG3D_PROFILE( "DrawNode execute()" );
 
     CommandMap delta( drawInfo._current << (*_commands) );
     delta.execute( drawInfo );
