@@ -50,7 +50,7 @@ Node::Node( const Node& rhs )
     _commands( rhs._commands ),
     _drawables( rhs._drawables ),
     _children( rhs._children ),
-    _bound( rhs._bound )
+    _bounds( rhs._bounds )
 {
 }
 Node::~Node()
@@ -115,6 +115,12 @@ jagDraw::BoundPtr Node::getBound( const jagDraw::CommandMap& commands )
 
     const jagDraw::CommandMap newCommands( ( _commands != NULL ) ? commands + *_commands : commands );
 
+    const jagDraw::DrawablePrepPtr& drawablePrep( newCommands[ jagDraw::DrawablePrep::VertexArrayObject_t ] );
+    const jagDraw::VertexArrayObjectPtr vaop( boost::dynamic_pointer_cast< jagDraw::VertexArrayObject >( drawablePrep ) );
+    BoundInfo& bi( _bounds[ vaop.get() ] );
+    if( !( bi._dirty ) )
+        return( bi._bound );
+
     jagDraw::BoundSphere b;
     BOOST_FOREACH( NodePtr& node, _children )
     {
@@ -123,16 +129,15 @@ jagDraw::BoundPtr Node::getBound( const jagDraw::CommandMap& commands )
 
     // Expand by Drawable bounds after expanding by child Node bounds
     // to increase precision.
-    const jagDraw::DrawablePrepPtr& drawablePrep( newCommands[ jagDraw::DrawablePrep::VertexArrayObject_t ] );
-    const jagDraw::VertexArrayObjectPtr vaop( boost::dynamic_pointer_cast< jagDraw::VertexArrayObject >( drawablePrep ) );
     b.expand( *( getDrawableBound( vaop ) ) );
 
     // Transform
     gmtl::Sphered newSphere = gmtl::transform( _matrix, b.asSphere() );
     // TBD ugly and expensive.
-    _bound = jagDraw::BoundPtr( new jagDraw::BoundSphere( newSphere ) );
+    bi._bound = jagDraw::BoundPtr( new jagDraw::BoundSphere( newSphere ) );
+    bi._dirty = false;
 
-    return( _bound );
+    return( bi._bound );
 }
 jagDraw::BoundPtr Node::getDrawableBound( const jagDraw::VertexArrayObjectPtr vaop )
 {
