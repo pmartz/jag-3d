@@ -23,6 +23,7 @@
 #include <jagDraw/Common.h>
 #include <jagDraw/PerContextData.h>
 #include <jagSG/ExecuteVisitor.h>
+#include <jagSG/CollectionVisitor.h>
 #include <jagSG/Node.h>
 #include <jagDisk/ReadWrite.h>
 #include <jagBase/Profile.h>
@@ -84,11 +85,11 @@ bool JagModel::startup( const unsigned int numContexts )
     //std::string fileName( "GRINDER_WHEEL.PRT.ive" );
     //std::string fileName( "M55339.ASM.ive" );
     //std::string fileName( "USMC23_4019.ASM.ive" );
-    //std::string fileName( "02-1100.ive" );
+    std::string fileName( "02-1100.ive" );
 
     //std::string fileName( "fountain.osg" );
     //std::string fileName( "glider.osg" );
-    std::string fileName( "cow.osg" );
+    //std::string fileName( "cow.osg" );
     //std::string fileName( "dumptruck.osg" );
     //std::string fileName( "teapot.osg" );
     JAG3D_INFO_STATIC( _logName, fileName );
@@ -191,6 +192,24 @@ bool JagModel::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj )
 
     const jagDraw::jagDrawContextID contextID( jagDraw::ContextSupport::instance()->getActiveContext() );
     jagDraw::DrawInfo& drawInfo( getDrawInfo( contextID ) );
+#if 1
+    jagSG::CollectionVisitor collect;
+
+    // Systems such as VRJ will pass view and projection matrices.
+    if( view.mState != gmtl::Matrix44f::IDENTITY || proj.mState != gmtl::Matrix44f::IDENTITY )
+        collect.setViewProj( view, proj );
+    else
+        collect.setViewProj( computeView(), _proj._data[ contextID ] );
+
+    // Collect a draw graph.
+    _root->accept( collect );
+
+    // Render the draw graph.
+    jagDraw::DrawNodeSimpleVec* drawGraph( 
+        const_cast< jagDraw::DrawNodeSimpleVec* >( &( collect.getDrawGraph() ) ) );
+    BOOST_FOREACH( jagDraw::Node& node, (*drawGraph) )
+        node.execute( drawInfo );
+#else
     jagSG::ExecuteVisitor execVisitor( drawInfo );
 
     // Systems such as VRJ will pass view and projection matrices.
@@ -201,6 +220,7 @@ bool JagModel::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj )
 
     // Render all Drawables.
     _root->accept( execVisitor );
+#endif
 
     glFlush();
 
