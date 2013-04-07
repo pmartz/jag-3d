@@ -23,6 +23,7 @@
 #include <jagDraw/Node.h>
 #include <jagBase/gmtlSupport.h>
 #include <jagDraw/Error.h>
+#include <jagBase/Profile.h>
 #include <jagBase/LogMacros.h>
 
 
@@ -38,6 +39,7 @@ CollectionVisitor::CollectionVisitor( const CollectionVisitor& rhs )
   : Visitor( rhs ),
     _transform( rhs._transform )
 {
+    reset();
 }
 CollectionVisitor::~CollectionVisitor()
 {
@@ -59,6 +61,8 @@ void CollectionVisitor::reset()
     resetMatrix();
 
     _drawGraph.clear();
+
+    _infoPtr = CollectionInfoPtr( new CollectionInfo() );
 }
 
 
@@ -66,32 +70,59 @@ void CollectionVisitor::visit( jagSG::Node& node )
 {
     JAG3D_TRACE( "visit()" );
 
+    JAG3D_PROFILE( "CV visit()" );
+
     pushCommandMap( node.getCommandMap() );
 
     const bool modelDirty( node.getTransform() != gmtl::MAT_IDENTITY44D );
     if( modelDirty )
     {
+        JAG3D_PROFILE( "CV transform" );
         pushMatrix( node.getTransform() );
         _transform.setModel( _matrixStack.back() );
     }
 
-    // TBD if all collection callbacks pass...
+    // TBD do we have to always do this, or can we get away with only
+    // doing it when modelDirty == true?
+    _infoPtr->reset();
+    Node::CallbackInfo* info( _infoPtr.get() );
+
+    bool collect( true );
+    jagSG::Node::CollectionCallbacks& callbacks( node.getCollectionCallbacks() );
+    BOOST_FOREACH( jagSG::Node::CallbackPtr cb, callbacks )
     {
+        if( !( (*cb)( *this, info ) ) )
+            //boost::static_pointer_cast< Node::CallbackInfoPtr >( _infoPtr ) ) ) )
+        {
+            collect = false;
+            break;
+        }
+    }
+    if( collect )
+    {
+        {
+        JAG3D_PROFILE( "CV transform" );
         if( _transform.getDirty() != 0 )
             updateTransformUniforms();
+        }
 
-        if( node.getNumDrawables() > 0 )
+        const unsigned int numDrawables( node.getNumDrawables() );
+        if( numDrawables > 0 )
         {
-            JAG3D_WARNING( "TBD Must allocate new CommandMapPtr?" );
+            JAG3D_PROFILE( "CV DrawNode processing" );
+
+            _drawGraph.resize( _drawGraph.size()+1 );
+            jagDraw::Node& drawNode( _drawGraph[ _drawGraph.size()-1 ] );
+
+            //JAG3D_WARNING( "TBD Must allocate new CommandMapPtr?" );
             jagDraw::CommandMapPtr commands( new jagDraw::CommandMap(
                  _commandStack.back() ) );
+            drawNode.setCommandMap( commands );
 
-            jagDraw::Node drawNode( commands );
-            for( unsigned int idx=0; idx < node.getNumDrawables(); ++idx )
+            for( unsigned int idx=0; idx < numDrawables; ++idx )
             {
                 drawNode.addDrawable( node.getDrawable( idx ) );
             }
-            _drawGraph.push_back( drawNode );
         }
 
         Visitor::visit( node );
@@ -100,6 +131,7 @@ void CollectionVisitor::visit( jagSG::Node& node )
 
     if( modelDirty )
     {
+        JAG3D_PROFILE( "CV transform" );
         popMatrix();
         _transform.setModel( _matrixStack.empty() ?
             gmtl::MAT_IDENTITY44D : _matrixStack.back() );
@@ -144,6 +176,24 @@ void CollectionVisitor::updateTransformUniforms()
     }
 
     _transform.setDirty( 0 );
+}
+
+
+
+CollectionVisitor::CollectionInfo::CollectionInfo()
+    : Node::CallbackInfo()
+{
+}
+CollectionVisitor::CollectionInfo::CollectionInfo( const CollectionInfo& rhs )
+    : Node::CallbackInfo( rhs )
+{
+}
+CollectionVisitor::CollectionInfo::~CollectionInfo()
+{
+}
+
+void CollectionVisitor::CollectionInfo::reset()
+{
 }
 
 

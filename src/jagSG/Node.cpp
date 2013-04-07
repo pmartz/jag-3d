@@ -50,7 +50,9 @@ Node::Node( const Node& rhs )
     _commands( rhs._commands ),
     _drawables( rhs._drawables ),
     _children( rhs._children ),
-    _bounds( rhs._bounds )
+    _bounds( rhs._bounds ),
+    _traverseCallback( rhs._traverseCallback ),
+    _collectionCallbacks( rhs._collectionCallbacks )
 {
 }
 Node::~Node()
@@ -80,6 +82,10 @@ void Node::setTraverseCallback( const CallbackPtr traverseCallback )
 const Node::CallbackPtr Node::getTraverseCallback() const
 {
     return( _traverseCallback );
+}
+Node::CollectionCallbacks& Node::getCollectionCallbacks()
+{
+    return( _collectionCallbacks );
 }
 
 void Node::execute( jagDraw::DrawInfo& drawInfo )
