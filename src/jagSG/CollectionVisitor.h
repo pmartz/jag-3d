@@ -60,15 +60,32 @@ public:
     \details TBD */
     const jagDraw::DrawNodeSimpleVec& getDrawGraph() const;
 
+
+    /** \class CollectionInfo CollectionVisitor.h <jagBase/CollectionVisitor.h>
+    \brief TBD
+    \details TBD */
+    class CollectionInfo : public Node::CallbackInfo
+    {
+    public:
+        CollectionInfo();
+        CollectionInfo( const CollectionInfo& rhs );
+        virtual ~CollectionInfo();
+
+        void reset();
+    };
+    typedef jagBase::ptr< CollectionInfo >::shared_ptr CollectionInfoPtr;
+
 protected:
     void updateTransformUniforms();
 
     jagDraw::DrawNodeSimpleVec _drawGraph;
 
     jagBase::TransformD _transform;
+
+    CollectionInfoPtr _infoPtr;
 };
 
-typedef jagBase::ptr< jagSG::CollectionVisitor >::shared_ptr CullVisitorPtr;
+typedef jagBase::ptr< jagSG::CollectionVisitor >::shared_ptr CollectionVisitorPtr;
 
 
 // jagSG

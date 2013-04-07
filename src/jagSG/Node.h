@@ -26,6 +26,7 @@
 #include <jagDraw/Drawable.h>
 #include <jagDraw/CommandMap.h>
 #include <jagDraw/Bound.h>
+#include <jagBase/MultiCallback.h>
 #include <jagDraw/ContextSupport.h>
 #include <jagBase/LogBase.h>
 #include <jagBase/ptr.h>
@@ -73,13 +74,28 @@ public:
     \details Normally this is only invoked if a traverse callback is not attached. */
     virtual void traverse( jagSG::VisitorBase& visitor );
 
+    /** \class CallbackInfo
+    \brief TBD
+    \details TBD */
+    class CallbackInfo {
+    public:
+        CallbackInfo() {}
+        CallbackInfo( const CallbackInfo& /* rhs */ ) {}
+        virtual ~CallbackInfo() {}
+    };
+    typedef jagBase::ptr< CallbackInfo >::shared_ptr CallbackInfoPtr;
+
     /** \struct Callback
     \brief TBD
     \details TBD */
     struct Callback {
         /** \brief TBD
         \details TBD */
-        virtual void operator()( jagSG::VisitorBase& visitor ) const;
+        virtual bool operator()( jagSG::VisitorBase& /* visitor */,
+            CallbackInfo* info = NULL )
+        {
+            return( false );
+        }
     };
     typedef jagBase::ptr< Callback >::shared_ptr CallbackPtr;
 
@@ -89,6 +105,15 @@ public:
     /** \brief TBD
     \details TBD */
     const CallbackPtr getTraverseCallback() const;
+
+
+    /** \brief TBD
+    \details TBD */
+    typedef jagBase::MultiCallback< CallbackPtr > CollectionCallbacks;
+    /** \brief TBD
+    \details TBD */
+    CollectionCallbacks& getCollectionCallbacks();
+
 
     /** \brief Calls execute on all attached Drawables.
     \details Primarily for "immediate mode" (no cull traversal) rendering.
@@ -195,6 +220,7 @@ protected:
     BoundMap _bounds;
 
     CallbackPtr _traverseCallback;
+    CollectionCallbacks _collectionCallbacks;
 };
 
 
