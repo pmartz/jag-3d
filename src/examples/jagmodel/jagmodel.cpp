@@ -193,22 +193,34 @@ bool JagModel::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj )
     const jagDraw::jagDrawContextID contextID( jagDraw::ContextSupport::instance()->getActiveContext() );
     jagDraw::DrawInfo& drawInfo( getDrawInfo( contextID ) );
 #if 1
-    jagSG::CollectionVisitor collect;
+    jagSG::CollectionVisitor& collect( getCollectionVisitor() );
+    collect.reset();
 
-    // Systems such as VRJ will pass view and projection matrices.
-    if( view.mState != gmtl::Matrix44f::IDENTITY || proj.mState != gmtl::Matrix44f::IDENTITY )
-        collect.setViewProj( view, proj );
-    else
-        collect.setViewProj( computeView(), _proj._data[ contextID ] );
+    {
+        JAG3D_PROFILE( "Collection" );
 
-    // Collect a draw graph.
-    _root->accept( collect );
+        // Systems such as VRJ will pass view and projection matrices.
+        if( view.mState != gmtl::Matrix44f::IDENTITY || proj.mState != gmtl::Matrix44f::IDENTITY )
+            collect.setViewProj( view, proj );
+        else
+            collect.setViewProj( computeView(), _proj._data[ contextID ] );
 
-    // Render the draw graph.
-    jagDraw::DrawNodeSimpleVec* drawGraph( 
-        const_cast< jagDraw::DrawNodeSimpleVec* >( &( collect.getDrawGraph() ) ) );
-    BOOST_FOREACH( jagDraw::Node& node, (*drawGraph) )
-        node.execute( drawInfo );
+        {
+        JAG3D_PROFILE( "Collection traverse" );
+        // Collect a draw graph.
+        _root->accept( collect );
+        }
+    }
+
+    {
+        JAG3D_PROFILE( "Render" );
+
+        // Render the draw graph.
+        jagDraw::DrawNodeSimpleVec* drawGraph( 
+            const_cast< jagDraw::DrawNodeSimpleVec* >( &( collect.getDrawGraph() ) ) );
+        BOOST_FOREACH( jagDraw::Node& node, (*drawGraph) )
+            node.execute( drawInfo );
+    }
 #else
     jagSG::ExecuteVisitor execVisitor( drawInfo );
 
