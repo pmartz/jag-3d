@@ -39,6 +39,7 @@ set( _jagBaseHeaderFiles
     LogBase.h
     LogEnable.h
     LogMacros.h
+    MultiCallback.h
     Profile.h
     ptr.h
     Transform.h
