@@ -54,8 +54,7 @@ which is OpenGL 3.2 core profile, but this support is likely to be dropped as
 soon as OSX moves forward with a more current OpenGL version.)
 
 Direct OpenGL support:
-\li \ref jagVersion "OpenGL V
-ersion Queries"
+\li \ref jagVersion "OpenGL Version Queries"
 \li \ref OpenGLAbstraction "OpenGL Abstraction Support"
 \li \ref jagDrawError "OpenGL Errors"
 \li \link jagDraw::VertexAttrib Generic Vertex Attributes \endlink
