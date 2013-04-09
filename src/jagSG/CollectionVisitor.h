@@ -47,6 +47,9 @@ public:
     /** \brief TBD
     \details TBD */
     void setViewProj( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj );
+    /** \brief TBD
+    \details TBD */
+    void setViewport( const GLint x, const GLint y, const GLsizei width, const GLsizei height );
 
     /** \brief TBD
     \details TBD */
@@ -64,14 +67,29 @@ public:
     /** \class CollectionInfo CollectionVisitor.h <jagBase/CollectionVisitor.h>
     \brief TBD
     \details TBD */
-    class CollectionInfo : public Node::CallbackInfo
+    class JAGSG_EXPORT CollectionInfo : public Node::CallbackInfo
     {
     public:
-        CollectionInfo();
+        CollectionInfo( jagBase::TransformD& transform );
         CollectionInfo( const CollectionInfo& rhs );
         virtual ~CollectionInfo();
 
-        void reset();
+        void setBound( jagDraw::BoundPtr bound );
+
+        double getECBoundDistance() const;
+        double getECBoundRadius() const;
+        double getWCLength( double ecSegmentLength ) const;
+
+    protected:
+        jagBase::TransformD& _transform;
+        jagDraw::BoundPtr _bound;
+
+        mutable double _ecDistance;
+        mutable bool _ecDistanceDirty;
+        mutable double _ecRadius;
+        mutable bool _ecRadiusDirty;
+        mutable double _wcLengthCoeff;
+        mutable bool _wcLengthCoeffDirty;
     };
     typedef jagBase::ptr< CollectionInfo >::shared_ptr CollectionInfoPtr;
 

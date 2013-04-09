@@ -158,6 +158,7 @@ void JagDemoApp::draw()
     const GLsizei y_size( static_cast< GLsizei >( vp_sy * w_height ) );
 
     glViewport( ll_x, ll_y, x_size, y_size );
+    _di->getCollectionVisitor().setViewport( ll_x, ll_y, x_size, y_size );
 
 
     ProjectionPtr project( user_data->getProjection() );

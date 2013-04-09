@@ -26,6 +26,8 @@
 #include <jagBase/Profile.h>
 #include <jagBase/LogMacros.h>
 
+#include <gmtl/gmtl.h>
+
 
 namespace jagSG {
 
@@ -51,6 +53,10 @@ void CollectionVisitor::setViewProj( const gmtl::Matrix44d& view, const gmtl::Ma
     _transform.setView( view );
     _transform.setProj( proj );
 }
+void CollectionVisitor::setViewport( const GLint x, const GLint y, const GLsizei width, const GLsizei height )
+{
+    _transform.setViewport( x, y, width, height );
+}
 
 
 void CollectionVisitor::reset()
@@ -62,7 +68,7 @@ void CollectionVisitor::reset()
 
     _drawGraph.clear();
 
-    _infoPtr = CollectionInfoPtr( new CollectionInfo() );
+    _infoPtr = CollectionInfoPtr( new CollectionInfo( _transform ) );
 }
 
 
@@ -82,9 +88,7 @@ void CollectionVisitor::visit( jagSG::Node& node )
         _transform.setModel( _matrixStack.back() );
     }
 
-    // TBD do we have to always do this, or can we get away with only
-    // doing it when modelDirty == true?
-    _infoPtr->reset();
+    _infoPtr->setBound( node.getBound() );
     Node::CallbackInfo* info( _infoPtr.get() );
 
     bool collect( true );
@@ -92,7 +96,6 @@ void CollectionVisitor::visit( jagSG::Node& node )
     BOOST_FOREACH( jagSG::Node::CallbackPtr cb, callbacks )
     {
         if( !( (*cb)( *this, info ) ) )
-            //boost::static_pointer_cast< Node::CallbackInfoPtr >( _infoPtr ) ) ) )
         {
             collect = false;
             break;
@@ -180,20 +183,85 @@ void CollectionVisitor::updateTransformUniforms()
 
 
 
-CollectionVisitor::CollectionInfo::CollectionInfo()
-    : Node::CallbackInfo()
+CollectionVisitor::CollectionInfo::CollectionInfo( jagBase::TransformD& transform )
+    : Node::CallbackInfo(),
+      _transform( transform )
+    // Initialization of these variables is handled in setBound():
+    //   _bound
+    //   _ecDistance
+    //   _ecDistanceDirty
+    //   _ecRadius
+    //   _ecRadiusDirty
+    //   _wcLengthCoeff
+    //   _wcLengthCoeffDirty
 {
 }
 CollectionVisitor::CollectionInfo::CollectionInfo( const CollectionInfo& rhs )
-    : Node::CallbackInfo( rhs )
+    : Node::CallbackInfo( rhs ),
+      _transform( rhs._transform )
+    // Initialization of these variables is handled in setBound():
+    //   _bound
+    //   _ecDistance
+    //   _ecDistanceDirty
+    //   _ecRadius
+    //   _ecRadiusDirty
+    //   _wcLengthCoeff
+    //   _wcLengthCoeffDirty
 {
 }
 CollectionVisitor::CollectionInfo::~CollectionInfo()
 {
 }
 
-void CollectionVisitor::CollectionInfo::reset()
+void CollectionVisitor::CollectionInfo::setBound( jagDraw::BoundPtr bound )
 {
+    _bound = bound;
+    _ecDistanceDirty = true;
+    _ecRadiusDirty = true;
+    _wcLengthCoeffDirty = true;
+}
+
+double CollectionVisitor::CollectionInfo::getECBoundDistance() const
+{
+    if( _ecDistanceDirty )
+    {
+        const gmtl::Point3d ecCenter( _transform.getModelView() * _bound->getCenter() );
+        _ecDistance = -ecCenter[ 2 ];
+        _ecDistanceDirty = false;
+    }
+    return( _ecDistance );
+}
+double CollectionVisitor::CollectionInfo::getECBoundRadius() const
+{
+    if( _ecRadiusDirty )
+    {
+        const gmtl::Vec3d radPrime( _transform.getModelView() *
+            gmtl::Vec3d( _bound->getRadius(), 0., 0. ) );
+        _ecRadius = gmtl::length< double >( radPrime );
+        _ecRadiusDirty = false;
+    }
+    return( _ecRadius );
+}
+double CollectionVisitor::CollectionInfo::getWCLength( double ecSegmentLength ) const
+{
+    if( _wcLengthCoeffDirty || _ecDistanceDirty )
+    {
+        // Formula to compute pixel distance from ec length:
+        // ( d * 0.5 * w * p0 ) / ( z * p11 + p15 )
+        //   d: ec length (parameter)
+        //   z: ec z value
+        //   w: viewport width
+        //   p: projection matrix (16 elements, 0-based)
+
+        int x, y, w, h;
+        _transform.getViewport( x, y, w, h );
+        const double* p( _transform.getProj().getData() );
+        const double ecZ( -getECBoundDistance() );
+
+        _wcLengthCoeff = ( 0.5 * w * p[0] ) / ( ecZ * p[11] + p[15] );
+        _wcLengthCoeffDirty = false;
+    }
+    return( _wcLengthCoeff * ecSegmentLength );
 }
 
 

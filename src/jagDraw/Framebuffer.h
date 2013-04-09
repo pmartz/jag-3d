@@ -137,6 +137,7 @@ public:
     \code
     glViewport( _vpX\, _vpY\, _vpWidth\, _vpHeight );
     \endcode }
+    \specViolations{Need a way to change the viewport in the jagSG::CollectionVisitor.}
     \specTableEnd
 
     Member variable defaults:
