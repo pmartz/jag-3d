@@ -75,6 +75,9 @@ public:
     virtual void setEmpty( const bool empty=true ) = 0;
     virtual bool getEmpty() const = 0;
 
+    virtual gmtl::Point3d getCenter() const = 0;
+    virtual double getRadius() const = 0;
+
 protected:
     BaseType _type;
 };
@@ -144,6 +147,18 @@ public:
     virtual bool getEmpty() const
     {
         return( _bound.isEmpty() );
+    }
+
+    virtual gmtl::Point3d getCenter() const
+    {
+        const gmtl::Point3d center( ( _bound.getMax() - _bound.getMin() ) * 0.5 );
+        return( center );
+    }
+    virtual double getRadius() const
+    {
+        gmtl::Vec3d vec( _bound.getMax() - _bound.getMin() );
+        const double radius( gmtl::length< double >( vec ) * 0.5 );
+        return( radius );
     }
 
 protected:
@@ -219,6 +234,15 @@ public:
     virtual bool getEmpty() const
     {
         return( false );//_bound.isEmpty() );
+    }
+
+    virtual gmtl::Point3d getCenter() const
+    {
+        return( _bound.getCenter() );
+    }
+    virtual double getRadius() const
+    {
+        return( _bound.getRadius() );
     }
 
 protected:

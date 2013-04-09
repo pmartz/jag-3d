@@ -80,6 +80,7 @@ void GLWidget::paintGL()
 void GLWidget::resizeGL( int w, int h )
 {
     glViewport( 0, 0, w, h );
+    di->getCollectionVisitor().setViewport( 0, 0, w, h );
     di->reshape( w, h );
 }
 

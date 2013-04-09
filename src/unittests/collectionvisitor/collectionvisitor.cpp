@@ -18,21 +18,28 @@
 *
 *************** <auto-copyright.pl END do not edit this line> ***************/
 
+#include <jagBase/Transform.h>
 #include <jagSG/Node.h>
 #include <jagSG/CollectionVisitor.h>
+#include <jagDraw/Bound.h>
 #include <jagDraw/Node.h>
 #include <jagDraw/Uniform.h>
 #include <jagDraw/Program.h>
 
 #include <boost/foreach.hpp>
+#include <gmtl/gmtl.h>
 
 #include <iostream>
 
+
+using jagBase::TransformD;
 
 using jagSG::Node;
 using jagSG::NodePtr;
 using jagSG::CollectionVisitor;
 
+using jagDraw::Bound;
+using jagDraw::BoundPtr;
 using jagDraw::CommandMap;
 using jagDraw::CommandMapPtr;
 using jagDraw::Uniform;
@@ -47,6 +54,50 @@ using jagDraw::Program;
 
 bool test()
 {
+    std::cout << "CollectionInfo test..." << std::endl;
+
+    {
+        gmtl::Matrix44d scale, view, proj;
+        const gmtl::Point3d eye( 0., 0., 40. );
+        const gmtl::Point3d center( 0., 30., 0. );
+        const gmtl::Vec3d up( 0., 1., 0. );
+        gmtl::setScale( scale, .5 );
+        gmtl::setLookAt< double >( view, eye, center, up );
+        gmtl::setPerspective< double >( proj, 90., 1., 1., 200. );
+
+        TransformD transform;
+        transform.setView( view );
+        transform.setProj( proj );
+        transform.setViewport( 0, 0, 100, 100 );
+
+        CollectionVisitor::CollectionInfo ci( transform );
+        gmtl::Sphered s( gmtl::Point3d( 0., 30., 0. ), 10. );
+        jagDraw::BoundPtr bound( new jagDraw::BoundSphere( s ) );
+        ci.setBound( bound );
+
+        const double ecd( ci.getECBoundDistance() );
+        if( ecd != 50. )
+        {
+            std::cerr << "EC distance: " << ecd << " != 50.0" << std::endl;
+            return( false );
+        }
+        const double ecr( ci.getECBoundRadius() );
+        if( ecr != 10. )
+        {
+            std::cerr << "EC radius: " << ecr << " != 10.0" << std::endl;
+            return( false );
+        }
+        const double winLen( ci.getWCLength( ecr ) );
+        if( (float)winLen != 10.f )
+        {
+            std::cerr << "WinC length: " << winLen << " != 10.0" << std::endl;
+            return( false );
+        }
+    }
+
+
+    std::cout << "Single node SG -> draw graph test..." << std::endl;
+
     NodePtr root( new Node() );
     CollectionVisitor cv;
     root->accept( cv );
@@ -56,6 +107,8 @@ bool test()
         return( false );
     }
 
+
+    std::cout << "  Draw graph verification..." << std::endl;
 
     cv.reset();
     CommandMapPtr commands( new CommandMap );
@@ -79,7 +132,9 @@ bool test()
     const jagDraw::Node& node( drawGraph[ 0 ] );
     if( node.getCommandMap() != commands )
     {
-        std::cerr << "Wrong CommandMap." << std::endl;
+        // TBD need to test for CommandMap equivalence.
+        // Address comparison is insufficient.
+        std::cerr << "KNOWN FAILURE: Wrong CommandMap." << std::endl;
         //return( false );
     }
     if( node.getNumDrawables() != 1 )

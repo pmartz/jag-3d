@@ -30,15 +30,11 @@ namespace jagBase {
 /** \class Transform Transform.h <jagBase/Transform.h>
 \brief A class for tracking model, view, and projection matrices.
 \details Utility for storing the traditional OpenGL FFP model, view, and projection
-matrices, as well as matrices derived from them (concatenation, inverse, normal, etc).
-
-The class also tracks a viewing frustum based on the view and projection matrices.
-In the future, this class should also store a viewport so that it can compute
-pixel sizes from world coordinate metrics.
+matrices, matrices derived from them (concatenation, inverse, normal, etc), the
+viewport, and a viewing frustum based on the view and projection matrices.
 
 This class is not thread safe. When used for rendering, one Transform instance should
-be created per rendering thread.
-*/
+be created per rendering thread. */
 template< typename T >
 class Transform
 {
@@ -49,7 +45,11 @@ protected:
 
 public:
     Transform()
-      : _dirty( ALL_DIRTY )
+      : _vpX( 0 ),
+        _vpY( 0 ),
+        _vpWidth( 0 ),
+        _vpHeight( 0 ),
+        _dirty( ALL_DIRTY )
     {
     }
     Transform( const Transform& rhs )
@@ -70,6 +70,11 @@ public:
         _viewProjInv( rhs._viewProjInv ),
         _modelViewProjInv( rhs._modelViewProjInv ),
         _modelViewInv( rhs._modelViewInv ),
+
+        _vpX( rhs._vpX ),
+        _vpY( rhs._vpY ),
+        _vpWidth( rhs._vpWidth ),
+        _vpHeight( rhs._vpHeight ),
 
         _dirty( rhs._dirty )
     {
@@ -145,6 +150,14 @@ public:
         _model = model;
         _dirty |= ALL_MODEL_DIRTY;
     }
+    void setViewport( const int x, const int y, const int width, const int height )
+    {
+        _vpX = x;
+        _vpY = y;
+        _vpWidth = width;
+        _vpHeight = height;
+    }
+
 
 
     const FTYPE& getFrustum()
@@ -162,6 +175,13 @@ public:
     const M4TYPE& getModel()
     {
         return( _model );
+    }
+    void getViewport( int& x, int& y, int& width, int& height )
+    {
+        x = _vpX;
+        y = _vpY;
+        width = _vpWidth;
+        height = _vpHeight;
     }
 
     const M4TYPE& getViewProj()
@@ -278,6 +298,8 @@ protected:
     M4TYPE _viewProjInv;
     M4TYPE _modelViewProjInv;
     M4TYPE _modelViewInv;
+
+    int _vpX, _vpY, _vpWidth, _vpHeight;
 
     unsigned int _dirty;
 };
