@@ -242,7 +242,7 @@ double CollectionVisitor::CollectionInfo::getECBoundRadius() const
     }
     return( _ecRadius );
 }
-double CollectionVisitor::CollectionInfo::getWCLength( double ecSegmentLength ) const
+double CollectionVisitor::CollectionInfo::getWinCLength( double ecSegmentLength ) const
 {
     if( _wcLengthCoeffDirty || _ecDistanceDirty )
     {
