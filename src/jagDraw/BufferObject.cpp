@@ -62,12 +62,14 @@ BufferObject::~BufferObject()
 
 GLuint BufferObject::getID( const unsigned int contextID )
 {
-    if( _ids[ contextID ] == 0 )
+    GLuint id( _ids[ contextID ] );
+    if( id == 0 )
     {
         internalInit( contextID );
+        id = _ids[ contextID ];
     }
 
-    return( _ids[ contextID ] );
+    return( id );
 }
 
 void BufferObject::setBuffer( jagBase::BufferPtr b ) 

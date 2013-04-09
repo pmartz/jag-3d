@@ -61,11 +61,15 @@ void Drawable::execute( DrawInfo& drawInfo )
 {
     JAG3D_TRACE( "Drawable::execute" );
 
-    JAG3D_PROFILE( "execute()" );
+    const size_t sz( _drawCommands.size() );
+    if( sz == 0 )
+        return;
 
-    BOOST_FOREACH( DrawCommandPtr dcp, _drawCommands )
+    DrawCommandPtr* ptr( &( _drawCommands[ 0 ] ) );
+    const DrawCommandPtr* end( &( _drawCommands[ sz - 1 ] ) );
+    while( ptr <= end )
     {
-        dcp->execute( drawInfo );
+        (*ptr++)->execute( drawInfo );
     }
 
     JAG3D_ERROR_CHECK( "Drawable::execute()" );
