@@ -31,12 +31,14 @@ set( _jagSGHeaderFiles
     ExecuteVisitor.h
     Common.h
     Node.h
+    SmallFeatureCallback.h
     Visitor.h
 )
 
 set( _jagSGSourceFiles
     CollectionVisitor.cpp
     ExecuteVisitor.cpp
+    SmallFeatureCallback.cpp
     Node.cpp
 )
 

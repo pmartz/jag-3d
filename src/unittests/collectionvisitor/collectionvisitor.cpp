@@ -87,7 +87,7 @@ bool test()
             std::cerr << "EC radius: " << ecr << " != 10.0" << std::endl;
             return( false );
         }
-        const double winLen( ci.getWCLength( ecr ) );
+        const double winLen( ci.getWinCLength( ecr ) );
         if( (float)winLen != 10.f )
         {
             std::cerr << "WinC length: " << winLen << " != 10.0" << std::endl;

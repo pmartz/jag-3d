@@ -78,7 +78,7 @@ public:
 
         double getECBoundDistance() const;
         double getECBoundRadius() const;
-        double getWCLength( double ecSegmentLength ) const;
+        double getWinCLength( double ecSegmentLength ) const;
 
     protected:
         jagBase::TransformD& _transform;

@@ -25,6 +25,7 @@
 #include <jagSG/ExecuteVisitor.h>
 #include <jagSG/CollectionVisitor.h>
 #include <jagSG/Node.h>
+#include <jagSG/SmallFeatureCallback.h>
 #include <jagDisk/ReadWrite.h>
 #include <jagBase/Profile.h>
 #include <jagBase/Version.h>
@@ -108,6 +109,9 @@ bool JagModel::startup( const unsigned int numContexts )
         JAG3D_FATAL_STATIC( _logName, "Can't load \"" + fileName + "\"." );
         return( false );
     }
+
+    jagSG::SmallFeatureDistricutionVisitor sfdv;
+    _root->accept( sfdv );
 
 
     jagDraw::ShaderPtr vs( (jagDraw::Shader*) jagDisk::read( "jagmodel.vert" ) );
