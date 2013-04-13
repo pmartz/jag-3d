@@ -23,6 +23,7 @@
 
 
 #include <jagBase/Export.h>
+#include <jagBase/Config.h>
 #include <jagBase/LogBase.h>
 #include <jagBase/ptr.h>
 #include <string>

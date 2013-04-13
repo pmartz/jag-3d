@@ -2,4 +2,4 @@ bld
 bld-vs10-32
 src/jagBase/Version.h
 syntax: glob
-src/jagBase/LogEnable.h
+src/jagBase/Config.h
