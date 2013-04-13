@@ -146,12 +146,15 @@ if( JAG3D_USE_GL3W )
 endif()
 
 
-
+# See src/jagBase/Config.h.in
 option( JAG3D_ENABLE_ERROR_CHECKS "If set, Jag3D enables internal OpenGL error checking." ON )
 if( JAG3D_ENABLE_ERROR_CHECKS )
-    add_definitions( -DJAG3D_ENABLE_ERROR_CHECKS )
+    set( JAG3D_ERROR_ENABLE_DEFINITION "#define JAG3D_ENABLE_ERROR_CHECKS 1" )
+else()
+    set( JAG3D_ERROR_ENABLE_DEFINITION "#undef JAG3D_ENABLE_ERROR_CHECKS" )
 endif()
 
+# See src/jagBase/Config.h.in
 option( JAG3D_ENABLE_LOGGING "If set, Jag3D enables console and/or log file writes." ON )
 if( JAG3D_ENABLE_LOGGING )
     set( JAG3D_LOG_ENABLE_DEFINITION "#define JAG3D_ENABLE_LOGGING 1" )
@@ -159,8 +162,12 @@ else()
     set( JAG3D_LOG_ENABLE_DEFINITION "#undef JAG3D_ENABLE_LOGGING" )
 endif()
 
+# See src/jagBase/Config.h.in
 option( JAG3D_ENABLE_PROFILING "If set, Jag3D enables profiling." OFF )
 if( JAG3D_ENABLE_PROFILING )
+    set( JAG3D_PROFILE_ENABLE_DEFINITION "#define JAG3D_ENABLE_PROFILING 1" )
+else()
+    set( JAG3D_PROFILE_ENABLE_DEFINITION "#undef JAG3D_ENABLE_PROFILING" )
     add_definitions( -DJAG3D_ENABLE_PROFILING )
 endif()
 

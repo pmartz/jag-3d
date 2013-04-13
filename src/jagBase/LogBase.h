@@ -22,7 +22,7 @@
 #define __JAGBASE_LOG_BASE_H__ 1
 
 
-#include <jagBase/LogEnable.h>
+#include <jagBase/Config.h>
 #include <jagBase/ptr.h>
 #include <Poco/Logger.h>
 #include <Poco/LogStream.h>
