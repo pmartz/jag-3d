@@ -62,6 +62,7 @@ public:
     }
     bool getStartupCalled() { return( _startupCalled ); }
 
+    void setContinuousRedraw( bool redraw=true ) { _continuousRedraw = redraw; }
     bool getContinuousRedraw() { return( _continuousRedraw ); }
 
     /** Called after a context has been created. */
