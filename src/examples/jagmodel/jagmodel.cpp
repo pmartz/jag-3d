@@ -219,7 +219,7 @@ bool JagModel::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj )
     {
         JAG3D_PROFILE( "Render" );
 
-        // Render the draw graph.
+        // Execute the draw graph.
         jagDraw::DrawNodeSimpleVec* drawGraph( 
             const_cast< jagDraw::DrawNodeSimpleVec* >( &( collect.getDrawGraph() ) ) );
         BOOST_FOREACH( jagDraw::Node& node, (*drawGraph) )
