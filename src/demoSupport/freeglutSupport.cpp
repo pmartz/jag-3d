@@ -68,19 +68,16 @@ void display()
 #ifdef JAG3D_ENABLE_PROFILING
     jagBase::ProfileManager::instance()->dumpAll();
 #endif
-
-    if( di->getContinuousRedraw() )
-        glutPostRedisplay();
 }
 
-void reshape (int w, int h)
+void reshape( int w, int h )
 {
     glViewport( 0, 0, w, h );
     di->getCollectionVisitor().setViewport( 0, 0, w, h );
     di->reshape( w, h );
 }
 
-void keyboard(unsigned char key, int x, int y)
+void keyboard( unsigned char key, int x, int y )
 {
     switch (key)
     {
@@ -90,6 +87,15 @@ void keyboard(unsigned char key, int x, int y)
         delete di;
         exit( 0 );
         break;
+    }
+}
+
+void timer( int value )
+{
+    if( di->getContinuousRedraw() )
+    {
+        glutPostRedisplay();
+        glutTimerFunc( 16, timer, 0 );
     }
 }
 
@@ -149,6 +155,7 @@ int main( int argc, char* argv[] )
         glutDisplayFunc( display ); 
         glutReshapeFunc( reshape );
         glutKeyboardFunc( keyboard );
+        glutTimerFunc( 16, timer, 0 );
     }
 
     if( !( di->startup( jagDraw::ContextSupport::instance()->getNumRegisteredContexts() ) ) )

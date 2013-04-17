@@ -44,7 +44,7 @@ public:
         _texWidth( 80 ),
         _texHeight( 80 )
     {
-        _continuousRedraw = true;
+        setContinuousRedraw();
     }
     virtual ~RttDemo() {}
 
