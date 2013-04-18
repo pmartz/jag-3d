@@ -68,6 +68,9 @@ void display()
 #ifdef JAG3D_ENABLE_PROFILING
     jagBase::ProfileManager::instance()->dumpAll();
 #endif
+
+    if( di->getContinuousRedraw() )
+        glutPostRedisplay();
 }
 
 void reshape( int w, int h )
@@ -155,7 +158,7 @@ int main( int argc, char* argv[] )
         glutDisplayFunc( display ); 
         glutReshapeFunc( reshape );
         glutKeyboardFunc( keyboard );
-        glutTimerFunc( 16, timer, 0 );
+        //glutTimerFunc( 16, timer, 0 );
     }
 
     if( !( di->startup( jagDraw::ContextSupport::instance()->getNumRegisteredContexts() ) ) )
