@@ -41,6 +41,7 @@ set( _jagDrawHeaderFiles
     FramebufferAttachable.h
     Image.h
     Node.h
+    NodeContainer.h
     ObjectID.h
     PerContextData.h
     PixelStore.h
@@ -68,6 +69,7 @@ set( _jagDrawSourceFiles
     Framebuffer.cpp
     Image.cpp
     Node.cpp
+    NodeContainer.cpp
     PixelStore.cpp
     Program.cpp
     Sampler.cpp

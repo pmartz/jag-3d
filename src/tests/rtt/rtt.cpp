@@ -61,7 +61,7 @@ protected:
             jagDraw::ProgramPtr& prog, jagDraw::VertexArrayObjectPtr& vaop );
 
 
-    jagDraw::DrawNodeSimpleVec _windowNodes, _rttNodes, _quadNodes;
+    jagDraw::NodeContainer _windowNodes, _rttNodes, _quadNodes;
     jagDraw::FramebufferPtr _textureFBO, _defaultFBO;
 
     const GLsizei _texWidth, _texHeight;
@@ -282,18 +282,9 @@ bool RttDemo::startup( const unsigned int numContexts )
     // Tell all Jag3D objects how many contexts to expect.
     _textureFBO->setMaxContexts( numContexts );
     _defaultFBO->setMaxContexts( numContexts );
-    BOOST_FOREACH( jagDraw::DrawNodeSimpleVec::value_type& dp, _windowNodes )
-    {
-        dp.setMaxContexts( numContexts );
-    }
-    BOOST_FOREACH( jagDraw::DrawNodeSimpleVec::value_type& dp, _rttNodes )
-    {
-        dp.setMaxContexts( numContexts );
-    }
-    BOOST_FOREACH( jagDraw::DrawNodeSimpleVec::value_type& dp, _quadNodes )
-    {
-        dp.setMaxContexts( numContexts );
-    }
+    _windowNodes.setMaxContexts( numContexts );
+    _rttNodes.setMaxContexts( numContexts );
+    _quadNodes.setMaxContexts( numContexts );
 
 
     return( true );
@@ -325,30 +316,14 @@ bool RttDemo::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj )
     if( ( ( ++_frames / 100 ) & 0x1 ) == 0 )
     {
         // Render lines to the window.
-
         glClear( GL_COLOR_BUFFER_BIT );
-
-        BOOST_FOREACH( jagDraw::Node& drawNode, _windowNodes )
-        {
-            drawNode.execute( drawInfo );
-        }
-        JAG3D_ERROR_CHECK( "Line rendering" );
+        _windowNodes.execute( drawInfo );
     }
     else
     {
         // Render lines to the FBO, then display the texture with a quad.
-
-        BOOST_FOREACH( jagDraw::Node& drawNode, _rttNodes )
-        {
-            drawNode.execute( drawInfo );
-        }
-        JAG3D_ERROR_CHECK( "Render to FBO" );
-
-        BOOST_FOREACH( jagDraw::Node& drawNode, _quadNodes )
-        {
-            drawNode.execute( drawInfo );
-        }
-        JAG3D_ERROR_CHECK( "Display texture on quad" );
+        _rttNodes.execute( drawInfo );
+        _quadNodes.execute( drawInfo );
     }
 
     glFlush();
