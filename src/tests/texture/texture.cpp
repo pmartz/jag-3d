@@ -55,7 +55,7 @@ public:
     }
 
 protected:
-    jagDraw::DrawNodeSimpleVec _nodes;
+    jagDraw::NodeContainer _nodes;
 };
 
 
@@ -166,10 +166,7 @@ bool TextureDemo::startup( const unsigned int numContexts )
 
 
     // Tell all Jag3D objects how many contexts to expect.
-    BOOST_FOREACH( jagDraw::Node& drawNode, _nodes )
-    {
-        drawNode.setMaxContexts( numContexts );
-    }
+    _nodes.setMaxContexts( numContexts );
 
 
     return( true );
@@ -201,10 +198,7 @@ bool TextureDemo::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& pro
     jagDraw::DrawInfo& drawInfo( getDrawInfo( contextID ) );
 
     // Render all Drawables.
-    BOOST_FOREACH( jagDraw::Node& drawNode, _nodes )
-    {
-        drawNode.execute( drawInfo );
-    }
+    _nodes.execute( drawInfo );
     
     glFlush();
     JAG3D_ERROR_CHECK( "TextureDemo display()" );
