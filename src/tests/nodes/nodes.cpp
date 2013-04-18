@@ -184,7 +184,7 @@ bool NodesDemo::startup( const unsigned int numContexts )
     ubsp->insert( ubp );
     commands->insert( ubsp );
 
-    gmtl::Vec3f lightVec( 0.5, .7, 1. );
+    gmtl::Vec3f lightVec( 0.5f, .7f, 1.f );
     gmtl::normalize( lightVec );
     jagDraw::UniformSetPtr usp( new jagDraw::UniformSet() );
     usp->insert( jagDraw::UniformPtr(
