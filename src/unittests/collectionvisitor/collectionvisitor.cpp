@@ -48,7 +48,7 @@ using jagDraw::UniformSet;
 using jagDraw::UniformSetPtr;
 using jagDraw::Drawable;
 using jagDraw::DrawablePtr;
-using jagDraw::DrawNodeSimpleVec;
+using jagDraw::NodeContainer;
 using jagDraw::Program;
 
 
@@ -122,7 +122,7 @@ bool test()
     root->setCommandMap( commands );
     root->addDrawable( draw );
     root->accept( cv );
-    const DrawNodeSimpleVec& drawGraph( cv.getDrawGraph() );
+    const NodeContainer& drawGraph( cv.getDrawGraph() );
     size_t size( drawGraph.size() );
     if( size != 1 )
     {

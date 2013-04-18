@@ -196,7 +196,7 @@ bool JagModel::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj )
 
     const jagDraw::jagDrawContextID contextID( jagDraw::ContextSupport::instance()->getActiveContext() );
     jagDraw::DrawInfo& drawInfo( getDrawInfo( contextID ) );
-#if 1
+
     jagSG::CollectionVisitor& collect( getCollectionVisitor() );
     collect.reset();
 
@@ -220,23 +220,10 @@ bool JagModel::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj )
         JAG3D_PROFILE( "Render" );
 
         // Execute the draw graph.
-        jagDraw::DrawNodeSimpleVec* drawGraph( 
-            const_cast< jagDraw::DrawNodeSimpleVec* >( &( collect.getDrawGraph() ) ) );
-        BOOST_FOREACH( jagDraw::Node& node, (*drawGraph) )
-            node.execute( drawInfo );
+        jagDraw::NodeContainer* drawGraph( 
+            const_cast< jagDraw::NodeContainer* >( &( collect.getDrawGraph() ) ) );
+        drawGraph->execute( drawInfo );
     }
-#else
-    jagSG::ExecuteVisitor execVisitor( drawInfo );
-
-    // Systems such as VRJ will pass view and projection matrices.
-    if( view.mState != gmtl::Matrix44f::IDENTITY || proj.mState != gmtl::Matrix44f::IDENTITY )
-        execVisitor.setViewProj( view, proj );
-    else
-        execVisitor.setViewProj( computeView(), _proj._data[ contextID ] );
-
-    // Render all Drawables.
-    _root->accept( execVisitor );
-#endif
 
     glFlush();
 
