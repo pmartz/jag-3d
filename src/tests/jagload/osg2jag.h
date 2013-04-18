@@ -24,6 +24,7 @@
 #include <osg/NodeVisitor>
 #include <jagDraw/Drawable.h>
 #include <jagDraw/Node.h>
+#include <jagDraw/NodeContainer.h>
 #include <jagBase/Buffer.h>
 
 #include <osg/PrimitiveSet>
@@ -45,7 +46,7 @@ public:
 
     void apply( osg::Geometry* geom );
 
-    jagDraw::DrawNodeSimpleVec getJagDrawNodeVec();
+    jagDraw::NodeContainer& getDrawNodeContainer();
 
 
     struct ArrayInfo {
@@ -62,7 +63,7 @@ public:
     ArrayInfo asJagArray( const osg::VectorGLuint* arrayIn );
 
 protected:
-    jagDraw::DrawNodeSimpleVec _jagDrawNodes;
+    jagDraw::NodeContainer _jagDrawNodes;
 };
 
 

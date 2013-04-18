@@ -68,7 +68,7 @@ protected:
     gmtl::Matrix44d computeProjection( double aspect );
     gmtl::Matrix44d computeView();
 
-    jagDraw::DrawNodeSimpleVec _drawNodes;
+    jagDraw::NodeContainer _drawNodes;
 
     typedef jagDraw::PerContextData< gmtl::Matrix44d > PerContextMatrix44d;
     PerContextMatrix44d _proj;
@@ -120,7 +120,7 @@ bool JagLoadDemo::startup( const unsigned int numContexts )
 
         Osg2Jag osg2JagConverter;
         root->accept( osg2JagConverter );
-        _drawNodes = osg2JagConverter.getJagDrawNodeVec();
+        _drawNodes = osg2JagConverter.getDrawNodeContainer();
     }
     if( _drawNodes.size() == 0 )
     {
@@ -178,10 +178,7 @@ bool JagLoadDemo::startup( const unsigned int numContexts )
 
 
     // Tell all Jag3D objects how many contexts to expect.
-    BOOST_FOREACH( jagDraw::Node& dp, _drawNodes )
-    {
-        dp.setMaxContexts( numContexts );
-    }
+    _drawNodes.setMaxContexts( numContexts );
     for( unsigned int idx=0; idx<numContexts; ++idx )
     {
         _viewProjUniform._data.push_back( jagDraw::UniformPtr(
@@ -241,10 +238,7 @@ bool JagLoadDemo::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& pro
     _normalUniform[ drawInfo._id ]->execute( drawInfo );
 
     // Render all Drawables.
-    BOOST_FOREACH( jagDraw::Node& node, _drawNodes )
-    {
-        node.execute( drawInfo );
-    }
+    _drawNodes.execute( drawInfo );
 
     glFlush();
 

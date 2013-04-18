@@ -45,6 +45,16 @@ NodeContainer::~NodeContainer()
 {
 }
 
+NodeContainer& NodeContainer::operator=( const NodeContainer& rhs )
+{
+    DrawNodeSimpleVec::operator=( rhs );
+    ObjectIDOwner::operator=( rhs );
+    // LogBase does not support (and doesn't need) assignment operator.
+    //jagBase::LogBase::operator=( rhs );
+    _callbacks = rhs._callbacks;
+    return( *this );
+}
+
 
 NodeContainer::CallbackVec& NodeContainer::getCallbacks()
 {
