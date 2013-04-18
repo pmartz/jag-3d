@@ -45,6 +45,8 @@ public:
     NodeContainer( const NodeContainer& rhs );
     ~NodeContainer();
 
+    NodeContainer& operator=( const NodeContainer& rhs );
+
 
     /** \struct Callback
     \brief TBD

@@ -206,7 +206,7 @@ void Osg2Jag::apply( osg::Geometry* geom )
     _jagDrawNodes.push_back( drawNode );
 }
 
-jagDraw::DrawNodeSimpleVec Osg2Jag::getJagDrawNodeVec()
+jagDraw::NodeContainer& Osg2Jag::getDrawNodeContainer()
 {
     return( _jagDrawNodes );
 }
