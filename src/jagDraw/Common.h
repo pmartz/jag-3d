@@ -34,6 +34,7 @@
 #include <jagDraw/DrawCommand.h>
 #include <jagDraw/DrawInfo.h>
 #include <jagDraw/Node.h>
+#include <jagDraw/NodeContainer.h>
 #include <jagDraw/Error.h>
 #include <jagDraw/Framebuffer.h>
 #include <jagDraw/Image.h>
