@@ -25,6 +25,7 @@
 #include <jagSG/Visitor.h>
 #include <jagBase/Transform.h>
 #include <jagDraw/Node.h>
+#include <jagDraw/NodeContainer.h>
 #include <jagDraw/Uniform.h>
 #include <jagBase/ptr.h>
 
@@ -61,7 +62,7 @@ public:
 
     /** \brief TBD
     \details TBD */
-    const jagDraw::DrawNodeSimpleVec& getDrawGraph() const;
+    const jagDraw::NodeContainer& getDrawGraph() const;
 
 
     /** \class CollectionInfo CollectionVisitor.h <jagBase/CollectionVisitor.h>
@@ -96,7 +97,7 @@ public:
 protected:
     void updateTransformUniforms();
 
-    jagDraw::DrawNodeSimpleVec _drawGraph;
+    jagDraw::NodeContainer _drawGraph;
 
     jagBase::TransformD _transform;
 

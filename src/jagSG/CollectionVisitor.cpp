@@ -143,7 +143,7 @@ void CollectionVisitor::visit( jagSG::Node& node )
     popCommandMap();
 }
 
-const jagDraw::DrawNodeSimpleVec& CollectionVisitor::getDrawGraph() const
+const jagDraw::NodeContainer& CollectionVisitor::getDrawGraph() const
 {
     return( _drawGraph );
 }
