@@ -86,11 +86,11 @@ bool JagModel::startup( const unsigned int numContexts )
     //std::string fileName( "GRINDER_WHEEL.PRT.ive" );
     //std::string fileName( "M55339.ASM.ive" );
     //std::string fileName( "USMC23_4019.ASM.ive" );
-    //std::string fileName( "02-1100.ive" );
+    std::string fileName( "02-1100.ive" );
 
     //std::string fileName( "fountain.osg" );
     //std::string fileName( "glider.osg" );
-    std::string fileName( "cow.osg" );
+    //std::string fileName( "cow.osg" );
     //std::string fileName( "dumptruck.osg" );
     //std::string fileName( "teapot.osg" );
     JAG3D_INFO_STATIC( _logName, fileName );
@@ -102,6 +102,13 @@ bool JagModel::startup( const unsigned int numContexts )
     }
 
 
+    // Prepare the draw graph.
+    jagDraw::DrawGraphPtr drawGraphTemplate( new jagDraw::DrawGraph() );
+    drawGraphTemplate->resize( 1 );
+    getCollectionVisitor().setDrawGraphTemplate( drawGraphTemplate );
+
+
+    // Prepare the scene graph.
     _root = boost::make_shared< jagSG::Node >(
         *(jagSG::Node*) jagDisk::read( fileName ) );
     if( _root == NULL )
@@ -220,9 +227,11 @@ bool JagModel::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj )
         JAG3D_PROFILE( "Render" );
 
         // Execute the draw graph.
-        jagDraw::NodeContainer* drawGraph( 
-            const_cast< jagDraw::NodeContainer* >( &( collect.getDrawGraph() ) ) );
-        drawGraph->execute( drawInfo );
+        jagDraw::DrawGraphPtr drawGraph( collect.getDrawGraph() );
+        BOOST_FOREACH( jagDraw::DrawGraph::value_type& data, *drawGraph )
+        {
+            data.execute( drawInfo );
+        }
     }
 
     glFlush();

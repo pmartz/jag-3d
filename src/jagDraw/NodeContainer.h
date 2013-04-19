@@ -96,6 +96,9 @@ protected:
 typedef jagBase::ptr< jagDraw::NodeContainer >::shared_ptr NodeContainerPtr;
 typedef std::vector< NodeContainerPtr > NodeContainerVec;
 
+typedef std::vector< NodeContainer > DrawGraph; // or NodeContainerSimpleVec
+typedef jagBase::ptr< jagDraw::DrawGraph >::shared_ptr DrawGraphPtr;
+
 
 #if 0
 class DrawNodeCommandSorter

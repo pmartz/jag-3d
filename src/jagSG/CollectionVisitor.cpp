@@ -39,8 +39,11 @@ CollectionVisitor::CollectionVisitor()
 }
 CollectionVisitor::CollectionVisitor( const CollectionVisitor& rhs )
   : Visitor( rhs ),
+    _currentID( rhs._currentID ),
     _transform( rhs._transform )
 {
+    setDrawGraphTemplate( rhs._drawGraphTemplate );
+
     reset();
 }
 CollectionVisitor::~CollectionVisitor()
@@ -66,7 +69,16 @@ void CollectionVisitor::reset()
     resetCommandMap();
     resetMatrix();
 
-    _drawGraph.clear();
+    _currentID = 0;
+    if( _drawGraph != NULL )
+    {
+        BOOST_FOREACH( jagDraw::DrawGraph::value_type& data, *_drawGraph )
+        {
+            data.clear();
+        }
+        if( _currentID < _drawGraph->size() )
+            _currentNodes = &( (*_drawGraph)[ _currentID ] );
+    }
 
     _infoPtr = CollectionInfoPtr( new CollectionInfo( _transform ) );
 }
@@ -114,8 +126,8 @@ void CollectionVisitor::visit( jagSG::Node& node )
         {
             JAG3D_PROFILE( "CV DrawNode processing" );
 
-            _drawGraph.resize( _drawGraph.size()+1 );
-            jagDraw::Node& drawNode( _drawGraph[ _drawGraph.size()-1 ] );
+            _currentNodes->resize( _currentNodes->size()+1 );
+            jagDraw::Node& drawNode( (*_currentNodes)[ _currentNodes->size()-1 ] );
 
             //JAG3D_WARNING( "TBD Must allocate new CommandMapPtr?" );
             jagDraw::CommandMapPtr commands( new jagDraw::CommandMap(
@@ -143,9 +155,30 @@ void CollectionVisitor::visit( jagSG::Node& node )
     popCommandMap();
 }
 
-const jagDraw::NodeContainer& CollectionVisitor::getDrawGraph() const
+
+jagDraw::DrawGraphPtr CollectionVisitor::getDrawGraph() const
 {
     return( _drawGraph );
+}
+
+void CollectionVisitor::setDrawGraphTemplate( jagDraw::DrawGraphPtr drawGraphTemplate )
+{
+    _drawGraphTemplate = drawGraphTemplate;
+    _drawGraph = jagDraw::DrawGraphPtr( new jagDraw::DrawGraph( *_drawGraphTemplate ) );
+}
+const jagDraw::DrawGraphPtr CollectionVisitor::getDrawGraphTemplate() const
+{
+    return( _drawGraphTemplate );
+}
+
+void CollectionVisitor::setCurrentNodeContainer( const unsigned int currentID )
+{
+    _currentID = currentID;
+    _currentNodes = &( (*_drawGraph)[ _currentID ] );
+}
+unsigned int CollectionVisitor::getCurrentNodeContainer() const
+{
+    return( _currentID );
 }
 
 
