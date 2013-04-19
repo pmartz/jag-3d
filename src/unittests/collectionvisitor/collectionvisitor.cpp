@@ -100,8 +100,11 @@ bool test()
 
     NodePtr root( new Node() );
     CollectionVisitor cv;
+    jagDraw::DrawGraphPtr drawGraphTemplate( new jagDraw::DrawGraph() );
+    cv.setDrawGraphTemplate( drawGraphTemplate );
+
     root->accept( cv );
-    if( cv.getDrawGraph().size() > 0 )
+    if( cv.getDrawGraph()->size() > 0 )
     {
         std::cerr << "Empty scene graph returns non-NULL draw graph." << std::endl;
         return( false );
@@ -109,6 +112,9 @@ bool test()
 
 
     std::cout << "  Draw graph verification..." << std::endl;
+
+    drawGraphTemplate->resize( 1 );
+    cv.setDrawGraphTemplate( drawGraphTemplate );
 
     cv.reset();
     CommandMapPtr commands( new CommandMap );
@@ -122,14 +128,15 @@ bool test()
     root->setCommandMap( commands );
     root->addDrawable( draw );
     root->accept( cv );
-    const NodeContainer& drawGraph( cv.getDrawGraph() );
-    size_t size( drawGraph.size() );
+    const jagDraw::DrawGraphPtr drawGraph( cv.getDrawGraph() );
+    size_t size( drawGraph->size() );
     if( size != 1 )
     {
         std::cerr << "Draw graph size " << size << " != 1." << std::endl;
         return( false );
     }
-    const jagDraw::Node& node( drawGraph[ 0 ] );
+    const NodeContainer& nodes( (*drawGraph)[ 0 ] );
+    const jagDraw::Node& node( nodes[ 0 ] );
     if( node.getCommandMap() != commands )
     {
         // TBD need to test for CommandMap equivalence.

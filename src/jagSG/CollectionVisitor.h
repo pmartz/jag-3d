@@ -60,9 +60,24 @@ public:
     \details TBD */
     virtual void visit( jagSG::Node& node );
 
+
     /** \brief TBD
     \details TBD */
-    const jagDraw::NodeContainer& getDrawGraph() const;
+    jagDraw::DrawGraphPtr getDrawGraph() const;
+
+    /** \brief TBD
+    \details TBD */
+    void setDrawGraphTemplate( jagDraw::DrawGraphPtr drawGraphTemplate );
+    /** \brief TBD
+    \details TBD */
+    const jagDraw::DrawGraphPtr getDrawGraphTemplate() const;
+
+    /** \brief TBD
+    \details TBD */
+    void setCurrentNodeContainer( const unsigned int currentID );
+    /** \brief TBD
+    \details TBD */
+    unsigned int getCurrentNodeContainer() const;
 
 
     /** \class CollectionInfo CollectionVisitor.h <jagBase/CollectionVisitor.h>
@@ -97,7 +112,10 @@ public:
 protected:
     void updateTransformUniforms();
 
-    jagDraw::NodeContainer _drawGraph;
+    jagDraw::DrawGraphPtr _drawGraphTemplate;
+    jagDraw::DrawGraphPtr _drawGraph;
+    unsigned int _currentID;
+    jagDraw::NodeContainer* _currentNodes;
 
     jagBase::TransformD _transform;
 
