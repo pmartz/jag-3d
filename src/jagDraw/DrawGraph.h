@@ -18,11 +18,11 @@
 *
 *************** <auto-copyright.pl END do not edit this line> ***************/
 
-#ifndef __JAGDRAW_NODE_CONTAINER_H__
-#define __JAGDRAW_NODE_CONTAINER_H__ 1
+#ifndef __JAGDRAW_DRAW_GRAPH_H__
+#define __JAGDRAW_DRAW_GRAPH_H__ 1
 
 #include <jagDraw/Export.h>
-#include <jagDraw/Node.h>
+#include <jagDraw/NodeContainer.h>
 #include <jagDraw/ObjectID.h>
 #include <jagBase/LogBase.h>
 #include <jagBase/MultiCallback.h>
@@ -34,18 +34,18 @@
 namespace jagDraw {
 
 
-/** \class NodeContainer NodeContainer.h <jagDraw/NodeContainer.h>
+/** \class DrawGraph DrawGraph.h <jagDraw/DrawGraph.h>
 \brief TBD
 \details std::vector of draw graph Node objects. */
-class JAGDRAW_EXPORT NodeContainer : public jagDraw::DrawNodeSimpleVec,
+class JAGDRAW_EXPORT DrawGraph : public jagDraw::NodeContainerSimpleVec,
         protected jagBase::LogBase, public ObjectIDOwner
 {
 public:
-    NodeContainer();
-    NodeContainer( const NodeContainer& rhs );
-    ~NodeContainer();
+    DrawGraph();
+    DrawGraph( const DrawGraph& rhs );
+    ~DrawGraph();
 
-    NodeContainer& operator=( const NodeContainer& rhs );
+    DrawGraph& operator=( const DrawGraph& rhs );
 
 
     /** \struct Callback
@@ -54,7 +54,7 @@ public:
     struct Callback {
         /** \brief TBD
         \details TBD */
-        virtual bool operator()( NodeContainer& /* nodeContainer */,
+        virtual bool operator()( DrawGraph& /* drawGraph */,
             DrawInfo& /* drawInfo */ )
         {
             return( false );
@@ -93,65 +93,13 @@ protected:
     CallbackVec _callbacks;
 };
 
-typedef jagBase::ptr< jagDraw::NodeContainer >::shared_ptr NodeContainerPtr;
-typedef std::vector< NodeContainerPtr > NodeContainerVec;
-typedef std::vector< NodeContainer > NodeContainerSimpleVec;
-
-
-#if 0
-class DrawNodeCommandSorter
-{
-public:
-    DrawNodeCommandSorter()
-    {}
-    DrawNodeCommandSorter( const DrawablePrep::CommandTypeVec& priorityVec ):
-        _priorityVec( priorityVec )
-    {}
-    DrawNodeCommandSorter( const DrawNodeCommandSorter& rhs )
-        : _priorityVec( rhs._priorityVec )
-    {}
-    ~DrawNodeCommandSorter()
-    {}
-
-    bool operator()( const Node& lhs, const Node& rhs ) const
-    {
-        const CommandMapPtr lhsCommands( lhs.getCommandMap() );
-        const CommandMapPtr rhsCommands( rhs.getCommandMap() );
-
-        for( DrawablePrep::CommandTypeVec::const_iterator typeIter = _priorityVec.begin(); typeIter != _priorityVec.end(); ++typeIter )
-        {
-            switch( (int)( lhsCommands->_bits[ *typeIter ] ) | ( rhsCommands->_bits[ *typeIter ] << 1 ) )
-            {
-                case 0:
-                    continue;
-                case 1:
-                    return( true );
-                case 2:
-                    return( false );
-                case 3: 
-                {
-                    const DrawablePrepPtr a( lhsCommands->_data.find( *typeIter )->second );
-                    const DrawablePrepPtr b( rhsCommands->_data.find( *typeIter )->second );
-                    if( *a < *b )
-                        return( true );
-                    if( *a > *b )
-                        return( false );
-                    break;
-                }
-            }
-        }
-        return( false );
-    }
-
-protected:
-    DrawablePrep::CommandTypeVec _priorityVec;
-};
-#endif
+typedef jagBase::ptr< jagDraw::DrawGraph >::shared_ptr DrawGraphPtr;
+typedef std::vector< DrawGraphPtr > DrawGraphVec;
 
 
 // jagDraw
 }
 
 
-// __JAGDRAW_NODE_CONTAINER_H__
+// __JAGDRAW_DRAW_GRAPH_H__
 #endif

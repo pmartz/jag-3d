@@ -18,8 +18,8 @@
 *
 *************** <auto-copyright.pl END do not edit this line> ***************/
 
+#include <jagDraw/DrawGraph.h>
 #include <jagDraw/NodeContainer.h>
-#include <jagDraw/Node.h>
 #include <jagDraw/Error.h>
 #include <jagBase/Profile.h>
 #include <jagBase/LogMacros.h>
@@ -30,25 +30,25 @@
 namespace jagDraw {
 
 
-NodeContainer::NodeContainer()
-  : jagBase::LogBase( "jag.draw.ncon" ),
+DrawGraph::DrawGraph()
+  : jagBase::LogBase( "jag.draw.graph" ),
     ObjectIDOwner()
 {
 }
-NodeContainer::NodeContainer( const NodeContainer& rhs )
-  : DrawNodeSimpleVec( rhs ),
-    jagBase::LogBase( "jag.draw.ncon" ),
+DrawGraph::DrawGraph( const DrawGraph& rhs )
+  : NodeContainerSimpleVec( rhs ),
+    jagBase::LogBase( "jag.draw.graph" ),
     ObjectIDOwner( rhs ),
     _callbacks( rhs._callbacks )
 {
 }
-NodeContainer::~NodeContainer()
+DrawGraph::~DrawGraph()
 {
 }
 
-NodeContainer& NodeContainer::operator=( const NodeContainer& rhs )
+DrawGraph& DrawGraph::operator=( const DrawGraph& rhs )
 {
-    DrawNodeSimpleVec::operator=( rhs );
+    NodeContainerSimpleVec::operator=( rhs );
     ObjectIDOwner::operator=( rhs );
     // LogBase does not support (and doesn't need) assignment operator.
     //jagBase::LogBase::operator=( rhs );
@@ -57,16 +57,16 @@ NodeContainer& NodeContainer::operator=( const NodeContainer& rhs )
 }
 
 
-NodeContainer::CallbackVec& NodeContainer::getCallbacks()
+DrawGraph::CallbackVec& DrawGraph::getCallbacks()
 {
     return( _callbacks );
 }
 
-void NodeContainer::execute( DrawInfo& drawInfo )
+void DrawGraph::execute( DrawInfo& drawInfo )
 {
     JAG3D_TRACE( "execute()" );
 
-    JAG3D_PROFILE( "NodeContainer execute()" );
+    JAG3D_PROFILE( "DrawGraph execute()" );
 
     BOOST_FOREACH( CallbackPtr cb, _callbacks )
     {
@@ -76,26 +76,26 @@ void NodeContainer::execute( DrawInfo& drawInfo )
 
     internalExecute( drawInfo );
 
-    JAG3D_ERROR_CHECK( "NodeContainer::execute()" );
+    JAG3D_ERROR_CHECK( "DrawGraph::execute()" );
 }
-void NodeContainer::internalExecute( DrawInfo& drawInfo )
+void DrawGraph::internalExecute( DrawInfo& drawInfo )
 {
-    BOOST_FOREACH( Node& node, *this )
+    BOOST_FOREACH( NodeContainer& node, *this )
     {
         node.execute( drawInfo );
     }
 }
 
-void NodeContainer::setMaxContexts( const unsigned int numContexts )
+void DrawGraph::setMaxContexts( const unsigned int numContexts )
 {
-    BOOST_FOREACH( Node& node, *this )
+    BOOST_FOREACH( NodeContainer& node, *this )
     {
         node.setMaxContexts( numContexts );
     }
 }
-void NodeContainer::deleteID( const jagDraw::jagDrawContextID contextID )
+void DrawGraph::deleteID( const jagDraw::jagDrawContextID contextID )
 {
-    BOOST_FOREACH( Node& node, *this )
+    BOOST_FOREACH( NodeContainer& node, *this )
     {
         node.deleteID( contextID );
     }
