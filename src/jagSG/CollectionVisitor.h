@@ -26,6 +26,7 @@
 #include <jagBase/Transform.h>
 #include <jagDraw/Node.h>
 #include <jagDraw/NodeContainer.h>
+#include <jagDraw/DrawGraph.h>
 #include <jagDraw/Uniform.h>
 #include <jagBase/ptr.h>
 
