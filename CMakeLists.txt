@@ -20,10 +20,21 @@
 cmake_minimum_required( VERSION 2.8.5 )
 project( Jag3D )
 
-set( JAG3D_VERSION 0.00.05 )
+macro( zeroPad _input _output )
+    if( ${${_input}} LESS 10 )
+        set( ${_output} "0${${_input}}" )
+    else()
+        set( ${_output} "${${_input}}" )
+    endif()
+endmacro()
+
 set( JAG3D_MAJOR_VERSION 0 )
 set( JAG3D_MINOR_VERSION 0 )
-set( JAG3D_SUB_VERSION 5 )
+set( JAG3D_SUB_VERSION 6 )
+zeroPad( JAG3D_MINOR_VERSION __minorPad )
+zeroPad( JAG3D_SUB_VERSION __patchPad )
+set( JAG3D_VERSION ${JAG3D_MAJOR_VERSION}.${__minorPad}.${__patchPad} )
+
 
 set( CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/CMakeModules;${CMAKE_MODULE_PATH}" )
 
