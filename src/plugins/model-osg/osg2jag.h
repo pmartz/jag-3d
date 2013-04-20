@@ -27,6 +27,8 @@
 #include <jagSG/Node.h>
 #include <osg/PrimitiveSet>
 
+#include <map>
+
 
 namespace osg {
     class Node;
@@ -53,13 +55,17 @@ public:
 protected:
     void apply( osg::Geometry* geom );
 
-    void preTraverse( const gmtl::Matrix44d& m=gmtl::MAT_IDENTITY44D );
+    bool preTraverse( osg::Object* osgObject, const gmtl::Matrix44d& m=gmtl::MAT_IDENTITY44D );
     void postTraverse();
 
 
     jagSG::Node* _jagScene;
     jagSG::Node* _current;
+    // TBD I think we can get rid of _nodeStack when jagSG::Node supports parent.
     std::vector< jagSG::Node* > _nodeStack;
+
+    typedef std::map< osg::Object*, jagSG::NodePtr > OSGObjectMap;
+    OSGObjectMap _objInstances;
 
 
     struct ArrayInfo {
