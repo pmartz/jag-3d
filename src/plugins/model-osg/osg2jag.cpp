@@ -57,7 +57,8 @@ void Osg2Jag::apply( osg::Node& osgNode )
 {
     JAG3D_TRACE_STATIC( "jag.plugin.model.jagload", "apply( Node& )" );
 
-    preTraverse();
+    if( !preTraverse( &osgNode ) )
+        return;
     traverse( osgNode );
     postTraverse();
 }
@@ -65,7 +66,8 @@ void Osg2Jag::apply( osg::MatrixTransform& osgNode )
 {
     JAG3D_TRACE_STATIC( "jag.plugin.model.jagload", "apply( Transform& )" );
 
-    preTraverse( asGmtlMatrix( osgNode.getMatrix() ) );
+    if( !preTraverse( &osgNode, asGmtlMatrix( osgNode.getMatrix() ) ) )
+        return;
     traverse( osgNode );
     postTraverse();
 }
@@ -73,7 +75,8 @@ void Osg2Jag::apply( osg::Geode& osgNode )
 {
     JAG3D_TRACE_STATIC( "jag.plugin.model.jagload", "apply( Geode& )" );
 
-    preTraverse();
+    if( !preTraverse( &osgNode ) )
+        return;
 
     unsigned int idx;
     for( idx=0; idx<osgNode.getNumDrawables(); idx++ )
@@ -86,7 +89,7 @@ void Osg2Jag::apply( osg::Geode& osgNode )
     postTraverse();
 }
 
-void Osg2Jag::preTraverse( const gmtl::Matrix44d& m )
+bool Osg2Jag::preTraverse( osg::Object* osgObject, const gmtl::Matrix44d& m )
 {
     if( _jagScene == NULL )
     {
@@ -95,13 +98,24 @@ void Osg2Jag::preTraverse( const gmtl::Matrix44d& m )
     }
     else
     {
-        jagSG::NodePtr np( new jagSG::Node() );
-        _current->addChild( np );
-        _current = np.get();
+        OSGObjectMap::iterator it( _objInstances.find( osgObject ) );
+        if( it != _objInstances.end() )
+        {
+            _current->addChild( it->second );
+            return( false );
+        }
+        else
+        {
+            jagSG::NodePtr np( new jagSG::Node() );
+            _current->addChild( np );
+            _current = np.get();
+            _objInstances[ osgObject ] = np;
+        }
     }
     _nodeStack.push_back( _current );
 
     _current->setTransform( m );
+    return( true );
 }
 void Osg2Jag::postTraverse()
 {
@@ -120,7 +134,8 @@ void Osg2Jag::apply( osg::Geometry* geom )
         return;
     }
 
-    preTraverse();
+    if( !preTraverse( geom ) )
+        return;
 
     DrawablePtr draw( DrawablePtr( new Drawable ) );
     jagDraw::CommandMapPtr commands( jagDraw::CommandMapPtr( new jagDraw::CommandMap() ) );
