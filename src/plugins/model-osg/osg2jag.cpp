@@ -101,6 +101,7 @@ bool Osg2Jag::preTraverse( osg::Object* osgObject, const gmtl::Matrix44d& m )
         OSGObjectMap::iterator it( _objInstances.find( osgObject ) );
         if( it != _objInstances.end() )
         {
+            JAG3D_TRACE_STATIC( "jag.plugin.model.jagload", "\tShared instance." );
             _current->addChild( it->second );
             return( false );
         }

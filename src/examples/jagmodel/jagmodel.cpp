@@ -88,6 +88,7 @@ bool JagModel::startup( const unsigned int numContexts )
     //std::string fileName( "USMC23_4019.ASM.ive" );
     //std::string fileName( "02-1100.ive" );
 
+    //std::string fileName( "sharedtetra.osg" );
     //std::string fileName( "fountain.osg" );
     //std::string fileName( "glider.osg" );
     std::string fileName( "cow.osg" );
