@@ -228,10 +228,7 @@ bool JagModel::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj )
 
         // Execute the draw graph.
         jagDraw::DrawGraphPtr drawGraph( collect.getDrawGraph() );
-        BOOST_FOREACH( jagDraw::DrawGraph::value_type& data, *drawGraph )
-        {
-            data.execute( drawInfo );
-        }
+        drawGraph->execute( drawInfo );
     }
 
     glFlush();
