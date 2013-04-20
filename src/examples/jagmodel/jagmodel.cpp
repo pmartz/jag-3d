@@ -193,12 +193,20 @@ bool JagModel::init()
     return( true );
 }
 
+// Don't bother until we have something worth sorting.
+//#define ENABLE_SORT
+
 bool JagModel::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj )
 {
     if( !getStartupCalled() )
         return( true );
 
     JAG3D_PROFILE( "frame" );
+
+#ifdef ENABLE_SORT
+    jagDraw::DrawablePrep::CommandTypeVec plist;
+    plist.push_back( jagDraw::DrawablePrep::UniformSet_t );
+#endif
 
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
@@ -218,10 +226,20 @@ bool JagModel::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj )
             collect.setViewProj( computeView(), _proj._data[ contextID ] );
 
         {
-        JAG3D_PROFILE( "Collection traverse" );
-        // Collect a draw graph.
-        _root->accept( collect );
+            JAG3D_PROFILE( "Collection traverse" );
+            // Collect a draw graph.
+            _root->accept( collect );
         }
+#ifdef ENABLE_SORT
+        {
+            JAG3D_PROFILE( "Collection sort" );
+            jagDraw::DrawGraphPtr drawGraph( collect.getDrawGraph() );
+            BOOST_FOREACH( jagDraw::NodeContainer& nc, *drawGraph )
+            {
+                std::sort( nc.begin(), nc.end(), jagDraw::DrawNodeCommandSorter( plist ) );
+            }
+        }
+#endif
     }
 
     {
