@@ -190,7 +190,7 @@ int main( int argc, char* argv[] )
     bpo::options_description desc( "Options" );
     // Add test/demo options
     desc.add_options()
-        ( "help", "Help text" );
+        ( "help,h", "Help text" );
 #if 0
     // Not supported for VRJ; taken from config files.
     desc.add_options()

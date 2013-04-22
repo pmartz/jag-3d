@@ -83,7 +83,7 @@ protected:
 DemoInterface* DemoInterface::create( bpo::options_description& desc )
 {
     desc.add_options()
-        ( "file", bpo::value< std::string >(), "Model to load. Default: cow.osg" );
+        ( "file,f", bpo::value< std::string >(), "Model to load. Default: cow.osg" );
 
     return( new JagModel );
 }

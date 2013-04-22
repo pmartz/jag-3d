@@ -108,8 +108,8 @@ int main( int argc, char* argv[] )
     bpo::options_description desc( "Options" );
     // Add test/demo options
     desc.add_options()
-        ( "help", "Help text" )
-        ( "version", bpo::value< double >(), "OpenGL context version. Default: 4.0." )
+        ( "help,h", "Help text" )
+        ( "version,v", bpo::value< double >(), "OpenGL context version. Default: 4.0." )
         ( "nwin", bpo::value< int >(), "Number of windows. Default: 1." )
         ;
 
