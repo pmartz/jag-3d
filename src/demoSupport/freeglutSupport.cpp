@@ -108,9 +108,10 @@ int main( int argc, char* argv[] )
     bpo::options_description desc( "Options" );
     // Add test/demo options
     desc.add_options()
-        ( "version", bpo::value< double >(), "OpenGL context version. Default: 4.0." );
-    desc.add_options()
-        ( "nwin", bpo::value< int >(), "Number of windows. Default: 1." );
+        ( "help", "Help text" )
+        ( "version", bpo::value< double >(), "OpenGL context version. Default: 4.0." )
+        ( "nwin", bpo::value< int >(), "Number of windows. Default: 1." )
+        ;
 
     // Create test/demo-specific DemoInterface, and allow it to
     // add test/demo-specific options.
@@ -119,6 +120,13 @@ int main( int argc, char* argv[] )
     bpo::variables_map vm;
     bpo::store( bpo::parse_command_line( argc, argv, desc ), vm );
     bpo::notify( vm );
+
+    if( !( di->parseOptions( vm ) ) ||
+        ( vm.count( "help" ) > 0 ) )
+    {
+        std::cout << desc << std::endl;
+        return( 1 );
+    }
 
 #if( POCO_OS == POCO_OS_MAC_OS_X )
     // In OSX 10.7/10.8, use GL 3.2 and GLSL 1.50

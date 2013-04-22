@@ -189,6 +189,8 @@ int main( int argc, char* argv[] )
 {
     bpo::options_description desc( "Options" );
     // Add test/demo options
+    desc.add_options()
+        ( "help", "Help text" );
 #if 0
     // Not supported for VRJ; taken from config files.
     desc.add_options()
@@ -199,6 +201,17 @@ int main( int argc, char* argv[] )
 #endif
 
     DemoInterface* di( DemoInterface::create( desc ) );
+
+    bpo::variables_map vm;
+    bpo::store( bpo::parse_command_line( argc, argv, desc ), vm );
+    bpo::notify( vm );
+
+    if( !( di->parseOptions( vm ) ) ||
+        ( vm.count( "help" ) > 0 ) )
+    {
+        std::cout << desc << std::endl;
+        return( 1 );
+    }
 
     Kernel* kernel = Kernel::instance();
     JagDemoApp* application = new JagDemoApp( di );

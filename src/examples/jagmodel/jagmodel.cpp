@@ -33,6 +33,7 @@
 #include <jagBase/LogMacros.h>
 
 #include <boost/program_options/options_description.hpp>
+#include <boost/program_options/variables_map.hpp>
 #include <gmtl/gmtl.h>
 
 #include <boost/foreach.hpp>
@@ -50,9 +51,12 @@ class JagModel : public DemoInterface
 {
 public:
     JagModel()
-      : DemoInterface( "jag.ex.jagmodel" )
+      : DemoInterface( "jag.ex.jagmodel" ),
+        _fileName( "cow.osg" )
     {}
     virtual ~JagModel() {}
+
+    virtual bool parseOptions( boost::program_options::variables_map& vm );
 
     virtual bool startup( const unsigned int numContexts );
     virtual bool init();
@@ -67,6 +71,8 @@ protected:
     gmtl::Matrix44d computeProjection( double aspect );
     gmtl::Matrix44d computeView();
 
+    std::string _fileName;
+
     jagSG::NodePtr _root;
 
     typedef jagDraw::PerContextData< gmtl::Matrix44d > PerContextMatrix44d;
@@ -76,13 +82,24 @@ protected:
 
 DemoInterface* DemoInterface::create( bpo::options_description& desc )
 {
+    desc.add_options()
+        ( "file", bpo::value< std::string >(), "Model to load. Default: cow.osg" );
+
     return( new JagModel );
+}
+
+bool JagModel::parseOptions( bpo::variables_map& vm )
+{
+    if( vm.count( "file" ) > 0 )
+        _fileName = vm[ "file" ].as< std::string >();
+    return( true );
 }
 
 bool JagModel::startup( const unsigned int numContexts )
 {
     DemoInterface::startup( numContexts );
 
+#if 0
     //std::string fileName( "GRINDER_WHEEL.PRT.ive" );
     //std::string fileName( "M55339.ASM.ive" );
     //std::string fileName( "USMC23_4019.ASM.ive" );
@@ -94,11 +111,12 @@ bool JagModel::startup( const unsigned int numContexts )
     std::string fileName( "cow.osg" );
     //std::string fileName( "dumptruck.osg" );
     //std::string fileName( "teapot.osg" );
-    JAG3D_INFO_STATIC( _logName, fileName );
+#endif
+    JAG3D_INFO_STATIC( _logName, _fileName );
 
-    if( fileName.empty() )
+    if( _fileName.empty() )
     {
-        JAG3D_FATAL_STATIC( _logName, "Specify '--load <fileName>' on command line." );
+        JAG3D_FATAL_STATIC( _logName, "Specify '--file <fileName>' on command line." );
         return( false );
     }
 
@@ -111,10 +129,10 @@ bool JagModel::startup( const unsigned int numContexts )
 
     // Prepare the scene graph.
     _root = boost::make_shared< jagSG::Node >(
-        *(jagSG::Node*) jagDisk::read( fileName ) );
+        *(jagSG::Node*) jagDisk::read( _fileName ) );
     if( _root == NULL )
     {
-        JAG3D_FATAL_STATIC( _logName, "Can't load \"" + fileName + "\"." );
+        JAG3D_FATAL_STATIC( _logName, "Can't load \"" + _fileName + "\"." );
         return( false );
     }
 

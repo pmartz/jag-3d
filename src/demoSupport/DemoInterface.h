@@ -27,6 +27,7 @@
 #include <gmtl/gmtl.h>
 
 #include <boost/program_options/options_description.hpp>
+#include <boost/program_options/variables_map.hpp>
 #include <boost/foreach.hpp>
 
 
@@ -45,6 +46,7 @@ public:
     virtual ~DemoInterface() {}
 
     static DemoInterface* create( boost::program_options::options_description& desc );
+    virtual bool parseOptions( boost::program_options::variables_map& vm ) { return( true ); }
 
     /** Called before any contexts are created. */
     virtual bool startup( const unsigned int numContexts )
