@@ -27,6 +27,7 @@
 #include <jagBase/LogMacros.h>
 #include <jagDisk/ReadWrite.h>
 #include <boost/program_options/options_description.hpp>
+#include <boost/program_options/variables_map.hpp>
 #include <gmtl/gmtl.h>
 
 #include <boost/foreach.hpp>
@@ -42,9 +43,12 @@ class TextureDemo : public DemoInterface
 {
 public:
     TextureDemo()
-      : DemoInterface( "jag.demo.texture" )
+      : DemoInterface( "jag.demo.texture" ),
+        _imageName( "balloon.jpg" )
     {}
     virtual ~TextureDemo() {}
+
+    virtual bool parseOptions( boost::program_options::variables_map& vm );
 
     virtual bool startup( const unsigned int numContexts );
     virtual bool init();
@@ -56,14 +60,24 @@ public:
 
 protected:
     jagDraw::NodeContainer _nodes;
+
+    std::string _imageName;
 };
 
 
 DemoInterface* DemoInterface::create( bpo::options_description& desc )
 {
-    jagBase::Log::instance()->setPriority( jagBase::Log::PrioDebug, jagBase::Log::Console );
+    desc.add_options()
+        ( "file,f", bpo::value< std::string >(), "Image to load. Default: balloon.jpg" );
 
     return( new TextureDemo );
+}
+
+bool TextureDemo::parseOptions( bpo::variables_map& vm )
+{
+    if( vm.count( "file" ) > 0 )
+        _imageName = vm[ "file" ].as< std::string >();
+    return( true );
 }
 
 bool TextureDemo::startup( const unsigned int numContexts )
@@ -119,7 +133,7 @@ bool TextureDemo::startup( const unsigned int numContexts )
     commands->insert( uniformSet );
 
     // Load image using jagDisk plugin interface.
-    jagDraw::ImagePtr image( (jagDraw::Image*) jagDisk::read( "balloon.jpg" ) );
+    jagDraw::ImagePtr image( (jagDraw::Image*) jagDisk::read( _imageName ) );
     jagDraw::TexturePtr tex( new jagDraw::Texture( GL_TEXTURE_2D, image,
         jagDraw::SamplerPtr( new jagDraw::Sampler() ) ) );
     tex->getSampler()->getSamplerState()->_minFilter = GL_LINEAR;
