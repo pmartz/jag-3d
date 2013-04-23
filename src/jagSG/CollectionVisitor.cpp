@@ -33,13 +33,15 @@ namespace jagSG {
 
 
 CollectionVisitor::CollectionVisitor()
-  : Visitor( "collect" )
+  : Visitor( "collect" ),
+    _currentNodes( NULL )
 {
     reset();
 }
 CollectionVisitor::CollectionVisitor( const CollectionVisitor& rhs )
   : Visitor( rhs ),
     _currentID( rhs._currentID ),
+    _currentNodes( NULL ),
     _transform( rhs._transform )
 {
     setDrawGraphTemplate( rhs._drawGraphTemplate );
@@ -126,6 +128,9 @@ void CollectionVisitor::visit( jagSG::Node& node )
         {
             JAG3D_PROFILE( "CV DrawNode processing" );
 
+            if( _currentNodes == NULL )
+                setCurrentNodeContainer( 0 );
+
             _currentNodes->resize( _currentNodes->size()+1 );
             jagDraw::Node& drawNode( (*_currentNodes)[ _currentNodes->size()-1 ] );
 
@@ -174,6 +179,18 @@ const jagDraw::DrawGraphPtr CollectionVisitor::getDrawGraphTemplate() const
 void CollectionVisitor::setCurrentNodeContainer( const unsigned int currentID )
 {
     _currentID = currentID;
+
+    if( ( _drawGraph == NULL ) ||
+        ( _currentID >= _drawGraph->size() ) )
+    {
+        if( _drawGraph == NULL )
+            // No draw graph template specified.
+            _drawGraph = jagDraw::DrawGraphPtr( new jagDraw::DrawGraph() );
+
+        // Either off the end of the draw graph,
+        // or no draw graph template specified.
+        _drawGraph->resize( _currentID + 1 );
+    }
     _currentNodes = &( (*_drawGraph)[ _currentID ] );
 }
 unsigned int CollectionVisitor::getCurrentNodeContainer() const
