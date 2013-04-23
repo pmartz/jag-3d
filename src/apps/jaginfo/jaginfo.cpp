@@ -40,6 +40,72 @@ std::string logstr( "jag.app.info" );
 
 
 
+class DrawGraphVisitor
+{
+public:
+    DrawGraphVisitor();
+    ~DrawGraphVisitor();
+
+    void reset();
+    void dump( std::ostream& ostr );
+
+    void traverse( jagDraw::DrawGraph& drawGraph );
+
+    virtual void visit( jagDraw::NodeContainer& nc );
+    virtual void visit( jagDraw::Node& node, jagDraw::NodeContainer& nc );
+
+protected:
+    jagDraw::NodeContainerPtr _ncp;
+
+    unsigned int _containers;
+    unsigned int _nodes;
+};
+
+DrawGraphVisitor::DrawGraphVisitor()
+{
+    reset();
+}
+DrawGraphVisitor::~DrawGraphVisitor()
+{
+}
+
+void DrawGraphVisitor::reset()
+{
+    _containers = 0;
+    _nodes = 0;
+}
+void DrawGraphVisitor::dump( std::ostream& ostr )
+{
+    ostr << "            \tTotal" << std::endl;
+    ostr << "            \t-----" << std::endl;
+    ostr << " Containers:\t" << _containers << std::endl;
+    ostr << "      Nodes:\t" << _nodes << std::endl;
+}
+
+void DrawGraphVisitor::traverse( jagDraw::DrawGraph& drawGraph )
+{
+    BOOST_FOREACH( jagDraw::DrawGraph::value_type& nc, drawGraph )
+    {
+        visit( nc );
+        BOOST_FOREACH( jagDraw::NodeContainer::value_type& node, nc )
+        {
+            visit( node, nc );
+        }
+    }
+}
+
+void DrawGraphVisitor::visit( jagDraw::NodeContainer& nc )
+{
+    ++_containers;
+}
+void DrawGraphVisitor::visit( jagDraw::Node& node, jagDraw::NodeContainer& nc )
+{
+    ++_nodes;
+}
+
+
+
+
 class CountVisitor : public jagSG::VisitorBase
 {
 public:
@@ -77,6 +143,7 @@ void CountVisitor::reset()
     _drawables = _uDrawables = 0;
     _nodeSet.clear();
     _commandSet.clear();
+    _drawableSet.clear();
 }
 void CountVisitor::dump( std::ostream& ostr )
 {
@@ -164,6 +231,13 @@ int main( int argc, char** argv )
     CountVisitor cv;
     root->accept( cv );
     cv.dump( std::cout );
+
+    jagSG::CollectionVisitor collect;
+    root->accept( collect );
+
+    DrawGraphVisitor dgv;
+    dgv.traverse( *( collect.getDrawGraph() ) );
+    dgv.dump( std::cout );
 
     return( 0 );
 }
