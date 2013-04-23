@@ -53,10 +53,12 @@ public:
 
     unsigned int _nodes, _uNodes;
     unsigned int _commands, _uCommands;
+    unsigned int _drawables, _uDrawables;
 
 protected:
     std::set< jagSG::NodePtr > _nodeSet;
     std::set< jagDraw::CommandMapPtr > _commandSet;
+    std::set< jagDraw::DrawablePtr > _drawableSet;
 };
 
 CountVisitor::CountVisitor()
@@ -72,13 +74,17 @@ void CountVisitor::reset()
 {
     _nodes = _uNodes = 0;
     _commands = _uCommands = 0;
+    _drawables = _uDrawables = 0;
     _nodeSet.clear();
     _commandSet.clear();
 }
 void CountVisitor::dump( std::ostream& ostr )
 {
-    ostr << _nodes << ", " << _uNodes << std::endl;
-    ostr << _commands << ", " << _uCommands << std::endl;
+    ostr << "            \tTotal\tUnique" << std::endl;
+    ostr << "            \t-----\t------" << std::endl;
+    ostr << "      Nodes:\t" << _nodes << "\t" << _uNodes << std::endl;
+    ostr << "CommandMaps:\t" << _commands << "\t" << _uCommands << std::endl;
+    ostr << "  Drawables:\t" << _drawables << "\t" << _uDrawables << std::endl;
 }
 
 void CountVisitor::visit( jagSG::Node& node )
@@ -99,6 +105,17 @@ void CountVisitor::visit( jagSG::Node& node )
         {
             ++_uCommands;
             _commandSet.insert( cp );
+        }
+    }
+
+    for( unsigned int idx=0; idx < node.getNumDrawables(); ++idx )
+    {
+        ++_drawables;
+        const jagDraw::DrawablePtr dp( node.getDrawable( idx ) );
+        if( _drawableSet.find( dp ) == _drawableSet.end() )
+        {
+            ++_uDrawables;
+            _drawableSet.insert( dp );
         }
     }
 
