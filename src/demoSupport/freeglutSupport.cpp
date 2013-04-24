@@ -105,12 +105,14 @@ void timer( int value )
 
 int main( int argc, char* argv[] )
 {
+    std::vector< int > winsize;
     bpo::options_description desc( "Options" );
     // Add test/demo options
     desc.add_options()
         ( "help,h", "Help text" )
         ( "version,v", bpo::value< double >(), "OpenGL context version. Default: 4.0." )
         ( "nwin", bpo::value< int >(), "Number of windows. Default: 1." )
+        ( "winsize,w", bpo::value< std::vector< int > >( &winsize )->multitoken(), "Window width and height. Default: 300 300." )
         ;
 
     // Create test/demo-specific DemoInterface, and allow it to
@@ -144,6 +146,12 @@ int main( int argc, char* argv[] )
     if( vm.count( "nwin" ) > 0 )
         nwin = vm[ "nwin" ].as< int >();
 
+    if( winsize.size() != 2 )
+    {
+        winsize.clear();
+        winsize.push_back( 300 ); winsize.push_back( 300 );
+    }
+
 
     glutInit( &argc, argv );
     glutInitDisplayMode( GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_MULTISAMPLE );
@@ -156,7 +164,7 @@ int main( int argc, char* argv[] )
             glutInitContextProfile( GLUT_CORE_PROFILE );
     }
 
-    glutInitWindowSize( 300, 300 );
+    glutInitWindowSize( winsize[ 0 ], winsize[ 1 ] );
     glutSetOption( GLUT_RENDERING_CONTEXT, GLUT_CREATE_NEW_CONTEXT );
     while( nwin-- )
     {
