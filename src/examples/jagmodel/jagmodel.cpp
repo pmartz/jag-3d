@@ -22,7 +22,6 @@
 
 #include <jagDraw/Common.h>
 #include <jagDraw/PerContextData.h>
-#include <jagSG/ExecuteVisitor.h>
 #include <jagSG/CollectionVisitor.h>
 #include <jagSG/Node.h>
 #include <jagSG/SmallFeatureCallback.h>
@@ -212,7 +211,7 @@ bool JagModel::init()
 }
 
 // Don't bother until we have something worth sorting.
-//#define ENABLE_SORT
+#define ENABLE_SORT
 
 bool JagModel::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj )
 {

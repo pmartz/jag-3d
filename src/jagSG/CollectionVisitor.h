@@ -42,6 +42,7 @@ class JAGSG_EXPORT CollectionVisitor : public Visitor
 {
 public:
     CollectionVisitor();
+    CollectionVisitor( jagSG::Node& node );
     CollectionVisitor( const CollectionVisitor& rhs );
     virtual ~CollectionVisitor();
 
