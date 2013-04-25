@@ -70,7 +70,7 @@ Classes that derive from VisitorBase should override visit() to perform per-Node
 This function also controls continued traversal. The easiest way to do this is to
 call VisitorBase::visit(), which traverses all children.
 
-Nodes often contain a traversal callback to determine whyich children are traversed.
+Nodes often contain a traversal callback to determine which children are traversed.
 See the Visitor class. The Visitor::visit() function uses a Node's traversal callback
 if present, and calls Node::traverse() otherwise. Typically, application classes
 should derive from Visitor to take advantage of this, unless they explicitly need to

@@ -40,41 +40,38 @@ std::string logstr( "jag.app.info" );
 
 
 
-class DrawGraphVisitor
+class DrawGraphCountVisitor : public jagDraw::Visitor
 {
 public:
-    DrawGraphVisitor();
-    ~DrawGraphVisitor();
+    DrawGraphCountVisitor();
+    ~DrawGraphCountVisitor();
 
     void reset();
     void dump( std::ostream& ostr );
 
-    void traverse( jagDraw::DrawGraph& drawGraph );
-
-    virtual void visit( jagDraw::NodeContainer& nc );
-    virtual void visit( jagDraw::Node& node, jagDraw::NodeContainer& nc );
+    virtual bool visit( jagDraw::NodeContainer& nc );
+    virtual bool visit( jagDraw::Node& node, jagDraw::NodeContainer& nc );
 
 protected:
-    jagDraw::NodeContainerPtr _ncp;
-
     unsigned int _containers;
     unsigned int _nodes;
 };
 
-DrawGraphVisitor::DrawGraphVisitor()
+DrawGraphCountVisitor::DrawGraphCountVisitor()
+    : jagDraw::Visitor( "count" )
 {
     reset();
 }
-DrawGraphVisitor::~DrawGraphVisitor()
+DrawGraphCountVisitor::~DrawGraphCountVisitor()
 {
 }
 
-void DrawGraphVisitor::reset()
+void DrawGraphCountVisitor::reset()
 {
     _containers = 0;
     _nodes = 0;
 }
-void DrawGraphVisitor::dump( std::ostream& ostr )
+void DrawGraphCountVisitor::dump( std::ostream& ostr )
 {
     ostr << "            \tTotal" << std::endl;
     ostr << "            \t-----" << std::endl;
@@ -82,35 +79,25 @@ void DrawGraphVisitor::dump( std::ostream& ostr )
     ostr << "      Nodes:\t" << _nodes << std::endl;
 }
 
-void DrawGraphVisitor::traverse( jagDraw::DrawGraph& drawGraph )
-{
-    BOOST_FOREACH( jagDraw::DrawGraph::value_type& nc, drawGraph )
-    {
-        visit( nc );
-        BOOST_FOREACH( jagDraw::NodeContainer::value_type& node, nc )
-        {
-            visit( node, nc );
-        }
-    }
-}
-
-void DrawGraphVisitor::visit( jagDraw::NodeContainer& nc )
+bool DrawGraphCountVisitor::visit( jagDraw::NodeContainer& nc )
 {
     ++_containers;
+    return( true );
 }
-void DrawGraphVisitor::visit( jagDraw::Node& node, jagDraw::NodeContainer& nc )
+bool DrawGraphCountVisitor::visit( jagDraw::Node& node, jagDraw::NodeContainer& nc )
 {
     ++_nodes;
+    return( true );
 }
 
 
 
 
-class CountVisitor : public jagSG::VisitorBase
+class SceneGraphCountVisitor : public jagSG::VisitorBase
 {
 public:
-    CountVisitor();
-    ~CountVisitor();
+    SceneGraphCountVisitor();
+    ~SceneGraphCountVisitor();
 
     void reset();
     void dump( std::ostream& ostr );
@@ -127,16 +114,16 @@ protected:
     std::set< jagDraw::DrawablePtr > _drawableSet;
 };
 
-CountVisitor::CountVisitor()
+SceneGraphCountVisitor::SceneGraphCountVisitor()
     : jagSG::VisitorBase( "count" )
 {
     reset();
 }
-CountVisitor::~CountVisitor()
+SceneGraphCountVisitor::~SceneGraphCountVisitor()
 {
 }
 
-void CountVisitor::reset()
+void SceneGraphCountVisitor::reset()
 {
     _nodes = _uNodes = 0;
     _commands = _uCommands = 0;
@@ -145,7 +132,7 @@ void CountVisitor::reset()
     _commandSet.clear();
     _drawableSet.clear();
 }
-void CountVisitor::dump( std::ostream& ostr )
+void SceneGraphCountVisitor::dump( std::ostream& ostr )
 {
     ostr << "            \tTotal\tUnique" << std::endl;
     ostr << "            \t-----\t------" << std::endl;
@@ -154,7 +141,7 @@ void CountVisitor::dump( std::ostream& ostr )
     ostr << "  Drawables:\t" << _drawables << "\t" << _uDrawables << std::endl;
 }
 
-void CountVisitor::visit( jagSG::Node& node )
+void SceneGraphCountVisitor::visit( jagSG::Node& node )
 {
     ++_nodes;
     jagSG::NodePtr np( node.shared_from_this() );
@@ -228,16 +215,16 @@ int main( int argc, char** argv )
     jagSG::NodePtr root( boost::make_shared< jagSG::Node >(
         *(jagSG::Node*) jagDisk::read( fileName ) ) );
 
-    CountVisitor cv;
-    root->accept( cv );
-    cv.dump( std::cout );
+    SceneGraphCountVisitor sgcv;
+    root->accept( sgcv );
+    sgcv.dump( std::cout );
 
     jagSG::CollectionVisitor collect;
     root->accept( collect );
 
-    DrawGraphVisitor dgv;
-    dgv.traverse( *( collect.getDrawGraph() ) );
-    dgv.dump( std::cout );
+    DrawGraphCountVisitor dgcv;
+    dgcv.traverse( *( collect.getDrawGraph() ) );
+    dgcv.dump( std::cout );
 
     return( 0 );
 }
