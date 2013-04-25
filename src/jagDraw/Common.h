@@ -48,6 +48,7 @@
 #include <jagDraw/VertexArrayObject.h>
 #include <jagDraw/VertexAttrib.h>
 #include <jagDraw/VertexAttribContainer.h>
+#include <jagDraw/Visitor.h>
 
 
 // __JAGDRAW_COMMON_H__
