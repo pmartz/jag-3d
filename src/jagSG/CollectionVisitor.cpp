@@ -38,6 +38,13 @@ CollectionVisitor::CollectionVisitor()
 {
     reset();
 }
+CollectionVisitor::CollectionVisitor( jagSG::Node& node )
+  : Visitor( "collect" ),
+    _currentNodes( NULL )
+{
+    reset();
+    node.accept( *this );
+}
 CollectionVisitor::CollectionVisitor( const CollectionVisitor& rhs )
   : Visitor( rhs ),
     _currentID( rhs._currentID ),

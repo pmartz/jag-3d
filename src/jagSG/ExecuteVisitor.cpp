@@ -35,10 +35,11 @@ ExecuteVisitor::ExecuteVisitor( jagDraw::DrawInfo& drawInfo )
     reset();
 }
 ExecuteVisitor::ExecuteVisitor( jagDraw::DrawInfo& drawInfo, jagSG::Node& node )
-  : Visitor( "exec", node ),
+  : Visitor( "exec" ),
     _drawInfo( drawInfo )
 {
     reset();
+    node.accept( *this );
 }
 ExecuteVisitor::ExecuteVisitor( const ExecuteVisitor& rhs )
   : Visitor( rhs ),
