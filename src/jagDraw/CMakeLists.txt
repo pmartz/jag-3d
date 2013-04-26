@@ -88,7 +88,7 @@ unset( _jagDrawGl3wHeaderFiles )
 unset( _jagDrawGl3wSourceFiles )
 if( JAG3D_USE_GL3W )
     set( _jagDrawGl3wHeaderFiles
-        GL3/gl3w.h
+        GL/gl3w.h
         ContextSupportGl3w.h
     )
     set( _jagDrawGl3wSourceFiles
