@@ -24,7 +24,7 @@
 
 
 #if defined( JAG3D_USE_GL3W )
-#  include <jagDraw/GL3/gl3w.h>
+#  include <jagDraw/GL/gl3w.h>
 #else
 #  ifndef GL_GLEXT_PROTOTYPES
 #    define GL_GLEXT_PROTOTYPES
@@ -37,7 +37,7 @@
 #    include <GLES2/gl2.h>
 #    include <GLES2/gl2ext.h>
 #  else
-#    include <GL3/gl3.h>
+#    include <GL/gl3.h>
 #  endif
 #endif
 

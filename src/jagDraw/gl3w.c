@@ -2,7 +2,7 @@
 #define JAGDRAW_GL3W_EXPORT __declspec( dllexport )
 #endif
 
-#include <jagDraw/GL3/gl3w.h>
+#include <jagDraw/GL/gl3w.h>
 
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN 1

@@ -1,5 +1,5 @@
 # Finds the gl3.h header file.
-# Looks for GL3/gl3.h or OpenGL/gl3.h (for OSX compatibility).
+# Looks for GL/gl3.h, GL3/gl3.h, or OpenGL/gl3.h (for OSX compatibility).
 # 
 # This script defines the following:
 #  GL3_FOUND // Set to TRUE if gl3.h is found
@@ -8,7 +8,7 @@
 #  GL3_GL3_HEADER // advanced
 #
 # GL3_ROOT can be set as an environment variable or a CMake entry
-# to the parent directory of the GL3 directory containing gl3.h.
+# to the parent directory of the GL (or GL3 or OpenGL) directory containing gl3.h.
 #
 # Note: glcorearb.h replaced gl3.h in mid-2012.
 #  - If this script finds glcorearb.h, but does not find gl3.h,
@@ -22,12 +22,12 @@
 
 
 FIND_PATH( GL3_GL3_HEADER 
-    NAMES GL3/gl3.h OpenGL/gl3.h
+    NAMES GL/gl3.h GL3/gl3.h OpenGL/gl3.h
     HINTS ${GL3_ROOT}
     PATHS ENV GL3_ROOT
 )
 FIND_PATH( GL3_GLCOREARB_HEADER
-    NAMES GL3/glcorearb.h OpenGL/glcorearb.h
+    NAMES GL/glcorearb.h GL3/glcorearb.h OpenGL/glcorearb.h
     HINTS ${GL3_ROOT}
     PATHS ENV GL3_ROOT
 )
