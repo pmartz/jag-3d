@@ -65,6 +65,11 @@ public:
 
     /** \brief TBD
     \details TBD */
+    void collectDrawables( jagSG::Node& node );
+
+
+    /** \brief TBD
+    \details TBD */
     jagDraw::DrawGraphPtr getDrawGraph() const;
 
     /** \brief TBD

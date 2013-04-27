@@ -130,28 +130,7 @@ void CollectionVisitor::visit( jagSG::Node& node )
             updateTransformUniforms();
         }
 
-        const unsigned int numDrawables( node.getNumDrawables() );
-        if( numDrawables > 0 )
-        {
-            JAG3D_PROFILE( "CV DrawNode processing" );
-
-            if( _currentNodes == NULL )
-                setCurrentNodeContainer( 0 );
-
-            _currentNodes->resize( _currentNodes->size()+1 );
-            jagDraw::Node& drawNode( (*_currentNodes)[ _currentNodes->size()-1 ] );
-
-            //JAG3D_WARNING( "TBD Must allocate new CommandMapPtr?" );
-            jagDraw::CommandMapPtr commands( new jagDraw::CommandMap(
-                 _commandStack.back() ) );
-            drawNode.setCommandMap( commands );
-
-            for( unsigned int idx=0; idx < numDrawables; ++idx )
-            {
-                drawNode.addDrawable( node.getDrawable( idx ) );
-            }
-        }
-
+        collectDrawables( node );
         Visitor::visit( node );
     }
 
@@ -165,6 +144,31 @@ void CollectionVisitor::visit( jagSG::Node& node )
     }
 
     popCommandMap();
+}
+
+void CollectionVisitor::collectDrawables( jagSG::Node& node )
+{
+    const unsigned int numDrawables( node.getNumDrawables() );
+    if( numDrawables > 0 )
+    {
+        JAG3D_PROFILE( "CV DrawNode processing" );
+
+        if( _currentNodes == NULL )
+            setCurrentNodeContainer( 0 );
+
+        _currentNodes->resize( _currentNodes->size()+1 );
+        jagDraw::Node& drawNode( (*_currentNodes)[ _currentNodes->size()-1 ] );
+
+        //JAG3D_WARNING( "TBD Must allocate new CommandMapPtr?" );
+        jagDraw::CommandMapPtr commands( new jagDraw::CommandMap(
+                _commandStack.back() ) );
+        drawNode.setCommandMap( commands );
+
+        for( unsigned int idx=0; idx < numDrawables; ++idx )
+        {
+            drawNode.addDrawable( node.getDrawable( idx ) );
+        }
+    }
 }
 
 
