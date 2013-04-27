@@ -79,9 +79,18 @@ public:
     \details TBD */
     class CallbackInfo {
     public:
-        CallbackInfo() {}
+        CallbackInfo( jagSG::Node* node=NULL )
+          : _node( node )
+        {
+        }
         CallbackInfo( const CallbackInfo& /* rhs */ ) {}
         virtual ~CallbackInfo() {}
+
+        virtual void setNode( jagSG::Node* node ) { _node = node; }
+        jagSG::Node* getNode() const { return( _node ); }
+
+    protected:
+        jagSG::Node* _node;
     };
     typedef jagBase::ptr< CallbackInfo >::shared_ptr CallbackInfoPtr;
 

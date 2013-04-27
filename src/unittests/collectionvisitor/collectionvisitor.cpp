@@ -73,7 +73,7 @@ bool test()
         CollectionVisitor::CollectionInfo ci( transform );
         gmtl::Sphered s( gmtl::Point3d( 0., 30., 0. ), 10. );
         jagDraw::BoundPtr bound( new jagDraw::BoundSphere( s ) );
-        ci.setBound( bound );
+        ci.setBound( bound.get() );
 
         const double ecd( ci.getECBoundDistance() );
         if( ecd != 50. )
