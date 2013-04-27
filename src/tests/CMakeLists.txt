@@ -26,3 +26,4 @@ add_subdirectory( texture )
 
 # Tests for jagSG interface
 add_subdirectory( nodes )
+add_subdirectory( transparency )
