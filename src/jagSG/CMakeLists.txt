@@ -31,6 +31,7 @@ set( _jagSGHeaderFiles
     ExecuteVisitor.h
     Common.h
     Node.h
+    SelectContainerCallback.h
     SmallFeatureCallback.h
     Visitor.h
 )
@@ -38,6 +39,7 @@ set( _jagSGHeaderFiles
 set( _jagSGSourceFiles
     CollectionVisitor.cpp
     ExecuteVisitor.cpp
+    SelectContainerCallback.cpp
     SmallFeatureCallback.cpp
     Node.cpp
 )
