@@ -109,7 +109,7 @@ void CollectionVisitor::visit( jagSG::Node& node )
         _transform.setModel( _matrixStack.back() );
     }
 
-    _infoPtr->setBound( node.getBound() );
+    _infoPtr->setNode( &node );
     Node::CallbackInfo* info( _infoPtr.get() );
 
     bool collect( true );
@@ -124,14 +124,7 @@ void CollectionVisitor::visit( jagSG::Node& node )
     }
     if( collect )
     {
-        {
-        JAG3D_PROFILE( "CV transform" );
-        if( _transform.getDirty() != 0 )
-            updateTransformUniforms();
-        }
-
-        collectDrawables( node );
-        Visitor::visit( node );
+        collectAndTraverse( node );
     }
 
 
@@ -146,8 +139,14 @@ void CollectionVisitor::visit( jagSG::Node& node )
     popCommandMap();
 }
 
-void CollectionVisitor::collectDrawables( jagSG::Node& node )
+void CollectionVisitor::collectAndTraverse( jagSG::Node& node )
 {
+    {
+        JAG3D_PROFILE( "CV transform" );
+        if( _transform.getDirty() != 0 )
+            updateTransformUniforms();
+    }
+
     const unsigned int numDrawables( node.getNumDrawables() );
     if( numDrawables > 0 )
     {
@@ -169,6 +168,8 @@ void CollectionVisitor::collectDrawables( jagSG::Node& node )
             drawNode.addDrawable( node.getDrawable( idx ) );
         }
     }
+
+    Visitor::visit( node );
 }
 
 
@@ -244,11 +245,11 @@ void CollectionVisitor::updateTransformUniforms()
 
 
 
-CollectionVisitor::CollectionInfo::CollectionInfo( jagBase::TransformD& transform )
-    : Node::CallbackInfo(),
-      _transform( transform )
-    // Initialization of these variables is handled in setBound():
-    //   _bound
+CollectionVisitor::CollectionInfo::CollectionInfo( jagBase::TransformD& transform, jagSG::Node* node )
+    : Node::CallbackInfo( node ),
+      _transform( transform ),
+      _bound( NULL )
+    // Initialization of these variables is handled in setNode():
     //   _ecDistance
     //   _ecDistanceDirty
     //   _ecRadius
@@ -259,9 +260,9 @@ CollectionVisitor::CollectionInfo::CollectionInfo( jagBase::TransformD& transfor
 }
 CollectionVisitor::CollectionInfo::CollectionInfo( const CollectionInfo& rhs )
     : Node::CallbackInfo( rhs ),
-      _transform( rhs._transform )
-    // Initialization of these variables is handled in setBound():
-    //   _bound
+      _transform( rhs._transform ),
+      _bound( rhs._bound )
+    // Initialization of these variables is handled in setNode():
     //   _ecDistance
     //   _ecDistanceDirty
     //   _ecRadius
@@ -274,12 +275,24 @@ CollectionVisitor::CollectionInfo::~CollectionInfo()
 {
 }
 
-void CollectionVisitor::CollectionInfo::setBound( jagDraw::BoundPtr bound )
+void CollectionVisitor::CollectionInfo::setNode( jagSG::Node* node )
 {
-    _bound = bound;
+    jagSG::Node::CallbackInfo::setNode( node );
+    _bound = node->getBound().get();
+
     _ecDistanceDirty = true;
     _ecRadiusDirty = true;
     _wcLengthCoeffDirty = true;
+}
+void CollectionVisitor::CollectionInfo::setBound( jagDraw::Bound* bound )
+{
+    jagSG::Node::CallbackInfo::setNode( NULL );
+
+    _ecDistanceDirty = true;
+    _ecRadiusDirty = true;
+    _wcLengthCoeffDirty = true;
+
+    _bound = bound;
 }
 
 double CollectionVisitor::CollectionInfo::getECBoundDistance() const

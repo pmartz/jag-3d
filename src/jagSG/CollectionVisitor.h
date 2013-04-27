@@ -65,7 +65,7 @@ public:
 
     /** \brief TBD
     \details TBD */
-    void collectDrawables( jagSG::Node& node );
+    void collectAndTraverse( jagSG::Node& node );
 
 
     /** \brief TBD
@@ -93,11 +93,14 @@ public:
     class JAGSG_EXPORT CollectionInfo : public Node::CallbackInfo
     {
     public:
-        CollectionInfo( jagBase::TransformD& transform );
+        CollectionInfo( jagBase::TransformD& transform, jagSG::Node* node=NULL );
         CollectionInfo( const CollectionInfo& rhs );
         virtual ~CollectionInfo();
 
-        void setBound( jagDraw::BoundPtr bound );
+        virtual void setNode( jagSG::Node* node );
+        /** \brief Set the bound without setting the node.
+        \details This is primarily for use by unit tests. */
+        void setBound( jagDraw::Bound* Bound );
 
         double getECBoundDistance() const;
         double getECBoundRadius() const;
@@ -105,7 +108,7 @@ public:
 
     protected:
         jagBase::TransformD& _transform;
-        jagDraw::BoundPtr _bound;
+        jagDraw::Bound* _bound;
 
         mutable double _ecDistance;
         mutable bool _ecDistanceDirty;
