@@ -31,6 +31,9 @@
 #include <jagBase/Log.h>
 #include <jagBase/LogMacros.h>
 
+#include <boost/chrono/chrono.hpp>
+#include <boost/chrono/time_point.hpp>
+#include <boost/chrono/duration.hpp>
 #include <boost/program_options/options_description.hpp>
 #include <boost/program_options/variables_map.hpp>
 #include <gmtl/gmtl.h>
@@ -46,14 +49,18 @@ using namespace std;
 namespace bpo = boost::program_options;
 
 
-class JagModel : public DemoInterface
+class Transparency : public DemoInterface
 {
 public:
-    JagModel()
-      : DemoInterface( "jag.ex.jagmodel" ),
-        _fileName( "cow.osg" )
-    {}
-    virtual ~JagModel() {}
+    Transparency()
+      : DemoInterface( "jag.ex.trans" ),
+        _fileName( "cow.osg" ),
+        _lastTime(),
+        _rotation( 0. )
+    {
+        setContinuousRedraw();
+    }
+    virtual ~Transparency() {}
 
     virtual bool parseOptions( boost::program_options::variables_map& vm );
 
@@ -68,7 +75,7 @@ public:
 
 protected:
     gmtl::Matrix44d computeProjection( double aspect );
-    gmtl::Matrix44d computeView();
+    gmtl::Matrix44d computeView( const double angleRad );
 
     std::string _fileName;
 
@@ -76,6 +83,9 @@ protected:
 
     typedef jagDraw::PerContextData< gmtl::Matrix44d > PerContextMatrix44d;
     PerContextMatrix44d _proj;
+
+    boost::chrono::high_resolution_clock::time_point _lastTime;
+    double _rotation;
 };
 
 
@@ -84,17 +94,17 @@ DemoInterface* DemoInterface::create( bpo::options_description& desc )
     desc.add_options()
         ( "file,f", bpo::value< std::string >(), "Model to load. Default: cow.osg" );
 
-    return( new JagModel );
+    return( new Transparency );
 }
 
-bool JagModel::parseOptions( bpo::variables_map& vm )
+bool Transparency::parseOptions( bpo::variables_map& vm )
 {
     if( vm.count( "file" ) > 0 )
         _fileName = vm[ "file" ].as< std::string >();
     return( true );
 }
 
-bool JagModel::startup( const unsigned int numContexts )
+bool Transparency::startup( const unsigned int numContexts )
 {
     DemoInterface::startup( numContexts );
 
@@ -114,16 +124,11 @@ bool JagModel::startup( const unsigned int numContexts )
 
 
     // Prepare the scene graph.
-    _root = boost::make_shared< jagSG::Node >(
-        *(jagSG::Node*) jagDisk::read( _fileName ) );
-    if( _root == NULL )
-    {
-        JAG3D_FATAL_STATIC( _logName, "Can't load \"" + _fileName + "\"." );
-        return( false );
-    }
+    _root = jagSG::NodePtr( new jagSG::Node() );
 
-    jagSG::SmallFeatureDistributionVisitor sfdv;
-    _root->accept( sfdv );
+    jagSG::NodePtr model( boost::make_shared< jagSG::Node >(
+        *(jagSG::Node*) jagDisk::read( _fileName ) ) );
+    _root->addChild( model );
 
 
     jagDraw::ShaderPtr vs( (jagDraw::Shader*) jagDisk::read( "jagmodel.vert" ) );
@@ -182,7 +187,7 @@ bool JagModel::startup( const unsigned int numContexts )
     return( true );
 }
 
-bool JagModel::init()
+bool Transparency::init()
 {
     glClearColor( 0.f, 0.f, 0.f, 0.f );
 
@@ -200,7 +205,7 @@ bool JagModel::init()
 // Don't bother until we have something worth sorting.
 #define ENABLE_SORT
 
-bool JagModel::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj )
+bool Transparency::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj )
 {
     if( !getStartupCalled() )
         return( true );
@@ -212,6 +217,14 @@ bool JagModel::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj )
     plist.push_back( jagDraw::DrawablePrep::UniformSet_t );
 #endif
 
+    boost::chrono::high_resolution_clock::time_point current( boost::chrono::high_resolution_clock::now() );
+    const boost::chrono::high_resolution_clock::duration elapsed( current - _lastTime );
+    _lastTime = current;
+    const double elapsedSecs( elapsed.count() * 0.000000001 );
+    _rotation += elapsedSecs * gmtl::Math::TWO_PI / 3.; // 2*PI rans (360 degrees) every 3 seconds.
+    if( _rotation > gmtl::Math::TWO_PI )
+        _rotation -= gmtl::Math::TWO_PI;
+
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
     const jagDraw::jagDrawContextID contextID( jagDraw::ContextSupport::instance()->getActiveContext() );
@@ -220,24 +233,22 @@ bool JagModel::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj )
     jagSG::CollectionVisitor& collect( getCollectionVisitor() );
     collect.reset();
 
+    jagDraw::DrawGraphPtr drawGraph;
     {
         JAG3D_PROFILE( "Collection" );
 
-        // Systems such as VRJ will pass view and projection matrices.
-        if( view.mState != gmtl::Matrix44f::IDENTITY || proj.mState != gmtl::Matrix44f::IDENTITY )
-            collect.setViewProj( view, proj );
-        else
-            collect.setViewProj( computeView(), _proj._data[ contextID ] );
+        collect.setViewProj( computeView( _rotation ), _proj._data[ contextID ] );
 
         {
             JAG3D_PROFILE( "Collection traverse" );
             // Collect a draw graph.
             _root->accept( collect );
         }
+        drawGraph = collect.getDrawGraph();
+
 #ifdef ENABLE_SORT
         {
             JAG3D_PROFILE( "Collection sort" );
-            jagDraw::DrawGraphPtr drawGraph( collect.getDrawGraph() );
             BOOST_FOREACH( jagDraw::NodeContainer& nc, *drawGraph )
             {
                 std::sort( nc.begin(), nc.end(), jagDraw::DrawNodeCommandSorter( plist ) );
@@ -250,7 +261,6 @@ bool JagModel::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj )
         JAG3D_PROFILE( "Render" );
 
         // Execute the draw graph.
-        jagDraw::DrawGraphPtr drawGraph( collect.getDrawGraph() );
         drawGraph->execute( drawInfo );
     }
 
@@ -261,7 +271,7 @@ bool JagModel::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj )
     return( true );
 }
 
-void JagModel::reshape( const int w, const int h )
+void Transparency::reshape( const int w, const int h )
 {
     if( !getStartupCalled() )
         return;
@@ -270,7 +280,7 @@ void JagModel::reshape( const int w, const int h )
     _proj._data[ contextID ] = computeProjection( (double)w/(double)h );
 }
 
-gmtl::Matrix44d JagModel::computeProjection( double aspect )
+gmtl::Matrix44d Transparency::computeProjection( double aspect )
 {
     const gmtl::Sphered s( _root->getBound()->asSphere() );
 
@@ -278,20 +288,24 @@ gmtl::Matrix44d JagModel::computeProjection( double aspect )
         return( gmtl::MAT_IDENTITY44D );
 
     gmtl::Matrix44d proj;
-    const double zNear = 3.5 * s.getRadius();
-    const double zFar = 5.75 * s.getRadius();
+    const double zNear = 2.8 * s.getRadius();
+    const double zFar = 5.2 * s.getRadius();
     gmtl::setPerspective< double >( proj, 30., aspect, zNear, zFar );
 
     return( proj );
 }
 
-gmtl::Matrix44d JagModel::computeView()
+gmtl::Matrix44d Transparency::computeView( const double angleRad )
 {
     const gmtl::Sphered s( _root->getBound()->asSphere() );
     const gmtl::Point3d center( s.getCenter() );
     const double radius( (float)s.getRadius() );
 
-    const gmtl::Point3d eye( center + ( gmtl::Point3d( 1.5, -4., 1.5 ) * radius ) );
+    gmtl::Matrix33d rot;
+    setRot( rot, gmtl::AxisAngle< double >( angleRad, 0., 0., 1. ) );
+    gmtl::Point3d eyeOffset( rot * gmtl::Point3d( 0., -4., 0. ) * radius );
+
+    const gmtl::Point3d eye( center + eyeOffset );
     const gmtl::Vec3d up( 0.f, 0.f, 1.f );
 
     gmtl::Matrix44d view;
