@@ -98,19 +98,6 @@ bool JagModel::startup( const unsigned int numContexts )
 {
     DemoInterface::startup( numContexts );
 
-#if 0
-    //std::string fileName( "GRINDER_WHEEL.PRT.ive" );
-    //std::string fileName( "M55339.ASM.ive" );
-    //std::string fileName( "USMC23_4019.ASM.ive" );
-    //std::string fileName( "02-1100.ive" );
-
-    //std::string fileName( "sharedtetra.osg" );
-    //std::string fileName( "fountain.osg" );
-    //std::string fileName( "glider.osg" );
-    std::string fileName( "cow.osg" );
-    //std::string fileName( "dumptruck.osg" );
-    //std::string fileName( "teapot.osg" );
-#endif
     JAG3D_INFO_STATIC( _logName, _fileName );
 
     if( _fileName.empty() )
@@ -135,7 +122,7 @@ bool JagModel::startup( const unsigned int numContexts )
         return( false );
     }
 
-    jagSG::SmallFeatureDistricutionVisitor sfdv;
+    jagSG::SmallFeatureDistributionVisitor sfdv;
     _root->accept( sfdv );
 
 

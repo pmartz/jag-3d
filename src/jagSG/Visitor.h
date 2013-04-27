@@ -263,7 +263,7 @@ public:
         // push stacks, if desired
 
         if( node.getTraverseCallback() != NULL )
-            (*node.getTraverseCallback())( *this );
+            (*node.getTraverseCallback())( this );
         else
             node.traverse( *this );
 

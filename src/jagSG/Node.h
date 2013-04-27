@@ -91,7 +91,7 @@ public:
     struct Callback {
         /** \brief TBD
         \details TBD */
-        virtual bool operator()( jagSG::VisitorBase& /* visitor */,
+        virtual bool operator()( jagSG::VisitorBase* /* visitor */,
             CallbackInfo* info = NULL )
         {
             return( false );

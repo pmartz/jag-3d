@@ -33,7 +33,7 @@ SmallFeatureCallback::SmallFeatureCallback()
 {
 }
 SmallFeatureCallback::SmallFeatureCallback( const SmallFeatureCallback& rhs )
-  : jagBase::LogBase( "jag.sg.node" ),
+  : jagBase::LogBase( "jag.sg.coll.small" ),
     jagSG::Node::Callback( rhs )
 {
 }
@@ -42,7 +42,7 @@ SmallFeatureCallback::~SmallFeatureCallback()
 }
 
 
-bool SmallFeatureCallback::operator()( jagSG::VisitorBase& visitor, jagSG::Node::CallbackInfo* info )
+bool SmallFeatureCallback::operator()( jagSG::VisitorBase* /* visitor */, jagSG::Node::CallbackInfo* info )
 {
     jagSG::CollectionVisitor::CollectionInfo* ci( static_cast<
         jagSG::CollectionVisitor::CollectionInfo* >( info ) );
@@ -54,21 +54,21 @@ bool SmallFeatureCallback::operator()( jagSG::VisitorBase& visitor, jagSG::Node:
 
 
 
-SmallFeatureDistricutionVisitor::SmallFeatureDistricutionVisitor()
+SmallFeatureDistributionVisitor::SmallFeatureDistributionVisitor()
     : jagSG::VisitorBase( "small" ),
       _cb( SmallFeatureCallbackPtr( new SmallFeatureCallback() ) )
 {
 }
-SmallFeatureDistricutionVisitor::SmallFeatureDistricutionVisitor( const SmallFeatureDistricutionVisitor& rhs )
+SmallFeatureDistributionVisitor::SmallFeatureDistributionVisitor( const SmallFeatureDistributionVisitor& rhs )
     : jagSG::VisitorBase( rhs ),
       _cb( rhs._cb )
 {
 }
-SmallFeatureDistricutionVisitor::~SmallFeatureDistricutionVisitor()
+SmallFeatureDistributionVisitor::~SmallFeatureDistributionVisitor()
 {
 }
 
-void SmallFeatureDistricutionVisitor::visit( jagSG::Node& node )
+void SmallFeatureDistributionVisitor::visit( jagSG::Node& node )
 {
     node.getCollectionCallbacks().push_back( _cb );
 

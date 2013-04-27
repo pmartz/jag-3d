@@ -116,7 +116,7 @@ void CollectionVisitor::visit( jagSG::Node& node )
     jagSG::Node::CollectionCallbacks& callbacks( node.getCollectionCallbacks() );
     BOOST_FOREACH( jagSG::Node::CallbackPtr cb, callbacks )
     {
-        if( !( (*cb)( *this, info ) ) )
+        if( !( (*cb)( this, info ) ) )
         {
             collect = false;
             break;

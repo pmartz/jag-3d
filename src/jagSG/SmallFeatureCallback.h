@@ -46,7 +46,7 @@ public:
 
     /** \brief TBD
     \details TBD */
-    virtual bool operator()( jagSG::VisitorBase& visitor, jagSG::Node::CallbackInfo* info );
+    virtual bool operator()( jagSG::VisitorBase* visitor, jagSG::Node::CallbackInfo* info );
 
 protected:
 };
@@ -55,16 +55,16 @@ typedef jagBase::ptr< SmallFeatureCallback >::shared_ptr SmallFeatureCallbackPtr
 
 
 
-/** \class SmallFeatureDistricutionVisitor SmallFeatureCallback.h <jagSG/SmallFeatureCallback.h>
+/** \class SmallFeatureDistributionVisitor SmallFeatureCallback.h <jagSG/SmallFeatureCallback.h>
 \brief TBD
 \details TBD
 */
-class JAGSG_EXPORT SmallFeatureDistricutionVisitor : public jagSG::VisitorBase
+class JAGSG_EXPORT SmallFeatureDistributionVisitor : public jagSG::VisitorBase
 {
 public:
-    SmallFeatureDistricutionVisitor();
-    SmallFeatureDistricutionVisitor( const SmallFeatureDistricutionVisitor& rhs );
-    ~SmallFeatureDistricutionVisitor();
+    SmallFeatureDistributionVisitor();
+    SmallFeatureDistributionVisitor( const SmallFeatureDistributionVisitor& rhs );
+    ~SmallFeatureDistributionVisitor();
 
     virtual void visit( jagSG::Node& node );
 
