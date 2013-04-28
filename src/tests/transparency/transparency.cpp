@@ -221,7 +221,7 @@ bool Transparency::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& pr
     const boost::chrono::high_resolution_clock::duration elapsed( current - _lastTime );
     _lastTime = current;
     const double elapsedSecs( elapsed.count() * 0.000000001 );
-    _rotation += elapsedSecs * gmtl::Math::TWO_PI / 3.; // 2*PI rans (360 degrees) every 3 seconds.
+    _rotation += elapsedSecs * gmtl::Math::TWO_PI / 4.; // 2*PI rans (360 degrees) every 4 secs.
     if( _rotation > gmtl::Math::TWO_PI )
         _rotation -= gmtl::Math::TWO_PI;
 
