@@ -51,6 +51,7 @@ if(APPLE)
 endif(APPLE)
 
 set( _projectLibraries
+    jagUtil
     jagSG
     jagDraw
     jagDisk
