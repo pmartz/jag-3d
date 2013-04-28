@@ -7,7 +7,7 @@
 @PACKAGE_INIT@
 
 # These are IMPORTED targets created by jag3dLibraryDepends.cmake
-set( jag3d_LIBRARIES "jagSG;jagDraw;jagDisk;jagBase" )
+set( jag3d_LIBRARIES "jagUtil;jagSG;jagDraw;jagDisk;jagBase" )
 set( jag3d_EXECUTABLE test )
 
 # Compute paths
