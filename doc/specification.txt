@@ -20,9 +20,9 @@
 
 \section SpecIntroduction Introduction
 
-JAG specifies the behavior of an OpenGL-based rendering toolkit. JAG does not specify
+JAG specifies the behavior of an OpenGL-based rendering toolkit. JAG doesn't specify
 function or class names or a language binding. There could be multiple JAG-compliant
-toolkit implementations, of which Jag3D is one. It is not a requirement that code written
+toolkit implementations, of which Jag3D is one. It isn't a requirement that code written
 for one JAG-compliant toolkit will port directly, or even easily, to another JAG-compliant
 toolkit.
 
@@ -33,14 +33,19 @@ core profile flags ("GL4"). For additional information, download a copy of the
 <a href="http://www.opengl.org/registry/#oldspecs">OpenGL v4.0 specification</a>. Note
 that future versions of JAG will likely require a more recent version of OpenGL.
 
-Note that JAG-based client code isn't required to use a GL4 context. However, because a
-JAG implementation provides utilities to access GL4 functionality, non-GL4 client code
-should take precautions to avoid JAG functionality that depends on GL4. As an example,
-client code using an OpenGL 3.2 context should not use any of the indirect drawing
+It's expected that client code will create and use a GL4 context. However,
+this isn't a strict requirement. When using contexts less than GL4, client
+code should take care to avoid GL4-based functionality. As an example,
+client code using an OpenGL 3.2 context shouldn't use any of the indirect drawing
 commands (DrawElementsIndirect), or double-precision uniform variables.
 
 A JAG implementation isn't required to provide GL4 functionality via OpenGL's
-extension mechanism for client code that uses non-GL4 contexts.
+extension mechanism for client code that uses non-GL4 contexts. As an
+example, client code using a GL2 context shouldn't expect JAG to provide
+access to vertex array objects as an extension. (Note this implies limits to
+how low of a context client code can use, as vertex array objects are required
+for rendering in OpenGL v4.0 core profile.) In short, client code should
+create and use a GL4 context.
 
 As an OpenGL-based rendering toolkit, JAG must not prevent or hinder the use of any
 OpenGL rendering algorithm or technique.
@@ -51,7 +56,7 @@ OpenGL rendering algorithm or technique.
 The specification is composed of two parts: this \a Introduction document,
 and the <a href="annotated.html">Doxygen-generated class reference</a>
 from the Jag3D source code. Because Jag3D is a C++ implementation of JAG,
-this reference material is inherently C++-oriented. This bias should not
+this reference material is inherently C++-oriented. This bias shouldn't
 be interpreted as a specification requirement.
 
 The reference material for each class and member function contains the following
@@ -65,12 +70,19 @@ specifications:
 \li Known specification violations.
 
 
+\subsection SpecLogHandle Log Handle
+
+To support the \ref SpecModuleLogging requirement, each module, class, or
+function that displays messages must have a log handle.
+
+
 \anchor ThreadDefinitions
 \subsection SpecThread Thread-safety Requirements
+
 \li Thread Safe: The code employes explicit locking.
 \li Context Safe: The code is thread safe when executed by a
 context-specific thread. Multiple context threads must have
-thread-specific instances of any C++ objects marked as "Context Safe". 
+thread-specific instances of any code marked as "Context Safe". 
 \li Read-Only: The code is thread safe because it does not modify
 any shared memory.
 \li Unsafe: The code is not thread safe.
@@ -78,8 +90,11 @@ any shared memory.
 
 \subsection SpecOpenGL OpenGL Footprint Requirements
 
-for functions that issue OpenGL commands, this spec documents
+For functions that issue OpenGL commands, this spec documents
 what commands are issued and under which circumstances.
+
+A JAG regresssion test suite could use an OpenGL shim layer
+to verify compliance with the OpenGL footprint specification.
 
 
 \subsection SpecDependency Dependency Requirements
@@ -124,18 +139,26 @@ reference counted memory.
 
 The JAG implementation must support a logging mechanism with the following features:
 \li Direct output to the console or a log file.
-\li Set logging verbosity per class and per logical grouping of like classes.
+\li Set logging verbosity per module, class, or function, and per logical grouping of related code.
+
+The logged information and its format are implementation-dependent, with the following
+three exceptions:
+  -# The OpenGL shim layer must allow OpenGL error checking per command.
+  -# The Draw module must log OpenGL errors. The granularity of the error checks is
+implementation-dependent, but there must be a way to eliminate all error checks at
+compile-time. Error checking includes both glGetError() and glCheckFramebufferStatus().
+  -# The JAG implementation must provide a mechanism to log the version information.
 
 \subsection SpecModuleMath Math
 
-The Jag implementation must support a math library containing data types
+The JAG implementation must support a math library containing data types
 compatible with OpenGL. The math library must support the following features:
 \li matrix-matrix concatenation
 \li matrix inversion
 \li matrix-vector multiplication
 \li common matrix construction utilities (frustum, perspective, rotate, etc)
 \li vector cross and dot product
-\li vector normalization, scale, modulation, addition, and subtraction
+\li vector length, squared length, normalization, scale, modulation, addition, and subtraction
 \li arrays of matrices and vectors
 
 \subsection SpecModuleOpenGL OpenGL
