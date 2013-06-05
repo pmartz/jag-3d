@@ -82,7 +82,7 @@ if( JAG3D_USE_FREEGLUT )
 endif()
 option( JAG3D_USE_QT "If set and Qt is found, Jag3D builds windowed executables with Qt." ON )
 if( JAG3D_USE_QT )
-    find_package( Qt4 4.8.0 COMPONENTS QtCore QtGui QtOpenGL )
+    find_package( Qt5 5.0.2 COMPONENTS QtCore QtGui QtOpenGL )
 endif()
 option( JAG3D_USE_VRJ "If set and VR Juggler is found, Jag3D builds windowed executables with VR Juggler." ON )
 if( JAG3D_USE_VRJ )
@@ -258,7 +258,8 @@ install( FILES "extra/Findjag3d.cmake"
 # =============================================
 
 # Add all targets to the build-tree export set
-export( TARGETS jagUtil jagSG jagDraw jagDisk jagBase
+# export( TARGETS jagUtil jagSG jagDraw jagDisk jagBase
+export( TARGETS jagSG jagDraw jagDisk jagBase
   FILE "${PROJECT_BINARY_DIR}/lib/jag3dLibraryDepends.cmake" )
 
 # Export the package for use from the build-tree

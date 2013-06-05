@@ -30,7 +30,17 @@ namespace jagUtil
 {
 
 
-JAGUTIL_EXPORT jagDraw::Drawable* makePlane( const gmtl::Point3f& corner, const gmtl::Vec3f& u, const gmtl::Vec3f& v,
+typedef struct {
+    gmtl::Point3f _v;
+    gmtl::Vec3f _n;
+    gmtl::Point2f _tc;
+} VertexNormalTexCoordStruct;
+
+typedef std::vector< VertexNormalTexCoordStruct > VNTCVec;
+
+
+JAGUTIL_EXPORT jagDraw::Drawable* makePlane( VNTCVec& data,
+    const gmtl::Point3f& corner, const gmtl::Vec3f& u, const gmtl::Vec3f& v,
     const short subU=1, const short subV=1, jagDraw::Drawable* drawable=NULL );
 
 
