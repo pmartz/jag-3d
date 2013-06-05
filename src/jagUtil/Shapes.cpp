@@ -19,6 +19,7 @@
 *************** <auto-copyright.pl END do not edit this line> ***************/
 
 #include <jagUtil/Shapes.h>
+#include <jagBase/LogMacros.h>
 #include <gmtl/gmtl.h>
 
 
@@ -26,9 +27,71 @@ namespace jagUtil
 {
 
 
-jagDraw::Drawable* makePlane( const gmtl::Point3f& corner, const gmtl::Vec3f& u, const gmtl::Vec3f& v,
+static void addPlaneData( VNTCVec& data,
+    const osg::Vec3& corner,
+    const osg::Vec3& u, unsigned short uSteps,
+    const osg::Vec3& v, unsigned short vSteps,
+    const osg::Vec3& normal, jagDraw::Drawable* geom )
+{
+    std::vector< short > indices;
+
+    unsigned short uIdx, vIdx;
+    for( vIdx=0; vIdx<=vSteps; vIdx++ )
+    {
+        const float vPct( (float)vIdx / (float)vSteps );
+        const gmtl::Vec3f vVec( v * vPct );
+
+        unsigned int startIdx( data.size() ), idx( 0 );
+        for( uIdx=0; uIdx<=uSteps; uIdx++ )
+        {
+            VertexNormalTexCoordStruct vntc;
+            vntc._v = corner + vVec + (u * uPct);
+            vntc._n = normal;
+            const float uPct( (float)uIdx / (float)uSteps );
+            vntc._tc = gmtl::Vec2f( uPct, vPct );
+            data.push_back( vntc );
+
+            indices.push_back( startIdx + idx + uSteps + 1 );
+            indices.push_bacl( startIdx + idx );
+            idx++;
+        }
+        jagDraw::DrawElementsPtr de( jagDraw::DrawElementsPtr( new jagDraw::DrawElements
+            ( GL_TRIANGLE_STRIP, idx-startIdx, GL_UNSIGNED_SHORT, 0,
+            jagDraw::BufferObjectPtr( new jagDraw::ElementArrayBuffer(
+                jagBase::BufferPtr( new jagBase::Buffer( indices.size()*sizeof(unsigned short), &( indices[ 0 ] ) )))))));
+        geom->addDrawCommand( de );
+    }
+}
+
+static bool buildPlaneData( VNTCVec& data,
+    const gmtl::Point3f& corner, const gmtl::Vec3f& u, const gmtl::Vec3f& v,
     const short subU, const short subV, jagDraw::Drawable* drawable )
 {
+    if( ( subU <= 0 ) || ( subV <= 0 ) )
+    {
+        JAG3D_ERROR_STATIC( "jag.util.plane", "makePlane: Invalid subdivisions." );
+        return( false );
+    }
+
+    gmtl::Vec3f normal( u ^ v );
+    gmtl::normalize( normal );
+    addPlaneData( data, corner, u, subU, v, subV, normal, geom );
+
+    return( true );
+}
+
+jagDraw::Drawable* makePlane( VNTCVec& data,
+    const gmtl::Point3f& corner, const gmtl::Vec3f& u, const gmtl::Vec3f& v,
+    const short subU, const short subV, jagDraw::Drawable* drawable )
+{
+    jagDraw::Drawable* draw( drawable );
+    if( draw == NULL )
+        draw = new jagDraw::Drawable();
+
+    if( buildPlaneData( data, corner, u, v, subU, subV, draw ) )
+        return( draw );
+
+    JAG3D_ERROR_STATIC( "jag.util.plane", "makePlane: Error." );
     return( NULL );
 }
 

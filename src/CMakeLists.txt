@@ -23,7 +23,7 @@ add_subdirectory( jagBase )
 add_subdirectory( jagDisk )
 add_subdirectory( jagDraw )
 add_subdirectory( jagSG )
-add_subdirectory( jagUtil )
+# add_subdirectory( jagUtil )
 
 
 if( JAG3D_BUILD_PLUGINS )
