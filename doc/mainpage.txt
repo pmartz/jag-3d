@@ -156,8 +156,8 @@ Furthermore, in order to run any of the examples, you'll need one or more
 windowing toolkits. Jag3D's build infrastructure currently supports the
 following windowing toolkits:
 \li <a href=http://freeglut.sourceforge.net/>Freeglut</a> v2.8.0 or newer.
-\li <a href=http://code.google.com/p/vrjuggler/source/checkout>VRJuggler</a> The 'gl3' branch is required ("git checkout gl3").
-\li <a href=http://qt-project.org/downloads>Qt</a> v4.8.0 or newer (v4.8.3 recommended). You need only the libraries, not the SDK.
+\li <a href=http://code.google.com/p/vrjuggler/source/checkout>VRJuggler</a> git main trunk.
+\li <a href=http://qt-project.org/downloads>Qt</a> v5.0.0 or newer.
 
 Poco and Boost must be built as shared libraries / DLLs in order for Jag3D to work correctly.
 
