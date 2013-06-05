@@ -40,7 +40,7 @@ class Buffer
 public:
     Buffer()
       : _size( 0 ),
-        _buffer( NULL )
+        _buffer()
     {
     }
 
