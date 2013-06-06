@@ -193,7 +193,7 @@ endmacro()
 macro( _addQtExecutable _category _exeName )
     set( _localExeName "${_exeName}-qt" )
 
-    QT5_WRAP_CPP( _mocFiles
+    QT4_WRAP_CPP( _mocFiles
         ${PROJECT_SOURCE_DIR}/src/demoSupport/qtGlWidget.h
         OPTIONS "-f"
     )
@@ -218,7 +218,10 @@ macro( _addQtExecutable _category _exeName )
     unset( _allIncludes )
     set( _allIncludes
         ${_projectIncludes}
-        ${_QT_INCLUDE_DIRS}
+        ${QT_INCLUDE_DIR}
+        ${QT_QTOPENGL_INCLUDE_DIR}
+        ${QT_QTGUI_INCLUDE_DIR}
+        ${QT_QTCORE_INCLUDE_DIR}
         ${_includes}
         ${_optionalDependencyIncludes}
         ${_requiredDependencyIncludes}
@@ -229,7 +232,8 @@ macro( _addQtExecutable _category _exeName )
 
     target_link_libraries( ${_localExeName}
         ${_libs}
-        ${_QT_LIBRARIES}
+        ${QT_QTOPENGL_LIBRARY}
+        ${QT_LIBRARIES}
         ${_projectLibraries}
         ${_optionalDependencyLibraries}
         ${_requiredDependencyLibraries}
@@ -294,7 +298,7 @@ macro( _addExecutable _category _exeName )
     if( Freeglut_FOUND AND JAG3D_USE_FREEGLUT )
         _addFreeglutExecutable( ${_category} ${_exeName} ${ARGN} )
     endif()
-    if( _QT_FOUND AND JAG3D_USE_QT )
+    if( QT4_FOUND AND JAG3D_USE_QT )
         _addQtExecutable( ${_category} ${_exeName} ${ARGN} )
     endif()
     if( VRJUGGLER30_FOUND AND CPPDOM_FOUND AND JAG3D_USE_VRJ )
