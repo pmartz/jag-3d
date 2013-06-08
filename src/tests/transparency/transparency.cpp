@@ -22,9 +22,8 @@
 
 #include <jagDraw/Common.h>
 #include <jagDraw/PerContextData.h>
-#include <jagSG/CollectionVisitor.h>
-#include <jagSG/Node.h>
-#include <jagSG/SmallFeatureCallback.h>
+#include <jagSG/Common.h>
+#include <jagUtil/Shapes.h>
 #include <jagDisk/ReadWrite.h>
 #include <jagBase/Profile.h>
 #include <jagBase/Version.h>
@@ -104,6 +103,66 @@ bool Transparency::parseOptions( bpo::variables_map& vm )
     return( true );
 }
 
+
+jagSG::NodePtr createPlanesSubgraph( jagDraw::BoundPtr bound )
+{
+    jagSG::NodePtr planeRoot = jagSG::NodePtr( new jagSG::Node() );
+
+    // Create container to store the plane vertex / normal / texcoord data.
+    jagUtil::VNTCVec data;
+
+    // Create the first plane and its data
+    float radius( (float)( bound->getRadius() ) );
+    gmtl::Point3f corner( radius, -radius, radius );
+    gmtl::Vec3f uVec( 0.f, 0.f, -2.f*radius );
+    gmtl::Vec3f vVec( 0.f, 2.f*radius, 0.f );
+    jagDraw::DrawablePtr plane0( jagUtil::makePlane(
+        data, corner, uVec, vVec ) );
+    planeRoot->addDrawable( plane0 );
+
+    // Create second plane and its data.
+    corner = gmtl::Point3f( -radius, -radius, -radius );
+    uVec = gmtl::Vec3f( 0.f, 0.f, 2.f*radius );
+    plane0 = jagDraw::DrawablePtr( jagUtil::makePlane(
+        data, corner, uVec, vVec ) );
+    planeRoot->addDrawable( plane0 );
+
+    // Put the data in an array buffer object, and add it to
+    // a VertexArrayObject.
+    {
+        // TBD this should be in a convenicne routine.
+
+        jagBase::BufferPtr ibp( new jagBase::Buffer( data.size() * sizeof( jagUtil::VertexNormalTexCoordStruct ), (void*)&data[0] ) );
+        jagDraw::BufferObjectPtr ibop( new jagDraw::BufferObject( GL_ARRAY_BUFFER, ibp ) );
+
+        const GLsizei stride( sizeof( jagUtil::VertexNormalTexCoordStruct ) );
+        jagDraw::VertexAttribPtr vertAttrib( new jagDraw::VertexAttrib(
+            "vertex", 3, GL_FLOAT, GL_FALSE, stride, 0 ) );
+        jagDraw::VertexAttribPtr normAttrib( new jagDraw::VertexAttrib(
+            "normal", 3, GL_FLOAT, GL_FALSE, stride, sizeof( GLfloat ) * 3 ) );
+        jagDraw::VertexAttribPtr tcAttrib( new jagDraw::VertexAttrib(
+            "texcoord", 2, GL_FLOAT, GL_FALSE, stride, sizeof( GLfloat ) * 6 ) );
+
+        jagDraw::VertexArrayObjectPtr vaop( new jagDraw::VertexArrayObject );
+        // Bind the GL_ARRAY_BUFFER for interleaved vertices, normals, and texcoords
+        vaop->addVertexArrayCommand( ibop, jagDraw::VertexArrayObject::Vertex );
+        vaop->addVertexArrayCommand( vertAttrib, jagDraw::VertexArrayObject::Vertex );
+        vaop->addVertexArrayCommand( normAttrib, jagDraw::VertexArrayObject::Normal );
+        vaop->addVertexArrayCommand( tcAttrib, jagDraw::VertexArrayObject::TexCoord );
+
+        jagDraw::CommandMapPtr commands( planeRoot->getCommandMap() );
+        if( commands == NULL )
+        {
+            commands = jagDraw::CommandMapPtr( new jagDraw::CommandMap() );
+            planeRoot->setCommandMap( commands );
+        }
+        commands->insert( vaop );
+    }
+
+    return( planeRoot );
+}
+
+
 bool Transparency::startup( const unsigned int numContexts )
 {
     DemoInterface::startup( numContexts );
@@ -129,6 +188,8 @@ bool Transparency::startup( const unsigned int numContexts )
     jagSG::NodePtr model( boost::make_shared< jagSG::Node >(
         *(jagSG::Node*) jagDisk::read( _fileName ) ) );
     _root->addChild( model );
+
+    _root->addChild( createPlanesSubgraph( model->getBound() ) );
 
 
     jagDraw::ShaderPtr vs( (jagDraw::Shader*) jagDisk::read( "jagmodel.vert" ) );
