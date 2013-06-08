@@ -28,10 +28,10 @@ namespace jagUtil
 
 
 static void addPlaneData( VNTCVec& data,
-    const osg::Vec3& corner,
-    const osg::Vec3& u, unsigned short uSteps,
-    const osg::Vec3& v, unsigned short vSteps,
-    const osg::Vec3& normal, jagDraw::Drawable* geom )
+    const gmtl::Point3f& corner,
+    const gmtl::Vec3f& u, unsigned short uSteps,
+    const gmtl::Vec3f& v, unsigned short vSteps,
+    const gmtl::Vec3f& normal, jagDraw::Drawable* geom )
 {
     std::vector< short > indices;
 
@@ -41,18 +41,19 @@ static void addPlaneData( VNTCVec& data,
         const float vPct( (float)vIdx / (float)vSteps );
         const gmtl::Vec3f vVec( v * vPct );
 
-        unsigned int startIdx( data.size() ), idx( 0 );
+        short startIdx( (short)( data.size() ) ), idx( 0 );
         for( uIdx=0; uIdx<=uSteps; uIdx++ )
         {
             VertexNormalTexCoordStruct vntc;
+
+            const float uPct( (float)uIdx / (float)uSteps );
             vntc._v = corner + vVec + (u * uPct);
             vntc._n = normal;
-            const float uPct( (float)uIdx / (float)uSteps );
             vntc._tc = gmtl::Vec2f( uPct, vPct );
             data.push_back( vntc );
 
             indices.push_back( startIdx + idx + uSteps + 1 );
-            indices.push_bacl( startIdx + idx );
+            indices.push_back( startIdx + idx );
             idx++;
         }
         jagDraw::DrawElementsPtr de( jagDraw::DrawElementsPtr( new jagDraw::DrawElements
@@ -75,24 +76,24 @@ static bool buildPlaneData( VNTCVec& data,
 
     gmtl::Vec3f normal( u ^ v );
     gmtl::normalize( normal );
-    addPlaneData( data, corner, u, subU, v, subV, normal, geom );
+    addPlaneData( data, corner, u, subU, v, subV, normal, drawable );
 
     return( true );
 }
 
-jagDraw::Drawable* makePlane( VNTCVec& data,
+jagDraw::DrawablePtr makePlane( VNTCVec& data,
     const gmtl::Point3f& corner, const gmtl::Vec3f& u, const gmtl::Vec3f& v,
-    const short subU, const short subV, jagDraw::Drawable* drawable )
+    const short subU, const short subV, jagDraw::DrawablePtr drawable )
 {
-    jagDraw::Drawable* draw( drawable );
+    jagDraw::DrawablePtr draw( drawable );
     if( draw == NULL )
-        draw = new jagDraw::Drawable();
+        draw = jagDraw::DrawablePtr( new jagDraw::Drawable() );
 
-    if( buildPlaneData( data, corner, u, v, subU, subV, draw ) )
+    if( buildPlaneData( data, corner, u, v, subU, subV, draw.get() ) )
         return( draw );
 
     JAG3D_ERROR_STATIC( "jag.util.plane", "makePlane: Error." );
-    return( NULL );
+    return( jagDraw::DrawablePtr( NULL ) );
 }
 
 

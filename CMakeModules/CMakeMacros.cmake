@@ -50,8 +50,8 @@ if(APPLE)
     )
 endif(APPLE)
 
-#    jagUtil
 set( _projectLibraries
+    jagUtil
     jagSG
     jagDraw
     jagDisk
