@@ -19,12 +19,37 @@
 *************** <auto-copyright.pl END do not edit this line> ***************/
 
 #include <jagUtil/Shapes.h>
+#include <jagDraw/VertexAttrib.h>
 #include <jagBase/LogMacros.h>
 #include <gmtl/gmtl.h>
 
 
 namespace jagUtil
 {
+
+
+jagDraw::VertexArrayObjectPtr createVertexArrayObject( const VNTCVec& data )
+{
+    jagBase::BufferPtr ibp( new jagBase::Buffer( data.size() * sizeof( jagUtil::VertexNormalTexCoordStruct ), (void*)&data[0] ) );
+    jagDraw::BufferObjectPtr ibop( new jagDraw::BufferObject( GL_ARRAY_BUFFER, ibp ) );
+
+    const GLsizei stride( sizeof( jagUtil::VertexNormalTexCoordStruct ) );
+    jagDraw::VertexAttribPtr vertAttrib( new jagDraw::VertexAttrib(
+        "vertex", 3, GL_FLOAT, GL_FALSE, stride, 0 ) );
+    jagDraw::VertexAttribPtr normAttrib( new jagDraw::VertexAttrib(
+        "normal", 3, GL_FLOAT, GL_FALSE, stride, sizeof( GLfloat ) * 3 ) );
+    jagDraw::VertexAttribPtr tcAttrib( new jagDraw::VertexAttrib(
+        "texcoord", 2, GL_FLOAT, GL_FALSE, stride, sizeof( GLfloat ) * 6 ) );
+
+    jagDraw::VertexArrayObjectPtr vaop( new jagDraw::VertexArrayObject );
+    // Bind the GL_ARRAY_BUFFER for interleaved vertices, normals, and texcoords
+    vaop->addVertexArrayCommand( ibop, jagDraw::VertexArrayObject::Vertex );
+    vaop->addVertexArrayCommand( vertAttrib, jagDraw::VertexArrayObject::Vertex );
+    vaop->addVertexArrayCommand( normAttrib, jagDraw::VertexArrayObject::Normal );
+    vaop->addVertexArrayCommand( tcAttrib, jagDraw::VertexArrayObject::TexCoord );
+
+    return( vaop );
+}
 
 
 static void addPlaneData( VNTCVec& data,
@@ -52,15 +77,21 @@ static void addPlaneData( VNTCVec& data,
             vntc._tc = gmtl::Vec2f( uPct, vPct );
             data.push_back( vntc );
 
-            indices.push_back( startIdx + idx + uSteps + 1 );
-            indices.push_back( startIdx + idx );
+            if( vIdx < vSteps )
+            {
+                indices.push_back( startIdx + idx + uSteps + 1 );
+                indices.push_back( startIdx + idx );
+            }
             idx++;
         }
-        jagDraw::DrawElementsPtr de( jagDraw::DrawElementsPtr( new jagDraw::DrawElements
-            ( GL_TRIANGLE_STRIP, idx-startIdx, GL_UNSIGNED_SHORT, 0,
-            jagDraw::BufferObjectPtr( new jagDraw::ElementArrayBuffer(
-                jagBase::BufferPtr( new jagBase::Buffer( indices.size()*sizeof(unsigned short), &( indices[ 0 ] ) )))))));
-        geom->addDrawCommand( de );
+        if( vIdx < vSteps )
+        {
+            jagDraw::DrawElementsPtr de( jagDraw::DrawElementsPtr( new jagDraw::DrawElements
+                ( GL_TRIANGLE_STRIP, idx * 2, GL_UNSIGNED_SHORT, 0,
+                jagDraw::BufferObjectPtr( new jagDraw::ElementArrayBuffer(
+                    jagBase::BufferPtr( new jagBase::Buffer( indices.size()*sizeof(unsigned short), &( indices[ 0 ] ) )))))));
+            geom->addDrawCommand( de );
+        }
     }
 }
 
