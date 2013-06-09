@@ -61,6 +61,7 @@ static void addPlaneData( VNTCVec& data,
     std::vector< short > indices;
 
     unsigned short uIdx, vIdx;
+    unsigned short count( 0 );
     for( vIdx=0; vIdx<=vSteps; vIdx++ )
     {
         const float vPct( (float)vIdx / (float)vSteps );
@@ -77,22 +78,30 @@ static void addPlaneData( VNTCVec& data,
             vntc._tc = gmtl::Vec2f( uPct, vPct );
             data.push_back( vntc );
 
-            if( vIdx < vSteps )
+            if( ( vIdx < vSteps ) && ( uIdx < uSteps ) )
             {
+                const short a( startIdx + idx );
+                const short b( startIdx + idx + uSteps + 2 );
+
                 indices.push_back( startIdx + idx + uSteps + 1 );
-                indices.push_back( startIdx + idx );
+                indices.push_back( a );
+                indices.push_back( b );
+
+                indices.push_back( b );
+                indices.push_back( a );
+                indices.push_back( startIdx + idx + 1 );
+
+                count += 6;
             }
             idx++;
         }
-        if( vIdx < vSteps )
-        {
-            jagDraw::DrawElementsPtr de( jagDraw::DrawElementsPtr( new jagDraw::DrawElements
-                ( GL_TRIANGLE_STRIP, idx * 2, GL_UNSIGNED_SHORT, 0,
-                jagDraw::BufferObjectPtr( new jagDraw::ElementArrayBuffer(
-                    jagBase::BufferPtr( new jagBase::Buffer( indices.size()*sizeof(unsigned short), &( indices[ 0 ] ) )))))));
-            geom->addDrawCommand( de );
-        }
     }
+
+    jagDraw::DrawElementsPtr de( jagDraw::DrawElementsPtr( new jagDraw::DrawElements
+        ( GL_TRIANGLES, count, GL_UNSIGNED_SHORT, 0,
+        jagDraw::BufferObjectPtr( new jagDraw::ElementArrayBuffer(
+            jagBase::BufferPtr( new jagBase::Buffer( indices.size()*sizeof(unsigned short), &( indices[ 0 ] ) )))))));
+    geom->addDrawCommand( de );
 }
 
 static bool buildPlaneData( VNTCVec& data,
