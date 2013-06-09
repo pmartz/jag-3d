@@ -23,6 +23,7 @@
 
 #include <jagUtil/Export.h>
 #include <jagDraw/Drawable.h>
+#include <jagDraw/VertexArrayObject.h>
 #include <gmtl/gmtl.h>
 
 
@@ -37,6 +38,9 @@ typedef struct {
 } VertexNormalTexCoordStruct;
 
 typedef std::vector< VertexNormalTexCoordStruct > VNTCVec;
+
+JAGUTIL_EXPORT jagDraw::VertexArrayObjectPtr createVertexArrayObject( const VNTCVec& data );
+
 
 
 JAGUTIL_EXPORT jagDraw::DrawablePtr makePlane( VNTCVec& data,

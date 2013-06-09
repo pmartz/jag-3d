@@ -123,41 +123,22 @@ jagSG::NodePtr createPlanesSubgraph( jagDraw::BoundPtr bound )
     // Create second plane and its data.
     corner = gmtl::Point3f( -radius, -radius, -radius );
     uVec = gmtl::Vec3f( 0.f, 0.f, 2.f*radius );
-    plane0 = jagDraw::DrawablePtr( jagUtil::makePlane(
+    jagDraw::DrawablePtr plane1( jagUtil::makePlane(
         data, corner, uVec, vVec ) );
-    planeRoot->addDrawable( plane0 );
+    // Must add as separate child node for proper depth sorting.
+    jagSG::NodePtr planeChild( jagSG::NodePtr( new jagSG::Node() ) );
+    planeChild->addDrawable( plane1 );
+    planeRoot->addChild( planeChild );
 
     // Put the data in an array buffer object, and add it to
     // a VertexArrayObject.
+    jagDraw::CommandMapPtr commands( planeRoot->getCommandMap() );
+    if( commands == NULL )
     {
-        // TBD this should be in a convenicne routine.
-
-        jagBase::BufferPtr ibp( new jagBase::Buffer( data.size() * sizeof( jagUtil::VertexNormalTexCoordStruct ), (void*)&data[0] ) );
-        jagDraw::BufferObjectPtr ibop( new jagDraw::BufferObject( GL_ARRAY_BUFFER, ibp ) );
-
-        const GLsizei stride( sizeof( jagUtil::VertexNormalTexCoordStruct ) );
-        jagDraw::VertexAttribPtr vertAttrib( new jagDraw::VertexAttrib(
-            "vertex", 3, GL_FLOAT, GL_FALSE, stride, 0 ) );
-        jagDraw::VertexAttribPtr normAttrib( new jagDraw::VertexAttrib(
-            "normal", 3, GL_FLOAT, GL_FALSE, stride, sizeof( GLfloat ) * 3 ) );
-        jagDraw::VertexAttribPtr tcAttrib( new jagDraw::VertexAttrib(
-            "texcoord", 2, GL_FLOAT, GL_FALSE, stride, sizeof( GLfloat ) * 6 ) );
-
-        jagDraw::VertexArrayObjectPtr vaop( new jagDraw::VertexArrayObject );
-        // Bind the GL_ARRAY_BUFFER for interleaved vertices, normals, and texcoords
-        vaop->addVertexArrayCommand( ibop, jagDraw::VertexArrayObject::Vertex );
-        vaop->addVertexArrayCommand( vertAttrib, jagDraw::VertexArrayObject::Vertex );
-        vaop->addVertexArrayCommand( normAttrib, jagDraw::VertexArrayObject::Normal );
-        vaop->addVertexArrayCommand( tcAttrib, jagDraw::VertexArrayObject::TexCoord );
-
-        jagDraw::CommandMapPtr commands( planeRoot->getCommandMap() );
-        if( commands == NULL )
-        {
-            commands = jagDraw::CommandMapPtr( new jagDraw::CommandMap() );
-            planeRoot->setCommandMap( commands );
-        }
-        commands->insert( vaop );
+        commands = jagDraw::CommandMapPtr( new jagDraw::CommandMap() );
+        planeRoot->setCommandMap( commands );
     }
+    commands->insert( jagUtil::createVertexArrayObject( data ) );
 
     return( planeRoot );
 }
@@ -349,8 +330,8 @@ gmtl::Matrix44d Transparency::computeProjection( double aspect )
         return( gmtl::MAT_IDENTITY44D );
 
     gmtl::Matrix44d proj;
-    const double zNear = 2.8 * s.getRadius();
-    const double zFar = 5.2 * s.getRadius();
+    const double zNear = .5;// 2.8 * s.getRadius();
+    const double zFar = 400.;//5.2 * s.getRadius();
     gmtl::setPerspective< double >( proj, 30., aspect, zNear, zFar );
 
     return( proj );
