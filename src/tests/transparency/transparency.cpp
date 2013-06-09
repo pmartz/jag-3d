@@ -124,7 +124,7 @@ jagSG::NodePtr createPlanesSubgraph( jagDraw::BoundPtr bound )
     corner = gmtl::Point3f( -radius, -radius, -radius );
     uVec = gmtl::Vec3f( 0.f, 0.f, 2.f*radius );
     jagDraw::DrawablePtr plane1( jagUtil::makePlane(
-        data, corner, uVec, vVec ) );
+        data, corner, uVec, vVec, 4, 4 ) );
     // Must add as separate child node for proper depth sorting.
     jagSG::NodePtr planeChild( jagSG::NodePtr( new jagSG::Node() ) );
     planeChild->addDrawable( plane1 );
