@@ -250,7 +250,7 @@ bool Transparency::startup( const unsigned int numContexts )
 
 bool Transparency::init()
 {
-    glClearColor( 0.f, 0.f, 0.f, 0.f );
+    glClearColor( 1.f, 1.f, 1.f, 0.f );
 
     glEnable( GL_DEPTH_TEST );
 
@@ -312,9 +312,16 @@ bool Transparency::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& pr
 #ifdef ENABLE_SORT
         {
             JAG3D_PROFILE( "Collection sort" );
-            BOOST_FOREACH( jagDraw::NodeContainer& nc, *drawGraph )
             {
+                // Sort by commands.
+                jagDraw::NodeContainer& nc( (*drawGraph)[ 0 ] );
                 std::sort( nc.begin(), nc.end(), jagDraw::DrawNodeCommandSorter( plist ) );
+            }
+            {
+                // Sort by descending eye coord z distance.
+                jagDraw::NodeContainer& nc( (*drawGraph)[ 1 ] );
+                jagDraw::DrawNodeDistanceSorter distanceSorter;
+                std::sort( nc.begin(), nc.end(), distanceSorter );
             }
         }
 #endif
