@@ -41,6 +41,7 @@ class JAGSG_EXPORT SelectContainerCallback : protected jagBase::LogBase,
 {
 public:
     SelectContainerCallback();
+    SelectContainerCallback( const unsigned int index );
     SelectContainerCallback( const SelectContainerCallback& rhs );
     ~SelectContainerCallback();
 

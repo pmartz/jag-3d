@@ -33,6 +33,12 @@ SelectContainerCallback::SelectContainerCallback()
     _index( 0 )
 {
 }
+SelectContainerCallback::SelectContainerCallback( const unsigned int index )
+  : jagBase::LogBase( "jag.sg.coll.select" ),
+    jagSG::Node::Callback(),
+    _index( index )
+{
+}
 SelectContainerCallback::SelectContainerCallback( const SelectContainerCallback& rhs )
   : jagBase::LogBase( "jag.sg.coll.select" ),
     jagSG::Node::Callback( rhs ),
