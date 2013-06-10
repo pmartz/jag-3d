@@ -147,12 +147,12 @@ bool test()
         if( cc._prog != 8 )
         {
             std::cerr << "Unsorted should set 8 programs, sets " << cc._prog << " instead." << std::endl;
-            return( 1 );
+            return( false );
         }
         if( cc._tex != 2 )
         {
             std::cerr << "Unsorted should set 2 texture sets, sets " << cc._tex << " instead." << std::endl;
-            return( 1 );
+            return( false );
         }
     }
 
@@ -194,14 +194,16 @@ bool test()
         if( cc._prog != 2 )
         {
             std::cerr << "Sorted should set 2 programs, sets " << cc._prog << " instead." << std::endl;
-            return( 1 );
+            return( false );
         }
         if( cc._tex != 4 )
         {
             std::cerr << "Sorted should set 4 texture sets, sets " << cc._tex << " instead." << std::endl;
-            return( 1 );
+            return( false );
         }
     }
+
+    return( true );
 }
 
 int main( int argc, char** argv )
