@@ -25,6 +25,8 @@
 #include <jagSG/Node.h>
 #include <jagSG/Visitor.h>
 #include <jagSG/CollectionVisitor.h>
+#include <jagSG/SelectContainerCallback.h>
+#include <jagSG/SmallFeatureCallback.h>
 
 
 // __JAGSG_COMMON_H__

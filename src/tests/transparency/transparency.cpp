@@ -108,6 +108,11 @@ jagSG::NodePtr createPlanesSubgraph( jagDraw::BoundPtr bound )
 {
     jagSG::NodePtr planeRoot = jagSG::NodePtr( new jagSG::Node() );
 
+    // Instruct collection visitor to copy data store references
+    // into a specific NodeContainer.
+    jagSG::SelectContainerCallbackPtr sccp( new jagSG::SelectContainerCallback( 1 ) );
+    planeRoot->getCollectionCallbacks().push_back( sccp );
+
     // Create container to store the plane vertex / normal / texcoord data.
     jagUtil::VNTCVec data;
 
@@ -159,7 +164,8 @@ bool Transparency::startup( const unsigned int numContexts )
 
     // Prepare the draw graph.
     jagDraw::DrawGraphPtr drawGraphTemplate( new jagDraw::DrawGraph() );
-    drawGraphTemplate->resize( 1 );
+    drawGraphTemplate->resize( 2 );
+    //(*drawGraphTemplate)[ 1 ]
     getCollectionVisitor().setDrawGraphTemplate( drawGraphTemplate );
 
 
