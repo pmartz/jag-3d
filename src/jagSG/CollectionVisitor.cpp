@@ -158,6 +158,9 @@ void CollectionVisitor::collectAndTraverse( jagSG::Node& node )
         _currentNodes->resize( _currentNodes->size()+1 );
         jagDraw::Node& drawNode( (*_currentNodes)[ _currentNodes->size()-1 ] );
 
+        // Set eye coord distance (for distance-based render order control ).
+        drawNode.setDistance( _infoPtr->getECBoundDistance() );
+
         //JAG3D_WARNING( "TBD Must allocate new CommandMapPtr?" );
         jagDraw::CommandMapPtr commands( new jagDraw::CommandMap(
                 _commandStack.back() ) );

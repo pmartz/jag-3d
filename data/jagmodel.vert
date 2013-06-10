@@ -17,7 +17,7 @@ void main()
 {
     vec3 ecNormal = normalize( jagModelViewInvTransMatrix * normal );
     float diffuse = max( dot( ecLightDir, ecNormal ), 0. );
-    color = vec4( ambientScene ) + vec4( diffuseMat * diffuse, 1. );
+    color = vec4( vec3( ambientScene ) + ( diffuseMat * diffuse ), 1. );
 
     gl_Position = jagModelViewProjMatrix * vertex;
 } 
