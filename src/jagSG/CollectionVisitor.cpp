@@ -90,6 +90,9 @@ void CollectionVisitor::reset()
     }
 
     _infoPtr = CollectionInfoPtr( new CollectionInfo( _transform ) );
+
+    _minNear = DBL_MAX;
+    _maxFar = -DBL_MAX;
 }
 
 
@@ -161,6 +164,11 @@ void CollectionVisitor::collectAndTraverse( jagSG::Node& node )
         // Set eye coord distance (for distance-based render order control ).
         drawNode.setDistance( _infoPtr->getECBoundDistance() );
 
+        // Recard changes to min near / max far.
+        _minNear = std::min< double >( _minNear, _infoPtr->getECBoundDistance() - _infoPtr->getECBoundRadius() );
+        _maxFar = std::max< double >( _maxFar, _infoPtr->getECBoundDistance() + _infoPtr->getECBoundRadius() );
+
+
         //JAG3D_WARNING( "TBD Must allocate new CommandMapPtr?" );
         jagDraw::CommandMapPtr commands( new jagDraw::CommandMap(
                 _commandStack.back() ) );
@@ -190,6 +198,17 @@ const jagDraw::DrawGraphPtr CollectionVisitor::getDrawGraphTemplate() const
 {
     return( _drawGraphTemplate );
 }
+
+void CollectionVisitor::getNearFar( double& minECNear, double& maxECFar, const double ratio )
+{
+    const double scaledNear( _maxFar * ratio );
+    if( _minNear < scaledNear )
+        minECNear = scaledNear;
+    else
+        minECNear = _minNear;
+    maxECFar = _maxFar;
+}
+
 
 void CollectionVisitor::setCurrentNodeContainer( const unsigned int currentID )
 {
