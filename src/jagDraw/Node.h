@@ -184,6 +184,39 @@ protected:
 };
 
 
+class DrawNodeDistanceSorter
+{
+public:
+    typedef enum {
+        Ascending,
+        Descending
+    } SortOrder;
+
+    DrawNodeDistanceSorter( const SortOrder order=Descending )
+        : _order( order )
+    {}
+    DrawNodeDistanceSorter( const DrawNodeDistanceSorter& rhs )
+        : _order( rhs._order )
+    {}
+    ~DrawNodeDistanceSorter()
+    {}
+
+    bool operator()( const Node& lhs, const Node& rhs ) const
+    {
+        const double lDist( lhs.getDistance() );
+        const double rDist( rhs.getDistance() );
+        if( lDist < rDist )
+            return( _order == Ascending );
+        else if( lDist > rDist )
+            return( _order != Ascending );
+        return( false );
+    }
+
+protected:
+    SortOrder _order;
+};
+
+
 // jagDraw
 }
 
