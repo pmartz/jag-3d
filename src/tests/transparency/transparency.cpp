@@ -148,6 +148,18 @@ jagSG::NodePtr createPlanesSubgraph( jagDraw::BoundPtr bound )
     return( planeRoot );
 }
 
+struct BlendCallback : public jagDraw::NodeContainer::Callback
+{
+    virtual bool operator()( jagDraw::NodeContainer& nodeContainer,
+        jagDraw::DrawInfo& drawInfo )
+    {
+        glEnable( GL_BLEND );
+        nodeContainer.internalExecute( drawInfo );
+        glDisable( GL_BLEND );
+        return( false );
+    }
+};
+
 
 bool Transparency::startup( const unsigned int numContexts )
 {
@@ -165,7 +177,8 @@ bool Transparency::startup( const unsigned int numContexts )
     // Prepare the draw graph.
     jagDraw::DrawGraphPtr drawGraphTemplate( new jagDraw::DrawGraph() );
     drawGraphTemplate->resize( 2 );
-    //(*drawGraphTemplate)[ 1 ]
+    (*drawGraphTemplate)[ 1 ].getCallbacks().push_back(
+        jagDraw::NodeContainer::CallbackPtr( new BlendCallback() ) );
     getCollectionVisitor().setDrawGraphTemplate( drawGraphTemplate );
 
 
@@ -240,6 +253,8 @@ bool Transparency::init()
     glClearColor( 0.f, 0.f, 0.f, 0.f );
 
     glEnable( GL_DEPTH_TEST );
+
+    glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 
     // Auto-log the version string.
     jagBase::getVersionString();

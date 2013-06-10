@@ -85,6 +85,19 @@ public:
         return( (unsigned int) _drawables.size() );
     }
 
+    /** \brief Set the distance (absolute eye coordinate z value).
+    \details Set by jagSG::CollectionVisitor during collection.
+    Can be used to sort Nodes by depth. */
+    void setDistance( const double distance )
+    {
+        _distance = distance;
+    }
+    /** \brief Get the disance (absolute eye coordinate z value). */
+    double getDistance() const
+    {
+        return( _distance );
+    }
+
 
     /** \brief Assignment operator.
     \details Required by std::sort(). */
@@ -92,6 +105,7 @@ public:
     {
         _commands = rhs._commands;
         _drawables = rhs._drawables;
+        _distance = rhs._distance;
         return( *this );
     }
 
@@ -112,6 +126,8 @@ public:
 protected:
     CommandMapPtr _commands;
     DrawableVec _drawables;
+
+    double _distance;
 };
 
 typedef jagBase::ptr< jagDraw::Node >::shared_ptr DrawNodePtr;

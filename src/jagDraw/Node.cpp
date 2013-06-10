@@ -34,14 +34,16 @@ namespace jagDraw {
 Node::Node( CommandMapPtr commands )
   : jagBase::LogBase( "jag.draw.node" ),
     ObjectIDOwner(),
-    _commands( commands )
+    _commands( commands ),
+    _distance( 0. )
 {
 }
 Node::Node( const Node& rhs )
   : jagBase::LogBase( "jag.draw.node" ),
     ObjectIDOwner( rhs ),
     _commands( rhs._commands ),
-    _drawables( rhs._drawables )
+    _drawables( rhs._drawables ),
+    _distance( rhs._distance )
 {
 }
 Node::~Node()
