@@ -192,7 +192,7 @@ bool Transparency::startup( const unsigned int numContexts )
     _root->addChild( createPlanesSubgraph( model->getBound() ) );
 
 
-    jagDraw::ShaderPtr vs( (jagDraw::Shader*) jagDisk::read( "jagmodel.vert" ) );
+    jagDraw::ShaderPtr vs( (jagDraw::Shader*) jagDisk::read( "transparency.vert" ) );
     jagDraw::ShaderPtr fs( (jagDraw::Shader*) jagDisk::read( "jagmodel.frag" ) );
     if( ( vs == NULL ) || ( fs == NULL ) )
     {
