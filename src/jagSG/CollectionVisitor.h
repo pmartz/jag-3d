@@ -81,6 +81,10 @@ public:
 
     /** \brief TBD
     \details TBD */
+    void getNearFar( double& minECNear, double& maxECFar, const double ratio=( 1. / 2000. ) );
+
+    /** \brief TBD
+    \details TBD */
     void setCurrentNodeContainer( const unsigned int currentID );
     /** \brief TBD
     \details TBD */
@@ -130,6 +134,8 @@ protected:
     jagBase::TransformD _transform;
 
     CollectionInfoPtr _infoPtr;
+
+    double _minNear, _maxFar;
 };
 
 typedef jagBase::ptr< jagSG::CollectionVisitor >::shared_ptr CollectionVisitorPtr;
