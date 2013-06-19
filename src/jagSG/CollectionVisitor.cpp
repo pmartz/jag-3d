@@ -237,14 +237,14 @@ void CollectionVisitor::updateTransformUniforms()
 {
     jagDraw::UniformSetPtr usp( new jagDraw::UniformSet() );
 
-    if( _transform.getDirty() & jagBase::TransformD::MODEL_VIEW_PROJ_DIRTY )
+    if( _transform.getDirty() & jagBase::TransformD::MODEL_VIEW_PROJ )
     {
         gmtl::Matrix44f mvpMat;
         gmtl::convert( mvpMat, _transform.getModelViewProj() );
         jagDraw::UniformPtr modelViewProj( new jagDraw::Uniform( "jagModelViewProjMatrix", mvpMat ) );
         usp->insert( modelViewProj );
     }
-    if( _transform.getDirty() & jagBase::TransformD::MODEL_VIEW_INV_TRANS_DIRTY )
+    if( _transform.getDirty() & jagBase::TransformD::MODEL_VIEW_INV_TRANS )
     {
         gmtl::Matrix33f mvitMat;
         gmtl::convert( mvitMat, _transform.getModelViewInvTrans() );

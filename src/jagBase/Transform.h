@@ -85,38 +85,38 @@ public:
 
 
     enum {
-        VIEW_PROJ_DIRTY = 0x1 << 0,
-        MODEL_VIEW_PROJ_DIRTY = 0x1 << 1,
-        MODEL_VIEW_DIRTY = 0x1 << 2,
-        MODEL_VIEW_INV_TRANS_DIRTY = 0x1 << 3,
-        PROJ_INV_DIRTY = 0x1 << 4,
-        VIEW_INV_DIRTY = 0x1 << 5,
-        MODEL_INV_DIRTY = 0x1 << 6,
-        VIEW_PROJ_INV_DIRTY = 0x1 << 7,
-        MODEL_VIEW_PROJ_INV_DIRTY = 0x1 << 8,
-        MODEL_VIEW_INV_DIRTY = 0x1 << 9,
+        VIEW_PROJ = 0x1 << 0,
+        MODEL_VIEW_PROJ = 0x1 << 1,
+        MODEL_VIEW = 0x1 << 2,
+        MODEL_VIEW_INV_TRANS = 0x1 << 3,
+        PROJ_INV = 0x1 << 4,
+        VIEW_INV = 0x1 << 5,
+        MODEL_INV = 0x1 << 6,
+        VIEW_PROJ_INV = 0x1 << 7,
+        MODEL_VIEW_PROJ_INV = 0x1 << 8,
+        MODEL_VIEW_INV = 0x1 << 9,
 
-        ALL_PROJ_DIRTY = ( VIEW_PROJ_DIRTY |
-                           MODEL_VIEW_PROJ_DIRTY |
-                           PROJ_INV_DIRTY |
-                           VIEW_PROJ_INV_DIRTY |
-                           MODEL_VIEW_PROJ_INV_DIRTY ),
+        ALL_PROJ_DIRTY = ( VIEW_PROJ |
+                           MODEL_VIEW_PROJ |
+                           PROJ_INV |
+                           VIEW_PROJ_INV |
+                           MODEL_VIEW_PROJ_INV ),
 
-        ALL_VIEW_DIRTY = ( VIEW_PROJ_DIRTY |
-                           MODEL_VIEW_PROJ_DIRTY |
-                           MODEL_VIEW_DIRTY |
-                           MODEL_VIEW_INV_TRANS_DIRTY |
-                           VIEW_INV_DIRTY |
-                           VIEW_PROJ_INV_DIRTY |
-                           MODEL_VIEW_PROJ_INV_DIRTY |
-                           MODEL_VIEW_INV_DIRTY ),
+        ALL_VIEW_DIRTY = ( VIEW_PROJ |
+                           MODEL_VIEW_PROJ |
+                           MODEL_VIEW |
+                           MODEL_VIEW_INV_TRANS |
+                           VIEW_INV |
+                           VIEW_PROJ_INV |
+                           MODEL_VIEW_PROJ_INV |
+                           MODEL_VIEW_INV ),
 
-        ALL_MODEL_DIRTY = ( MODEL_VIEW_PROJ_DIRTY |
-                            MODEL_VIEW_DIRTY |
-                            MODEL_VIEW_INV_TRANS_DIRTY |
-                            MODEL_INV_DIRTY |
-                            MODEL_VIEW_PROJ_INV_DIRTY |
-                            MODEL_VIEW_INV_DIRTY ),
+        ALL_MODEL_DIRTY = ( MODEL_VIEW_PROJ |
+                            MODEL_VIEW |
+                            MODEL_VIEW_INV_TRANS |
+                            MODEL_INV |
+                            MODEL_VIEW_PROJ_INV |
+                            MODEL_VIEW_INV ),
 
         ALL_DIRTY = ( ALL_PROJ_DIRTY |
                       ALL_VIEW_DIRTY |
@@ -186,96 +186,96 @@ public:
 
     const M4TYPE& getViewProj()
     {
-        if( _dirty & VIEW_PROJ_DIRTY )
+        if( _dirty & VIEW_PROJ )
         {
             _viewProj = _proj * _view;
-            _dirty &= ~VIEW_PROJ_DIRTY;
+            _dirty &= ~VIEW_PROJ;
         }
         return( _viewProj );
     }
     const M4TYPE& getModelViewProj()
     {
-        if( _dirty & MODEL_VIEW_PROJ_DIRTY )
+        if( _dirty & MODEL_VIEW_PROJ )
         {
             _modelViewProj = _proj * getModelView();
-            _dirty &= ~MODEL_VIEW_PROJ_DIRTY;
+            _dirty &= ~MODEL_VIEW_PROJ;
         }
         return( _modelViewProj );
     }
     const M4TYPE& getModelView()
     {
-        if( _dirty & MODEL_VIEW_DIRTY )
+        if( _dirty & MODEL_VIEW )
         {
             _modelView = _view * _model;
-            _dirty &= ~MODEL_VIEW_DIRTY;
+            _dirty &= ~MODEL_VIEW;
         }
         return( _modelView );
     }
     const M3TYPE& getModelViewInvTrans()
     {
-        if( _dirty & MODEL_VIEW_INV_TRANS_DIRTY )
+        if( _dirty & MODEL_VIEW_INV_TRANS )
         {
             const M4TYPE& m( getModelViewInv() );
             // Transpose during set():
             _modelViewInvTrans.set(  m( 0, 0 ),  m( 1, 0 ),  m( 2, 0 ),
                                      m( 0, 1 ),  m( 1, 1 ),  m( 2, 1 ),
                                      m( 0, 2 ),  m( 1, 2 ),  m( 2, 2 )  );
-            _dirty &= ~MODEL_VIEW_INV_TRANS_DIRTY;
+            _dirty &= ~MODEL_VIEW_INV_TRANS;
         }
         return( _modelViewInvTrans );
     }
 
     const M4TYPE& getProjInv()
     {
-        if( _dirty & PROJ_INV_DIRTY )
+        if( _dirty & PROJ_INV )
         {
             gmtl::invert( _projInv, _proj );
-            _dirty &= ~PROJ_INV_DIRTY;
+            _dirty &= ~PROJ_INV;
         }
         return( _projInv );
     }
     const M4TYPE& getViewInv()
     {
-        if( _dirty & VIEW_INV_DIRTY )
+        if( _dirty & VIEW_INV )
         {
             gmtl::invert( _viewInv, _view );
-            _dirty &= ~VIEW_INV_DIRTY;
+            _dirty &= ~VIEW_INV;
         }
         return( _viewInv );
     }
     const M4TYPE& getModelInv()
     {
-        if( _dirty & MODEL_INV_DIRTY )
+        if( _dirty & MODEL_INV )
         {
             gmtl::invert( _modelInv, _model );
-            _dirty &= ~MODEL_INV_DIRTY;
+            _dirty &= ~MODEL_INV;
         }
         return( _modelInv );
     }
     const M4TYPE& getViewProjInv()
     {
-        if( _dirty & VIEW_PROJ_INV_DIRTY )
+        if( _dirty & VIEW_PROJ_INV )
         {
             gmtl::invert( _viewProjInv, getViewProj() );
-            _dirty &= ~VIEW_PROJ_INV_DIRTY;
+            _dirty &= ~VIEW_PROJ_INV;
         }
         return( _viewProjInv );
     }
     const M4TYPE& getModelViewProjInv()
     {
-        if( _dirty & MODEL_VIEW_PROJ_INV_DIRTY )
+        if( _dirty & MODEL_VIEW_PROJ_INV )
         {
             gmtl::invert( _modelViewProjInv, getModelViewProj() );
-            _dirty &= ~MODEL_VIEW_PROJ_INV_DIRTY;
+            _dirty &= ~MODEL_VIEW_PROJ_INV;
         }
         return( _modelViewProjInv );
     }
     const M4TYPE& getModelViewInv()
     {
-        if( _dirty & MODEL_VIEW_INV_DIRTY )
+        if( _dirty & MODEL_VIEW_INV )
         {
             gmtl::invert( _modelViewInv, getModelView() );
-            _dirty &= ~MODEL_VIEW_INV_DIRTY;
+            _dirty &= ~MODEL_VIEW_INV;
         }
         return( _modelViewInv );
     }
