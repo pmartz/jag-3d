@@ -119,7 +119,7 @@ public:
     struct Callback {
         /** \brief TBD
         \details TBD */
-        virtual bool operator()( jagDraw::Node& /* node */ )
+        virtual bool operator()( jagDraw::Node& /* node */, jagDraw::DrawInfo& /* drawInfo */ )
         {
             return( false );
         }

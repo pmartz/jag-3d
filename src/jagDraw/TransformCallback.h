@@ -34,11 +34,14 @@ namespace jagDraw {
 \details TBD */
 struct JAGDRAW_EXPORT TransformCallback : protected jagDraw::Node::Callback
 {
-    TransformCallback();
+    TransformCallback( const jagBase::TransformD& transform );
     TransformCallback( const TransformCallback& rhs );
     virtual ~TransformCallback();
 
-    virtual bool operator()( jagDraw::Node& node );
+    virtual bool operator()( jagDraw::Node& node, jagDraw::DrawInfo& drawInfo );
+
+
+    jagBase::TransformD _transform;
 };
 
 
