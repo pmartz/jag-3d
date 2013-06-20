@@ -83,7 +83,7 @@ void Node::execute( DrawInfo& drawInfo )
     ExecuteCallbacks& callbacks( getExecuteCallbacks() );
     BOOST_FOREACH( jagDraw::Node::CallbackPtr cb, callbacks )
     {
-        if( !( (*cb)( *this ) ) )
+        if( !( (*cb)( *this, drawInfo ) ) )
         {
             return;
         }

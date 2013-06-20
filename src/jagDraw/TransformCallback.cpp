@@ -19,15 +19,20 @@
 *************** <auto-copyright.pl END do not edit this line> ***************/
 
 #include <jagDraw/TransformCallback.h>
+#include <jagDraw/DrawInfo.h>
 
 
 namespace jagDraw {
 
 
-TransformCallback::TransformCallback()
+TransformCallback::TransformCallback( const jagBase::TransformD& transform )
+    : Node::Callback(),
+    _transform( transform )
 {
 }
 TransformCallback::TransformCallback( const TransformCallback& rhs )
+    : Node::Callback( rhs ),
+    _transform( rhs._transform )
 {
 }
 TransformCallback::~TransformCallback()
@@ -35,7 +40,7 @@ TransformCallback::~TransformCallback()
 }
 
 
-bool TransformCallback::operator()( jagDraw::Node& node )
+bool TransformCallback::operator()( jagDraw::Node& node, jagDraw::DrawInfo& drawInfo )
 {
     return( true );
 }
