@@ -51,6 +51,26 @@ Node::~Node()
 }
 
 
+void Node::setTransform( const gmtl::Matrix44d& matrix )
+{
+    _matrix = matrix;
+}
+gmtl::Matrix44d& Node::getTransform()
+{
+    return( _matrix );
+}
+const gmtl::Matrix44d& Node::getTransform() const
+{
+    return( _matrix );
+}
+
+
+Node::ExecuteCallbacks& Node::getExecuteCallbacks()
+{
+    return( _executeCallbacks );
+}
+
+
 void Node::execute( DrawInfo& drawInfo )
 {
     JAG3D_TRACE( "execute()" );

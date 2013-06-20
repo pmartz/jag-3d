@@ -104,14 +104,6 @@ void CollectionVisitor::visit( jagSG::Node& node )
 
     pushCommandMap( node.getCommandMap() );
 
-    const bool modelDirty( node.getTransform() != gmtl::MAT_IDENTITY44D );
-    if( modelDirty )
-    {
-        JAG3D_PROFILE( "CV transform" );
-        pushMatrix( node.getTransform() );
-        _transform.setModel( _matrixStack.back() );
-    }
-
     _infoPtr->setNode( &node );
     Node::CallbackInfo* info( _infoPtr.get() );
 
@@ -130,20 +122,19 @@ void CollectionVisitor::visit( jagSG::Node& node )
         collectAndTraverse( node );
     }
 
-
-    if( modelDirty )
-    {
-        JAG3D_PROFILE( "CV transform" );
-        popMatrix();
-        _transform.setModel( _matrixStack.empty() ?
-            gmtl::MAT_IDENTITY44D : _matrixStack.back() );
-    }
-
     popCommandMap();
 }
 
 void CollectionVisitor::collectAndTraverse( jagSG::Node& node )
 {
+    const bool modelDirty( node.getTransform() != gmtl::MAT_IDENTITY44D );
+    if( modelDirty )
+    {
+        pushMatrix( node.getTransform() );
+        _transform.setModel( _matrixStack.back() );
+    }
+
+    // TBD transform move to draw graph
     {
         JAG3D_PROFILE( "CV transform" );
         if( _transform.getDirty() != 0 )
@@ -164,6 +155,10 @@ void CollectionVisitor::collectAndTraverse( jagSG::Node& node )
         // Set eye coord distance (for distance-based render order control ).
         drawNode.setDistance( _infoPtr->getECBoundDistance() );
 
+        // Set the model matrix.
+        if( modelDirty )
+            drawNode.setTransform( _matrixStack.back() );
+
         // Recard changes to min near / max far.
         _minNear = std::min< double >( _minNear, _infoPtr->getECBoundDistance() - _infoPtr->getECBoundRadius() );
         _maxFar = std::max< double >( _maxFar, _infoPtr->getECBoundDistance() + _infoPtr->getECBoundRadius() );
@@ -181,6 +176,13 @@ void CollectionVisitor::collectAndTraverse( jagSG::Node& node )
     }
 
     Visitor::visit( node );
+
+    if( modelDirty )
+    {
+        popMatrix();
+        _transform.setModel( _matrixStack.empty() ?
+            gmtl::MAT_IDENTITY44D : _matrixStack.back() );
+    }
 }
 
 
