@@ -25,6 +25,7 @@
 #include <jagDraw/CommandMap.h>
 #include <jagDraw/ObjectID.h>
 #include <jagDraw/Drawable.h>
+#include <jagBase/MultiCallback.h>
 #include <jagBase/LogBase.h>
 #include <jagBase/ptr.h>
 
@@ -110,6 +111,38 @@ public:
     }
 
 
+    /** \struct Callback
+    \brief TBD
+    \details TBD */
+    struct Callback {
+        /** \brief TBD
+        \details TBD */
+        virtual bool operator()( jagDraw::Node& /* node */ )
+        {
+            return( false );
+        }
+    };
+    typedef jagBase::ptr< Callback >::shared_ptr CallbackPtr;
+
+
+    /** \brief Transform
+    \details TBD */
+    void setTransform( const gmtl::Matrix44d& matrix );
+    /** \brief TBD
+    \details TBD */
+    gmtl::Matrix44d& getTransform();
+    /** \overload */
+    const gmtl::Matrix44d& getTransform() const;
+
+
+    /** \brief TBD
+    \details TBD */
+    typedef jagBase::MultiCallback< CallbackPtr > ExecuteCallbacks;
+    /** \brief TBD
+    \details TBD */
+    ExecuteCallbacks& getExecuteCallbacks();
+
+
     /** \brief TBD
     \details TBD */
     virtual void execute( DrawInfo& drawInfo );
@@ -124,10 +157,13 @@ public:
     virtual void deleteID( const jagDraw::jagDrawContextID contextID );
 
 protected:
+    gmtl::Matrix44d _matrix;
     CommandMapPtr _commands;
     DrawableVec _drawables;
 
     double _distance;
+
+    ExecuteCallbacks _executeCallbacks;
 };
 
 typedef jagBase::ptr< jagDraw::Node >::shared_ptr DrawNodePtr;

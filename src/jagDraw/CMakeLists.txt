@@ -51,6 +51,7 @@ set( _jagDrawHeaderFiles
     Sampler.h
     Shader.h
     Texture.h
+    TransformCallback.h
     types.h
     Uniform.h
     UniformBlock.h
@@ -78,6 +79,7 @@ set( _jagDrawSourceFiles
     Sampler.cpp
     Shader.cpp
     Texture.cpp
+    TransformCallback.cpp
     Uniform.cpp
     UniformBlock.cpp
     Version.cpp
