@@ -140,13 +140,6 @@ void CollectionVisitor::collectAndTraverse( jagSG::Node& node )
         _transform.setModel( _matrixStack.back() );
     }
 
-    // TBD transform move to draw graph
-    {
-        JAG3D_PROFILE( "CV transform" );
-        if( _transform.getDirty() != 0 )
-            updateTransformUniforms();
-    }
-
     const unsigned int numDrawables( node.getNumDrawables() );
     if( numDrawables > 0 )
     {
@@ -246,38 +239,6 @@ unsigned int CollectionVisitor::getCurrentNodeContainer() const
     return( _currentID );
 }
 
-
-void CollectionVisitor::updateTransformUniforms()
-{
-    jagDraw::UniformSetPtr usp( new jagDraw::UniformSet() );
-
-    if( _transform.getDirty() & jagBase::TransformD::MODEL_VIEW_PROJ )
-    {
-        gmtl::Matrix44f mvpMat;
-        gmtl::convert( mvpMat, _transform.getModelViewProj() );
-        jagDraw::UniformPtr modelViewProj( new jagDraw::Uniform( "jagModelViewProjMatrix", mvpMat ) );
-        usp->insert( modelViewProj );
-    }
-    if( _transform.getDirty() & jagBase::TransformD::MODEL_VIEW_INV_TRANS )
-    {
-        gmtl::Matrix33f mvitMat;
-        gmtl::convert( mvitMat, _transform.getModelViewInvTrans() );
-        jagDraw::UniformPtr modelViewInvTrans( new jagDraw::Uniform( "jagModelViewInvTransMatrix", mvitMat ) );
-        usp->insert( modelViewInvTrans );
-    }
-    jagDraw::CommandMap& commands( _commandStack.back() );
-    jagDraw::DrawablePrepPtr& uniformSet( commands[ jagDraw::DrawablePrep::UniformSet_t ] );
-    if( uniformSet == NULL )
-    {
-        commands.insert( usp );
-    }
-    else
-    {
-        uniformSet = uniformSet->combine( usp );
-    }
-
-    _transform.setDirty( 0 );
-}
 
 
 
