@@ -125,8 +125,6 @@ public:
     typedef jagBase::ptr< CollectionInfo >::shared_ptr CollectionInfoPtr;
 
 protected:
-    void updateTransformUniforms();
-
     jagDraw::DrawGraphPtr _drawGraphTemplate;
     jagDraw::DrawGraphPtr _drawGraph;
     unsigned int _currentID;
