@@ -24,6 +24,7 @@
 #include <jagDraw/Export.h>
 #include <jagDraw/Node.h>
 #include <jagBase/Transform.h>
+#include <jagBase/ptr.h>
 
 
 namespace jagDraw {
@@ -32,7 +33,7 @@ namespace jagDraw {
 /** \struct TransformCallback TransformCallback.h <TransformCallback/Node.h>
 \brief A draw node execute callback that specifies transform uniforms.
 \details TBD */
-struct JAGDRAW_EXPORT TransformCallback : protected jagDraw::Node::Callback
+struct JAGDRAW_EXPORT TransformCallback : public jagDraw::Node::Callback
 {
     TransformCallback( const jagBase::TransformD& transform );
     TransformCallback( const TransformCallback& rhs );
@@ -43,6 +44,8 @@ struct JAGDRAW_EXPORT TransformCallback : protected jagDraw::Node::Callback
 
     jagBase::TransformD _transform;
 };
+
+typedef jagBase::ptr< jagDraw::TransformCallback >::shared_ptr TransformCallbackPtr;
 
 
 // jagDraw

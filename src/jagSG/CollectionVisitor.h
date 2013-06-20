@@ -27,6 +27,7 @@
 #include <jagDraw/Node.h>
 #include <jagDraw/NodeContainer.h>
 #include <jagDraw/DrawGraph.h>
+#include <jagDraw/TransformCallback.h>
 #include <jagDraw/Uniform.h>
 #include <jagBase/ptr.h>
 
@@ -135,6 +136,7 @@ protected:
 
     CollectionInfoPtr _infoPtr;
 
+    jagDraw::TransformCallbackPtr _drawTransformCallback;
     double _minNear, _maxFar;
 };
 

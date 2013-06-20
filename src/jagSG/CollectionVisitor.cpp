@@ -91,6 +91,12 @@ void CollectionVisitor::reset()
 
     _infoPtr = CollectionInfoPtr( new CollectionInfo( _transform ) );
 
+    // TBD transform. Warning: if client code calls reset,
+    //   then gets the transform and sets near/far, then the TransformCallback
+    //   is going to miss that change. Must fix this.
+    _drawTransformCallback = jagDraw::TransformCallbackPtr(
+        new jagDraw::TransformCallback( _transform ) );
+
     _minNear = DBL_MAX;
     _maxFar = -DBL_MAX;
 }
@@ -159,7 +165,13 @@ void CollectionVisitor::collectAndTraverse( jagSG::Node& node )
         if( modelDirty )
             drawNode.setTransform( _matrixStack.back() );
 
-        // Recard changes to min near / max far.
+        // TBD transform. Need to do this on first draw node and then
+        //   only on other draw nodes if they have a dirty model matrix.
+        //   But for now, do it everywhere.
+        // Model matrix is dirty; add callback to update the transform uniforms.
+        drawNode.getExecuteCallbacks().push_back( _drawTransformCallback );
+
+        // Record changes to min near / max far.
         _minNear = std::min< double >( _minNear, _infoPtr->getECBoundDistance() - _infoPtr->getECBoundRadius() );
         _maxFar = std::max< double >( _maxFar, _infoPtr->getECBoundDistance() + _infoPtr->getECBoundRadius() );
 

@@ -42,6 +42,25 @@ TransformCallback::~TransformCallback()
 
 bool TransformCallback::operator()( jagDraw::Node& node, jagDraw::DrawInfo& drawInfo )
 {
+    jagDraw::UniformSet us;
+
+    _transform.setModel( node.getTransform() );
+    {
+        gmtl::Matrix44f mvpMat;
+        gmtl::convert( mvpMat, _transform.getModelViewProj() );
+        jagDraw::UniformPtr modelViewProj( new jagDraw::Uniform( "jagModelViewProjMatrix", mvpMat ) );
+        us.insert( modelViewProj );
+    }
+    {
+        gmtl::Matrix33f mvitMat;
+        gmtl::convert( mvitMat, _transform.getModelViewInvTrans() );
+        jagDraw::UniformPtr modelViewInvTrans( new jagDraw::Uniform( "jagModelViewInvTransMatrix", mvitMat ) );
+        us.insert( modelViewInvTrans );
+    }
+    _transform.setDirty( 0 );
+
+    us.execute( drawInfo );
+
     return( true );
 }
 
