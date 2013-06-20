@@ -104,9 +104,11 @@ public:
     \details Required by std::sort(). */
     Node& operator=( const Node& rhs )
     {
+        _matrix = rhs._matrix;
         _commands = rhs._commands;
         _drawables = rhs._drawables;
         _distance = rhs._distance;
+        _executeCallbacks = rhs._executeCallbacks;
         return( *this );
     }
 

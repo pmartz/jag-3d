@@ -34,6 +34,7 @@ namespace jagDraw {
 Node::Node( CommandMapPtr commands )
   : jagBase::LogBase( "jag.draw.node" ),
     ObjectIDOwner(),
+    _matrix( gmtl::MAT_IDENTITY44D ),
     _commands( commands ),
     _distance( 0. )
 {
@@ -41,9 +42,11 @@ Node::Node( CommandMapPtr commands )
 Node::Node( const Node& rhs )
   : jagBase::LogBase( "jag.draw.node" ),
     ObjectIDOwner( rhs ),
+    _matrix( rhs._matrix ),
     _commands( rhs._commands ),
     _drawables( rhs._drawables ),
-    _distance( rhs._distance )
+    _distance( rhs._distance ),
+    _executeCallbacks( rhs._executeCallbacks )
 {
 }
 Node::~Node()
@@ -76,6 +79,15 @@ void Node::execute( DrawInfo& drawInfo )
     JAG3D_TRACE( "execute()" );
 
     JAG3D_PROFILE( "DrawNode execute()" );
+
+    ExecuteCallbacks& callbacks( getExecuteCallbacks() );
+    BOOST_FOREACH( jagDraw::Node::CallbackPtr cb, callbacks )
+    {
+        if( !( (*cb)( *this ) ) )
+        {
+            return;
+        }
+    }
 
     CommandMap delta( drawInfo._current << (*_commands) );
     delta.execute( drawInfo );
