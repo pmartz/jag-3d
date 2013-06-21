@@ -25,9 +25,9 @@
 namespace jagDraw {
 
 
-TransformCallback::TransformCallback( const jagBase::TransformD& transform )
+TransformCallback::TransformCallback()
     : Node::Callback(),
-    _transform( transform )
+    _transform()
 {
 }
 TransformCallback::TransformCallback( const TransformCallback& rhs )

@@ -78,6 +78,9 @@ void CollectionVisitor::reset()
     resetCommandMap();
     resetMatrix();
 
+    _drawTransformCallback = jagDraw::TransformCallbackPtr(
+        new jagDraw::TransformCallback() );
+
     _currentID = 0;
     if( _drawGraph != NULL )
     {
@@ -87,15 +90,11 @@ void CollectionVisitor::reset()
         }
         if( _currentID < _drawGraph->size() )
             _currentNodes = &( (*_drawGraph)[ _currentID ] );
+
+        _drawGraph->setTransformCallback( _drawTransformCallback );
     }
 
     _infoPtr = CollectionInfoPtr( new CollectionInfo( _transform ) );
-
-    // TBD transform. Warning: if client code calls reset,
-    //   then gets the transform and sets near/far, then the TransformCallback
-    //   is going to miss that change. Must fix this.
-    _drawTransformCallback = jagDraw::TransformCallbackPtr(
-        new jagDraw::TransformCallback( _transform ) );
 
     _minNear = DBL_MAX;
     _maxFar = -DBL_MAX;
@@ -200,6 +199,9 @@ void CollectionVisitor::setDrawGraphTemplate( jagDraw::DrawGraphPtr drawGraphTem
 {
     _drawGraphTemplate = drawGraphTemplate;
     _drawGraph = jagDraw::DrawGraphPtr( new jagDraw::DrawGraph( *_drawGraphTemplate ) );
+
+    if( _drawTransformCallback != NULL )
+        _drawGraph->setTransformCallback( _drawTransformCallback );
 }
 const jagDraw::DrawGraphPtr CollectionVisitor::getDrawGraphTemplate() const
 {
