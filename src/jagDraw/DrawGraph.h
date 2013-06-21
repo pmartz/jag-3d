@@ -24,6 +24,7 @@
 #include <jagDraw/Export.h>
 #include <jagDraw/NodeContainer.h>
 #include <jagDraw/ObjectID.h>
+#include <jagDraw/TransformCallback.h>
 #include <jagBase/LogBase.h>
 #include <jagBase/MultiCallback.h>
 #include <jagBase/ptr.h>
@@ -70,6 +71,17 @@ public:
     CallbackVec& getCallbacks();
 
 
+    /** \brief TBD
+    \details TBD */
+    void setTransformCallback( TransformCallbackPtr transformCallback );
+    /** \brief TBD
+    \details TBD */
+    TransformCallbackPtr getTransformCallback();
+    /** \brief TBD
+    \details TBD */
+    void setViewProj( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj );
+
+
     /** \brief If all callbacks pass, execute all Nodes.
     \details If all callbacks return true, call internalExecute().
     Otherwise do nothing and return.
@@ -91,6 +103,8 @@ public:
 
 protected:
     CallbackVec _callbacks;
+
+    TransformCallbackPtr _transformCallback;
 };
 
 typedef jagBase::ptr< jagDraw::DrawGraph >::shared_ptr DrawGraphPtr;

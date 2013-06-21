@@ -73,15 +73,15 @@ public:
     }
 
 protected:
-    gmtl::Matrix44d computeProjection( double aspect );
+    gmtl::Matrix44d computeProjection( const double aspect, const double zNear=0.5, const double zFar=400. );
     gmtl::Matrix44d computeView( const double angleRad );
 
     std::string _fileName;
 
     jagSG::NodePtr _root;
 
-    typedef jagDraw::PerContextData< gmtl::Matrix44d > PerContextMatrix44d;
-    PerContextMatrix44d _proj;
+    typedef jagDraw::PerContextData< double > PerContextAspect;
+    PerContextAspect _aspect;
 
     boost::chrono::high_resolution_clock::time_point _lastTime;
     double _rotation;
@@ -234,11 +234,10 @@ bool Transparency::startup( const unsigned int numContexts )
     commands->insert( usp );
 
 
-    // We keep a different project matrix per context (to support different
+    // We keep a different aspect ratio per context (to support different
     // window sizes). Initialize them all to a reasonable default.
-    const gmtl::Matrix44d defaultProjMat( computeProjection( 1. ) );
     for( unsigned int idx( 0 ); idx<numContexts; ++idx )
-        _proj._data.push_back( defaultProjMat );
+        _aspect._data.push_back( 1. );
 
 
     // Tell all Jag3D objects how many contexts to expect.
@@ -300,7 +299,9 @@ bool Transparency::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& pr
     {
         JAG3D_PROFILE( "Collection" );
 
-        collect.setViewProj( computeView( _rotation ), _proj._data[ contextID ] );
+        // Set view and projection to define the collection frustum.
+        const gmtl::Matrix44d viewMatrix( computeView( _rotation ) );
+        collect.setViewProj( viewMatrix, computeProjection( _aspect._data[ contextID ] ) );
 
         {
             JAG3D_PROFILE( "Collection traverse" );
@@ -308,6 +309,12 @@ bool Transparency::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& pr
             _root->accept( collect );
         }
         drawGraph = collect.getDrawGraph();
+
+        // Set view and projection to use for drawing. Create projection using
+        // the computed near and far planes.
+        double minNear, maxFar;
+        collect.getNearFar( minNear, maxFar );
+        drawGraph->setViewProj( viewMatrix, computeProjection( _aspect._data[ contextID ], minNear, maxFar ) );
 
 #ifdef ENABLE_SORT
         {
@@ -347,19 +354,12 @@ void Transparency::reshape( const int w, const int h )
         return;
 
     const jagDraw::jagDrawContextID contextID( jagDraw::ContextSupport::instance()->getActiveContext() );
-    _proj._data[ contextID ] = computeProjection( (double)w/(double)h );
+    _aspect._data[ contextID ] = ( double ) w / ( double ) h;
 }
 
-gmtl::Matrix44d Transparency::computeProjection( double aspect )
+gmtl::Matrix44d Transparency::computeProjection( const double aspect, const double zNear, const double zFar )
 {
-    const gmtl::Sphered s( _root->getBound()->asSphere() );
-
-    if( s.getRadius() <= 0.f )
-        return( gmtl::MAT_IDENTITY44D );
-
     gmtl::Matrix44d proj;
-    const double zNear = .5;// 2.8 * s.getRadius();
-    const double zFar = 400.;//5.2 * s.getRadius();
     gmtl::setPerspective< double >( proj, 30., aspect, zNear, zFar );
 
     return( proj );

@@ -39,7 +39,8 @@ DrawGraph::DrawGraph( const DrawGraph& rhs )
   : NodeContainerSimpleVec( rhs ),
     jagBase::LogBase( "jag.draw.graph" ),
     ObjectIDOwner( rhs ),
-    _callbacks( rhs._callbacks )
+    _callbacks( rhs._callbacks ),
+    _transformCallback( rhs._transformCallback )
 {
 }
 DrawGraph::~DrawGraph()
@@ -53,6 +54,8 @@ DrawGraph& DrawGraph::operator=( const DrawGraph& rhs )
     // LogBase does not support (and doesn't need) assignment operator.
     //jagBase::LogBase::operator=( rhs );
     _callbacks = rhs._callbacks;
+    _transformCallback = rhs._transformCallback;
+
     return( *this );
 }
 
@@ -61,6 +64,22 @@ DrawGraph::CallbackVec& DrawGraph::getCallbacks()
 {
     return( _callbacks );
 }
+
+
+void DrawGraph::setTransformCallback( TransformCallbackPtr transformCallback )
+{
+    _transformCallback = transformCallback;
+}
+TransformCallbackPtr DrawGraph::getTransformCallback()
+{
+    return( _transformCallback );
+}
+void DrawGraph::setViewProj( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj )
+{
+    _transformCallback->_transform.setView( view );
+    _transformCallback->_transform.setProj( proj );
+}
+
 
 void DrawGraph::execute( DrawInfo& drawInfo )
 {

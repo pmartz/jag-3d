@@ -35,7 +35,7 @@ namespace jagDraw {
 \details TBD */
 struct JAGDRAW_EXPORT TransformCallback : public jagDraw::Node::Callback
 {
-    TransformCallback( const jagBase::TransformD& transform );
+    TransformCallback();
     TransformCallback( const TransformCallback& rhs );
     virtual ~TransformCallback();
 
