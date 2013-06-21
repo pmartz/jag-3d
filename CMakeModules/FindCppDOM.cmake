@@ -36,7 +36,7 @@ else()
                   HINTS ${cppdom_FLAGPOLL_LIBRARY_DIRS} )
     find_package_handle_standard_args( CppDOM
                                        REQUIRED_VARS CPPDOM_LIBRARY CPPDOM_INCLUDE_DIR
-                                       VERSION_VAR FP_CPPDOM_VERSION
+                                       VERSION_VAR cppdom_FLAGPOLL_MODULE_VERSION
                                        FAIL_MESSAGE ${CPPDOM_FAIL_MESSAGE} )
     set( CPPDOM_LIBRARIES ${CPPDOM_LIBRARY} )
     mark_as_advanced( CPPDOM_LIBRARIES )
