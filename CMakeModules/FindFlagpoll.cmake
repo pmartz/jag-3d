@@ -63,7 +63,7 @@ mark_as_advanced(FLAGPOLL)
 ###
 # Macro for internal use - shared workings between all the public macros below.
 ###
-macro(_flagpoll_get_results _package _arg _flag _output)
+macro(_flagpoll_get_results _package _arg _regex_string _output)
 	if(FLAGPOLL)
 
 		# If the CMakeLists that called the flagpoll macro passed NO_DEPS,
@@ -85,30 +85,29 @@ macro(_flagpoll_get_results _package _arg _flag _output)
 			ERROR_QUIET
 			OUTPUT_STRIP_TRAILING_WHITESPACE)
 
-		if(_FLAGPOLL_OUTPUT)
-			# Remove -I and /I(or equivalent for other flags
-			string(REGEX
-				REPLACE
-				"[-/]${_flag}"
-				""
-				_FLAGPOLL_OUTPUT
-				${_FLAGPOLL_OUTPUT})
+        if(_FLAGPOLL_OUTPUT)
+            # Remove -I and /I(or equivalent for other flags
+            string(REGEX
+                   REPLACE
+                   "${_regex_string}"
+                   ""
+                   _FLAGPOLL_OUTPUT
+                   ${_FLAGPOLL_OUTPUT})
 
-			# Remove extra spaces
-			string(REGEX REPLACE " +" " " _FLAGPOLL_OUTPUT ${_FLAGPOLL_OUTPUT})
+            # Remove extra spaces
+            string(REGEX REPLACE " +" " " _FLAGPOLL_OUTPUT ${_FLAGPOLL_OUTPUT})
 
-			# Make a CMake list, standardize paths, and append only what we want to our final list
-			separate_arguments(_FLAGPOLL_OUTPUT)
-			foreach(_RESULT ${_FLAGPOLL_OUTPUT})
-				string(REGEX MATCH "^-" _BAD ${_RESULT})
-				if(_RESULT AND NOT _BAD)
-					file(TO_CMAKE_PATH "${_RESULT}" _RESULT_CLEAN)
-					list(APPEND ${_output} ${_RESULT_CLEAN})
-				endif()
-			endforeach()
-		endif()
-
-	endif()
+            # Make a CMake list, standardize paths, and append only what we want to our final list
+            separate_arguments(_FLAGPOLL_OUTPUT)
+            foreach(_RESULT ${_FLAGPOLL_OUTPUT})
+                string(REGEX MATCH "^-" _BAD ${_RESULT})
+                if(_RESULT AND NOT _BAD)
+                    file(TO_CMAKE_PATH "${_RESULT}" _RESULT_CLEAN)
+                    list(APPEND ${_output} ${_RESULT_CLEAN})
+                endif()
+            endforeach()
+        endif()
+    endif()
 endmacro()
 
 ###
@@ -118,7 +117,7 @@ macro(flagpoll_get_include_dirs _package)
 	# Passing ARGN along so if they specified NO_DEPS we actually do it.
 	_flagpoll_get_results(${_package}
 		"--cflags-only-I"
-		I
+		"[-/]I"
 		${_package}_FLAGPOLL_INCLUDE_DIRS
 		${ARGN})
 endmacro()
@@ -127,7 +126,7 @@ macro(flagpoll_get_library_dirs _package)
 	# Passing ARGN along so if they specified NO_DEPS we actually do it.
 	_flagpoll_get_results(${_package}
 		"--libs-only-L"
-		L
+		"-L|/libpath:"
 		${_package}_FLAGPOLL_LIBRARY_DIRS
 		${ARGN})
 endmacro()
@@ -136,7 +135,7 @@ macro(flagpoll_get_library_names _package)
 	# Passing ARGN along so if they specified NO_DEPS we actually do it.
 	_flagpoll_get_results(${_package}
 		"--libs-only-l"
-		l
+		"-l"
 		${_package}_FLAGPOLL_LIBRARY_NAMES
 		${ARGN})
 endmacro()
@@ -145,7 +144,23 @@ macro(flagpoll_get_extra_libs _package)
 	# Passing ARGN along so if they specified NO_DEPS we actually do it.
 	_flagpoll_get_results(${_package}
 		"--get-extra-libs"
-		l
+		"-l"
 		${_package}_FLAGPOLL_EXTRA_LIBS
 		${ARGN})
+endmacro()
+
+macro(flagpoll_get_module_version _package)
+    _flagpoll_get_results(${_package}
+        "--modversion"
+        "[-/]I" # provide a "dummy" regex string
+        ${_package}_FLAGPOLL_MODULE_VERSION
+        ${ARGN})
+endmacro()
+
+macro(flagpoll_get_other_definitions _package)
+    _flagpoll_get_results(${_package}
+        "--cflags-only-other"
+        "[-/]I" # provide a "dummy" regex string
+        ${_package}_FLAGPOLL_OTHER_DEFINITIONS
+        ${ARGN})
 endmacro()
