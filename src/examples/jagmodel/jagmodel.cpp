@@ -67,15 +67,15 @@ public:
     }
 
 protected:
-    gmtl::Matrix44d computeProjection( double aspect );
+    gmtl::Matrix44d computeProjection( const double aspect, const double zNear=0.5, const double zFar=400. );
     gmtl::Matrix44d computeView();
 
     std::string _fileName;
 
     jagSG::NodePtr _root;
 
-    typedef jagDraw::PerContextData< gmtl::Matrix44d > PerContextMatrix44d;
-    PerContextMatrix44d _proj;
+    typedef jagDraw::PerContextData< double > PerContextAspect;
+    PerContextAspect _aspect;
 };
 
 
@@ -168,11 +168,10 @@ bool JagModel::startup( const unsigned int numContexts )
     commands->insert( usp );
 
 
-    // We keep a different project matrix per context (to support different
+    // We keep a different aspect ratio per context (to support different
     // window sizes). Initialize them all to a reasonable default.
-    const gmtl::Matrix44d defaultProjMat( computeProjection( 1. ) );
     for( unsigned int idx( 0 ); idx<numContexts; ++idx )
-        _proj._data.push_back( defaultProjMat );
+        _aspect._data.push_back( 1. );
 
 
     // Tell all Jag3D objects how many contexts to expect.
@@ -220,14 +219,20 @@ bool JagModel::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj )
     jagSG::CollectionVisitor& collect( getCollectionVisitor() );
     collect.reset();
 
+    gmtl::Matrix44d viewMatrix( view );
+    gmtl::Matrix44d projMatrix( proj );
     {
         JAG3D_PROFILE( "Collection" );
 
+        // Set view and projection to define the collection frustum.
         // Systems such as VRJ will pass view and projection matrices.
-        if( view.mState != gmtl::Matrix44f::IDENTITY || proj.mState != gmtl::Matrix44f::IDENTITY )
-            collect.setViewProj( view, proj );
-        else
-            collect.setViewProj( computeView(), _proj._data[ contextID ] );
+        if( view.mState == gmtl::Matrix44f::IDENTITY || proj.mState != gmtl::Matrix44f::IDENTITY )
+        {
+            // Not VRJ. Compute a view and projection.
+            viewMatrix = computeView();
+            projMatrix = computeProjection( _aspect._data[ contextID ] );
+        }
+        collect.setViewProj( viewMatrix, projMatrix );
 
         {
             JAG3D_PROFILE( "Collection traverse" );
@@ -251,6 +256,14 @@ bool JagModel::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj )
 
         // Execute the draw graph.
         jagDraw::DrawGraphPtr drawGraph( collect.getDrawGraph() );
+
+        // Compute projection matrix to use for drawing, based on CollectionVisitor's
+        // computed min/max Z values.
+        double minZ, maxZ;
+        collect.getNearFar( minZ, maxZ );
+        projMatrix = computeProjection( _aspect._data[ contextID ], minZ, maxZ );
+        drawGraph->setViewProj( viewMatrix, projMatrix );
+
         drawGraph->execute( drawInfo );
     }
 
@@ -267,19 +280,12 @@ void JagModel::reshape( const int w, const int h )
         return;
 
     const jagDraw::jagDrawContextID contextID( jagDraw::ContextSupport::instance()->getActiveContext() );
-    _proj._data[ contextID ] = computeProjection( (double)w/(double)h );
+    _aspect._data[ contextID ] = ( double ) w / ( double ) h;
 }
 
-gmtl::Matrix44d JagModel::computeProjection( double aspect )
+gmtl::Matrix44d JagModel::computeProjection( const double aspect, const double zNear, const double zFar )
 {
-    const gmtl::Sphered s( _root->getBound()->asSphere() );
-
-    if( s.getRadius() <= 0.f )
-        return( gmtl::MAT_IDENTITY44D );
-
     gmtl::Matrix44d proj;
-    const double zNear = 3.5 * s.getRadius();
-    const double zFar = 5.75 * s.getRadius();
     gmtl::setPerspective< double >( proj, 30., aspect, zNear, zFar );
 
     return( proj );
