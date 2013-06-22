@@ -33,6 +33,11 @@
 namespace jagDraw {
 
 
+// Forward
+class Bound;
+typedef jagBase::ptr< Bound >::shared_ptr BoundPtr;
+
+
 /** \class Bound Bound.h <jagDraw/Bound.h>
 \brief TBD
 \details TBD
@@ -58,6 +63,7 @@ public:
 
     virtual gmtl::AABoxd asAABox() const = 0;
     virtual gmtl::Sphered asSphere() const = 0;
+    virtual jagDraw::BoundPtr clone() const = 0;
 
     virtual bool contains( const gmtl::Point3f& point )
     {
@@ -82,7 +88,6 @@ protected:
     BaseType _type;
 };
 
-typedef jagBase::ptr< jagDraw::Bound >::shared_ptr BoundPtr;
 
 
 /** \class BoundAABox Bound.h <jagDraw/Bound.h>
@@ -119,6 +124,10 @@ public:
         const gmtl::Point3d& c( extent * .5 + _bound.mMin );
         const double r( gmtl::length( extent ) * .5 );
         return( gmtl::Sphered( c, r ) );
+    }
+    virtual BoundPtr clone() const
+    {
+        return( BoundPtr( new BoundAABox( *this ) ) );
     }
 
     virtual bool contains( const gmtl::Point3d& point )
@@ -208,6 +217,10 @@ public:
     virtual gmtl::Sphered asSphere() const
     {
         return( _bound );
+    }
+    virtual BoundPtr clone() const
+    {
+        return( BoundPtr( new BoundSphere( *this ) ) );
     }
 
     virtual bool contains( const gmtl::Point3d& point )

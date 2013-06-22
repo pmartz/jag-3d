@@ -148,6 +148,13 @@ the list directly with getDrawCommandVec().
     virtual BoundPtr getBound( const VertexArrayObjectPtr vaop );
 
     /** \brief TBD
+    \details TBD */
+    void setInitialBound( BoundPtr initialBound );
+    /** \brief TBD
+    \details TBD */
+    BoundPtr getInitialBound() const;
+
+    /** \brief TBD
     \details TBD
 
     \specFuncBegin
@@ -273,10 +280,15 @@ protected:
     /** Default value: _drawCommands = jagDraw::DrawCommandVec() */
     DrawCommandVec _drawCommands;
 
-    /** Default value: _bound = jagDraw::BoundPtr() */
+    /** Default value: The first call to getBound() determines the
+    default \c _bound value. If \c _initialBound is NULL, a new
+    jagDraw::BoundAABox is allocated; otherwise, \c _initialBOund
+    is cloned. */
     BoundPtr _bound;
     /** Default value: _boundDirty = true */
     bool _boundDirty;
+    /** Default value: NULL */
+    BoundPtr _initialBound;
 
     /** Default value: _computeBoundCallback = ComputeBoundCallbackPtr() */
     ComputeBoundCallbackPtr _computeBoundCallback;
