@@ -80,7 +80,12 @@ BoundPtr Drawable::getBound( const VertexArrayObjectPtr vaop )
     if( getBoundDirty( vaop ) )
     {
         if( _bound == NULL )
-            _bound = BoundPtr( new BoundAABox() );
+        {
+            if( _initialBound == NULL )
+                _bound = BoundPtr( new BoundAABox() );
+            else
+                _bound = _initialBound->clone();
+        }
         if( _computeBoundCallback != NULL )
             (*_computeBoundCallback)( _bound, vaop );
         else
@@ -89,6 +94,15 @@ BoundPtr Drawable::getBound( const VertexArrayObjectPtr vaop )
     }
 
     return( _bound );
+}
+
+void Drawable::setInitialBound( BoundPtr initialBound )
+{
+    _initialBound = initialBound;
+}
+BoundPtr Drawable::getInitialBound() const
+{
+    return( _initialBound );
 }
 
 void Drawable::setBoundDirty( const VertexArrayObjectPtr vaop, const bool dirty )
