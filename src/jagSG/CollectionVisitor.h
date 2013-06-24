@@ -98,13 +98,12 @@ public:
     class JAGSG_EXPORT CollectionInfo : public Node::CallbackInfo
     {
     public:
-        CollectionInfo( jagBase::TransformD& transform, jagSG::Node* node=NULL );
+        CollectionInfo( jagBase::TransformD& transform );
         CollectionInfo( const CollectionInfo& rhs );
         virtual ~CollectionInfo();
 
-        virtual void setNode( jagSG::Node* node );
-        /** \brief Set the bound without setting the node.
-        \details This is primarily for use by unit tests. */
+        /** \brief TBD
+        \details TBD */
         void setBound( jagDraw::Bound* Bound );
 
         double getECBoundDistance() const;

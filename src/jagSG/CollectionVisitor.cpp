@@ -110,6 +110,7 @@ void CollectionVisitor::visit( jagSG::Node& node )
     pushCommandMap( node.getCommandMap() );
 
     _infoPtr->setNode( &node );
+    _infoPtr->setBound( node.getBound( _commandStack.back() ).get() );
     Node::CallbackInfo* info( _infoPtr.get() );
 
     bool collect( true );
@@ -244,11 +245,11 @@ unsigned int CollectionVisitor::getCurrentNodeContainer() const
 
 
 
-CollectionVisitor::CollectionInfo::CollectionInfo( jagBase::TransformD& transform, jagSG::Node* node )
-    : Node::CallbackInfo( node ),
+CollectionVisitor::CollectionInfo::CollectionInfo( jagBase::TransformD& transform )
+    : Node::CallbackInfo(),
       _transform( transform ),
       _bound( NULL )
-    // Initialization of these variables is handled in setNode():
+    // Initialization of these variables is handled in setBound():
     //   _ecDistance
     //   _ecDistanceDirty
     //   _ecRadius
@@ -261,7 +262,7 @@ CollectionVisitor::CollectionInfo::CollectionInfo( const CollectionInfo& rhs )
     : Node::CallbackInfo( rhs ),
       _transform( rhs._transform ),
       _bound( rhs._bound )
-    // Initialization of these variables is handled in setNode():
+    // Initialization of these variables is handled in setBound():
     //   _ecDistance
     //   _ecDistanceDirty
     //   _ecRadius
@@ -274,19 +275,8 @@ CollectionVisitor::CollectionInfo::~CollectionInfo()
 {
 }
 
-void CollectionVisitor::CollectionInfo::setNode( jagSG::Node* node )
-{
-    jagSG::Node::CallbackInfo::setNode( node );
-    _bound = node->getBound().get();
-
-    _ecDistanceDirty = true;
-    _ecRadiusDirty = true;
-    _wcLengthCoeffDirty = true;
-}
 void CollectionVisitor::CollectionInfo::setBound( jagDraw::Bound* bound )
 {
-    jagSG::Node::CallbackInfo::setNode( NULL );
-
     _ecDistanceDirty = true;
     _ecRadiusDirty = true;
     _wcLengthCoeffDirty = true;
