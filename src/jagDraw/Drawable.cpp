@@ -40,15 +40,14 @@ namespace jagDraw {
 
 
 Drawable::Drawable()
-  : jagBase::LogBase( "jag.draw.drawable" ),
-    _boundDirty( true )
+  : jagBase::LogBase( "jag.draw.drawable" )
 {
 }
 Drawable::Drawable( const Drawable& rhs )
   : jagBase::LogBase( rhs ),
     _drawCommands( rhs._drawCommands ),
-    _bound( rhs._bound ),
-    _boundDirty( rhs._boundDirty ),
+    _bounds( rhs._bounds ),
+    _initialBound( rhs._initialBound ),
     _computeBoundCallback( rhs._computeBoundCallback )
 {
 }
@@ -77,28 +76,34 @@ void Drawable::execute( DrawInfo& drawInfo )
 
 BoundPtr Drawable::getBound( const VertexArrayObjectPtr vaop )
 {
-    if( getBoundDirty( vaop ) )
+    BoundInfo& boundInfo( _bounds[ vaop.get() ] );
+    if( boundInfo._dirty )
     {
-        if( _bound == NULL )
+        if( boundInfo._bound == NULL )
         {
             if( _initialBound == NULL )
-                _bound = BoundPtr( new BoundAABox() );
+                boundInfo._bound = BoundPtr( new BoundAABox() );
             else
-                _bound = _initialBound->clone();
+                boundInfo._bound = _initialBound->clone();
         }
         if( _computeBoundCallback != NULL )
-            (*_computeBoundCallback)( _bound, vaop );
+            (*_computeBoundCallback)( boundInfo._bound, vaop );
         else
-            computeBounds( _bound, vaop );
-        setBoundDirty( vaop, false );
+            computeBounds( boundInfo._bound, vaop );
+        boundInfo._dirty = false;
     }
 
-    return( _bound );
+    return( boundInfo._bound );
 }
 
 void Drawable::setInitialBound( BoundPtr initialBound )
 {
     _initialBound = initialBound;
+
+    BOOST_FOREACH( BoundMap::value_type& mapElement, _bounds )
+    {
+        mapElement.second._dirty = true;
+    }
 }
 BoundPtr Drawable::getInitialBound() const
 {
@@ -107,11 +112,15 @@ BoundPtr Drawable::getInitialBound() const
 
 void Drawable::setBoundDirty( const VertexArrayObjectPtr vaop, const bool dirty )
 {
-    _boundDirty = dirty;
+    _bounds[ vaop.get() ]._dirty = true;
 }
 bool Drawable::getBoundDirty( const VertexArrayObjectPtr vaop ) const
 {
-    return( _boundDirty );
+    BoundMap::const_iterator it( _bounds.find( vaop.get() ) );
+    if( it != _bounds.end() )
+        return( it->second._dirty );
+    else
+        return( true );
 }
 
 void Drawable::computeBounds( BoundPtr _bound, const VertexArrayObjectPtr vaop )
@@ -163,6 +172,12 @@ void Drawable::computeBounds( BoundPtr _bound, const VertexArrayObjectPtr vaop )
         }
     }
 }
+
+Drawable::BoundInfo::BoundInfo()
+    : _dirty( true )
+{
+}
+
 
 
 void Drawable::addDrawCommand( DrawCommandPtr dcp )

@@ -280,13 +280,23 @@ protected:
     /** Default value: _drawCommands = jagDraw::DrawCommandVec() */
     DrawCommandVec _drawCommands;
 
+    /** \struct BoundInfo Drawable.h <jagDraw/Drawable.h>
+    \brief A bounding volume with associated data.
+    \details Allows a bounding volume and dirty flag per VertexArrayObject.
+    See BoundMap. */
+    struct BoundInfo {
+        BoundInfo();
+
+        BoundPtr _bound;
+        bool _dirty;
+    };
+    typedef std::map< VertexArrayObject*, BoundInfo > BoundMap;
+
     /** Default value: The first call to getBound() determines the
     default \c _bound value. If \c _initialBound is NULL, a new
     jagDraw::BoundAABox is allocated; otherwise, \c _initialBOund
     is cloned. */
-    BoundPtr _bound;
-    /** Default value: _boundDirty = true */
-    bool _boundDirty;
+    BoundMap _bounds;
     /** Default value: NULL */
     BoundPtr _initialBound;
 
