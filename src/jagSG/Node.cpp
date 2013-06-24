@@ -123,6 +123,9 @@ jagDraw::BoundPtr Node::getBound( const jagDraw::CommandMap& commands )
 
     const jagDraw::DrawablePrepPtr& drawablePrep( newCommands[ jagDraw::DrawablePrep::VertexArrayObject_t ] );
     const jagDraw::VertexArrayObjectPtr vaop( boost::dynamic_pointer_cast< jagDraw::VertexArrayObject >( drawablePrep ) );
+
+    boost::mutex::scoped_lock lock( _mutex );
+
     BoundInfo& bi( _bounds[ vaop.get() ] );
     if( !( bi._dirty ) )
         return( bi._bound );

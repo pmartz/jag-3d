@@ -227,6 +227,8 @@ protected:
     };
     typedef std::map< jagDraw::VertexArrayObject*, BoundInfo > BoundMap;
     BoundMap _bounds;
+    /** \brief Lock around _bounds BoundInfo map. */
+    mutable boost::mutex _mutex;
 
     CallbackPtr _traverseCallback;
     CollectionCallbacks _collectionCallbacks;

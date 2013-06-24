@@ -76,6 +76,8 @@ void Drawable::execute( DrawInfo& drawInfo )
 
 BoundPtr Drawable::getBound( const VertexArrayObjectPtr vaop )
 {
+    boost::mutex::scoped_lock lock( _mutex );
+
     BoundInfo& boundInfo( _bounds[ vaop.get() ] );
     if( boundInfo._dirty )
     {
@@ -100,6 +102,7 @@ void Drawable::setInitialBound( BoundPtr initialBound )
 {
     _initialBound = initialBound;
 
+    boost::mutex::scoped_lock lock( _mutex );
     BOOST_FOREACH( BoundMap::value_type& mapElement, _bounds )
     {
         mapElement.second._dirty = true;
@@ -112,10 +115,13 @@ BoundPtr Drawable::getInitialBound() const
 
 void Drawable::setBoundDirty( const VertexArrayObjectPtr vaop, const bool dirty )
 {
+    boost::mutex::scoped_lock lock( _mutex );
     _bounds[ vaop.get() ]._dirty = true;
 }
 bool Drawable::getBoundDirty( const VertexArrayObjectPtr vaop ) const
 {
+    boost::mutex::scoped_lock lock( _mutex );
+
     BoundMap::const_iterator it( _bounds.find( vaop.get() ) );
     if( it != _bounds.end() )
         return( it->second._dirty );
@@ -123,7 +129,7 @@ bool Drawable::getBoundDirty( const VertexArrayObjectPtr vaop ) const
         return( true );
 }
 
-void Drawable::computeBounds( BoundPtr _bound, const VertexArrayObjectPtr vaop )
+void Drawable::computeBounds( BoundPtr bound, const VertexArrayObjectPtr vaop )
 {
     if( vaop == NULL )
     {
@@ -154,14 +160,14 @@ void Drawable::computeBounds( BoundPtr _bound, const VertexArrayObjectPtr vaop )
             VertexAttribContainer< gmtl::Point3f > vac( bop, verts, dcp );
             VertexAttribContainer< gmtl::Point3f >::iterator pointIter( vac );
             for( pointIter = vac.begin(); pointIter != vac.end(); ++pointIter )
-                _bound->expand( *pointIter );
+                bound->expand( *pointIter );
         }
         else if( vertType == IntEnum( 3, GL_DOUBLE ) )
         {
             VertexAttribContainer< gmtl::Point3d > vac( bop, verts, dcp );
             VertexAttribContainer< gmtl::Point3d >::iterator pointIter( vac );
             for( pointIter = vac.begin(); pointIter != vac.end(); ++pointIter )
-                _bound->expand( *pointIter );
+                bound->expand( *pointIter );
         }
         else
         {
@@ -171,11 +177,6 @@ void Drawable::computeBounds( BoundPtr _bound, const VertexArrayObjectPtr vaop )
             JAG3D_ERROR( ostr.str() );
         }
     }
-}
-
-Drawable::BoundInfo::BoundInfo()
-    : _dirty( true )
-{
 }
 
 
