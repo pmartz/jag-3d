@@ -1,0 +1,190 @@
+/**
+
+\page JagSpecification JAG Specification
+
+\section Contents
+
+- \ref SpecIntroduction
+- \ref SpecComponenets
+- \ref SpecModules
+  - \ref SpecModulePointer
+  - \ref SpecModuleLogging
+  - \ref SpecModuleMath
+  - \ref SpecModuleOpenGL
+  - \ref SpecModuleBase
+  - \ref SpecModuleDisk
+    - Plugins
+  - \ref SpecModuleDraw
+  - \ref SpecModuleSG
+
+
+\section SpecIntroduction Introduction
+
+JAG specifies the behavior of an OpenGL-based rendering toolkit. JAG doesn't specify
+function or class names or a language binding. There could be multiple JAG-compliant
+toolkit implementations, of which Jag3D is one. It isn't a requirement that code written
+for one JAG-compliant toolkit will port directly, or even easily, to another JAG-compliant
+toolkit.
+
+"OpenGL-based rendering toolkit" means a collection of software, typically implemented as
+a library, useful for developingt OpenGL applications. JAG is specifically designed to
+support applications that use OpenGL v4.0 contexts created with the forward compatible and
+core profile flags ("GL4"). For additional information, download a copy of the
+<a href="http://www.opengl.org/registry/#oldspecs">OpenGL v4.0 specification</a>. Note
+that future versions of JAG will likely require a more recent version of OpenGL.
+
+It's expected that client code will create and use a GL4 context. However,
+this isn't a strict requirement. When using contexts less than GL4, client
+code should take care to avoid GL4-based functionality. As an example,
+client code using an OpenGL 3.2 context shouldn't use any of the indirect drawing
+commands (DrawElementsIndirect), or double-precision uniform variables.
+
+A JAG implementation isn't required to provide GL4 functionality via OpenGL's
+extension mechanism for client code that uses non-GL4 contexts. As an
+example, client code using a GL2 context shouldn't expect JAG to provide
+access to vertex array objects as an extension. (Note this implies limits to
+how low of a context client code can use, as vertex array objects are required
+for rendering in OpenGL v4.0 core profile.) In short, client code should
+create and use a GL4 context.
+
+As an OpenGL-based rendering toolkit, JAG must not prevent or hinder the use of any
+OpenGL rendering algorithm or technique.
+
+
+\section SpecComponenets Specification Components
+
+The specification is composed of two parts: this \a Introduction document,
+and the <a href="annotated.html">Doxygen-generated class reference</a>
+from the Jag3D source code. Because Jag3D is a C++ implementation of JAG,
+this reference material is inherently C++-oriented. This bias shouldn't
+be interpreted as a specification requirement.
+
+The reference material for each class and member function contains the following
+specifications:
+\li Log handle.
+\li Thread-safety requirements.
+\li OpenGL footprint requirements (if applicable).
+\li Dependency requirements.
+\li Variable default values, if applicable.
+\li Intended usage.
+\li Known specification violations.
+
+
+\subsection SpecLogHandle Log Handle
+
+To support the \ref SpecModuleLogging requirement, each module, class, or
+function that displays messages must have a log handle.
+
+
+\anchor ThreadDefinitions
+\subsection SpecThread Thread-safety Requirements
+
+\li Thread Safe: The code employes explicit locking.
+\li Context Safe: The code is thread safe when executed by a
+context-specific thread. Multiple context threads must have
+thread-specific instances of any code marked as "Context Safe". 
+\li Read-Only: The code is thread safe because it does not modify
+any shared memory.
+\li Unsafe: The code is not thread safe.
+
+
+\subsection SpecOpenGL OpenGL Footprint Requirements
+
+For functions that issue OpenGL commands, this spec documents
+what commands are issued and under which circumstances.
+
+A JAG regresssion test suite could use an OpenGL shim layer
+to verify compliance with the OpenGL footprint specification.
+
+
+\subsection SpecDependency Dependency Requirements
+
+Jag3D reference documentation for specific classes and functions
+enumerate their dependencies. (For example, jagDraw::Drawable depends on
+jagDraw::DrawCommand.)
+
+The following table describes JAG dependencies at a higher level. Each
+row and column represents a JAG module. A dependency from the row module
+on the subordinate column module is indicated with &apos;X&apos;.
+
+<table border=1 cellpadding=4>
+  <tr align=CENTER bgcolor=#d0d0d0>
+    <th></th>            <th>Scene Graph</th>  <th>Draw</th>  <th>Disk</th>  <th>OpenGL</th>  <th>Math</th>  <th>Logging</th>  <th>Smart Pointers</th>
+  </tr>
+  <tr align=CENTER>
+    <td>Scene Graph</td> <td></td>             <td>X</td>     <td></td>      <td></td>        <td>X</td>     <td>X</td>        <td>X</td>
+  </tr>
+  <tr align=CENTER>
+    <td>Draw</td>        <td></td>             <td></td>      <td></td>      <td>X</td>       <td>X</td>     <td>X</td>        <td>X</td>
+  </tr>
+  <tr align=CENTER>
+    <td>Disk</td>        <td></td>             <td></td>      <td></td>      <td></td>        <td></td>      <td>X</td>        <td>X</td>
+  </tr>
+  <tr align=CENTER>
+    <td>Plugins</td>     <td>X</td>            <td>X</td>     <td>X</td>     <td></td>        <td>X</td>     <td>X</td>        <td>X</td>
+  </tr>
+</table>
+
+The modules themselves are described in the following section.
+
+
+\section SpecModules Module Requirements
+
+\subsection SpecModulePointer Smart Pointers
+
+The JAG implementation must support boost- or TR1-compatible pointers for
+reference counted memory.
+
+\subsection SpecModuleLogging Logging
+
+The JAG implementation must support a logging mechanism with the following features:
+\li Direct output to the console or a log file.
+\li Set logging verbosity per module, class, or function, and per logical grouping of related code.
+
+The logged information and its format are implementation-dependent, with the following
+three exceptions:
+  -# The OpenGL shim layer must allow OpenGL error checking per command.
+  -# The Draw module must log OpenGL errors. The granularity of the error checks is
+implementation-dependent, but there must be a way to eliminate all error checks at
+compile-time. Error checking includes both glGetError() and glCheckFramebufferStatus().
+  -# The JAG implementation must provide a mechanism to log the version information.
+
+\subsection SpecModuleMath Math
+
+The JAG implementation must support a math library containing data types
+compatible with OpenGL. The math library must support the following features:
+\li matrix-matrix concatenation
+\li matrix inversion
+\li matrix-vector multiplication
+\li common matrix construction utilities (frustum, perspective, rotate, etc)
+\li vector cross and dot product
+\li vector length, squared length, normalization, scale, modulation, addition, and subtraction
+\li arrays of matrices and vectors
+
+\subsection SpecModuleOpenGL OpenGL
+
+OpenGL is not a JAG module. However, a JAG-compliant implementation must
+provide a shim layer above OpenGL. THis shim layer must provide the
+following functionality:
+\li OpenGL command and parameter recording to file
+\li Command trace messages to console
+\li Per-command error checking
+\li State dump
+
+All functionality must be available on a per-context basis.
+All functionality must be individually enabled or disabled. The implementation
+must provide the ability to disable the entire shim layer such that it has
+zero impact on performance (typically with a compile-time option).
+
+\subsection SpecModuleBase Base
+
+The \a Base module is not a JAG requirement. Jag3D has a jagBase library,
+and it contains support for smart pointers, logging, and math.
+
+\subsection SpecModuleDisk Disk
+<h4>Plugins</h4>
+\subsection SpecModuleDraw Draw
+\subsection SpecModuleSG Scene Graph
+
+
+*/
