@@ -30,6 +30,8 @@
 #include <jagDraw/DrawCommand.h>
 #include <jagBase/ptr.h>
 
+#include <boost/thread/mutex.hpp>
+
 #include <vector>
 
 
@@ -197,7 +199,7 @@ the list directly with getDrawCommandVec().
     \specTableEnd
     \specFuncEnd
     */
-    void computeBounds( BoundPtr _bound, const VertexArrayObjectPtr vaop );
+    void computeBounds( BoundPtr bound, const VertexArrayObjectPtr vaop );
 
     struct ComputeBoundCallback {
         /**
@@ -283,20 +285,30 @@ protected:
     \details Allows a bounding volume and dirty flag per VertexArrayObject.
     See BoundMap. */
     struct BoundInfo {
-        BoundInfo();
-
-        BoundPtr _bound;
+        BoundInfo()
+            : _dirty( true )
+        {}
+        BoundInfo( const BoundInfo& rhs )
+            : _dirty( rhs._dirty ),
+            _bound( rhs._bound )
+        {}
         bool _dirty;
+        jagDraw::BoundPtr _bound;
     };
     typedef std::map< VertexArrayObject*, BoundInfo > BoundMap;
 
-    /** Default value: The first call to getBound() determines the
-    default \c _bound value. If \c _initialBound is NULL, a new
+    /** Default value: For each element in _bounds, BoundInfo::_dirty
+    is initially true. The first call to getBound() initializes the
+    entry further. If \c _initialBound is NULL, a new
     jagDraw::BoundAABox is allocated; otherwise, \c _initialBOund
-    is cloned. */
+    is cloned. BoundInfo::_bound is expanded around all applicable
+    vertex data, and BoundInfo::_dirty is set to false. */
     BoundMap _bounds;
     /** Default value: NULL */
     BoundPtr _initialBound;
+    /** \brief Lock around _bounds BoundInfo map. */
+    mutable boost::mutex _mutex;
+
 
     /** Default value: _computeBoundCallback = ComputeBoundCallbackPtr() */
     ComputeBoundCallbackPtr _computeBoundCallback;
