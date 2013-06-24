@@ -242,11 +242,11 @@ public:
 
     virtual void setEmpty( const bool empty=true )
     {
-        //_bound.setEmpty( empty );
+        _bound.setInitialized( !empty );
     }
     virtual bool getEmpty() const
     {
-        return( false );//_bound.isEmpty() );
+        return( !( _bound.isInitialized() ) );
     }
 
     virtual gmtl::Point3d getCenter() const
