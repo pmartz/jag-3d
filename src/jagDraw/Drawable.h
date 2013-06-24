@@ -58,8 +58,9 @@ Drawable supports the following functionality:
 
 Each Drawable instance stores the following information:
 \li A vector of shared pointers to DrawCommand objects.
-\li A shared pointer to a Bound object.
-\li A boolean flag to indicate the bound dirty state.
+\li Possibly multiple shared pointers to Bound objects.
+\li Possibly multiple boolean flags to indicate bound dirty state.
+\li A shared pointer to an initial / minimum bounding volume.
 \li A shared pointer to a Drawable::ComputeBoundCallback.
 
 The computed bounding volume could be unintialized. See computeBounds().
@@ -83,12 +84,6 @@ to the Drawables in jagDraw::Node objects. }
 \specTableEnd
 
 See member functions for additional specification requirements.
-
-\specIssue{The fact that Drawable objects don't contain vertex data impacts
-bound computation. A Drawable could be shared by multiple jagDraw::Node
-objects\, producing different bound values depending on which
-VertexArrayObject is associated with the jagDraw::Node CommandMap.}
-
 \specEnd
 
 */
@@ -126,14 +121,17 @@ the list directly with getDrawCommandVec().
 
     \specFuncBegin
 
-    If Drawable::_boundDirty is true, this function performs the following operations:
-    - If Drawable::_bound is NULL, this function allocates a new bound and stores it in Drawable::_bound.
+    This function creates a Drawable::BoundInfo entry in the Drawable::_bounds map,
+    if it doesn't already exist.
+    If BoundInfo::_dirty is true, this function performs the following operations:
+    - If BoundInfo::_bound is NULL, this function allocates a new bound.
+      If _initialBound is not NULL, it's cloned to create this new bound.
     - If Drawable::_computeBoundCallback() is non-NULL, this function executes the callback.
       Otherwise, this function calls computeBounds().
-    - Drawable::_boundDirty is set to false by calling setBoundDirty().
+    - BoundInfo::_dirty is set to false.
 
-    Regardless of whether Drawable::_boundDirty was initially true or false, this function
-    returns the value of Drawable::_bound.
+    Regardless of whether BoundInfo::_dirty was initially true or false, this function
+    returns the value of BoundInfo::_bound.
 
     If Drawable::_computeBoundCallback == NULL and the bound is <em>uncomputable</em>,
     the return value will always be uninitialized. If Drawable::_computeBoundCallback
