@@ -81,7 +81,9 @@ public:
     virtual void setEmpty( const bool empty=true ) = 0;
     virtual bool getEmpty() const = 0;
 
+    virtual void setCenter( const gmtl::Point3d& center ) = 0;
     virtual gmtl::Point3d getCenter() const = 0;
+
     virtual double getRadius() const = 0;
 
 protected:
@@ -158,11 +160,18 @@ public:
         return( _bound.isEmpty() );
     }
 
+    virtual void setCenter( const gmtl::Point3d& center )
+    {
+        gmtl::Vec3d delta( center - getCenter() );
+        _bound.setMin( _bound.getMin() + delta );
+        _bound.setMax( _bound.getMax() + delta );
+    }
     virtual gmtl::Point3d getCenter() const
     {
         const gmtl::Point3d center( ( _bound.getMax() - _bound.getMin() ) * 0.5 + _bound.getMin() );
         return( center );
     }
+
     virtual double getRadius() const
     {
         gmtl::Vec3d vec( _bound.getMax() - _bound.getMin() );
@@ -249,10 +258,15 @@ public:
         return( !( _bound.isInitialized() ) );
     }
 
+    virtual void setCenter( const gmtl::Point3d& center )
+    {
+        _bound.setCenter( center );
+    }
     virtual gmtl::Point3d getCenter() const
     {
         return( _bound.getCenter() );
     }
+
     virtual double getRadius() const
     {
         return( _bound.getRadius() );
