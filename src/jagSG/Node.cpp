@@ -145,7 +145,7 @@ jagDraw::BoundPtr Node::getBound( const jagDraw::CommandMap& commands )
     // Center a bound on the average center, then expand it by
     // all child nodes and all attached Drawables.
     jagDraw::BoundSphere b;
-    b.asSphere().setCenter( averageCenter );
+    b.setCenter( averageCenter );
     b.setEmpty( false );
     BOOST_FOREACH( NodePtr& node, _children )
     {
@@ -165,6 +165,12 @@ jagDraw::BoundPtr Node::getDrawableBound( const jagDraw::VertexArrayObjectPtr va
 {
     JAG3D_PROFILE( "SGNode::getDrawableBound" );
 
+    if( getNumDrawables() == 0 )
+    {
+        // Return an empty / uninitialized sphere.
+        return( jagDraw::BoundPtr( new jagDraw::BoundSphere() ) );
+    }
+
     gmtl::Point3d averageCenter( 0., 0., 0. );
     BOOST_FOREACH( jagDraw::DrawablePtr& drawable, _drawables )
     {
@@ -173,7 +179,8 @@ jagDraw::BoundPtr Node::getDrawableBound( const jagDraw::VertexArrayObjectPtr va
     averageCenter /= getNumDrawables();
 
     jagDraw::BoundSphere b;
-    b.asSphere().setCenter( averageCenter );
+    b.setCenter( averageCenter );
+    b.setEmpty( false );
     BOOST_FOREACH( jagDraw::DrawablePtr& drawable, _drawables )
     {
         b.expand( *( drawable->getBound( vaop ) ) );
