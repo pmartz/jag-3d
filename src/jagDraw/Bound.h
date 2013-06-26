@@ -160,7 +160,7 @@ public:
 
     virtual gmtl::Point3d getCenter() const
     {
-        const gmtl::Point3d center( ( _bound.getMax() - _bound.getMin() ) * 0.5 );
+        const gmtl::Point3d center( ( _bound.getMax() - _bound.getMin() ) * 0.5 + _bound.getMin() );
         return( center );
     }
     virtual double getRadius() const
