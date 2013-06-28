@@ -117,6 +117,7 @@ bool test()
     cv.setDrawGraphTemplate( drawGraphTemplate );
 
     cv.reset();
+    cv.setNearFarOps( jagSG::CollectionVisitor::None ); // Don't do anything with near and far.
     CommandMapPtr commands( new CommandMap );
     UniformPtr u0 = UniformPtr( new Uniform( "a", (GLint)1 ) );
     UniformPtr u1 = UniformPtr( new Uniform( "b", (GLint)2 ) );
