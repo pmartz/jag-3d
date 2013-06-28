@@ -34,13 +34,17 @@ namespace jagSG {
 
 CollectionVisitor::CollectionVisitor()
   : Visitor( "collect" ),
-    _currentNodes( NULL )
+    _currentNodes( NULL ),
+    _nearFarOps( Default ),
+    _frustumPlanes( LeftRightTopBottomPlanes )
 {
     reset();
 }
 CollectionVisitor::CollectionVisitor( jagSG::Node& node )
   : Visitor( "collect" ),
-    _currentNodes( NULL )
+    _currentNodes( NULL ),
+    _nearFarOps( Default ),
+    _frustumPlanes( LeftRightTopBottomPlanes )
 {
     reset();
     node.accept( *this );
@@ -49,7 +53,9 @@ CollectionVisitor::CollectionVisitor( const CollectionVisitor& rhs )
   : Visitor( rhs ),
     _currentID( rhs._currentID ),
     _currentNodes( NULL ),
-    _transform( rhs._transform )
+    _transform( rhs._transform ),
+    _nearFarOps( rhs._nearFarOps ),
+    _frustumPlanes( rhs._frustumPlanes )
 {
     setDrawGraphTemplate( rhs._drawGraphTemplate );
 
@@ -96,8 +102,8 @@ void CollectionVisitor::reset()
 
     _infoPtr = CollectionInfoPtr( new CollectionInfo( _transform ) );
 
-    _minNear = DBL_MAX;
-    _maxFar = -DBL_MAX;
+    _minECZ = DBL_MAX;
+    _maxECZ = -DBL_MAX;
 }
 
 
@@ -140,8 +146,18 @@ void CollectionVisitor::collectAndTraverse( jagSG::Node& node )
         _transform.setModel( _matrixStack.back() );
     }
 
+    // Calculate maxECZ, used to determine 1) if all Drawables
+    // are behind the viewer, and 2) possible modification to the
+    // computed _maxECZ value.
+    const double maxDrawableECZ( _infoPtr->getECBoundDistance() + _infoPtr->getECBoundRadius() );
+    // We will collectDrawables if either 1) we don't care about them
+    // being behind the viewer, or 2) at least some of the Drawables are
+    // in front of the viewer.
+    const bool collectDrawables( ( ( _nearFarOps & DiscardNegativeECZDrawables ) == 0 ) ||
+        ( maxDrawableECZ > 0.0 ) );
+
     const unsigned int numDrawables( node.getNumDrawables() );
-    if( numDrawables > 0 )
+    if( collectDrawables && ( numDrawables > 0 ) )
     {
         JAG3D_PROFILE( "CV DrawNode processing" );
 
@@ -164,9 +180,12 @@ void CollectionVisitor::collectAndTraverse( jagSG::Node& node )
         // Model matrix is dirty; add callback to update the transform uniforms.
         drawNode.getExecuteCallbacks().push_back( _drawTransformCallback );
 
-        // Record changes to min near / max far.
-        _minNear = std::min< double >( _minNear, _infoPtr->getECBoundDistance() - _infoPtr->getECBoundRadius() );
-        _maxFar = std::max< double >( _maxFar, _infoPtr->getECBoundDistance() + _infoPtr->getECBoundRadius() );
+        if( ( _nearFarOps & AutoCompute ) != 0 )
+        {
+            // Record changes to min near / max far.
+            _minECZ = std::min< double >( _minECZ, _infoPtr->getECBoundDistance() - _infoPtr->getECBoundRadius() );
+            _maxECZ = std::max< double >( _maxECZ, maxDrawableECZ );
+        }
 
 
         //JAG3D_WARNING( "TBD Must allocate new CommandMapPtr?" );
@@ -209,14 +228,33 @@ const jagDraw::DrawGraphPtr CollectionVisitor::getDrawGraphTemplate() const
     return( _drawGraphTemplate );
 }
 
+
+void CollectionVisitor::setNearFarOps( const NearFarOps nearFarOps )
+{
+    _nearFarOps = nearFarOps;
+}
+CollectionVisitor::NearFarOps CollectionVisitor::getNearFarOps() const
+{
+    return( _nearFarOps );
+}
+
 void CollectionVisitor::getNearFar( double& minECNear, double& maxECFar, const double ratio )
 {
-    const double scaledNear( _maxFar * ratio );
-    if( _minNear < scaledNear )
+    const double scaledNear( _maxECZ * ratio );
+    if( _minECZ < scaledNear )
         minECNear = scaledNear;
     else
-        minECNear = _minNear;
-    maxECFar = _maxFar;
+        minECNear = _minECZ;
+    maxECFar = _maxECZ;
+}
+
+void CollectionVisitor::setFrustumPlanes( const FrustumPlanes frustumPlanes )
+{
+    _frustumPlanes = frustumPlanes;
+}
+CollectionVisitor::FrustumPlanes CollectionVisitor::getFrustumPlanes() const
+{
+    return( _frustumPlanes );
 }
 
 
@@ -248,6 +286,7 @@ unsigned int CollectionVisitor::getCurrentNodeContainer() const
 CollectionVisitor::CollectionInfo::CollectionInfo( jagBase::TransformD& transform )
     : Node::CallbackInfo(),
       _transform( transform ),
+      _frustumPlanes( LeftRightTopBottomPlanes ),
       _bound( NULL )
     // Initialization of these variables is handled in setBound():
     //   _ecDistance
@@ -261,6 +300,7 @@ CollectionVisitor::CollectionInfo::CollectionInfo( jagBase::TransformD& transfor
 CollectionVisitor::CollectionInfo::CollectionInfo( const CollectionInfo& rhs )
     : Node::CallbackInfo( rhs ),
       _transform( rhs._transform ),
+      _frustumPlanes( rhs._frustumPlanes ),
       _bound( rhs._bound )
     // Initialization of these variables is handled in setBound():
     //   _ecDistance
