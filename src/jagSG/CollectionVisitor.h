@@ -83,6 +83,7 @@ public:
 
 
     typedef enum {
+        None = 0,
         AutoCompute = ( 0x1 << 0 ),
         DiscardNegativeECZDrawables = ( 0x1 << 1 ),
         Default = ( AutoCompute | DiscardNegativeECZDrawables )
