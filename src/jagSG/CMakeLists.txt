@@ -29,6 +29,7 @@ set( _jagSGHeaderFiles
     Export.h
     CollectionVisitor.h
     ExecuteVisitor.h
+    FrustumCullCallback.h
     Common.h
     Node.h
     SelectContainerCallback.h
@@ -39,6 +40,7 @@ set( _jagSGHeaderFiles
 set( _jagSGSourceFiles
     CollectionVisitor.cpp
     ExecuteVisitor.cpp
+    FrustumCullCallback.cpp
     SelectContainerCallback.cpp
     SmallFeatureCallback.cpp
     Node.cpp

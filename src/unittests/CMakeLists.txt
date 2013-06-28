@@ -28,3 +28,4 @@ add_subdirectory( uniformsetadd )
 
 # Tests for jagSG interface
 add_subdirectory( collectionvisitor )
+add_subdirectory( frustumcull )
