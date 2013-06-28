@@ -185,8 +185,14 @@ bool Transparency::startup( const unsigned int numContexts )
     // Prepare the scene graph.
     _root = jagSG::NodePtr( new jagSG::Node() );
 
+    jagSG::Node* rawModel( (jagSG::Node*) jagDisk::read( _fileName ) );
+    if( rawModel == NULL )
+    {
+        JAG3D_FATAL_STATIC( _logName, "Can't load model: " + _fileName );
+        return( false );
+    }
     jagSG::NodePtr model( boost::make_shared< jagSG::Node >(
-        *(jagSG::Node*) jagDisk::read( _fileName ) ) );
+        *rawModel ) );
     _root->addChild( model );
 
     _root->addChild( createPlanesSubgraph( model->getBound() ) );
