@@ -114,13 +114,15 @@ bool JagModel::startup( const unsigned int numContexts )
 
 
     // Prepare the scene graph.
-    _root = boost::make_shared< jagSG::Node >(
-        *(jagSG::Node*) jagDisk::read( _fileName ) );
-    if( _root == NULL )
+    jagSG::Node* rawModel( (jagSG::Node*) jagDisk::read( _fileName ) );
+    if( rawModel == NULL )
     {
         JAG3D_FATAL_STATIC( _logName, "Can't load \"" + _fileName + "\"." );
         return( false );
     }
+    _root = boost::make_shared< jagSG::Node >(
+        *rawModel );
+        
 
     jagSG::SmallFeatureDistributionVisitor sfdv;
     _root->accept( sfdv );

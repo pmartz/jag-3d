@@ -188,7 +188,7 @@ bool Transparency::startup( const unsigned int numContexts )
     jagSG::Node* rawModel( (jagSG::Node*) jagDisk::read( _fileName ) );
     if( rawModel == NULL )
     {
-        JAG3D_FATAL_STATIC( _logName, "Can't load model: " + _fileName );
+        JAG3D_FATAL_STATIC( _logName, "Can't load \"" + _fileName + "\"." );
         return( false );
     }
     jagSG::NodePtr model( boost::make_shared< jagSG::Node >(
