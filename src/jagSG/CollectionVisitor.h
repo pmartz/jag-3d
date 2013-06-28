@@ -59,6 +59,7 @@ public:
     \details TBD */
     void reset();
 
+
     /** \brief TBD
     \details TBD */
     virtual void visit( jagSG::Node& node );
@@ -80,9 +81,40 @@ public:
     \details TBD */
     const jagDraw::DrawGraphPtr getDrawGraphTemplate() const;
 
+
+    typedef enum {
+        AutoCompute = ( 0x1 << 0 ),
+        DiscardNegativeECZDrawables = ( 0x1 << 1 ),
+        Default = ( AutoCompute | DiscardNegativeECZDrawables )
+    } NearFarOps;
+    /** \brief TBD
+    \details TBD */
+    void setNearFarOps( const NearFarOps nearFarOps );
+    /** \brief TBD
+    \details TBD */
+    NearFarOps getNearFarOps() const;
+
     /** \brief TBD
     \details TBD */
     void getNearFar( double& minECNear, double& maxECFar, const double ratio=( 1. / 2000. ) );
+
+    typedef enum {
+        LeftPlane = ( 0x1 << 0 ),
+        RightPlane = ( 0x1 << 1 ),
+        TopPlane = ( 0x1 << 2 ),
+        BottomPlane = ( 0x1 << 3 ),
+        NearPlane = ( 0x1 << 4 ),
+        FarPlane = ( 0x1 << 5 ),
+        LeftRightTopBottomPlanes = ( LeftPlane | RightPlane | TopPlane | BottomPlane ),
+        AllPlanes = ( LeftRightTopBottomPlanes | NearPlane | FarPlane )
+    } FrustumPlanes;
+    /** \brief TBD
+    \details TBD */
+    void setFrustumPlanes( const FrustumPlanes frustumPlanes );
+    /** \brief TBD
+    \details TBD */
+    FrustumPlanes getFrustumPlanes() const;
+
 
     /** \brief TBD
     \details TBD */
@@ -103,7 +135,11 @@ public:
         virtual ~CollectionInfo();
 
         /** \brief TBD
-        \details TBD */
+        \details Set by CollectionVisitor. */
+        void setFrustumPlanes( const FrustumPlanes _frustumPlanes );
+
+        /** \brief TBD
+        \details Set by CollectionVisitor. */
         void setBound( jagDraw::Bound* Bound );
 
         double getECBoundDistance() const;
@@ -112,6 +148,9 @@ public:
 
     protected:
         jagBase::TransformD& _transform;
+
+        FrustumPlanes _frustumPlanes;
+
         jagDraw::Bound* _bound;
 
         mutable double _ecDistance;
@@ -134,7 +173,10 @@ protected:
     CollectionInfoPtr _infoPtr;
 
     jagDraw::TransformCallbackPtr _drawTransformCallback;
-    double _minNear, _maxFar;
+
+    NearFarOps _nearFarOps;
+    double _minECZ, _maxECZ;
+    FrustumPlanes _frustumPlanes;
 };
 
 typedef jagBase::ptr< jagSG::CollectionVisitor >::shared_ptr CollectionVisitorPtr;
