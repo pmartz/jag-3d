@@ -209,6 +209,30 @@ transform( const gmtl::Matrix<T,ROWS,COLS>& m, const gmtl::Sphere<T>& src )
 }
 
 
+
+/** \brief Check for potential containment.
+\details Returns true if the sphere is potentially inside the frustum.
+Returns false if the sphere is clearly outside the frustum.
+*/
+template<typename T>
+inline bool isPotentiallyContained(const Frustum<T>& f, const Sphere<T>& s)
+{
+   for ( unsigned int i = 0; i < 6; ++i )
+   {
+      Vec<T, 3> norm( f.mPlanes[i].mNorm );
+      normalize( norm );
+      T dist = dot(norm, static_cast< Vec<T, 3> >(s.getCenter())) +
+          f.mPlanes[i].mOffset + T(s.getRadius());
+      if ( dist  < T(0.) )
+      {
+         return false;
+      }
+   }
+
+   return true;
+}
+
+
 // gmtl
 }
 
