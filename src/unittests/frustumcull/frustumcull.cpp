@@ -96,6 +96,9 @@ bool test()
         gmtl::setPerspective< double >( proj, 10., 1., 1., 200. );
 
         CollectionVisitor cv;
+        cv.setViewProj( view, proj );
+        cv.setViewport( 0, 0, 100, 100 );
+
         jagDraw::DrawGraphPtr drawGraphTemplate( new jagDraw::DrawGraph() );
         drawGraphTemplate->resize( 1 );
         cv.setDrawGraphTemplate( drawGraphTemplate );

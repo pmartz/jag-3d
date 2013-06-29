@@ -367,6 +367,16 @@ double CollectionVisitor::CollectionInfo::getWinCLength( double ecSegmentLength 
     return( _wcLengthCoeff * ecSegmentLength );
 }
 
+bool CollectionVisitor::CollectionInfo::inFrustum() const
+{
+    const jagBase::TransformD::FTYPE frustum( _transform.getFrustum() );
+    if( _bound->getType() == jagDraw::Bound::Box_t )
+        return( gmtl::isInVolume( frustum, _bound->asAABox() ) );
+    else
+        return( gmtl::isPotentiallyContained( frustum, _bound->asSphere() ) );
+}
+
+
 
 // jagSG
 }

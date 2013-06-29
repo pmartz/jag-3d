@@ -44,8 +44,10 @@ FrustumCullCallback::~FrustumCullCallback()
 
 bool FrustumCullCallback::operator()( jagSG::VisitorBase* /* visitor */, jagSG::Node::CallbackInfo* info )
 {
-    // TBD not yet implemented.
-    return( true );
+    jagSG::CollectionVisitor::CollectionInfo* ci( static_cast<
+        jagSG::CollectionVisitor::CollectionInfo* >( info ) );
+
+    return( ci->inFrustum() );
 }
 
 

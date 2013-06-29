@@ -38,12 +38,12 @@ be created per rendering thread. */
 template< typename T >
 class Transform
 {
-protected:
+public:
     typedef gmtl::Frustum< T > FTYPE;
     typedef gmtl::Matrix< T, 3, 3 > M3TYPE;
     typedef gmtl::Matrix< T, 4, 4 > M4TYPE;
 
-public:
+
     Transform()
       : _vpX( 0 ),
         _vpY( 0 ),

@@ -147,6 +147,8 @@ public:
         double getECBoundRadius() const;
         double getWinCLength( double ecSegmentLength ) const;
 
+        bool inFrustum() const;
+
     protected:
         jagBase::TransformD& _transform;
 
