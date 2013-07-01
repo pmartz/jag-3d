@@ -115,7 +115,7 @@ void VertexArrayObject::addVertexArrayCommand( VertexArrayCommandPtr vacp, const
         _vertices.push_back( vacp );
     }
 }
-VertexArrayCommandPtr VertexArrayObject::getVertexArrayCommand( const VertexArrayCommand::Type& type, const UsageHint& usage )
+VertexArrayCommandPtr VertexArrayObject::getVertexArrayCommand( const VertexArrayCommand::Type& type, const UsageHint& usage ) const
 {
     if( usage == Vertex )
     {

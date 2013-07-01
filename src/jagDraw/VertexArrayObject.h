@@ -92,7 +92,7 @@ public:
     void addVertexArrayCommand( VertexArrayCommandPtr vacp, const UsageHint& usage=Unspecified );
     /** \brief TBD
     \details TBD */
-    VertexArrayCommandPtr getVertexArrayCommand( const VertexArrayCommand::Type& type, const UsageHint& usage );
+    VertexArrayCommandPtr getVertexArrayCommand( const VertexArrayCommand::Type& type, const UsageHint& usage ) const;
 
     /** \brief TBD
     \details TBD */
