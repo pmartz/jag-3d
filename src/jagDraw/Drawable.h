@@ -25,6 +25,7 @@
 #include <jagBase/LogBase.h>
 #include <jagDraw/ObjectID.h>
 #include <jagDraw/Bound.h>
+#include <jagDraw/BoundOwner.h>
 #include <jagDraw/VertexArrayObject.h>
 #include <jagDraw/VertexArrayCommand.h>
 #include <jagDraw/DrawCommand.h>
@@ -89,7 +90,8 @@ See member functions for additional specification requirements.
 \specEnd
 
 */
-class JAGDRAW_EXPORT Drawable : protected jagBase::LogBase, public ObjectIDOwner
+class JAGDRAW_EXPORT Drawable : protected jagBase::LogBase,
+        public ObjectIDOwner, public BoundOwner
 {
 public:
     Drawable();
@@ -110,124 +112,6 @@ the list directly with getDrawCommandVec().
     \specFuncEnd
     */
     virtual void execute( DrawInfo& drawInfo );
-
-
-    /** \name Bound Query and Computation
-    \details 
-    */
-    /*@{*/
-
-    /** \brief Returns a bounding volume.
-    \details 
-    \param vaop The VertexArrayObject required for bound computation.
-
-    \specFuncBegin
-
-    This function creates a jagDraw::BoundInfo entry in the Drawable::_bounds map,
-    if it doesn't already exist.
-    If BoundInfo::_dirty is true, this function performs the following operations:
-    - If BoundInfo::_bound is NULL, this function allocates a new bound.
-      If _initialBound is not NULL, it's cloned to create this new bound.
-    - If Drawable::_computeBoundCallback() is non-NULL, this function executes the callback.
-      Otherwise, this function calls computeBounds().
-    - BoundInfo::_dirty is set to false.
-
-    Regardless of whether BoundInfo::_dirty was initially true or false, this function
-    returns the value of BoundInfo::_bound.
-
-    If Drawable::_computeBoundCallback == NULL and the bound is <em>uncomputable</em>,
-    the return value will always be uninitialized. If Drawable::_computeBoundCallback
-    is non-NULL, Drawable::_computeBoundCallback is entirely responsible for determining
-    the return value.
-
-    \specTableBegin
-    \specDepend{VertexArrayObject}
-    \specTableEnd
-    \specFuncEnd
-    */
-    virtual BoundPtr getBound( const VertexArrayObjectPtr vaop );
-
-    /** \brief TBD
-    \details TBD */
-    void setInitialBound( BoundPtr initialBound );
-    /** \brief TBD
-    \details TBD */
-    BoundPtr getInitialBound() const;
-
-    /** \brief TBD
-    \details TBD
-
-    \specFuncBegin
-    \specTableBegin
-    \specDepend{VertexArrayObjectPtr}
-    \specTableEnd
-    \specFuncEnd
-    */
-    void setBoundDirty( const VertexArrayObjectPtr vaop, const bool dirty=true );
-    /** \brief TBD
-    \details TBD
-
-    \specFuncBegin
-    \specTableBegin
-    \specDepend{VertexArrayObjectPtr}
-    \specTableEnd
-    \specFuncEnd
-    */
-    bool getBoundDirty( const VertexArrayObjectPtr vaop ) const;
-
-    /** \brief Computes a bounding volume.
-    \details
-    
-    \specFuncBegin
-
-    Computes the bounding volume based on Drawable::_drawCommands,
-    Drawable::_computeBoundCallback, and the specified VertexArrayObject
-    \c vaop.
-
-    If any of the following conditions are true, the bound is
-    <em>uncomputable</em>:
-    \li \c vaop is NULL.
-    \li \c vaop does not contain a non-NULL BufferObjectPtr marked as VertexArrayObject::Vertex.
-    \li \c vaop does not contain a non-NULL VertexAttribPtr marked as VertexArrayObject::Vertex.
-    \li Drawable::_drawCommands.size() == 0.
-
-    \specTableBegin
-    \specDepend{Bound\, VertexArrayObject
-
-        Jag3D uses VertexAttribContainer to compute the bound\, but this is not a
-        JAG specification requirement. }
-    \specTableEnd
-    \specFuncEnd
-    */
-    void computeBounds( BoundPtr bound, const VertexArrayObjectPtr vaop );
-
-    struct ComputeBoundCallback {
-        /**
-
-        \specFuncBegin
-        \specTableBegin
-        \specDepend{VertexArrayObject}
-        \specTableEnd
-        \specFuncEnd
-        */
-        virtual void operator()( BoundPtr _bound, const VertexArrayObjectPtr vaop ) = 0;
-    };
-    typedef jagBase::ptr< ComputeBoundCallback >::shared_ptr ComputeBoundCallbackPtr;
-
-    /** \brief TBD
-    \details TBD */
-    void setComputeBoundCallback( ComputeBoundCallbackPtr computeBoundCallback )
-    {
-        _computeBoundCallback = computeBoundCallback;
-    }
-    /** \brief TBD
-    \details TBD */
-    ComputeBoundCallbackPtr getComputeBoundCallback() const
-    {
-        return( _computeBoundCallback );
-    }
-
-    /**@}*/
 
 
     /** \name Draw Commands
@@ -276,25 +160,14 @@ the list directly with getDrawCommandVec().
     /**@}*/
 
 
+    /** \brief Compute the Drawable's bounding volume.
+    \details Override the base class BoundOwner::computeBounds(). */
+    virtual void computeBounds( BoundPtr bound, const VertexArrayObject* vao );
+
+
 protected:
     /** Default value: _drawCommands = jagDraw::DrawCommandVec() */
     DrawCommandVec _drawCommands;
-
-    /** Default value: For each element in _bounds, BoundInfo::_dirty
-    is initially true. The first call to getBound() initializes the
-    entry further. If \c _initialBound is NULL, a new
-    jagDraw::BoundAABox is allocated; otherwise, \c _initialBOund
-    is cloned. BoundInfo::_bound is expanded around all applicable
-    vertex data, and BoundInfo::_dirty is set to false. */
-    BoundMap _bounds;
-    /** Default value: NULL */
-    BoundPtr _initialBound;
-    /** \brief Lock around _bounds BoundInfo map. */
-    mutable boost::mutex _mutex;
-
-
-    /** Default value: _computeBoundCallback = ComputeBoundCallbackPtr() */
-    ComputeBoundCallbackPtr _computeBoundCallback;
 };
 
 typedef jagBase::ptr< jagDraw::Drawable >::shared_ptr DrawablePtr;
