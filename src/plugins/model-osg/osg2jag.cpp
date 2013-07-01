@@ -93,7 +93,7 @@ bool Osg2Jag::preTraverse( osg::Object* osgObject, const gmtl::Matrix44d& m )
 {
     if( _jagScene == NULL )
     {
-        _jagScene = new jagSG::Node();
+        _jagScene = jagSG::NodePtr( new jagSG::Node() );
         _current = _jagScene;
     }
     else
@@ -109,7 +109,7 @@ bool Osg2Jag::preTraverse( osg::Object* osgObject, const gmtl::Matrix44d& m )
         {
             jagSG::NodePtr np( new jagSG::Node() );
             _current->addChild( np );
-            _current = np.get();
+            _current = np;
             _objInstances[ osgObject ] = np;
         }
     }
@@ -269,7 +269,7 @@ void Osg2Jag::apply( osg::Geometry* geom )
     postTraverse();
 }
 
-jagSG::Node* Osg2Jag::getJagScene()
+jagSG::NodePtr Osg2Jag::getJagScene()
 {
     return( _jagScene );
 }

@@ -49,7 +49,7 @@ public:
 
     virtual void apply( osg::Geode& osgNode );
 
-    jagSG::Node* getJagScene();
+    jagSG::NodePtr getJagScene();
 
 
 protected:
@@ -59,10 +59,10 @@ protected:
     void postTraverse();
 
 
-    jagSG::Node* _jagScene;
-    jagSG::Node* _current;
+    jagSG::NodePtr _jagScene;
+    jagSG::NodePtr _current;
     // TBD I think we can get rid of _nodeStack when jagSG::Node supports parent.
-    std::vector< jagSG::Node* > _nodeStack;
+    jagSG::NodeVec _nodeStack;
 
     typedef std::map< osg::Object*, jagSG::NodePtr > OSGObjectMap;
     OSGObjectMap _objInstances;

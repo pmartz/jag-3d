@@ -81,7 +81,7 @@ public:
 
         Osg2Jag osg2Jag;
         osgNode->accept( osg2Jag );
-        return( osg2Jag.getJagScene() );
+        return( osg2Jag.getJagScene().get() );
     }
     virtual void* read( std::istream& iStr ) const
     {
