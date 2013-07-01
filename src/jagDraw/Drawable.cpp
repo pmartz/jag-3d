@@ -80,11 +80,11 @@ BoundPtr Drawable::newBound()
     return( BoundPtr( new BoundAABox() ) );
 }
 
-void Drawable::computeBounds( BoundPtr bound, const VertexArrayObject* vao )
+void Drawable::computeBound( BoundPtr bound, const VertexArrayObject* vao )
 {
     if( vao == NULL )
     {
-        JAG3D_WARNING( "computeBounds() encountered NULL vertex array object." );
+        JAG3D_WARNING( "computeBound() encountered NULL vertex array object." );
         return;
     }
 
@@ -94,7 +94,7 @@ void Drawable::computeBounds( BoundPtr bound, const VertexArrayObject* vao )
         vao->getVertexArrayCommand( VertexArrayCommand::VertexAttrib_t, VertexArrayObject::Vertex ) ) );
     if( ( bop == NULL ) || ( verts == NULL ) )
     {
-        JAG3D_WARNING( "computeBounds(): NULL buffer object or vertex attrib (VAO has no vertex data)." );
+        JAG3D_WARNING( "computeBound(): NULL buffer object or vertex attrib (VAO has no vertex data)." );
         return;
     }
 
@@ -123,7 +123,7 @@ void Drawable::computeBounds( BoundPtr bound, const VertexArrayObject* vao )
         else
         {
             std::ostringstream ostr;
-            ostr << "computeBounds(): Unsupported VertexAttrib type/size combination.\n";
+            ostr << "computeBound(): Unsupported VertexAttrib type/size combination.\n";
             ostr << "\tType: " << std::hex << type << ", size: " << std::dec << size;
             JAG3D_ERROR( ostr.str() );
         }

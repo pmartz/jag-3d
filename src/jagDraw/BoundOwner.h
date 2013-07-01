@@ -95,7 +95,7 @@ public:
     - If BoundInfo::_bound is NULL, this function allocates a new bound.
       If _initialBound is not NULL, it's cloned to create this new bound.
     - If Drawable::_computeBoundCallback() is non-NULL, this function executes the callback.
-      Otherwise, this function calls computeBounds().
+      Otherwise, this function calls computeBound().
     - BoundInfo::_dirty is set to false.
 
     Regardless of whether BoundInfo::_dirty was initially true or false, this function
@@ -132,7 +132,7 @@ public:
             if( _computeBoundCallback != NULL )
                 (*_computeBoundCallback)( boundInfo._bound, vao );
             else
-                computeBounds( boundInfo._bound, vao );
+                computeBound( boundInfo._bound, vao );
             boundInfo._dirty = false;
         }
 
@@ -219,7 +219,7 @@ public:
     \specTableEnd
     \specFuncEnd
     */
-    virtual void computeBounds( BoundPtr bound, const VertexArrayObject* vao ) = 0;
+    virtual void computeBound( BoundPtr bound, const VertexArrayObject* vao ) = 0;
 
     struct ComputeBoundCallback {
         /**

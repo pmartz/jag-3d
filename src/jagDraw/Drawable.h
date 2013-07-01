@@ -66,7 +66,7 @@ Each Drawable instance stores the following information:
 \li A shared pointer to an initial / minimum bounding volume.
 \li A shared pointer to a Drawable::ComputeBoundCallback.
 
-The computed bounding volume could be unintialized. See computeBounds().
+The computed bounding volume could be unintialized. See computeBound().
 
 \specTableBegin
 \specLog{jag.draw.drawable}
@@ -169,8 +169,8 @@ the list directly with getDrawCommandVec().
     BoundPtr newBound();
 
     /** \brief Compute the Drawable's bounding volume.
-    \details Override the base class BoundOwner::computeBounds(). */
-    virtual void computeBounds( BoundPtr bound, const VertexArrayObject* vao );
+    \details Override the base class BoundOwner::computeBound(). */
+    virtual void computeBound( BoundPtr bound, const VertexArrayObject* vao );
 
     /**@}*/
 

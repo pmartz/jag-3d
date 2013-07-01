@@ -26,6 +26,7 @@
 #include <jagDraw/Drawable.h>
 #include <jagDraw/CommandMap.h>
 #include <jagDraw/Bound.h>
+#include <jagDraw/BoundOwner.h>
 #include <jagBase/MultiCallback.h>
 #include <jagDraw/ContextSupport.h>
 #include <jagBase/LogBase.h>
@@ -56,7 +57,8 @@ class VisitorBase;
 \details TBD
 */
 class JAGSG_EXPORT Node : protected jagBase::LogBase,
-        public jagDraw::ObjectIDOwner, public SHARED_FROM_THIS(Node)
+        public jagDraw::ObjectIDOwner, public jagDraw::BoundOwner,
+        public SHARED_FROM_THIS(Node)
 {
 public:
     Node();
@@ -146,6 +148,11 @@ public:
     const gmtl::Matrix44d& getTransform() const;
 
 
+    /** \name Support for Node bound volume computation and the BoundOwner base-class.
+    \details Override member functions from the BoundOwner base class.
+    Also provide jagSG::Node-specific bound computation support. */
+    /**@{*/
+
     /** \brief Get the bound from any node based on \c commands
     \details \c commands contains jagDraw::VertexArrayObjects, which contain
     the vertex data required to compute the bound. */
@@ -156,10 +163,17 @@ public:
     {
         return( getBound( jagDraw::CommandMap() ) );
     }
-    /** \brief Get the bound of attached jagDraw::Drawable objects.
-    \details \c vaop is the jagDraw::VertexArrayObjects containing
-    the vertex data to compute the bound from. */
-    virtual jagDraw::BoundPtr getDrawableBound( const jagDraw::VertexArrayObjectPtr vaop );
+
+    /** \brief Return a new uninitialized bound.
+    \details Override the base class BoundOwner::computeBound().
+    Returns a new BoundSphere. */
+    jagDraw::BoundPtr newBound();
+
+    /** \brief Compute the Drawable's bounding volume.
+    \details Override the base class BoundOwner::computeBound(). */
+    virtual void computeBound( jagDraw::BoundPtr bound, const jagDraw::VertexArrayObject* vao );
+
+    /**@}*/
 
 
     /** \brief CommandMap
@@ -229,10 +243,6 @@ protected:
     jagDraw::DrawableVec _drawables;
     NodeVec _children;
     NodeVec _parents;
-
-    jagDraw::BoundMap _bounds;
-    /** \brief Lock around _bounds BoundInfo map. */
-    mutable boost::mutex _mutex;
 
     CallbackPtr _traverseCallback;
     CollectionCallbacks _collectionCallbacks;

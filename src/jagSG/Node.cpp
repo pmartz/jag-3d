@@ -40,18 +40,19 @@ namespace jagSG {
 Node::Node()
   : jagBase::LogBase( "jag.sg.node" ),
     ObjectIDOwner(),
+    jagDraw::BoundOwner(),
     _matrix( gmtl::MAT_IDENTITY44D )
 {
 }
 Node::Node( const Node& rhs )
   : jagBase::LogBase( "jag.sg.node" ),
     ObjectIDOwner( rhs ),
+    jagDraw::BoundOwner( rhs ),
     _matrix( rhs._matrix ),
     _commands( rhs._commands ),
     _drawables( rhs._drawables ),
     _children( rhs._children ),
     _parents( rhs._parents ),
-    _bounds( rhs._bounds ),
     _traverseCallback( rhs._traverseCallback ),
     _collectionCallbacks( rhs._collectionCallbacks )
 {
@@ -125,68 +126,83 @@ jagDraw::BoundPtr Node::getBound( const jagDraw::CommandMap& commands )
     const jagDraw::DrawablePrepPtr& drawablePrep( newCommands[ jagDraw::DrawablePrep::VertexArrayObject_t ] );
     const jagDraw::VertexArrayObjectPtr vaop( boost::dynamic_pointer_cast< jagDraw::VertexArrayObject >( drawablePrep ) );
 
-    boost::mutex::scoped_lock lock( _mutex );
 
-    jagDraw::BoundInfo& bi( _bounds[ vaop.get() ] );
-    if( !( bi._dirty ) )
-        return( bi._bound );
+    // If dirty==true, BoundOwner::getBound() will call computeBound().
+    // For jagSG::Node, computeBound() will compute the bound of the
+    // Node's Drawables. Then we can include the bound of the child
+    // Nodes.
+    //
+    // If dirty==false, BoundOwner::getBound() will return the complete
+    // subgraph bound, and our work is done.
 
-    // Get bounds of all drawables.
-    const jagDraw::BoundPtr drawableBound( getDrawableBound( vaop ) );
+    bool dirty( getBoundDirty( vaop.get() ) );
+    jagDraw::BoundPtr bound( jagDraw::BoundOwner::getBound( vaop.get() ) );
 
-    // Compute the average center of the drawable bounds and
-    // all child node bounds.
-    gmtl::Point3d averageCenter( drawableBound->getEmpty() ? gmtl::Point3d( 0., 0., 0. ) : drawableBound->getCenter() );
-    BOOST_FOREACH( NodePtr& node, _children )
+    if( dirty )
     {
-        averageCenter += node->getBound( newCommands )->getCenter();
-    }
-    averageCenter /= ( getNumChildren() + ( drawableBound->getEmpty() ? 0 : 1 ) );
+        // Compute the average center of the drawable bounds and
+        // all child node bounds.
+        gmtl::Point3d averageCenter( bound->getEmpty() ? gmtl::Point3d( 0., 0., 0. ) : bound->getCenter() );
+        BOOST_FOREACH( NodePtr& node, _children )
+        {
+            averageCenter += node->getBound( newCommands )->getCenter();
+        }
+        averageCenter /= ( getNumChildren() + ( bound->getEmpty() ? 0 : 1 ) );
 
-    // Center a bound on the average center, then expand it by
-    // all child nodes and all attached Drawables.
-    jagDraw::BoundSphere b;
-    b.setCenter( averageCenter );
-    b.setEmpty( false );
-    BOOST_FOREACH( NodePtr& node, _children )
+        // Create a new bound.
+        jagDraw::BoundPtr fullBound;
+        if( _initialBound == NULL )
+            fullBound = newBound();
+        else
+            fullBound = _initialBound->clone();
+
+        // Center a bound on the average center, then expand it by
+        // all child nodes and all attached Drawables.
+        fullBound->setCenter( averageCenter );
+        fullBound->setEmpty( false );
+        BOOST_FOREACH( NodePtr& node, _children )
+        {
+            fullBound->expand( *( node->getBound( newCommands ) ) );
+        }
+        fullBound->expand( *bound );
+
+        // Store in BoundMap
+        _bounds[ vaop.get() ]._bound = fullBound;
+        return( fullBound );
+    }
+    else
     {
-        b.expand( *( node->getBound( newCommands ) ) );
+        // Bound was not dirty.
+        return( bound );
     }
-    b.expand( *drawableBound );
-
-    // Transform
-    gmtl::Sphered newSphere = gmtl::transform( _matrix, b.asSphere() );
-    // TBD ugly and expensive.
-    bi._bound = jagDraw::BoundPtr( new jagDraw::BoundSphere( newSphere ) );
-    bi._dirty = false;
-
-    return( bi._bound );
 }
-jagDraw::BoundPtr Node::getDrawableBound( const jagDraw::VertexArrayObjectPtr vaop )
-{
-    JAG3D_PROFILE( "SGNode::getDrawableBound" );
 
+jagDraw::BoundPtr Node::newBound()
+{
+    return( jagDraw::BoundPtr( new jagDraw::BoundSphere() ) );
+}
+
+void Node::computeBound( jagDraw::BoundPtr bound, const jagDraw::VertexArrayObject* vao )
+{
+    JAG3D_PROFILE( "SGNode::computeBound" );
+
+    bound->setEmpty();
     if( getNumDrawables() == 0 )
-    {
-        // Return an empty / uninitialized sphere.
-        return( jagDraw::BoundPtr( new jagDraw::BoundSphere() ) );
-    }
+        return;
 
     gmtl::Point3d averageCenter( 0., 0., 0. );
     BOOST_FOREACH( jagDraw::DrawablePtr& drawable, _drawables )
     {
-        averageCenter += drawable->getBound( vaop.get() )->getCenter();
+        averageCenter += drawable->getBound( vao )->getCenter();
     }
     averageCenter /= getNumDrawables();
 
-    jagDraw::BoundSphere b;
-    b.setCenter( averageCenter );
-    b.setEmpty( false );
+    bound->setCenter( averageCenter );
+    bound->setEmpty( false );
     BOOST_FOREACH( jagDraw::DrawablePtr& drawable, _drawables )
     {
-        b.expand( *( drawable->getBound( vaop.get() ) ) );
+        bound->expand( *( drawable->getBound( vao ) ) );
     }
-    return( jagDraw::BoundPtr( new jagDraw::BoundSphere( b ) ) );
 }
 
 
