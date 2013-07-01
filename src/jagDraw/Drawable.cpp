@@ -74,6 +74,12 @@ void Drawable::execute( DrawInfo& drawInfo )
     JAG3D_ERROR_CHECK( "Drawable::execute()" );
 }
 
+
+BoundPtr Drawable::newBound()
+{
+    return( BoundPtr( new BoundAABox() ) );
+}
+
 void Drawable::computeBounds( BoundPtr bound, const VertexArrayObject* vao )
 {
     if( vao == NULL )

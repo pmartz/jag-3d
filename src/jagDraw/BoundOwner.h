@@ -76,6 +76,13 @@ public:
     {
     }
 
+
+    /** \brief Create a new uninitialized bound.
+    \details This function is called by getBound() if \c _initialBound is NULL.
+    Typically, this function returns a BoundAABoxPtr for subclass jagDraw::Drawable,
+    and a BoundSphere for subclass jagSG::Node. */
+    virtual BoundPtr newBound() = 0;
+
     /** \brief Returns a bounding volume.
     \details 
     \param  The VertexArrayObject required for bound computation.
@@ -114,10 +121,13 @@ public:
             if( boundInfo._bound == NULL )
             {
                 if( _initialBound == NULL )
-                    // TBD virtual BoundPtr newBound() = 0;
-                    boundInfo._bound = BoundPtr( new BoundAABox() );
+                    boundInfo._bound = newBound();
                 else
                     boundInfo._bound = _initialBound->clone();
+            }
+            else
+            {
+                boundInfo._bound->setEmpty();
             }
             if( _computeBoundCallback != NULL )
                 (*_computeBoundCallback)( boundInfo._bound, vao );
