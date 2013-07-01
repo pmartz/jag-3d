@@ -174,7 +174,7 @@ public:
 
     /** \brief Drawables
     \details TBD */
-    void addDrawable( jagDraw::DrawablePtr node );
+    virtual void addDrawable( jagDraw::DrawablePtr node );
     /** \brief TBD
     \details TBD */
     unsigned int getNumDrawables() const;
@@ -187,7 +187,7 @@ public:
 
     /** \brief Children
     \details TBD */
-    void addChild( NodePtr node );
+    virtual void addChild( NodePtr node );
     /** \brief TBD
     \details TBD */
     unsigned int getNumChildren() const;
@@ -196,6 +196,21 @@ public:
     NodePtr getChild( const unsigned int idx );
     /** \overload */
     const NodePtr getChild( const unsigned int idx ) const;
+
+    /** \brief Children
+    \details TBD */
+    virtual void addParent( NodePtr node );
+    /** \brief TBD
+    \details TBD */
+    unsigned int getNumParents() const;
+    /** \brief TBD
+    \details TBD */
+    NodePtr getParent( const unsigned int idx );
+    /** \overload */
+    const NodePtr getParent( const unsigned int idx ) const;
+    /** \brief TBD
+    \details TBD */
+    const NodeVec& getParents() const;
 
 
 
@@ -213,6 +228,7 @@ protected:
     jagDraw::CommandMapPtr _commands;
     jagDraw::DrawableVec _drawables;
     NodeVec _children;
+    NodeVec _parents;
 
     struct BoundInfo {
         BoundInfo()
