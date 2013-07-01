@@ -24,7 +24,6 @@
 #include <jagDraw/VertexArrayObject.h>
 #include <jagDraw/BufferObject.h>
 #include <jagDraw/DrawCommand.h>
-#include <jagDraw/VertexArrayObject.h>
 #include <jagDraw/VertexAttribContainer.h>
 #include <jagDraw/DrawInfo.h>
 #include <jagDraw/Error.h>
@@ -40,15 +39,16 @@ namespace jagDraw {
 
 
 Drawable::Drawable()
-  : jagBase::LogBase( "jag.draw.drawable" )
+  : jagBase::LogBase( "jag.draw.drawable" ),
+    ObjectIDOwner(),
+    BoundOwner()
 {
 }
 Drawable::Drawable( const Drawable& rhs )
   : jagBase::LogBase( rhs ),
-    _drawCommands( rhs._drawCommands ),
-    _bounds( rhs._bounds ),
-    _initialBound( rhs._initialBound ),
-    _computeBoundCallback( rhs._computeBoundCallback )
+    ObjectIDOwner( rhs ),
+    BoundOwner( rhs ),
+    _drawCommands( rhs._drawCommands )
 {
 }
 Drawable::~Drawable()
@@ -74,73 +74,18 @@ void Drawable::execute( DrawInfo& drawInfo )
     JAG3D_ERROR_CHECK( "Drawable::execute()" );
 }
 
-BoundPtr Drawable::getBound( const VertexArrayObjectPtr vaop )
+void Drawable::computeBounds( BoundPtr bound, const VertexArrayObject* vao )
 {
-    boost::mutex::scoped_lock lock( _mutex );
-
-    BoundInfo& boundInfo( _bounds[ vaop.get() ] );
-    if( boundInfo._dirty )
-    {
-        if( boundInfo._bound == NULL )
-        {
-            if( _initialBound == NULL )
-                boundInfo._bound = BoundPtr( new BoundAABox() );
-            else
-                boundInfo._bound = _initialBound->clone();
-        }
-        if( _computeBoundCallback != NULL )
-            (*_computeBoundCallback)( boundInfo._bound, vaop );
-        else
-            computeBounds( boundInfo._bound, vaop );
-        boundInfo._dirty = false;
-    }
-
-    return( boundInfo._bound );
-}
-
-void Drawable::setInitialBound( BoundPtr initialBound )
-{
-    _initialBound = initialBound;
-
-    boost::mutex::scoped_lock lock( _mutex );
-    BOOST_FOREACH( BoundMap::value_type& mapElement, _bounds )
-    {
-        mapElement.second._dirty = true;
-    }
-}
-BoundPtr Drawable::getInitialBound() const
-{
-    return( _initialBound );
-}
-
-void Drawable::setBoundDirty( const VertexArrayObjectPtr vaop, const bool dirty )
-{
-    boost::mutex::scoped_lock lock( _mutex );
-    _bounds[ vaop.get() ]._dirty = true;
-}
-bool Drawable::getBoundDirty( const VertexArrayObjectPtr vaop ) const
-{
-    boost::mutex::scoped_lock lock( _mutex );
-
-    BoundMap::const_iterator it( _bounds.find( vaop.get() ) );
-    if( it != _bounds.end() )
-        return( it->second._dirty );
-    else
-        return( true );
-}
-
-void Drawable::computeBounds( BoundPtr bound, const VertexArrayObjectPtr vaop )
-{
-    if( vaop == NULL )
+    if( vao == NULL )
     {
         JAG3D_WARNING( "computeBounds() encountered NULL vertex array object." );
         return;
     }
 
     BufferObjectPtr bop( boost::dynamic_pointer_cast< BufferObject >(
-        vaop->getVertexArrayCommand( VertexArrayCommand::BufferObject_t, VertexArrayObject::Vertex ) ) );
+        vao->getVertexArrayCommand( VertexArrayCommand::BufferObject_t, VertexArrayObject::Vertex ) ) );
     VertexAttribPtr verts( boost::dynamic_pointer_cast< VertexAttrib >(
-        vaop->getVertexArrayCommand( VertexArrayCommand::VertexAttrib_t, VertexArrayObject::Vertex ) ) );
+        vao->getVertexArrayCommand( VertexArrayCommand::VertexAttrib_t, VertexArrayObject::Vertex ) ) );
     if( ( bop == NULL ) || ( verts == NULL ) )
     {
         JAG3D_WARNING( "computeBounds(): NULL buffer object or vertex attrib (VAO has no vertex data)." );

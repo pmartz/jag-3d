@@ -175,7 +175,7 @@ jagDraw::BoundPtr Node::getDrawableBound( const jagDraw::VertexArrayObjectPtr va
     gmtl::Point3d averageCenter( 0., 0., 0. );
     BOOST_FOREACH( jagDraw::DrawablePtr& drawable, _drawables )
     {
-        averageCenter += drawable->getBound( vaop )->getCenter();
+        averageCenter += drawable->getBound( vaop.get() )->getCenter();
     }
     averageCenter /= getNumDrawables();
 
@@ -184,7 +184,7 @@ jagDraw::BoundPtr Node::getDrawableBound( const jagDraw::VertexArrayObjectPtr va
     b.setEmpty( false );
     BOOST_FOREACH( jagDraw::DrawablePtr& drawable, _drawables )
     {
-        b.expand( *( drawable->getBound( vaop ) ) );
+        b.expand( *( drawable->getBound( vaop.get() ) ) );
     }
     return( jagDraw::BoundPtr( new jagDraw::BoundSphere( b ) ) );
 }
