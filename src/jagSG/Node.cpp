@@ -50,6 +50,7 @@ Node::Node( const Node& rhs )
     _commands( rhs._commands ),
     _drawables( rhs._drawables ),
     _children( rhs._children ),
+    _parents( rhs._parents ),
     _bounds( rhs._bounds ),
     _traverseCallback( rhs._traverseCallback ),
     _collectionCallbacks( rhs._collectionCallbacks )
@@ -229,6 +230,7 @@ const jagDraw::DrawablePtr Node::getDrawable( const unsigned int idx ) const
 void Node::addChild( NodePtr node )
 {
     _children.push_back( node );
+    node->addParent( shared_from_this() );
 }
 unsigned int Node::getNumChildren() const
 {
@@ -246,6 +248,33 @@ const NodePtr Node::getChild( const unsigned int idx ) const
         return( NodePtr( (Node*)NULL ) );
     return( _children[ idx ] );
 }
+
+void Node::addParent( NodePtr node )
+{
+    _parents.push_back( node );
+}
+unsigned int Node::getNumParents() const
+{
+    return( (unsigned int) _parents.size() );
+}
+NodePtr Node::getParent( const unsigned int idx )
+{
+    if( idx >= getNumParents() )
+        return( NodePtr( (Node*)NULL ) );
+    return( _parents[ idx ] );
+}
+const NodePtr Node::getParent( const unsigned int idx ) const
+{
+    if( idx >= getNumParents() )
+        return( NodePtr( (Node*)NULL ) );
+    return( _parents[ idx ] );
+}
+const NodeVec& Node::getParents() const
+{
+    return( _parents );
+}
+
+
 
 
 void Node::setMaxContexts( const unsigned int numContexts )
