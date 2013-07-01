@@ -123,7 +123,7 @@ the list directly with getDrawCommandVec().
 
     \specFuncBegin
 
-    This function creates a Drawable::BoundInfo entry in the Drawable::_bounds map,
+    This function creates a jagDraw::BoundInfo entry in the Drawable::_bounds map,
     if it doesn't already exist.
     If BoundInfo::_dirty is true, this function performs the following operations:
     - If BoundInfo::_bound is NULL, this function allocates a new bound.
@@ -279,23 +279,6 @@ the list directly with getDrawCommandVec().
 protected:
     /** Default value: _drawCommands = jagDraw::DrawCommandVec() */
     DrawCommandVec _drawCommands;
-
-    /** \struct BoundInfo Drawable.h <jagDraw/Drawable.h>
-    \brief A bounding volume with associated data.
-    \details Allows a bounding volume and dirty flag per VertexArrayObject.
-    See BoundMap. */
-    struct BoundInfo {
-        BoundInfo()
-            : _dirty( true )
-        {}
-        BoundInfo( const BoundInfo& rhs )
-            : _dirty( rhs._dirty ),
-            _bound( rhs._bound )
-        {}
-        bool _dirty;
-        jagDraw::BoundPtr _bound;
-    };
-    typedef std::map< VertexArrayObject*, BoundInfo > BoundMap;
 
     /** Default value: For each element in _bounds, BoundInfo::_dirty
     is initially true. The first call to getBound() initializes the

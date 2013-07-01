@@ -29,6 +29,8 @@
 #include <gmtl/Containment.h>
 #include <gmtl/VecOps.h>
 
+#include <map>
+
 
 namespace jagDraw {
 
@@ -275,6 +277,29 @@ public:
 protected:
     gmtl::Sphered _bound;
 };
+
+
+
+// forward:
+class VertexArrayObject;
+
+/** \struct BoundInfo Bound.h <jagDraw/Bound.h>
+\brief A bounding volume with associated data.
+\details Allows a bounding volume and dirty flag per VertexArrayObject.
+See BoundMap.
+\details TBD */
+struct BoundInfo {
+    BoundInfo()
+        : _dirty( true )
+    {}
+    BoundInfo( const BoundInfo& rhs )
+        : _dirty( rhs._dirty ),
+        _bound( rhs._bound )
+    {}
+    bool _dirty;
+    jagDraw::BoundPtr _bound;
+};
+typedef std::map< jagDraw::VertexArrayObject*, BoundInfo > BoundMap;
 
 
 // jagDraw
