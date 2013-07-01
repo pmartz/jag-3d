@@ -160,9 +160,19 @@ the list directly with getDrawCommandVec().
     /**@}*/
 
 
+    /** \name BoundOwner support
+    \details Override member functions from the BoundOwner base class. */
+    /**@{*/
+
+    /** \brief Return a new uninitialized bound.
+    \details Returns a new BoundAABox. */
+    BoundPtr newBound();
+
     /** \brief Compute the Drawable's bounding volume.
     \details Override the base class BoundOwner::computeBounds(). */
     virtual void computeBounds( BoundPtr bound, const VertexArrayObject* vao );
+
+    /**@}*/
 
 
 protected:
