@@ -127,7 +127,7 @@ jagDraw::BoundPtr Node::getBound( const jagDraw::CommandMap& commands )
 
     boost::mutex::scoped_lock lock( _mutex );
 
-    BoundInfo& bi( _bounds[ vaop.get() ] );
+    jagDraw::BoundInfo& bi( _bounds[ vaop.get() ] );
     if( !( bi._dirty ) )
         return( bi._bound );
 

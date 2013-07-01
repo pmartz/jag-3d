@@ -230,19 +230,7 @@ protected:
     NodeVec _children;
     NodeVec _parents;
 
-    struct BoundInfo {
-        BoundInfo()
-            : _dirty( true )
-        {}
-        BoundInfo( const BoundInfo& rhs )
-            : _dirty( rhs._dirty ),
-            _bound( rhs._bound )
-        {}
-        bool _dirty;
-        jagDraw::BoundPtr _bound;
-    };
-    typedef std::map< jagDraw::VertexArrayObject*, BoundInfo > BoundMap;
-    BoundMap _bounds;
+    jagDraw::BoundMap _bounds;
     /** \brief Lock around _bounds BoundInfo map. */
     mutable boost::mutex _mutex;
 
