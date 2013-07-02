@@ -24,6 +24,7 @@
 
 #include <jagBase/ptr.h>
 #include <jagBase/gmtlSupport.h>
+#include <jagBase/LogMacros.h>
 #include <gmtl/AABox.h>
 #include <gmtl/Sphere.h>
 #include <gmtl/Containment.h>
@@ -79,6 +80,8 @@ public:
     }
     virtual void expand( const gmtl::Point3d& point ) = 0;
     virtual void expand( const Bound& rhs ) = 0;
+
+    virtual void transform( const gmtl::Matrix44d& matrix ) = 0;
 
     virtual void setEmpty( const bool empty=true ) = 0;
     virtual bool getEmpty() const = 0;
@@ -151,6 +154,16 @@ public:
         }
         else
             gmtl::extendVolume( _bound, rhs.asAABox() );
+    }
+
+    virtual void transform( const gmtl::Matrix44d& matrix )
+    {
+        JAG3D_CRITICAL_STATIC( "jag.draw.bound", "BoundAABox::transform() is not implemented." );
+        // TBD Currently there is no way to transform a box.
+        /*
+        gmtl::AABoxd newBox( gmtl::transform( matrix, _bound ) );
+        _bound = newBox;
+        */
     }
 
     virtual void setEmpty( const bool empty=true )
@@ -249,6 +262,12 @@ public:
             gmtl::extendVolume( _bound, rhs.asSphere() );
         else
             gmtl::extendVolume( _bound, rhs.asAABox() );
+    }
+
+    virtual void transform( const gmtl::Matrix44d& matrix )
+    {
+        gmtl::Sphered newSphere( gmtl::transform( matrix, _bound ) );
+        _bound = newSphere;
     }
 
     virtual void setEmpty( const bool empty=true )

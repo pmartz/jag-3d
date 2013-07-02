@@ -166,6 +166,9 @@ jagDraw::BoundPtr Node::getBound( const jagDraw::CommandMap& commands )
         }
         fullBound->expand( *bound );
 
+        // Transform
+        fullBound->transform( _matrix );
+
         // Store in BoundMap
         _bounds[ vaop.get() ]._bound = fullBound;
         return( fullBound );
