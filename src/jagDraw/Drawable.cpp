@@ -80,7 +80,7 @@ BoundPtr Drawable::newBound()
     return( BoundPtr( new BoundAABox() ) );
 }
 
-void Drawable::computeBound( BoundPtr bound, const VertexArrayObject* vao )
+void Drawable::computeBound( BoundPtr bound, const VertexArrayObject* vao, BoundOwner* owner )
 {
     if( vao == NULL )
     {

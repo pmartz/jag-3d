@@ -63,15 +63,18 @@ typedef std::map< const jagDraw::VertexArrayObject*, BoundInfo > BoundMap;
 class BoundOwner
 {
 public:
+    /** Constructor */
     BoundOwner()
     {
     }
+    /** Copy constructor */
     BoundOwner( const BoundOwner& rhs )
       : _bounds( rhs._bounds ),
         _initialBound( rhs._initialBound ),
         _computeBoundCallback( rhs._computeBoundCallback )
     {
     }
+    /** Destructor */
     ~BoundOwner()
     {
     }
@@ -89,24 +92,25 @@ public:
 
     \specFuncBegin
 
-    This function creates a jagDraw::BoundInfo entry in the Drawable::_bounds map,
+    This function creates a jagDraw::BoundInfo entry in the _bounds map,
     if it doesn't already exist.
     If BoundInfo::_dirty is true, this function performs the following operations:
     - If BoundInfo::_bound is NULL, this function allocates a new bound.
       If _initialBound is not NULL, it's cloned to create this new bound.
-    - If Drawable::_computeBoundCallback() is non-NULL, this function executes the callback.
+    - If _computeBoundCallback is non-NULL, this function executes the callback.
       Otherwise, this function calls computeBound().
     - BoundInfo::_dirty is set to false.
 
     Regardless of whether BoundInfo::_dirty was initially true or false, this function
     returns the value of BoundInfo::_bound.
 
-    If Drawable::_computeBoundCallback == NULL and the bound is <em>uncomputable</em>,
-    the return value will always be uninitialized. If Drawable::_computeBoundCallback
-    is non-NULL, Drawable::_computeBoundCallback is entirely responsible for determining
+    If _computeBoundCallback == NULL and the bound is <em>uncomputable</em>,
+    the return value will always be uninitialized. If _computeBoundCallback
+    is non-NULL, _computeBoundCallback is entirely responsible for determining
     the return value.
 
     \specTableBegin
+    \specThread{Thread Safe}
     \specDepend{VertexArrayObject}
     \specTableEnd
     \specFuncEnd
@@ -130,34 +134,45 @@ public:
                 boundInfo._bound->setEmpty();
             }
             if( _computeBoundCallback != NULL )
-                (*_computeBoundCallback)( boundInfo._bound, vao );
+                (*_computeBoundCallback)( boundInfo._bound, vao, this );
             else
-                computeBound( boundInfo._bound, vao );
+                computeBound( boundInfo._bound, vao, this );
             boundInfo._dirty = false;
         }
 
         return( boundInfo._bound );
     }
 
-    /** \brief TBD
-    \details TBD */
+    /** \brief Set an initial bounding volume.
+    \details The BoundOwner's bounding volume assumes the Bound::BaseType
+    of _initialBound, and is guaranteed to fully enclose _initialBound.
+    
+    See getBound() for how the _initialBound is used.
+
+    Possible application use cases include assigning a minimum volume
+    extent, and specifying use of BoundSphere or BoundAABox. */
     void setInitialBound( BoundPtr initialBound )
     {
         _initialBound = initialBound;
         setAllBoundsDirty();
     }
-    /** \brief TBD
+    /** \brief Return the _initialBound.
     \details TBD */
     BoundPtr getInitialBound() const
     {
         return( _initialBound );
     }
 
-    /** \brief TBD
-    \details TBD
+    /** \brief Set the dirty state for a specific Bound.
+    \details Set the BoundInfo::_dirty flag to \c dirty for
+    the Bound indexed by \c vao.
+
+    If _bound doesn't have a BoundInfo map entry for \c vao,
+    this function creates one. Thus it is not const.
 
     \specFuncBegin
     \specTableBegin
+    \specThread{Thread Safe}
     \specDepend{VertexArrayObjectPtr}
     \specTableEnd
     \specFuncEnd
@@ -167,19 +182,29 @@ public:
         boost::mutex::scoped_lock lock( _mutex );
         _bounds[ vao ]._dirty = dirty;
     }
-    void setAllBoundsDirty()
-    {
-        boost::mutex::scoped_lock lock( _mutex );
-        BOOST_FOREACH( BoundMap::value_type& mapElement, _bounds )
-        {
-            mapElement.second._dirty = true;
-        }
-    }
-    /** \brief TBD
+    /** \brief Set the dirty state for all Bounds.
     \details TBD
 
     \specFuncBegin
     \specTableBegin
+    \specThread{Thread Safe}
+    \specTableEnd
+    \specFuncEnd
+    */
+    void setAllBoundsDirty( const bool dirty=true )
+    {
+        boost::mutex::scoped_lock lock( _mutex );
+        BOOST_FOREACH( BoundMap::value_type& mapElement, _bounds )
+        {
+            mapElement.second._dirty = dirty;
+        }
+    }
+    /** \brief Return the dirty state for a specific Bound.
+    \details TBD
+
+    \specFuncBegin
+    \specTableBegin
+    \specThread{Thread Safe}
     \specDepend{VertexArrayObjectPtr}
     \specTableEnd
     \specFuncEnd
@@ -200,37 +225,40 @@ public:
     
     \specFuncBegin
 
-    Computes the bounding volume based on Drawable::_drawCommands,
-    Drawable::_computeBoundCallback, and the specified VertexArrayObject
+    Computes the bounding volume for the given VertexArrayObject
     \c vao.
 
-    If any of the following conditions are true, the bound is
-    <em>uncomputable</em>:
+    The bound could be <em>uncomputable</em> if the BoundOwner subclass
+    doesn't have enough information to compute the bound. Valid reasons
+    include, but are not limited to:
     \li \c vao is NULL.
     \li \c vao does not contain a non-NULL BufferObjectPtr marked as VertexArrayObject::Vertex.
     \li \c vao does not contain a non-NULL VertexAttribPtr marked as VertexArrayObject::Vertex.
-    \li Drawable::_drawCommands.size() == 0.
+    See the BoundOwner subclasses (jagDraw::Drawable and jagSG::Node)
+    for <em>uncomputable</em> bound reasons.
 
     \specTableBegin
-    \specDepend{Bound\, VertexArrayObject
-
-        Jag3D uses VertexAttribContainer to compute the bound\, but this is not a
-        JAG specification requirement. }
+    \specThread{Thread Safe}
+    \specDepend{Bound\, VertexArrayObject}
     \specTableEnd
     \specFuncEnd
     */
-    virtual void computeBound( BoundPtr bound, const VertexArrayObject* vao ) = 0;
+    virtual void computeBound( BoundPtr bound, const VertexArrayObject* vao, BoundOwner* owner ) = 0;
 
+    /** \struct ComputeBoundCallback BoundOwner.h <jagDraw/BoundOwner.h>
+    \brief Custom bound computation support.
+    \details TBD */
     struct ComputeBoundCallback {
         /**
 
         \specFuncBegin
         \specTableBegin
+        \specThread{Thread Safe}
         \specDepend{VertexArrayObject}
         \specTableEnd
         \specFuncEnd
         */
-        virtual void operator()( BoundPtr _bound, const VertexArrayObject* vao ) = 0;
+        virtual void operator()( BoundPtr _bound, const VertexArrayObject* vao, BoundOwner* owner ) = 0;
     };
     typedef jagBase::ptr< ComputeBoundCallback >::shared_ptr ComputeBoundCallbackPtr;
 
