@@ -182,7 +182,7 @@ jagDraw::BoundPtr Node::newBound()
     return( jagDraw::BoundPtr( new jagDraw::BoundSphere() ) );
 }
 
-void Node::computeBound( jagDraw::BoundPtr bound, const jagDraw::VertexArrayObject* vao )
+void Node::computeBound( jagDraw::BoundPtr bound, const jagDraw::VertexArrayObject* vao, BoundOwner* owner )
 {
     JAG3D_PROFILE( "SGNode::computeBound" );
 

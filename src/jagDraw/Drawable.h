@@ -169,8 +169,30 @@ the list directly with getDrawCommandVec().
     BoundPtr newBound();
 
     /** \brief Compute the Drawable's bounding volume.
-    \details Override the base class BoundOwner::computeBound(). */
-    virtual void computeBound( BoundPtr bound, const VertexArrayObject* vao );
+    \details Override the base class BoundOwner::computeBound().
+    
+    \specFuncBegin
+
+    Computes the bounding volume based on Drawable::_drawCommands,
+    and the specified VertexArrayObject \c vao.
+
+    If any of the following conditions are true, the bound is
+    <em>uncomputable</em>:
+    \li \c vao is NULL.
+    \li \c vao does not contain a non-NULL BufferObjectPtr marked as VertexArrayObject::Vertex.
+    \li \c vao does not contain a non-NULL VertexAttribPtr marked as VertexArrayObject::Vertex.
+    \li Drawable::_drawCommands.size() == 0.
+
+    \specTableBegin
+    \specThread{Thread Safe}
+    \specDepend{Bound\, VertexArrayObject
+
+        Jag3D uses VertexAttribContainer to compute the bound\, but this is not a
+        JAG specification requirement. }
+    \specTableEnd
+    \specFuncEnd
+    */
+    virtual void computeBound( BoundPtr bound, const VertexArrayObject* vao, BoundOwner* owner );
 
     /**@}*/
 

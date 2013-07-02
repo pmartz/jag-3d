@@ -171,7 +171,7 @@ public:
 
     /** \brief Compute the Drawable's bounding volume.
     \details Override the base class BoundOwner::computeBound(). */
-    virtual void computeBound( jagDraw::BoundPtr bound, const jagDraw::VertexArrayObject* vao );
+    virtual void computeBound( jagDraw::BoundPtr bound, const jagDraw::VertexArrayObject* vao, BoundOwner* owner );
 
     /**@}*/
 
