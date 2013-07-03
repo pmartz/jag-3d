@@ -22,8 +22,9 @@
 #define __JAGDRAW_BOUND_OWNER_H__ 1
 
 
-#include <jagDraw/Bound.h>
 #include <jagBase/ptr.h>
+#include <jagBase/MultiCallback.h>
+#include <jagDraw/Bound.h>
 
 #include <boost/foreach.hpp>
 
@@ -71,6 +72,7 @@ public:
     BoundOwner( const BoundOwner& rhs )
       : _bounds( rhs._bounds ),
         _initialBound( rhs._initialBound ),
+        _boundDirtyCallbacks( rhs._boundDirtyCallbacks ),
         _computeBoundCallback( rhs._computeBoundCallback )
     {
     }
@@ -181,6 +183,16 @@ public:
     {
         boost::mutex::scoped_lock lock( _mutex );
         _bounds[ vao ]._dirty = dirty;
+
+        if( dirty )
+        {
+            // If any client code has registered a BoundDirtyCallback,
+            // send out a notification that setBoundsDirty() was called.
+            BOOST_FOREACH( BoundDirtyCallbackPtr& bdcb, _boundDirtyCallbacks )
+            {
+                bdcb->boundDirty( vao, this );
+            }
+        }
     }
     /** \brief Set the dirty state for all Bounds.
     \details TBD
@@ -197,6 +209,16 @@ public:
         BOOST_FOREACH( BoundMap::value_type& mapElement, _bounds )
         {
             mapElement.second._dirty = dirty;
+        }
+
+        if( dirty )
+        {
+            // If any client code has registered a BoundDirtyCallback,
+            // send out a notification that setAllBoundsDirty() was called.
+            BOOST_FOREACH( BoundDirtyCallbackPtr& bdcb, _boundDirtyCallbacks )
+            {
+                bdcb->allBoundsDirty( this );
+            }
         }
     }
     /** \brief Return the dirty state for a specific Bound.
@@ -219,6 +241,37 @@ public:
         else
             return( true );
     }
+
+    /** \struct BoundDirtyCallback BoundOwner.h <jagDraw/BoundOwner.h>
+    \brief Notifies client code when bounds have been dirtied.
+    \details Primarily for use by jagSG::Node so that the scene graph
+    bounds can be dirtied when an owned jagDraw::Drawable bound is dirtied.
+    */
+    struct BoundDirtyCallback
+    {
+        /** \brief TBD
+        \details TBD */
+        virtual void boundDirty( const VertexArrayObject* vao, BoundOwner* owner )
+        {
+        }
+        /** \brief 
+        \details TBD */
+        virtual void allBoundsDirty( BoundOwner* owner )
+        {
+        }
+    };
+    typedef jagBase::ptr< BoundDirtyCallback >::shared_ptr BoundDirtyCallbackPtr;
+
+    /** \brief TBD
+    \details TBD */
+    typedef jagBase::MultiCallback< BoundDirtyCallbackPtr > BoundDirtyCallbacks;
+    /** \brief TBD
+    \details TBD */
+    BoundDirtyCallbacks& getBoundDirtyCallbacks()
+    {
+        return( _boundDirtyCallbacks );
+    }
+
 
     /** \brief Computes a bounding volume.
     \details
@@ -287,6 +340,9 @@ protected:
     BoundPtr _initialBound;
     /** \brief Lock around _bounds BoundInfo map. */
     mutable boost::mutex _mutex;
+
+    /** Default value: _boundDirtyCallbacks = BoundDirtyCallbacks(); */
+    BoundDirtyCallbacks _boundDirtyCallbacks;
 
     /** Default value: _computeBoundCallback = ComputeBoundCallbackPtr() */
     ComputeBoundCallbackPtr _computeBoundCallback;
