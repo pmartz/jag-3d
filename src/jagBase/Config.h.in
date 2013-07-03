@@ -39,5 +39,8 @@
 // Controlled by CMake variable JAG3D_ENABLE_PROFILING
 @JAG3D_PROFILE_ENABLE_DEFINITION@
 
+// Controlled by CMake variable JAG3D_USE_GL3W
+@JAG3D_USE_GL3W_DEFINITION@
+
 // __JAGBASE_CONFIG_H__
 #endif
