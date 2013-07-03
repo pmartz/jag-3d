@@ -126,7 +126,7 @@ public:
     CollectionCallbacks& getCollectionCallbacks();
 
 
-    /** \brief Calls execute on all attached Drawables.
+    /** \brief Calls the execute() function on all attached Drawables.
     \details Primarily for "immediate mode" (no cull traversal) rendering.
     See the ExecuteVisitor.
 
