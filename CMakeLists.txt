@@ -151,7 +151,9 @@ else()
     option( JAG3D_USE_GL3W "If set, use gl3w (GL3/4 replacement for GLEW). Otherwise, assume native GL3/4 support." OFF )
 endif()
 if( JAG3D_USE_GL3W )
-    add_definitions( -DJAG3D_USE_GL3W )
+    set( JAG3D_USE_GL3W_DEFINITION "#define JAG3D_USE_GL3W 1" )
+else()
+    set( JAG3D_USE_GL3W_DEFINITION "#undef JAG3D_USE_GL3W" )
 endif()
 
 
@@ -177,7 +179,6 @@ if( JAG3D_ENABLE_PROFILING )
     set( JAG3D_PROFILE_ENABLE_DEFINITION "#define JAG3D_ENABLE_PROFILING 1" )
 else()
     set( JAG3D_PROFILE_ENABLE_DEFINITION "#undef JAG3D_ENABLE_PROFILING" )
-    add_definitions( -DJAG3D_ENABLE_PROFILING )
 endif()
 
 option( BUILD_SHARED_LIBS "Set to ON to build JAG3D for dynamic linking. Use OFF for static." ON )
