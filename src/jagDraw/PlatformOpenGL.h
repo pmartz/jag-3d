@@ -22,6 +22,8 @@
 #define __JAGDRAW_PLATFORM_OPENGL_H__ 1
 
 
+// This header defines use of GL3W.
+#include <jagBase/Config.h>
 
 #if defined( JAG3D_USE_GL3W )
 #  include <jagDraw/GL/gl3w.h>
