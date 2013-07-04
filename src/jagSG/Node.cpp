@@ -227,6 +227,30 @@ const jagDraw::CommandMapPtr Node::getCommandMap() const
 void Node::addDrawable( jagDraw::DrawablePtr node )
 {
     _drawables.push_back( node );
+    setAllBoundsDirty();
+}
+int Node::removeDrawable( jagDraw::DrawablePtr drawable )
+{
+    jagDraw::DrawableVec::iterator it;
+    for( it=_drawables.begin(); it != _drawables.end(); ++it )
+    {
+        if( *it == drawable )
+        {
+            _drawables.erase( it );
+            setAllBoundsDirty();
+            return( (int)( _drawables.size() ) );
+        }
+    }
+    return( -1 );
+}
+int Node::removeDrawable( const unsigned int index )
+{
+    jagDraw::DrawablePtr drawable( getDrawable( index ) );
+    if( drawable != NULL )
+    {
+        return( removeDrawable( drawable ) );
+    }
+    return( -1 );
 }
 unsigned int Node::getNumDrawables() const
 {
@@ -250,6 +274,31 @@ void Node::addChild( NodePtr node )
 {
     _children.push_back( node );
     node->addParent( shared_from_this() );
+    setAllBoundsDirty();
+}
+int Node::removeChild( NodePtr node )
+{
+    NodeVec::iterator it;
+    for( it = _children.begin(); it != _children.end(); ++it )
+    {
+        if( *it == node )
+        {
+            node->removeParent( this );
+            _children.erase( it );
+            setAllBoundsDirty();
+            return( (int)( _children.size() ) );
+        }
+    }
+    return( -1 );
+}
+int Node::removeNode( const unsigned int index )
+{
+    NodePtr node( getChild( index ) );
+    if( node != NULL )
+    {
+        return( removeChild( node ) );
+    }
+    return( -1 );
 }
 unsigned int Node::getNumChildren() const
 {
@@ -271,6 +320,19 @@ const NodePtr Node::getChild( const unsigned int idx ) const
 void Node::addParent( NodePtr node )
 {
     _parents.push_back( node );
+}
+int Node::removeParent( Node* node )
+{
+    NodeVec::iterator it;
+    for( it = _parents.begin(); it != _parents.end(); ++it )
+    {
+        if( it->get() == node )
+        {
+            _parents.erase( it );
+            return( (int)( _parents.size() ) );
+        }
+    }
+    return( -1 );
 }
 unsigned int Node::getNumParents() const
 {
