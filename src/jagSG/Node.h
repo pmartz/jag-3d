@@ -192,6 +192,13 @@ public:
     /** \brief TBD
     \details TBD */
     unsigned int getNumDrawables() const;
+    /** \brief Remove a Drawable.
+    \details Returns the total number of Drawables remaining
+    after the deletion. Returns -1 if the specified Drawable 
+    can't be found. */
+    virtual int removeDrawable( jagDraw::DrawablePtr drawable );
+    /** \overload */
+    virtual int removeDrawable( const unsigned int index );
     /** \brief TBD
     \details TBD */
     jagDraw::DrawablePtr getDrawable( const unsigned int idx );
@@ -204,6 +211,12 @@ public:
     virtual void addChild( NodePtr node );
     /** \brief TBD
     \details TBD */
+    virtual int removeChild( NodePtr node );
+    /** \brief TBD
+    \details TBD */
+    virtual int removeNode( const unsigned int index );
+    /** \brief TBD
+    \details TBD */
     unsigned int getNumChildren() const;
     /** \brief TBD
     \details TBD */
@@ -214,6 +227,9 @@ public:
     /** \brief Children
     \details TBD */
     virtual void addParent( NodePtr node );
+    /** \brief TBD
+    \details TBD */
+    virtual int removeParent( Node* node );
     /** \brief TBD
     \details TBD */
     unsigned int getNumParents() const;
