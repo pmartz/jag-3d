@@ -81,6 +81,37 @@ public:
     }
 
 
+    /** \brief Removes all computed bounding volumes.
+    \details Removes all bounds and empties the \c _bounds map.
+
+    \specTableBegin
+    \specThread{Thread Safe}
+    \specTableEnd
+    \specFuncEnd
+    */
+    void resetBounds()
+    {
+        boost::mutex::scoped_lock lock( _mutex );
+        _bounds.clear();
+    }
+    /** \brief Remove a specific bounding volume.
+    \details Removes the bound associated with the specified \c vao.
+
+    \specTableBegin
+    \specThread{Thread Safe}
+    \specDepend{VertexArrayObject}
+    \specTableEnd
+    \specFuncEnd
+    */
+    void removeBound( const VertexArrayObject* vao )
+    {
+        boost::mutex::scoped_lock lock( _mutex );
+
+        BoundMap::const_iterator it( _bounds.find( vao ) );
+        if( it != _bounds.end() )
+            _bounds.erase( it );
+    }
+
     /** \brief Create a new uninitialized bound.
     \details This function is called by getBound() if \c _initialBound is NULL.
     Typically, this function returns a BoundAABoxPtr for subclass jagDraw::Drawable,
