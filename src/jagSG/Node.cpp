@@ -291,7 +291,7 @@ int Node::removeChild( NodePtr node )
     }
     return( -1 );
 }
-int Node::removeNode( const unsigned int index )
+int Node::removeChild( const unsigned int index )
 {
     NodePtr node( getChild( index ) );
     if( node != NULL )

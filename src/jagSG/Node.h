@@ -214,7 +214,7 @@ public:
     virtual int removeChild( NodePtr node );
     /** \brief TBD
     \details TBD */
-    virtual int removeNode( const unsigned int index );
+    virtual int removeChild( const unsigned int index );
     /** \brief TBD
     \details TBD */
     unsigned int getNumChildren() const;

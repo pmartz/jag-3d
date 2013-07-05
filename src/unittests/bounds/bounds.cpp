@@ -18,13 +18,9 @@
 *
 *************** <auto-copyright.pl END do not edit this line> ***************/
 
-#include <jagBase/Transform.h>
+#include <jagDraw/Bound.h>
 #include <jagSG/Node.h>
-#include <jagSG/CollectionVisitor.h>
-#include <jagSG/FrustumCullCallback.h>
-#include <jagDraw/Node.h>
-#include <jagDraw/Uniform.h>
-#include <jagDraw/Program.h>
+#include <jagDraw/DrawCommand.h>
 #include <jagUtil/Shapes.h>
 
 #include <boost/foreach.hpp>
@@ -44,6 +40,7 @@ using jagDraw::CommandMap;
 using jagDraw::CommandMapPtr;
 using jagDraw::Drawable;
 using jagDraw::DrawablePtr;
+using jagDraw::DrawArrays;
 
 
 DrawablePtr createQuad( jagUtil::VNTCVec& data, const gmtl::Point3f& center, const float extent )
@@ -64,6 +61,9 @@ bool test()
 {
     std::cout << "Testing: Expand NULL sphere around sphere..." << std::endl;
     {
+        // Expand a zero-radius sphere by a sphere with radius 10.
+        // The result should be a sphere with radius 10.
+
         const gmtl::Point3d center( 10., -5., -2. );
 
         BoundSphere sphereA;
@@ -81,6 +81,8 @@ bool test()
         if( sphereA.getRadius() != radius )
         {
             std::cerr << "Incorrect sphere radius. " << sphereA.getRadius() << " != " << radius << std::endl;
+            std::cerr << "\tThis failues indicates that GGT/GMTL might not be up-to-date, as" << std::endl;
+            std::cerr << "\ta patch was submitted to fix this issue in gmtl/Containment.h." << std::endl;
             return( false );
         }
     }
@@ -93,6 +95,10 @@ bool test()
 
         std::cout << "Testing: Obtain bound from quad..." << std::endl;
         {
+            // Test that attaching a non-empty Drawable to a scene graph Node
+            // heirarchy will correctly expand the Node's bounding volume.
+            // Ensure that querying the volume clears all bound dirty flags.
+
             NodePtr nodeA( NodePtr( new Node() ) );
             jagUtil::VNTCVec data;
             DrawablePtr quad( createQuad( data, gmtl::Point3f( 0., 0., 0. ), 10.f ) );
@@ -113,8 +119,86 @@ bool test()
                 return( false );
             }
         }
+#if 0
+        std::cout << "Testing: Repeat, with new VAO..." << std::endl;
+        {
+            // Remove the root node's child (from the previous test).
+            // Then repeat the same test, but use a different VAO address.
+            // The test should still pass. Failure indicates that the
+            // CommandMap did not use Notifier to inform the Node of the
+            // VAO change.
+
+            root->removeChild( 0 ); // Remove node from previous test.
+            if( root->getNumChildren() > 0 )
+            {
+                std::cerr << "Invalid initial conditions. Wrong number of children: " << root->getNumChildren() << std::endl;
+                return( false );
+            }
+
+            NodePtr nodeA( NodePtr( new Node() ) );
+            jagUtil::VNTCVec data;
+            DrawablePtr drawable( createQuad( data, gmtl::Point3f( 0., 0., 0. ), 10.f ) );
+            nodeA->addDrawable( drawable );
+            root->addChild( nodeA );
+            commands->insert( jagUtil::createVertexArrayObject( data ) );
+
+            BoundPtr bound( root->getBound() );
+            double returnRadius( bound->getRadius() );
+            if( ( returnRadius < 7.05 ) || ( returnRadius > 7.1 ) )
+            {
+                std::cerr << "Incorrect radius: " << returnRadius << std::endl;
+                return( false );
+            }
+            if( root->getAnyBoundDirty() )
+            {
+                std::cerr << "Failed bound clean test." << std::endl;
+                return( false );
+            }
+        }
+#endif
     }
 
+    {
+        NodePtr root( NodePtr( new jagSG::Node() ) );
+
+        CommandMapPtr commands( CommandMapPtr( new CommandMap() ) );
+        root->setCommandMap( commands );
+
+        std::cout << "Testing: Adding DrawCommand dirties SG Node bound..." << std::endl;
+        {
+            // Add a non-empty Drawable to a Node and query the Node bound.
+            // Then add a new DrawCommand to the Drawable. Test that this
+            // correctly marks the Node bound as dirty.
+
+            NodePtr nodeA( NodePtr( new Node() ) );
+            jagUtil::VNTCVec data;
+            DrawablePtr drawable( createQuad( data, gmtl::Point3f( 0., 0., 0. ), 10.f ) );
+            nodeA->addDrawable( drawable );
+            root->addChild( nodeA );
+            commands->insert( jagUtil::createVertexArrayObject( data ) );
+
+            BoundPtr bound( root->getBound() );
+            double returnRadius( bound->getRadius() );
+            if( ( returnRadius < 7.05 ) || ( returnRadius > 7.1 ) )
+            {
+                std::cerr << "Incorrect radius: " << returnRadius << std::endl;
+                return( false );
+            }
+            if( root->getAnyBoundDirty() )
+            {
+                std::cerr << "Failed bound clean test." << std::endl;
+                return( false );
+            }
+
+            jagDraw::DrawArraysPtr da( jagDraw::DrawArraysPtr( new jagDraw::DrawArrays( GL_POINTS, 0, 1 ) ) );
+            drawable->addDrawCommand( da );
+            if( !( root->getAnyBoundDirty() ) )
+            {
+                std::cerr << "Failed, bound should be dirty after adding DrawCommand." << std::endl;
+                return( false );
+            }
+        }
+    }
 
     return( true );
 }
