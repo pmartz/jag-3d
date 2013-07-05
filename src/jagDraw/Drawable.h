@@ -196,6 +196,11 @@ the list directly with getDrawCommandVec().
     */
     virtual void computeBound( BoundPtr bound, const VertexArrayObject* vao, BoundOwner* owner );
 
+    /** \brief Notify owning code of bound dirty state. */
+    virtual void setBoundDirty( const VertexArrayObject* vao, const bool dirty=true );
+    /** \brief Notify owning code of bound dirty state. */
+    virtual void setAllBoundsDirty( const bool dirty=true );
+
     /**@}*/
 
 

@@ -132,15 +132,31 @@ void Drawable::computeBound( BoundPtr bound, const VertexArrayObject* vao, Bound
     }
 }
 
+void Drawable::setBoundDirty( const VertexArrayObject* vao, const bool dirty )
+{
+    BoundOwner::setBoundDirty( vao, dirty );
+    if( dirty )
+    {
+        BoundDirtyNotifyInfo bdni;
+        bdni._vao = const_cast< VertexArrayObject* >( vao );
+        notify( bdni );
+    }
+}
+void Drawable::setAllBoundsDirty( const bool dirty )
+{
+    BoundOwner::setAllBoundsDirty( dirty );
+    if( dirty )
+    {
+        BoundDirtyNotifyInfo bdni;
+        notify( bdni );
+    }
+}
 
 
 void Drawable::addDrawCommand( DrawCommandPtr dcp )
 {
     _drawCommands.push_back( dcp );
     setAllBoundsDirty();
-
-    BoundDirtyNotifyInfo bdni;
-    notify( bdni );
 }
 
 DrawCommandVec& Drawable::getDrawCommandVec()

@@ -209,7 +209,7 @@ public:
     \specTableEnd
     \specFuncEnd
     */
-    void setBoundDirty( const VertexArrayObject* vao, const bool dirty=true )
+    virtual void setBoundDirty( const VertexArrayObject* vao, const bool dirty=true )
     {
         boost::mutex::scoped_lock lock( _mutex );
         _bounds[ vao ]._dirty = dirty;
@@ -223,7 +223,7 @@ public:
     \specTableEnd
     \specFuncEnd
     */
-    void setAllBoundsDirty( const bool dirty=true )
+    virtual void setAllBoundsDirty( const bool dirty=true )
     {
         boost::mutex::scoped_lock lock( _mutex );
         BOOST_FOREACH( BoundMap::value_type& mapElement, _bounds )
