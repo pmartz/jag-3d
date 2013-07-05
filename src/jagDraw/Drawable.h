@@ -26,6 +26,7 @@
 #include <jagDraw/ObjectID.h>
 #include <jagDraw/Bound.h>
 #include <jagDraw/BoundOwner.h>
+#include <jagBase/Notifier.h>
 #include <jagDraw/VertexArrayObject.h>
 #include <jagDraw/VertexArrayCommand.h>
 #include <jagDraw/DrawCommand.h>
@@ -91,7 +92,8 @@ See member functions for additional specification requirements.
 
 */
 class JAGDRAW_EXPORT Drawable : protected jagBase::LogBase,
-        public ObjectIDOwner, public BoundOwner
+        public ObjectIDOwner, public BoundOwner,
+        public jagBase::Notifier
 {
 public:
     Drawable();
@@ -200,6 +202,12 @@ the list directly with getDrawCommandVec().
 protected:
     /** Default value: _drawCommands = jagDraw::DrawCommandVec() */
     DrawCommandVec _drawCommands;
+
+    /** Default value: _boundDirtyNotifyInfo =
+            BoundOwner::BoundDirtyNotifyInfoPtr(
+                new BoundOwner::BoundDirtyNotifyInfo() );
+    */
+    BoundOwner::BoundDirtyNotifyInfoPtr _boundDirtyNotifyInfo;
 };
 
 typedef jagBase::ptr< jagDraw::Drawable >::shared_ptr DrawablePtr;

@@ -373,7 +373,7 @@ bool CollectionVisitor::CollectionInfo::inFrustum() const
     if( _bound->getType() == jagDraw::Bound::Box_t )
         return( gmtl::isInVolume( frustum, _bound->asAABox() ) );
     else
-        return( gmtl::isPotentiallyContained( frustum, _bound->asSphere() ) );
+        return( gmtl::isInVolume( frustum, _bound->asSphere() ) );
 }
 
 
