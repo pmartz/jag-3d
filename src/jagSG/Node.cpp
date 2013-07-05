@@ -43,6 +43,7 @@ Node::Node()
     jagDraw::BoundOwner(),
     _matrix( gmtl::MAT_IDENTITY44D )
 {
+    _boundDirtyCallback = BoundDirtyCallbackPtr( new BoundDirtyCallback( this ) );
 }
 Node::Node( const Node& rhs )
   : jagBase::LogBase( "jag.sg.node" ),
@@ -56,6 +57,7 @@ Node::Node( const Node& rhs )
     _traverseCallback( rhs._traverseCallback ),
     _collectionCallbacks( rhs._collectionCallbacks )
 {
+    _boundDirtyCallback = BoundDirtyCallbackPtr( new BoundDirtyCallback( this ) );
 }
 Node::~Node()
 {
@@ -224,9 +226,10 @@ const jagDraw::CommandMapPtr Node::getCommandMap() const
 }
 
 
-void Node::addDrawable( jagDraw::DrawablePtr node )
+void Node::addDrawable( jagDraw::DrawablePtr drawable )
 {
-    _drawables.push_back( node );
+    _drawables.push_back( drawable );
+    drawable->getNotifierCallbacks().push_back( _boundDirtyCallback );
     setAllBoundsDirty();
 }
 int Node::removeDrawable( jagDraw::DrawablePtr drawable )
@@ -236,6 +239,7 @@ int Node::removeDrawable( jagDraw::DrawablePtr drawable )
     {
         if( *it == drawable )
         {
+            drawable->removeNotifierCallback( _boundDirtyCallback );
             _drawables.erase( it );
             setAllBoundsDirty();
             return( (int)( _drawables.size() ) );
@@ -387,6 +391,14 @@ void Node::deleteID( const jagDraw::jagDrawContextID contextID )
     {
         node->deleteID( contextID );
     }
+}
+
+
+
+void Node::BoundDirtyCallback::operator()( jagBase::Notifier* notifier, const jagBase::Notifier::NotifierInfo& info )
+{
+    JAG3D_CRITICAL_STATIC( "jag.node.bounddirty", "I was notified." );
+    _owner->setAllBoundsDirty();
 }
 
 

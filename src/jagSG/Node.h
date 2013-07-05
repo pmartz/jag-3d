@@ -188,7 +188,7 @@ public:
 
     /** \brief Drawables
     \details TBD */
-    virtual void addDrawable( jagDraw::DrawablePtr node );
+    virtual void addDrawable( jagDraw::DrawablePtr drawable );
     /** \brief TBD
     \details TBD */
     unsigned int getNumDrawables() const;
@@ -262,6 +262,29 @@ protected:
 
     CallbackPtr _traverseCallback;
     CollectionCallbacks _collectionCallbacks;
+
+    /** \struct Callback Notifier.h <jagBase/Notifier.h>
+    \brief Notifies client code  */
+    struct BoundDirtyCallback : jagBase::Notifier::NotifierCallback
+    {
+        BoundDirtyCallback( Node* owner )
+            : _owner( owner )
+        {}
+        BoundDirtyCallback( const BoundDirtyCallback& rhs )
+            : _owner( rhs._owner )
+        {}
+        virtual ~BoundDirtyCallback()
+        {}
+
+        /** \brief TBD
+        \details TBD */
+        virtual void operator()( jagBase::Notifier* notifier, const jagBase::Notifier::NotifierInfo& info );
+
+        Node* _owner;
+    };
+    typedef jagBase::ptr< BoundDirtyCallback >::shared_ptr BoundDirtyCallbackPtr;
+
+    BoundDirtyCallbackPtr _boundDirtyCallback;
 };
 
 

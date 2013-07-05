@@ -327,6 +327,16 @@ public:
         return( _computeBoundCallback );
     }
 
+
+    struct BoundDirtyNotifyInfo : jagBase::Notifier::NotifierInfo
+    {
+        BoundDirtyNotifyInfo()
+            : _vao( NULL )
+        {}
+
+        jagDraw::VertexArrayObject* _vao;
+    };
+
 protected:
     /** Default value: For each element in _bounds, BoundInfo::_dirty
     is initially true. The first call to getBound() initializes the
@@ -342,16 +352,6 @@ protected:
 
     /** Default value: _computeBoundCallback = ComputeBoundCallbackPtr() */
     ComputeBoundCallbackPtr _computeBoundCallback;
-
-    struct BoundDirtyNotifyInfo : jagBase::Notifier::NotifyInfo
-    {
-        BoundDirtyNotifyInfo()
-            : _vao( NULL )
-        {}
-
-        jagDraw::VertexArrayObject* _vao;
-    };
-    typedef jagBase::ptr< BoundDirtyNotifyInfo >::shared_ptr BoundDirtyNotifyInfoPtr;
 };
 
 
