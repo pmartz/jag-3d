@@ -24,6 +24,7 @@
 
 #include <jagBase/ptr.h>
 #include <jagBase/MultiCallback.h>
+#include <jagBase/LogMacros.h>
 
 #include <boost/foreach.hpp>
 
@@ -44,7 +45,7 @@ public:
     }
     /** Copy constructor */
     Notifier( const Notifier& rhs )
-      : _callbacks( rhs._callbacks )
+      : _notifierCallbacks( rhs._notifierCallbacks )
     {
     }
     /** Destructor */
@@ -53,52 +54,45 @@ public:
     }
 
 
-    /** \struct NotifyInfo Notifier.h <jagBase/Notifier.h>
+    /** \struct NotifierInfo Notifier.h <jagBase/Notifier.h>
     \brief Base class containing information passed to Notifier::Callback objects. */
-    struct NotifyInfo
+    struct NotifierInfo
     {
-        NotifyInfo()
-        {
-        }
-        NotifyInfo( const NotifyInfo& rhs )
-        {
-        }
-        virtual ~NotifyInfo()
-        {
-        }
+        NotifierInfo()
+        {}
+        NotifierInfo( const NotifierInfo& rhs )
+        {}
+        virtual ~NotifierInfo()
+        {}
 
         // Derived classes add additional field / member functions as needed.
     };
-    typedef jagBase::ptr< NotifyInfo >::shared_ptr NotifyInfoPtr;
 
     /** \struct Callback Notifier.h <jagBase/Notifier.h>
     \brief Notifies client code  */
-    struct Callback
+    struct NotifierCallback
     {
-        Callback()
-        {
-        }
-        Callback( const Callback& rhs )
-        {
-        }
-        virtual ~Callback()
-        {
-        }
+        NotifierCallback()
+        {}
+        NotifierCallback( const NotifierCallback& rhs )
+        {}
+        virtual ~NotifierCallback()
+        {}
 
         /** \brief TBD
         \details TBD */
-        virtual void operator()( Notifier* /* notifier */, NotifyInfoPtr /* info */ )
+        virtual void operator()( jagBase::Notifier* /* notifier */, const jagBase::Notifier::NotifierInfo& /* info */ )
         {
         }
     };
-    typedef jagBase::ptr< Callback >::shared_ptr CallbackPtr;
+    typedef jagBase::ptr< NotifierCallback >::shared_ptr NotifierCallbackPtr;
 
     /** \brief Notify all attached callbacks.
     \details Invoke the operator function call on all attached callbacks
     and pass the specified \c info struct as a parameter. */
-    void notify( NotifyInfoPtr info=( NotifyInfoPtr( (NotifyInfo*)NULL ) ) )
+    void notify( const NotifierInfo& info )
     {
-        BOOST_FOREACH( CallbackPtr& cb, _callbacks )
+        BOOST_FOREACH( NotifierCallbackPtr& cb, _notifierCallbacks )
         {
             (*cb)( this, info );
         }
@@ -106,18 +100,33 @@ public:
 
     /** \brief TBD
     \details TBD */
-    typedef jagBase::MultiCallback< CallbackPtr > Callbacks;
+    typedef jagBase::MultiCallback< NotifierCallbackPtr > NotifierCallbacks;
 
     /** \brief TBD
     \details TBD */
-    Callbacks& getCallbacks()
+    NotifierCallbacks& getNotifierCallbacks()
     {
-        return( _callbacks );
+        return( _notifierCallbacks );
+    }
+    /** \brief TBD
+    \details TBD */
+    void removeNotifierCallback( NotifierCallbackPtr target )
+    {
+        JAG3D_CRITICAL_STATIC( "jag.base.notifier", "removeCallback()." );
+
+        NotifierCallbacks::iterator it;
+        for( it = _notifierCallbacks.begin(); it != _notifierCallbacks.end(); ++it )
+        {
+            if( (*it) == target )
+            {
+                it = _notifierCallbacks.erase( it );
+            }
+        }
     }
 
 protected:
     /** Default value: _boundDirtyCallbacks = BoundDirtyCallbacks(); */
-    Callbacks _callbacks;
+    NotifierCallbacks _notifierCallbacks;
 };
 
 

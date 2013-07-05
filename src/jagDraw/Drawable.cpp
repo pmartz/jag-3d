@@ -42,9 +42,7 @@ Drawable::Drawable()
   : jagBase::LogBase( "jag.draw.drawable" ),
     ObjectIDOwner(),
     BoundOwner(),
-    jagBase::Notifier(),
-    _boundDirtyNotifyInfo( BoundOwner::BoundDirtyNotifyInfoPtr(
-            new BoundOwner::BoundDirtyNotifyInfo() ) )
+    jagBase::Notifier()
 {
 }
 Drawable::Drawable( const Drawable& rhs )
@@ -140,7 +138,9 @@ void Drawable::addDrawCommand( DrawCommandPtr dcp )
 {
     _drawCommands.push_back( dcp );
     setAllBoundsDirty();
-    notify( _boundDirtyNotifyInfo );
+
+    BoundDirtyNotifyInfo bdni;
+    notify( bdni );
 }
 
 DrawCommandVec& Drawable::getDrawCommandVec()

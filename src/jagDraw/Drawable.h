@@ -202,12 +202,6 @@ the list directly with getDrawCommandVec().
 protected:
     /** Default value: _drawCommands = jagDraw::DrawCommandVec() */
     DrawCommandVec _drawCommands;
-
-    /** Default value: _boundDirtyNotifyInfo =
-            BoundOwner::BoundDirtyNotifyInfoPtr(
-                new BoundOwner::BoundDirtyNotifyInfo() );
-    */
-    BoundOwner::BoundDirtyNotifyInfoPtr _boundDirtyNotifyInfo;
 };
 
 typedef jagBase::ptr< jagDraw::Drawable >::shared_ptr DrawablePtr;
