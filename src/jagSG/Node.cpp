@@ -398,7 +398,16 @@ void Node::deleteID( const jagDraw::jagDrawContextID contextID )
 void Node::BoundDirtyCallback::operator()( jagBase::Notifier* notifier, const jagBase::Notifier::NotifierInfo& info )
 {
     JAG3D_CRITICAL_STATIC( "jag.node.bounddirty", "I was notified." );
-    _owner->setAllBoundsDirty();
+
+    const jagDraw::Drawable::BoundDirtyNotifyInfo* bdni( dynamic_cast<
+        const jagDraw::Drawable::BoundDirtyNotifyInfo* >( &info ) );
+    if( bdni != NULL )
+    {
+        if( bdni->_vao != NULL )
+            _owner->setBoundDirty( bdni->_vao );
+        else
+            _owner->setAllBoundsDirty();
+    }
 }
 
 
