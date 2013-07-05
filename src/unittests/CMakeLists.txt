@@ -18,14 +18,10 @@
 #
 #************** <auto-copyright.pl END do not edit this line> ***************
 
-# Tests for jagBase interface
-add_subdirectory( transforminfo )
-
-# Tests for jagDraw interface
+add_subdirectory( bounds )
+add_subdirectory( collectionvisitor )
 add_subdirectory( commandmapops )
 add_subdirectory( commandmapsort )
-add_subdirectory( uniformsetadd )
-
-# Tests for jagSG interface
-add_subdirectory( collectionvisitor )
 add_subdirectory( frustumcull )
+add_subdirectory( transforminfo )
+add_subdirectory( uniformsetadd )

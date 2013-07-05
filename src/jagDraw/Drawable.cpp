@@ -41,13 +41,17 @@ namespace jagDraw {
 Drawable::Drawable()
   : jagBase::LogBase( "jag.draw.drawable" ),
     ObjectIDOwner(),
-    BoundOwner()
+    BoundOwner(),
+    jagBase::Notifier(),
+    _boundDirtyNotifyInfo( BoundOwner::BoundDirtyNotifyInfoPtr(
+            new BoundOwner::BoundDirtyNotifyInfo() ) )
 {
 }
 Drawable::Drawable( const Drawable& rhs )
   : jagBase::LogBase( rhs ),
     ObjectIDOwner( rhs ),
     BoundOwner( rhs ),
+    jagBase::Notifier( rhs ),
     _drawCommands( rhs._drawCommands )
 {
 }
@@ -135,6 +139,8 @@ void Drawable::computeBound( BoundPtr bound, const VertexArrayObject* vao, Bound
 void Drawable::addDrawCommand( DrawCommandPtr dcp )
 {
     _drawCommands.push_back( dcp );
+    setAllBoundsDirty();
+    notify( _boundDirtyNotifyInfo );
 }
 
 DrawCommandVec& Drawable::getDrawCommandVec()

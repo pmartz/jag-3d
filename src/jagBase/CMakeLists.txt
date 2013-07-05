@@ -40,6 +40,7 @@ set( _jagBaseHeaderFiles
     LogBase.h
     LogMacros.h
     MultiCallback.h
+    Notifier.h
     Profile.h
     ptr.h
     Transform.h
