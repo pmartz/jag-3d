@@ -192,7 +192,7 @@ bool test()
 
             jagDraw::DrawArraysPtr da( jagDraw::DrawArraysPtr( new jagDraw::DrawArrays( GL_POINTS, 0, 1 ) ) );
             drawable->addDrawCommand( da );
-            if( !( nodeA->getAnyBoundDirty() ) )
+            if( !( root->getAnyBoundDirty() ) )
             {
                 std::cerr << "Failed, bound should be dirty after adding DrawCommand." << std::endl;
                 return( false );

@@ -169,9 +169,14 @@ public:
     Returns a new BoundSphere. */
     jagDraw::BoundPtr newBound();
 
-    /** \brief Compute the Drawable's bounding volume.
+    /** \brief Compute the Node's bounding volume.
     \details Override the base class BoundOwner::computeBound(). */
     virtual void computeBound( jagDraw::BoundPtr bound, const jagDraw::VertexArrayObject* vao, BoundOwner* owner );
+
+    /** \brief Mark all bounds dirty and notify parents.
+    \details Override the base class BoundOwner::setAllBoundsDirty()
+    so that parent Nodes can be notified. */
+    virtual void setAllBoundsDirty( const bool dirty=true );
 
     /**@}*/
 
