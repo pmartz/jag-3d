@@ -210,6 +210,18 @@ void Node::computeBound( jagDraw::BoundPtr bound, const jagDraw::VertexArrayObje
     }
 }
 
+void Node::setAllBoundsDirty( const bool dirty )
+{
+    BoundOwner::setAllBoundsDirty( dirty );
+    if( dirty )
+    {
+        BOOST_FOREACH( NodePtr& parentNode, _parents )
+        {
+            parentNode->setAllBoundsDirty();
+        }
+    }
+}
+
 
 
 void Node::setCommandMap( jagDraw::CommandMapPtr commands )
