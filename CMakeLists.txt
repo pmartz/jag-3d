@@ -132,6 +132,9 @@ POCOFinder()
 # For now, do it here, so that the jagload test can leverage it.
 include( FindOSGHelper )
 
+# find the optional Directx SDK (for DirectInput game pad support).
+option( DIRECTINPUT_ARCH_x64 "Select for 64-bit target architectures, unselect for 32-bit." ON )
+find_package( DirectInput QUIET )
 
 
 if( QT_FOUND )
