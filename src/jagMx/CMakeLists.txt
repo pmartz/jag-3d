@@ -25,36 +25,38 @@ if( BUILD_SHARED_LIBS )
 endif()
 
 
-set( _directXHeaders )
-set( _directXSource )
+set( _dxHeaders )
+set( _dxSource )
+set( _dxLibrary )
 if( DIRECTINPUT_FOUND )
 	add_definitions(-DDIRECTINPUT_ENABLED)
     include_directories( ${DIRECTINPUT_INCLUDE_DIR} )
-    set( _directXHeaders
+    set( _dxHeaders
         MxGamePadDX.h
     )
-    set( _directXSource
+    set( _dxSources
         MxGamePadDX.cpp
     )
+    set( _dxLibrary ${DIRECTINPUT_LIBRARIES} )
 endif()
 
 set( _jagMxHeaderFiles
     Export.h
-    ${_directXHeaders}
+    ${_dxHeaders}
     MxCore.h
+    MxGamePad.h
     MxUtils.h
 )
 #    MxEventHandler.h
-#    MxGamePad.h
 #)
 
 set( _jagMxSourceFiles
-    ${_directXSource}
+    ${_dxSources}
     MxCore.cpp
+    MxGamePad.cpp
     MxUtils.cpp
 )
 #    MxEventHandler.cpp
-#    MxGamePad.cpp
 #)
 
 _addLibrary( ${_libName}
@@ -62,6 +64,7 @@ _addLibrary( ${_libName}
     ${_jagMxSourceFiles}
     JAG_LIBRARIES
         jagBase
+        ${_dxLibrary}
 )
 
 install(
