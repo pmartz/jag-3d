@@ -1,22 +1,22 @@
 /*************** <auto-copyright.pl BEGIN do not edit this line> **************
- *
- * osgWorks is (C) Copyright 2009-2012 by Kenneth Mark Bryden
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License version 2.1 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA 02111-1307, USA.
- *
- *************** <auto-copyright.pl END do not edit this line> ***************/
+*
+* jag3d is (C) Copyright 2011-2013 by Kenneth Mark Bryden and Paul Martz
+*
+* This library is free software; you can redistribute it and/or
+* modify it under the terms of the GNU Lesser General Public
+* License version 2.1 as published by the Free Software Foundation.
+*
+* This library is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+* Library General Public License for more details.
+*
+* You should have received a copy of the GNU Lesser General Public
+* License along with this library; if not, write to the
+* Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+* Boston, MA 02111-1307, USA.
+*
+*************** <auto-copyright.pl END do not edit this line> ***************/
 
 #include <jagMx/MxUtils.h>
 #include <jagBase/LogMacros.h>
@@ -67,13 +67,13 @@ gmtl::Vec2d computeOptimalNearFar( const gmtl::Point3d& position,
 
 #if 0
 // TBD MxCoe Port
-gmtl::Vec4d computePanPlane( osg::Node* scene, const osgwMx::MxCore* mxCore,
+gmtl::Vec4d computePanPlane( osg::Node* scene, const jagMx::MxCore* mxCore,
                  const double ndcX, const double ndcY )
 {
     const osg::BoundingSphere& bs = scene->getBound();
 
     osg::Matrixd proj = mxCore->computeProjection(
-        osgwMx::computeOptimalNearFar( mxCore->getPosition(), bs, mxCore->getOrtho() ) );
+        jagMx::computeOptimalNearFar( mxCore->getPosition(), bs, mxCore->getOrtho() ) );
 
     // Assume ortho, where ndc far plane == 1 and w always == 1.
     osg::Vec4d farPoint( ndcX, ndcY, 1., 1. );
@@ -114,7 +114,7 @@ gmtl::Vec4d computePanPlane( osg::Node* scene, const osgwMx::MxCore* mxCore,
 
 #if 0
 // TBD MxCoe Port
-bool intersect( osg::Vec3d& result, const osg::Vec3d& farPoint, osg::Node* scene, const osgwMx::MxCore* mxCore )
+bool intersect( osg::Vec3d& result, const osg::Vec3d& farPoint, osg::Node* scene, const jagMx::MxCore* mxCore )
 {
     if( scene == NULL )
     {
@@ -144,14 +144,14 @@ bool intersect( osg::Vec3d& result, const osg::Vec3d& farPoint, osg::Node* scene
 
 #if 0
 // TBD MxCoe Port
-osg::Vec3d pan( const osg::Node* scene, const osgwMx::MxCore* mxCore,
+osg::Vec3d pan( const osg::Node* scene, const jagMx::MxCore* mxCore,
     const osg::Vec4d panPlane, const double deltaNdcX, const double deltaNdcY )
 {
     const osg::BoundingSphere& bs = scene->getBound();
 
     // Get the view volume far plane value, and the distance from
     // the near to far plane.
-    osg::Vec2d nearFar( osgwMx::computeOptimalNearFar( mxCore->getPosition(), bs, mxCore->getOrtho() ) );
+    osg::Vec2d nearFar( jagMx::computeOptimalNearFar( mxCore->getPosition(), bs, mxCore->getOrtho() ) );
     double zNear( nearFar[ 0 ] ), zFar( nearFar[ 1 ] );
     const double distance = zFar - zNear;
 
@@ -200,11 +200,11 @@ osg::Vec3d pan( const osg::Node* scene, const osgwMx::MxCore* mxCore,
 
 #if 0
 // TBD MxCoe Port
-osg::Vec3d pickPoint( osg::Node* scene, const osgwMx::MxCore* mxCore,
+osg::Vec3d pickPoint( osg::Node* scene, const jagMx::MxCore* mxCore,
     const double ndcX, const double ndcY )
 {
     const osg::BoundingSphere& bs = scene->getBound();
-    osg::Vec2d nearFar( osgwMx::computeOptimalNearFar( mxCore->getPosition(), bs, mxCore->getOrtho() ) );
+    osg::Vec2d nearFar( jagMx::computeOptimalNearFar( mxCore->getPosition(), bs, mxCore->getOrtho() ) );
 
     osg::Vec4d ccFarPoint( ndcX, ndcY, 1., 1. );
     if( !( mxCore->getOrtho() ) )

@@ -125,7 +125,7 @@ must also be configured to return an appropriate projection matrix.
 */
 #if 0
 // TBD MxCoe Port
-osg::Vec4d JAGMX_EXPORT computePanPlane( osg::Node* scene, const osgwMx::MxCore* mxCore,
+osg::Vec4d JAGMX_EXPORT computePanPlane( osg::Node* scene, const jagMx::MxCore* mxCore,
     const double ndcX, const double ndcY );
 #endif
 
@@ -152,7 +152,7 @@ pass the negated return value to MxCore::moveLiteral().
 */
 #if 0
 // TBD MxCoe Port
-osg::Vec3d OSGWMX_EXPORT pan( const osg::Node* scene, const osgwMx::MxCore* mxCore,
+osg::Vec3d JAGMX_EXPORT pan( const osg::Node* scene, const jagMx::MxCore* mxCore,
     const osg::Vec4d panPlane, const double deltaNdcX, const double deltaNdcY );
 #endif
 
@@ -180,7 +180,7 @@ displays a warning and returns (0,0,0).
 TBD Future work: combine pickPoint and intersect into one function. */
 #if 0
 // TBD MxCoe Port
-osg::Vec3d OSGWMX_EXPORT pickPoint( osg::Node* scene, const osgwMx::MxCore* mxCore,
+osg::Vec3d JAGMX_EXPORT pickPoint( osg::Node* scene, const jagMx::MxCore* mxCore,
     const double ndcX, const double ndcY );
 #endif
 
@@ -238,7 +238,7 @@ class JAGMX_EXPORT FunctionalMap
 public:
     FunctionalMap();
     FunctionalMap( const FunctionalMap& rhs );
-    ~FunctionalMap();
+    virtual ~FunctionalMap();
 
     /** Various game pad functions. */
     typedef enum {

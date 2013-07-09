@@ -335,7 +335,7 @@ void MxCore::lookAtAndFit( const gmtl::AABoxd& bb )
     // bound that we're passing to computeInitialDistanceFromFOVY().
     const double extraDistance = bb.radius() - bs.radius();
     const double distance = extraDistance +
-        osgwMx::computeInitialDistanceFromFOVY( bs, bestFov );
+        jagMx::computeInitialDistanceFromFOV( bs, bestFov );
     setPosition( bs.getCenter() - ( newDir * distance ) );
 #endif
 }

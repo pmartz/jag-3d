@@ -51,7 +51,7 @@ class JAGMX_EXPORT MxCore
 public:
     MxCore();
     MxCore( const MxCore& rhs );
-    ~MxCore();
+    virtual ~MxCore();
 
 
     /** \name Model or View Matrix Access
