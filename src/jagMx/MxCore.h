@@ -150,7 +150,10 @@ public:
 
     /** \brief Convenience routine to return the cross product of
     \c _viewDir and \c _viewUp. */
-    gmtl::Vec3d getCross() const { return( _viewDir ^ _viewUp ); }
+    gmtl::Vec3d getCross() const
+    {
+        return( _viewDir ^ _viewUp );
+    }
 
     /** \brief Set the current up vector to the initial up vector.
     \details Sets the current up vector to the initial up vector, with
