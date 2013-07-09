@@ -42,19 +42,19 @@ set( _jagMxHeaderFiles
     Export.h
     ${_directXHeaders}
     MxCore.h
+    MxGamePad.h
     MxUtils.h
 )
 #    MxEventHandler.h
-#    MxGamePad.h
 #)
 
 set( _jagMxSourceFiles
     ${_directXSource}
     MxCore.cpp
+    MxGamePad.cpp
     MxUtils.cpp
 )
 #    MxEventHandler.cpp
-#    MxGamePad.cpp
 #)
 
 _addLibrary( ${_libName}
