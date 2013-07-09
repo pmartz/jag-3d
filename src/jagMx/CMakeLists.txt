@@ -26,7 +26,7 @@ endif()
 
 
 set( _dxHeaders )
-set( _dxSource )
+set( _dxSources )
 set( _dxLibrary )
 if( DIRECTINPUT_FOUND )
 	add_definitions(-DDIRECTINPUT_ENABLED)

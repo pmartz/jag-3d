@@ -18,8 +18,14 @@ else()
 endif()
 
 
-if( DIRECTINPUT_ROOT_DIR AND WIN32 )
-    FIND_PATH( DIRECTINPUT_INCLUDE_DIR dinput.h
+if( WIN32 )
+#    FIND_PATH( DIRECTINPUT_ROOT_DIR Include/D3D10.h
+#               PATHS
+#               $ENV{PATH}
+#               $ENV{PROGRAMFILES}
+#     )
+
+     FIND_PATH( DIRECTINPUT_INCLUDE_DIR dinput.h
                PATHS
                ${DIRECTINPUT_ROOT_DIR}/Include
     )

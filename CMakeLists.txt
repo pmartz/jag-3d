@@ -133,6 +133,7 @@ POCOFinder()
 include( FindOSGHelper )
 
 # find the optional Directx SDK (for DirectInput game pad support).
+set( DIRECTINPUT_ROOT_DIR "" CACHE PATH "DirectInput installation directory" )
 option( DIRECTINPUT_ARCH_x64 "Select for 64-bit target architectures, unselect for 32-bit." ON )
 find_package( DirectInput )
 
