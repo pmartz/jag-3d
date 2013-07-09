@@ -134,7 +134,7 @@ include( FindOSGHelper )
 
 # find the optional Directx SDK (for DirectInput game pad support).
 option( DIRECTINPUT_ARCH_x64 "Select for 64-bit target architectures, unselect for 32-bit." ON )
-find_package( DirectInput QUIET )
+find_package( DirectInput )
 
 
 if( QT_FOUND )
