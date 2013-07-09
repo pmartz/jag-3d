@@ -22,6 +22,7 @@
 #define __JAGMX_MX_CORE_H__ 1
 
 #include <jagMx/Export.h>
+#include <jagBase/ptr.h>
 #include <gmtl/gmtl.h>
 
 
@@ -390,6 +391,8 @@ protected:
     gmtl::Vec2d _clampFovyRange;
     double _orthoBottom, _orthoTop;
 };
+
+typedef jagBase::ptr< jagMx::MxCore >::shared_ptr MxCorePtr;
 
 
 // jagMx

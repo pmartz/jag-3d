@@ -24,6 +24,7 @@
 
 #include <jagMx/Export.h>
 #include <jagMx/MxCore.h>
+#include <jagBase/ptr.h>
 #include <gmtl/gmtl.h>
 
 #include <vector>
@@ -337,6 +338,9 @@ protected:
 
     std::vector< bool > _state;
 };
+
+typedef jagBase::ptr< jagMx::FunctionalMap >::shared_ptr FunctionalMapPtr;
+
 
 
 /*@}*/
