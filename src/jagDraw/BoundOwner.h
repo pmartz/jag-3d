@@ -107,7 +107,7 @@ public:
     {
         boost::mutex::scoped_lock lock( _mutex );
 
-        BoundMap::const_iterator it( _bounds.find( vao ) );
+        BoundMap::iterator it( _bounds.find( vao ) );
         if( it != _bounds.end() )
             _bounds.erase( it );
     }

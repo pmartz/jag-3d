@@ -133,7 +133,7 @@ jagDraw::DrawablePtr makePlane( VNTCVec& data,
         return( draw );
 
     JAG3D_ERROR_STATIC( "jag.util.plane", "makePlane: Error." );
-    return( jagDraw::DrawablePtr( NULL ) );
+    return( jagDraw::DrawablePtr( ( jagDraw::Drawable* ) NULL ) );
 }
 
 

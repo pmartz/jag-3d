@@ -45,8 +45,8 @@ using namespace jagDraw;
 
 Osg2Jag::Osg2Jag()
   : osg::NodeVisitor( osg::NodeVisitor::TRAVERSE_ALL_CHILDREN ),
-    _jagScene( NULL ),
-    _current( NULL )
+    _jagScene( jagSG::NodePtr( (jagSG::Node*)NULL ) ),
+    _current( jagSG::NodePtr( (jagSG::Node*)NULL ) )
 {
 }
 Osg2Jag::~Osg2Jag()
@@ -121,7 +121,8 @@ bool Osg2Jag::preTraverse( osg::Object* osgObject, const gmtl::Matrix44d& m )
 void Osg2Jag::postTraverse()
 {
     _nodeStack.pop_back();
-    _current = ( _nodeStack.empty() ? NULL : _nodeStack.back() );
+    _current = ( _nodeStack.empty() ?
+        jagSG::NodePtr( (jagSG::Node*)NULL ) : _nodeStack.back() );
 }
 
 

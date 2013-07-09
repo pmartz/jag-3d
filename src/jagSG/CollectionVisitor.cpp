@@ -28,6 +28,8 @@
 
 #include <gmtl/gmtl.h>
 
+#include <cfloat>
+
 
 namespace jagSG {
 
