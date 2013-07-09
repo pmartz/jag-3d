@@ -52,7 +52,7 @@ sphere \c bs with a perspective projection. \c fov should be the minimum
 field of view, either horizontally or vertically (accounting for aspect ratio).
 \param fovy Field of view in degrees.
 */
-double JAGMX_EXPORT computeInitialDistanceFromFOVY( const gmtl::Sphered& bs, const double fov );
+double JAGMX_EXPORT computeInitialDistanceFromFOV( const gmtl::Sphered& bs, const double fov );
 
 
 /** \brief Computes optimal near and far plane distances.

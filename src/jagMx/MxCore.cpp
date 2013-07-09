@@ -111,14 +111,10 @@ gmtl::Matrix44d MxCore::getOrientationMatrix() const
 {
     const gmtl::Vec3d c = getCross();
     const gmtl::Vec3d& u = _viewUp;
-    const gmtl::Vec3d& d = _viewDir;
+    const gmtl::Vec3d& negDir = -_viewDir;
 
     gmtl::Matrix44d m;
-    m.set(
-        c[0], u[0], -d[0], 0.0,
-        c[1], u[1], -d[1], 0.0,
-        c[2], u[2], -d[2], 0.0,
-        0.0, 0.0, 0.0, 1.0 );
+    gmtl::setAxes( m, c, u, negDir );
     return( m );
 }
 gmtl::Matrix44d MxCore::getInverseMatrix() const
@@ -214,9 +210,10 @@ void MxCore::getOriented( gmtl::Vec3d& up, gmtl::Vec3d& dir )
 
 void MxCore::setByMatrix( const gmtl::Matrix44d& m )
 {
-    _viewUp.set( m( 1, 0 ), m( 1, 1 ), m( 1, 2 ) );
-    _viewDir.set( -m( 2, 0 ), -m( 2, 1 ), -m( 2, 2 ) );
-    _position.set( m( 3, 0 ), m( 3, 1 ), m( 3, 2 ) );
+    const double* data( m.mData );
+    _viewUp.set( data[ 4 ], data[ 5 ], data[ 6 ] );
+    _viewDir.set( -data[ 8 ], -data[ 9 ], -data[ 10 ] );
+    _position.set( data[ 12 ], data[ 13 ], data[ 14 ] );
     orthonormalize();
 }
 void MxCore::setByInverseMatrix( const gmtl::Matrix44d& m )
@@ -227,8 +224,9 @@ void MxCore::setByInverseMatrix( const gmtl::Matrix44d& m )
 }
 void MxCore::setOrientationByMatrix( const gmtl::Matrix44d& m )
 {
-    _viewUp.set( m( 1, 0 ), m( 1, 1 ), m( 1, 2 ) );
-    _viewDir.set( -m( 2, 0 ), -m( 2, 1 ), -m( 2, 2 ) );
+    const double* data( m.mData );
+    _viewUp.set( data[ 4 ], data[ 5 ], data[ 6 ] );
+    _viewDir.set( -data[ 8 ], -data[ 9 ], -data[ 10 ] );
     orthonormalize();
 }
 void MxCore::setOrientationByInverseMatrix( const gmtl::Matrix44d& m )
@@ -261,7 +259,7 @@ void MxCore::lookAtAndFit( const gmtl::Sphered& bs )
 
     // Set the eve position distance so that the sphere fits into the minimum FOV.
     double minFov = ( _aspect < 1. ) ? ( _aspect * _fovy ) : _fovy;
-    const double distance = jagMx::computeInitialDistanceFromFOVY( bs, minFov );
+    const double distance = jagMx::computeInitialDistanceFromFOV( bs, minFov );
     setPosition( bs.getCenter() - ( newDir * distance ) );
 }
 
@@ -397,11 +395,7 @@ void MxCore::moveConstrained( const gmtl::Vec3d& delta )
     const gmtl::Vec3d& u = _initialUp;
     const gmtl::Vec3d back = c ^ u;
     gmtl::Matrix44d orient;
-    orient.set(
-        c[ 0 ], u[ 0 ], back[ 0 ], 0.0,
-        c[ 1 ], u[ 1 ], back[ 1 ], 0.0,
-        c[ 2 ], u[ 2 ], back[ 2 ], 0.0,
-        0.0, 0.0, 0.0, 1.0 );
+    gmtl::setAxes( orient, c, u, back );
 
     const gmtl::Vec3d scaledDelta( delta[0] * _moveScale[0],
         delta[1] * _moveScale[1], delta[2] * _moveScale[2] );
@@ -412,19 +406,14 @@ void MxCore::moveOriented( const gmtl::Vec3d& delta, const bool orientedToWorld 
 {
     const gmtl::Vec3d c = _orientedDir ^ _orientedUp;
     const gmtl::Vec3d& u = _orientedUp;
-    const gmtl::Vec3d& d = _orientedDir;
+    const gmtl::Vec3d& negDir = -_orientedDir;
     gmtl::Matrix44d orient;
-    orient.set(
-        c[ 0 ], u[ 0 ], -d[ 0 ], 0.0,
-        c[ 1 ], u[ 1 ], -d[ 1 ], 0.0,
-        c[ 2 ], u[ 2 ], -d[ 2 ], 0.0,
-        0.0, 0.0, 0.0, 1.0 );
+    gmtl::setAxes( orient, c, u, negDir );
     if( orientedToWorld )
     {
         const gmtl::Vec3d cl = getCross();
         const gmtl::Vec3d& ul = _viewUp;
         const gmtl::Vec3d& dl = _viewDir;
-
         gmtl::Matrix44d l2w;
         gmtl::setAxes( l2w, cl, dl, ul );
         orient = l2w * orient;

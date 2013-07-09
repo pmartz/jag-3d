@@ -51,10 +51,10 @@ set( _jagMxHeaderFiles
 set( _jagMxSourceFiles
     ${_directXSource}
     MxCore.cpp
+    MxUtils.cpp
 )
 #    MxEventHandler.cpp
 #    MxGamePad.cpp
-#    MxUtils.cpp
 #)
 
 _addLibrary( ${_libName}
