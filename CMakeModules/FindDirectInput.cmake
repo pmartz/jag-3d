@@ -18,8 +18,6 @@ else()
 endif()
 
 
-SET( DIRECTINPUT_FOUND FALSE )
-
 if( DIRECTINPUT_ROOT_DIR AND WIN32 )
     FIND_PATH( DIRECTINPUT_INCLUDE_DIR dinput.h
                PATHS
@@ -41,15 +39,18 @@ if( DIRECTINPUT_ROOT_DIR AND WIN32 )
                   ${DIRECTINPUT_ROOT_DIR}/lib/${_dxArch}
     )
     
-    SET( DIRECTINPUT_LIBRARIES
+    set( DIRECTINPUT_LIBRARIES
          ${DIRECTINPUT_LIBRARY}
          ${DIRECTINPUT_GUID_LIBRARY}
          ${DIRECTINPUT_ERR_LIBRARY}
     )
     
-    if( DIRECTINPUT_INCLUDE_DIR AND DIRECTINPUT_LIBRARIES )
-        SET( DIRECTINPUT_FOUND TRUE )
-    endif()
+    include( FindPackageHandleStandardArgs )
+    set( DIRECTINPUT_FAIL_MESSAGE "Cound not find optional DirectInput dependency." )
+
+    find_package_handle_standard_args( DIRECTINPUT
+        REQUIRED_VARS DIRECTINPUT_INCLUDE_DIR DIRECTINPUT_LIBRARIES
+        FAIL_MESSAGE ${DIRECTINPUT_FAIL_MESSAGE} )
 
     mark_as_advanced( DIRECTINPUT_ERR_LIBRARY )
     mark_as_advanced( DIRECTINPUT_GUID_LIBRARY )
