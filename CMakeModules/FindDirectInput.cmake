@@ -18,15 +18,7 @@ else()
 endif()
 
 
-SET( DIRECTINPUT_FOUND FALSE )
-
-IF( WIN32 )
-    FIND_PATH( DIRECTINPUT_ROOT_DIR Include/D3D10.h
-               PATHS
-               $ENV{PATH}
-               $ENV{PROGRAMFILES}
-    )
-    
+if( DIRECTINPUT_ROOT_DIR AND WIN32 )
     FIND_PATH( DIRECTINPUT_INCLUDE_DIR dinput.h
                PATHS
                ${DIRECTINPUT_ROOT_DIR}/Include
@@ -47,20 +39,23 @@ IF( WIN32 )
                   ${DIRECTINPUT_ROOT_DIR}/lib/${_dxArch}
     )
     
-    SET( DIRECTINPUT_LIBRARIES
+    set( DIRECTINPUT_LIBRARIES
          ${DIRECTINPUT_LIBRARY}
          ${DIRECTINPUT_GUID_LIBRARY}
          ${DIRECTINPUT_ERR_LIBRARY}
     )
     
-    IF ( DIRECTINPUT_INCLUDE_DIR AND DIRECTINPUT_LIBRARIES )
-        SET( DIRECTINPUT_FOUND TRUE )
-    ENDIF ( DIRECTINPUT_INCLUDE_DIR AND DIRECTINPUT_LIBRARIES )
+    include( FindPackageHandleStandardArgs )
+    set( DIRECTINPUT_FAIL_MESSAGE "Cound not find optional DirectInput dependency." )
+
+    find_package_handle_standard_args( DIRECTINPUT
+        REQUIRED_VARS DIRECTINPUT_INCLUDE_DIR DIRECTINPUT_LIBRARIES
+        FAIL_MESSAGE ${DIRECTINPUT_FAIL_MESSAGE} )
 
     mark_as_advanced( DIRECTINPUT_ERR_LIBRARY )
     mark_as_advanced( DIRECTINPUT_GUID_LIBRARY )
     mark_as_advanced( DIRECTINPUT_INCLUDE_DIR )
     mark_as_advanced( DIRECTINPUT_LIBRARY )
-ENDIF( WIN32 )
+endif()
 
 MARK_AS_ADVANCED( DIRECTINPUT_FOUND )
