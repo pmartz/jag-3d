@@ -154,12 +154,13 @@ use the same include path. Then \ref BuildCMake "point CMake at the directory co
 Jag3D has the following required dependencies:
 \li <a href=http://pocoproject.org/download/index.html>Poco</a> v1.4.3p1 or newer. Get the "Basic Edition".
 \li <a href=http://www.boost.org/users/download/>Boost</a> v1.48_0 or newer. Some libraries are required.
-\li <a href=http://sourceforge.net/projects/ggt/>Generic Graphics Toolkit (GMTL)</a> svn trunk r1280 or newer.
+\li <a href=http://sourceforge.net/projects/ggt/>Generic Graphics Toolkit (GMTL)</a> svn trunk r1284 or newer.
 
 Jag3D has the following optional dependencies:
 \li <a href=http://www.openscenegraph.org/projects/osg>OpenSceneGraph (OSG)</a> v3.0.1 or newer (v3.1.3 recommended).
 Must be built for GL3 compatibility.
 \li <a href=http://www.stack.nl/~dimitri/doxygen/download.html >Doxygen</a>.
+\li Microsoft DirectX SDK (for gamepad support).
 
 Furthermore, in order to run any of the examples, you'll need one or more
 windowing toolkits. Jag3D's build infrastructure currently supports the
@@ -185,6 +186,7 @@ The following CMake variables will probably need to be set in order to find the 
 \li Poco_ROOT
 \li Freeglut_ROOT_PATH
 \li FREEGLUT_STATIC Create as a BOOL and set to true, if you are using static freeglut libraries.
+\li DIRECTINPUT_ROOT_DIR
 
 For finding VRJuggler, set VJ_BASE_DIR in your environment. VRJuggler requires
 CppDOM, so you will also need to set CPPDOM_ROOT_DIR as a CMake variable.
