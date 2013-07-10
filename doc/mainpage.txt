@@ -132,11 +132,11 @@ Jag3D uses the gl3w toolkit, so this means you'll need to download glcorearb.h f
 <a href=http://www.opengl.org/registry/>OpenGL Extension Registry</a>. Unfortunately, gl3w
 has adopted the current paradagm:
 \code
-#include <GL\glcorearb.h>
+#include <GL/glcorearb.h>
 \endcode
 but OSG still uses the old paradigm:
 \code
-#include <GL3\gl3.h>
+#include <GL3/gl3.h>
 \endcode
 In order to use the optional OSG dependency, you'll need to create
 a stub gl3.h header like this:

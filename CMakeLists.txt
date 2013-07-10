@@ -261,7 +261,7 @@ install( FILES "extra/Findjag3d.cmake"
 # =============================================
 
 # Add all targets to the build-tree export set
-export( TARGETS jagUtil jagSG jagDraw jagDisk jagBase
+export( TARGETS jagMx jagUtil jagSG jagDraw jagDisk jagBase
   FILE "${PROJECT_BINARY_DIR}/lib/jag3dLibraryDepends.cmake" )
 
 # Export the package for use from the build-tree

@@ -339,6 +339,8 @@ public:
     /** \brief Compute a projection matrix.
     \details Conpute a symmetrical projection matrix using the specified zNear and
     zFar planes. */
+    gmtl::Matrix44d computeProjection( const double zNear, const double zFar ) const;
+    /** \overload */
     gmtl::Matrix44d computeProjection( const gmtl::Vec2d& nearFar ) const;
 
     /** \brief Set the field of view in y (fovy) in degrees.
