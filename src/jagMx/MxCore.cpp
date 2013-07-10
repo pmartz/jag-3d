@@ -590,10 +590,8 @@ void MxCore::updateFovy( gmtl::Matrix44d& proj ) const
     }
 #endif
 }
-gmtl::Matrix44d MxCore::computeProjection( const gmtl::Vec2d& nearFar ) const
+gmtl::Matrix44d MxCore::computeProjection( const double zNear, const double zFar ) const
 {
-    const double zNear = nearFar[ 0 ];
-    const double zFar = nearFar[ 1 ];
     gmtl::Matrix44d ret;
     if( _ortho )
     {
@@ -610,6 +608,10 @@ gmtl::Matrix44d MxCore::computeProjection( const gmtl::Vec2d& nearFar ) const
         gmtl::setPerspective( ret, _fovy, _aspect, myNear, zFar );
     }
     return( ret );
+}
+gmtl::Matrix44d MxCore::computeProjection( const gmtl::Vec2d& nearFar ) const
+{
+    return( computeProjection( nearFar[ 0 ], nearFar[ 1 ] ) );
 }
 
 void MxCore::setFovy( double fovy )
