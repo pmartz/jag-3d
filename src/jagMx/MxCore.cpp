@@ -356,7 +356,6 @@ void MxCore::rotateLocal( double angle, const gmtl::Vec3d& axis )
 {
     gmtl::AxisAngled aa( angle * _rotateScale, axis );
     gmtl::Matrix44d r( gmtl::makeRot< gmtl::Matrix44d, gmtl::AxisAngled >( aa ) );
-    gmtl::set( r, aa );
 
     _viewDir = r * _viewDir;
     _viewUp = r * _viewUp;
@@ -367,7 +366,6 @@ void MxCore::rotateOrbit( double angle, const gmtl::Vec3d& axis )
 {
     gmtl::AxisAngled aa( angle * _rotateScale, axis );
     gmtl::Matrix44d r( gmtl::makeRot< gmtl::Matrix44d, gmtl::AxisAngled >( aa ) );
-    gmtl::set( r, aa );
 
     const gmtl::Vec3d vec( _position - _orbitCenter );
     _position = ( r * vec ) + _orbitCenter;

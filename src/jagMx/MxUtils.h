@@ -198,7 +198,7 @@ The returned \c axis and \c angle values are intended to be passed to the MxCore
 \param delta The delta xy morion in normalized (-1 to 1 ) windows coordinates.
 \param orientMat The current view orientation matrix.
 \param sensitivity Controls simulated trackball sensitivity. Smaller values produce less
-of a rool effect, while larger values produce a more pronounced roll effect. Valid range
+of a roll effect, while larger values produce a more pronounced roll effect. Valid range
 is 0.0 to pi/2. Default is 1.3.
 \return angle The computed rotation angle in radians.
 \return axis The axis to rotate about.
