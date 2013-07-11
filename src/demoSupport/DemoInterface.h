@@ -24,6 +24,7 @@
 
 #include <jagDraw/DrawInfo.h>
 #include <jagSG/CollectionVisitor.h>
+#include <jagMx/MxCore.h>
 #include <gmtl/gmtl.h>
 
 #include <boost/program_options/options_description.hpp>
@@ -67,7 +68,7 @@ public:
     void setContinuousRedraw( bool redraw=true ) { _continuousRedraw = redraw; }
     bool getContinuousRedraw() { return( _continuousRedraw ); }
 
-    /** Called after a context has been created. */
+    /** Called for each context, after the context has been created. */
     virtual bool init() = 0;
     /** Called to render a frame. */
     virtual bool frame( const gmtl::Matrix44d& view=gmtl::MAT_IDENTITY44D, const gmtl::Matrix44d& proj=gmtl::MAT_IDENTITY44D ) = 0;
@@ -85,6 +86,11 @@ public:
         return( _collectionVisitor );
     }
 
+    jagMx::MxCorePtr& getMxCore( const jagDraw::jagDrawContextID contextID )
+    {
+        return( _mxCore._data[ contextID ] );
+    }
+
 protected:
     std::string _logName;
     bool _startupCalled;
@@ -93,6 +99,9 @@ protected:
 
     jagDraw::PerContextDrawInfo _drawInfo;
     jagSG::CollectionVisitor _collectionVisitor;
+
+    typedef jagDraw::PerContextData< jagMx::MxCorePtr > PerContextMxCore;
+    PerContextMxCore _mxCore;
 };
 
 

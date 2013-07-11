@@ -79,9 +79,6 @@ protected:
 
     jagSG::NodePtr _root;
 
-    typedef jagDraw::PerContextData< jagMx::MxCorePtr > PerContextMxCore;
-    PerContextMxCore _mxCore;
-
     boost::chrono::high_resolution_clock::time_point _lastTime;
 };
 
