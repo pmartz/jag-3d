@@ -40,9 +40,9 @@ namespace jagMx
 MxCore::MxCore()
   : _viewUp( 0., 0., 1. ),
     _viewDir( 0., 1., 0. ),
-    _position( 0., 0., 0. ),
     _initialUp( 0., 0., 1. ),
     _initialDir( 0., 1., 0. ),
+    _position( 0., 0., 0. ),
     _initialPosition( 0., 0., 0. ),
     _orientedUp( 0., 0., 1. ),
     _orientedDir( 0., 1., 0. ),
@@ -63,9 +63,9 @@ MxCore::MxCore()
 MxCore::MxCore( const MxCore& rhs )
   : _viewUp( rhs._viewUp ),
     _viewDir( rhs._viewDir ),
-    _position( rhs._position ),
     _initialUp( rhs._initialUp ),
     _initialDir( rhs._initialDir ),
+    _position( rhs._position ),
     _initialPosition( rhs._initialPosition ),
     _orientedUp( rhs._orientedUp ),
     _orientedDir( rhs._orientedDir ),
