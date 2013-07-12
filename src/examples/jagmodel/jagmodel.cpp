@@ -168,11 +168,15 @@ bool JagModel::startup( const unsigned int numContexts )
 
     // We keep a different aspect ratio per context (to support different
     // window sizes). Initialize them all to a reasonable default.
+    const jagDraw::BoundPtr bound( _root->getBound() );
+    const gmtl::Point3d pos( bound->getCenter() + gmtl::Vec3d( 0., -1., 0. ) );
     for( unsigned int idx( 0 ); idx<numContexts; ++idx )
     {
         jagMx::MxCorePtr mxCore( new jagMx::MxCore() );
         mxCore->setAspect( 1. );
         mxCore->setFovy( 30. );
+        mxCore->setPosition( pos );
+        mxCore->setOrbitCenterPoint( bound->getCenter() );
         _mxCore._data.push_back( mxCore );
     }
 
