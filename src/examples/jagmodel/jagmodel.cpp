@@ -67,15 +67,11 @@ public:
     }
 
 protected:
-    gmtl::Matrix44d computeProjection( const double aspect, const double zNear=0.5, const double zFar=400. );
-    gmtl::Matrix44d computeView();
+    gmtl::Matrix44d computeView( jagMx::MxCorePtr mxCore );
 
     std::string _fileName;
 
     jagSG::NodePtr _root;
-
-    typedef jagDraw::PerContextData< double > PerContextAspect;
-    PerContextAspect _aspect;
 };
 
 
@@ -173,7 +169,12 @@ bool JagModel::startup( const unsigned int numContexts )
     // We keep a different aspect ratio per context (to support different
     // window sizes). Initialize them all to a reasonable default.
     for( unsigned int idx( 0 ); idx<numContexts; ++idx )
-        _aspect._data.push_back( 1. );
+    {
+        jagMx::MxCorePtr mxCore( new jagMx::MxCore() );
+        mxCore->setAspect( 1. );
+        mxCore->setFovy( 30. );
+        _mxCore._data.push_back( mxCore );
+    }
 
 
     // Tell all Jag3D objects how many contexts to expect.
@@ -218,23 +219,18 @@ bool JagModel::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj )
     const jagDraw::jagDrawContextID contextID( jagDraw::ContextSupport::instance()->getActiveContext() );
     jagDraw::DrawInfo& drawInfo( getDrawInfo( contextID ) );
 
+    jagMx::MxCorePtr mxCore( _mxCore._data[ contextID ] );
+
     jagSG::CollectionVisitor& collect( getCollectionVisitor() );
     collect.reset();
 
-    gmtl::Matrix44d viewMatrix( view );
-    gmtl::Matrix44d projMatrix( proj );
+    gmtl::Matrix44d viewMatrix;
     {
         JAG3D_PROFILE( "Collection" );
 
         // Set view and projection to define the collection frustum.
-        // Systems such as VRJ will pass view and projection matrices.
-        if( view.mState == gmtl::Matrix44f::IDENTITY || proj.mState != gmtl::Matrix44f::IDENTITY )
-        {
-            // Not VRJ. Compute a view and projection.
-            viewMatrix = computeView();
-            projMatrix = computeProjection( _aspect._data[ contextID ] );
-        }
-        collect.setViewProj( viewMatrix, projMatrix );
+        viewMatrix = computeView( mxCore );
+        collect.setViewProj( viewMatrix, mxCore->computeProjection( .1, 500. ) );
 
         {
             JAG3D_PROFILE( "Collection traverse" );
@@ -259,12 +255,11 @@ bool JagModel::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj )
         // Execute the draw graph.
         jagDraw::DrawGraphPtr drawGraph( collect.getDrawGraph() );
 
-        // Compute projection matrix to use for drawing, based on CollectionVisitor's
-        // computed min/max Z values.
-        double minZ, maxZ;
-        collect.getNearFar( minZ, maxZ );
-        projMatrix = computeProjection( _aspect._data[ contextID ], minZ, maxZ );
-        drawGraph->setViewProj( viewMatrix, projMatrix );
+        // Set view and projection to use for drawing. Create projection using
+        // the computed near and far planes.
+        double minNear, maxFar;
+        collect.getNearFar( minNear, maxFar );
+        drawGraph->setViewProj( viewMatrix, mxCore->computeProjection( minNear, maxFar ) );
 
         drawGraph->execute( drawInfo );
     }
@@ -282,27 +277,11 @@ void JagModel::reshape( const int w, const int h )
         return;
 
     const jagDraw::jagDrawContextID contextID( jagDraw::ContextSupport::instance()->getActiveContext() );
-    _aspect._data[ contextID ] = ( double ) w / ( double ) h;
+    _mxCore._data[ contextID ]->setAspect( ( double ) w / ( double ) h );
 }
 
-gmtl::Matrix44d JagModel::computeProjection( const double aspect, const double zNear, const double zFar )
+gmtl::Matrix44d JagModel::computeView( jagMx::MxCorePtr mxCore )
 {
-    gmtl::Matrix44d proj;
-    gmtl::setPerspective< double >( proj, 30., aspect, zNear, zFar );
-
-    return( proj );
-}
-
-gmtl::Matrix44d JagModel::computeView()
-{
-    const gmtl::Sphered s( _root->getBound()->asSphere() );
-    const gmtl::Point3d center( s.getCenter() );
-    const double radius( (float)s.getRadius() );
-
-    const gmtl::Point3d eye( center + ( gmtl::Point3d( 1.5, -4., 1.5 ) * radius ) );
-    const gmtl::Vec3d up( 0.f, 0.f, 1.f );
-
-    gmtl::Matrix44d view;
-    gmtl::setLookAt( view, eye, center, up );
-    return( view );
+    mxCore->lookAtAndFit( _root->getBound()->asSphere() );
+    return( mxCore->getInverseMatrix() );
 }

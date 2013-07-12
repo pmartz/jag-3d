@@ -39,6 +39,7 @@
 #    include <GLES2/gl2.h>
 #    include <GLES2/gl2ext.h>
 #  else
+#    define GL3_PROTOTYPES 1
 #    include <GL/gl3.h>
 #  endif
 #endif

@@ -56,7 +56,8 @@ public:
 
 
     Bound( const BaseType type )
-      : _type( type )
+      : SHARED_FROM_THIS( Bound )(),
+      _type( type )
     {}
     Bound( const Bound& rhs )
       : _type( rhs._type )

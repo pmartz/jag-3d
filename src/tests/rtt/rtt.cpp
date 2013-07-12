@@ -40,9 +40,9 @@ class RttDemo : public DemoInterface
 public:
     RttDemo()
       : DemoInterface( "jag.demo.rtt" ),
-        _frames( 0 ),
         _texWidth( 80 ),
-        _texHeight( 80 )
+        _texHeight( 80 ),
+        _frames( 0 )
     {
         setContinuousRedraw();
     }

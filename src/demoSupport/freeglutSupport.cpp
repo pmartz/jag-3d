@@ -21,6 +21,8 @@
 #include <demoSupport/DemoInterface.h>
 #include <jagDraw/ContextSupport.h>
 #include <jagBase/Profile.h>
+#include <jagMx/MxCore.h>
+#include <jagMx/MxUtils.h>
 
 #include <demoSupport/platformFreeglut.h>
 
@@ -30,6 +32,7 @@
 #include <boost/program_options/parsers.hpp>
 
 #include <iostream>
+#include <vector>
 
 
 using namespace std;
@@ -37,6 +40,13 @@ namespace bpo = boost::program_options;
 
 
 DemoInterface* di( NULL );
+
+int _lastX, _lastY;
+float _lastNX, _lastNY;
+typedef std::vector< int > IntVec;
+IntVec _width, _height;
+bool _leftDrag;
+
 
 
 void init()
@@ -75,6 +85,10 @@ void display()
 
 void reshape( int w, int h )
 {
+    const int window( glutGetWindow() - 1 );
+    _width[ window ] = w;
+    _height[ window ] = h;
+
     glViewport( 0, 0, w, h );
     di->getCollectionVisitor().setViewport( 0, 0, w, h );
     di->reshape( w, h );
@@ -100,6 +114,63 @@ void timer( int value )
         glutPostRedisplay();
         glutTimerFunc( 16, timer, 0 );
     }
+}
+
+void normXY( float& normX, float& normY, const int x, const int y, const int width, const int height )
+{
+    // Given a width x height window, convert pixel coords x and y
+    // to normalized coords in the range -1 to 1. Invert Y so that
+    // -1 is at the window bottom.
+    const float halfW( (float)width * .5f );
+    const float halfH( (float)height * .5f );
+
+    normX = ( (float)x - halfW ) / halfW;
+    normY = -( (float)y - halfH ) / halfH;
+}
+
+void mouse( int button, int op, int x, int y )
+{
+    const int window( glutGetWindow() - 1 );
+    const int width( _width[ window ] );
+    const int height( _height[ window ] );
+
+    normXY( _lastNX, _lastNY, x, y, width, height );
+    _lastX = x;
+    _lastY = y;
+
+    if( button == GLUT_LEFT_BUTTON )
+        _leftDrag = ( op == GLUT_DOWN );
+}
+void motion( int x, int y )
+{
+    if( !_leftDrag )
+        return;
+
+    const int window( glutGetWindow() - 1 );
+    jagMx::MxCorePtr mxCore( di->getMxCore( window ) );
+    if( mxCore == NULL )
+        return;
+
+    const int width( _width[ window ] );
+    const int height( _height[ window ] );
+
+    float nx, ny;
+    normXY( nx, ny, x, y, width, height );
+    const float deltaX( nx - _lastNX );
+    const float deltaY( ny - _lastNY );
+
+    double angle;
+    gmtl::Vec3d axis;
+    jagMx::computeTrackball( angle, axis,
+        gmtl::Vec2d( _lastNX, _lastNY ), gmtl::Vec2d( deltaX, deltaY ),
+        mxCore->getOrientationMatrix() );
+
+    mxCore->rotateOrbit( angle, axis );
+
+    _lastNX = nx;
+    _lastNY = ny;
+
+    glutPostRedisplay();
 }
 
 
@@ -166,6 +237,8 @@ int main( int argc, char* argv[] )
 
     glutInitWindowSize( winsize[ 0 ], winsize[ 1 ] );
     glutSetOption( GLUT_RENDERING_CONTEXT, GLUT_CREATE_NEW_CONTEXT );
+    _width.resize( nwin );
+    _height.resize( nwin );
     while( nwin-- )
     {
         glutCreateWindow( argv[ 0 ] );
@@ -175,6 +248,11 @@ int main( int argc, char* argv[] )
         glutReshapeFunc( reshape );
         glutKeyboardFunc( keyboard );
         //glutTimerFunc( 16, timer, 0 );
+        glutMouseFunc( mouse );
+        glutMotionFunc( motion );
+
+        _width[ nwin ] = winsize[ 0 ];
+        _height[ nwin ] = winsize[ 1 ];
     }
 
     if( !( di->startup( jagDraw::ContextSupport::instance()->getNumRegisteredContexts() ) ) )
