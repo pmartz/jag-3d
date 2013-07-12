@@ -248,28 +248,27 @@ void computeTrackball( double& angle, gmtl::Vec3d& axis,
     const gmtl::Point2d& start, const gmtl::Vec2d& delta,
     const gmtl::Matrix44d& orientMat, const double sensitivity )
 {
-    JAG3D_NOTICE_STATIC( "jag.mxcore", "computeTrackball: TBD MxCore port, not yet implemented." );
-#if 0
     // Take the spin direction 'delta' and rotate it 90 degrees
     // to get our base axis (still in the window plane).
     // Simultaneously convert to current view space.
-    osg::Vec2d screenAxis( -delta[ 1 ], delta[ 0 ] );
-    const osg::Vec3d baseAxis = osg::Vec3d( screenAxis[ 0 ], screenAxis[ 1 ], 0. ) * orientMat;
-    osg::Vec3d dir3 = osg::Vec3d( delta[ 0 ], delta[ 1 ], 0. ) * orientMat;
-    dir3.normalize();
+    gmtl::Vec2d screenAxis( -delta[ 1 ], delta[ 0 ] );
+    const gmtl::Vec3d baseAxis( orientMat * gmtl::Vec3d( screenAxis[ 0 ], screenAxis[ 1 ], 0. ) );
+    gmtl::Vec3d dir3( orientMat * gmtl::Vec3d( delta[ 0 ], delta[ 1 ], 0. ) );
+    gmtl::normalize( dir3 );
 
     // The distance from center, along with the roll sensitivity,
     // tells us how much to rotate the baseAxis (ballTouchAngle) to get
     // the actual ballAxis.
-    const double distance = start.length();
-    const double rotationDir( ( screenAxis * start > 0. ) ? -1. : 1. );
+    const double distance = gmtl::length( gmtl::Vec2d( start ) );
+    const double rotationDir( ( gmtl::dot( screenAxis, start ) > 0. ) ? -1. : 1. );
     const double ballTouchAngle = rotationDir * sensitivity * distance;
-    osg::Vec3d ballAxis = baseAxis * osg::Matrixd::rotate( ballTouchAngle, dir3 );
-    ballAxis.normalize();
+    const gmtl::AxisAngled aa( ballTouchAngle, dir3 );
+    gmtl::Matrix44d r; gmtl::set( r, aa );
+    gmtl::Vec3d ballAxis( r * baseAxis );
+    gmtl::normalize( ballAxis );
 
-    angle = -( delta.length() );
+    angle = -( gmtl::length( delta ) );
     axis = ballAxis;
-#endif
 }
 
 

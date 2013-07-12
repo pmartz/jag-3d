@@ -62,7 +62,7 @@ public:
     {
         _fboTextureLevel = fboTextureLevel;
     }
-    const GLint getFBOTextureLevel() const
+    GLint getFBOTextureLevel() const
     {
         return( _fboTextureLevel );
     }

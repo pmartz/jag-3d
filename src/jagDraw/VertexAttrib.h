@@ -94,7 +94,7 @@ public:
         type = _type;
         normalized = _normalized;
         stride = _stride;
-        offset = _offset;
+        offset = (GLuint)( _offset );
     }
     void getSizeType( GLint& size, GLenum& type )
     {
@@ -109,7 +109,7 @@ protected:
     GLenum _type;
     GLboolean _normalized;
     GLsizei _stride;
-    GLuint _offset;
+    GLsizeiptr _offset;
 };
 
 typedef jagBase::ptr< jagDraw::VertexAttrib >::shared_ptr VertexAttribPtr;

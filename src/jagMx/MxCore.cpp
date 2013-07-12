@@ -24,6 +24,7 @@
 #include <jagBase/LogMacros.h>
 #include <gmtl/gmtl.h>
 
+#include <algorithm>
 #include <cmath>
 #include <iostream>
 
@@ -356,7 +357,6 @@ void MxCore::rotateLocal( double angle, const gmtl::Vec3d& axis )
 {
     gmtl::AxisAngled aa( angle * _rotateScale, axis );
     gmtl::Matrix44d r( gmtl::makeRot< gmtl::Matrix44d, gmtl::AxisAngled >( aa ) );
-    gmtl::set( r, aa );
 
     _viewDir = r * _viewDir;
     _viewUp = r * _viewUp;
@@ -367,7 +367,6 @@ void MxCore::rotateOrbit( double angle, const gmtl::Vec3d& axis )
 {
     gmtl::AxisAngled aa( angle * _rotateScale, axis );
     gmtl::Matrix44d r( gmtl::makeRot< gmtl::Matrix44d, gmtl::AxisAngled >( aa ) );
-    gmtl::set( r, aa );
 
     const gmtl::Vec3d vec( _position - _orbitCenter );
     _position = ( r * vec ) + _orbitCenter;
@@ -630,7 +629,7 @@ void MxCore::fovyScaleUp()
     _fovy *= _fovyScale;
     if( _clampFovyScale )
     {
-        _fovy = min( _fovy, _clampFovyRange[ 1 ] );
+        _fovy = std::min< double >( _fovy, _clampFovyRange[ 1 ] );
     }
 
     _orthoBottom *= _fovyScale;
@@ -642,7 +641,7 @@ void MxCore::fovyScaleDown()
     _fovy *= factor;
     if( _clampFovyScale )
     {
-        _fovy = max( _fovy, _clampFovyRange[ 0 ] );
+        _fovy = std::max< double >( _fovy, _clampFovyRange[ 0 ] );
     }
 
     _orthoBottom *= factor;

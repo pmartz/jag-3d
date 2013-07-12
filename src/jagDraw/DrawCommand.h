@@ -697,8 +697,8 @@ public:
 
     virtual int getIndex( const unsigned int counter ) const
     {
-        unsigned int localCounter( counter );
-        for( unsigned int idx=0; idx < _primcount; ++idx )
+        GLsizei localCounter( counter );
+        for( GLsizei idx=0; idx < _primcount; ++idx )
         {
             if( localCounter >= _countArray[ idx ] )
                 localCounter -= _countArray[ idx ];
@@ -711,7 +711,7 @@ public:
     virtual unsigned int getNumIndices() const
     {
         unsigned int total( 0 );
-        for( unsigned int idx=0; idx < _primcount; ++idx )
+        for( GLsizei idx=0; idx < _primcount; ++idx )
         {
             total += _countArray[ idx ];
         }

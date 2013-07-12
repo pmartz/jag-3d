@@ -44,10 +44,10 @@ namespace jagDisk {
 
 ReaderWriterInfo::ReaderWriterInfo( ReaderWriterPtr instance, const std::string& className,
             const std::string& baseClassName, const std::string& description )
-  : _rwInstance( instance ),
-    _className( className ),
+  : _className( className ),
     _baseClassName( baseClassName ),
-    _description( description )
+    _description( description ),
+    _rwInstance( instance )
 {
     PluginManager::PluginInfo* pi( PluginManager::instance()->getActivelyLoadingPlugin() );
     _pluginName = pi->_name;
