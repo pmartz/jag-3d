@@ -24,6 +24,7 @@
 #include <jagBase/LogMacros.h>
 #include <gmtl/gmtl.h>
 
+#include <algorithm>
 #include <cmath>
 #include <iostream>
 
@@ -628,7 +629,7 @@ void MxCore::fovyScaleUp()
     _fovy *= _fovyScale;
     if( _clampFovyScale )
     {
-        _fovy = min( _fovy, _clampFovyRange[ 1 ] );
+        _fovy = std::min( _fovy, _clampFovyRange[ 1 ] );
     }
 
     _orthoBottom *= _fovyScale;
@@ -640,7 +641,7 @@ void MxCore::fovyScaleDown()
     _fovy *= factor;
     if( _clampFovyScale )
     {
-        _fovy = max( _fovy, _clampFovyRange[ 0 ] );
+        _fovy = std::max( _fovy, _clampFovyRange[ 0 ] );
     }
 
     _orthoBottom *= factor;
