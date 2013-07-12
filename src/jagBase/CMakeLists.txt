@@ -46,12 +46,14 @@ set( _jagBaseHeaderFiles
     Transform.h
     types.h
     Version.h
+    UserDataOwner.h
 )
 
 set( _jagBaseSourceFiles
     Log.cpp
     Profile.cpp
     Version.cpp
+    UserDataOwner.cpp
 )
 
 _addLibrary( ${_libName}

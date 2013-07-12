@@ -30,6 +30,7 @@
 #include <jagBase/MultiCallback.h>
 #include <jagDraw/ContextSupport.h>
 #include <jagBase/LogBase.h>
+#include <jagBase/UserDataOwner.h>
 #include <jagBase/ptr.h>
 
 #include <gmtl/gmtl.h>
@@ -57,6 +58,7 @@ class VisitorBase;
 \details TBD
 */
 class JAGSG_EXPORT Node : protected jagBase::LogBase,
+		public jagBase::UserDataOwner, 
         public jagDraw::ObjectIDOwner, public jagDraw::BoundOwner,
         public SHARED_FROM_THIS(Node)
 {

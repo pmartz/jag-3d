@@ -31,6 +31,7 @@
 #include <jagDraw/VertexArrayCommand.h>
 #include <jagDraw/DrawCommand.h>
 #include <jagBase/ptr.h>
+#include <jagBase/UserDataOwner.h>
 
 #include <boost/thread/mutex.hpp>
 
@@ -93,6 +94,7 @@ See member functions for additional specification requirements.
 */
 class JAGDRAW_EXPORT Drawable : protected jagBase::LogBase,
         public ObjectIDOwner, public BoundOwner,
+		public jagBase::UserDataOwner,
         public jagBase::Notifier
 {
 public:

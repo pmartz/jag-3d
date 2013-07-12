@@ -26,6 +26,8 @@
 #include <jagBase/LogMacros.h>
 
 #include <jagBase/ptr.h>
+#include <jagBase/UserDataOwner.h>
+
 #include <boost/foreach.hpp>
 
 #include <vector>
@@ -38,7 +40,7 @@
 namespace jagDraw {
 
 
-class CommandMap : public ObjectIDOwner
+	class CommandMap : public ObjectIDOwner, public jagBase::UserDataOwner
 {
 public:
     CommandMap( const std::string& name=std::string("") )
