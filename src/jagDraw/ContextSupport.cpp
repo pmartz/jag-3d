@@ -142,7 +142,7 @@ platformContextID ContextSupport::getPlatformContextID( const jagDrawContextID c
         JAG3D_ERROR( msg );
     }
 
-    return( NULL );
+    return( ( platformContextID )0 );
 }
 
 jagDrawContextID ContextSupport::getJagContextID( const platformContextID pCtxId ) const

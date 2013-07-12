@@ -65,6 +65,7 @@ Program::Program()
 Program::Program( const Program& rhs )
   : DrawablePrep( rhs ),
     ObjectID( rhs ),
+    SHARED_FROM_THIS( Program )( rhs ),
     jagBase::LogBase( rhs )
 {
 }

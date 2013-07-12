@@ -47,6 +47,7 @@ UniformBlock::UniformBlock( const std::string& name )
 UniformBlock::UniformBlock( const UniformBlock& rhs )
   : DrawablePrep( rhs ),
     ObjectIDOwner( rhs ),
+    SHARED_FROM_THIS( UniformBlock )( rhs ),
     jagBase::LogBase( rhs ),
     _name( rhs._name ),
     _nameHash( rhs._nameHash ),

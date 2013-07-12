@@ -64,7 +64,7 @@ public:
     \envvar JAG3D_LOG_FILE_NAME */
     void setLogFileName( const std::string& logFileName );
 
-    typedef enum {
+    enum {
         PrioSilent = 0,
         PrioFatal = Poco::Message::PRIO_FATAL,
         PrioCritical = Poco::Message::PRIO_CRITICAL,
@@ -79,10 +79,10 @@ public:
     /** \brief TBD
     \details TBD
     */
-    typedef enum {
+    enum DestinationType {
         Console,
         LogFile
-    } DestinationType;
+    };
 
     /** \brief Set the logging priority and logging destination.
     \details
