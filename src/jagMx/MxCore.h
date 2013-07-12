@@ -134,11 +134,11 @@ public:
     const gmtl::Vec3d& getDir() const { return( _viewDir ); }
 
     /** \brief Access the current view position). */
-    void setPosition( const gmtl::Vec3d& newPos ) { _position = newPos; }
+    void setPosition( const gmtl::Point3d& newPos ) { _position = newPos; }
     /** \brief Access the current view position). */
-    gmtl::Vec3d getPosition() { return( _position ); }
+    gmtl::Point3d getPosition() { return( _position ); }
     /** \overload */
-    const gmtl::Vec3d& getPosition() const { return( _position ); }
+    const gmtl::Point3d& getPosition() const { return( _position ); }
 
     /** \brief Sets the current up, dir, and position from \c m. */
     void setByMatrix( const gmtl::Matrix44d& m );
@@ -375,8 +375,9 @@ public:
 protected:
     void orthonormalize();
 
-    gmtl::Vec3d _viewUp, _viewDir, _position;
-    gmtl::Vec3d _initialUp, _initialDir, _initialPosition;
+    gmtl::Vec3d _viewUp, _viewDir;
+    gmtl::Vec3d _initialUp, _initialDir;
+    gmtl::Point3d _position, _initialPosition;
     gmtl::Vec3d _orientedUp, _orientedDir;
 
     gmtl::Vec3d _orbitCenter;
