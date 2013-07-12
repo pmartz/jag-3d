@@ -44,6 +44,7 @@ Framebuffer::Framebuffer( GLenum target )
 }
 Framebuffer::Framebuffer( const Framebuffer& rhs )
   : DrawablePrep( rhs ),
+    ObjectID( rhs ),
     jagBase::LogBase( rhs ),
     _target( rhs._target ),
     _viewport( rhs._viewport ),
@@ -259,7 +260,8 @@ Renderbuffer::Renderbuffer( const GLenum internalFormat, const GLsizei width, co
 {
 }
 Renderbuffer::Renderbuffer( const Renderbuffer& rhs )
-  : FramebufferAttachable( rhs ),
+  : ObjectID( rhs ),
+    FramebufferAttachable( rhs ),
     jagBase::LogBase( rhs ),
     _samples( rhs._samples ),
     _internalFormat( rhs._internalFormat),

@@ -56,6 +56,7 @@ Texture::Texture( const GLenum target, ImagePtr image, SamplerPtr sampler )
 Texture::Texture( const Texture& rhs )
   : DrawablePrep( rhs ),
     FramebufferAttachable( rhs ),
+    ObjectID( rhs ),
     jagBase::LogBase( rhs ),
     _target( rhs._target ),
     _image( rhs._image ),

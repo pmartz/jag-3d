@@ -40,6 +40,7 @@ namespace jagSG {
 Node::Node()
   : jagBase::LogBase( "jag.sg.node" ),
     ObjectIDOwner(),
+    SHARED_FROM_THIS( Node )(),
     jagDraw::BoundOwner(),
     _matrix( gmtl::MAT_IDENTITY44D )
 {
@@ -48,6 +49,7 @@ Node::Node()
 Node::Node( const Node& rhs )
   : jagBase::LogBase( "jag.sg.node" ),
     ObjectIDOwner( rhs ),
+    SHARED_FROM_THIS( Node )( rhs ),
     jagDraw::BoundOwner( rhs ),
     _matrix( rhs._matrix ),
     _commands( rhs._commands ),

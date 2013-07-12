@@ -45,7 +45,8 @@ public:
       : _name( name )
     {}
     CommandMap( const CommandMap& rhs )
-      : _name( rhs._name ),
+      : ObjectIDOwner( rhs ),
+        _name( rhs._name ),
         _data( rhs._data ),
         _bits( rhs._bits ),
         _overrideBits( rhs._overrideBits ),
