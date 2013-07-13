@@ -137,6 +137,10 @@ set( DIRECTINPUT_ROOT_DIR "" CACHE PATH "DirectInput installation directory" )
 option( DIRECTINPUT_ARCH_x64 "Select for 64-bit target architectures, unselect for 32-bit." ON )
 find_package( DirectInput )
 
+if( DIRECTINPUT_FOUND )
+    add_definitions( -DDIRECTINPUT_ENABLED )
+endif()
+
 
 if( QT_FOUND )
     include( ${QT_USE_FILE} )
