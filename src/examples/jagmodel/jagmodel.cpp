@@ -67,8 +67,6 @@ public:
     }
 
 protected:
-    gmtl::Matrix44d computeView( jagMx::MxCorePtr mxCore );
-
     std::string _fileName;
 
     jagSG::NodePtr _root;
@@ -166,8 +164,8 @@ bool JagModel::startup( const unsigned int numContexts )
     commands->insert( usp );
 
 
-    // We keep a different aspect ratio per context (to support different
-    // window sizes). Initialize them all to a reasonable default.
+    // We have potentially different views per window, so we keep an MxCore
+    // per context. Initialize the MxCore objects and create default views.
     const jagDraw::BoundPtr bound( _root->getBound() );
     const gmtl::Point3d pos( bound->getCenter() + gmtl::Vec3d( 0., -1., 0. ) );
     for( unsigned int idx( 0 ); idx<numContexts; ++idx )
@@ -177,6 +175,7 @@ bool JagModel::startup( const unsigned int numContexts )
         mxCore->setFovy( 30. );
         mxCore->setPosition( pos );
         mxCore->setOrbitCenterPoint( bound->getCenter() );
+        mxCore->lookAtAndFit( bound->asSphere() );
         _mxCore._data.push_back( mxCore );
     }
 
@@ -233,7 +232,7 @@ bool JagModel::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj )
         JAG3D_PROFILE( "Collection" );
 
         // Set view and projection to define the collection frustum.
-        viewMatrix = computeView( mxCore );
+        viewMatrix = mxCore->getInverseMatrix();
         collect.setViewProj( viewMatrix, mxCore->computeProjection( .1, 500. ) );
 
         {
@@ -282,10 +281,4 @@ void JagModel::reshape( const int w, const int h )
 
     const jagDraw::jagDrawContextID contextID( jagDraw::ContextSupport::instance()->getActiveContext() );
     _mxCore._data[ contextID ]->setAspect( ( double ) w / ( double ) h );
-}
-
-gmtl::Matrix44d JagModel::computeView( jagMx::MxCorePtr mxCore )
-{
-    mxCore->lookAtAndFit( _root->getBound()->asSphere() );
-    return( mxCore->getInverseMatrix() );
 }
