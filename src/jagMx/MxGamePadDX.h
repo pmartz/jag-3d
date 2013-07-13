@@ -24,6 +24,7 @@
 
 #include <jagMx/Export.h>
 #include <jagMx/MxGamePad.h>
+#include <jagBase/ptr.h>
 
 #include <dinput.h>
 
@@ -87,6 +88,8 @@ protected:
     void processSticks( const DIJOYSTATE2& devState, const double deltaSeconds );
     void processDPad( const DIJOYSTATE2& devState );
 };
+
+typedef jagBase::ptr< jagMx::MxGamePadDX >::shared_ptr MxGamePadDXPtr;
 
 
 // jagMx

@@ -23,6 +23,10 @@
 #include <jagBase/Profile.h>
 #include <jagMx/MxCore.h>
 #include <jagMx/MxUtils.h>
+#include <jagMx/MxGamePad.h>
+#ifdef DIRECTINPUT_ENABLED
+#  include <jagMx/MxGamePadDX.h>
+#endif
 
 #include <demoSupport/platformFreeglut.h>
 
@@ -47,6 +51,7 @@ typedef std::vector< int > IntVec;
 IntVec _width, _height;
 bool _leftDrag, _rightDrag;
 
+static jagMx::MxGamePadPtr gamePad( jagMx::MxGamePadPtr( (jagMx::MxGamePad*)NULL ) );
 
 
 void init()
@@ -109,7 +114,21 @@ void keyboard( unsigned char key, int x, int y )
 
 void timer( int value )
 {
-    if( di->getContinuousRedraw() )
+    // Currently we can only use window 0.
+    jagMx::MxCorePtr mxCore( di->getMxCore( 0 ) );
+    if( mxCore == NULL )
+        return;
+
+    gamePad->setMxCore( mxCore );
+
+    bool redraw( false );
+#ifdef DIRECTINPUT_ENABLED
+    jagMx::MxGamePadDX* gp( dynamic_cast< jagMx::MxGamePadDX* >( gamePad.get() ) );
+    if( gp != NULL )
+        redraw = gp->poll( 1./60. ); // TBD use a timer.
+#endif
+
+    if( redraw )
     {
         glutPostRedisplay();
         glutTimerFunc( 16, timer, 0 );
@@ -233,6 +252,12 @@ int main( int argc, char* argv[] )
     }
 
 
+#ifdef DIRECTINPUT_ENABLED
+    gamePad = jagMx::MxGamePadDXPtr( new jagMx::MxGamePadDX() );
+    //gamePad->setStickRate( moveRate );
+#endif
+
+
     glutInit( &argc, argv );
     glutInitDisplayMode( GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_MULTISAMPLE );
     if( version >= 3.0 )
@@ -256,7 +281,8 @@ int main( int argc, char* argv[] )
         glutDisplayFunc( display ); 
         glutReshapeFunc( reshape );
         glutKeyboardFunc( keyboard );
-        //glutTimerFunc( 16, timer, 0 );
+        if( gamePad != NULL )
+            glutTimerFunc( 16, timer, 0 );
         glutMouseFunc( mouse );
         glutMotionFunc( motion );
 
