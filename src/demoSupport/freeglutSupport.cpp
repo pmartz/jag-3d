@@ -45,7 +45,7 @@ int _lastX, _lastY;
 float _lastNX, _lastNY;
 typedef std::vector< int > IntVec;
 IntVec _width, _height;
-bool _leftDrag;
+bool _leftDrag, _rightDrag;
 
 
 
@@ -140,10 +140,12 @@ void mouse( int button, int op, int x, int y )
 
     if( button == GLUT_LEFT_BUTTON )
         _leftDrag = ( op == GLUT_DOWN );
+    if( button == GLUT_RIGHT_BUTTON )
+        _rightDrag = ( op == GLUT_DOWN );
 }
 void motion( int x, int y )
 {
-    if( !_leftDrag )
+    if( !_leftDrag && !_rightDrag )
         return;
 
     const int window( glutGetWindow() - 1 );
@@ -159,16 +161,23 @@ void motion( int x, int y )
     const float deltaX( nx - _lastNX );
     const float deltaY( ny - _lastNY );
 
-    double angle;
-    gmtl::Vec3d axis;
-    jagMx::computeTrackball( angle, axis,
-        gmtl::Vec2d( _lastNX, _lastNY ), gmtl::Vec2d( deltaX, deltaY ),
-        mxCore->getOrientationMatrix() );
+    if( _rightDrag )
+    {
+        mxCore->moveOrbit( deltaY * .1f );
+    }
+    else if( _leftDrag )
+    {
+        double angle;
+        gmtl::Vec3d axis;
+        jagMx::computeTrackball( angle, axis,
+            gmtl::Vec2d( _lastNX, _lastNY ), gmtl::Vec2d( deltaX, deltaY ),
+            mxCore->getOrientationMatrix() );
 
-    mxCore->rotateOrbit( angle, axis );
+        mxCore->rotateOrbit( angle, axis );
 
-    _lastNX = nx;
-    _lastNY = ny;
+        _lastNX = nx;
+        _lastNY = ny;
+    }
 
     glutPostRedisplay();
 }
