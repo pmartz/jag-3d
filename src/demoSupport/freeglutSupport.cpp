@@ -163,7 +163,7 @@ void motion( int x, int y )
 
     if( _rightDrag )
     {
-        mxCore->moveOrbit( deltaY * .1f );
+        mxCore->moveOrbit( deltaY );
     }
     else if( _leftDrag )
     {
@@ -174,10 +174,10 @@ void motion( int x, int y )
             mxCore->getOrientationMatrix() );
 
         mxCore->rotateOrbit( angle, axis );
-
-        _lastNX = nx;
-        _lastNY = ny;
     }
+
+    _lastNX = nx;
+    _lastNY = ny;
 
     glutPostRedisplay();
 }
