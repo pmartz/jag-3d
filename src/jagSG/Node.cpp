@@ -39,6 +39,7 @@ namespace jagSG {
 
 Node::Node()
   : jagBase::LogBase( "jag.sg.node" ),
+    jagBase::UserDataOwner(),
     ObjectIDOwner(),
     SHARED_FROM_THIS( Node )(),
     jagDraw::BoundOwner(),
@@ -48,6 +49,7 @@ Node::Node()
 }
 Node::Node( const Node& rhs )
   : jagBase::LogBase( "jag.sg.node" ),
+    jagBase::UserDataOwner( rhs ),
     ObjectIDOwner( rhs ),
     SHARED_FROM_THIS( Node )( rhs ),
     jagDraw::BoundOwner( rhs ),
