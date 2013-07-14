@@ -3,7 +3,8 @@
 \mainpage Jag3D: A 3D Rendering Toolkit
 
 \ref JagBuild "Building Jag3D"<br>
-\ref JagRun "Running Jag3D"
+\ref JagRun "Running Jag3D"<br>
+\ref JagCommits "Mercurial (Hg) Guidelines for Jag3D Commits"
 
 <hr>
 
@@ -231,5 +232,19 @@ Other examples and tests require you to set environment variables:
 corresponding \c .jagpi files.
 \li JAG3D_DATA_PATH should be set to a list of directories containing data files, such
 as the \c data directory in the Jag3D source tree.
+
+
+\section JagCommits Mercurial (Hg) Guidelines for Jag3D Commits
+
+Before making modifications to JAG, please review
+\ref SpecSubmissions "the submissions requirements".
+
+To make changes to the Jag3D project, you should first clone
+<a href="https://code.google.com/p/jag-3d/source/checkout">
+the Google Code repo</a> to your local development system.
+
+-# Make changes and commit to your local repo. You might need
+to do this multiple times.
+-# The second step.
 
 */
