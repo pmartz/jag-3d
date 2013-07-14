@@ -31,7 +31,7 @@
 class TextDumpSG : public jagSG::Visitor
 {
 public:
-    TextDumpSG();
+    TextDumpSG( std::ostream& oStr );
     virtual ~TextDumpSG();
 
     /** \brief TBD
@@ -39,6 +39,7 @@ public:
     virtual void visit( jagSG::Node& node );
 
 protected:
+    std::ostream& _oStr;
     int _indent;
 };
 

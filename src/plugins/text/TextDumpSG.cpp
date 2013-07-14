@@ -21,9 +21,12 @@
 #include "TextDumpSG.h"
 #include <jagBase/LogMacros.h>
 
+#include <fstream>
 
-TextDumpSG::TextDumpSG()
+
+TextDumpSG::TextDumpSG( std::ostream& oStr )
   : Visitor( "text" ),
+  _oStr( oStr ),
   _indent( 0 )
 {
 }
@@ -33,5 +36,6 @@ TextDumpSG::~TextDumpSG()
 
 void TextDumpSG::visit( jagSG::Node& node )
 {
+    _oStr << "Node" << std::endl;
     Visitor::visit( node );
 }
