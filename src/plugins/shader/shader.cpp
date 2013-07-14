@@ -79,6 +79,7 @@ public:
 
         void* data( read( iStr ) );
         _type = 0;
+        iStr.close();
 
         return( data );
     }
