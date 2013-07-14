@@ -263,11 +263,13 @@ hg bundle -r <first-commit-rev#>
 \endcode
 Using TortoiseHg, right click on the first commit, then select
 Export -> Bundle Rev and Descendants... from the context menu.
--# E-Mail the bundled changeset to someone with commit access, and
-we'll unbundle it and push it out to the Google Code repo.
+-# <a href="https://code.google.com/p/jag-3d/issues/list">
+Open an issue</a> and attach the bundled changeset, or email it
+to someone with commit access. After approval, your changeset
+will be unbundled into the Google Code repo.
 
-Note that it doesn't matter if your bundle contains revisions that are
-already in the Google Code repo. Mercurial is smart enough to deal with
+It doesn't matter if your bundle contains revisions that are already
+in the Google Code repo. Mercurial is smart enough to deal with
 this correctly.
 
 */
