@@ -72,7 +72,7 @@ public:
 
     virtual void* read( const std::string& fileName ) const
     {
-        JAG3D_INFO_STATIC( "jag.plugin.model",
+        JAG3D_INFO(
             std::string( "Using OSG v" ) + std::string( osgGetVersion() ) );
 
         osg::ref_ptr< osg::Node > osgNode( osgDB::readNodeFile( fileName ) );
