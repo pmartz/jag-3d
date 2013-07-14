@@ -48,9 +48,12 @@ public:
 	UserDataOwner() {}
 	~UserDataOwner() {}
 
+
+    typedef std::map<std::string, Poco::Dynamic::Var> UserDataMap;
+
 	/** \brief Get the user data object
 	*/
-	std::map<std::string, Poco::Dynamic::Var>& getUserData() {
+	UserDataMap& getUserData() {
 		return _userData;
 	}
 
@@ -66,10 +69,28 @@ public:
 		return _userData[key];
 	}
 
+
+    /** \brief Set the "name" key using the standard key naming convention.
+    */
+    void setUserDataName( const std::string& name )
+    {
+        _userData[ "__jag3d_Name" ] = name;
+    }
+    /** \brief Get the "name" key using the standard key naming convention.
+    */
+    std::string getUserDataName() const
+    {
+        UserDataMap::const_iterator it( _userData.find( "__jag3d_Name" ) );
+        if( it == _userData.end() )
+            return( std::string( "" ) );
+
+        const Poco::Dynamic::Var& value( it->second );
+        return( value.convert< std::string >() );
+    }
+
+
 protected:
-	
-	
-	std::map<std::string, Poco::Dynamic::Var> _userData;
+	UserDataMap _userData;
 	
 
 };
