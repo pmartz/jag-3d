@@ -46,6 +46,9 @@ TBD Included are several helper functions for common uses of userData. These may
 class UserDataOwner {
 public:
 	UserDataOwner() {}
+	UserDataOwner( const UserDataOwner& rhs )
+      : _userData( rhs._userData ) 
+    {}
 	~UserDataOwner() {}
 
 
