@@ -20,12 +20,19 @@
 
 #include <jagDisk/PluginManager.h>
 #include <jagDisk/ReaderWriter.h>
+
+#include "TextDumpSG.h"
+#include "TextDumpDG.h"
+#include <jagSG/Node.h>
+#include <jagDraw/DrawGraph.h>
+
 #include <jagBase/LogMacros.h>
 #include <Poco/ClassLibrary.h>
 #include <Poco/Path.h>
 #include <Poco/String.h>
 
 #include <fstream>
+#include <string>
 
 
 using namespace jagDisk;
@@ -66,11 +73,39 @@ public:
 
     virtual bool write( const std::string& fileName, const void* data ) const
     {
-        JAG3D_INFO( "write() TBD" );
-        return( false );
+        std::ofstream oStr( fileName.c_str() );
+        if( !oStr )
+        {
+            // TBD record error
+            return( false );
+        }
+
+        const bool result( write( oStr, data ) );
+        oStr.close();
+
+        return( result );
     }
     virtual bool write( std::ostream& oStr, const void* data ) const
     {
+        const jagSG::Node* node( static_cast< const jagSG::Node* >( data ) );
+        if( node != NULL )
+        {
+            TextDumpSG tdsg( oStr );
+            const_cast< jagSG::Node* >( node )->accept( tdsg );
+            return( true );
+        }
+
+        JAG3D_NOTICE( "Text dump for jagDraw::DrawGraph: not yet implemented." );
+#if 0
+        const jagDraw::DrawGraph* drawGraph( dynamic_cast< const jagDraw::DrawGraph* >( data ) );
+        if( drawGraph != NULL )
+        {
+            TextDumpDG tddg( oStr );
+            drawGraph->accept( tddg );
+            return( true );
+        }
+#endif
+
         return( false );
     }
 
