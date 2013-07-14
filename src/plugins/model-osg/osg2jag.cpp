@@ -115,7 +115,10 @@ bool Osg2Jag::preTraverse( osg::Object* osgObject, const gmtl::Matrix44d& m )
     }
     _nodeStack.push_back( _current );
 
+    if( !( osgObject->getName().empty() ) )
+        _current->setUserDataName( osgObject->getName() );
     _current->setTransform( m );
+
     return( true );
 }
 void Osg2Jag::postTraverse()

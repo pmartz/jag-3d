@@ -41,7 +41,7 @@ void TextDumpSG::visit( jagSG::Node& node )
         indentStr += "  ";
 
     _oStr << indentStr << "----------------" << std::endl;
-    _oStr << indentStr << "Node" << std::endl;
+    _oStr << indentStr << "Node \"" << node.getUserDataName() << "\"" << std::endl;
     if( node.getNumDrawables() > 0 )
         _oStr << indentStr << "- Num drawables: " << node.getNumDrawables() << std::endl;
     if( node.getNumChildren() > 0 )
