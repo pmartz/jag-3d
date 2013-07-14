@@ -16,6 +16,7 @@
     - Plugins
   - \ref SpecModuleDraw
   - \ref SpecModuleSG
+- \ref SpecSubmissions
 
 
 \section SpecIntroduction Introduction
@@ -186,5 +187,17 @@ and it contains support for smart pointers, logging, and math.
 \subsection SpecModuleDraw Draw
 \subsection SpecModuleSG Scene Graph
 
+
+\section SpecSubmissions Submission Guidelines
+
+This section is to be done. Need to outline submissions process and
+requirements.
+
+\li Modifications to code
+that adheres to spec must be accompanied by appropriate spec changes,
+reviewed, voted upon, and approved.
+\li New code modules must come with a spec, be initially committed to
+an external project ("jag-extern" or something), reviewed, voted upon,
+and approved.
 
 */
