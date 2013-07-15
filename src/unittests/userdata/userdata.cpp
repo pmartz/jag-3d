@@ -125,6 +125,49 @@ bool test()
 
 		}
 
+
+		std::cout << "Testing: User Data setting and retrieval using pass by reference get method with jagSG::Node and a custom class for data storage. . ." << std::endl;
+		{
+			class TestClass {
+			public:
+				const int getA() {return _a;}
+				const std::string getB() {return _b;}
+				void setA(int a) {_a=a;}
+				void setB(std::string b) {_b=b;}
+			protected:
+				int _a;
+				std::string _b;
+			};
+
+			jagSG::Node udo;
+			TestClass testVar;
+			testVar.setA(4242);
+			testVar.setB("string test123");
+			udo.getUserData()["prop1"] = "string test";
+			udo.getUserData()["prop2"] = 42;
+			udo.getUserData()["prop3"] = testVar;
+
+
+			if(udo.getUserData()["prop2"] !=  42) {
+				std::cerr << "could not retrieve value set from string key using return by reference get method" << std::endl;
+				return false;
+			}
+
+			if(udo.getUserData()["prop1"] != "string test") {
+				std::cerr << "could not retrieve and compare string value" << std::endl;
+				return false;
+			}
+
+			 TestClass extractedVar = udo.getUserData()["prop3"].extract<TestClass>();
+
+			if(extractedVar.getB() != "string test123") {
+				std::cerr << extractedVar.getB() << std::endl;
+				std::cerr << "could not use a custom class" << std::endl;	
+				return false;
+			}
+
+		}
+
         
 
 	}
