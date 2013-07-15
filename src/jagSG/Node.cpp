@@ -37,8 +37,8 @@
 namespace jagSG {
 
 
-Node::Node()
-  : jagBase::LogBase( "jag.sg.node" ),
+Node::Node( const std::string& logName )
+  : jagBase::LogBase( logName.empty() ? "jag.sg.node" : logName ),
     jagBase::UserDataOwner(),
     ObjectIDOwner(),
     SHARED_FROM_THIS( Node )(),

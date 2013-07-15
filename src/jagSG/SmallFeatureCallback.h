@@ -40,7 +40,7 @@ class JAGSG_EXPORT SmallFeatureCallback : protected jagBase::LogBase,
         public jagSG::Node::Callback
 {
 public:
-    SmallFeatureCallback();
+    SmallFeatureCallback( const std::string& logName=std::string( "" ) );
     SmallFeatureCallback( const SmallFeatureCallback& rhs );
     ~SmallFeatureCallback();
 

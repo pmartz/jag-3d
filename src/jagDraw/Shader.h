@@ -41,7 +41,7 @@ namespace jagDraw {
 class JAGDRAW_EXPORT Shader : public ObjectID, protected jagBase::LogBase
 {
 public:
-    Shader( GLenum type );
+    Shader( GLenum type, const std::string& logName=std::string( "" ) );
     Shader( const Shader& rhs );
     ~Shader();
 

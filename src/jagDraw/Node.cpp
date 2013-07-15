@@ -31,11 +31,19 @@
 namespace jagDraw {
 
 
-Node::Node( CommandMapPtr commands )
-  : jagBase::LogBase( "jag.draw.node" ),
+Node::Node( CommandMapPtr commands, const std::string& logName )
+  : jagBase::LogBase( logName.empty() ? "jag.draw.node" : logName ),
     ObjectIDOwner(),
     _matrix( gmtl::MAT_IDENTITY44D ),
     _commands( commands ),
+    _distance( 0. )
+{
+}
+Node::Node( const std::string& logName )
+    : jagBase::LogBase( logName ),
+    ObjectIDOwner(),
+    _matrix( gmtl::MAT_IDENTITY44D ),
+    _commands( ( CommandMap* )NULL ),
     _distance( 0. )
 {
 }

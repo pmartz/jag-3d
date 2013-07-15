@@ -98,7 +98,7 @@ class JAGDRAW_EXPORT Drawable : protected jagBase::LogBase,
         public jagBase::Notifier
 {
 public:
-    Drawable();
+    Drawable( const std::string& logName=std::string( "" ) );
     Drawable( const Drawable& rhs );
     ~Drawable();
     
