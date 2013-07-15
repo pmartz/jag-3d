@@ -96,7 +96,7 @@ we make that change.
 
 \gl{section 2.11.4}.
 */
-class JAGDRAW_EXPORT Uniform : public DrawablePrep, public jagBase::LogBase,
+class JAGDRAW_EXPORT Uniform : public DrawablePrep, protected jagBase::LogBase,
         public SHARED_FROM_THIS(Uniform)
 {
 public:

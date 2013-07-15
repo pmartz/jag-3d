@@ -184,7 +184,7 @@ public:
 \brief TBD
 \details TBD
 */
-class JAGBASE_EXPORT ProfileDump : public ProfileVisitor, public jagBase::LogBase
+class JAGBASE_EXPORT ProfileDump : public ProfileVisitor, protected jagBase::LogBase
 {
 public:
     ProfileDump();
