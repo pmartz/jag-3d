@@ -60,7 +60,7 @@ public:
         NormalMatrix
     };
 
-    Program();
+    Program( const std::string& logName=std::string( "" ) );
     Program( const Program& rhs );
     ~Program();
 

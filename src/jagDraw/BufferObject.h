@@ -53,7 +53,7 @@ public:
     and DrawIndirectBuffer is instantiated.
     and .
     */
-    BufferObject( const GLenum target=GL_NONE );
+    BufferObject( const GLenum target=GL_NONE, const std::string& logName=std::string( "" ) );
     /**
     \glparam{target,table 2.8}
     \param b BufferPtr

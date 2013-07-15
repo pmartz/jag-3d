@@ -27,26 +27,26 @@
 namespace jagDraw {
 
 
-Texture::Texture()
+Texture::Texture( const std::string& logName )
   : DrawablePrep( Texture_t ),
     FramebufferAttachable(),
-    jagBase::LogBase( "jag.draw.tex" ),
+    jagBase::LogBase( logName.empty() ? "jag.draw.tex" : logName ),
     _target( GL_NONE )
 {
 }
-Texture::Texture( const GLenum target, ImagePtr image )
+Texture::Texture( const GLenum target, ImagePtr image, const std::string& logName )
   : DrawablePrep( Texture_t ),
     FramebufferAttachable(),
-    jagBase::LogBase( "jag.draw.tex" ),
+    jagBase::LogBase( logName.empty() ? "jag.draw.tex" : logName ),
     _target( target )
 {
     _image.resize( 1 );
     _image[ 0 ] = image;
 }
-Texture::Texture( const GLenum target, ImagePtr image, SamplerPtr sampler )
+Texture::Texture( const GLenum target, ImagePtr image, SamplerPtr sampler, const std::string& logName )
   : DrawablePrep( Texture_t ),
     FramebufferAttachable(),
-    jagBase::LogBase( "jag.draw.tex" ),
+    jagBase::LogBase( logName.empty() ? "jag.draw.tex" : logName ),
     _target( target ),
     _sampler( sampler )
 {

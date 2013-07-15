@@ -27,8 +27,8 @@
 namespace jagSG {
 
 
-SmallFeatureCallback::SmallFeatureCallback()
-  : jagBase::LogBase( "jag.sg.coll.small" ),
+SmallFeatureCallback::SmallFeatureCallback( const std::string& logName )
+  : jagBase::LogBase( logName.empty() ? "jag.sg.coll.small" : logName ),
     jagSG::Node::Callback()
 {
 }

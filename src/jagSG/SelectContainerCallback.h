@@ -40,8 +40,8 @@ class JAGSG_EXPORT SelectContainerCallback : protected jagBase::LogBase,
         public jagSG::Node::Callback
 {
 public:
-    SelectContainerCallback();
-    SelectContainerCallback( const unsigned int index );
+    SelectContainerCallback( const std::string& logName=std::string( "" ) );
+    SelectContainerCallback( const unsigned int index, const std::string& logName=std::string( "" ) );
     SelectContainerCallback( const SelectContainerCallback& rhs );
     ~SelectContainerCallback();
 

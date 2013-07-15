@@ -97,13 +97,13 @@ derived class. As an example, a derived class might override visit() as follows:
 class VisitorBase : protected jagBase::LogBase
 {
 public:
-    VisitorBase( const std::string& logName )
-      : jagBase::LogBase( "jag.sg.visit." + logName )
+    VisitorBase( const std::string& logNameSuffix, const std::string& logName=std::string( "" ) )
+      : jagBase::LogBase( logName.empty() ? std::string( "jag.sg.visit." ) + logNameSuffix : logName )
     {
     }
 
-    VisitorBase( const std::string& logName, jagSG::Node& node )
-      : jagBase::LogBase( "jag.sg.visit." + logName )
+    VisitorBase( jagSG::Node& node, const std::string& logNameSuffix, const std::string& logName=std::string( "" ) )
+      : jagBase::LogBase( logName.empty() ? std::string( "jag.sg.visit." ) + logNameSuffix : logName )
     {
         node.accept( *this );
     }
@@ -236,13 +236,13 @@ call Visitor::visit() to effect traversal, then perform any post-traversal tasks
 class Visitor : public VisitorBase
 {
 public:
-    Visitor( const std::string& logName )
-      : VisitorBase( logName )
+    Visitor( const std::string& logNameSuffix, const std::string& logName=std::string( "" ) )
+      : VisitorBase( logNameSuffix, logName )
     {
     }
 
-    Visitor( const std::string& logName, jagSG::Node& node )
-      : VisitorBase( logName, node )
+    Visitor( jagSG::Node& node, const std::string& logNameSuffix, const std::string& logName=std::string( "" ) )
+      : VisitorBase( node, logNameSuffix, logName )
     {
     }
 
