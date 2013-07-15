@@ -153,7 +153,7 @@ preferably as a sibling to the GL directory that contains glcorearb.h (so that t
 use the same include path. Then \ref BuildCMake "point CMake at the directory containing both GL and GL3".
 
 Jag3D has the following required dependencies:
-\li <a href=http://pocoproject.org/download/index.html>Poco</a> v1.4.3p1 or newer. Get the "Basic Edition".
+\li <a href=http://pocoproject.org/download/index.html>Poco</a> developer release v1.5.1 or newer. Get the "Basic Edition".
 \li <a href=http://www.boost.org/users/download/>Boost</a> v1.48_0 or newer. Some libraries are required.
 \li <a href=http://sourceforge.net/projects/ggt/>Generic Graphics Toolkit (GMTL)</a> svn trunk r1284 or newer.
 
