@@ -78,8 +78,12 @@ public:
 
         // TBD need an "explicit" mode where the location is set by the app
         // (because it uses glBindAttribLocation). This would avoid the table lookup.
+
         ProgramPtr prog( boost::dynamic_pointer_cast< Program >( drawInfo._current[ DrawablePrep::Program_t ] ) );
         GLint index( prog->getVertexAttribLocation( _indexHash ) );
+        if( index == -1 )
+            // This vertex attrib isn't used in the shader.
+            return;
 
         // Note that we do NOT check for index == -1. Inactive vertex attribs
         // are not centerline usage. OpenGL will ignore these calls if
