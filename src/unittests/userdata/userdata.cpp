@@ -23,7 +23,7 @@
 #include <jagDraw/Node.h>
 #include <jagBase/UserDataOwner.h>
 
-
+#include <Poco/Foundation.h>
 #include <boost/foreach.hpp>
 #include <gmtl/gmtl.h>
 
@@ -126,6 +126,7 @@ bool test()
 		}
 
 
+#if( POCO_OS != POCO_OS_MAC_OS_X )
 		std::cout << "Testing: User Data setting and retrieval using pass by reference get method with jagSG::Node and a custom class for data storage. . ." << std::endl;
 		{
 			class TestClass {
@@ -165,7 +166,6 @@ bool test()
 				std::cerr << "could not use a custom class" << std::endl;	
 				return false;
 			}
-
 		}
 
         
@@ -232,7 +232,7 @@ bool test()
 				return false;
 			}
 		}
-
+#endif
 
 	}
     return( true );
