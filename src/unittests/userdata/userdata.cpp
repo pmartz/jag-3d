@@ -169,6 +169,70 @@ bool test()
 		}
 
         
+		std::cout << "Testing: User Data setting and retrieval using pass by reference get method with jagSG::Node and a large custom class for data storage. . ." << std::endl;
+		{
+			class TestClass {
+			public:
+				const int getA() {return _a;}
+				const std::string getB() {return _b;}
+				void setA(int a) {_a=a;}
+				void setB(std::string b) {_b=b;}
+			public:
+				int _a;
+				std::string _b;
+				int a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,x,y,z,aa,ab,ac,ad,ae,af,ag,ah,ai,aj,ak,al,am,an,ao,ap,aq,ar,as,at,au,av,ax,ay,
+					az,ba,bb,bc,bd,be,bf,bg,bh,bi,bj,bk,bl,bm,bn,bo,bp,bq,br,bs,bt,bu,bv,bx,by,bz;
+			};
+
+			jagSG::Node udo;
+			TestClass testVar;
+			testVar.setA(4242);
+			testVar.setB("string test123");
+			testVar.v = 567;
+			testVar.bx = 568;
+			testVar.av = 569;
+			udo.getUserData()["prop1"] = "string test";
+			udo.getUserData()["prop2"] = 42;
+			udo.getUserData()["prop3"] = testVar;
+			
+
+			if(udo.getUserData()["prop2"] !=  42) {
+				std::cerr << "could not retrieve value set from string key using return by reference get method" << std::endl;
+				return false;
+			}
+
+			if(udo.getUserData()["prop1"] != "string test") {
+				std::cerr << "could not retrieve and compare string value" << std::endl;
+				return false;
+			}
+
+			 TestClass extractedVar = udo.getUserData()["prop3"].extract<TestClass>();
+
+			if(extractedVar.getB() != "string test123") {
+				std::cerr << extractedVar.getB() << std::endl;
+				std::cerr << "could not use a custom class" << std::endl;	
+				return false;
+			}
+
+			if(extractedVar.v != 567) {
+				std::cerr << extractedVar.v << std::endl;
+				std::cerr << "could not use a large custom class" << std::endl;	
+				return false;
+			}
+
+			if(extractedVar.bx != 568) {
+				std::cerr << extractedVar.bx << std::endl;
+				std::cerr << "could not use a large custom class" << std::endl;	
+				return false;
+			}
+
+			if(extractedVar.av != 569) {
+				std::cerr << extractedVar.av << std::endl;
+				std::cerr << "could not use a large custom class" << std::endl;	
+				return false;
+			}
+		}
+
 
 	}
     return( true );
