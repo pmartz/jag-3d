@@ -21,6 +21,14 @@
 #ifndef __JAGBASE_USER_DATA_OWNER_H__
 #define __JAGBASE_USER_DATA_OWNER_H__ 1
 
+#include <Poco/Foundation.h>
+#if( POCO_OS == POCO_OS_MAC_OS_X )
+// Include this first to work around OSX gcc 4.2 build issue
+// Put isinf(), isnan() in global namespace, which Poco assumes. 
+#include <cmath>
+using std::isinf;
+using std::isnan;
+#endif
 
 #include <jagBase/Config.h>
 #include <jagBase/ptr.h>

@@ -23,6 +23,15 @@
 #  include <jagDraw/ContextSupportGl3w.h>
 #endif
 
+#include <Poco/Foundation.h>
+#if( POCO_OS == POCO_OS_MAC_OS_X )
+// Include this first to work around OSX gcc 4.2 build issue
+// Put isinf(), isnan() in global namespace, which Poco assumes. 
+#include <cmath>
+using std::isinf;
+using std::isnan;
+#endif
+
 #include <jagBase/Log.h>
 #include <jagBase/LogMacros.h>
 #include <Poco/NumberFormatter.h>
