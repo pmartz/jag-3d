@@ -30,8 +30,8 @@
 namespace jagDraw {
 
 
-DrawGraph::DrawGraph()
-  : jagBase::LogBase( "jag.draw.graph" ),
+DrawGraph::DrawGraph( const std::string& logName )
+  : jagBase::LogBase( logName.empty() ? "jag.draw.graph" : logName ),
     ObjectIDOwner()
 {
 }

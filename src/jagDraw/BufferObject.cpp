@@ -28,8 +28,8 @@
 namespace jagDraw {
 
 
-BufferObject::BufferObject( const GLenum target )
-  : jagBase::LogBase( "jag.draw.bufobj" ),
+BufferObject::BufferObject( const GLenum target, const std::string& logName )
+  : jagBase::LogBase( logName.empty() ? "jag.draw.bufobj" : logName ),
     ObjectID(),
     VertexArrayCommand( VertexArrayCommand::BufferObject_t ),
     _target( target ),

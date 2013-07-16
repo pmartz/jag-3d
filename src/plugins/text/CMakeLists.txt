@@ -18,7 +18,17 @@
 #
 #************** <auto-copyright.pl END do not edit this line> ***************
 
-add_subdirectory( image-osg )
-add_subdirectory( model-osg )
-add_subdirectory( shader )
-add_subdirectory( text )
+# Required for ModuleInstall.cmake
+set( _libName jagp-text )
+
+_addPlugin( ${_libName}
+    text.cpp
+    TextDumpDG.cpp
+    TextDumpDG.h
+    TextDumpSG.cpp
+    TextDumpSG.h
+    JAG_LIBRARIES
+        jagDisk jagSG jagDraw jagBase
+)
+
+_addPluginInfo( jagp-text.jagpi )

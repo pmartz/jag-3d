@@ -173,7 +173,7 @@ void CollectionVisitor::collectAndTraverse( jagSG::Node& node )
         drawNode.setDistance( _infoPtr->getECBoundDistance() );
 
         // Set the model matrix.
-        if( modelDirty )
+        if( _matrixStack.size() > 0 )
             drawNode.setTransform( _matrixStack.back() );
 
         // TBD transform. Need to do this on first draw node and then
@@ -242,6 +242,16 @@ CollectionVisitor::NearFarOps CollectionVisitor::getNearFarOps() const
 
 void CollectionVisitor::getNearFar( double& minECNear, double& maxECFar, const double ratio )
 {
+    if( _minECZ > _maxECZ )
+    {
+        // This typically happens when everything is culled and no bounds
+        // were used to modify the min and max eye coord z values. In
+        // this case, the returned values are irrelevant.
+        minECNear = 1.;
+        maxECFar = 100.;
+        return;
+    }
+         
     const double scaledNear( _maxECZ * ratio );
     if( _minECZ < scaledNear )
         minECNear = scaledNear;

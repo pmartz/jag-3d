@@ -30,8 +30,8 @@
 namespace jagDraw {
 
 
-Shader::Shader( GLenum type )
-  : jagBase::LogBase( "jag.draw.shader" ),
+Shader::Shader( GLenum type, const std::string& logName )
+  : jagBase::LogBase( logName.empty() ? "jag.draw.shader" : logName ),
     _type( type )
 {
 }

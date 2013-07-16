@@ -63,7 +63,7 @@ class JAGDRAW_EXPORT UniformBlock : public DrawablePrep,
             protected jagBase::LogBase
 {
 public:
-    UniformBlock( const std::string& name );
+    UniformBlock( const std::string& name, const std::string& logName=std::string( "" ) );
     UniformBlock( const UniformBlock& rhs );
     virtual ~UniformBlock();
 

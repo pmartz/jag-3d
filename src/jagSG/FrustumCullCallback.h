@@ -40,7 +40,7 @@ class JAGSG_EXPORT FrustumCullCallback : protected jagBase::LogBase,
         public jagSG::Node::Callback
 {
 public:
-    FrustumCullCallback();
+    FrustumCullCallback( const std::string& logName=std::string( "" ) );
     FrustumCullCallback( const FrustumCullCallback& rhs );
     ~FrustumCullCallback();
 

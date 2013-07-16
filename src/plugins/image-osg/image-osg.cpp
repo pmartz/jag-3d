@@ -74,7 +74,7 @@ public:
 
     virtual void* read( const std::string& fileName ) const
     {
-        JAG3D_INFO_STATIC( "jag.plugin.image",
+        JAG3D_INFO(
             std::string( "Using OSG v" ) + std::string( osgGetVersion() ) );
 
         osg::ref_ptr< osg::Image > osgImage( osgDB::readImageFile( fileName ) );
@@ -87,7 +87,7 @@ public:
 
     virtual bool write( const std::string& fileName, const void* data ) const
     {
-        JAG3D_INFO_STATIC( "jag.plugin.image",
+        JAG3D_INFO(
             std::string( "Using OSG v" ) + std::string( osgGetVersion() ) );
 
         osg::ref_ptr< osg::Image > osgImage( convertToOsgImage( (Image*)data ) );

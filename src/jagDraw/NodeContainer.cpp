@@ -30,8 +30,8 @@
 namespace jagDraw {
 
 
-NodeContainer::NodeContainer()
-  : jagBase::LogBase( "jag.draw.ncon" ),
+NodeContainer::NodeContainer( const std::string& logName )
+  : jagBase::LogBase( logName.empty() ? "jag.draw.ncon" : logName ),
     ObjectIDOwner()
 {
 }

@@ -94,9 +94,13 @@ simply always sets its value. This will change in the future when
 Uniform becomes "smarter", but we must keep this scenario in mind when
 we make that change.
 
+To be done: Constructors of classes deriving from jagBase::LogBase should
+take an optional \c logName parameter to allow overriding the default
+logger name. This is currently not implemented for the Uniform class.
+
 \gl{section 2.11.4}.
 */
-class JAGDRAW_EXPORT Uniform : public DrawablePrep, public jagBase::LogBase,
+class JAGDRAW_EXPORT Uniform : public DrawablePrep, protected jagBase::LogBase,
         public SHARED_FROM_THIS(Uniform)
 {
 public:

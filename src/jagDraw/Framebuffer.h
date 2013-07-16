@@ -79,7 +79,7 @@ class JAGDRAW_EXPORT Framebuffer : public DrawablePrep,
         public ObjectID, protected jagBase::LogBase
 {
 public:
-    Framebuffer( GLenum target=GL_FRAMEBUFFER );
+    Framebuffer( GLenum target=GL_FRAMEBUFFER, const std::string& logName=std::string( "" ) );
     Framebuffer( const Framebuffer& rhs );
     virtual ~Framebuffer();
 
@@ -234,7 +234,8 @@ class JAGDRAW_EXPORT Renderbuffer : public ObjectID,
         public FramebufferAttachable, protected jagBase::LogBase
 {
 public:
-    Renderbuffer( const GLenum internalFormat=GL_NONE, const GLsizei width=0, const GLsizei height=0, const GLsizei samples=0 );
+    Renderbuffer( const std::string& logName );
+    Renderbuffer( const GLenum internalFormat=GL_NONE, const GLsizei width=0, const GLsizei height=0, const GLsizei samples=0, const std::string& logName=std::string( "" ) );
 
     Renderbuffer( const Renderbuffer& rhs );
     virtual ~Renderbuffer();

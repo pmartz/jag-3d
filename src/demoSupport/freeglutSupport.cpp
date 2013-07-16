@@ -23,6 +23,10 @@
 #include <jagBase/Profile.h>
 #include <jagMx/MxCore.h>
 #include <jagMx/MxUtils.h>
+#include <jagMx/MxGamePad.h>
+#ifdef DIRECTINPUT_ENABLED
+#  include <jagMx/MxGamePadDX.h>
+#endif
 
 #include <demoSupport/platformFreeglut.h>
 
@@ -45,8 +49,9 @@ int _lastX, _lastY;
 float _lastNX, _lastNY;
 typedef std::vector< int > IntVec;
 IntVec _width, _height;
-bool _leftDrag;
+bool _leftDrag, _rightDrag;
 
+static jagMx::MxGamePadPtr gamePad( jagMx::MxGamePadPtr( (jagMx::MxGamePad*)NULL ) );
 
 
 void init()
@@ -109,7 +114,21 @@ void keyboard( unsigned char key, int x, int y )
 
 void timer( int value )
 {
-    if( di->getContinuousRedraw() )
+    // Currently we can only use window 0.
+    jagMx::MxCorePtr mxCore( di->getMxCore( 0 ) );
+    if( mxCore == NULL )
+        return;
+
+    gamePad->setMxCore( mxCore );
+
+    bool redraw( false );
+#ifdef DIRECTINPUT_ENABLED
+    jagMx::MxGamePadDX* gp( dynamic_cast< jagMx::MxGamePadDX* >( gamePad.get() ) );
+    if( gp != NULL )
+        redraw = gp->poll( 1./60. ); // TBD use a timer.
+#endif
+
+    if( redraw )
     {
         glutPostRedisplay();
         glutTimerFunc( 16, timer, 0 );
@@ -140,10 +159,12 @@ void mouse( int button, int op, int x, int y )
 
     if( button == GLUT_LEFT_BUTTON )
         _leftDrag = ( op == GLUT_DOWN );
+    if( button == GLUT_RIGHT_BUTTON )
+        _rightDrag = ( op == GLUT_DOWN );
 }
 void motion( int x, int y )
 {
-    if( !_leftDrag )
+    if( !_leftDrag && !_rightDrag )
         return;
 
     const int window( glutGetWindow() - 1 );
@@ -159,13 +180,20 @@ void motion( int x, int y )
     const float deltaX( nx - _lastNX );
     const float deltaY( ny - _lastNY );
 
-    double angle;
-    gmtl::Vec3d axis;
-    jagMx::computeTrackball( angle, axis,
-        gmtl::Vec2d( _lastNX, _lastNY ), gmtl::Vec2d( deltaX, deltaY ),
-        mxCore->getOrientationMatrix() );
+    if( _rightDrag )
+    {
+        mxCore->moveOrbit( deltaY );
+    }
+    else if( _leftDrag )
+    {
+        double angle;
+        gmtl::Vec3d axis;
+        jagMx::computeTrackball( angle, axis,
+            gmtl::Vec2d( _lastNX, _lastNY ), gmtl::Vec2d( deltaX, deltaY ),
+            mxCore->getOrientationMatrix() );
 
-    mxCore->rotateOrbit( angle, axis );
+        mxCore->rotateOrbit( angle, axis );
+    }
 
     _lastNX = nx;
     _lastNY = ny;
@@ -224,6 +252,12 @@ int main( int argc, char* argv[] )
     }
 
 
+#ifdef DIRECTINPUT_ENABLED
+    gamePad = jagMx::MxGamePadDXPtr( new jagMx::MxGamePadDX() );
+    //gamePad->setStickRate( moveRate );
+#endif
+
+
     glutInit( &argc, argv );
     glutInitDisplayMode( GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_MULTISAMPLE );
     if( version >= 3.0 )
@@ -247,7 +281,8 @@ int main( int argc, char* argv[] )
         glutDisplayFunc( display ); 
         glutReshapeFunc( reshape );
         glutKeyboardFunc( keyboard );
-        //glutTimerFunc( 16, timer, 0 );
+        if( gamePad != NULL )
+            glutTimerFunc( 16, timer, 0 );
         glutMouseFunc( mouse );
         glutMotionFunc( motion );
 

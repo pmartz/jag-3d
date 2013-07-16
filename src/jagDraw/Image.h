@@ -42,7 +42,7 @@ namespace jagDraw {
 class JAGDRAW_EXPORT Image : protected jagBase::LogBase
 {
 public:
-    Image();
+    Image( const std::string& logName=std::string( "" ) );
     Image( const Image& rhs );
     virtual ~Image();
 

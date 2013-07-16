@@ -172,9 +172,9 @@ void ProfileVisitor::traverse( ProfileNodePtr node )
 }
 
 
-ProfileDump::ProfileDump()
+ProfileDump::ProfileDump( const std::string& logName )
     : ProfileVisitor(),
-      jagBase::LogBase( "jag.prof" ),
+      jagBase::LogBase( logName.empty() ? "jag.prof" : logName ),
       _depth( 0 )
 {
 }

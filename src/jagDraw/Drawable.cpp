@@ -38,8 +38,8 @@
 namespace jagDraw {
 
 
-Drawable::Drawable()
-  : jagBase::LogBase( "jag.draw.drawable" ),
+Drawable::Drawable( const std::string& logName )
+  : jagBase::LogBase( logName.empty() ? "jag.draw.drawable" : logName ),
     ObjectIDOwner(),
     BoundOwner(),
     jagBase::Notifier()

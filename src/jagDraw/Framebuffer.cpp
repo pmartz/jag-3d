@@ -29,9 +29,9 @@
 namespace jagDraw {
 
 
-Framebuffer::Framebuffer( GLenum target )
+Framebuffer::Framebuffer( GLenum target, const std::string& logName )
   : DrawablePrep( Framebuffer_t ),
-    jagBase::LogBase( "jag.draw.fbo" ),
+    jagBase::LogBase( logName.empty() ? "jag.draw.fbo" : logName ),
     _target( target ),
     _viewport( false ),
     _clear( false ),
@@ -249,10 +249,18 @@ bool Framebuffer::anyDirty(  const unsigned int contextID  ) const
 
 
 
-
-Renderbuffer::Renderbuffer( const GLenum internalFormat, const GLsizei width, const GLsizei height, const GLsizei samples )
+Renderbuffer::Renderbuffer( const std::string& logName )
+    : FramebufferAttachable(),
+    jagBase::LogBase( logName ),
+    _samples( 0 ),
+    _internalFormat( GL_NONE ),
+    _width( 0 ),
+    _height( 0 )
+{
+}
+Renderbuffer::Renderbuffer( const GLenum internalFormat, const GLsizei width, const GLsizei height, const GLsizei samples, const std::string& logName )
   : FramebufferAttachable(),
-    jagBase::LogBase( "jag.draw.fbo.rb" ),
+    jagBase::LogBase( logName.empty() ? "jag.draw.fbo.rb" : logName ),
     _samples( samples ),
     _internalFormat( internalFormat),
     _width( width ),
