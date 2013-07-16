@@ -30,7 +30,7 @@ endmacro()
 
 set( JAG3D_MAJOR_VERSION 0 )
 set( JAG3D_MINOR_VERSION 0 )
-set( JAG3D_SUB_VERSION 7 )
+set( JAG3D_SUB_VERSION 11 )
 zeroPad( JAG3D_MINOR_VERSION __minorPad )
 zeroPad( JAG3D_SUB_VERSION __patchPad )
 set( JAG3D_VERSION ${JAG3D_MAJOR_VERSION}.${__minorPad}.${__patchPad} )
@@ -136,6 +136,10 @@ include( FindOSGHelper )
 set( DIRECTINPUT_ROOT_DIR "" CACHE PATH "DirectInput installation directory" )
 option( DIRECTINPUT_ARCH_x64 "Select for 64-bit target architectures, unselect for 32-bit." ON )
 find_package( DirectInput )
+
+if( DIRECTINPUT_FOUND )
+    add_definitions( -DDIRECTINPUT_ENABLED )
+endif()
 
 
 if( QT_FOUND )

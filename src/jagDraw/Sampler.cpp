@@ -32,10 +32,10 @@
 namespace jagDraw {
 
 
-Sampler::Sampler()
+Sampler::Sampler( const std::string& logName )
   : DrawablePrep( DrawablePrep::Sampler_t ),
     ObjectID(),
-    jagBase::LogBase( "jag.draw.sampler" ),
+    jagBase::LogBase( logName.empty() ? "jag.draw.sampler" : logName ),
     _samplerState( SamplerStatePtr( new SamplerState() ) )
 {
 }

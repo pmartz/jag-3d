@@ -53,10 +53,10 @@ public:
     /**
     \glparam{target,section 3.8}
     */
-    Texture();
-    Texture( const GLenum target, ImagePtr image=ImagePtr((Image*)NULL) );
+    Texture( const std::string& logName=std::string( "" ) );
+    Texture( const GLenum target, ImagePtr image=ImagePtr((Image*)NULL), const std::string& logName=std::string( "" ) );
     /** TBD Sampler should be orthogonal to Texture and should be in SamplerSet. */
-    Texture( const GLenum target, ImagePtr image, SamplerPtr sampler );
+    Texture( const GLenum target, ImagePtr image, SamplerPtr sampler, const std::string& logName=std::string( "" ) );
     Texture( const Texture& rhs );
     virtual ~Texture();
 

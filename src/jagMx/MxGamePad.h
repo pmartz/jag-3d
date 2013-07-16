@@ -25,6 +25,7 @@
 #include <jagMx/Export.h>
 #include <jagMx/MxCore.h>
 #include <jagMx/MxUtils.h>
+#include <jagBase/ptr.h>
 #include <gmtl/gmtl.h>
 
 #include <cmath>
@@ -309,6 +310,8 @@ protected:
     FunctionalMap::FunctionType _moveMode;
     FunctionalMap::FunctionType _rotateMode;
 };
+
+typedef jagBase::ptr< jagMx::MxGamePad >::shared_ptr MxGamePadPtr;
 
 
 // jagMx

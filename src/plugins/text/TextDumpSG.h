@@ -18,24 +18,31 @@
 *
 *************** <auto-copyright.pl END do not edit this line> ***************/
 
-#include <jagDisk/ReaderWriter.h>
+#ifndef __TEXT_DUMP_S_G_H__
+#define __TEXT_DUMP_S_G_H__ 1
+
+#include <jagSG/Visitor.h>
 
 
-namespace jagDisk {
-
-
-ReaderWriter::ReaderWriter( const std::string& logNameSuffix, const std::string& logName )
-  : jagBase::LogBase( logName.empty() ? std::string( "jag.disk.rw." ) + logNameSuffix : logName )
+/** \class TextDumpSG TextDumpSG.h
+\brief Dump scene graph information to a text file.
+\details TBD
+*/
+class TextDumpSG : public jagSG::Visitor
 {
-}
-ReaderWriter::ReaderWriter( const ReaderWriter& rhs )
-  : jagBase::LogBase( rhs )
-{
-}
-ReaderWriter::~ReaderWriter()
-{
-}
+public:
+    TextDumpSG( std::ostream& oStr );
+    virtual ~TextDumpSG();
+
+    /** \brief TBD
+    \details TBD */
+    virtual void visit( jagSG::Node& node );
+
+protected:
+    std::ostream& _oStr;
+    int _indent;
+};
 
 
-// jagDisk
-}
+// __TEXT_DUMP_S_G_H__
+#endif

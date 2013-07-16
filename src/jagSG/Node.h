@@ -63,7 +63,7 @@ class JAGSG_EXPORT Node : protected jagBase::LogBase,
         public SHARED_FROM_THIS(Node)
 {
 public:
-    Node();
+    Node( const std::string& logName=std::string( "" ) );
     Node( const Node& rhs );
     ~Node();
 

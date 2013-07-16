@@ -3,7 +3,8 @@
 \mainpage Jag3D: A 3D Rendering Toolkit
 
 \ref JagBuild "Building Jag3D"<br>
-\ref JagRun "Running Jag3D"
+\ref JagRun "Running Jag3D"<br>
+\ref JagCommits "Mercurial (Hg) Guidelines for Jag3D Commits"
 
 <hr>
 
@@ -152,7 +153,7 @@ preferably as a sibling to the GL directory that contains glcorearb.h (so that t
 use the same include path. Then \ref BuildCMake "point CMake at the directory containing both GL and GL3".
 
 Jag3D has the following required dependencies:
-\li <a href=http://pocoproject.org/download/index.html>Poco</a> v1.4.3p1 or newer. Get the "Basic Edition".
+\li <a href=http://pocoproject.org/download/index.html>Poco</a> developer release v1.5.1 or newer. Get the "Basic Edition".
 \li <a href=http://www.boost.org/users/download/>Boost</a> v1.48_0 or newer. Some libraries are required.
 \li <a href=http://sourceforge.net/projects/ggt/>Generic Graphics Toolkit (GMTL)</a> svn trunk r1284 or newer.
 
@@ -231,5 +232,44 @@ Other examples and tests require you to set environment variables:
 corresponding \c .jagpi files.
 \li JAG3D_DATA_PATH should be set to a list of directories containing data files, such
 as the \c data directory in the Jag3D source tree.
+
+
+\section JagCommits Mercurial (Hg) Guidelines for Jag3D Commits
+
+Before making modifications to JAG, please review
+\ref SpecSubmissions "the submissions requirements".
+
+To make changes to the Jag3D project, you should first clone
+<a href="https://code.google.com/p/jag-3d/source/checkout">
+the Google Code repo</a> to your local development system.
+
+Please submit all changes as bundled changesets that have already been
+merged with the current Google Code repo tip. Bundled changesets preserve
+your local revision history and automatically credit you as the author
+of the modifications.
+
+Here are general rules you should follow for Jag3D development:
+-# Make changes and commit to your local repo. You might need
+to do this multiple times.
+-# Before you submit your changes, pull the latest from the
+Google Code repo and merge with your local repo. (For extended
+development, you might want to do this frequently to stay current
+and avoid the pain of a single massive merge.)
+-# Don't forget to commit your merge to your local repo.
+-# Create a changeset that starts at your first commit and ends
+at the tip of your repo. Using hg command line:
+\code
+hg bundle -r <first-commit-rev#>
+\endcode
+Using TortoiseHg, right click on the first commit, then select
+Export -> Bundle Rev and Descendants... from the context menu.
+-# <a href="https://code.google.com/p/jag-3d/issues/list">
+Open an issue</a> and attach the bundled changeset, or email it
+to someone with commit access. After approval, your changeset
+will be unbundled into the Google Code repo.
+
+It doesn't matter if your bundle contains revisions that are already
+in the Google Code repo. Mercurial is smart enough to deal with
+this correctly.
 
 */

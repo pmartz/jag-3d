@@ -57,7 +57,7 @@ class JAGDRAW_EXPORT Sampler : public DrawablePrep,
         public ObjectID, protected jagBase::LogBase
 {
 public:
-    Sampler();
+    Sampler( const std::string& logName=std::string( "" ) );
     Sampler( const Sampler& rhs );
     ~Sampler();
 

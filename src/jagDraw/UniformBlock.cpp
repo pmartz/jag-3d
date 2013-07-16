@@ -35,10 +35,10 @@
 namespace jagDraw {
 
 
-UniformBlock::UniformBlock( const std::string& name )
+UniformBlock::UniformBlock( const std::string& name, const std::string& logName )
   : DrawablePrep( UniformBlock_t ),
     ObjectIDOwner(),
-    jagBase::LogBase( "jag.draw.ublock" ),
+    jagBase::LogBase( logName.empty() ? "jag.draw.ublock" : logName ),
     _name( name )
 {
     _nameHash = Program::createHash( _name );

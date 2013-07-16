@@ -42,7 +42,8 @@ The CommandMap must not be NULL. */
 	class JAGDRAW_EXPORT Node : protected jagBase::LogBase, public ObjectIDOwner, public jagBase::UserDataOwner
 {
 public:
-    Node( CommandMapPtr commands=CommandMapPtr( (CommandMap*)NULL ));
+    Node( CommandMapPtr commands=CommandMapPtr( (CommandMap*)NULL ), const std::string& logName=std::string( "" ) );
+    Node( const std::string& logName );
     Node( const Node& rhs );
     ~Node();
 

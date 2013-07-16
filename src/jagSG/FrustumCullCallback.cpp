@@ -27,8 +27,8 @@
 namespace jagSG {
 
 
-FrustumCullCallback::FrustumCullCallback()
-  : jagBase::LogBase( "jag.sg.coll.frustum" ),
+FrustumCullCallback::FrustumCullCallback( const std::string& logName )
+  : jagBase::LogBase( logName.empty() ? "jag.sg.coll.frustum" : logName ),
     jagSG::Node::Callback()
 {
 }

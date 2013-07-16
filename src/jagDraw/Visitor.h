@@ -56,8 +56,8 @@ Visitir::visit(NodeContainer&) halts traversal for the DrawGraph.
 class Visitor : protected jagBase::LogBase
 {
 public:
-    Visitor( const std::string& logName )
-      : jagBase::LogBase( "jag.draw.visit." + logName )
+    Visitor( const std::string& logNameSuffix, const std::string& logName=std::string( "" ) )
+      : jagBase::LogBase( logName.empty() ? std::string( "jag.draw.visit." ) + logNameSuffix : logName )
     {
     }
 

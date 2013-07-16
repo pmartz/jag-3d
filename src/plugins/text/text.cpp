@@ -20,21 +20,19 @@
 
 #include <jagDisk/PluginManager.h>
 #include <jagDisk/ReaderWriter.h>
-#include <jagSG/Node.h>
-#include <jagBase/LogMacros.h>
 
+#include "TextDumpSG.h"
+#include "TextDumpDG.h"
+#include <jagSG/Node.h>
+#include <jagDraw/DrawGraph.h>
+
+#include <jagBase/LogMacros.h>
 #include <Poco/ClassLibrary.h>
 #include <Poco/Path.h>
 #include <Poco/String.h>
 
-#include "osg2jag.h"
-
-#include <osgDB/ReadFile>
-#include <osgDB/WriteFile>
-#include <osg/Node>
-#include <osg/Version>
-
 #include <fstream>
+#include <string>
 
 
 using namespace jagDisk;
@@ -44,44 +42,29 @@ using namespace jagDisk;
 */
 /**@{*/
 
-/** \class OSGModelRW
-\brief OSG-based model data loader.
+/** \class TextDump
+\brief Dump information about scene graphs and draw graphs to text file.
 */
-class OSGModelRW : public ReaderWriter
+class TextDump : public ReaderWriter
 {
 public:
-    OSGModelRW()
-      : ReaderWriter( "osg-model" )
+    TextDump()
+      : ReaderWriter( "text" )
     {}
-    virtual ~OSGModelRW()
+    virtual ~TextDump()
     {}
 
     virtual bool supportsExtension( const std::string& extension )
     {
         const std::string allLower( Poco::toLower( extension ) );
-        return( ( extension == "gif" ) ||
-            ( extension == "osg" ) ||
-            ( extension == "osgt" ) ||
-            ( extension == "ive" ) ||
-            ( extension == "osgb" ) ||
-            ( extension == "flt" ) ||
-            ( extension == "3ds" ) ||
-            ( extension == "obj" )
+        return( ( extension == "txt" ) ||
+            ( extension == "text" )
             );
     }
 
     virtual void* read( const std::string& fileName ) const
     {
-        JAG3D_INFO(
-            std::string( "Using OSG v" ) + std::string( osgGetVersion() ) );
-
-        osg::ref_ptr< osg::Node > osgNode( osgDB::readNodeFile( fileName ) );
-        if( !( osgNode.valid() ) )
-            return( NULL );
-
-        Osg2Jag osg2Jag;
-        osgNode->accept( osg2Jag );
-        return( osg2Jag.getJagScene().get() );
+        return( NULL );
     }
     virtual void* read( std::istream& iStr ) const
     {
@@ -90,19 +73,43 @@ public:
 
     virtual bool write( const std::string& fileName, const void* data ) const
     {
-        osg::ref_ptr< osg::Node > osgNode( convertToOsgNode( (jagSG::Node*)data ) );
-        return( osgDB::writeNodeFile( *osgNode, fileName ) );
+        std::ofstream oStr( fileName.c_str() );
+        if( !oStr )
+        {
+            // TBD record error
+            return( false );
+        }
+
+        const bool result( write( oStr, data ) );
+        oStr.close();
+
+        return( result );
     }
     virtual bool write( std::ostream& oStr, const void* data ) const
     {
+        const jagSG::Node* node( static_cast< const jagSG::Node* >( data ) );
+        if( node != NULL )
+        {
+            TextDumpSG tdsg( oStr );
+            const_cast< jagSG::Node* >( node )->accept( tdsg );
+            return( true );
+        }
+
+        JAG3D_NOTICE( "Text dump for jagDraw::DrawGraph: not yet implemented." );
+#if 0
+        const jagDraw::DrawGraph* drawGraph( dynamic_cast< const jagDraw::DrawGraph* >( data ) );
+        if( drawGraph != NULL )
+        {
+            TextDumpDG tddg( oStr );
+            drawGraph->accept( tddg );
+            return( true );
+        }
+#endif
+
         return( false );
     }
 
 protected:
-    osg::Node* convertToOsgNode( jagSG::Node* jagNode ) const
-    {
-        return( NULL );
-    }
 };
 
 /**@}*/
@@ -111,15 +118,15 @@ protected:
 // Register the ShaderRW class with the PluginManager.
 // This macro declares a static object initialized when the plugin is loaded.
 REGISTER_READERWRITER(
-    new OSGModelRW(),   // Create an instance of ModelRW.
-    OSGModelRW,         // Class name -- NOT a string.
+    new TextDump(),   // Create an instance of ImageRW.
+    TextDump,         // Class name -- NOT a string.
     "ReaderWriter",   // Base class name as a string.
-    "Read and write models to disk using OSG dependency."  // Description text.
+    "Dump information about scene graphs and draw graphs to text file."  // Description text.
 );
 
 
 // Poco ClassLibrary manifest registration. Add a POCO_EXPORT_CLASS
 // for each ReaderWriter class in the plugin.
 POCO_BEGIN_MANIFEST( ReaderWriter )
-    POCO_EXPORT_CLASS( OSGModelRW )
+    POCO_EXPORT_CLASS( TextDump )
 POCO_END_MANIFEST

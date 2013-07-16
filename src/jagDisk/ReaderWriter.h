@@ -47,7 +47,7 @@ namespace jagDisk {
 class JAGDISK_EXPORT ReaderWriter : protected jagBase::LogBase
 {
 public:
-    ReaderWriter( const std::string& logName=std::string( "rw" ) );
+    ReaderWriter( const std::string& logNameSuffix, const std::string& logName=std::string( "" ) );
     ReaderWriter( const ReaderWriter& rhs );
     ~ReaderWriter();
 

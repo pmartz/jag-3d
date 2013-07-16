@@ -41,7 +41,7 @@ class JAGDRAW_EXPORT NodeContainer : public jagDraw::DrawNodeSimpleVec,
         protected jagBase::LogBase, public ObjectIDOwner
 {
 public:
-    NodeContainer();
+    NodeContainer( const std::string& logName=std::string( "" ) );
     NodeContainer( const NodeContainer& rhs );
     ~NodeContainer();
 

@@ -42,7 +42,7 @@ class JAGDRAW_EXPORT DrawGraph : public jagDraw::NodeContainerSimpleVec,
         protected jagBase::LogBase, public ObjectIDOwner
 {
 public:
-    DrawGraph();
+    DrawGraph( const std::string& logName=std::string( "" ) );
     DrawGraph( const DrawGraph& rhs );
     ~DrawGraph();
 
