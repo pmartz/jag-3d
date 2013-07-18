@@ -41,7 +41,7 @@ void TextDumpSG::visit( jagSG::Node& node )
     for( int idx = 0; idx < _indent; ++idx )
         indentStr += "  ";
 
-    const bool verbose( _logger.getLevel() < Poco::Message::Priority::PRIO_NOTICE );
+    const bool verbose( _logger.getLevel() < Poco::Message::PRIO_NOTICE );
 
     if( verbose )
     {
