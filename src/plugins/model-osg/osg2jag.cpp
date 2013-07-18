@@ -40,6 +40,8 @@
 #include <sstream>
 
 
+static const std::string loggerName( "jag.plugin.model.osg2jag" );
+
 using namespace jagDraw;
 
 
@@ -55,7 +57,7 @@ Osg2Jag::~Osg2Jag()
 
 void Osg2Jag::apply( osg::Node& osgNode )
 {
-    JAG3D_TRACE_STATIC( "jag.plugin.model.jagload", "apply( Node& )" );
+    JAG3D_TRACE_STATIC( loggerName, "apply( Node& )" );
 
     if( !preTraverse( &osgNode ) )
         return;
@@ -64,7 +66,7 @@ void Osg2Jag::apply( osg::Node& osgNode )
 }
 void Osg2Jag::apply( osg::MatrixTransform& osgNode )
 {
-    JAG3D_TRACE_STATIC( "jag.plugin.model.jagload", "apply( Transform& )" );
+    JAG3D_TRACE_STATIC( loggerName, "apply( Transform& )" );
 
     if( !preTraverse( &osgNode, asGmtlMatrix( osgNode.getMatrix() ) ) )
         return;
@@ -73,7 +75,7 @@ void Osg2Jag::apply( osg::MatrixTransform& osgNode )
 }
 void Osg2Jag::apply( osg::Geode& osgNode )
 {
-    JAG3D_TRACE_STATIC( "jag.plugin.model.jagload", "apply( Geode& )" );
+    JAG3D_TRACE_STATIC( loggerName, "apply( Geode& )" );
 
     if( !preTraverse( &osgNode ) )
         return;
@@ -101,7 +103,7 @@ bool Osg2Jag::preTraverse( osg::Object* osgObject, const gmtl::Matrix44d& m )
         OSGObjectMap::iterator it( _objInstances.find( osgObject ) );
         if( it != _objInstances.end() )
         {
-            JAG3D_TRACE_STATIC( "jag.plugin.model.jagload", "\tShared instance." );
+            JAG3D_TRACE_STATIC( loggerName, "\tShared instance." );
             _current->addChild( it->second );
             return( false );
         }
@@ -131,11 +133,11 @@ void Osg2Jag::postTraverse()
 
 void Osg2Jag::apply( osg::Geometry* geom )
 {
-    JAG3D_TRACE_STATIC( "jag.plugin.model.jagload", "Geometry" );
+    JAG3D_TRACE_STATIC( loggerName, "Geometry" );
 
     if( geom->getVertexArray() == NULL )
     {
-        JAG3D_WARNING_STATIC( "jag.plugin.model.jagload", "Geometry has no vertex array. Skipping." );
+        JAG3D_WARNING_STATIC( loggerName, "Geometry has no vertex array. Skipping." );
         return;
     }
 
@@ -162,7 +164,7 @@ void Osg2Jag::apply( osg::Geometry* geom )
     {
         if( geom->getNormalBinding() != osg::Geometry::BIND_PER_VERTEX )
         {
-            JAG3D_NOTICE_STATIC( "jag.plugin.model.jagload", "Only BIND_PER_VERTEX is currently supported." );
+            JAG3D_NOTICE_STATIC( loggerName, "Only BIND_PER_VERTEX is currently supported." );
         }
 
         ArrayInfo info( asJagArray( geom->getNormalArray() ) );
@@ -185,7 +187,7 @@ void Osg2Jag::apply( osg::Geometry* geom )
         {
         case osg::PrimitiveSet::DrawArraysPrimitiveType:
         {
-            JAG3D_TRACE_STATIC( "jag.plugin.model.jagload", "DrawArrays" );
+            JAG3D_TRACE_STATIC( loggerName, "DrawArrays" );
 
             const osg::DrawArrays* da( static_cast< const osg::DrawArrays* >( ps ) );
             jagDraw::DrawArraysPtr drawcom( new jagDraw::DrawArrays(
@@ -195,7 +197,7 @@ void Osg2Jag::apply( osg::Geometry* geom )
         }
         case osg::PrimitiveSet::DrawArrayLengthsPrimitiveType:
         {
-            JAG3D_TRACE_STATIC( "jag.plugin.model.jagload", "DrawArrayLengths" );
+            JAG3D_TRACE_STATIC( loggerName, "DrawArrayLengths" );
 
             const osg::DrawArrayLengths* dal( static_cast< const osg::DrawArrayLengths* >( ps ) );
             const unsigned int size( dal->size() );
@@ -222,7 +224,7 @@ void Osg2Jag::apply( osg::Geometry* geom )
         }
         case osg::PrimitiveSet::DrawElementsUBytePrimitiveType:
         {
-            JAG3D_TRACE_STATIC( "jag.plugin.model.jagload", "DrawElementsUByte" );
+            JAG3D_TRACE_STATIC( loggerName, "DrawElementsUByte" );
 
             const osg::DrawElementsUByte* deub( static_cast< const osg::DrawElementsUByte* >( ps ) );
             ArrayInfo info( asJagArray( deub ) );
@@ -235,7 +237,7 @@ void Osg2Jag::apply( osg::Geometry* geom )
         }
         case osg::PrimitiveSet::DrawElementsUShortPrimitiveType:
         {
-            JAG3D_TRACE_STATIC( "jag.plugin.model.jagload", "DrawElementsUShort" );
+            JAG3D_TRACE_STATIC( loggerName, "DrawElementsUShort" );
 
             const osg::DrawElementsUShort* deus( static_cast< const osg::DrawElementsUShort* >( ps ) );
             ArrayInfo info( asJagArray( deus ) );
@@ -248,7 +250,7 @@ void Osg2Jag::apply( osg::Geometry* geom )
         }
         case osg::PrimitiveSet::DrawElementsUIntPrimitiveType:
         {
-            JAG3D_TRACE_STATIC( "jag.plugin.model.jagload", "DrawElementsUInt" );
+            JAG3D_TRACE_STATIC( loggerName, "DrawElementsUInt" );
 
             const osg::DrawElementsUInt* deui( static_cast< const osg::DrawElementsUInt* >( ps ) );
             ArrayInfo info( asJagArray( deui ) );
@@ -261,7 +263,7 @@ void Osg2Jag::apply( osg::Geometry* geom )
         }
         default:
         {
-            JAG3D_ERROR_STATIC( "jag.plugin.model.jagload", "Osg2Jag::apply(Geometry&): Unsupported osg::PrimitiveSet::Type." );
+            JAG3D_ERROR_STATIC( loggerName, "Osg2Jag::apply(Geometry&): Unsupported osg::PrimitiveSet::Type." );
             break;
         }
         }
@@ -314,14 +316,14 @@ Osg2Jag::ArrayInfo Osg2Jag::asJagArray( const osg::Array* arrayIn )
     }
     default:
     {
-        JAG3D_ERROR_STATIC( "jag.plugin.model.jagload", "Osg2Jag::asJagArray(): Unsupported osg::Array::Type." );
+        JAG3D_ERROR_STATIC( loggerName, "Osg2Jag::asJagArray(): Unsupported osg::Array::Type." );
         break;
     }
     }
 
     std::ostringstream ostr;
     ostr << "Processed array of size " << info._numElements;
-    JAG3D_INFO_STATIC( "jag.plugin.model.jagload", std::string(ostr.str()) );
+    JAG3D_INFO_STATIC( loggerName, std::string(ostr.str()) );
 
     return( info );
 }
