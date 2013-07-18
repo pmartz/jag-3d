@@ -1,0 +1,6 @@
+bld
+bld-vs10-32
+build
+src/jagBase/Version.h
+syntax: glob
+src/jagBase/Config.h
