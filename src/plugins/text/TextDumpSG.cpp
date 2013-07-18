@@ -40,16 +40,29 @@ void TextDumpSG::visit( jagSG::Node& node )
     for( int idx = 0; idx < _indent; ++idx )
         indentStr += "  ";
 
-    _oStr << indentStr << "----------------" << std::endl;
-    _oStr << indentStr << "Node \"" << node.getUserDataName() << "\"" << std::endl;
-    if( node.getNumDrawables() > 0 )
-        _oStr << indentStr << "- Num drawables: " << node.getNumDrawables() << std::endl;
-    if( node.getNumChildren() > 0 )
-        _oStr << indentStr << "- Num children: " << node.getNumChildren() << std::endl;
-    if( node.getTransform().mState != gmtl::Matrix44d::IDENTITY )
-        _oStr << indentStr << "- Transformed" << std::endl;
-    if( node.getCommandMap() != NULL )
-        _oStr << indentStr << "- Commands" << std::endl;
+    const bool verbose( _logger.getLevel() < Poco::Message::Priority::PRIO_NOTICE );
+
+    if( verbose )
+    {
+        _oStr << indentStr << "----------------" << std::endl;
+        _oStr << indentStr << "Node \"" << node.getUserDataName() << "\"" << std::endl;
+        if( node.getNumDrawables() > 0 )
+            _oStr << indentStr << "- Num drawables: " << node.getNumDrawables() << std::endl;
+        if( node.getNumChildren() > 0 )
+            _oStr << indentStr << "- Num children: " << node.getNumChildren() << std::endl;
+        if( node.getTransform().mState != gmtl::Matrix44d::IDENTITY )
+            _oStr << indentStr << "- Transformed" << std::endl;
+        if( node.getCommandMap() != NULL )
+            _oStr << indentStr << "- Commands" << std::endl;
+    }
+    else {
+        _oStr << indentStr << "Node \"" << node.getUserDataName() << "\", " <<
+            node.getNumDrawables() << " drawables, " <<
+            node.getNumChildren() << " children." <<
+            ( ( node.getTransform().mState != gmtl::Matrix44d::IDENTITY ) ? " T" : "" ) <<
+            ( ( node.getCommandMap() != NULL ) ? " CM" : "" ) <<
+            std::endl;
+    }
 
     ++_indent;
     Visitor::visit( node );
