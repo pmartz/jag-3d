@@ -149,7 +149,6 @@ jagDraw::BoundPtr Node::getBound( const jagDraw::CommandMap& commands )
         // Compute the average center of the drawable bounds and
         // all child node bounds.
         gmtl::Point3d averageCenter( bound->getEmpty() ? gmtl::Point3d( 0., 0., 0. ) : bound->getCenter() );
-        const bool correct( getUserDataName() == std::string( "USMC23_1001.ASM" ) );
         BOOST_FOREACH( NodePtr& node, _children )
         {
             averageCenter += node->getBound( newCommands )->getCenter();
