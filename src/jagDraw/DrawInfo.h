@@ -22,6 +22,7 @@
 #define __JAGDRAW_DRAW_INFO_H__ 1
 
 #include <jagDraw/Export.h>
+#include <jagDraw/PlatformOpenGL.h>
 #include <jagDraw/ContextSupport.h>
 #include <jagDraw/CommandMap.h>
 #include <jagDraw/PerContextData.h>
@@ -34,16 +35,27 @@ namespace jagDraw {
 
 
 /** \class DrawInfo DrawInfo.h <jagDraw/DrawInfo.h>
-\brief
-\details
+\brief Draw-traversal control information.
+\details Contains information used to execute and optimize the draw traversal.
 */
 struct JAGDRAW_EXPORT DrawInfo
 {
     DrawInfo();
 
+    /** Jag context identifier. */
     jagDrawContextID _id;
 
+    /** The current CommandMap. As each jagDraw::Node is executed during
+    the draw traversal, \c _current is updated to reflect the CommandMap in
+    effect. \c _current is used to access the current jagDraw::Program to
+    bind new Uniform and UniformBlock objects, amoung other things. */
     CommandMap _current;
+
+    /** \brief Buffer object ID most recently bound to GL_ELEMENT_ARRAY_BUFFER.
+    \details Facilitates element buffer sharing and eliminates redundant
+    element buffer binding by tracking the most recently bound element buffer
+    object. */
+    GLuint _elementBufferID;
 
 
     typedef std::map< Program::HashValue, ConstUniformPtr > UniformMap;

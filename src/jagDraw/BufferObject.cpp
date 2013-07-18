@@ -94,6 +94,17 @@ void BufferObject::setUsage( const GLenum usage )
 void BufferObject::execute( DrawInfo& drawInfo )
 {
     const GLuint id( getID( drawInfo._id ) );
+    if( _target == GL_ELEMENT_ARRAY_BUFFER )
+    {
+        if( drawInfo._elementBufferID == id )
+        {
+            // Do not rebind the same element buffer object.
+            return;
+        }
+        drawInfo._elementBufferID = id;
+        JAG3D_DEBUG( "Bound element buffer." );
+    }
+
     glBindBuffer( _target, id );
 }
 
