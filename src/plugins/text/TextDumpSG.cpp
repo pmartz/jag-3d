@@ -20,6 +20,7 @@
 
 #include "TextDumpSG.h"
 #include <jagBase/LogMacros.h>
+#include <Poco/Message.h>
 
 #include <fstream>
 
