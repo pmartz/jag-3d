@@ -233,7 +233,7 @@ bool JagModel::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj )
 
         // Set view and projection to define the collection frustum.
         viewMatrix = mxCore->getInverseMatrix();
-        collect.setViewProj( viewMatrix, mxCore->computeProjection( .1, 500. ) );
+        collect.setViewProj( viewMatrix, mxCore->computeProjection( .1, 5000. ) );
 
         {
             JAG3D_PROFILE( "Collection traverse" );
