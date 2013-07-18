@@ -149,11 +149,14 @@ jagDraw::BoundPtr Node::getBound( const jagDraw::CommandMap& commands )
         // Compute the average center of the drawable bounds and
         // all child node bounds.
         gmtl::Point3d averageCenter( bound->getEmpty() ? gmtl::Point3d( 0., 0., 0. ) : bound->getCenter() );
+        const bool correct( getUserDataName() == std::string( "USMC23_1001.ASM" ) );
         BOOST_FOREACH( NodePtr& node, _children )
         {
             averageCenter += node->getBound( newCommands )->getCenter();
         }
-        averageCenter /= ( getNumChildren() + ( bound->getEmpty() ? 0 : 1 ) );
+        const unsigned int boundCount( getNumChildren() + ( bound->getEmpty() ? 0 : 1 ) );
+        if( boundCount > 0 )
+            averageCenter /= boundCount;
 
         // Create a new bound.
         jagDraw::BoundPtr fullBound;
@@ -162,18 +165,21 @@ jagDraw::BoundPtr Node::getBound( const jagDraw::CommandMap& commands )
         else
             fullBound = _initialBound->clone();
 
-        // Center a bound on the average center, then expand it by
-        // all child nodes and all attached Drawables.
-        fullBound->setCenter( averageCenter );
-        fullBound->setEmpty( false );
-        BOOST_FOREACH( NodePtr& node, _children )
+        if( boundCount > 0 )
         {
-            fullBound->expand( *( node->getBound( newCommands ) ) );
-        }
-        fullBound->expand( *bound );
+            // Center a bound on the average center, then expand it by
+            // all child nodes and all attached Drawables.
+            fullBound->setCenter( averageCenter );
+            fullBound->setEmpty( false );
+            BOOST_FOREACH( NodePtr& node, _children )
+            {
+                fullBound->expand( *( node->getBound( newCommands ) ) );
+            }
+            fullBound->expand( *bound );
 
-        // Transform
-        fullBound->transform( _matrix );
+            // Transform
+            fullBound->transform( _matrix );
+        }
 
         // Store in BoundMap
         _bounds[ vaop.get() ]._bound = fullBound;
