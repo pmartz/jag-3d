@@ -81,7 +81,10 @@ bool BufferObject::isSameKind( const VertexArrayCommand& rhs ) const
 }
 
 void BufferObject::setBuffer( jagBase::BufferPtr b ) 
-{ 
+{
+    // Hack: TBD. Need to do OpenGL resource management.
+    _ids._data.clear();
+
     _buffer = b;
 }
 
