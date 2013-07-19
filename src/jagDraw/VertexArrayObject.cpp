@@ -23,6 +23,7 @@
 #include <jagDraw/BufferObject.h>
 #include <jagDraw/DrawInfo.h>
 #include <jagDraw/Error.h>
+#include <jagBase/LogMacros.h>
 
 #include <boost/foreach.hpp>
 
@@ -143,6 +144,18 @@ VertexArrayCommandVec& VertexArrayObject::getVertexArrayCommandList()
 const VertexArrayCommandVec& VertexArrayObject::getVertexArrayCommandList() const
 {
     return( _commands );
+}
+
+
+bool VertexArrayObject::isSameKind( const VertexArrayObject& rhs )
+{
+    return( false );
+}
+
+VertexArrayObject& VertexArrayObject::combine( const VertexArrayObject& rhs )
+{
+    JAG3D_WARNING_STATIC( "jag.draw.vao", "combine() not yet implemented." );
+    return( *this );
 }
 
 

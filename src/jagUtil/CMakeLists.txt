@@ -26,11 +26,13 @@ endif()
 
 
 set( _jagUtilHeaderFiles
+    BufferAggregationVisitor.h
     Export.h
     Shapes.h
 )
 
 set( _jagUtilSourceFiles
+    BufferAggregationVisitor.cpp
     Shapes.cpp
 )
 
