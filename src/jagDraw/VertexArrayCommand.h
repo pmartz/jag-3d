@@ -51,14 +51,25 @@ public:
 
     VertexArrayCommand( const Type type )
       : _type( type )
-    {}
+    {
+    }
     VertexArrayCommand( const VertexArrayCommand& rhs )
       : _type( rhs._type )
-    {}
+    {
+    }
     ~VertexArrayCommand()
-    {}
+    {
+    }
 
-    Type getType() const { return( _type ); }
+    Type getType() const
+    {
+        return( _type );
+    }
+
+    virtual bool isSameKind( const VertexArrayCommand& rhs ) const
+    {
+        return( _type == rhs._type );
+    }
 
     virtual void execute( DrawInfo& drawInfo ) = 0;
 

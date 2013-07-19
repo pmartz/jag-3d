@@ -24,6 +24,7 @@
 #include <jagUtil/Export.h>
 #include <jagSG/Visitor.h>
 #include <jagSG/Node.h>
+#include <jagDraw/VertexArrayObject.h>
 
 
 namespace jagUtil
@@ -34,7 +35,7 @@ namespace jagUtil
 \brief Combines vertex array and element array buffers.
 \details
 */
-class BufferAggregationVisitor : public jagSG::VisitorBase
+class JAGUTIL_EXPORT BufferAggregationVisitor : public jagSG::VisitorBase
 {
 public:
     BufferAggregationVisitor( jagSG::NodePtr node, const std::string& logName=std::string( "" ) );
@@ -45,6 +46,8 @@ public:
 
 protected:
     void handleDrawable( jagDraw::DrawablePtr draw );
+
+    jagDraw::VertexArrayObjectPtr _vaop;
 };
 
 

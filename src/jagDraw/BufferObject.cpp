@@ -72,6 +72,14 @@ GLuint BufferObject::getID( const unsigned int contextID )
     return( id );
 }
 
+bool BufferObject::isSameKind( const VertexArrayCommand& rhs ) const
+{
+    const BufferObject* bo( static_cast< const BufferObject* >( &rhs ) );
+    return( VertexArrayCommand::isSameKind( rhs ) &&
+        ( _target == bo->_target ) &&
+        ( _usage == bo->_usage ) );
+}
+
 void BufferObject::setBuffer( jagBase::BufferPtr b ) 
 { 
     _buffer = b;

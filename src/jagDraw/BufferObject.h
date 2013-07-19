@@ -67,6 +67,8 @@ public:
 
     virtual GLuint getID( const jagDraw::jagDrawContextID contextID );
 
+    virtual bool isSameKind( const VertexArrayCommand& rhs ) const;
+
     void setBuffer( jagBase::BufferPtr b );
     jagBase::BufferPtr getBuffer() { return( _buffer ); }
     size_t getBufferSize();

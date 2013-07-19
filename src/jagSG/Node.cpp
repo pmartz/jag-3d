@@ -130,7 +130,7 @@ jagDraw::BoundPtr Node::getBound( const jagDraw::CommandMap& commands )
     const jagDraw::CommandMap newCommands( ( _commands != NULL ) ? commands + *_commands : commands );
 
     const jagDraw::DrawablePrepPtr& drawablePrep( newCommands[ jagDraw::DrawablePrep::VertexArrayObject_t ] );
-    const jagDraw::VertexArrayObjectPtr vaop( boost::dynamic_pointer_cast< jagDraw::VertexArrayObject >( drawablePrep ) );
+    const jagDraw::VertexArrayObjectPtr vaop( boost::static_pointer_cast< jagDraw::VertexArrayObject >( drawablePrep ) );
 
 
     // If dirty==true, BoundOwner::getBound() will call computeBound().
