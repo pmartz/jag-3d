@@ -21,6 +21,7 @@
 #include <jagDraw/PlatformOpenGL.h>
 #include <jagDraw/VertexArrayObject.h>
 #include <jagDraw/BufferObject.h>
+#include <jagDraw/VertexAttrib.h>
 #include <jagDraw/DrawInfo.h>
 #include <jagDraw/Error.h>
 #include <jagBase/LogMacros.h>
@@ -120,7 +121,7 @@ void VertexArrayObject::addVertexArrayCommand( VertexArrayCommandPtr vacp, const
     unsigned int idx;
     for( idx=0; idx < _initialized._data.size(); idx++ )
     {
-        _initialized[ idx ] = false;
+        _initialized[ idx ] = GL_FALSE;
     }
 
     if( usage == Vertex )
@@ -178,8 +179,7 @@ bool VertexArrayObject::isSameKind( const VertexArrayObject& rhs ) const
         return( true );
     }
 
-    size_t idx;
-    for( idx = 0; idx < _commands.size(); ++idx )
+    for( size_t idx = 0; idx < _commands.size(); ++idx )
     {
         if( !( _commands[ idx ]->isSameKind( *( rhs._commands[ idx ] ) ) ) )
         {
@@ -204,7 +204,28 @@ VertexArrayObject& VertexArrayObject::combine( const VertexArrayObject& rhs )
         return( *this );
     }
 
-    JAG3D_WARNING_STATIC( "jag.draw.vao", "combine() not yet implemented." );
+    for( size_t idx = 0; idx < _commands.size(); ++idx )
+    {
+        if( _commands[ idx ]->getType() == VertexArrayCommand::BufferObject_t )
+        {
+            // Append the right-hand buffer to the left-hand buffer.
+            BufferObjectPtr& leftBuf( boost::static_pointer_cast< BufferObject >( _commands[ idx ] ) );
+            const BufferObjectPtr& rightBuf( boost::static_pointer_cast< BufferObject >( rhs._commands[ idx ] ) );
+            const size_t leftSize( leftBuf->getBuffer()->getSize() );
+            const size_t rightSize( rightBuf->getBuffer()->getSize() );
+            jagBase::BufferPtr newBuf( jagBase::BufferPtr( new jagBase::Buffer( leftSize + rightSize ) ) );
+            ::memcpy( newBuf->data(), leftBuf->getBuffer()->data(), leftSize );
+            ::memcpy( &( ((char*)(newBuf->data()))[ leftSize ] ), rightBuf->getBuffer()->data(), rightSize );
+            leftBuf->setBuffer( newBuf );
+        }
+        else if( _commands[ idx ]->getType() == VertexArrayCommand::VertexAttrib_t )
+        {
+            // Nothing to do?
+            //VertexAttribPtr& leftAttrib( boost::static_pointer_cast< VertexAttrib >( _commands[ idx ] ) );
+            //const VertexAttribPtr& rightAttrib( boost::static_pointer_cast< VertexAttrib >( rhs._commands[ idx ] ) );
+        }
+    }
+
     return( *this );
 }
 
