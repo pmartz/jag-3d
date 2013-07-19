@@ -32,6 +32,8 @@ namespace jagUtil
 BufferAggregationVisitor::BufferAggregationVisitor( jagSG::NodePtr node, const std::string& logName )
     : jagSG::VisitorBase( "bufagg", logName )
 {
+    _vaop = jagDraw::VertexArrayObjectPtr( new jagDraw::VertexArrayObject() );
+
     // Ensure bounds are clean.
     node->getBound();
 
@@ -69,6 +71,14 @@ void BufferAggregationVisitor::visit( jagSG::Node& node )
     }
 
     pushCommandMap( node.getCommandMap() );
+
+
+    jagDraw::CommandMap& commands( _commandStack.back() );
+    jagDraw::DrawablePrepPtr& drawablePrep( commands[ jagDraw::DrawablePrep::VertexArrayObject_t ] );
+    jagDraw::VertexArrayObjectPtr vaop( boost::static_pointer_cast< jagDraw::VertexArrayObject >( drawablePrep ) );
+    if( ( vaop != NULL ) && _vaop->isSameKind( *vaop ) )
+        _vaop->combine( *vaop );
+
 
     for( unsigned int idx=0; idx < node.getNumDrawables(); ++idx )
     {

@@ -64,6 +64,17 @@ public:
     virtual ~VertexAttrib()
     {}
 
+    virtual bool isSameKind( const VertexArrayCommand& rhs ) const
+    {
+        const VertexAttrib* va( static_cast< const VertexAttrib* >( &rhs ) );
+        return( VertexArrayCommand::isSameKind( rhs ) &&
+            ( _indexHash == va->_indexHash ) &&
+            ( _size == va->_size ) &&
+            ( _type == va->_type ) &&
+            ( _normalized == va->_normalized ) &&
+            ( _stride == va->_stride ) );
+    }
+
     virtual void execute( DrawInfo& drawInfo )
     {
         // Program::execute() must be called prior to VertexAttrib::execute().

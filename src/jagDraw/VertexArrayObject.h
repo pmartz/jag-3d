@@ -52,6 +52,11 @@ public:
     VertexArrayObject( const VertexArrayObject& rhs );
     virtual ~VertexArrayObject();
 
+
+    /** \brief TBD
+    \details TBD */
+    VertexArrayObject& operator=( const VertexArrayObject& rhs );
+
     /** \brief TBD
     \details TBD */
     virtual DrawablePrepPtr clone() { return( VertexArrayObjectPtr( new VertexArrayObject( *this ) ) ); }
@@ -113,7 +118,7 @@ public:
     \details Used by jagUtil::BufferAggregationVisitor. If two VAOs
     are identical in format, they can be aggregated, thus reducing
     draw traversal VAO bind calls. */
-    bool isSameKind( const VertexArrayObject& rhs );
+    bool isSameKind( const VertexArrayObject& rhs ) const;
 
     /** \brief Appends VAO \c rhs onto the end of this VAO instance.
     \details Used by jagUtil::BufferAggregationVisitor. */

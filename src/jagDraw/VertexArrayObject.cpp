@@ -34,8 +34,8 @@ namespace jagDraw {
 VertexArrayObject::VertexArrayObject()
   : DrawablePrep( VertexArrayObject_t ),
     ObjectID()
-{}
-
+{
+}
 VertexArrayObject::VertexArrayObject( const VertexArrayObject& rhs )
   : DrawablePrep( rhs ),
     ObjectID( rhs ),
@@ -44,11 +44,23 @@ VertexArrayObject::VertexArrayObject( const VertexArrayObject& rhs )
     _vertices( rhs._vertices )
 {
 }
-
-
 VertexArrayObject::~VertexArrayObject() 
 {
     // TBD Handle object deletion
+}
+
+
+VertexArrayObject& VertexArrayObject::operator=( const VertexArrayObject& rhs )
+{
+    // TBD doesn't exist
+    //DrawablePrep::operator=( rhs );
+    // TBD doesn't exist, and probably not what we want anyway.
+    //ObjectID::operator=( rhs );
+    _initialized._data.clear();
+    _commands = rhs._commands;
+    _vertices = rhs._vertices;
+
+    return( *this );
 }
 
 
@@ -147,13 +159,51 @@ const VertexArrayCommandVec& VertexArrayObject::getVertexArrayCommandList() cons
 }
 
 
-bool VertexArrayObject::isSameKind( const VertexArrayObject& rhs )
+bool VertexArrayObject::isSameKind( const VertexArrayObject& rhs ) const
 {
-    return( false );
+    if( _commands.empty() )
+    {
+        JAG3D_TRACE_STATIC( "jag.draw.vao", "isSameKind true (lhs is empty)." );
+        return( true );
+    }
+    if( rhs._commands.empty() )
+    {
+        JAG3D_TRACE_STATIC( "jag.draw.vao", "isSameKind true (rhs is empty)." );
+        return( true );
+    }
+
+    if( _commands.size() != rhs._commands.size() )
+    {
+        JAG3D_TRACE_STATIC( "jag.draw.vao", "isSameKind false (command sizes not equal)." );
+        return( true );
+    }
+
+    size_t idx;
+    for( idx = 0; idx < _commands.size(); ++idx )
+    {
+        if( !( _commands[ idx ]->isSameKind( *( rhs._commands[ idx ] ) ) ) )
+        {
+            JAG3D_TRACE_STATIC( "jag.draw.vao", "isSameKind false (VAC mismatch)." );
+            return( false );
+        }
+    }
+
+    JAG3D_TRACE_STATIC( "jag.draw.vao", "isSameKind true." );
+    return( true );
 }
 
 VertexArrayObject& VertexArrayObject::combine( const VertexArrayObject& rhs )
 {
+    if( _commands.empty() )
+    {
+        *this = rhs;
+        return( *this );
+    }
+    if( rhs._commands.empty() )
+    {
+        return( *this );
+    }
+
     JAG3D_WARNING_STATIC( "jag.draw.vao", "combine() not yet implemented." );
     return( *this );
 }
