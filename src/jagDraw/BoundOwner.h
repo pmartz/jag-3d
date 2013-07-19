@@ -271,6 +271,16 @@ public:
         return( false );
     }
 
+    /** \brief Return the total number of bounding volumes.
+    \details In the typical case, this function returns 1. But because
+    jagDraw::VertexArrayObject is part of the CommandMap and can be associated
+    with any jagSG::Node, a BoundOwner could have more than 1 bound. */
+    unsigned int getNumBounds() const
+    {
+        boost::mutex::scoped_lock lock( _mutex );
+        return( ( unsigned int )( _bounds.size() ) );
+    }
+
 
     /** \brief Computes a bounding volume.
     \details

@@ -101,6 +101,26 @@ public:
     \details TBD */
     const VertexArrayCommandVec& getVertexArrayCommandList() const;
 
+
+    /** \name VertexArrayObject Aggregation
+    \details Aggregating multiple VertexArrayObjects together can
+    increase performance by reducing bind calls. See
+    jagUtil::BufferAggregationVisitor.
+    */
+    /*@{*/
+
+    /** \brief Determines if two VAOs are identical in format.
+    \details Used by jagUtil::BufferAggregationVisitor. If two VAOs
+    are identical in format, they can be aggregated, thus reducing
+    draw traversal VAO bind calls. */
+    bool isSameKind( const VertexArrayObject& rhs );
+
+    /** \brief Appends VAO \c rhs onto the end of this VAO instance.
+    \details Used by jagUtil::BufferAggregationVisitor. */
+    VertexArrayObject& combine( const VertexArrayObject& rhs );
+
+    /*@}*/
+
 protected:
     void internalInit( const unsigned int contextID );
 
