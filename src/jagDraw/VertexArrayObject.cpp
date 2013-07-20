@@ -202,20 +202,26 @@ size_t VertexArrayObject::combine( const VertexArrayObject& rhs )
 
     // First, check for consistent buffer sizes and establish the
     // return value.
-    size_t size( 0 );
+    size_t elementCount( 0 );
+    size_t lastBufferSizeBytes( 0 );
     for( size_t idx = 0; idx < _commands.size(); ++idx )
     {
         if( _commands[ idx ]->getType() == VertexArrayCommand::BufferObject_t )
         {
             BufferObjectPtr& buf( boost::static_pointer_cast< BufferObject >( _commands[ idx ] ) );
-            size_t bufferSize( buf->getBuffer()->getSize() );
-            if( size == 0 )
+            lastBufferSizeBytes = buf->getBuffer()->getSize();
+        }
+        else if( _commands[ idx ]->getType() == VertexArrayCommand::VertexAttrib_t )
+        {
+            VertexAttribPtr va( boost::static_pointer_cast< VertexAttrib >( _commands[ idx ] ) );
+            size_t elements = lastBufferSizeBytes / va->getActualStride();
+            if( elementCount == 0 )
             {
-                size = bufferSize;
+                elementCount = elements;
             }
-            else if( size != bufferSize )
+            else if( elementCount != elements )
             {
-                JAG3D_ERROR_STATIC( "jag.draw.vao", "VAO contains multiple buffers of unequal sizes." );
+                JAG3D_ERROR_STATIC( "jag.draw.vao", "combine(): inconsistent element count." );
                 return( 0 );
             }
         }
@@ -224,7 +230,7 @@ size_t VertexArrayObject::combine( const VertexArrayObject& rhs )
     // If there is nothing in the source VAO (rhs), nothing to do.
     if( rhs._commands.empty() )
     {
-        return( size );
+        return( elementCount );
     }
 
     for( size_t idx = 0; idx < _commands.size(); ++idx )
@@ -244,7 +250,7 @@ size_t VertexArrayObject::combine( const VertexArrayObject& rhs )
         }
     }
 
-    return( size );
+    return( elementCount );
 }
 
 
