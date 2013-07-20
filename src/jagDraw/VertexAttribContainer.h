@@ -169,7 +169,7 @@ public:
     iterator begin()
     {
         iterator result( *this,
-            (T*)( (unsigned char *)( _buffer->ptr() )
+            (T*)( (unsigned char *)( _buffer->getData() )
                 + _offset + _dcp->getIndex( 0 ) * _step ),
             0 );
         return( result );
@@ -178,7 +178,7 @@ public:
     iterator end()
     {
         iterator result( *this,
-            (T*)( (unsigned char *)( _buffer->ptr() )
+            (T*)( (unsigned char *)( _buffer->getData() )
                 + _offset + _dcp->getIndex( _dcp->getNumIndices() ) * _step ),
             _dcp->getNumIndices() );
         return( result );

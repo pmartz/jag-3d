@@ -86,7 +86,7 @@ void UniformBlock::execute( DrawInfo& drawInfo, const Program::BlockInfo& blockI
         JAG3D_TRACE( "execute(): " + _name + ", bindIndex: " + ostr.str() );
     }
 
-    if( _buffer->size() < blockInfo._minSize )
+    if( _buffer->getSize() < blockInfo._minSize )
         _buffer->setSize( blockInfo._minSize );
 
     // TBD load uniforms into buffer
@@ -103,7 +103,7 @@ void UniformBlock::execute( DrawInfo& drawInfo, const Program::BlockInfo& blockI
             { \
                 __type value; \
                 uniform->get( value ); \
-                std::memcpy( _buffer->offset( offsetValue ), &value, sizeof( __type ) ); \
+                std::memcpy( _buffer->getOffset( offsetValue ), &value, sizeof( __type ) ); \
                 break; \
             }
 

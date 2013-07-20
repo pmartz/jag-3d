@@ -24,6 +24,8 @@
 
 #include <boost/foreach.hpp>
 
+#include <sstream>
+
 
 namespace jagUtil
 {
@@ -47,10 +49,19 @@ BufferAggregationVisitor::BufferAggregationVisitor( jagSG::NodePtr node, const s
 BufferAggregationVisitor::BufferAggregationVisitor( const BufferAggregationVisitor& rhs )
     : jagSG::VisitorBase( rhs )
 {
+    reset();
 }
 BufferAggregationVisitor::~BufferAggregationVisitor()
 {
 }
+
+void BufferAggregationVisitor::reset()
+{
+    _vaop.reset( ( jagDraw::VertexArrayObject* )NULL );
+    _nodeSet.clear();
+    _offsetMap.clear();
+}
+
 
 
 void BufferAggregationVisitor::visit( jagSG::Node& node )
@@ -70,19 +81,42 @@ void BufferAggregationVisitor::visit( jagSG::Node& node )
         return;
     }
 
+    if( _nodeSet.find( &node ) != _nodeSet.end() )
+    {
+        JAG3D_INFO( "Found shared node \"" + node.getUserDataName() + "\"." );
+        return;
+    }
+    _nodeSet.insert( &node );
+
     pushCommandMap( node.getCommandMap() );
 
 
     jagDraw::CommandMap& commands( _commandStack.back() );
     jagDraw::DrawablePrepPtr& drawablePrep( commands[ jagDraw::DrawablePrep::VertexArrayObject_t ] );
     jagDraw::VertexArrayObjectPtr vaop( boost::static_pointer_cast< jagDraw::VertexArrayObject >( drawablePrep ) );
+
     if( ( vaop != NULL ) && _vaop->isSameKind( *vaop ) )
-        _vaop->combine( *vaop );
-
-
-    for( unsigned int idx=0; idx < node.getNumDrawables(); ++idx )
     {
-        handleDrawable( node.getDrawable( idx ) );
+        std::ostringstream ostr;
+        size_t offset;
+        if( _offsetMap.find( vaop.get() ) != _offsetMap.end() )
+        {
+            offset = _offsetMap[ vaop.get() ];
+            ostr << "Found mapped VAO, using offset " << offset;
+        }
+        else
+        {
+            offset = _vaop->combine( *vaop );
+            _offsetMap[ vaop.get() ] = offset;
+            ostr << "Did not find VAO, using offset " << offset;
+        }
+        JAG3D_INFO( ostr.str() );
+
+
+        for( unsigned int idx=0; idx < node.getNumDrawables(); ++idx )
+        {
+            handleDrawable( node.getDrawable( idx ) );
+        }
     }
 
     node.traverse( *this );

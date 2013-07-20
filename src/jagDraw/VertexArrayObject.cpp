@@ -192,16 +192,39 @@ bool VertexArrayObject::isSameKind( const VertexArrayObject& rhs ) const
     return( true );
 }
 
-VertexArrayObject& VertexArrayObject::combine( const VertexArrayObject& rhs )
+size_t VertexArrayObject::combine( const VertexArrayObject& rhs )
 {
     if( _commands.empty() )
     {
         *this = rhs;
-        return( *this );
+        return( 0 );
     }
+
+    // First, check for consistent buffer sizes and establish the
+    // return value.
+    size_t size( 0 );
+    for( size_t idx = 0; idx < _commands.size(); ++idx )
+    {
+        if( _commands[ idx ]->getType() == VertexArrayCommand::BufferObject_t )
+        {
+            BufferObjectPtr& buf( boost::static_pointer_cast< BufferObject >( _commands[ idx ] ) );
+            size_t bufferSize( buf->getBuffer()->getSize() );
+            if( size == 0 )
+            {
+                size = bufferSize;
+            }
+            else if( size != bufferSize )
+            {
+                JAG3D_ERROR_STATIC( "jag.draw.vao", "VAO contains multiple buffers of unequal sizes." );
+                return( 0 );
+            }
+        }
+    }
+
+    // If there is nothing in the source VAO (rhs), nothing to do.
     if( rhs._commands.empty() )
     {
-        return( *this );
+        return( size );
     }
 
     for( size_t idx = 0; idx < _commands.size(); ++idx )
@@ -211,12 +234,7 @@ VertexArrayObject& VertexArrayObject::combine( const VertexArrayObject& rhs )
             // Append the right-hand buffer to the left-hand buffer.
             BufferObjectPtr& leftBuf( boost::static_pointer_cast< BufferObject >( _commands[ idx ] ) );
             const BufferObjectPtr& rightBuf( boost::static_pointer_cast< BufferObject >( rhs._commands[ idx ] ) );
-            const size_t leftSize( leftBuf->getBuffer()->getSize() );
-            const size_t rightSize( rightBuf->getBuffer()->getSize() );
-            jagBase::BufferPtr newBuf( jagBase::BufferPtr( new jagBase::Buffer( leftSize + rightSize ) ) );
-            ::memcpy( newBuf->data(), leftBuf->getBuffer()->data(), leftSize );
-            ::memcpy( &( ((char*)(newBuf->data()))[ leftSize ] ), rightBuf->getBuffer()->data(), rightSize );
-            leftBuf->setBuffer( newBuf );
+            leftBuf->getBuffer()->append( *( rightBuf->getBuffer() ) );
         }
         else if( _commands[ idx ]->getType() == VertexArrayCommand::VertexAttrib_t )
         {
@@ -226,7 +244,7 @@ VertexArrayObject& VertexArrayObject::combine( const VertexArrayObject& rhs )
         }
     }
 
-    return( *this );
+    return( size );
 }
 
 
