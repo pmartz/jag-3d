@@ -105,7 +105,7 @@ public:
         glVertexAttribPointer( index, _size, _type, _normalized, _stride, (GLvoid *)(_offset ) );
     }
 
-    void getAll( GLint& size, GLenum& type, GLboolean& normalized, GLsizei& stride, GLuint& offset )
+    void getAll( GLint& size, GLenum& type, GLboolean& normalized, GLsizei& stride, GLuint& offset ) const
     {
         size = _size;
         type = _type;
@@ -113,10 +113,40 @@ public:
         stride = _stride;
         offset = (GLuint)( _offset );
     }
-    void getSizeType( GLint& size, GLenum& type )
+    void getSizeType( GLint& size, GLenum& type ) const
     {
         size = _size;
         type = _type;
+    }
+    GLsizeiptr getOffset() const
+    {
+        return( _offset );
+    }
+    GLsizei getActualStride() const
+    {
+        if( _stride != 0 )
+            return( _stride );
+
+        unsigned int bytesPerElement( 0 );
+        switch( _type )
+        {
+        case GL_BYTE: bytesPerElement = sizeof( GLbyte ); break;
+        case GL_UNSIGNED_BYTE: bytesPerElement = sizeof( GLubyte ); break;
+        case GL_SHORT: bytesPerElement = sizeof( GLshort ); break;
+        case GL_UNSIGNED_SHORT: bytesPerElement = sizeof( GLushort ); break;
+        case GL_INT: bytesPerElement = sizeof( GLint ); break;
+        case GL_INT_2_10_10_10_REV: // GLuint
+        case GL_UNSIGNED_INT_2_10_10_10_REV: // GLuint
+        case GL_UNSIGNED_INT: bytesPerElement = sizeof( GLuint ); break;
+        case GL_HALF_FLOAT: bytesPerElement = sizeof( GLhalf ); break;
+        case GL_FLOAT: bytesPerElement = sizeof( GLfloat ); break;
+        case GL_DOUBLE: bytesPerElement = sizeof( GLdouble ); break;
+        default:
+            // TBD;
+            bytesPerElement = 1;
+            break;
+        }
+        return( _size * bytesPerElement );
     }
 
 protected:
