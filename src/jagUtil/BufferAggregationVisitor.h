@@ -26,6 +26,9 @@
 #include <jagSG/Node.h>
 #include <jagDraw/VertexArrayObject.h>
 
+#include <set>
+#include <map>
+
 
 namespace jagUtil
 {
@@ -42,12 +45,20 @@ public:
     BufferAggregationVisitor( const BufferAggregationVisitor& rhs );
     ~BufferAggregationVisitor();
 
+    void reset();
+
     virtual void visit( jagSG::Node& node );
 
 protected:
     void handleDrawable( jagDraw::DrawablePtr draw );
 
     jagDraw::VertexArrayObjectPtr _vaop;
+
+    typedef std::set< jagSG::Node* > NodeSet;
+    NodeSet _nodeSet;
+
+    typedef std::map< jagDraw::VertexArrayObject*, size_t > OffsetMap;
+    OffsetMap _offsetMap;
 };
 
 

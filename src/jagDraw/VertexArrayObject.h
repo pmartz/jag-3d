@@ -121,8 +121,9 @@ public:
     bool isSameKind( const VertexArrayObject& rhs ) const;
 
     /** \brief Appends VAO \c rhs onto the end of this VAO instance.
-    \details Used by jagUtil::BufferAggregationVisitor. */
-    VertexArrayObject& combine( const VertexArrayObject& rhs );
+    \details Used by jagUtil::BufferAggregationVisitor.
+    \return The previous size of the contained buffer object(s). */
+    size_t combine( const VertexArrayObject& rhs );
 
     /*@}*/
 

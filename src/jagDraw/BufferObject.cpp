@@ -167,7 +167,7 @@ void BufferObject::internalInit( const unsigned int contextID )
     }
 
     glBindBuffer( _target, id );
-    glBufferData( _target, _buffer->getSize(), _buffer->data(), _usage );
+    glBufferData( _target, _buffer->getSize(), _buffer->getData(), _usage );
     glBindBuffer( _target, 0 );
 
     JAG3D_ERROR_CHECK( "BufferObject::internalInit() glBufferData()" );

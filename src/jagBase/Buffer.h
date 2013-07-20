@@ -40,65 +40,87 @@ class Buffer
 public:
     Buffer()
       : _size( 0 ),
-        _buffer()
+        _data()
     {
     }
-
     Buffer( size_t size )
       : _size( size ) ,
-        _buffer( size==0 ? NULL : new unsigned char[ size ] )
+        _data( size==0 ? NULL : new unsigned char[ size ] )
     {
     }
-
     Buffer( size_t size, const void *ptr )
       : _size( size ),
-        _buffer( size==0 ? NULL : new unsigned char[ size ] )
+        _data( size==0 ? NULL : new unsigned char[ size ] )
     {
         copy( ptr );
     }
-
     Buffer( const Buffer& b ):
         _size( b._size ),
-        _buffer( b._buffer )
+        _data( b._data )
     {
     }
-
     ~Buffer()
     {
     }
 
-    void setSize( size_t size )
+    void setSize( size_t size, bool copy=true )
     {
+        const size_t oldSize( _size );
+        UCharArray oldData( _data );
         _size = size;
-        _buffer.reset( new unsigned char[ _size ] );
+        _data.reset( new unsigned char[ _size ] );
+        if( copy )
+        {
+            memcpy( getData(), oldData.get(),
+                ( oldSize < _size ) ? oldSize : _size );
+        }
+    }
+    size_t getSize() const
+    {
+        return( _size );
     }
 
-    size_t size() { return( _size ); }
-    size_t getSize() { return( _size ); }
-
-    void* ptr() { return( _buffer.get() ); }
-    void* data() { return( _buffer.get() ); }
-    void* offset( size_t off ) { return( &( _buffer.get() )[ off ] ); }
+    const void* getData() const
+    {
+        return( _data.get() );
+    }
+    void* getData()
+    {
+        return( _data.get() );
+    }
+    void* getOffset( size_t off )
+    {
+        return( &( _data.get() )[ off ] );
+    }
+    const void* getOffset( size_t off ) const
+    {
+        return( &( _data.get() )[ off ] );
+    }
 
     void copy( const void* ptr )
     {
-        std::memcpy( _buffer.get(), ptr, _size );
+        std::memcpy( _data.get(), ptr, _size );
     }
-
-    void copy( void* ptr, size_t size )
+    void copy( const void* ptr, const size_t size )
     {
-        std::memcpy( _buffer.get(), ptr, _size );
+        std::memcpy( _data.get(), ptr, _size );
     }
-
-    void copy( void* ptr, size_t size, size_t off )
+    void copy( const void* ptr, const size_t size, const size_t off )
     {
-        std::memcpy( offset( off ), ptr, size );
+        std::memcpy( getOffset( off ), ptr, size );
     }
 
-private:
+    void append( const Buffer& rhs )
+    {
+        const size_t oldSize( getSize() );
+        const size_t newSize( oldSize + rhs.getSize() );
+        setSize( newSize );
+        copy( rhs.getData(), rhs.getSize(), oldSize );
+    }
+
+protected:
+    jagBase::UCharArray _data;
     size_t _size;
-
-    jagBase::UCharArray _buffer;
 };
 
 typedef jagBase::ptr< jagBase::Buffer >::shared_ptr BufferPtr;

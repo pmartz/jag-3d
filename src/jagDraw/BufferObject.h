@@ -51,8 +51,8 @@ public:
     \glparam{target,table 2.8}
     \param target defaults to \c GL_NONE only when GL_VERSION_4_0 is not defined
     and DrawIndirectBuffer is instantiated.
-    and .
-    */
+    
+    With this constructor, _usage defaults to GL_STATIC_DRAW. */
     BufferObject( const GLenum target=GL_NONE, const std::string& logName=std::string( "" ) );
     /**
     \glparam{target,table 2.8}
@@ -76,6 +76,8 @@ public:
     void setTarget( const GLenum target );
     GLenum getTarget() { return _target; }
 
+    /** \brief Set the \c usage parameter for the \c glBufferData() call.
+    \details Default value: GL_STATIC_DRAW. */
     void setUsage( const GLenum usage );
     GLenum getUsage() { return( _usage ); }
 
