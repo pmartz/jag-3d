@@ -45,6 +45,28 @@ BufferAggregationVisitor::BufferAggregationVisitor( jagSG::NodePtr node, const s
     // on the entire scene graph.
     JAG3D_NOTICE( "Need a ResetBoundsVisitor." );
     node->resetBounds();
+
+    if( _vaop->getVertexArrayCommandList().empty() )
+    {
+        JAG3D_INFO( "Result: VAO is empty." );
+        return;
+    }
+
+    jagDraw::CommandMapPtr commands( node->getCommandMap() );
+    if( commands == NULL )
+    {
+        commands.reset( new jagDraw::CommandMap() );
+        node->setCommandMap( commands );
+    }
+    commands->insert( _vaop );
+
+    JAG3D_DEBUG( "Final VAO/offset map:" );
+    BOOST_FOREACH( const OffsetMap::value_type& data, _offsetMap )
+    {
+        std::ostringstream ostr;
+        ostr << std::hex << data.first << std::dec << ", " << data.second;
+        JAG3D_DEBUG( "  " + ostr.str() );
+    }
 }
 BufferAggregationVisitor::BufferAggregationVisitor( const BufferAggregationVisitor& rhs )
     : jagSG::VisitorBase( rhs )
@@ -97,6 +119,14 @@ void BufferAggregationVisitor::visit( jagSG::Node& node )
 
     if( ( vaop != NULL ) && _vaop->isSameKind( *vaop ) )
     {
+        // We're going to aggregate the current VAO into the master.
+        // Step 1: If the current VAO in the command stack matches the Node's
+        // VAO, then remove the Node's VAO, because it will use the master
+        // from not on.
+
+        // Step 2: Combine the current VAO into the master VAO and
+        // obtain the offset into the master VAO of the start of the
+        // current VAO. We'll use this to modify the DrawCommand indices.
         std::ostringstream ostr;
         size_t offset;
         if( _offsetMap.find( vaop.get() ) != _offsetMap.end() )
@@ -112,7 +142,8 @@ void BufferAggregationVisitor::visit( jagSG::Node& node )
         }
         JAG3D_INFO( ostr.str() );
 
-
+        // Step 3: Modify the DrawCommand indices to access the new location
+        // of the current VAO -- where it got copied to in the master VAO.
         for( unsigned int idx=0; idx < node.getNumDrawables(); ++idx )
         {
             handleDrawable( node.getDrawable( idx ) );
