@@ -54,7 +54,8 @@ public:
       : _buffer( bop->getBuffer() ),
         _vap( vap ),
         _dcp( dcp ),
-        _step( computeStep() )
+        _step( _vap->getActualStride() ),
+        _offset( _vap->getOffset() )
     {
     }
     VertexAttribContainer( const VertexAttribContainer<T>& rhs )
@@ -186,42 +187,11 @@ public:
 
 
 protected:
-    size_t computeStep()
-    {
-        GLint size;
-        GLenum type;
-        GLboolean normalized;
-        GLsizei stride;
-        GLuint offset;
-        _vap->getAll( size, type, normalized, stride, offset );
-        _offset = (size_t) offset;
-
-        if( stride != 0 )
-        {
-            return( stride );
-        }
-
-        unsigned int bytesPerElement( 0 );
-        switch( type )
-        {
-        case GL_UNSIGNED_BYTE: bytesPerElement = sizeof( GLbyte ); break;
-        case GL_FLOAT: bytesPerElement = sizeof( GLfloat ); break;
-        case GL_DOUBLE: bytesPerElement = sizeof( GLdouble ); break;
-        default:
-            // TBD;
-            bytesPerElement = 1;
-            break;
-        }
-        return( size * bytesPerElement );
-    }
-
-
     const jagBase::BufferPtr _buffer;
     const VertexAttribPtr _vap;
     const DrawCommandPtr _dcp;
 
     size_t _step;
-
     size_t _offset;
 };
 
