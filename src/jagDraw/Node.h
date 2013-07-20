@@ -39,7 +39,7 @@ namespace jagDraw {
 \brief TBD
 \details jagDraw::Node associates a CommandMap with a collection of Drawables.
 The CommandMap must not be NULL. */
-	class JAGDRAW_EXPORT Node : protected jagBase::LogBase, public ObjectIDOwner, public jagBase::UserDataOwner
+class JAGDRAW_EXPORT Node : protected jagBase::LogBase, public ObjectIDOwner, public jagBase::UserDataOwner
 {
 public:
     Node( CommandMapPtr commands=CommandMapPtr( (CommandMap*)NULL ), const std::string& logName=std::string( "" ) );
