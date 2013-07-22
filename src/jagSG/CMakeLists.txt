@@ -30,6 +30,7 @@ set( _jagSGHeaderFiles
     CollectionVisitor.h
     ExecuteVisitor.h
     FrustumCullCallback.h
+    NodeMaskCullCallback.h
     Common.h
     Node.h
     SelectContainerCallback.h
@@ -43,6 +44,7 @@ set( _jagSGSourceFiles
     FrustumCullCallback.cpp
     SelectContainerCallback.cpp
     SmallFeatureCallback.cpp
+    NodeMaskCullCallback.cpp
     Node.cpp
 )
 
