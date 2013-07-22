@@ -113,7 +113,6 @@ void BufferObject::execute( DrawInfo& drawInfo )
             return;
         }
         drawInfo._elementBufferID = id;
-        JAG3D_DEBUG( "Bound element buffer." );
     }
 
     glBindBuffer( _target, id );
