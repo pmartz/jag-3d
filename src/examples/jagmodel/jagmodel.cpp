@@ -31,6 +31,8 @@
 #include <jagBase/Log.h>
 #include <jagBase/LogMacros.h>
 
+#include <jagUtil/BufferAggregationVisitor.h>
+
 #include <boost/program_options/options_description.hpp>
 #include <boost/program_options/variables_map.hpp>
 #include <gmtl/gmtl.h>
@@ -121,6 +123,8 @@ bool JagModel::startup( const unsigned int numContexts )
     jagSG::SmallFeatureDistributionVisitor sfdv;
     _root->accept( sfdv );
 
+    //jagUtil::BufferAggregationVisitor bav( _root );
+
 
     jagDraw::ShaderPtr vs( (jagDraw::Shader*) jagDisk::read( "jagmodel.vert" ) );
     jagDraw::ShaderPtr fs( (jagDraw::Shader*) jagDisk::read( "jagmodel.frag" ) );
@@ -182,7 +186,6 @@ bool JagModel::startup( const unsigned int numContexts )
 
     // Tell all Jag3D objects how many contexts to expect.
     _root->setMaxContexts( numContexts );
-
 
     return( true );
 }
