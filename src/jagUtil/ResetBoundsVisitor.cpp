@@ -1,0 +1,61 @@
+/*************** <auto-copyright.pl BEGIN do not edit this line> **************
+*
+* jag3d is (C) Copyright 2011-2012 by Kenneth Mark Bryden and Paul Martz
+*
+* This library is free software; you can redistribute it and/or
+* modify it under the terms of the GNU Lesser General Public
+* License version 2.1 as published by the Free Software Foundation.
+*
+* This library is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+* Library General Public License for more details.
+*
+* You should have received a copy of the GNU Lesser General Public
+* License along with this library; if not, write to the
+* Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+* Boston, MA 02111-1307, USA.
+*
+*************** <auto-copyright.pl END do not edit this line> ***************/
+
+#include <jagUtil/ResetBoundsVisitor.h>
+#include <jagDraw/Drawable.h>
+#include <jagSG/Node.h>
+
+#include <boost/foreach.hpp>
+
+
+
+namespace jagUtil
+{
+
+
+ResetBoundsVisitor::ResetBoundsVisitor( jagSG::NodePtr node, const std::string& logName )
+    : jagSG::VisitorBase( "resetbnds", logName )
+{
+    node->accept( *this );
+}
+ResetBoundsVisitor::ResetBoundsVisitor( const ResetBoundsVisitor& rhs )
+    : jagSG::VisitorBase( rhs )
+{
+}
+ResetBoundsVisitor::~ResetBoundsVisitor()
+{
+}
+
+
+void ResetBoundsVisitor::visit( jagSG::Node& node )
+{
+    node.resetBounds();
+
+    for( unsigned int idx = 0; idx < node.getNumDrawables(); ++idx )
+    {
+        node.getDrawable( idx )->resetBounds();
+    }
+
+    node.traverse( *this );
+}
+
+
+// jagUtil
+}
