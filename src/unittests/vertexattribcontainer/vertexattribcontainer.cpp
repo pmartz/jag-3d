@@ -116,7 +116,7 @@ bool test()
                 gmtl::Point3f( 5., -5., 0. )
             };
             VertexAttribContainer< gmtl::Point3f > vac( bop, verts, dcp );
-            VertexAttribContainer< gmtl::Point3f >::iterator pointIter( vac );
+            VertexAttribContainer< gmtl::Point3f >::iterator pointIter;
             unsigned int count( 0 );
             for( pointIter = vac.begin(); pointIter != vac.end(); ++pointIter )
             {
