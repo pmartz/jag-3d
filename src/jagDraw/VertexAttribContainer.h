@@ -105,6 +105,7 @@ public:
             const ptrdiff_t byteDistance( _vaCont.deltaByteCount( _counter, _counter+1 ) );
             ++_counter;
             _pos = (T*)( (unsigned char*)( _pos ) + byteDistance );
+            _vaCont.valid( _pos ); // For debugging.
             return( *_pos );
         }
         T operator++( int ) // postfix inc
@@ -165,6 +166,19 @@ public:
         const int indexFrom( _dcp->getIndex( from ) );
         const int indexTo( _dcp->getIndex( to ) );
         return( (ptrdiff_t)( ( indexTo - indexFrom ) * _step ) );
+    }
+    bool valid( T* address )
+    {
+        const unsigned char* minAddr( (unsigned char*)(_buffer->getData()) );
+        const unsigned char* maxAddr( (unsigned char*)(_buffer->getData()) + _buffer->getSize() - 1 );
+        const unsigned char* testAddr( reinterpret_cast< unsigned char* >( address ) );
+        const bool result( ( minAddr <= testAddr ) &&
+            ( testAddr <= maxAddr ) );
+        if( !result )
+        {
+            JAG3D_ERROR_STATIC( "jag.draw.vac", "Failed address valid test." );
+        }
+        return( result );
     }
 
     iterator begin()
