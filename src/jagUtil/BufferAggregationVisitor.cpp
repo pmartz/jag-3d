@@ -19,6 +19,7 @@
 *************** <auto-copyright.pl END do not edit this line> ***************/
 
 #include <jagUtil/BufferAggregationVisitor.h>
+#include <jagUtil/ResetBoundsVisitor.h>
 #include <jagDraw/Drawable.h>
 #include <jagDraw/DrawCommand.h>
 #include <jagSG/Node.h>
@@ -42,10 +43,10 @@ BufferAggregationVisitor::BufferAggregationVisitor( jagSG::NodePtr node, const s
 
     node->accept( *this );
 
-    // This only resets the root node bounds. We need to reset bounds
-    // on the entire scene graph.
-    JAG3D_NOTICE( "Need a ResetBoundsVisitor." );
-    //node->resetBounds();
+    {
+        // Reset (clear) the map of VAOs to bounds in every Node and Drawable.
+        jagUtil::ResetBoundsVisitor rbv( node );
+    }
 
     if( _vaop->getVertexArrayCommandList().empty() )
     {
@@ -131,7 +132,7 @@ void BufferAggregationVisitor::visit( jagSG::Node& node )
         // Step 1: If the current VAO in the command stack matches the Node's
         // VAO, then remove the Node's VAO, because it will use the master
         // from now on.
-        if( false )//localCommands != NULL )
+        if( localCommands != NULL )
         {
             jagDraw::DrawablePrepPtr& dp( (*localCommands)[ jagDraw::DrawablePrep::VertexArrayObject_t ] );
             jagDraw::VertexArrayObjectPtr localVAO( boost::static_pointer_cast< jagDraw::VertexArrayObject >( dp ) );
@@ -157,7 +158,7 @@ void BufferAggregationVisitor::visit( jagSG::Node& node )
         }
         JAG3D_INFO( ostr.str() );
 
-        if( false )//offset > 0 )
+        if( offset > 0 )
         {
             // Step 3: Modify the DrawCommand indices to access the new location
             // of the current VAO -- where it got copied to in the master VAO.

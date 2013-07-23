@@ -26,13 +26,15 @@ endif()
 
 
 set( _jagUtilHeaderFiles
-    BufferAggregationVisitor.h
     Export.h
+    BufferAggregationVisitor.h
+    ResetBoundsVisitor.h
     Shapes.h
 )
 
 set( _jagUtilSourceFiles
     BufferAggregationVisitor.cpp
+    ResetBoundsVisitor.cpp
     Shapes.cpp
 )
 
