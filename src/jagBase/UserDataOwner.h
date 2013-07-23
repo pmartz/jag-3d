@@ -99,6 +99,19 @@ public:
         return( value.convert< std::string >() );
     }
 
+	void setNodeMask(const bool nodeMask) {
+		_userData[ "__jag3d_NodeMask"  ] = nodeMask;  
+	}
+
+	bool getNodeMask() const
+    {
+        UserDataMap::const_iterator it( _userData.find( "__jag3d_NodeMask" ) );
+        if( it == _userData.end() )
+            return( true);
+
+        const Poco::Dynamic::Var& value( it->second );
+        return( value.convert< bool >() );
+    }
 
 protected:
 	UserDataMap _userData;
