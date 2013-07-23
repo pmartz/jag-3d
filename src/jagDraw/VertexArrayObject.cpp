@@ -208,7 +208,7 @@ size_t VertexArrayObject::combine( const VertexArrayObject& rhs )
     {
         if( _commands[ idx ]->getType() == VertexArrayCommand::BufferObject_t )
         {
-            BufferObjectPtr& buf( boost::static_pointer_cast< BufferObject >( _commands[ idx ] ) );
+            BufferObjectPtr buf( boost::static_pointer_cast< BufferObject >( _commands[ idx ] ) );
             lastBufferSizeBytes = buf->getBuffer()->getSize();
         }
         else if( _commands[ idx ]->getType() == VertexArrayCommand::VertexAttrib_t )
@@ -238,7 +238,7 @@ size_t VertexArrayObject::combine( const VertexArrayObject& rhs )
         if( _commands[ idx ]->getType() == VertexArrayCommand::BufferObject_t )
         {
             // Append the right-hand buffer to the left-hand buffer.
-            BufferObjectPtr& leftBuf( boost::static_pointer_cast< BufferObject >( _commands[ idx ] ) );
+            BufferObjectPtr leftBuf( boost::static_pointer_cast< BufferObject >( _commands[ idx ] ) );
             const BufferObjectPtr& rightBuf( boost::static_pointer_cast< BufferObject >( rhs._commands[ idx ] ) );
             leftBuf->getBuffer()->append( *( rightBuf->getBuffer() ) );
         }

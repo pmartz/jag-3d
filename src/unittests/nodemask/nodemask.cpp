@@ -170,7 +170,7 @@ bool test()
             //root->addChild( createQuad( gmtl::Point3f( 0., 0., 0. ), 10.f ) );
 
             // All but the fifth child have the nodemask set to true explicitly
-			for(auto i = 0; i < 10; i++) {
+			for(unsigned int i = 0; i < 10; i++) {
 				NodePtr child = createQuad( gmtl::Point3f( 0., 0., 0. ), 10.f );
 				if(i==4)
 					child->setNodeMask(false);

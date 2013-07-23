@@ -135,7 +135,9 @@ public:
         case GL_SHORT: bytesPerElement = sizeof( GLshort ); break;
         case GL_UNSIGNED_SHORT: bytesPerElement = sizeof( GLushort ); break;
         case GL_INT: bytesPerElement = sizeof( GLint ); break;
+#ifdef GL_VERSION_3_3
         case GL_INT_2_10_10_10_REV: // GLuint
+#endif
         case GL_UNSIGNED_INT_2_10_10_10_REV: // GLuint
         case GL_UNSIGNED_INT: bytesPerElement = sizeof( GLuint ); break;
         case GL_HALF_FLOAT: bytesPerElement = sizeof( GLhalf ); break;
