@@ -123,7 +123,7 @@ bool JagModel::startup( const unsigned int numContexts )
     jagSG::SmallFeatureDistributionVisitor sfdv;
     _root->accept( sfdv );
 
-    //jagUtil::BufferAggregationVisitor bav( _root );
+    jagUtil::BufferAggregationVisitor bav( _root );
 
 
     jagDraw::ShaderPtr vs( (jagDraw::Shader*) jagDisk::read( "jagmodel.vert" ) );
