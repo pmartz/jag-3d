@@ -102,15 +102,35 @@ bool test()
 
         BOOST_FOREACH( const DrawCommandPtr dcp, quad->getDrawCommandVec() )
         {
+            if( dcp->getCount() != 6 )
+            {
+                std::cout << "DrawCommand with count " << dcp->getCount() << " expected 6." << std::endl;
+                return( false );
+            }
+            gmtl::Point3f expectedVerts[] = {
+                gmtl::Point3f( -5., 5., 0. ),
+                gmtl::Point3f( -5., -5., 0. ),
+                gmtl::Point3f( 5., 5., 0. ),
+                gmtl::Point3f( 5., 5., 0. ),
+                gmtl::Point3f( -5., -5., 0. ),
+                gmtl::Point3f( 5., -5., 0. )
+            };
             VertexAttribContainer< gmtl::Point3f > vac( bop, verts, dcp );
             VertexAttribContainer< gmtl::Point3f >::iterator pointIter( vac );
             unsigned int count( 0 );
             for( pointIter = vac.begin(); pointIter != vac.end(); ++pointIter )
-                ++count;
-            if( count != 6 )
             {
-                std::cout << "Expected 6 vertices, got " << count << std::endl;
-                return( false );
+                if( count >= dcp->getCount() )
+                {
+                    std::cout << "Exceeded array length." << std::endl;
+                    return( false );
+                }
+                if( *pointIter != expectedVerts[ count ] )
+                {
+                    std::cout << "Vertex " << count << ", " << *pointIter << " mismatch." << std::endl;
+                    return( false );
+                }
+                ++count;
             }
         }
     }
