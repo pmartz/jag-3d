@@ -111,14 +111,14 @@ void Drawable::computeBound( BoundPtr bound, const VertexArrayObject* vao, Bound
         if( vertType == IntEnum( 3, GL_FLOAT ) )
         {
             VertexAttribContainer< gmtl::Point3f > vac( bop, verts, dcp );
-            VertexAttribContainer< gmtl::Point3f >::iterator pointIter( vac );
+            VertexAttribContainer< gmtl::Point3f >::iterator pointIter;
             for( pointIter = vac.begin(); pointIter != vac.end(); ++pointIter )
                 bound->expand( *pointIter );
         }
         else if( vertType == IntEnum( 3, GL_DOUBLE ) )
         {
             VertexAttribContainer< gmtl::Point3d > vac( bop, verts, dcp );
-            VertexAttribContainer< gmtl::Point3d >::iterator pointIter( vac );
+            VertexAttribContainer< gmtl::Point3d >::iterator pointIter;
             for( pointIter = vac.begin(); pointIter != vac.end(); ++pointIter )
                 bound->expand( *pointIter );
         }

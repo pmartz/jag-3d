@@ -79,15 +79,13 @@ public:
         friend class VertexAttribContainer;
 
     public:
-        iterator( VertexAttribContainer<T>& vaCont )
-          : _pos( NULL ),
-            _counter( 0 ),
-            _vaCont( vaCont )
+        iterator()
+          : _counter( 0 ),
+            _vaCont( NULL )
         {
         }
         iterator( const iterator& rhs )
-          : _pos( rhs._pos ),
-            _counter( rhs._counter ),
+          : _counter( rhs._counter ),
             _vaCont( rhs._vaCont )
         {
         }
@@ -95,35 +93,34 @@ public:
         {
         }
 
-        T operator*() const
+        T& operator*()
         {
-            return( *_pos );
+            return( _vaCont->getVertexAttrib( _counter ) );
+        }
+        const T& operator*() const
+        {
+            return( _vaCont->getVertexAttrib( _counter ) );
         }
 
-        T& operator++() // prefix inc
+        iterator& operator++() // prefix inc
         {
-            const ptrdiff_t byteDistance( _vaCont.deltaByteCount( _counter, _counter+1 ) );
             ++_counter;
-            _pos = (T*)( (unsigned char*)( _pos ) + byteDistance );
-            _vaCont.valid( _pos ); // For debugging.
-            return( *_pos );
+            return( *this );
         }
-        T operator++( int ) // postfix inc
+        iterator operator++( int ) // postfix inc
         {
-            const T result( *this );
+            const iterator& result( *this );
             ++( *this );
             return( result );
         }
-        T& operator--() // prefix dec
+        iterator& operator--() // prefix dec
         {
-            const ptrdiff_t byteDistance( _vaCont.deltaByteCount( _counter, _counter-1 ) );
             --_counter;
-            _pos = (T*)( (unsigned char*)( _pos ) + byteDistance );
-            return( *_pos );
+            return( *this );
         }
-        T operator--( int ) // postfix dec
+        iterator operator--( int ) // postfix dec
         {
-            const T result( *this );
+            const iterator& result( *this );
             --( *this );
             return( result );
         }
@@ -131,7 +128,7 @@ public:
         bool operator==( const iterator& rhs ) const
         {
             return( ( _counter == rhs._counter ) &&
-                ( _pos == rhs._pos ) );
+                ( _vaCont == rhs._vaCont ) );
         }
         bool operator!=( const iterator& rhs ) const
         {
@@ -140,70 +137,60 @@ public:
 
         iterator& operator=( const iterator& rhs )
         {
-            _pos = rhs._pos;
             _counter = rhs._counter;
+            _vaCont = rhs._vaCont;
             return( *this );
         }
 
     protected:
-        iterator( VertexAttribContainer<T>& vaCont, T* pos, unsigned int counter )
-          : _pos( pos ),
-            _counter( counter ),
+        iterator( VertexAttribContainer<T>* vaCont, const unsigned int counter )
+          : _counter( counter ),
             _vaCont( vaCont )
         {
         }
 
-        T* _pos;
         unsigned int _counter;
-
-        VertexAttribContainer<T>& _vaCont;
+        VertexAttribContainer<T>* _vaCont;
     };
 
 
 
-    ptrdiff_t deltaByteCount( const unsigned int from, const unsigned int to ) const
-    {
-        const int indexFrom( _dcp->getIndex( from ) );
-        const int indexTo( _dcp->getIndex( to ) );
-        return( (ptrdiff_t)( ( indexTo - indexFrom ) * _step ) );
-    }
-    bool valid( T* address )
-    {
-        const unsigned char* minAddr( (unsigned char*)(_buffer->getData()) );
-        const unsigned char* maxAddr( (unsigned char*)(_buffer->getData()) + _buffer->getSize() - 1 );
-        const unsigned char* testAddr( reinterpret_cast< unsigned char* >( address ) );
-        const bool result( ( minAddr <= testAddr ) &&
-            ( testAddr <= maxAddr ) );
-        if( !result )
-        {
-            JAG3D_ERROR_STATIC( "jag.draw.vac", "Failed address valid test." );
-        }
-        return( result );
-    }
-
     iterator begin()
     {
-        iterator result( *this,
-            (T*)( (unsigned char *)( _buffer->getData() )
-                + _offset + _dcp->getIndex( 0 ) * _step ),
-            0 );
-        return( result );
+        return( iterator( this, 0 ) );
     }
 
     iterator end()
     {
-        iterator result( *this,
-            (T*)( (unsigned char *)( _buffer->getData() )
-                + _offset + _dcp->getIndex( _dcp->getNumIndices() ) * _step ),
-            _dcp->getNumIndices() );
-        return( result );
+        return( iterator( this, _dcp->getNumIndices() ) );
+    }
+
+    T& getVertexAttrib( const unsigned int count )
+    {
+        return( *( (T*)(
+            ( (unsigned char *)( _buffer->getData() ) + _offset
+            + _dcp->getIndex( count ) * _step ) ) ) );
+    }
+
+    VertexAttribContainer& operator=( const VertexAttribContainer<T>& rhs )
+    {
+        _buffer = rhs._buffer;
+        _vap = rhs._vap;
+        _dcp = rhs._dcp;
+        return( *this );
+    }
+    bool operator==( const VertexAttribContainer<T>& rhs ) const
+    {
+        return( ( _buffer == rhs._buffer ) &&
+            ( _vap == rhs._vap ) &&
+            ( _dcp == rhs._dcp ) );
     }
 
 
 protected:
-    const jagBase::BufferPtr _buffer;
-    const VertexAttribPtr _vap;
-    const DrawCommandPtr _dcp;
+    jagBase::BufferPtr _buffer;
+    VertexAttribPtr _vap;
+    DrawCommandPtr _dcp;
 
     size_t _step;
     size_t _offset;
