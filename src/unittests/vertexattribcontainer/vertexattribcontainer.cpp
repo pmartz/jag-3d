@@ -18,16 +18,22 @@
 *
 *************** <auto-copyright.pl END do not edit this line> ***************/
 
+#include <jagDraw/BufferObject.h>
 #include <jagDraw/DrawCommand.h>
 #include <jagDraw/VertexAttribContainer.h>
 #include <jagDraw/VertexArrayObject.h>
 #include <jagUtil/Shapes.h>
 
+#include <boost/shared_ptr.hpp>
+#include <boost/foreach.hpp>
 #include <iostream>
 
 
+using jagDraw::VertexArrayCommand;
 using jagDraw::BufferObject;
+using jagDraw::BufferObjectPtr;
 using jagDraw::VertexAttrib;
+using jagDraw::VertexAttribPtr;
 using jagDraw::VertexAttribContainer;
 using jagDraw::VertexArrayObject;
 using jagDraw::VertexArrayObjectPtr;
@@ -52,6 +58,34 @@ DrawablePtr createQuad( jagUtil::VNTCVec& data, const gmtl::Point3f& center, con
     return( quad );
 }
 
+bool validate( BufferObjectPtr& bop, VertexAttribPtr& verts, const VertexArrayObjectPtr& vaop )
+{
+    if( vaop == NULL )
+    {
+        std::cout << "Null VertexArrayObject." << std::endl;
+        return( false );
+    }
+
+    bop = ( boost::dynamic_pointer_cast< BufferObject >(
+        vaop->getVertexArrayCommand( VertexArrayCommand::BufferObject_t, VertexArrayObject::Vertex ) ) );
+    verts = ( boost::dynamic_pointer_cast< VertexAttrib >(
+        vaop->getVertexArrayCommand( VertexArrayCommand::VertexAttrib_t, VertexArrayObject::Vertex ) ) );
+    if( ( bop == NULL ) || ( verts == NULL ) )
+    {
+        std::cout << "NULL BufferObject or VertexAttrib." << std::endl;
+        return( false );
+    }
+    GLint size;
+    GLenum type;
+    verts->getSizeType( size, type );
+    if( ( size != 3 ) || ( type != GL_FLOAT ) )
+    {
+        std::cout << "Bad VertexAttrib size or type." << std::endl;
+        return( false );
+    }
+
+    return( true );
+}
 
 bool test()
 {
@@ -60,6 +94,25 @@ bool test()
         jagUtil::VNTCVec data;
         DrawablePtr quad( createQuad( data, gmtl::Point3f( 0., 0., 0. ), 10.f ) );
         VertexArrayObjectPtr vaop( jagUtil::createVertexArrayObject( data ) );
+
+        BufferObjectPtr bop;
+        VertexAttribPtr verts;
+        if( !( validate( bop, verts, vaop ) ) )
+            return( false );
+
+        BOOST_FOREACH( const DrawCommandPtr dcp, quad->getDrawCommandVec() )
+        {
+            VertexAttribContainer< gmtl::Point3f > vac( bop, verts, dcp );
+            VertexAttribContainer< gmtl::Point3f >::iterator pointIter( vac );
+            unsigned int count( 0 );
+            for( pointIter = vac.begin(); pointIter != vac.end(); ++pointIter )
+                ++count;
+            if( count != 6 )
+            {
+                std::cout << "Expected 6 vertices, got " << count << std::endl;
+                return( false );
+            }
+        }
     }
 
     return( true );
