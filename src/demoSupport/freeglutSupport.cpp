@@ -182,10 +182,18 @@ void motion( int x, int y )
 
     if( _rightDrag )
     {
+        if( deltaY == 0.f )
+            // Then we're really not dragging...
+            return;
+
         mxCore->moveOrbit( deltaY );
     }
     else if( _leftDrag )
     {
+        if( ( deltaX == 0.f ) && ( deltaY == 0.f ) )
+            // Then we're really not dragging...
+            return;
+
         double angle;
         gmtl::Vec3d axis;
         jagMx::computeTrackball( angle, axis,
