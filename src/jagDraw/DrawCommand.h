@@ -32,7 +32,11 @@
 namespace jagDraw {
 
 
+// Forward declarations
 struct DrawInfo;
+
+class DrawArraysBase;
+class DrawElementsBase;
 
 
 
@@ -72,16 +76,19 @@ class DrawCommand : public ObjectIDOwner
 public:
     enum DrawCommandType{
         DrawArraysType,
+        DrawArraysInstancedBaseInstanceType,
         DrawArraysInstancedType,
         DrawArraysIndirectType,
         MultiDrawArraysType,
         DrawElementsType,
+        DrawElementsInstancedBaseInstanceType,
         DrawElementsInstancedType,
         MultiDrawElementsType,
         DrawRangeElementsType,
         DrawElementsBaseVertexType,
         DrawRangeElementsBaseVertexType,
         DrawElementsInstancedBaseVertexType,
+        DrawElementsInstancedBaseVertexBaseInstanceType,
         DrawElementsIndirectType,
         MultiDrawElementsBaseVertexType,
 
@@ -118,14 +125,20 @@ public:
     {}
 
 
-    /**
-    */
     virtual void execute( DrawInfo& ) = 0;
 
 
-    /**
+    /** \name TypeDetermination Draw Command Type Determination
+    \details Quick access to the draw command type.
+    */
+    /**@{*/
+
+    /** \brief Get the DrawCommandType.
     */
     DrawCommandType getDrawCommandType() { return _drawCommandType; }
+
+    /**@}*/
+
 
     void setMode( const GLenum mode ) { _mode = mode; }
     GLenum getMode() const { return( _mode ); }
@@ -141,6 +154,7 @@ public:
     \details Used by BufferIterator to access elements of a BufferObject used by a VertexAttrib.
     */
     /**@{*/
+
     virtual int getIndex( const unsigned int counter ) const
     {
         return( counter );
@@ -149,6 +163,7 @@ public:
     {
         return( _count );
     }
+
     /**@}*/
 
 protected:
@@ -179,6 +194,7 @@ public:
     {}
     virtual ~DrawArraysBase()
     {}
+
 
     /** \brief Set DrawArraysBase::_first.
     \details DrawArraysBase::_first is passed as a parameter to the OpenGL commands
@@ -223,6 +239,7 @@ public:
         _elementBuffer( rhs._elementBuffer )
     {}
     virtual ~DrawElementsBase() {}
+
 
     /** \brief Set DrawElementsBase::_type.
     \details DrawElementsBase::_type is passed as a parameter to the OpenGL
@@ -312,6 +329,41 @@ public:
 
 protected:
     GLint _baseVertex;
+};
+
+/** \class BaseInstanceBase DrawCommand.h <jagDraw/DrawCommand.h>
+\brief Base class for DrawCommands that issue gl*BaseInstance().
+\details
+
+\specBegin BaseInstanceBase
+
+\specTableBegin
+\specThread{ }
+\specGL{ }
+\specDepend{ }
+\specUsage{ }
+\specViolations{ }
+\specTableEnd
+\specEnd
+
+*/
+class BaseInstanceBase
+{
+public:
+    BaseInstanceBase( const GLuint baseInstance )
+      : _baseInstance( baseInstance )
+    {}
+    BaseInstanceBase( const BaseInstanceBase& rhs )
+      : _baseInstance( rhs._baseInstance )
+    {}
+    virtual ~BaseInstanceBase()
+    {}
+
+    void setBaseInstance( const GLuint baseInstance ) { _baseInstance = baseInstance; }
+    GLuint getBaseInstance() const { return( _baseInstance ); }
+
+protected:
+    GLuint _baseInstance;
 };
 
 /** \class RangeBase DrawCommand.h <jagDraw/DrawCommand.h>
@@ -502,6 +554,59 @@ public:
 };
 
 typedef jagBase::ptr< jagDraw::DrawArrays >::shared_ptr DrawArraysPtr;
+
+
+/** \class DrawArraysInstancedBaseInstance DrawCommand.h <jagDraw/DrawCommand.h>
+\brief Retained storage for the glDrawArraysInstanceBaseInstance() command.
+\details
+
+\specBegin DrawArraysInstancedBaseInstance
+
+\specTableBegin
+\specThreadBase{DrawCommand}
+\specGL{On each call to execute():
+    \code
+    glDrawArraysInstancedBaseInstance( _mode\, _first\, _count\, _primcount, _baseInstance );
+    \endcode }
+\specDepend{None}
+\specUsageBase{DrawCommand}
+\specViolations{None}
+\specTableEnd
+\specEnd
+
+*/
+class DrawArraysInstancedBaseInstance : public DrawCommand,
+            public DrawArraysBase, public BaseInstanceBase
+{
+public:
+    DrawArraysInstancedBaseInstance( const GLenum mode, const GLint first, const GLsizei count, const GLsizei primcount, const GLuint baseInstance )
+      : DrawCommand( DrawArraysInstancedBaseInstanceType, mode, count, primcount ),
+        DrawArraysBase( first ),
+        BaseInstanceBase( baseInstance )
+    {}
+    DrawArraysInstancedBaseInstance( const DrawArraysInstancedBaseInstance& rhs )
+      : DrawCommand( rhs ),
+        DrawArraysBase( rhs ),
+        BaseInstanceBase( rhs )
+    {}
+    virtual ~DrawArraysInstancedBaseInstance()
+    {}
+
+    /** \brief TBD */
+    virtual void execute( DrawInfo& drawInfo )
+    {
+#ifdef GL_VERSION_4_2
+        glDrawArraysInstancedBaseInstance( _mode, _first, _count, _primcount, _baseInstance );
+#endif
+    }
+
+    virtual int getIndex( const unsigned int counter ) const
+    {
+        return( _first + counter );
+    }
+};
+
+typedef jagBase::ptr< jagDraw::DrawArraysInstancedBaseInstance >::shared_ptr DrawArraysInstancedBaseInstancePtr;
 
 
 /** \class DrawArraysInstanced DrawCommand.h <jagDraw/DrawCommand.h>
@@ -801,6 +906,91 @@ public:
 };
 
 typedef jagBase::ptr< jagDraw::DrawElements >::shared_ptr DrawElementsPtr;
+
+
+/** \class DrawElementsInstancedBaseInstance DrawCommand.h <jagDraw/DrawCommand.h>
+\brief Retained storage for the glDrawElementsInstancedBaseInstance() command.
+\details
+
+All DrawElements commands must be used with GL_ELEMENT_ARRAY_BUFFER (OpenGL v4.0
+core profile spec). If an instance of this object is created with \c indices == NULL,
+it is the calling code's responsibility to ensure that the active VertexArrayObject
+has a buffer object bound to GL_ELEMENT_ARRAY_BUFFER.
+
+\specBegin DrawElementsInstancedBaseInstance
+
+\specTableBegin
+\specThreadBase{DrawCommand}
+\specGL{On each call to execute():
+    \code
+    // GL_ELEMENT_ARRAY_BUFFER bind (if necessary; see ElementArrayBuffer).
+    glDrawElementsInstancedBaseInstance( _mode\, _count\, _type\, _indices\, _primcount, _baseInstance );
+    \endcode }
+\specDepend{ElementArrayBuffer}
+\specUsageBase{DrawCommand}
+\specViolations{None}
+\specTableEnd
+\specEnd
+
+*/
+class DrawElementsInstancedBaseInstance : public DrawCommand,
+            public DrawElementsBase, public BaseInstanceBase
+{
+public:
+    DrawElementsInstancedBaseInstance( GLenum mode, GLsizei count, GLenum type,
+            const GLvoid* indices, GLsizei primcount, const GLuint baseInstance,
+            const jagDraw::BufferObjectPtr elementBuffer=jagDraw::BufferObjectPtr() )
+      : DrawCommand( DrawElementsInstancedBaseInstanceType, mode, count, primcount ),
+        DrawElementsBase( type, indices, elementBuffer ),
+        BaseInstanceBase( baseInstance )
+    {}
+    DrawElementsInstancedBaseInstance( const DrawElementsInstancedBaseInstance& rhs )
+      : DrawCommand( rhs ),
+        DrawElementsBase( rhs ),
+        BaseInstanceBase( rhs )
+    {}
+    virtual ~DrawElementsInstancedBaseInstance()
+    {}
+
+    /** \brief Tell the DrawCommand how many contexts to expect.
+    \details Invokes setMaxContexts() on any BufferObjects that the DrawCommand owns. */
+    virtual void setMaxContexts( const unsigned int numContexts )
+    {
+        if( _elementBuffer != NULL )
+            _elementBuffer->setMaxContexts( numContexts );
+    }
+
+    /** \brief TBD
+    \details TBD
+    */
+    virtual void deleteID( const jagDraw::jagDrawContextID contextID ) {}
+
+    virtual void execute( DrawInfo& drawInfo )
+    {
+#ifdef GL_VERSION_4_2
+        if( _elementBuffer != NULL )
+            _elementBuffer->execute( drawInfo );
+        glDrawElementsInstancedBaseInstance( _mode, _count, _type, _indices, _primcount, _baseInstance );
+#endif
+    }
+
+    virtual int getIndex( const unsigned int counter ) const
+    {
+        if( _elementBuffer != NULL )
+        {
+            const unsigned char* ptr( ( const unsigned char* ) _elementBuffer->getBuffer()->getData() + (ptrdiff_t)_indices );
+            switch( _type ) {
+                case GL_UNSIGNED_BYTE: return( ptr[ counter ] ); break;
+                case GL_UNSIGNED_SHORT: return( ((unsigned short*)ptr)[ counter ] ); break;
+                case GL_UNSIGNED_INT: return( ((unsigned int*)ptr)[ counter ] ); break;
+                default: return( -1 );
+            }
+        }
+        return( -1 );
+    }
+};
+
+typedef jagBase::ptr< jagDraw::DrawElementsInstancedBaseInstance >::shared_ptr DrawElementsInstancedBaseInstancePtr;
 
 
 /** \class DrawElementsInstanced DrawCommand.h <jagDraw/DrawCommand.h>
@@ -1224,6 +1414,78 @@ public:
 };
 
 typedef jagBase::ptr< jagDraw::DrawElementsInstancedBaseVertex >::shared_ptr DrawElementsInstancedBaseVertexPtr;
+
+
+/** \class DrawElementsInstancedBaseVertexBaseInstance DrawCommand.h <jagDraw/DrawCommand.h>
+\brief Retained storage for the glDrawElementsInstancedBaseVertexBaseInstance() command.
+\details
+
+All DrawElements commands must be used with GL_ELEMENT_ARRAY_BUFFER (OpenGL v4.0
+core profile spec). If an instance of this object is created with \c indices == NULL,
+it is the calling code's responsibility to ensure that the active VertexArrayObject
+has a buffer object bound to GL_ELEMENT_ARRAY_BUFFER.
+
+\specBegin DrawElementsInstancedBaseVertexBaseInstance
+
+\specTableBegin
+\specThreadBase{DrawCommand}
+\specGL{On each call to execute():
+    \code
+    // GL_ELEMENT_ARRAY_BUFFER bind (if necessary; see ElementArrayBuffer).
+    glDrawElementsInstancedBaseVertexBaseInstance( _mode\, _count\, _type\, _indices\, _primcount\, _baseVertex, _baseInstance );
+    \endcode }
+\specDepend{ElementArrayBuffer}
+\specUsageBase{DrawCommand}
+\specViolations{None}
+\specTableEnd
+\specEnd
+
+*/
+class DrawElementsInstancedBaseVertexBaseInstance : public DrawCommand,
+            public DrawElementsBase, public BaseVertexBase, public BaseInstanceBase
+{
+public:
+    DrawElementsInstancedBaseVertexBaseInstance( GLenum mode, GLsizei count, GLenum type,
+            const GLvoid* offset, GLsizei primcount, GLint baseVertex, GLuint baseInstance,
+            const jagDraw::BufferObjectPtr elementBuffer=jagDraw::BufferObjectPtr() )
+      : DrawCommand( DrawElementsInstancedBaseVertexBaseInstanceType, mode, count, primcount ),
+        DrawElementsBase( type, offset, elementBuffer ),
+        BaseVertexBase( baseVertex ),
+        BaseInstanceBase( baseInstance )
+    {}
+    DrawElementsInstancedBaseVertexBaseInstance( const DrawElementsInstancedBaseVertexBaseInstance& rhs )
+      : DrawCommand( rhs ),
+        DrawElementsBase( rhs ),
+        BaseVertexBase( rhs ),
+        BaseInstanceBase( rhs )
+    {}
+    virtual ~DrawElementsInstancedBaseVertexBaseInstance()
+    {}
+
+    /** \brief Tell the DrawCommand how many contexts to expect.
+    \details Invokes setMaxContexts() on any BufferObjects that the DrawCommand owns. */
+    virtual void setMaxContexts( const unsigned int numContexts )
+    {
+        if( _elementBuffer != NULL )
+            _elementBuffer->setMaxContexts( numContexts );
+    }
+
+    /** \brief TBD
+    \details TBD
+    */
+    virtual void deleteID( const jagDraw::jagDrawContextID contextID ) {}
+
+    virtual void execute( DrawInfo& drawInfo )
+    {
+#ifdef GL_VERSION_4_2
+        if( _elementBuffer != NULL )
+            _elementBuffer->execute( drawInfo );
+        glDrawElementsInstancedBaseVertexBaseInstance( _mode, _count, _type, _indices, _primcount, _baseVertex, _baseInstance );
+#endif
+    }
+};
+
+typedef jagBase::ptr< jagDraw::DrawElementsInstancedBaseVertexBaseInstance >::shared_ptr DrawElementsInstancedBaseVertexBaseInstancePtr;
 
 
 /** \class DrawElementsIndirect DrawCommand.h <jagDraw/DrawCommand.h>
