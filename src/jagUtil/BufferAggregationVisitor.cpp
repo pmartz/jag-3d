@@ -34,7 +34,7 @@ namespace jagUtil
 
 
 BufferAggregationVisitor::BufferAggregationVisitor( jagSG::NodePtr node, const std::string& logName )
-    : jagSG::VisitorBase( "bufagg", logName )
+    : jagSG::VisitorBase( logName.empty() ? "jag.util.bufagg" : logName )
 {
     _vaop = jagDraw::VertexArrayObjectPtr( new jagDraw::VertexArrayObject() );
 
@@ -63,7 +63,7 @@ BufferAggregationVisitor::BufferAggregationVisitor( jagSG::NodePtr node, const s
     }
     commands->insert( _vaop );
 
-    JAG3D_CRITICAL( "Finished." );
+    JAG3D_TRACE( "Finished." );
 #if 0
     // Debug.
     JAG3D_DEBUG( "Final VAO/offset map:" );
@@ -88,7 +88,8 @@ void BufferAggregationVisitor::reset()
 {
     _vaop.reset( ( jagDraw::VertexArrayObject* )NULL );
     _nodeSet.clear();
-    _bufferObjectSet.clear();
+    _arrayBuffers.clear();
+    _elementBuffers.clear();
     _offsetMap.clear();
 }
 
@@ -175,19 +176,19 @@ void BufferAggregationVisitor::visit( jagSG::Node& node )
 }
 
 
-void BufferAggregationVisitor::offsetDrawElements( jagDraw::DrawElements* de, const size_t offset )
+void BufferAggregationVisitor::offsetDrawElements( jagDraw::DrawElementsBase* deBase, const size_t offset )
 {
-    jagDraw::BufferObjectPtr oldBuf( de->getElementBuffer() );
-    if( _bufferObjectSet.find( oldBuf.get() ) != _bufferObjectSet.end() )
+    jagDraw::BufferObjectPtr oldBuf( deBase->getElementBuffer() );
+    if( _elementBuffers.find( oldBuf.get() ) != _elementBuffers.end() )
     {
         // Already processed this (shared) buffer object.
         return;
     }
-    _bufferObjectSet.insert( oldBuf.get() );
+    _elementBuffers.insert( oldBuf.get() );
 
     const size_t oldByteSize( oldBuf->getBuffer()->getSize() );
     size_t numElements( 0 );
-    switch( de->getType() )
+    switch( deBase->getType() )
     {
     case GL_UNSIGNED_BYTE: numElements = oldByteSize / sizeof( GLubyte ); break;
     case GL_UNSIGNED_SHORT: numElements = oldByteSize / sizeof( GLushort ); break;
@@ -198,7 +199,7 @@ void BufferAggregationVisitor::offsetDrawElements( jagDraw::DrawElements* de, co
     GLint* newPtr( newData );
 
     size_t count( numElements );
-    switch( de->getType() )
+    switch( deBase->getType() )
     {
     case GL_UNSIGNED_BYTE:
     {
@@ -225,8 +226,8 @@ void BufferAggregationVisitor::offsetDrawElements( jagDraw::DrawElements* de, co
 
     jagBase::BufferPtr buf( new jagBase::Buffer( numElements * sizeof( GLuint ), newData ) );
     jagDraw::BufferObjectPtr newBuf( new jagDraw::BufferObject( GL_ELEMENT_ARRAY_BUFFER, buf ) );
-    de->setElementBuffer( newBuf );
-    de->setType( GL_UNSIGNED_INT );
+    deBase->setElementBuffer( newBuf );
+    deBase->setType( GL_UNSIGNED_INT );
 
     free( newData );
 }
@@ -237,15 +238,15 @@ void BufferAggregationVisitor::handleDrawable( jagDraw::DrawablePtr draw, const 
 
     BOOST_FOREACH( jagDraw::DrawCommandPtr& dcp, draw->getDrawCommandVec() )
     {
-        if( dcp->getDrawCommandType() == jagDraw::DrawCommand::DrawElementsType )
+        jagDraw::DrawElementsBase* deBase( dynamic_cast< jagDraw::DrawElementsBase* >( dcp.get() ) );
+        jagDraw::DrawArraysBase* daBase( dynamic_cast< jagDraw::DrawArraysBase* >( dcp.get() ) );
+        if( deBase != NULL )
         {
-            jagDraw::DrawElements* de( static_cast< jagDraw::DrawElements* >( dcp.get() ) );
-            offsetDrawElements( de, offset );
+            offsetDrawElements( deBase, offset );
         }
-        else if( dcp->getDrawCommandType() == jagDraw::DrawCommand::DrawArraysType )
+        else if( daBase != NULL )
         {
-            jagDraw::DrawArrays* da( static_cast< jagDraw::DrawArrays* >( dcp.get() ) );
-            da->setFirst( da->getFirst() + (GLint)( offset ) );
+            daBase->setFirst( daBase->getFirst() + (GLint)( offset ) );
         }
         else
             JAG3D_CRITICAL( "Unknown command" );

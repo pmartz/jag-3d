@@ -50,7 +50,7 @@ public:
     virtual void visit( jagSG::Node& node );
 
 protected:
-    void offsetDrawElements( jagDraw::DrawElements* de, const size_t offset );
+    void offsetDrawElements( jagDraw::DrawElementsBase* deBase, const size_t offset );
     void handleDrawable( jagDraw::DrawablePtr draw, const jagDraw::VertexArrayObject* vaop );
 
     jagDraw::VertexArrayObjectPtr _vaop;
@@ -58,7 +58,8 @@ protected:
     typedef std::set< jagSG::Node* > NodeSet;
     NodeSet _nodeSet;
     typedef std::set< jagDraw::BufferObject* > BufferObjectSet;
-    BufferObjectSet _bufferObjectSet;
+    BufferObjectSet _arrayBuffers;
+    BufferObjectSet _elementBuffers;
 
     typedef std::map< jagDraw::VertexArrayObject*, size_t > OffsetMap;
     OffsetMap _offsetMap;
