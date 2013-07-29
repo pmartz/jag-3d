@@ -262,7 +262,7 @@ void BufferAggregationVisitor::handleDrawable( jagDraw::DrawablePtr draw, const 
             _elementBuffers.insert( oldBuf.get() );
 
             offsetDrawElements( deBase, offset );
-            //combineElementBuffer( deBase );
+            combineElementBuffer( deBase );
         }
         else if( daBase != NULL )
         {
