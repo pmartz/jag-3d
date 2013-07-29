@@ -42,24 +42,24 @@ TransformCallback::~TransformCallback()
 
 bool TransformCallback::operator()( jagDraw::Node& node, jagDraw::DrawInfo& drawInfo )
 {
-    jagDraw::UniformSet us;
-
     _transform.setModel( node.getTransform() );
     {
         gmtl::Matrix44f mvpMat;
         gmtl::convert( mvpMat, _transform.getModelViewProj() );
-        jagDraw::UniformPtr modelViewProj( new jagDraw::Uniform( "jagModelViewProjMatrix", mvpMat ) );
-        us.insert( modelViewProj );
+        jagDraw::UniformPtr& uniform( drawInfo.getOrCreateUniform( "jagModelViewProjMatrix" ) );
+        uniform->setType( GL_FLOAT_MAT4 );
+        uniform->set( mvpMat );
+        uniform->executeWithoutMap( drawInfo );
     }
     {
         gmtl::Matrix33f mvitMat;
         gmtl::convert( mvitMat, _transform.getModelViewInvTrans() );
-        jagDraw::UniformPtr modelViewInvTrans( new jagDraw::Uniform( "jagModelViewInvTransMatrix", mvitMat ) );
-        us.insert( modelViewInvTrans );
+        jagDraw::UniformPtr& uniform( drawInfo.getOrCreateUniform( "jagModelViewInvTransMatrix" ) );
+        uniform->setType( GL_FLOAT_MAT3 );
+        uniform->set( mvitMat );
+        uniform->executeWithoutMap( drawInfo );
     }
     _transform.setDirty( 0 );
-
-    us.execute( drawInfo );
 
     return( true );
 }
