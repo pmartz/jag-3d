@@ -39,45 +39,57 @@ class Buffer
 {
 public:
     Buffer()
-      : _size( 0 ),
-        _data()
+      : _data(),
+        _size( 0 ),
+        _maxSize( 0 )
     {
     }
     Buffer( size_t size )
-      : _size( size ) ,
-        _data( size==0 ? NULL : new unsigned char[ size ] )
+      : _data( size==0 ? NULL : new unsigned char[ size ] ),
+        _size( size ),
+        _maxSize( size )
     {
     }
     Buffer( size_t size, const void *ptr )
-      : _size( size ),
-        _data( size==0 ? NULL : new unsigned char[ size ] )
+      : _data( size==0 ? NULL : new unsigned char[ size ] ),
+        _size( size ),
+        _maxSize( size )
     {
         copy( ptr );
     }
-    Buffer( const Buffer& b ):
-        _size( b._size ),
-        _data( b._data )
+    Buffer( const Buffer& rhs )
+      : _data( rhs._data ),
+        _size( rhs._size ),
+        _maxSize( rhs._maxSize )
     {
     }
     ~Buffer()
     {
     }
 
-    void setSize( size_t size, bool copy=true )
+    void setSize( size_t size )
     {
-        const size_t oldSize( _size );
-        UCharArray oldData( _data );
+        if( size > _maxSize )
+            setMaxSize( size );
         _size = size;
-        _data.reset( new unsigned char[ _size ] );
-        if( copy )
-        {
-            memcpy( getData(), oldData.get(),
-                ( oldSize < _size ) ? oldSize : _size );
-        }
     }
     size_t getSize() const
     {
         return( _size );
+    }
+
+    void setMaxSize( const size_t maxSize )
+    {
+        const size_t oldSize( _size );
+        UCharArray oldData( _data );
+        _maxSize = maxSize;
+        _data.reset( new unsigned char[ _maxSize ] );
+        std::memcpy( getData(), oldData.get(),
+            ( oldSize < _maxSize ) ? oldSize : _maxSize );
+    }
+    size_t getMaxSize() const
+    {
+        return( _maxSize );
     }
 
     const void* getData() const
@@ -114,13 +126,16 @@ public:
     {
         const size_t oldSize( getSize() );
         const size_t newSize( oldSize + rhs.getSize() );
-        setSize( newSize );
+        if( newSize > _maxSize )
+            setMaxSize( newSize );
         copy( rhs.getData(), rhs.getSize(), oldSize );
+        _size = newSize;
     }
 
 protected:
     jagBase::UCharArray _data;
     size_t _size;
+    size_t _maxSize;
 };
 
 typedef jagBase::ptr< jagBase::Buffer >::shared_ptr BufferPtr;
