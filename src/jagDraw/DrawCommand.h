@@ -35,10 +35,6 @@ namespace jagDraw {
 // Forward declarations
 struct DrawInfo;
 
-class DrawArraysBase;
-class DrawElementsBase;
-
-
 
 /** \class DrawCommand DrawCommand.h <jagDraw/DrawCommand.h>
 \brief Retains and executes OpenGL drawing commands.
@@ -821,6 +817,15 @@ public:
             total += _countArray[ idx ];
         }
         return( total );
+    }
+
+    jagDraw::GLintArray& getFirst()
+    {
+        return( _firstArray );
+    }
+    const jagDraw::GLintArray& getFirst() const
+    {
+        return( _firstArray );
     }
 
 protected:
