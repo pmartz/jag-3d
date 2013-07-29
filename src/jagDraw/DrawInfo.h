@@ -58,7 +58,7 @@ struct JAGDRAW_EXPORT DrawInfo
     GLuint _elementBufferID;
 
 
-    typedef std::map< Program::HashValue, ConstUniformPtr > UniformMap;
+    typedef std::map< Program::HashValue, UniformPtr > UniformMap;
 
     /** \brief List of active uniforms during draw.
     \details When a new Program is used, it iterates over its
@@ -66,6 +66,22 @@ struct JAGDRAW_EXPORT DrawInfo
     If a match is found, the corresponding uniform value is specified.
     */
     UniformMap _uniformMap;
+
+    /**\brief Returns an existi9ng, or creates a new uniform in _uniformMap.
+    \details TBD
+    */
+    UniformPtr& getOrCreateUniform( const std::string& name )
+    {
+        const Program::HashValue hashVal( Program::createHash( name ) );
+        UniformMap::iterator it( _uniformMap.find( hashVal ) );
+        if( it == _uniformMap.end() )
+        {
+            UniformPtr uniform( UniformPtr( new Uniform( name ) ) );
+            _uniformMap[ hashVal ] = uniform;
+            it = _uniformMap.find( hashVal );
+        }
+        return( it->second );
+    }
 
 
     typedef std::map< Program::HashValue, ConstUniformBlockPtr > UniformBlockMap;

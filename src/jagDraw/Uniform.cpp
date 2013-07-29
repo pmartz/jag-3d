@@ -30,6 +30,12 @@
 namespace jagDraw {
 
 
+Uniform::Uniform()
+  : DrawablePrep( Uniform_t ),
+    jagBase::LogBase( "jag.draw.uniform" ),
+    _transpose( false )
+{
+}
 Uniform::Uniform( const std::string& name )
   : DrawablePrep( Uniform_t ),
     jagBase::LogBase( "jag.draw.uniform" )
@@ -66,6 +72,16 @@ Uniform::Uniform( const Uniform& rhs )
 }
 Uniform::~Uniform()
 {
+}
+
+
+void Uniform::setName( const std::string& name )
+{
+    internalInit( name );
+}
+std::string Uniform::getName()
+{
+    return( _name );
 }
 
 
@@ -160,6 +176,7 @@ void Uniform::execute( DrawInfo& drawInfo, const GLint loc ) const
     // This should NOT be necessary, as we should only be here if this
     // uniform is already in the drawInfo._uniformMap.
     //drawInfo._uniformMap[ _indexHash ] = shared_from_this();
+
 
     if( _isSampler )
     {
@@ -257,20 +274,25 @@ void Uniform::execute( DrawInfo& drawInfo, const GLint loc ) const
     }
 }
 
+void Uniform::executeWithoutMap( DrawInfo& drawInfo ) const
+{
+    if( drawInfo._current.contains( Program_t ) )
+    {
+        ProgramPtr prog( boost::dynamic_pointer_cast< Program >( drawInfo._current[ Program_t ] ) );
+        const GLint loc( prog->getUniformLocation( _indexHash ) );
+        execute( drawInfo, loc );
+    }
+}
+
 void Uniform::execute( DrawInfo& drawInfo )
 {
     // Add this uniform to the pool of potentially active uniforms
     // for the current frame and draw thread.
     drawInfo._uniformMap[ _indexHash ] = shared_from_this();
 
-    // Uniform::execute() could execute before Program::execute(),
-    // so only look up uniform location if a Program is available.
-    if( drawInfo._current.contains( Program_t ) )
-    {
-        ProgramPtr prog( boost::dynamic_pointer_cast< Program >( drawInfo._current[ Program_t ] ) );
-        GLint index( prog->getUniformLocation( _indexHash ) );
-        execute( drawInfo, index );
-    }
+    // Actually set the value. Handles the case where there is a
+    // current Program that has already executed.
+    executeWithoutMap( drawInfo );
 }
 
 

@@ -104,6 +104,8 @@ class JAGDRAW_EXPORT Uniform : public DrawablePrep, protected jagBase::LogBase,
         public SHARED_FROM_THIS(Uniform)
 {
 public:
+    /** \brief Default constructor. Name, type, and value must be specified explicitly. */
+    Uniform();
     /** \brief Constructor, specified uniform name. */
     Uniform( const std::string& name );
     /** \brief Constructor, specified uniform name and type.
@@ -117,6 +119,14 @@ public:
     Uniform( const Uniform& rhs );
     /** \brief Destructor. */
     virtual ~Uniform();
+
+
+    /** \brief TBD
+    \details TBD */
+    void setName( const std::string& name );
+    /** \brief TBD
+    \details TBD */
+    std::string getName();
 
 
     /** \brief Set the value of a sampler uniform.
@@ -202,11 +212,14 @@ public:
     \details TBD */
     virtual DrawablePrepPtr clone() { return( UniformPtr( new Uniform( *this ) ) ); }
 
+    /** \brief Execute the glUniform call.
+    \details TBD */
+    void execute( DrawInfo& drawInfo, const GLint loc ) const;
     /** \brief TBD
     \details TBD
     Does not add this uniform to drawInfo._uniformMap.
     \gl{section 2.11.4}. */
-    void execute( DrawInfo& drawInfo, const GLint loc ) const;
+    void executeWithoutMap( DrawInfo& drawInfo ) const;
     /** \brief TBD
     \details TBD
     Adds this uniform to drawInfo._uniformMap.
