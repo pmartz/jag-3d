@@ -80,6 +80,10 @@ Node::ExecuteCallbacks& Node::getExecuteCallbacks()
 {
     return( _executeCallbacks );
 }
+const Node::ExecuteCallbacks& Node::getExecuteCallbacks() const
+{
+    return( _executeCallbacks );
+}
 
 
 void Node::execute( DrawInfo& drawInfo )
@@ -88,17 +92,23 @@ void Node::execute( DrawInfo& drawInfo )
 
     JAG3D_PROFILE( "DrawNode execute()" );
 
-    ExecuteCallbacks& callbacks( getExecuteCallbacks() );
-    BOOST_FOREACH( jagDraw::Node::CallbackPtr cb, callbacks )
+    {
+    JAG3D_PROFILE( "callbacks" );
+    const ExecuteCallbacks& callbacks( getExecuteCallbacks() );
+    BOOST_FOREACH( const jagDraw::Node::CallbackPtr& cb, callbacks )
     {
         if( !( (*cb)( *this, drawInfo ) ) )
         {
             return;
         }
     }
+    }
 
+    {
+    JAG3D_PROFILE( "CommandMap" );
     CommandMap delta( drawInfo._current << (*_commands) );
     delta.execute( drawInfo );
+    }
 
     BOOST_FOREACH( DrawablePtr drawable, _drawables )
     {
