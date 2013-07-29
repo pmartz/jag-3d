@@ -66,12 +66,8 @@ void Drawable::execute( DrawInfo& drawInfo )
     if( sz == 0 )
         return;
 
-    DrawCommandPtr* ptr( &( _drawCommands[ 0 ] ) );
-    const DrawCommandPtr* end( &( _drawCommands[ sz - 1 ] ) );
-    while( ptr <= end )
-    {
-        (*ptr++)->execute( drawInfo );
-    }
+    for( size_t idx = 0; idx < sz; ++idx )
+        _drawCommands[ idx ]->execute( drawInfo );
 
     JAG3D_ERROR_CHECK( "Drawable::execute()" );
 }
