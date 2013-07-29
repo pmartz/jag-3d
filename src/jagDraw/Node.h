@@ -144,6 +144,8 @@ public:
     /** \brief TBD
     \details TBD */
     ExecuteCallbacks& getExecuteCallbacks();
+    /** \overload */
+    const ExecuteCallbacks& getExecuteCallbacks() const;
 
 
     /** \brief TBD
