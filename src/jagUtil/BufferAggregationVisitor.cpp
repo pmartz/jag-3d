@@ -88,7 +88,6 @@ void BufferAggregationVisitor::reset()
 {
     _vaop.reset( ( jagDraw::VertexArrayObject* )NULL );
     _nodeSet.clear();
-    _arrayBuffers.clear();
     _elementBuffers.clear();
     _offsetMap.clear();
 }
@@ -159,14 +158,11 @@ void BufferAggregationVisitor::visit( jagSG::Node& node )
         }
         JAG3D_INFO( ostr.str() );
 
-        if( offset > 0 )
+        // Step 3: Modify the DrawCommand indices to access the new location
+        // of the current VAO -- where it got copied to in the master VAO.
+        for( unsigned int idx=0; idx < node.getNumDrawables(); ++idx )
         {
-            // Step 3: Modify the DrawCommand indices to access the new location
-            // of the current VAO -- where it got copied to in the master VAO.
-            for( unsigned int idx=0; idx < node.getNumDrawables(); ++idx )
-            {
-                handleDrawable( node.getDrawable( idx ), vaop.get() );
-            }
+            handleDrawable( node.getDrawable( idx ), vaop.get() );
         }
     }
 
@@ -179,13 +175,6 @@ void BufferAggregationVisitor::visit( jagSG::Node& node )
 void BufferAggregationVisitor::offsetDrawElements( jagDraw::DrawElementsBase* deBase, const size_t offset )
 {
     jagDraw::BufferObjectPtr oldBuf( deBase->getElementBuffer() );
-    if( _elementBuffers.find( oldBuf.get() ) != _elementBuffers.end() )
-    {
-        // Already processed this (shared) buffer object.
-        return;
-    }
-    _elementBuffers.insert( oldBuf.get() );
-
     const size_t oldByteSize( oldBuf->getBuffer()->getSize() );
     size_t numElements( 0 );
     switch( deBase->getType() )
@@ -232,6 +221,28 @@ void BufferAggregationVisitor::offsetDrawElements( jagDraw::DrawElementsBase* de
     free( newData );
 }
 
+void BufferAggregationVisitor::combineElementBuffer( jagDraw::DrawElementsBase* deBase )
+{
+    jagDraw::BufferObjectPtr rightBuf( deBase->getElementBuffer() );
+    if( _elements == NULL )
+    {
+        // First buffer. Take it as the master, and return.
+        _elements = rightBuf;
+        return;
+    }
+
+    jagBase::BufferPtr lhs( _elements->getBuffer() );
+    const jagBase::BufferPtr rhs( rightBuf->getBuffer() );
+    const size_t requiredSize( lhs->getSize() + rhs->getSize() );
+    if( lhs->getMaxSize() < requiredSize )
+        lhs->setMaxSize( std::max< size_t >( lhs->getMaxSize() * 2, requiredSize ) );
+    size_t lhsIndices( lhs->getSize() );
+    lhs->append( *rhs );
+
+    deBase->setElementBuffer( _elements );
+    deBase->setIndices( ( const GLvoid* ) lhsIndices );
+}
+
 void BufferAggregationVisitor::handleDrawable( jagDraw::DrawablePtr draw, const jagDraw::VertexArrayObject* vaop )
 {
     const size_t offset( _offsetMap[ const_cast<jagDraw::VertexArrayObject*>(vaop) ] );
@@ -242,14 +253,33 @@ void BufferAggregationVisitor::handleDrawable( jagDraw::DrawablePtr draw, const 
         jagDraw::DrawArraysBase* daBase( dynamic_cast< jagDraw::DrawArraysBase* >( dcp.get() ) );
         if( deBase != NULL )
         {
+            jagDraw::BufferObjectPtr oldBuf( deBase->getElementBuffer() );
+            if( _elementBuffers.find( oldBuf.get() ) != _elementBuffers.end() )
+            {
+                // Already processed this (shared) buffer object.
+                continue;
+            }
+            _elementBuffers.insert( oldBuf.get() );
+
             offsetDrawElements( deBase, offset );
+            //combineElementBuffer( deBase );
         }
         else if( daBase != NULL )
         {
             daBase->setFirst( daBase->getFirst() + (GLint)( offset ) );
         }
         else
-            JAG3D_CRITICAL( "Unknown command" );
+        {
+            jagDraw::MultiDrawArrays* mda( dynamic_cast< jagDraw::MultiDrawArrays* >( dcp.get() ) );
+            if( mda != NULL )
+            {
+                jagDraw::GLintArray& first( mda->getFirst() );
+                for( GLsizei idx = 0; idx < mda->getPrimcount(); ++idx )
+                    first[ idx ] += (GLint)( offset );
+            }
+            else
+                JAG3D_CRITICAL( "Unsupported DrawCommand" );
+        }
     }
 }
 
