@@ -51,14 +51,15 @@ public:
 
 protected:
     void offsetDrawElements( jagDraw::DrawElementsBase* deBase, const size_t offset );
+    void combineElementBuffer( jagDraw::DrawElementsBase* deBase );
     void handleDrawable( jagDraw::DrawablePtr draw, const jagDraw::VertexArrayObject* vaop );
 
     jagDraw::VertexArrayObjectPtr _vaop;
+    jagDraw::BufferObjectPtr _elements;
 
     typedef std::set< jagSG::Node* > NodeSet;
     NodeSet _nodeSet;
     typedef std::set< jagDraw::BufferObject* > BufferObjectSet;
-    BufferObjectSet _arrayBuffers;
     BufferObjectSet _elementBuffers;
 
     typedef std::map< jagDraw::VertexArrayObject*, size_t > OffsetMap;
