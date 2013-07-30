@@ -27,6 +27,7 @@
 #include <Poco/Path.h>
 
 #include <jagBase/ptr.h>
+#include <boost/any.hpp>
 #include <string>
 #include <vector>
 #include <iostream>
@@ -38,6 +39,47 @@ namespace jagDisk {
 /** \addtogroup PluginSupport Plugin Support
 */
 /**@{*/
+
+
+/** \class ReadStatus ReaderWriter.H <jagDisk/ReaderWriter.H>
+\brief Container for the result of a plugin read() operation.
+\details Contains a boolean result and a boost::any. If the
+result is true, boost::any holds a valid read result (usually
+a jagBase::ptr::shared_ptr). */
+class JAGDISK_EXPORT ReadStatus
+{
+public:
+    ReadStatus()
+        : _result( false )
+    {}
+    ReadStatus( boost::any& data )
+        : _result( true ),
+          _data( data )
+    {}
+    ~ReadStatus()
+    {}
+
+    void set( boost::any& data )
+    {
+        _result = true;
+        _data = data;
+    }
+
+    bool operator()() const
+    {
+        return( _result );
+    }
+
+    boost::any operator*() const
+    {
+        return( _data );
+    }
+
+protected:
+    bool _result;
+    boost::any _data;
+};
+
 
 
 /** \class ReaderWriter ReaderWriter.H <jagDisk/ReaderWriter.H>
@@ -60,18 +102,19 @@ public:
         return( false );
     }
 
-    virtual void* read( const std::string& /*fileName*/ ) const
+    // Returns a boost::any containing a jagBase::ptr::shared_ptr.
+    virtual ReadStatus read( const std::string& /*fileName*/ ) const
     {
-        return( NULL );
+        return( ReadStatus() );
     }
     virtual bool write( const std::string& /*fileName*/, const void* /*data*/ ) const
     {
         return( false );
     }
 
-    virtual void* read( std::istream& /*iStr*/ ) const
+    virtual ReadStatus read( std::istream& /*iStr*/ ) const
     {
-        return( NULL );
+        return( ReadStatus() );
     }
     virtual bool write( std::ostream& /*oStr*/, const void* /*data*/ ) const
     {

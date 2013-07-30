@@ -212,8 +212,17 @@ int main( int argc, char** argv )
     }
 
 
-    jagSG::NodePtr root( boost::make_shared< jagSG::Node >(
-        *(jagSG::Node*) jagDisk::read( fileName ) ) );
+    boost::any anyRoot( jagDisk::read( fileName ) );
+    jagSG::NodePtr root;
+    try {
+        root = boost::any_cast< jagSG::NodePtr >( anyRoot );
+    } catch( boost::bad_any_cast bac ) { bac.what(); }
+    if( root == NULL )
+    {
+        JAG3D_FATAL_STATIC( logstr, "Can't load \"" + fileName + "\"." );
+        return( false );
+    }
+
 
     SceneGraphCountVisitor sgcv;
     root->accept( sgcv );

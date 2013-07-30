@@ -70,22 +70,23 @@ public:
             );
     }
 
-    virtual void* read( const std::string& fileName ) const
+    virtual ReadStatus read( const std::string& fileName ) const
     {
         JAG3D_INFO(
             std::string( "Using OSG v" ) + std::string( osgGetVersion() ) );
 
         osg::ref_ptr< osg::Node > osgNode( osgDB::readNodeFile( fileName ) );
         if( !( osgNode.valid() ) )
-            return( NULL );
+            return( ReadStatus() );
 
         Osg2Jag osg2Jag;
         osgNode->accept( osg2Jag );
-        return( osg2Jag.getJagScene().get() );
+        jagSG::NodePtr result( osg2Jag.getJagScene() );
+        return( ReadStatus( boost::any( result ) ) );
     }
-    virtual void* read( std::istream& iStr ) const
+    virtual ReadStatus read( std::istream& iStr ) const
     {
-        return( NULL );
+        return( ReadStatus() );
     }
 
     virtual bool write( const std::string& fileName, const void* data ) const

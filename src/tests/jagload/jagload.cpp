@@ -90,15 +90,6 @@ bool JagLoadDemo::startup( const unsigned int numContexts )
 {
     DemoInterface::startup( numContexts );
 
-    //std::string fileName( "GRINDER_WHEEL.PRT.ive" );
-    //std::string fileName( "M55339.ASM.ive" );
-    //std::string fileName( "USMC23_4019.ASM.ive" );
-    //std::string fileName( "02-1100.ive" );
-
-    //std::string fileName( "fountain.osg" );
-    //std::string fileName( "glider.osg" );
-    //std::string fileName( "cow.osg" );
-    //std::string fileName( "dumptruck.osg" );
     std::string fileName( "teapot.osg" );
     JAG3D_INFO_STATIC( _logName, fileName );
 
@@ -130,13 +121,8 @@ bool JagLoadDemo::startup( const unsigned int numContexts )
 
     jagDraw::Node& firstDrawNode( _drawNodes[ 0 ] );
 
-    jagDraw::ShaderPtr vs( (jagDraw::Shader*) jagDisk::read( "jagload.vert" ) );
-    jagDraw::ShaderPtr fs( (jagDraw::Shader*) jagDisk::read( "jagload.frag" ) );
-    if( ( vs == NULL ) || ( fs == NULL ) )
-    {
-        JAG3D_INFO_STATIC( _logName, "Unable to load shaders. Set JAG3D_DATA_PATH in the environment." );
-        return( false );
-    }
+    jagDraw::ShaderPtr vs( DemoInterface::readShaderUtil( "jagload.vert" ) );
+    jagDraw::ShaderPtr fs( DemoInterface::readShaderUtil( "jagload.frag" ) );
 
     jagDraw::ProgramPtr prog;
     prog = jagDraw::ProgramPtr( new jagDraw::Program );

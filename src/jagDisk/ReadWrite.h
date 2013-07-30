@@ -24,6 +24,7 @@
 
 #include <jagDisk/Export.h>
 
+#include <boost/any.hpp>
 #include <string>
 
 
@@ -41,7 +42,7 @@ class Options;
 /** \brief
 \details
 */
-JAGDISK_EXPORT void* read( const std::string& fileName, const Options* options=NULL );
+JAGDISK_EXPORT boost::any read( const std::string& fileName, const Options* options=NULL );
 
 /** \brief
 \details
