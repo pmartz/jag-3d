@@ -23,13 +23,20 @@
 
 
 #include <jagDraw/DrawInfo.h>
+#include <jagDraw/Shader.h>
+#include <jagDraw/Image.h>
+#include <jagSG/Node.h>
 #include <jagSG/CollectionVisitor.h>
 #include <jagMx/MxCore.h>
+#include <jagDisk/ReadWrite.h>
+#include <jagBase/LogMacros.h>
+
 #include <gmtl/gmtl.h>
 
 #include <boost/program_options/options_description.hpp>
 #include <boost/program_options/variables_map.hpp>
 #include <boost/foreach.hpp>
+#include <boost/any.hpp>
 
 
 /** \class DemoInterface DemoInterface.h DemoInterface.h
@@ -105,6 +112,44 @@ protected:
 
     typedef jagDraw::PerContextData< jagMx::MxCorePtr > PerContextMxCore;
     PerContextMxCore _mxCore;
+
+
+
+#define __READ_UTIL( _RESULT, _TYPE, _NAME ) \
+    { \
+        boost::any anyTemp( jagDisk::read( _NAME ) ); \
+        try { \
+            _RESULT = boost::any_cast< _TYPE >( anyTemp ); \
+        } \
+        catch( boost::bad_any_cast bac ) \
+        { \
+            bac.what(); \
+        } \
+        if( _RESULT == NULL ) \
+        { \
+            JAG3D_FATAL_STATIC( _logName, "Can't load \"" + _NAME + "\"." ); \
+            return( false ); \
+        } \
+    }
+
+    jagSG::NodePtr readSceneGraphNodeUtil( const std::string& fileName )
+    {
+        jagSG::NodePtr result;
+        __READ_UTIL( result, jagSG::NodePtr, fileName );
+        return( result );
+    }
+    jagDraw::ImagePtr readImageUtil( const std::string& fileName )
+    {
+        jagDraw::ImagePtr result;
+        __READ_UTIL( result, jagDraw::ImagePtr, fileName );
+        return( result );
+    }
+    jagDraw::ShaderPtr readShaderUtil( const std::string& fileName )
+    {
+        jagDraw::ShaderPtr result;
+        __READ_UTIL( result, jagDraw::ShaderPtr, fileName );
+        return( result );
+    }
 };
 
 

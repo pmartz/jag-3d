@@ -59,13 +59,13 @@ public:
             isFrag( allLower ) );
     }
 
-    virtual void* read( const std::string& fileName ) const
+    virtual ReadStatus read( const std::string& fileName ) const
     {
         std::ifstream iStr( fileName.c_str() );
         if( !iStr )
         {
             // TBD record error
-            return( NULL );
+            return( ReadStatus() );
         }
 
         Poco::Path pathName( fileName );
@@ -77,13 +77,13 @@ public:
         else if( isFrag( extension ) )
             _type = GL_FRAGMENT_SHADER;
 
-        void* data( read( iStr ) );
+        ReadStatus readStatus( read( iStr ) );
         _type = 0;
         iStr.close();
 
-        return( data );
+        return( readStatus );
     }
-    virtual void* read( std::istream& iStr ) const
+    virtual ReadStatus read( std::istream& iStr ) const
     {
         // Get total file size. But because we're reading a text file,
         // the size of the actual data we read might be smaller. For
@@ -104,10 +104,10 @@ public:
         const std::string shaderSource( buff );
         delete[] buff;
 
-        jagDraw::Shader* shader( new jagDraw::Shader( _type ) );
+        ShaderPtr shader( ShaderPtr( new Shader( _type ) ) );
         shader->addSourceString( shaderSource );
 
-        return( shader );
+        return( ReadStatus( boost::any( shader ) ) );
     }
 
 protected:

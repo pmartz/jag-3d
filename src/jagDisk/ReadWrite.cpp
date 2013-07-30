@@ -24,13 +24,14 @@
 #include <jagBase/LogMacros.h>
 #include <Poco/File.h>
 
+#include <boost/any.hpp>
 #include <boost/foreach.hpp>
 
 
 namespace jagDisk {
 
 
-void* read( const std::string& fileName, const Options* options )
+boost::any read( const std::string& fileName, const Options* options )
 {
     const std::string logStr( "jag.disk.rw" );
     JAG3D_TRACE_STATIC( logStr, "read() for: " + fileName );
@@ -57,11 +58,11 @@ void* read( const std::string& fileName, const Options* options )
             continue;
 
         JAG3D_TRACE_STATIC( logStr, "\tTrying loaded ReaderWriter subclass " + rwInfo._className );
-        void* data( rw->read( fullName ) );
-        if( data != NULL )
+        ReadStatus readStatus( rw->read( fullName ) );
+        if( readStatus() )
         {
             JAG3D_TRACE_STATIC( logStr, "\tread(): Success." );
-            return( data );
+            return( *readStatus );
         }
     }
 
@@ -82,9 +83,9 @@ void* read( const std::string& fileName, const Options* options )
         BOOST_FOREACH( ReaderWriterPtr rw, pi->_readerWriters )
         {
             JAG3D_TRACE_STATIC( logStr, "\tTrying new ReaderWriter." );
-            void* data( rw->read( fullName ) );
-            if( data != NULL )
-                return( data );
+            ReadStatus readStatus( rw->read( fullName ) );
+            if( readStatus() )
+                return( *readStatus );
         }
     }
 

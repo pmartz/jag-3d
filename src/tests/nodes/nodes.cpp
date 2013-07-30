@@ -158,13 +158,8 @@ bool NodesDemo::startup( const unsigned int numContexts )
         }
     }
 
-    jagDraw::ShaderPtr vs( (jagDraw::Shader*) jagDisk::read( "nodes.vert" ) );
-    jagDraw::ShaderPtr fs( (jagDraw::Shader*) jagDisk::read( "nodes.frag" ) );
-    if( ( vs == NULL ) || ( fs == NULL ) )
-    {
-        JAG3D_INFO_STATIC( _logName, "Unable to load shaders. Set JAG3D_DATA_PATH in the environment." );
-        return( false );
-    }
+    jagDraw::ShaderPtr vs( DemoInterface::readShaderUtil( "nodes.vert" ) );
+    jagDraw::ShaderPtr fs( DemoInterface::readShaderUtil( "nodes.frag" ) );
 
     jagDraw::ProgramPtr prog;
     prog = jagDraw::ProgramPtr( new jagDraw::Program );

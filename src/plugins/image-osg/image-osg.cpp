@@ -34,6 +34,7 @@
 #include <osg/Image>
 #include <osg/Version>
 
+#include <boost/any.hpp>
 #include <fstream>
 
 
@@ -72,17 +73,24 @@ public:
             );
     }
 
-    virtual void* read( const std::string& fileName ) const
+    virtual ReadStatus read( const std::string& fileName ) const
     {
         JAG3D_INFO(
             std::string( "Using OSG v" ) + std::string( osgGetVersion() ) );
 
         osg::ref_ptr< osg::Image > osgImage( osgDB::readImageFile( fileName ) );
-        return( convertFromOsgImage( osgImage.get() ) );
+        if( osgImage == NULL )
+        {
+            JAG3D_ERROR( std::string( "Can't load file " ) + fileName );
+            return( ReadStatus() );
+        }
+
+        ImagePtr image( convertFromOsgImage( osgImage.get() ) );
+        return( ReadStatus( boost::any( image ) ) );
     }
-    virtual void* read( std::istream& iStr ) const
+    virtual ReadStatus read( std::istream& iStr ) const
     {
-        return( NULL );
+        return( ReadStatus() );
     }
 
     virtual bool write( const std::string& fileName, const void* data ) const
@@ -99,7 +107,7 @@ public:
     }
 
 protected:
-    Image* convertFromOsgImage( osg::Image* osgImage ) const
+    ImagePtr convertFromOsgImage( osg::Image* osgImage ) const
     {
         if( osgImage == NULL ) return( NULL );
 
@@ -146,7 +154,7 @@ protected:
             break;
         }
 
-        Image* newImage( new Image() );
+        ImagePtr newImage( new Image() );
         newImage->set( 0, intFormat,
             osgImage->s(), osgImage->t(), osgImage->r(), 0,
             format, osgImage->getDataType(),

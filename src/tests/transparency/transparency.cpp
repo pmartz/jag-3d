@@ -180,26 +180,14 @@ bool Transparency::startup( const unsigned int numContexts )
     // Prepare the scene graph.
     _root = jagSG::NodePtr( new jagSG::Node() );
 
-    jagSG::Node* rawModel( (jagSG::Node*) jagDisk::read( _fileName ) );
-    if( rawModel == NULL )
-    {
-        JAG3D_FATAL_STATIC( _logName, "Can't load \"" + _fileName + "\"." );
-        return( false );
-    }
-    jagSG::NodePtr model( boost::make_shared< jagSG::Node >(
-        *rawModel ) );
+    jagSG::NodePtr model( DemoInterface::readSceneGraphNodeUtil( _fileName ) );
     _root->addChild( model );
 
     _root->addChild( createPlanesSubgraph( model->getBound() ) );
 
 
-    jagDraw::ShaderPtr vs( (jagDraw::Shader*) jagDisk::read( "transparency.vert" ) );
-    jagDraw::ShaderPtr fs( (jagDraw::Shader*) jagDisk::read( "jagmodel.frag" ) );
-    if( ( vs == NULL ) || ( fs == NULL ) )
-    {
-        JAG3D_INFO_STATIC( _logName, "Unable to load shaders. Set JAG3D_DATA_PATH in the environment." );
-        return( false );
-    }
+    jagDraw::ShaderPtr vs( DemoInterface::readShaderUtil( "transparency.vert" ) );
+    jagDraw::ShaderPtr fs( DemoInterface::readShaderUtil( "jagmodel.frag" ) );
 
     jagDraw::ProgramPtr prog;
     prog = jagDraw::ProgramPtr( new jagDraw::Program );

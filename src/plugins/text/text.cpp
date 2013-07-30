@@ -62,15 +62,6 @@ public:
             );
     }
 
-    virtual void* read( const std::string& fileName ) const
-    {
-        return( NULL );
-    }
-    virtual void* read( std::istream& iStr ) const
-    {
-        return( NULL );
-    }
-
     virtual bool write( const std::string& fileName, const void* data ) const
     {
         std::ofstream oStr( fileName.c_str() );
