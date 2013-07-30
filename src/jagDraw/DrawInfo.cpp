@@ -26,15 +26,17 @@ namespace jagDraw {
 
 
 DrawInfo::DrawInfo()
-    : _id( 0 ),
-    _elementBufferID( 0 ),
-    _transform()
+    : _startFrame( true ),
+      _id( 0 ),
+      _elementBufferID( 0 ),
+      _transform()
 {
-    // Clear the _transform to zeros so that it will not match the first
-    // matrix and therefore trigger the transform uniform initialization.
-    // See jagDraw::TransformCallback.
-    for( unsigned int x = 0; x < 4; ++x )
-        _transform( x, x ) = 0.;
+}
+
+
+void DrawInfo::startFrame( const bool startFrame )
+{
+    _startFrame = startFrame;
 }
 
 
