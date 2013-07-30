@@ -43,6 +43,11 @@ struct JAGDRAW_EXPORT DrawInfo
 {
     DrawInfo();
 
+    void startFrame( const bool startFrame=true );
+
+
+    /** \brief Set to true just before the render traversal. */
+    bool _startFrame;
 
     /** Jag context identifier. */
     jagDrawContextID _id;
@@ -59,7 +64,7 @@ struct JAGDRAW_EXPORT DrawInfo
     object. */
     GLuint _elementBufferID;
 
-    /** */
+    /** \brief Track the most recent jagDraw::Node matrix. */
     gmtl::Matrix44d _transform;
 
 

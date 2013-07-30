@@ -20,6 +20,7 @@
 
 #include <jagDraw/DrawGraph.h>
 #include <jagDraw/NodeContainer.h>
+#include <jagDraw/DrawInfo.h>
 #include <jagDraw/Error.h>
 #include <jagBase/Profile.h>
 #include <jagBase/LogMacros.h>
@@ -86,6 +87,8 @@ void DrawGraph::execute( DrawInfo& drawInfo )
     JAG3D_TRACE( "execute()" );
 
     JAG3D_PROFILE( "DrawGraph execute()" );
+
+    drawInfo.startFrame();
 
     BOOST_FOREACH( CallbackPtr cb, _callbacks )
     {
