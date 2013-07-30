@@ -42,6 +42,10 @@ TransformCallback::~TransformCallback()
 
 bool TransformCallback::operator()( jagDraw::Node& node, jagDraw::DrawInfo& drawInfo )
 {
+    if( drawInfo._transform == node.getTransform() )
+        return( true );
+    drawInfo._transform = node.getTransform();
+
     _transform.setModel( node.getTransform() );
     {
         gmtl::Matrix44f mvpMat;

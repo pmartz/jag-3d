@@ -29,6 +29,7 @@
 
 #include <jagDraw/Uniform.h>
 #include <jagDraw/UniformBlock.h>
+#include <gmtl/gmtl.h>
 
 
 namespace jagDraw {
@@ -41,6 +42,7 @@ namespace jagDraw {
 struct JAGDRAW_EXPORT DrawInfo
 {
     DrawInfo();
+
 
     /** Jag context identifier. */
     jagDrawContextID _id;
@@ -56,6 +58,9 @@ struct JAGDRAW_EXPORT DrawInfo
     element buffer binding by tracking the most recently bound element buffer
     object. */
     GLuint _elementBufferID;
+
+    /** */
+    gmtl::Matrix44d _transform;
 
 
     typedef std::map< Program::HashValue, UniformPtr > UniformMap;
