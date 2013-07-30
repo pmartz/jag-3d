@@ -86,9 +86,12 @@ public:
         return( _collectionVisitor );
     }
 
-    jagMx::MxCorePtr& getMxCore( const jagDraw::jagDrawContextID contextID )
+    jagMx::MxCorePtr getMxCore( const jagDraw::jagDrawContextID contextID )
     {
-        return( _mxCore._data[ contextID ] );
+        if( _mxCore._data.empty() )
+            return( jagMx::MxCorePtr( (jagMx::MxCore*)NULL ) );
+        else
+            return( _mxCore._data[ contextID ] );
     }
 
 protected:
