@@ -19,14 +19,22 @@
 *************** <auto-copyright.pl END do not edit this line> ***************/
 
 #include <jagDraw/DrawInfo.h>
+#include <gmtl/gmtl.h>
 
 
 namespace jagDraw {
 
 
 DrawInfo::DrawInfo()
-    : _id( 0 )
+    : _id( 0 ),
+    _elementBufferID( 0 ),
+    _transform()
 {
+    // Clear the _transform to zeros so that it will not match the first
+    // matrix and therefore trigger the transform uniform initialization.
+    // See jagDraw::TransformCallback.
+    for( unsigned int x = 0; x < 4; ++x )
+        _transform( x, x ) = 0.;
 }
 
 
