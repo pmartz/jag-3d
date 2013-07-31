@@ -49,6 +49,7 @@ class Node;
 typedef jagBase::ptr< jagSG::Node >::shared_ptr NodePtr;
 typedef std::vector< NodePtr > NodeVec;
 typedef std::vector< Node > NodeSimpleVec;
+typedef std::vector< Node* > NodeSimplePtrVec;
 
 class VisitorBase;
 
@@ -114,10 +115,10 @@ public:
 
     /** \brief TBD
     \details TBD */
-    void setTraverseCallback( const CallbackPtr traverseCallback );
+    void setTraverseCallback( const CallbackPtr& traverseCallback );
     /** \brief TBD
     \details TBD */
-    const CallbackPtr getTraverseCallback() const;
+    const CallbackPtr& getTraverseCallback() const;
 
 
     /** \brief TBD
@@ -185,17 +186,17 @@ public:
 
     /** \brief CommandMap
     \details TBD */
-    void setCommandMap( jagDraw::CommandMapPtr commands );
+    void setCommandMap( jagDraw::CommandMapPtr& commands );
     /** \brief TBD
     \details TBD */
-    jagDraw::CommandMapPtr getCommandMap();
+    jagDraw::CommandMapPtr& getCommandMap();
     /** \overload */
-    const jagDraw::CommandMapPtr getCommandMap() const;
+    const jagDraw::CommandMapPtr& getCommandMap() const;
 
 
     /** \brief Drawables
     \details TBD */
-    virtual void addDrawable( jagDraw::DrawablePtr drawable );
+    virtual void addDrawable( jagDraw::DrawablePtr& drawable );
     /** \brief TBD
     \details TBD */
     unsigned int getNumDrawables() const;
@@ -203,22 +204,22 @@ public:
     \details Returns the total number of Drawables remaining
     after the deletion. Returns -1 if the specified Drawable 
     can't be found. */
-    virtual int removeDrawable( jagDraw::DrawablePtr drawable );
+    virtual int removeDrawable( jagDraw::DrawablePtr& drawable );
     /** \overload */
     virtual int removeDrawable( const unsigned int index );
     /** \brief TBD
     \details TBD */
-    jagDraw::DrawablePtr getDrawable( const unsigned int idx );
+    jagDraw::DrawablePtr& getDrawable( const unsigned int idx );
     /** \overload */
-    const jagDraw::DrawablePtr getDrawable( const unsigned int idx ) const;
+    const jagDraw::DrawablePtr& getDrawable( const unsigned int idx ) const;
 
 
     /** \brief Children
     \details TBD */
-    virtual void addChild( NodePtr node );
+    virtual void addChild( NodePtr& node );
     /** \brief TBD
     \details TBD */
-    virtual int removeChild( NodePtr node );
+    virtual int removeChild( const NodePtr& node );
     /** \brief TBD
     \details TBD */
     virtual int removeChild( const unsigned int index );
@@ -227,27 +228,27 @@ public:
     unsigned int getNumChildren() const;
     /** \brief TBD
     \details TBD */
-    NodePtr getChild( const unsigned int idx );
+    NodePtr& getChild( const unsigned int idx );
     /** \overload */
-    const NodePtr getChild( const unsigned int idx ) const;
+    const NodePtr& getChild( const unsigned int idx ) const;
 
     /** \brief Children
     \details TBD */
-    virtual void addParent( NodePtr node );
+    virtual void addParent( Node* node );
     /** \brief TBD
     \details TBD */
-    virtual int removeParent( Node* node );
+    virtual int removeParent( const Node* node );
     /** \brief TBD
     \details TBD */
     unsigned int getNumParents() const;
     /** \brief TBD
     \details TBD */
-    NodePtr getParent( const unsigned int idx );
+    Node* getParent( const unsigned int idx );
     /** \overload */
-    const NodePtr getParent( const unsigned int idx ) const;
+    const Node* getParent( const unsigned int idx ) const;
     /** \brief TBD
     \details TBD */
-    const NodeVec& getParents() const;
+    const NodeSimplePtrVec& getParents() const;
 
 
 
@@ -265,7 +266,7 @@ protected:
     jagDraw::CommandMapPtr _commands;
     jagDraw::DrawableVec _drawables;
     NodeVec _children;
-    NodeVec _parents;
+    NodeSimplePtrVec _parents;
 
     CallbackPtr _traverseCallback;
     CollectionCallbacks _collectionCallbacks;
