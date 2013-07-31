@@ -148,7 +148,7 @@ public:
     }
 
 
-    void pushNode( jagSG::NodePtr node )
+    void pushNode( jagSG::NodePtr& node )
     {
         _nodeStack.push_back( node );
     }
@@ -183,7 +183,7 @@ public:
         return( _matrixStack );
     }
 
-    void pushCommandMap( const jagDraw::CommandMapPtr commands )
+    void pushCommandMap( const jagDraw::CommandMapPtr& commands )
     {
         if( commands != NULL )
         {
@@ -208,7 +208,7 @@ public:
     {
         _commandStack.clear();
     }
-    const jagDraw::CommandMapDeque& getCommands() const
+    const jagDraw::CommandMapSimpleVec& getCommands() const
     {
         return( _commandStack );
     }
@@ -216,7 +216,7 @@ public:
 protected:
     NodeVec _nodeStack;
     jagBase::Matrix44dDeque _matrixStack;
-    jagDraw::CommandMapDeque _commandStack;
+    jagDraw::CommandMapSimpleVec _commandStack;
 };
 
 typedef jagBase::ptr< jagSG::VisitorBase >::shared_ptr VisitorBasePtr;
