@@ -159,10 +159,10 @@ public:
     /** \brief Get the bound from any node based on \c commands
     \details \c commands contains jagDraw::VertexArrayObjects, which contain
     the vertex data required to compute the bound. */
-    virtual jagDraw::BoundPtr getBound( const jagDraw::CommandMap& commands );
+    virtual const jagDraw::BoundPtr& getBound( const jagDraw::CommandMap& commands );
     /** \brief Get bound from root node.
     \details Assumes no default state. */
-    jagDraw::BoundPtr getBound()
+    const jagDraw::BoundPtr& getBound()
     {
         return( getBound( jagDraw::CommandMap() ) );
     }
@@ -174,7 +174,7 @@ public:
 
     /** \brief Compute the Node's bounding volume.
     \details Override the base class BoundOwner::computeBound(). */
-    virtual void computeBound( jagDraw::BoundPtr bound, const jagDraw::VertexArrayObject* vao, BoundOwner* owner );
+    virtual void computeBound( jagDraw::BoundPtr& bound, const jagDraw::VertexArrayObject* vao, BoundOwner* owner );
 
     /** \brief Mark all bounds dirty and notify parents.
     \details Override the base class BoundOwner::setAllBoundsDirty()

@@ -23,6 +23,7 @@
 
 
 #include <jagBase/ptr.h>
+#include <jagBase/Profile.h>
 #include <jagDraw/Bound.h>
 #include <jagBase/Notifier.h>
 
@@ -147,8 +148,10 @@ public:
     \specTableEnd
     \specFuncEnd
     */
-    virtual BoundPtr getBound( const VertexArrayObject* vao )
+    virtual const BoundPtr& getBound( const VertexArrayObject* vao )
     {
+        JAG3D_PROFILE( "BoundOwner::getBound" );
+
         boost::mutex::scoped_lock lock( _mutex );
 
         BoundInfo& boundInfo( _bounds[ vao ] );
@@ -183,14 +186,19 @@ public:
 
     Possible application use cases include assigning a minimum volume
     extent, and specifying use of BoundSphere or BoundAABox. */
-    void setInitialBound( BoundPtr initialBound )
+    void setInitialBound( const BoundPtr& initialBound )
     {
         _initialBound = initialBound;
         setAllBoundsDirty();
     }
     /** \brief Return the _initialBound.
     \details TBD */
-    BoundPtr getInitialBound() const
+    BoundPtr& getInitialBound()
+    {
+        return( _initialBound );
+    }
+    /** \overload */
+    const BoundPtr& getInitialBound() const
     {
         return( _initialBound );
     }
@@ -305,7 +313,7 @@ public:
     \specTableEnd
     \specFuncEnd
     */
-    virtual void computeBound( BoundPtr bound, const VertexArrayObject* vao, BoundOwner* owner ) = 0;
+    virtual void computeBound( BoundPtr& bound, const VertexArrayObject* vao, BoundOwner* owner ) = 0;
 
     /** \struct ComputeBoundCallback BoundOwner.h <jagDraw/BoundOwner.h>
     \brief Custom bound computation support.
@@ -320,7 +328,7 @@ public:
         \specTableEnd
         \specFuncEnd
         */
-        virtual void operator()( BoundPtr _bound, const VertexArrayObject* vao, BoundOwner* owner ) = 0;
+        virtual void operator()( BoundPtr& _bound, const VertexArrayObject* vao, BoundOwner* owner ) = 0;
     };
     typedef jagBase::ptr< ComputeBoundCallback >::shared_ptr ComputeBoundCallbackPtr;
 
