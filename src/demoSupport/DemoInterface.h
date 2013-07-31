@@ -128,7 +128,6 @@ protected:
         if( _RESULT == NULL ) \
         { \
             JAG3D_FATAL_STATIC( _logName, "Can't load \"" + _NAME + "\"." ); \
-            return( false ); \
         } \
     }
 
