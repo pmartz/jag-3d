@@ -83,11 +83,11 @@ void Node::traverse( jagSG::VisitorBase& visitor )
     }
 }
 
-void Node::setTraverseCallback( const CallbackPtr traverseCallback )
+void Node::setTraverseCallback( const CallbackPtr& traverseCallback )
 {
     _traverseCallback = traverseCallback;
 }
-const Node::CallbackPtr Node::getTraverseCallback() const
+const Node::CallbackPtr& Node::getTraverseCallback() const
 {
     return( _traverseCallback );
 }
@@ -224,7 +224,7 @@ void Node::setAllBoundsDirty( const bool dirty )
     BoundOwner::setAllBoundsDirty( dirty );
     if( dirty )
     {
-        BOOST_FOREACH( NodePtr& parentNode, _parents )
+        BOOST_FOREACH( Node* parentNode, _parents )
         {
             parentNode->setAllBoundsDirty();
         }
@@ -233,27 +233,27 @@ void Node::setAllBoundsDirty( const bool dirty )
 
 
 
-void Node::setCommandMap( jagDraw::CommandMapPtr commands )
+void Node::setCommandMap( jagDraw::CommandMapPtr& commands )
 {
     _commands = commands;
 }
-jagDraw::CommandMapPtr Node::getCommandMap()
+jagDraw::CommandMapPtr& Node::getCommandMap()
 {
     return( _commands );
 }
-const jagDraw::CommandMapPtr Node::getCommandMap() const
+const jagDraw::CommandMapPtr& Node::getCommandMap() const
 {
     return( _commands );
 }
 
 
-void Node::addDrawable( jagDraw::DrawablePtr drawable )
+void Node::addDrawable( jagDraw::DrawablePtr& drawable )
 {
     _drawables.push_back( drawable );
     drawable->getNotifierCallbacks().push_back( _boundDirtyCallback );
     setAllBoundsDirty();
 }
-int Node::removeDrawable( jagDraw::DrawablePtr drawable )
+int Node::removeDrawable( jagDraw::DrawablePtr& drawable )
 {
     jagDraw::DrawableVec::iterator it;
     for( it=_drawables.begin(); it != _drawables.end(); ++it )
@@ -281,27 +281,31 @@ unsigned int Node::getNumDrawables() const
 {
     return( (unsigned int) _drawables.size() );
 }
-jagDraw::DrawablePtr Node::getDrawable( const unsigned int idx )
+jagDraw::DrawablePtr& Node::getDrawable( const unsigned int idx )
 {
     if( idx >= getNumDrawables() )
-        return( jagDraw::DrawablePtr( (jagDraw::Drawable*)NULL ) );
+    {
+        JAG3D_ERROR( "getDrawable() index out of range." );
+    }
     return( _drawables[ idx ] );
 }
-const jagDraw::DrawablePtr Node::getDrawable( const unsigned int idx ) const
+const jagDraw::DrawablePtr& Node::getDrawable( const unsigned int idx ) const
 {
     if( idx >= getNumDrawables() )
-        return( jagDraw::DrawablePtr( (jagDraw::Drawable*)NULL ) );
+    {
+        JAG3D_ERROR( "getDrawable() index out of range." );
+    }
     return( _drawables[ idx ] );
 }
 
     
-void Node::addChild( NodePtr node )
+void Node::addChild( NodePtr& node )
 {
     _children.push_back( node );
-    node->addParent( shared_from_this() );
+    node->addParent( this );
     setAllBoundsDirty();
 }
-int Node::removeChild( NodePtr node )
+int Node::removeChild( const NodePtr& node )
 {
     NodeVec::iterator it;
     for( it = _children.begin(); it != _children.end(); ++it )
@@ -329,29 +333,33 @@ unsigned int Node::getNumChildren() const
 {
     return( (unsigned int) _children.size() );
 }
-NodePtr Node::getChild( const unsigned int idx )
+NodePtr& Node::getChild( const unsigned int idx )
 {
     if( idx >= getNumChildren() )
-        return( NodePtr( (Node*)NULL ) );
+    {
+        JAG3D_ERROR( "getChild() index out of range." );
+    }
     return( _children[ idx ] );
 }
-const NodePtr Node::getChild( const unsigned int idx ) const
+const NodePtr& Node::getChild( const unsigned int idx ) const
 {
     if( idx >= getNumChildren() )
-        return( NodePtr( (Node*)NULL ) );
+    {
+        JAG3D_ERROR( "getChild() index out of range." );
+    }
     return( _children[ idx ] );
 }
 
-void Node::addParent( NodePtr node )
+void Node::addParent( Node* node )
 {
     _parents.push_back( node );
 }
-int Node::removeParent( Node* node )
+int Node::removeParent( const Node* node )
 {
-    NodeVec::iterator it;
+    NodeSimplePtrVec::iterator it;
     for( it = _parents.begin(); it != _parents.end(); ++it )
     {
-        if( it->get() == node )
+        if( *it == node )
         {
             _parents.erase( it );
             return( (int)( _parents.size() ) );
@@ -363,19 +371,23 @@ unsigned int Node::getNumParents() const
 {
     return( (unsigned int) _parents.size() );
 }
-NodePtr Node::getParent( const unsigned int idx )
+Node* Node::getParent( const unsigned int idx )
 {
     if( idx >= getNumParents() )
-        return( NodePtr( (Node*)NULL ) );
+    {
+        JAG3D_ERROR( "getParent() index out of range." );
+    }
     return( _parents[ idx ] );
 }
-const NodePtr Node::getParent( const unsigned int idx ) const
+const Node* Node::getParent( const unsigned int idx ) const
 {
     if( idx >= getNumParents() )
-        return( NodePtr( (Node*)NULL ) );
+    {
+        JAG3D_ERROR( "getParent() index out of range." );
+    }
     return( _parents[ idx ] );
 }
-const NodeVec& Node::getParents() const
+const NodeSimplePtrVec& Node::getParents() const
 {
     return( _parents );
 }
