@@ -39,7 +39,7 @@
 namespace jagDraw {
 
 
-	class CommandMap : public ObjectIDOwner, public jagBase::UserDataOwner
+class CommandMap : public ObjectIDOwner, public jagBase::UserDataOwner
 {
 public:
     CommandMap( const std::string& name=std::string("") )
