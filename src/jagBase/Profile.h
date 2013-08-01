@@ -97,6 +97,8 @@ public:
         return( _root );
     }
 
+    void reset();
+
 protected:
     ProfileManager();
     ~ProfileManager();
