@@ -76,6 +76,12 @@ void ProfileManager::stopProfile()
         _current = _current->_parent;
 }
 
+void ProfileManager::reset()
+{
+    _root.reset( new ProfileNode( "jag" ) );
+    _current = _root;
+    startProfile( "jag" );
+}
 
 
 ProfileNode::ProfileNode( const char* name )

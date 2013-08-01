@@ -71,6 +71,7 @@ void GLWidget::paintGL()
 
 #ifdef JAG3D_ENABLE_PROFILING
     jagBase::ProfileManager::instance()->dumpAll();
+    jagBase::ProfileManager::instance()->reset();
 #endif
 
     if( di->getContinuousRedraw() )
