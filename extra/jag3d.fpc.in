@@ -1,0 +1,13 @@
+prefix=${fp_file_cwd}/../..
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: Jag3D
+Description: Jag3D release pre-compiled for VES
+Provides: Jag3D jag3d
+Requires: boost poco gmtl
+Version: @JAG3D_VERSION@
+Libs: @JAG3D_FPC_LIBRARIES@
+Cflags: @JAG3D_FPC_INCLUDES@
+Arch: noarch

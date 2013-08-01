@@ -1,0 +1,13 @@
+cow.osg
+dumptruck.osg
+fountain.osg
+glider.osg
+teapot.osg
+sharedtetra.osg
+
+GRINDER_WHEEL.PRT.ive
+M55339.ASM.ive
+USMC23_4019.ASM.ive
+02-1100.ive
+Sprayer\4630-Sprayer.ive
+
