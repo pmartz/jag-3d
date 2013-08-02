@@ -36,6 +36,7 @@ set( _jagSGHeaderFiles
     SelectContainerCallback.h
     SmallFeatureCallback.h
     Visitor.h
+    IntersectVisitor.h
 )
 
 set( _jagSGSourceFiles
@@ -46,6 +47,7 @@ set( _jagSGSourceFiles
     SmallFeatureCallback.cpp
     NodeMaskCullCallback.cpp
     Node.cpp
+    IntersectVisitor.cpp
 )
 
 _addLibrary( ${_libName}
