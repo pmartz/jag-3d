@@ -36,25 +36,6 @@
 namespace jagDraw {
 
 
-/** \struct BoundInfo BoundOwner.h <jagDraw/BoundOwner.h>
-\brief A bounding volume with associated data.
-\details Allows a bounding volume and dirty flag per VertexArrayObject.
-See BoundMap.
-\details TBD */
-struct BoundInfo {
-    BoundInfo()
-        : _dirty( true )
-    {}
-    BoundInfo( const BoundInfo& rhs )
-        : _dirty( rhs._dirty ),
-        _bound( rhs._bound )
-    {}
-    bool _dirty;
-    jagDraw::BoundPtr _bound;
-};
-
-
-
 /** \class BoundOwner BoundOwner.h <jagDraw/BoundOwner.h>
 \brief Common base class for objects that own bounding volumes.
 \details TBD
@@ -82,34 +63,6 @@ public:
     }
 
 
-    /** \brief Removes all computed bounding volumes.
-    \details Removes all bounds and empties the \c _bound map.
-
-    \specTableBegin
-    \specThread{Thread Safe}
-    \specTableEnd
-    \specFuncEnd
-    */
-    void resetBounds()
-    {
-        setAllBoundsDirty();
-        _bound = jagDraw::BoundPtr( (jagDraw::Bound*)NULL );
-    }
-    /** \brief Remove a specific bounding volume.
-    \details Removes the bound associated with the specified \c vao.
-
-    \specTableBegin
-    \specThread{Thread Safe}
-    \specDepend{VertexArrayObject}
-    \specTableEnd
-    \specFuncEnd
-    */
-    void removeBound()
-    {
-        setAllBoundsDirty();
-        _bound = jagDraw::BoundPtr( (jagDraw::Bound*)NULL );
-    }
-
     /** \brief Create a new uninitialized bound.
     \details This function is called by getBound() if \c _initialBound is NULL.
     Typically, this function returns a BoundAABoxPtr for subclass jagDraw::Drawable,
@@ -118,21 +71,19 @@ public:
 
     /** \brief Returns a bounding volume.
     \details 
-    \param  The VertexArrayObject required for bound computation.
+    \param  The CommandMap required for bound computation.
 
     \specFuncBegin
 
-    This function creates a jagDraw::BoundInfo entry in the _bound map,
-    if it doesn't already exist.
-    If BoundInfo::_dirty is true, this function performs the following operations:
-    - If BoundInfo::_bound is NULL, this function allocates a new bound.
+    If _dirty is true, this function performs the following operations:
+    - If _bound is NULL, this function allocates a new bound.
       If _initialBound is not NULL, it's cloned to create this new bound.
     - If _computeBoundCallback is non-NULL, this function executes the callback.
       Otherwise, this function calls computeBound().
-    - BoundInfo::_dirty is set to false.
+    - _dirty is set to false.
 
-    Regardless of whether BoundInfo::_dirty was initially true or false, this function
-    returns the value of BoundInfo::_bound.
+    Regardless of whether _dirty was initially true or false, this function
+    returns the value of _bound.
 
     If _computeBoundCallback == NULL and the bound is <em>uncomputable</em>,
     the return value will always be uninitialized. If _computeBoundCallback
@@ -141,7 +92,7 @@ public:
 
     \specTableBegin
     \specThread{Thread Safe}
-    \specDepend{VertexArrayObject}
+    \specDepend{CommandMap}
     \specTableEnd
     \specFuncEnd
     */
@@ -172,107 +123,13 @@ public:
         return( _bound );
     }
 
-    /** \brief Set an initial bounding volume.
-    \details The BoundOwner's bounding volume assumes the Bound::BaseType
-    of _initialBound, and is guaranteed to fully enclose _initialBound.
-    
-    See getBound() for how the _initialBound is used.
-
-    Possible application use cases include assigning a minimum volume
-    extent, and specifying use of BoundSphere or BoundAABox. */
-    void setInitialBound( const BoundPtr& initialBound )
-    {
-        _initialBound = initialBound;
-        setAllBoundsDirty();
-    }
-    /** \brief Return the _initialBound.
-    \details TBD */
-    BoundPtr& getInitialBound()
-    {
-        return( _initialBound );
-    }
-    /** \overload */
-    const BoundPtr& getInitialBound() const
-    {
-        return( _initialBound );
-    }
-
-    /** \brief Set the dirty state for a specific Bound.
-    \details Set the BoundInfo::_dirty flag to \c dirty for
-    the Bound indexed by \c vao.
-
-    If _bound doesn't have a BoundInfo map entry for \c vao,
-    this function creates one. Thus it is not const.
-
-    \specFuncBegin
-    \specTableBegin
-    \specThread{Thread Safe}
-    \specDepend{VertexArrayObjectPtr}
-    \specTableEnd
-    \specFuncEnd
-    */
-    virtual void setBoundDirty( const bool dirty=true )
-    {
-        _dirty = dirty;
-    }
-    /** \brief Set the dirty state for all Bounds.
-    \details TBD
-
-    \specFuncBegin
-    \specTableBegin
-    \specThread{Thread Safe}
-    \specTableEnd
-    \specFuncEnd
-    */
-    virtual void setAllBoundsDirty( const bool dirty=true )
-    {
-        _dirty = dirty;
-    }
-    /** \brief Return the dirty state for a specific Bound.
-    \details TBD
-
-    \specFuncBegin
-    \specTableBegin
-    \specThread{Thread Safe}
-    \specDepend{VertexArrayObjectPtr}
-    \specTableEnd
-    \specFuncEnd
-    */
-    bool getBoundDirty() const
-    {
-        return( _dirty );
-    }
-    /** \brief Return true if any bound is dirty.
-    \details
-
-    \specFuncBegin
-    \specTableBegin
-    \specThread{Thread Safe}
-    \specTableEnd
-    \specFuncEnd
-    */
-    bool getAnyBoundDirty() const
-    {
-        return( _dirty );
-    }
-
-    /** \brief Return the total number of bounding volumes.
-    \details In the typical case, this function returns 1. But because
-    jagDraw::VertexArrayObject is part of the CommandMap and can be associated
-    with any jagSG::Node, a BoundOwner could have more than 1 bound. */
-    unsigned int getNumBounds() const
-    {
-        return( 1 );
-    }
-
-
     /** \brief Computes a bounding volume.
     \details
     
     \specFuncBegin
 
-    Computes the bounding volume for the given VertexArrayObject
-    \c vao.
+    Computes the bounding volume for the given CommandMap
+    \c commands.
 
     The bound could be <em>uncomputable</em> if the BoundOwner subclass
     doesn't have enough information to compute the bound. Valid reasons
@@ -291,6 +148,74 @@ public:
     */
     virtual void computeBound( BoundPtr& bound, const jagDraw::CommandMap& commands, BoundOwner* owner ) = 0;
 
+
+    /** \brief Set an initial bounding volume.
+    \details The BoundOwner's bounding volume assumes the Bound::BaseType
+    of _initialBound, and is guaranteed to fully enclose _initialBound.
+    
+    See getBound() for how the _initialBound is used.
+
+    Possible application use cases include assigning a minimum volume
+    extent, and specifying use of BoundSphere or BoundAABox. */
+    void setInitialBound( const BoundPtr& initialBound )
+    {
+        _initialBound = initialBound;
+        setBoundDirty();
+    }
+    /** \brief Return the _initialBound.
+    \details TBD */
+    BoundPtr& getInitialBound()
+    {
+        return( _initialBound );
+    }
+    /** \overload */
+    const BoundPtr& getInitialBound() const
+    {
+        return( _initialBound );
+    }
+
+    /** \brief Mark a bound as dirty.
+    \details Set the _dirty flag to \c dirty.
+
+    Typically, classes derived from BoundOwner (jagDraw::Drawable and jagSG::Node)
+    override this function to notify observer classes (parent jagSG::Node objects)
+    that the bound has been dirtied.
+    \see setBoundDirtyFlag().
+
+    \specFuncBegin
+    \specTableBegin
+    \specThread{Thread Safe}
+    \specTableEnd
+    \specFuncEnd
+    */
+    virtual void setBoundDirty( const bool dirty=true )
+    {
+        _dirty = dirty;
+    }
+    /** \brief Mark a bound as dirty.
+    \details Set the _dirty flag to \c dirty.
+
+    This is not a virtual function and can't be overridden by derived classes.
+    Use this function to mark a bound as dirty without notifying any observers. */
+    void setBoundDirtyFlag( const bool dirty=true )
+    {
+        _dirty = dirty;
+    }
+    /** \brief Return the dirty state for a specific Bound.
+    \details TBD
+
+    \specFuncBegin
+    \specTableBegin
+    \specThread{Thread Safe}
+    \specTableEnd
+    \specFuncEnd
+    */
+    bool getBoundDirty() const
+    {
+        return( _dirty );
+    }
+
+
     /** \struct ComputeBoundCallback BoundOwner.h <jagDraw/BoundOwner.h>
     \brief Custom bound computation support.
     \details TBD */
@@ -300,7 +225,7 @@ public:
         \specFuncBegin
         \specTableBegin
         \specThread{Thread Safe}
-        \specDepend{VertexArrayObject}
+        \specDepend{CommandMap}
         \specTableEnd
         \specFuncEnd
         */
@@ -313,6 +238,7 @@ public:
     void setComputeBoundCallback( ComputeBoundCallbackPtr computeBoundCallback )
     {
         _computeBoundCallback = computeBoundCallback;
+        setBoundDirty();
     }
     /** \brief TBD
     \details TBD */
@@ -329,15 +255,12 @@ public:
     };
 
 protected:
-    /** Default value: For each element in _bound, BoundInfo::_dirty
-    is initially true. The first call to getBound() initializes the
-    entry further. If \c _initialBound is NULL, a new
-    jagDraw::BoundAABox is allocated; otherwise, \c _initialBOund
-    is cloned. BoundInfo::_bound is expanded around all applicable
-    vertex data, and BoundInfo::_dirty is set to false. */
+    /** Default value: _bound = BoundPtr() */
     BoundPtr _bound;
+    /** Default value: true */
     bool _dirty;
-    /** Default value: NULL */
+
+    /** Default value: _initialBound = BoundPtr() */
     BoundPtr _initialBound;
 
     /** Default value: _computeBoundCallback = ComputeBoundCallbackPtr() */

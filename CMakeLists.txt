@@ -30,7 +30,7 @@ endmacro()
 
 set( JAG3D_MAJOR_VERSION 0 )
 set( JAG3D_MINOR_VERSION 0 )
-set( JAG3D_SUB_VERSION 12 )
+set( JAG3D_SUB_VERSION 13 )
 zeroPad( JAG3D_MINOR_VERSION __minorPad )
 zeroPad( JAG3D_SUB_VERSION __patchPad )
 set( JAG3D_VERSION ${JAG3D_MAJOR_VERSION}.${__minorPad}.${__patchPad} )

@@ -177,7 +177,7 @@ public:
     /** \brief Mark all bounds dirty and notify parents.
     \details Override the base class BoundOwner::setAllBoundsDirty()
     so that parent Nodes can be notified. */
-    virtual void setAllBoundsDirty( const bool dirty=true );
+    virtual void setBoundDirty( const bool dirty=true );
 
     /**@}*/
 

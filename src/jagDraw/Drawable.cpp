@@ -134,16 +134,10 @@ void Drawable::computeBound( BoundPtr& bound, const jagDraw::CommandMap& command
 
 void Drawable::setBoundDirty( const bool dirty )
 {
+    if( _dirty == dirty )
+        return;
+
     BoundOwner::setBoundDirty( dirty );
-    if( dirty )
-    {
-        BoundDirtyNotifyInfo bdni;
-        notify( bdni );
-    }
-}
-void Drawable::setAllBoundsDirty( const bool dirty )
-{
-    BoundOwner::setAllBoundsDirty( dirty );
     if( dirty )
     {
         BoundDirtyNotifyInfo bdni;
@@ -155,7 +149,7 @@ void Drawable::setAllBoundsDirty( const bool dirty )
 void Drawable::addDrawCommand( DrawCommandPtr dcp )
 {
     _drawCommands.push_back( dcp );
-    setAllBoundsDirty();
+    setBoundDirty();
 }
 
 DrawCommandVec& Drawable::getDrawCommandVec()
