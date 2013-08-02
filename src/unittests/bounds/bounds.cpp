@@ -113,7 +113,7 @@ bool test()
                 std::cerr << "Incorrect radius: " << returnRadius << std::endl;
                 return( false );
             }
-            if( root->getAnyBoundDirty() )
+            if( root->getBoundDirty() )
             {
                 std::cerr << "Failed bound clean test." << std::endl;
                 return( false );
@@ -184,7 +184,7 @@ bool test()
                 std::cerr << "Incorrect radius: " << returnRadius << std::endl;
                 return( false );
             }
-            if( root->getAnyBoundDirty() )
+            if( root->getBoundDirty() )
             {
                 std::cerr << "Failed bound clean test." << std::endl;
                 return( false );
@@ -192,7 +192,7 @@ bool test()
 
             jagDraw::DrawArraysPtr da( jagDraw::DrawArraysPtr( new jagDraw::DrawArrays( GL_POINTS, 0, 1 ) ) );
             drawable->addDrawCommand( da );
-            if( !( root->getAnyBoundDirty() ) )
+            if( !( root->getBoundDirty() ) )
             {
                 std::cerr << "Failed, bound should be dirty after adding DrawCommand." << std::endl;
                 return( false );

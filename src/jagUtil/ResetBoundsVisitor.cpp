@@ -46,11 +46,11 @@ ResetBoundsVisitor::~ResetBoundsVisitor()
 
 void ResetBoundsVisitor::visit( jagSG::Node& node )
 {
-    node.resetBounds();
+    node.setBoundDirtyFlag();
 
     for( unsigned int idx = 0; idx < node.getNumDrawables(); ++idx )
     {
-        node.getDrawable( idx )->resetBounds();
+        node.getDrawable( idx )->setBoundDirtyFlag();
     }
 
     node.traverse( *this );

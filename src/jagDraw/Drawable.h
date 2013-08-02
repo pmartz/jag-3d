@@ -200,8 +200,6 @@ the list directly with getDrawCommandVec().
 
     /** \brief Notify owning code of bound dirty state. */
     virtual void setBoundDirty( const bool dirty=true );
-    /** \brief Notify owning code of bound dirty state. */
-    virtual void setAllBoundsDirty( const bool dirty=true );
 
     /**@}*/
 

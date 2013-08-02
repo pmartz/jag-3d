@@ -166,14 +166,17 @@ void Node::computeBound( jagDraw::BoundPtr& bound, const jagDraw::CommandMap& co
     bound->transform( _matrix );
 }
 
-void Node::setAllBoundsDirty( const bool dirty )
+void Node::setBoundDirty( const bool dirty )
 {
-    BoundOwner::setAllBoundsDirty( dirty );
+    if( _dirty == dirty )
+        return;
+
+    BoundOwner::setBoundDirty( dirty );
     if( dirty )
     {
         BOOST_FOREACH( Node* parentNode, _parents )
         {
-            parentNode->setAllBoundsDirty();
+            parentNode->setBoundDirty();
         }
     }
 }
@@ -198,7 +201,7 @@ void Node::addDrawable( jagDraw::DrawablePtr& drawable )
 {
     _drawables.push_back( drawable );
     drawable->getNotifierCallbacks().push_back( _boundDirtyCallback );
-    setAllBoundsDirty();
+    setBoundDirty();
 }
 int Node::removeDrawable( jagDraw::DrawablePtr& drawable )
 {
@@ -209,7 +212,7 @@ int Node::removeDrawable( jagDraw::DrawablePtr& drawable )
         {
             drawable->removeNotifierCallback( _boundDirtyCallback );
             _drawables.erase( it );
-            setAllBoundsDirty();
+            setBoundDirty();
             return( (int)( _drawables.size() ) );
         }
     }
@@ -250,7 +253,7 @@ void Node::addChild( NodePtr& node )
 {
     _children.push_back( node );
     node->addParent( this );
-    setAllBoundsDirty();
+    setBoundDirty();
 }
 int Node::removeChild( const NodePtr& node )
 {
@@ -261,7 +264,7 @@ int Node::removeChild( const NodePtr& node )
         {
             node->removeParent( this );
             _children.erase( it );
-            setAllBoundsDirty();
+            setBoundDirty();
             return( (int)( _children.size() ) );
         }
     }
@@ -383,7 +386,7 @@ void Node::BoundDirtyCallback::operator()( jagBase::Notifier* notifier, const ja
         const jagDraw::Drawable::BoundDirtyNotifyInfo* >( &info ) );
     if( bdni != NULL )
     {
-        _owner->setAllBoundsDirty();
+        _owner->setBoundDirty();
     }
 }
 

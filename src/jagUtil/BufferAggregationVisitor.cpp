@@ -96,19 +96,9 @@ void BufferAggregationVisitor::reset()
 
 void BufferAggregationVisitor::visit( jagSG::Node& node )
 {
-    if( node.getAnyBoundDirty() )
+    if( node.getBoundDirty() )
     {
         JAG3D_WARNING( "visit(): Detected dirty bounds. App should call getBound() before invoking this visitor." );
-    }
-
-    if( node.getNumBounds() > 1 )
-    {
-        // Atypical but legal case: The node is multiparented and accessed
-        // by more than one VertexArrayObject. We could handle this under certain
-        // controlled conditions, but for simplicitly we leave this entire
-        // subgraph alone.
-        JAG3D_INFO( "Found node \"" + node.getUserDataName() + "\" with multiple bounds." );
-        return;
     }
 
     if( _nodeSet.find( &node ) != _nodeSet.end() )
