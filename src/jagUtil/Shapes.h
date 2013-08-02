@@ -45,7 +45,7 @@ JAGUTIL_EXPORT jagDraw::VertexArrayObjectPtr createVertexArrayObject( const VNTC
 
 JAGUTIL_EXPORT jagDraw::DrawablePtr makePlane( VNTCVec& data,
     const gmtl::Point3f& corner, const gmtl::Vec3f& u, const gmtl::Vec3f& v,
-    const short subU=1, const short subV=1,
+    const int subU=1, const int subV=1,
     jagDraw::DrawablePtr drawable=jagDraw::DrawablePtr( ( jagDraw::Drawable* )NULL ) );
 
 
