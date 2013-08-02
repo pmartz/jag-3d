@@ -172,7 +172,7 @@ public:
 
     /** \brief Compute the Node's bounding volume.
     \details Override the base class BoundOwner::computeBound(). */
-    virtual void computeBound( jagDraw::BoundPtr& bound, const jagDraw::CommandMap& commands, BoundOwner* owner );
+    virtual void computeBound( jagDraw::BoundPtr& bound, const jagDraw::CommandMap& commands );
 
     /** \brief Mark all bounds dirty and notify parents.
     \details Override the base class BoundOwner::setAllBoundsDirty()

@@ -78,7 +78,7 @@ BoundPtr Drawable::newBound()
     return( BoundPtr( new BoundAABox() ) );
 }
 
-void Drawable::computeBound( BoundPtr& bound, const jagDraw::CommandMap& commands, BoundOwner* owner )
+void Drawable::computeBound( BoundPtr& bound, const jagDraw::CommandMap& commands )
 {
     JAG3D_PROFILE( "Drawable::computeBound" );
 
