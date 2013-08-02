@@ -128,7 +128,7 @@ jagDraw::BoundPtr Node::newBound()
     return( jagDraw::BoundPtr( new jagDraw::BoundSphere() ) );
 }
 
-void Node::computeBound( jagDraw::BoundPtr& bound, const jagDraw::CommandMap& commands, BoundOwner* owner )
+void Node::computeBound( jagDraw::BoundPtr& bound, const jagDraw::CommandMap& commands )
 {
     JAG3D_PROFILE( "SGNode::computeBound" );
 

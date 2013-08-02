@@ -196,7 +196,7 @@ the list directly with getDrawCommandVec().
     \specTableEnd
     \specFuncEnd
     */
-    virtual void computeBound( BoundPtr& bound, const jagDraw::CommandMap& commands, BoundOwner* owner );
+    virtual void computeBound( BoundPtr& bound, const jagDraw::CommandMap& commands );
 
     /** \brief Notify owning code of bound dirty state. */
     virtual void setBoundDirty( const bool dirty=true );

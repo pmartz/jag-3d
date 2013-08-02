@@ -24,13 +24,9 @@
 
 #include <jagBase/ptr.h>
 #include <jagBase/Profile.h>
+#include <jagDraw/CommandMap.h>
 #include <jagDraw/Bound.h>
 #include <jagBase/Notifier.h>
-#include <jagDraw/CommandMap.h>
-
-#include <boost/foreach.hpp>
-
-#include <map>
 
 
 namespace jagDraw {
@@ -38,7 +34,59 @@ namespace jagDraw {
 
 /** \class BoundOwner BoundOwner.h <jagDraw/BoundOwner.h>
 \brief Common base class for objects that own bounding volumes.
-\details TBD
+\details Currently the two derived classes are jagDraw::Drawable and
+jagSG::Node.
+
+\specBegin BoundOwner
+
+BoundOwner supports the following functionality:
+\li Storage for (or a pointer to) a bounding volume (jagDraw::Bound).
+\li Bounding volume initialization.
+\li Bounding volume access.
+\li Bounding volume computation.
+\li A flag to indicate the bound has been computed.
+
+Each BoundOwner instance stores the following information:
+\li A bound volume or pointer to same.
+\li A Boolean indication of the bound computation status.
+\li An initial / least bound volume (or pointer to same).
+\li A computation callback for custom bounds computation.
+
+The bounding volume is retrieved by a call to getBound(), which
+takes a CommandMap as a paramater. The CommandMap contains
+VertexArrayObject, which jagDraw::Drawables iterate over to
+compute their bounding volume.
+
+If the initial bound (see setInitialBound()) is non-NULL,
+the bounding volume is always guaranteed to be at
+least isometric to the initial bound.
+
+The bounding volume will be undefined if there is no
+initial bounding bolume, no compute bounds callback, and
+a BoundOwner is accessed by CommandMaps containing
+different VertexArrayObjects. This could happen, for example,
+during traversal of a multiparented scene graph.
+
+The returned bounding volume will be empty if there is no
+initial bounding volume, no copmpute bounds callback, and
+there are no subordinate BoundOwner objects that compute a
+non-empty bound. This could happen, for example, if a
+scene graph subgraph contains no Drawables, or Drawables
+with no DrawCommands. It could also happen if the CommandMap
+paremeter to computeBounds() contains no vertex data in
+the VertexArrayObject.
+
+\specTableBegin
+\specThread{Unsafe}
+\specGL{None}
+\specDepend{CommandMap\, Bound}
+\specUsage{TBD}
+\specViolations{None}
+\specTableEnd
+
+See member functions for additional specification requirements.
+\specEnd
+
 */
 class BoundOwner
 {
@@ -66,12 +114,19 @@ public:
     /** \brief Create a new uninitialized bound.
     \details This function is called by getBound() if \c _initialBound is NULL.
     Typically, this function returns a BoundAABoxPtr for subclass jagDraw::Drawable,
-    and a BoundSphere for subclass jagSG::Node. */
+    and a BoundSphere for subclass jagSG::Node.
+
+    \specFuncBegin
+    \specTableBegin
+    \specThread{Thread Safe}
+    \specTableEnd
+    \specFuncEnd
+    */
     virtual BoundPtr newBound() = 0;
 
     /** \brief Returns a bounding volume.
     \details 
-    \param  The CommandMap required for bound computation.
+    \param commands The CommandMap required for bound computation.
 
     \specFuncBegin
 
@@ -85,13 +140,8 @@ public:
     Regardless of whether _dirty was initially true or false, this function
     returns the value of _bound.
 
-    If _computeBoundCallback == NULL and the bound is <em>uncomputable</em>,
-    the return value will always be uninitialized. If _computeBoundCallback
-    is non-NULL, _computeBoundCallback is entirely responsible for determining
-    the return value.
-
     \specTableBegin
-    \specThread{Thread Safe}
+    \specThread{Unsafe}
     \specDepend{CommandMap}
     \specTableEnd
     \specFuncEnd
@@ -116,7 +166,7 @@ public:
             if( _computeBoundCallback != NULL )
                 (*_computeBoundCallback)( _bound, commands, this );
             else
-                computeBound( _bound, commands, this );
+                computeBound( _bound, commands );
             _dirty = false;
         }
 
@@ -131,27 +181,24 @@ public:
     Computes the bounding volume for the given CommandMap
     \c commands.
 
-    The bound could be <em>uncomputable</em> if the BoundOwner subclass
-    doesn't have enough information to compute the bound. Valid reasons
-    include, but are not limited to:
-    \li \c vao is NULL.
-    \li \c vao does not contain a non-NULL BufferObjectPtr marked as VertexArrayObject::Vertex.
-    \li \c vao does not contain a non-NULL VertexAttribPtr marked as VertexArrayObject::Vertex.
-    See the BoundOwner subclasses (jagDraw::Drawable and jagSG::Node)
+    The bound could be empty if the BoundOwner subclass doesn't
+    have enough information to compute the bound. See the
+    BoundOwner subclasses (jagDraw::Drawable and jagSG::Node)
     for <em>uncomputable</em> bound reasons.
 
     \specTableBegin
     \specThread{Thread Safe}
-    \specDepend{Bound\, VertexArrayObject}
+    \specDepend{Bound\, CommandMap}
     \specTableEnd
     \specFuncEnd
     */
-    virtual void computeBound( BoundPtr& bound, const jagDraw::CommandMap& commands, BoundOwner* owner ) = 0;
+    virtual void computeBound( BoundPtr& bound, const jagDraw::CommandMap& commands ) = 0;
 
 
     /** \brief Set an initial bounding volume.
     \details The BoundOwner's bounding volume assumes the Bound::BaseType
-    of _initialBound, and is guaranteed to fully enclose _initialBound.
+    of _initialBound, and is guaranteed to be at least isometric to
+    _initialBound.
     
     See getBound() for how the _initialBound is used.
 
@@ -179,8 +226,8 @@ public:
 
     Typically, classes derived from BoundOwner (jagDraw::Drawable and jagSG::Node)
     override this function to notify observer classes (parent jagSG::Node objects)
-    that the bound has been dirtied.
-    \see setBoundDirtyFlag().
+    that the bound has been dirtied. See setBoundDirtyFlag(), which simply sets
+    the dirty flag without notifying observers.
 
     \specFuncBegin
     \specTableBegin
@@ -220,7 +267,7 @@ public:
     \brief Custom bound computation support.
     \details TBD */
     struct ComputeBoundCallback {
-        /**
+        /** \brief Function call operator for computing bounds.
 
         \specFuncBegin
         \specTableBegin
@@ -233,14 +280,15 @@ public:
     };
     typedef jagBase::ptr< ComputeBoundCallback >::shared_ptr ComputeBoundCallbackPtr;
 
-    /** \brief TBD
-    \details TBD */
+    /** \brief Set the compute bounds callback and mark bounds as dirty.
+    \details By marking bounds dirty, all observers could be notified.
+    See setBoundDirty() */
     void setComputeBoundCallback( ComputeBoundCallbackPtr computeBoundCallback )
     {
         _computeBoundCallback = computeBoundCallback;
         setBoundDirty();
     }
-    /** \brief TBD
+    /** \brief Get the compute bounds callback.
     \details TBD */
     ComputeBoundCallbackPtr getComputeBoundCallback() const
     {
@@ -248,6 +296,10 @@ public:
     }
 
 
+    /** TBD jagDraw does not depend on jagSG. Consequently,
+    jagDraw::Drawable needs a callback mechanism to notify owning
+    jagSG::Node objects that a bound has changed. TBD consider
+    moving to the Poco notification system. */
     struct BoundDirtyNotifyInfo : jagBase::Notifier::NotifierInfo
     {
         BoundDirtyNotifyInfo()
