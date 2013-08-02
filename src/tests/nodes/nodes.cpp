@@ -143,7 +143,7 @@ bool NodesDemo::startup( const unsigned int numContexts )
 
     // Test bounding sphere computation.
     {
-        _bSphere = _scene->getBound( *commands );
+        _bSphere = ((jagDraw::BoundOwner*)(_scene.get()))->getBound( *commands );
         const gmtl::Sphered s( _bSphere->asSphere() );
 
         if( !( s.isInitialized() ) )

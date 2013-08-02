@@ -196,10 +196,10 @@ the list directly with getDrawCommandVec().
     \specTableEnd
     \specFuncEnd
     */
-    virtual void computeBound( BoundPtr& bound, const VertexArrayObject* vao, BoundOwner* owner );
+    virtual void computeBound( BoundPtr& bound, const jagDraw::CommandMap& commands, BoundOwner* owner );
 
     /** \brief Notify owning code of bound dirty state. */
-    virtual void setBoundDirty( const VertexArrayObject* vao, const bool dirty=true );
+    virtual void setBoundDirty( const bool dirty=true );
     /** \brief Notify owning code of bound dirty state. */
     virtual void setAllBoundsDirty( const bool dirty=true );
 

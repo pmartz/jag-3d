@@ -60,7 +60,8 @@ class VisitorBase;
 */
 class JAGSG_EXPORT Node : protected jagBase::LogBase,
 		public jagBase::UserDataOwner, 
-        public jagDraw::ObjectIDOwner, public jagDraw::BoundOwner,
+        public jagDraw::ObjectIDOwner,
+        public jagDraw::BoundOwner,
         public SHARED_FROM_THIS(Node)
 {
 public:
@@ -156,15 +157,12 @@ public:
     Also provide jagSG::Node-specific bound computation support. */
     /**@{*/
 
-    /** \brief Get the bound from any node based on \c commands
-    \details \c commands contains jagDraw::VertexArrayObjects, which contain
-    the vertex data required to compute the bound. */
-    virtual const jagDraw::BoundPtr& getBound( const jagDraw::CommandMap& commands );
     /** \brief Get bound from root node.
     \details Assumes no default state. */
     const jagDraw::BoundPtr& getBound()
     {
-        return( getBound( jagDraw::CommandMap() ) );
+        jagDraw::CommandMap commands;
+        return( BoundOwner::getBound( commands ) );
     }
 
     /** \brief Return a new uninitialized bound.
@@ -174,7 +172,7 @@ public:
 
     /** \brief Compute the Node's bounding volume.
     \details Override the base class BoundOwner::computeBound(). */
-    virtual void computeBound( jagDraw::BoundPtr& bound, const jagDraw::VertexArrayObject* vao, BoundOwner* owner );
+    virtual void computeBound( jagDraw::BoundPtr& bound, const jagDraw::CommandMap& commands, BoundOwner* owner );
 
     /** \brief Mark all bounds dirty and notify parents.
     \details Override the base class BoundOwner::setAllBoundsDirty()

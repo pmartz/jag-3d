@@ -78,11 +78,15 @@ BoundPtr Drawable::newBound()
     return( BoundPtr( new BoundAABox() ) );
 }
 
-void Drawable::computeBound( BoundPtr& bound, const VertexArrayObject* vao, BoundOwner* owner )
+void Drawable::computeBound( BoundPtr& bound, const jagDraw::CommandMap& commands, BoundOwner* owner )
 {
+    JAG3D_PROFILE( "Drawable::computeBound" );
+
+    const jagDraw::DrawablePrepPtr& drawablePrep( commands[ jagDraw::DrawablePrep::VertexArrayObject_t ] );
+    const jagDraw::VertexArrayObject* vao( ( boost::static_pointer_cast< jagDraw::VertexArrayObject >( drawablePrep ) ).get() );
     if( vao == NULL )
     {
-        JAG3D_WARNING( "computeBound() encountered NULL vertex array object." );
+        JAG3D_WARNING( "computeBound(): NULL vertex array object." );
         return;
     }
 
@@ -128,13 +132,12 @@ void Drawable::computeBound( BoundPtr& bound, const VertexArrayObject* vao, Boun
     }
 }
 
-void Drawable::setBoundDirty( const VertexArrayObject* vao, const bool dirty )
+void Drawable::setBoundDirty( const bool dirty )
 {
-    BoundOwner::setBoundDirty( vao, dirty );
+    BoundOwner::setBoundDirty( dirty );
     if( dirty )
     {
         BoundDirtyNotifyInfo bdni;
-        bdni._vao = const_cast< VertexArrayObject* >( vao );
         notify( bdni );
     }
 }

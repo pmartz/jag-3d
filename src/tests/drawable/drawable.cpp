@@ -303,9 +303,7 @@ bool DrawableDemo::startup( const unsigned int numContexts )
         dp->setMaxContexts( numContexts );
     }
 
-    const jagDraw::DrawablePrepPtr& drawablePrep( (*commands)[ jagDraw::DrawablePrep::VertexArrayObject_t ] );
-    const jagDraw::VertexArrayObjectPtr vaop( boost::dynamic_pointer_cast< jagDraw::VertexArrayObject >( drawablePrep ) );
-    jagDraw::BoundPtr bound( drawable->getBound( vaop.get() ) );
+    jagDraw::BoundPtr bound( drawable->getBound( *commands ) );
     gmtl::AABoxd box( bound->asAABox() );
     std::ostringstream ostr;
     ostr << "Min: " << box.mMin << "  Max: " << box.mMax;

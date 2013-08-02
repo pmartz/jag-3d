@@ -26,6 +26,7 @@
 #include <jagBase/Profile.h>
 #include <jagDraw/Bound.h>
 #include <jagBase/Notifier.h>
+#include <jagDraw/CommandMap.h>
 
 #include <boost/foreach.hpp>
 
@@ -34,9 +35,6 @@
 
 namespace jagDraw {
 
-
-// forward:
-class VertexArrayObject;
 
 /** \struct BoundInfo BoundOwner.h <jagDraw/BoundOwner.h>
 \brief A bounding volume with associated data.
@@ -54,7 +52,6 @@ struct BoundInfo {
     bool _dirty;
     jagDraw::BoundPtr _bound;
 };
-typedef std::map< const jagDraw::VertexArrayObject*, BoundInfo > BoundMap;
 
 
 
@@ -67,11 +64,14 @@ class BoundOwner
 public:
     /** Constructor */
     BoundOwner()
+        : _dirty( true ),
+        _computeBoundCallback( NULL )
     {
     }
     /** Copy constructor */
     BoundOwner( const BoundOwner& rhs )
-      : _bounds( rhs._bounds ),
+      : _bound( rhs._bound ),
+        _dirty( rhs._dirty ),
         _initialBound( rhs._initialBound ),
         _computeBoundCallback( rhs._computeBoundCallback )
     {
@@ -83,7 +83,7 @@ public:
 
 
     /** \brief Removes all computed bounding volumes.
-    \details Removes all bounds and empties the \c _bounds map.
+    \details Removes all bounds and empties the \c _bound map.
 
     \specTableBegin
     \specThread{Thread Safe}
@@ -92,8 +92,8 @@ public:
     */
     void resetBounds()
     {
-        boost::mutex::scoped_lock lock( _mutex );
-        _bounds.clear();
+        setAllBoundsDirty();
+        _bound = jagDraw::BoundPtr( (jagDraw::Bound*)NULL );
     }
     /** \brief Remove a specific bounding volume.
     \details Removes the bound associated with the specified \c vao.
@@ -104,13 +104,10 @@ public:
     \specTableEnd
     \specFuncEnd
     */
-    void removeBound( const VertexArrayObject* vao )
+    void removeBound()
     {
-        boost::mutex::scoped_lock lock( _mutex );
-
-        BoundMap::iterator it( _bounds.find( vao ) );
-        if( it != _bounds.end() )
-            _bounds.erase( it );
+        setAllBoundsDirty();
+        _bound = jagDraw::BoundPtr( (jagDraw::Bound*)NULL );
     }
 
     /** \brief Create a new uninitialized bound.
@@ -125,7 +122,7 @@ public:
 
     \specFuncBegin
 
-    This function creates a jagDraw::BoundInfo entry in the _bounds map,
+    This function creates a jagDraw::BoundInfo entry in the _bound map,
     if it doesn't already exist.
     If BoundInfo::_dirty is true, this function performs the following operations:
     - If BoundInfo::_bound is NULL, this function allocates a new bound.
@@ -148,34 +145,31 @@ public:
     \specTableEnd
     \specFuncEnd
     */
-    virtual const BoundPtr& getBound( const VertexArrayObject* vao )
+    virtual const BoundPtr& getBound( const jagDraw::CommandMap& commands )
     {
         JAG3D_PROFILE( "BoundOwner::getBound" );
 
-        boost::mutex::scoped_lock lock( _mutex );
-
-        BoundInfo& boundInfo( _bounds[ vao ] );
-        if( boundInfo._dirty )
+        if( _dirty )
         {
-            if( boundInfo._bound == NULL )
+            if( _bound == NULL )
             {
                 if( _initialBound == NULL )
-                    boundInfo._bound = newBound();
+                    _bound = newBound();
                 else
-                    boundInfo._bound = _initialBound->clone();
+                    _bound = _initialBound->clone();
             }
             else
             {
-                boundInfo._bound->setEmpty();
+                _bound->setEmpty();
             }
             if( _computeBoundCallback != NULL )
-                (*_computeBoundCallback)( boundInfo._bound, vao, this );
+                (*_computeBoundCallback)( _bound, commands, this );
             else
-                computeBound( boundInfo._bound, vao, this );
-            boundInfo._dirty = false;
+                computeBound( _bound, commands, this );
+            _dirty = false;
         }
 
-        return( boundInfo._bound );
+        return( _bound );
     }
 
     /** \brief Set an initial bounding volume.
@@ -217,10 +211,9 @@ public:
     \specTableEnd
     \specFuncEnd
     */
-    virtual void setBoundDirty( const VertexArrayObject* vao, const bool dirty=true )
+    virtual void setBoundDirty( const bool dirty=true )
     {
-        boost::mutex::scoped_lock lock( _mutex );
-        _bounds[ vao ]._dirty = dirty;
+        _dirty = dirty;
     }
     /** \brief Set the dirty state for all Bounds.
     \details TBD
@@ -233,11 +226,7 @@ public:
     */
     virtual void setAllBoundsDirty( const bool dirty=true )
     {
-        boost::mutex::scoped_lock lock( _mutex );
-        BOOST_FOREACH( BoundMap::value_type& mapElement, _bounds )
-        {
-            mapElement.second._dirty = dirty;
-        }
+        _dirty = dirty;
     }
     /** \brief Return the dirty state for a specific Bound.
     \details TBD
@@ -249,15 +238,9 @@ public:
     \specTableEnd
     \specFuncEnd
     */
-    bool getBoundDirty( const VertexArrayObject* vao ) const
+    bool getBoundDirty() const
     {
-        boost::mutex::scoped_lock lock( _mutex );
-
-        BoundMap::const_iterator it( _bounds.find( vao ) );
-        if( it != _bounds.end() )
-            return( it->second._dirty );
-        else
-            return( true );
+        return( _dirty );
     }
     /** \brief Return true if any bound is dirty.
     \details
@@ -270,13 +253,7 @@ public:
     */
     bool getAnyBoundDirty() const
     {
-        boost::mutex::scoped_lock lock( _mutex );
-        BOOST_FOREACH( const BoundMap::value_type& mapElement, _bounds )
-        {
-            if( mapElement.second._dirty )
-                return( true );
-        }
-        return( false );
+        return( _dirty );
     }
 
     /** \brief Return the total number of bounding volumes.
@@ -285,8 +262,7 @@ public:
     with any jagSG::Node, a BoundOwner could have more than 1 bound. */
     unsigned int getNumBounds() const
     {
-        boost::mutex::scoped_lock lock( _mutex );
-        return( ( unsigned int )( _bounds.size() ) );
+        return( 1 );
     }
 
 
@@ -313,7 +289,7 @@ public:
     \specTableEnd
     \specFuncEnd
     */
-    virtual void computeBound( BoundPtr& bound, const VertexArrayObject* vao, BoundOwner* owner ) = 0;
+    virtual void computeBound( BoundPtr& bound, const jagDraw::CommandMap& commands, BoundOwner* owner ) = 0;
 
     /** \struct ComputeBoundCallback BoundOwner.h <jagDraw/BoundOwner.h>
     \brief Custom bound computation support.
@@ -328,7 +304,7 @@ public:
         \specTableEnd
         \specFuncEnd
         */
-        virtual void operator()( BoundPtr& _bound, const VertexArrayObject* vao, BoundOwner* owner ) = 0;
+        virtual void operator()( BoundPtr& _bound, const jagDraw::CommandMap& commands, BoundOwner* owner ) = 0;
     };
     typedef jagBase::ptr< ComputeBoundCallback >::shared_ptr ComputeBoundCallbackPtr;
 
@@ -349,24 +325,20 @@ public:
     struct BoundDirtyNotifyInfo : jagBase::Notifier::NotifierInfo
     {
         BoundDirtyNotifyInfo()
-            : _vao( NULL )
         {}
-
-        jagDraw::VertexArrayObject* _vao;
     };
 
 protected:
-    /** Default value: For each element in _bounds, BoundInfo::_dirty
+    /** Default value: For each element in _bound, BoundInfo::_dirty
     is initially true. The first call to getBound() initializes the
     entry further. If \c _initialBound is NULL, a new
     jagDraw::BoundAABox is allocated; otherwise, \c _initialBOund
     is cloned. BoundInfo::_bound is expanded around all applicable
     vertex data, and BoundInfo::_dirty is set to false. */
-    BoundMap _bounds;
+    BoundPtr _bound;
+    bool _dirty;
     /** Default value: NULL */
     BoundPtr _initialBound;
-    /** \brief Lock around _bounds BoundInfo map. */
-    mutable boost::mutex _mutex;
 
     /** Default value: _computeBoundCallback = ComputeBoundCallbackPtr() */
     ComputeBoundCallbackPtr _computeBoundCallback;

@@ -111,17 +111,24 @@ void CollectionVisitor::reset()
 
 void CollectionVisitor::visit( jagSG::Node& node )
 {
+    {
+    JAG3D_PROFILE( "setup" );
     JAG3D_TRACE( "visit()" );
 
-    JAG3D_PROFILE( "CV visit()" );
-
+    {
+    JAG3D_PROFILE( "commandmap" );
     pushCommandMap( node.getCommandMap() );
+    }
 
     _infoPtr->setNode( &node );
-    _infoPtr->setBound( node.getBound( _commandStack.back() ).get() );
+    jagDraw::BoundOwner* boundOwner( &node );
+    _infoPtr->setBound( boundOwner->getBound( _commandStack.back() ).get() );
+    }
     Node::CallbackInfo* info( _infoPtr.get() );
 
     bool collect( true );
+    {
+    JAG3D_PROFILE( "callbacks" );
     jagSG::Node::CollectionCallbacks& callbacks( node.getCollectionCallbacks() );
     BOOST_FOREACH( jagSG::Node::CallbackPtr cb, callbacks )
     {
@@ -131,17 +138,23 @@ void CollectionVisitor::visit( jagSG::Node& node )
             break;
         }
     }
+    }
     if( collect )
     {
         collectAndTraverse( node );
     }
 
+    {
+    JAG3D_PROFILE( "wrapup" );
     popCommandMap();
+    }
 }
 
 void CollectionVisitor::collectAndTraverse( jagSG::Node& node )
 {
     const bool modelDirty( node.getTransform() != gmtl::MAT_IDENTITY44D );
+    {
+    JAG3D_PROFILE( "collect operations" );
     if( modelDirty )
     {
         pushMatrix( node.getTransform() );
@@ -161,8 +174,6 @@ void CollectionVisitor::collectAndTraverse( jagSG::Node& node )
     const unsigned int numDrawables( node.getNumDrawables() );
     if( collectDrawables && ( numDrawables > 0 ) )
     {
-        JAG3D_PROFILE( "CV DrawNode processing" );
-
         if( _currentNodes == NULL )
             setCurrentNodeContainer( 0 );
 
@@ -199,6 +210,7 @@ void CollectionVisitor::collectAndTraverse( jagSG::Node& node )
         {
             drawNode.addDrawable( node.getDrawable( idx ) );
         }
+    }
     }
 
     Visitor::visit( node );
