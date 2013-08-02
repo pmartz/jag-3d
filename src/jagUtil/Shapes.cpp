@@ -49,25 +49,25 @@ jagDraw::VertexArrayObjectPtr createVertexArrayObject( const VNTCVec& data )
     vaop->addVertexArrayCommand( tcAttrib, jagDraw::VertexArrayObject::TexCoord );
 
     return( vaop );
-}
+} 
 
 
 static void addPlaneData( VNTCVec& data,
     const gmtl::Point3f& corner,
-    const gmtl::Vec3f& u, unsigned short uSteps,
-    const gmtl::Vec3f& v, unsigned short vSteps,
+    const gmtl::Vec3f& u, unsigned int uSteps,
+    const gmtl::Vec3f& v, unsigned int vSteps,
     const gmtl::Vec3f& normal, jagDraw::Drawable* geom )
 {
-    std::vector< short > indices;
+    std::vector< unsigned int > indices;
 
-    unsigned short uIdx, vIdx;
-    unsigned short count( 0 );
+    unsigned int uIdx, vIdx;
+    unsigned int count( 0 );
     for( vIdx=0; vIdx<=vSteps; vIdx++ )
     {
         const float vPct( (float)vIdx / (float)vSteps );
         const gmtl::Vec3f vVec( v * vPct );
 
-        short startIdx( (short)( data.size() ) ), idx( 0 );
+        int startIdx( (int)( data.size() ) ), idx( 0 );
         for( uIdx=0; uIdx<=uSteps; uIdx++ )
         {
             VertexNormalTexCoordStruct vntc;
@@ -80,8 +80,8 @@ static void addPlaneData( VNTCVec& data,
 
             if( ( vIdx < vSteps ) && ( uIdx < uSteps ) )
             {
-                const short a( startIdx + idx );
-                const short b( startIdx + idx + uSteps + 2 );
+                const int a( startIdx + idx );
+                const int b( startIdx + idx + uSteps + 2 );
 
                 indices.push_back( startIdx + idx + uSteps + 1 );
                 indices.push_back( a );
@@ -98,15 +98,15 @@ static void addPlaneData( VNTCVec& data,
     }
 
     jagDraw::DrawElementsPtr de( jagDraw::DrawElementsPtr( new jagDraw::DrawElements
-        ( GL_TRIANGLES, count, GL_UNSIGNED_SHORT, 0,
+        ( GL_TRIANGLES, count, GL_UNSIGNED_INT, 0,
         jagDraw::BufferObjectPtr( new jagDraw::ElementArrayBuffer(
-            jagBase::BufferPtr( new jagBase::Buffer( indices.size()*sizeof(unsigned short), &( indices[ 0 ] ) )))))));
+            jagBase::BufferPtr( new jagBase::Buffer( indices.size()*sizeof(unsigned int), &( indices[ 0 ] ) )))))));
     geom->addDrawCommand( de );
 }
 
 static bool buildPlaneData( VNTCVec& data,
     const gmtl::Point3f& corner, const gmtl::Vec3f& u, const gmtl::Vec3f& v,
-    const short subU, const short subV, jagDraw::Drawable* drawable )
+    const int subU, const int subV, jagDraw::Drawable* drawable )
 {
     if( ( subU <= 0 ) || ( subV <= 0 ) )
     {
@@ -123,7 +123,7 @@ static bool buildPlaneData( VNTCVec& data,
 
 jagDraw::DrawablePtr makePlane( VNTCVec& data,
     const gmtl::Point3f& corner, const gmtl::Vec3f& u, const gmtl::Vec3f& v,
-    const short subU, const short subV, jagDraw::DrawablePtr drawable )
+    const int subU, const int subV, jagDraw::DrawablePtr drawable )
 {
     jagDraw::DrawablePtr draw( drawable );
     if( draw == NULL )
