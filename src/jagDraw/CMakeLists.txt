@@ -61,6 +61,7 @@ set( _jagDrawHeaderFiles
     VertexArrayObject.h
     VertexAttrib.h
     VertexAttribContainer.h
+    TriangleSurfer.h
     Visitor.h
 )
 
