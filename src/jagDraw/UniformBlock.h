@@ -57,6 +57,14 @@ buffer. But when the values have changes, UniformBlock should
 map the buffer and modify the values.
 
 \gl{section 2.9} \gl{section 2.11.4}.
+
+\specBegin
+
+\specTableBegin
+\specLog{jag.draw.ublock}
+\specTableEnd
+
+\specEnd
 */
 class JAGDRAW_EXPORT UniformBlock : public DrawablePrep,
             public ObjectIDOwner, public SHARED_FROM_THIS(UniformBlock),

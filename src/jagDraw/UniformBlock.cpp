@@ -90,8 +90,8 @@ void UniformBlock::execute( DrawInfo& drawInfo, const Program::BlockInfo& blockI
         _buffer->setSize( blockInfo._minSize );
 
     // TBD load uniforms into buffer
-    Program::OffsetMap offsets( blockInfo._offsets );
-    BOOST_FOREACH( UniformPtr uniform, _uniforms )
+    const Program::OffsetMap& offsets( blockInfo._offsets );
+    BOOST_FOREACH( const UniformPtr& uniform, _uniforms )
     {
         Program::OffsetMap::const_iterator it( offsets.find( uniform->getNameHash() ) );
         if( it != offsets.end() )
@@ -139,7 +139,7 @@ void UniformBlock::execute( DrawInfo& drawInfo )
     if( drawInfo._current.contains( Program_t ) )
     {
         ProgramPtr prog( boost::dynamic_pointer_cast< Program >( drawInfo._current[ Program_t ] ) );
-        Program::BlockInfo blockInfo( prog->getUniformBlockInfo( _nameHash ) );
+        const Program::BlockInfo& blockInfo( prog->getUniformBlockInfo( _nameHash ) );
         execute( drawInfo, blockInfo );
     }
 }
