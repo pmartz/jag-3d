@@ -453,6 +453,14 @@ GLint Program::getVertexAttribLocation( const std::string& s ) const
     return( getVertexAttribLocation( createHash( s ) ) );
 }
 
+bool Program::hasUniformBlock( const HashValue& h ) const
+{
+    return( _blockInfo.find( h ) != _blockInfo.end() );
+}
+bool Program::hasUniformBlock( const std::string& s ) const
+{
+    return( hasUniformBlock( createHash( s ) ) );
+}
 const Program::BlockInfo& Program::getUniformBlockInfo( const HashValue& h ) const
 {
     BlockInfoMap::const_iterator it( _blockInfo.find( h ) );

@@ -60,6 +60,14 @@ bool TransformCallback::operator()( jagDraw::Node& node, jagDraw::DrawInfo& draw
         uniform->executeWithoutMap( drawInfo );
     }
     {
+        gmtl::Matrix44f mvMat;
+        gmtl::convert( mvMat, _transform.getModelView() );
+        jagDraw::UniformPtr& uniform( drawInfo.getOrCreateUniform( "jagModelViewMatrix" ) );
+        uniform->setType( GL_FLOAT_MAT4 );
+        uniform->set( mvMat );
+        uniform->executeWithoutMap( drawInfo );
+    }
+    {
         gmtl::Matrix33f mvitMat;
         gmtl::convert( mvitMat, _transform.getModelViewInvTrans() );
         jagDraw::UniformPtr& uniform( drawInfo.getOrCreateUniform( "jagModelViewInvTransMatrix" ) );
