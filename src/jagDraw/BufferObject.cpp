@@ -155,12 +155,12 @@ void BufferObject::execute( DrawInfo& drawInfo )
 
 void BufferObject::setBufferDirty( const bool dirty )
 {
-    _dirty = true;
+    _dirty = dirty;
     _dirtyOffset = _dirtySize = 0;
 }
-void BufferObject::setBufferRangeDirty( const size_t offset, const size_t size )
+void BufferObject::setBufferRangeDirty( const size_t offset, const size_t size, const bool dirty )
 {
-    _dirty = true;
+    _dirty = dirty;
     _dirtyOffset = offset;
     _dirtySize = size;
 }

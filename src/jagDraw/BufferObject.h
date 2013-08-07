@@ -97,7 +97,7 @@ public:
     
     Note: Currently, BufferObject stores only a single dirty
     range. Need support for a list of dirty ranges. */
-    void setBufferRangeDirty( const size_t offset, const size_t size );
+    void setBufferRangeDirty( const size_t offset, const size_t size, const bool dirty=true );
 
 
     // TBD need to get context ID, probably as a param?
