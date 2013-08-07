@@ -192,7 +192,12 @@ public:
         OffsetMap _offsets;
     } BlockInfo;
 
+    bool hasUniformBlock( const HashValue& h ) const;
+    /** \overload */
+    bool hasUniformBlock( const std::string& s ) const;
+
     const BlockInfo& getUniformBlockInfo( const HashValue& h ) const;
+    /** \overload */
     const BlockInfo& getUniformBlockInfo( const std::string& s ) const;
 
 private:
