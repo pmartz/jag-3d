@@ -70,23 +70,38 @@ public:
     virtual bool isSameKind( const VertexArrayCommand& rhs ) const;
 
     void setBuffer( jagBase::BufferPtr b );
-    jagBase::BufferPtr getBuffer() { return( _buffer ); }
+    const jagBase::BufferPtr& getBuffer() const;
     size_t getBufferSize();
 
     void setTarget( const GLenum target );
-    GLenum getTarget() { return _target; }
+    GLenum getTarget() const;
 
     /** \brief Set the \c usage parameter for the \c glBufferData() call.
     \details Default value: GL_STATIC_DRAW. */
     void setUsage( const GLenum usage );
-    GLenum getUsage() { return( _usage ); }
+    GLenum getUsage() const;
 
     virtual void execute( DrawInfo& drawInfo );
 
+
+    /** \brief Mark the entire buffer as dirty.
+    \details During next BufferObject::execute(), send down
+    entire buffer data with a glBufferData() call. */
+    void setBufferDirty( const bool dirty=true );
+
+    /** \brief Mark a segment of the buffer as dirty.
+    \details During next BufferObject::execute(), send down
+    the range of buffer data with a glBufferSubData() call.
+    \param offset Offset from buffer start in bytes. 
+    \param size Number of bytes.
+    
+    Note: Currently, BufferObject stores only a single dirty
+    range. Need support for a list of dirty ranges. */
+    void setBufferRangeDirty( const size_t offset, const size_t size );
+
+
     // TBD need to get context ID, probably as a param?
-    void subData( GLsizeiptr offset, GLsizeiptr size, const GLvoid * );
-
-
+    void subData( GLsizeiptr offset, GLsizeiptr size, const GLvoid* data );
     // TBD need to get context ID, probably as a param?
     GLbyte* map( const GLenum access );
     // TBD need to get context ID, probably as a param?
@@ -95,9 +110,15 @@ public:
 protected:
     void internalInit( const unsigned int contextID );
 
+    /** Default value: _target = GL_NONE */
     GLenum _target;
+    /** Default value: _usage = GL_STATIC_DRAW */
     GLenum _usage;
+
     jagBase::BufferPtr _buffer;
+
+    bool _dirty;
+    size_t _dirtyOffset, _dirtySize;
 };
 
 typedef jagBase::ptr< jagDraw::BufferObject >::shared_ptr BufferObjectPtr;
