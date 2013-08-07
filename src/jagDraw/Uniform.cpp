@@ -93,7 +93,75 @@ void Uniform::setSampler( const GLint& v )
         return;
     }
     _value = v;
-} \
+}
+
+
+void Uniform::copyValue( void* address )
+{
+#define CASE_COPY(__type,__typeid) \
+    case __typeid: \
+    { \
+        __type value;  get( value ); \
+        std::memcpy( address, &value, sizeof( __type ) ); \
+        break; \
+    }
+
+    switch( getType() )
+    {
+    CASE_COPY( bool, GL_BOOL )
+    CASE_COPY( GLint, GL_INT )
+    CASE_COPY( GLuint, GL_UNSIGNED_INT )
+    CASE_COPY( GLfloat, GL_FLOAT )
+#ifdef GL_VERSION_4_0
+    CASE_COPY( GLdouble, GL_DOUBLE )
+#endif
+
+    CASE_COPY( gmtl::Point2i, GL_INT_VEC2 )
+    CASE_COPY( gmtl::Point3i, GL_INT_VEC3 )
+    CASE_COPY( gmtl::Point4i, GL_INT_VEC4 )
+
+    CASE_COPY( gmtl::Point2ui, GL_UNSIGNED_INT_VEC2 )
+    CASE_COPY( gmtl::Point3ui, GL_UNSIGNED_INT_VEC3 )
+    CASE_COPY( gmtl::Point4ui, GL_UNSIGNED_INT_VEC4 )
+
+    CASE_COPY( gmtl::Point2f, GL_FLOAT_VEC2 )
+    CASE_COPY( gmtl::Point3f, GL_FLOAT_VEC3 )
+    CASE_COPY( gmtl::Point4f, GL_FLOAT_VEC4 )
+
+#ifdef GL_VERSION_4_0
+    CASE_COPY( gmtl::Point2d, GL_DOUBLE_VEC2 )
+    CASE_COPY( gmtl::Point3d, GL_DOUBLE_VEC3 )
+    CASE_COPY( gmtl::Point4d, GL_DOUBLE_VEC4 )
+#endif
+
+    CASE_COPY( gmtl::Matrix22f, GL_FLOAT_MAT2 )
+    CASE_COPY( gmtl::Matrix33f, GL_FLOAT_MAT3 )
+    CASE_COPY( gmtl::Matrix44f, GL_FLOAT_MAT4 )
+
+    CASE_COPY( gmtl::Matrix23f, GL_FLOAT_MAT2x3 )
+    CASE_COPY( gmtl::Matrix24f, GL_FLOAT_MAT2x4 )
+    CASE_COPY( gmtl::Matrix32f, GL_FLOAT_MAT3x2 )
+    CASE_COPY( gmtl::Matrix34f, GL_FLOAT_MAT3x4 )
+    CASE_COPY( gmtl::Matrix42f, GL_FLOAT_MAT4x2 )
+    CASE_COPY( gmtl::Matrix43f, GL_FLOAT_MAT4x3 )
+
+#ifdef GL_VERSION_4_0
+    CASE_COPY( gmtl::Matrix22d, GL_DOUBLE_MAT2 )
+    CASE_COPY( gmtl::Matrix33d, GL_DOUBLE_MAT3 )
+    CASE_COPY( gmtl::Matrix44d, GL_DOUBLE_MAT4 )
+
+    CASE_COPY( gmtl::Matrix23d, GL_DOUBLE_MAT2x3 )
+    CASE_COPY( gmtl::Matrix24d, GL_DOUBLE_MAT2x4 )
+    CASE_COPY( gmtl::Matrix32d, GL_DOUBLE_MAT3x2 )
+    CASE_COPY( gmtl::Matrix34d, GL_DOUBLE_MAT3x4 )
+    CASE_COPY( gmtl::Matrix42d, GL_DOUBLE_MAT4x2 )
+    CASE_COPY( gmtl::Matrix43d, GL_DOUBLE_MAT4x3 )
+#endif
+    }
+
+#undef CASE_COPY
+}
+
 
 
 #define TYPE_METHOD_BODIES(__type,__typeid) \
@@ -146,7 +214,7 @@ TYPE_METHOD_BODIES( gmtl::Point3d, GL_DOUBLE_VEC3 )
 TYPE_METHOD_BODIES( gmtl::Point4d, GL_DOUBLE_VEC4 )
 #endif
 
-TYPE_METHOD_BODIES( gmtl::Matrix22f, GL_FLOAT_MAT3 )
+TYPE_METHOD_BODIES( gmtl::Matrix22f, GL_FLOAT_MAT2 )
 TYPE_METHOD_BODIES( gmtl::Matrix33f, GL_FLOAT_MAT3 )
 TYPE_METHOD_BODIES( gmtl::Matrix44f, GL_FLOAT_MAT4 )
 
@@ -158,7 +226,7 @@ TYPE_METHOD_BODIES( gmtl::Matrix42f, GL_FLOAT_MAT4x2 )
 TYPE_METHOD_BODIES( gmtl::Matrix43f, GL_FLOAT_MAT4x3 )
 
 #ifdef GL_VERSION_4_0
-TYPE_METHOD_BODIES( gmtl::Matrix22d, GL_DOUBLE_MAT3 )
+TYPE_METHOD_BODIES( gmtl::Matrix22d, GL_DOUBLE_MAT2 )
 TYPE_METHOD_BODIES( gmtl::Matrix33d, GL_DOUBLE_MAT3 )
 TYPE_METHOD_BODIES( gmtl::Matrix44d, GL_DOUBLE_MAT4 )
 

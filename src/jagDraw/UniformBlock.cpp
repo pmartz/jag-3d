@@ -97,28 +97,7 @@ void UniformBlock::execute( DrawInfo& drawInfo, const Program::BlockInfo& blockI
         if( it != offsets.end() )
         {
             const GLuint offsetValue( it->second );
-
-#define HANDLE_CASE(__typeid,__type) \
-            case __typeid: \
-            { \
-                __type value; \
-                uniform->get( value ); \
-                std::memcpy( _buffer->getOffset( offsetValue ), &value, sizeof( __type ) ); \
-                break; \
-            }
-
-            switch( uniform->getType() )
-            {
-            HANDLE_CASE( GL_FLOAT, GLfloat )
-            HANDLE_CASE( GL_FLOAT_VEC3, gmtl::Point3f )
-            default:
-                // TBD We need to support more uniform types.
-                JAG3D_ERROR( "execute(): Unsupported uniform type." );
-                break;
-            }
-
-#undef HANDLE_CASE
-
+            uniform->copyValue( _buffer->getOffset( offsetValue ) );
         }
     }
 
