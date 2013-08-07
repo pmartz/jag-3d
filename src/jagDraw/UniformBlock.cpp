@@ -74,6 +74,9 @@ Program::HashValue UniformBlock::getNameHash() const
 void UniformBlock::addUniform( UniformPtr uniform )
 {
     _uniforms.push_back( uniform );
+
+    if( _bufferObject != NULL )
+        _bufferObject->setBufferDirty();
 }
 
 
