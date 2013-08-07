@@ -134,6 +134,12 @@ public:
     void setSampler( const GLint& v );
 
 
+    /** \brief Copy the uniform value to the destination address.
+    \details Used by UniformBlock to copy a uniform value into
+    a mapped buffer object. */
+    void copyValue( void* address );
+
+
     /** \def UNIFORM_OF_TYPE
     \brief Declares Uniform class methods for various data types.
     \details For each type of uniform variable, the UNIFORM_OF_TYPE macro
