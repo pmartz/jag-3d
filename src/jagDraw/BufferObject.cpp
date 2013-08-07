@@ -33,28 +33,36 @@ BufferObject::BufferObject( const GLenum target, const std::string& logName )
     ObjectID(),
     VertexArrayCommand( VertexArrayCommand::BufferObject_t ),
     _target( target ),
-    _usage( GL_STATIC_DRAW )
-{}
-
+    _usage( GL_STATIC_DRAW ),
+    _dirty( true ),
+    _dirtyOffset( 0 ),
+    _dirtySize( 0 )
+{
+}
 BufferObject::BufferObject( const GLenum target, const jagBase::BufferPtr b, const GLenum usage )
   : jagBase::LogBase( "jag.draw.bufobj" ),
     ObjectID(),
     VertexArrayCommand( VertexArrayCommand::BufferObject_t ),
     _target( target ),
     _usage( usage ),
-    _buffer( b )
-{}
-
+    _buffer( b ),
+    _dirty( true ),
+    _dirtyOffset( 0 ),
+    _dirtySize( 0 )
+{
+}
 BufferObject::BufferObject( const BufferObject& rhs )
   : jagBase::LogBase( rhs ),
     ObjectID( rhs ),
     VertexArrayCommand( rhs ),
     _target( rhs._target ),
     _usage( rhs._usage ),
-    _buffer( rhs._buffer )
-{}
-
-
+    _buffer( rhs._buffer ),
+    _dirty( rhs._dirty ),
+    _dirtyOffset( rhs._dirtyOffset ),
+    _dirtySize( rhs._dirtySize )
+{
+}
 BufferObject::~BufferObject() 
 {
     // TBD Handle object deletion
@@ -87,6 +95,10 @@ void BufferObject::setBuffer( jagBase::BufferPtr b )
 
     _buffer = b;
 }
+const jagBase::BufferPtr& BufferObject::getBuffer() const
+{
+    return( _buffer );
+}
 
 size_t BufferObject::getBufferSize()
 {
@@ -97,9 +109,18 @@ void BufferObject::setTarget( const GLenum target )
 {
     _target = target;
 }
+GLenum BufferObject::getTarget() const
+{
+    return( _target );
+}
+
 void BufferObject::setUsage( const GLenum usage )
 {
     _usage = usage; 
+}
+GLenum BufferObject::getUsage() const
+{
+    return( _usage );
 }
 
 void BufferObject::execute( DrawInfo& drawInfo )
@@ -116,6 +137,32 @@ void BufferObject::execute( DrawInfo& drawInfo )
     }
 
     glBindBuffer( _target, id );
+
+    if( _dirty )
+    {
+        if( _dirtySize == 0 )
+            glBufferData( _target, _buffer->getSize(), _buffer->getData(), _usage );
+        else
+        {
+            GLsizeiptr offset( (GLsizeiptr)_dirtyOffset );
+            GLsizeiptr size( (GLsizeiptr)_dirtySize );
+            glBufferSubData( _target, offset, size,
+                _buffer->getOffset( _dirtyOffset ) );
+        }
+        _dirty = false;
+    }
+}
+
+void BufferObject::setBufferDirty( const bool dirty )
+{
+    _dirty = true;
+    _dirtyOffset = _dirtySize = 0;
+}
+void BufferObject::setBufferRangeDirty( const size_t offset, const size_t size )
+{
+    _dirty = true;
+    _dirtyOffset = offset;
+    _dirtySize = size;
 }
 
 void BufferObject::subData( GLsizeiptr offset, GLsizeiptr size, const GLvoid* data )
@@ -168,6 +215,7 @@ void BufferObject::internalInit( const unsigned int contextID )
     glBindBuffer( _target, id );
     glBufferData( _target, _buffer->getSize(), _buffer->getData(), _usage );
     glBindBuffer( _target, 0 );
+    _dirty = false;
 
     JAG3D_ERROR_CHECK( "BufferObject::internalInit() glBufferData()" );
 }
