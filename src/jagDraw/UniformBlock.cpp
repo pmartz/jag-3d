@@ -100,6 +100,7 @@ void UniformBlock::execute( DrawInfo& drawInfo, const Program::BlockInfo& blockI
             uniform->copyValue( _buffer->getOffset( offsetValue ) );
         }
     }
+    _bufferObject->setBufferDirty();
 
     // bind 
     _bufferObject->setIndex( blockInfo._bindIndex );
