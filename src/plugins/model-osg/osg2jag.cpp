@@ -175,7 +175,21 @@ void Osg2Jag::apply( osg::Geometry* geom )
             "normal", info._componentsPerElement, info._type, GL_FALSE, 0, 0 ) );
         vaop->addVertexArrayCommand( attrib, jagDraw::VertexArrayObject::Normal );
     }
-    // TBD tex coords
+    for( unsigned int idx = 0; idx < 15; ++idx )
+    {
+        if( geom->getTexCoordArray( idx ) != NULL )
+        {
+            ArrayInfo info( asJagArray( geom->getTexCoordArray( idx ) ) );
+            jagDraw::BufferObjectPtr bop( new jagDraw::BufferObject( GL_ARRAY_BUFFER, info._buffer ) );
+            vaop->addVertexArrayCommand( bop, jagDraw::VertexArrayObject::TexCoord );
+
+            std::ostringstream ostr;
+            ostr << "texcoord" << idx;
+            jagDraw::VertexAttribPtr attrib( new jagDraw::VertexAttrib(
+                ostr.str(), info._componentsPerElement, info._type, GL_FALSE, 0, 0 ) );
+            vaop->addVertexArrayCommand( attrib, jagDraw::VertexArrayObject::TexCoord );
+        }
+    }
 
     commands->insert( vaop );
 
