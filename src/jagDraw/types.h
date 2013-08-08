@@ -31,26 +31,39 @@
 namespace jagDraw {
 
 
-typedef PerContextData< GLboolean > PerContextGLboolean;
-typedef PerContextData< GLint > PerContextGLint;
-typedef PerContextData< GLuint > PerContextGLuint;
-typedef PerContextData< GLfloat > PerContextGLfloat;
-typedef PerContextData< GLdouble > PerContextGLdouble;
+/** \def DEFINE_TYPE_ARRAYS
+\brief Define  PerContextData, std::vector, and shared_array_ptr
+arrays for base OpenGL types. Examples:
+\li PerContextGLenum: A PerContextData array of GLenum.
+\li GLenumVec: A std::vector of GLenum.
+\li GLenumArray: A shared_array_ptr of GLenum.
+*/
+#define DEFINE_TYPE_ARRAYS(__type) \
+    typedef PerContextData< __type > PerContext##__type; \
+    typedef std::vector< __type > __type##Vec; \
+    typedef jagBase::ptr< __type >::shared_array_ptr __type##Array;
 
+DEFINE_TYPE_ARRAYS(GLenum);
+DEFINE_TYPE_ARRAYS(GLboolean);
+DEFINE_TYPE_ARRAYS(GLbitfield);
+DEFINE_TYPE_ARRAYS(GLbyte);
+DEFINE_TYPE_ARRAYS(GLshort);
+DEFINE_TYPE_ARRAYS(GLint);
+DEFINE_TYPE_ARRAYS(GLsizei);
+DEFINE_TYPE_ARRAYS(GLubyte);
+DEFINE_TYPE_ARRAYS(GLushort);
+DEFINE_TYPE_ARRAYS(GLuint);
+DEFINE_TYPE_ARRAYS(GLhalf);
+DEFINE_TYPE_ARRAYS(GLfloat);
+DEFINE_TYPE_ARRAYS(GLclampf);
+DEFINE_TYPE_ARRAYS(GLdouble);
+DEFINE_TYPE_ARRAYS(GLclampd);
 
-typedef std::vector< GLboolean > GLbooleanVec;
-typedef std::vector< GLubyte > GLubyteVec;
-typedef std::vector< GLushort > GLushortVec;
-typedef std::vector< GLint > GLintVec;
-typedef std::vector< GLuint > GLuintVec;
-typedef std::vector< GLfloat > GLfloatVec;
-typedef std::vector< GLdouble > GLdoubleVec;
-
-typedef jagBase::ptr< GLboolean >::shared_array_ptr GLbooleanArray;
-typedef jagBase::ptr< GLint >::shared_array_ptr GLintArray;
-typedef jagBase::ptr< GLuint >::shared_array_ptr GLuintArray;
-typedef jagBase::ptr< GLsizei >::shared_array_ptr GLsizeiArray;
+typedef PerContextData< GLvoid* > PerContextGLvoidPtr;
+typedef std::vector< GLvoid* > GLvoidPtrVec;
 typedef jagBase::ptr< GLvoid* >::shared_array_ptr GLvoidPtrArray;
+
+#undef DEFINE_TYPE_ARRAYS
 
 
 // jagDraw
