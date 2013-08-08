@@ -175,21 +175,24 @@ void Osg2Jag::apply( osg::Geometry* geom )
             "normal", info._componentsPerElement, info._type, GL_FALSE, 0, 0 ) );
         vaop->addVertexArrayCommand( attrib, jagDraw::VertexArrayObject::Normal );
     }
-    for( unsigned int idx = 0; idx < 15; ++idx )
+   
+	
+
+	for( unsigned int idx = 0; idx < geom->getNumTexCoordArrays(); ++idx )
     {
         if( geom->getTexCoordArray( idx ) != NULL )
         {
-            ArrayInfo info( asJagArray( geom->getTexCoordArray( idx ) ) );
+			ArrayInfo info( asJagArray( geom->getTexCoordArray( idx ) ) );
             jagDraw::BufferObjectPtr bop( new jagDraw::BufferObject( GL_ARRAY_BUFFER, info._buffer ) );
             vaop->addVertexArrayCommand( bop, jagDraw::VertexArrayObject::TexCoord );
-
             std::ostringstream ostr;
-            ostr << "texcoord" << idx;
+			std::cout << info._componentsPerElement << " texcoords" << std::endl;
             jagDraw::VertexAttribPtr attrib( new jagDraw::VertexAttrib(
                 ostr.str(), info._componentsPerElement, info._type, GL_FALSE, 0, 0 ) );
             vaop->addVertexArrayCommand( attrib, jagDraw::VertexArrayObject::TexCoord );
         }
     }
+	
 
     commands->insert( vaop );
 
@@ -300,6 +303,7 @@ Osg2Jag::ArrayInfo Osg2Jag::asJagArray( const osg::Array* arrayIn )
     ArrayInfo info;
 
     typedef std::vector< gmtl::Point3f > Point3fArray;
+	typedef std::vector< gmtl::Point2f > Point2fArray;
 
     switch( arrayIn->getType() )
     {
@@ -325,6 +329,31 @@ Osg2Jag::ArrayInfo Osg2Jag::asJagArray( const osg::Array* arrayIn )
         }
 
         jagBase::BufferPtr bp( new jagBase::Buffer( size * sizeof( gmtl::Point3f ), (void*)&( out[0] ) ) );
+        info._buffer = bp;
+        break;
+    }
+	case osg::Array::Vec2ArrayType:
+    {
+        const osg::Vec2Array* array( static_cast< const osg::Vec2Array* >( arrayIn ) );
+        const unsigned int size( array->size() );
+
+        info._type = GL_FLOAT;
+        info._numElements = size;
+        info._componentsPerElement = 2;
+
+        Point2fArray out;
+        out.resize( size );
+        unsigned int idx;
+        for( idx=0; idx<size; idx++ )
+        {
+            const osg::Vec2& v( (*array)[ idx ] );
+            gmtl::Point2f& p( out[ idx ] );
+            p[ 0 ] = v[ 0 ];
+            p[ 1 ] = v[ 1 ];
+           // p[ 2 ] = v[ 2 ];
+        }
+
+        jagBase::BufferPtr bp( new jagBase::Buffer( size * sizeof( gmtl::Point2f ), (void*)&( out[0] ) ) );
         info._buffer = bp;
         break;
     }

@@ -139,7 +139,7 @@ IntersectVisitor::~IntersectVisitor()
 
 
 void IntersectVisitor::intersect(jagSG::Node& node) {
-		
+		numNodes++;
 	
 	if(_rayDeque.size() <1)  
 		_rayDeque.push_back(currentRay);
@@ -184,6 +184,8 @@ void IntersectVisitor::intersect(jagSG::Node& node) {
 				jagDraw::TriangleSurfer<gmtl::Point3f> ts(bop,verts,dcp);
 				Point3f  *a, *b, *c;
 				double u, v, t;
+				numTriangles+=ts.getNumTriangles();
+				numDrawables++;
 				for(auto j = 0; j < ts.getNumTriangles(); j++) {
 					
 					ts.getTriangle(j, a, b, c);
@@ -229,7 +231,9 @@ void IntersectVisitor::intersect(jagSG::Node& node) {
 void IntersectVisitor::reset()
 {
     JAG3D_TRACE( "reset()" );
-
+	numTriangles = 0;
+	numNodes = 0;
+	numDrawables = 0;
     resetCommandMap();
     resetMatrix();
 

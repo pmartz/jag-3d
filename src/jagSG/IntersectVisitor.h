@@ -91,10 +91,11 @@ public:
 
     
 
-    
+	int getNumTriangles() { return numTriangles;}
 
 
-    
+	int getNumNodes() { return numNodes;}
+	int getNumDrawables() { return numDrawables;}
 
   
 
@@ -112,6 +113,9 @@ protected:
 	std::vector<hitRecord> hits;
 	std::deque< gmtl::Ray<double> > _rayDeque;
 	gmtl::Ray<double> currentRay;
+	int numTriangles;
+	int numNodes;
+	int numDrawables;
 };
 
 typedef jagBase::ptr< jagSG::IntersectVisitor >::shared_ptr IntersectVisitorPtr;
