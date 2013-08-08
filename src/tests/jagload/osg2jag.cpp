@@ -134,10 +134,10 @@ void Osg2Jag::apply( osg::Geometry* geom )
             const osg::DrawArrayLengths* dal( static_cast< const osg::DrawArrayLengths* >( ps ) );
             const unsigned int size( dal->size() );
 
-            jagDraw::GLintArray first( new GLint[ size ] );
-            jagDraw::GLsizeiArray count( new GLsizei[ size ] );
-            GLint* fp( first.get() );
-            GLsizei* cp( count.get() );
+            jagDraw::GLintVec first( size );
+            jagDraw::GLsizeiVec count( size );
+            GLint* fp( &first[ 0 ] );
+            GLsizei* cp( &count[ 0 ] );
 
             unsigned int idx;
             for( idx=0; idx<size; idx++ )

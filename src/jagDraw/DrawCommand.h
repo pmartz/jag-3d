@@ -419,25 +419,25 @@ protected:
 class MultiArrayBase
 {
 public:
-    MultiArrayBase( const jagDraw::GLsizeiArray countArray,
+    MultiArrayBase( const jagDraw::GLsizeiVec countVec,
                 const jagDraw::GLvoidPtrArray indicesArray=jagDraw::GLvoidPtrArray() )
-      : _countArray( countArray ),
+      : _countVec( countVec ),
         _indicesArray( indicesArray )
     {}
     MultiArrayBase( const MultiArrayBase& rhs )
-      : _countArray( rhs._countArray ),
+      : _countVec( rhs._countVec ),
         _indicesArray( rhs._indicesArray )
     {}
     virtual ~MultiArrayBase()
     {}
 
 
-    void setCountArray( const jagDraw::GLsizeiArray countArray )
+    void setCountArray( const jagDraw::GLsizeiVec countVec )
     {
-        _countArray = countArray;
+        _countVec = countVec;
     }
-    jagDraw::GLsizeiArray& getCountArray() { return( _countArray ); }
-    const jagDraw::GLsizeiArray& getCountArray() const { return( _countArray ); }
+    jagDraw::GLsizeiVec& getCountArray() { return( _countVec ); }
+    const jagDraw::GLsizeiVec& getCountArray() const { return( _countVec ); }
 
     void setIndicesArray( const jagDraw::GLvoidPtrArray indicesArray )
     {
@@ -447,7 +447,7 @@ public:
     const jagDraw::GLvoidPtrArray& getIndicesArray() const { return( _indicesArray ); }
 
 protected:
-    jagDraw::GLsizeiArray _countArray;
+    jagDraw::GLsizeiVec _countVec;
     jagDraw::GLvoidPtrArray _indicesArray;
 };
 
@@ -764,7 +764,7 @@ typedef jagBase::ptr< jagDraw::DrawArraysIndirect >::shared_ptr DrawArraysIndire
 \specThreadBase{DrawCommand}
 \specGL{On each call to execute():
     \code
-    glMultiDrawArrays( _mode\, _firstArray.get()\, _countArray.get()\, _primcount );
+    glMultiDrawArrays( _mode\, &_firstVec[ 0 ]\, &_countVec[ 0 ]\, _primcount );
     \endcode }
 \specDepend{DrawIndirectBuffer}
 \specUsageBase{DrawCommand}
@@ -777,23 +777,23 @@ class MultiDrawArrays : public DrawCommand,
             public MultiArrayBase
 {
 public:
-    MultiDrawArrays( const GLenum mode, const jagDraw::GLintArray& first,
-            const jagDraw::GLsizeiArray& count, const GLsizei primcount )
+    MultiDrawArrays( const GLenum mode, const jagDraw::GLintVec& first,
+            const jagDraw::GLsizeiVec& count, const GLsizei primcount )
       : DrawCommand( MultiDrawArraysType, mode, 0, primcount ),
         MultiArrayBase( count ),
-        _firstArray( first )
+        _firstVec( first )
     {}
     MultiDrawArrays( const MultiDrawArrays& rhs )
       : DrawCommand( rhs ),
         MultiArrayBase( rhs ),
-        _firstArray( rhs._firstArray )
+        _firstVec( rhs._firstVec )
     {}
     virtual ~MultiDrawArrays()
     {}
 
     virtual void execute( DrawInfo& drawInfo )
     {
-        glMultiDrawArrays( _mode, _firstArray.get(), _countArray.get(), _primcount );
+        glMultiDrawArrays( _mode, &_firstVec[ 0 ], &_countVec[ 0 ], _primcount );
     }
 
     virtual int getIndex( const unsigned int counter ) const
@@ -801,35 +801,35 @@ public:
         GLsizei localCounter( counter );
         for( GLsizei idx=0; idx < _primcount; ++idx )
         {
-            if( localCounter >= _countArray[ idx ] )
-                localCounter -= _countArray[ idx ];
+            if( localCounter >= _countVec[ idx ] )
+                localCounter -= _countVec[ idx ];
             else
-                return( _firstArray[ idx ] + localCounter );
+                return( _firstVec[ idx ] + localCounter );
         }
         // TBD Went off the end of the array. I wonder if this might seg fault...
-        return( _firstArray[ _primcount - 1 ] + _countArray[ _primcount - 1 ] + 1 );
+        return( _firstVec[ _primcount - 1 ] + _countVec[ _primcount - 1 ] + 1 );
     }
     virtual unsigned int getNumIndices() const
     {
         unsigned int total( 0 );
         for( GLsizei idx=0; idx < _primcount; ++idx )
         {
-            total += _countArray[ idx ];
+            total += _countVec[ idx ];
         }
         return( total );
     }
 
-    jagDraw::GLintArray& getFirst()
+    jagDraw::GLintVec& getFirst()
     {
-        return( _firstArray );
+        return( _firstVec );
     }
-    const jagDraw::GLintArray& getFirst() const
+    const jagDraw::GLintVec& getFirst() const
     {
-        return( _firstArray );
+        return( _firstVec );
     }
 
 protected:
-    jagDraw::GLintArray _firstArray;
+    jagDraw::GLintVec _firstVec;
 };
 
 typedef jagBase::ptr< jagDraw::MultiDrawArrays >::shared_ptr MultiDrawArraysPtr;
@@ -1095,7 +1095,7 @@ has a buffer object bound to GL_ELEMENT_ARRAY_BUFFER.
 \specGL{On each call to execute():
     \code
     // GL_ELEMENT_ARRAY_BUFFER bind (if necessary; see ElementArrayBuffer).
-    glMultiDrawElements( _mode\, _countArray.get()\, _type\, (const GLvoid**)( _indicesArray.get() )\, _primcount );
+    glMultiDrawElements( _mode\, &_countVec[ 0 ]\, _type\, (const GLvoid**)( _indicesArray.get() )\, _primcount );
     \endcode }
 \specDepend{ElementArrayBuffer}
 \specUsageBase{DrawCommand}
@@ -1108,7 +1108,7 @@ class MultiDrawElements : public DrawCommand,
             public DrawElementsBase, public MultiArrayBase
 {
 public:
-    MultiDrawElements( GLenum mode, const jagDraw::GLsizeiArray& count, GLenum type,
+    MultiDrawElements( GLenum mode, const jagDraw::GLsizeiVec& count, GLenum type,
             const jagDraw::GLvoidPtrArray& indices, GLsizei primcount,
             const jagDraw::BufferObjectPtr elementBuffer=jagDraw::BufferObjectPtr() )
       : DrawCommand( MultiDrawElementsType, mode, 0, primcount ),
@@ -1140,7 +1140,7 @@ public:
     {
         if( _elementBuffer != NULL )
             _elementBuffer->execute( drawInfo );
-        glMultiDrawElements( _mode, _countArray.get(), _type, (const GLvoid**)( _indicesArray.get() ), _primcount );
+        glMultiDrawElements( _mode, &_countVec[ 0 ], _type, (const GLvoid**)( _indicesArray.get() ), _primcount );
     }
 };
 
@@ -1579,7 +1579,7 @@ has a buffer object bound to GL_ELEMENT_ARRAY_BUFFER.
 \specGL{On each call to execute():
     \code
     // GL_ELEMENT_ARRAY_BUFFER bind (if necessary; see ElementArrayBuffer).
-    glMultiDrawElementsBaseVertex( _mode\, _countArray.get()\, _type\, (const GLvoid**)( _indicesArray.get() )\,
+    glMultiDrawElementsBaseVertex( _mode\, &_countVec[ 0 ]\, _type\, (const GLvoid**)( _indicesArray.get() )\,
             _primcount\, _basevertexArray.get() );
     \endcode }
 \specDepend{ElementArrayBuffer}
@@ -1593,7 +1593,7 @@ class MultiDrawElementsBaseVertex : public DrawCommand,
             public DrawElementsBase, public MultiArrayBase
 {
 public:
-    MultiDrawElementsBaseVertex( GLenum mode, const jagDraw::GLsizeiArray& count, 
+    MultiDrawElementsBaseVertex( GLenum mode, const jagDraw::GLsizeiVec& count, 
             GLenum type, const jagDraw::GLvoidPtrArray& indices, GLsizei primcount,
             const jagDraw::GLintArray& basevertex )
       : DrawCommand( MultiDrawElementsBaseVertexType, mode, 0, primcount ),
@@ -1628,7 +1628,7 @@ public:
     {
         if( _elementBuffer != NULL )
             _elementBuffer->execute( drawInfo );
-        glMultiDrawElementsBaseVertex( _mode, _countArray.get(), _type, (const GLvoid**)( _indicesArray.get() ),
+        glMultiDrawElementsBaseVertex( _mode, &_countVec[ 0 ], _type, (const GLvoid**)( _indicesArray.get() ),
             _primcount, _basevertexArray.get() );
     }
 
