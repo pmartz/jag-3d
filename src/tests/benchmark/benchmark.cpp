@@ -56,7 +56,7 @@ public:
     }
 
 protected:
-    jagDraw::Drawable _drawable;
+    jagDraw::DrawableVec _drawables;
     jagDraw::CommandMap _commands;
 };
 
@@ -72,10 +72,10 @@ DemoInterface* DemoInterface::create( bpo::options_description& desc )
 jagDraw::BufferObjectPtr createTriangleVertices( unsigned int n,
     const float x = .05f, const float y = .05f, const float z = .5f )
 {
-    const float xMin=-.9;
-    const float xMax=.9;
-    const float yMin=-.9;
-    const float yMax=.9;
+    const float xMin=-.9f;
+    const float xMax=.9f;
+    const float yMin=-.9f;
+    const float yMax=.9f;
     jagBase::Point3fVec v3fa( n );
 
     float yVal( yMin );
@@ -107,10 +107,8 @@ jagDraw::BufferObjectPtr createTriangleVertices( unsigned int n,
     return( jagDraw::BufferObjectPtr( new jagDraw::BufferObject( GL_ARRAY_BUFFER, vbp ) ) );
 }
 
-bool BenchmarkTest::startup( const unsigned int numContexts )
+jagDraw::ProgramPtr createProgram()
 {
-    DemoInterface::startup( numContexts );
-
     const char* vShaderSource =
 #if( POCO_OS == POCO_OS_MAC_OS_X )
         // In OSX 10.7/10.8, use GL 3.2 and GLSL 1.50
@@ -125,68 +123,70 @@ bool BenchmarkTest::startup( const unsigned int numContexts )
     jagDraw::ShaderPtr vs( new jagDraw::Shader( GL_VERTEX_SHADER ) );
     vs->addSourceString( std::string( vShaderSource ) );
 
-    jagDraw::ProgramPtr prog;
-    {
-        const char* fShaderSource =
+    const char* fShaderSource =
 #if( POCO_OS == POCO_OS_MAC_OS_X )
-            // In OSX 10.7/10.8, use GL 3.2 and GLSL 1.50
-            "#version 150 \n"
+        // In OSX 10.7/10.8, use GL 3.2 and GLSL 1.50
+        "#version 150 \n"
 #else
-            "#version 400 \n"
+        "#version 400 \n"
 #endif
-            "out vec4 colorOut; \n"
-            "void main() { \n"
-            "    colorOut = vec4( 1. ); \n"
-            "}";
-        jagDraw::ShaderPtr fs( new jagDraw::Shader( GL_FRAGMENT_SHADER ) );
-        fs->addSourceString( std::string( fShaderSource ) );
+        "out vec4 colorOut; \n"
+        "void main() { \n"
+        "    colorOut = vec4( 1. ); \n"
+        "}";
+    jagDraw::ShaderPtr fs( new jagDraw::Shader( GL_FRAGMENT_SHADER ) );
+    fs->addSourceString( std::string( fShaderSource ) );
 
-        prog = jagDraw::ProgramPtr( new jagDraw::Program );
-        prog->attachShader( vs );
-        prog->attachShader( fs );
-    }
+    jagDraw::ProgramPtr prog;
+    prog = jagDraw::ProgramPtr( new jagDraw::Program );
+    prog->attachShader( vs );
+    prog->attachShader( fs );
 
+    return( prog );
+}
 
-    // Define first drawable: tri strip on the left.
+void createSingleTriStrip( const unsigned int numVerts, jagDraw::DrawablePtr& drawable )
+{
+    drawable = jagDraw::DrawablePtr( new jagDraw::Drawable() );
+
+    jagDraw::GLuintVec elements;
+    unsigned int idx;
+    for( idx=0; idx<numVerts; idx++ )
+        elements.push_back( idx );
+    jagBase::BufferPtr elbp( new jagBase::Buffer( elements.size() * sizeof( GLint ), (void*)&elements[0] ) );
+    jagDraw::BufferObjectPtr elbop( new jagDraw::BufferObject( GL_ELEMENT_ARRAY_BUFFER, elbp ) );
+    jagDraw::DrawElementsPtr drawElements( new jagDraw::DrawElements( GL_TRIANGLE_STRIP, (const GLsizei) elements.size(), GL_UNSIGNED_INT, 0, elbop ) );
+
+    drawable->addDrawCommand( drawElements );
+
+    drawable->setMaxContexts( 1 );
+}
+
+const size_t numTestCases( 1 );
+const unsigned int numVerts( 10000000 );
+
+bool BenchmarkTest::startup( const unsigned int numContexts )
+{
+    DemoInterface::startup( numContexts );
+
+    // Set up CommandMap with Program and VAO.
     {
-        const unsigned int numVerts( 50000000 );
-
-        _commands.insert( prog );
+        _commands.insert( createProgram() );
 
         jagDraw::BufferObjectPtr vbop( createTriangleVertices( numVerts ) );
-
         jagDraw::VertexArrayObjectPtr vaop( new jagDraw::VertexArrayObject );
         vaop->addVertexArrayCommand( vbop, jagDraw::VertexArrayObject::Vertex );
-
         jagDraw::VertexAttribPtr verts( new jagDraw::VertexAttrib(
             "vertex", 3, GL_FLOAT, GL_FALSE, 0, 0 ) );
         vaop->addVertexArrayCommand( verts, jagDraw::VertexArrayObject::Vertex );
-
         _commands.insert( vaop );
 
-        jagDraw::GLuintVec elements;
-        unsigned int idx;
-        for( idx=0; idx<numVerts; idx++ )
-            elements.push_back( idx );
-        jagBase::BufferPtr elbp( new jagBase::Buffer( elements.size() * sizeof( GLint ), (void*)&elements[0] ) );
-        jagDraw::BufferObjectPtr elbop( new jagDraw::BufferObject( GL_ELEMENT_ARRAY_BUFFER, elbp ) );
-        jagDraw::DrawElementsPtr drawElements( new jagDraw::DrawElements( GL_TRIANGLE_STRIP, (const GLsizei) elements.size(), GL_UNSIGNED_INT, 0, elbop ) );
-        _drawable.addDrawCommand( drawElements );
+        _commands.setMaxContexts( 1 );
     }
 
-    // Define elements shared by second and third drawables.
-    const GLsizei stride = sizeof( GLfloat ) * 3 * 2;
-    jagDraw::VertexAttribPtr iVerts( new jagDraw::VertexAttrib(
-        "vertex", 3, GL_FLOAT, GL_FALSE, stride, 0 ) );
-    jagDraw::VertexAttribPtr iColor( new jagDraw::VertexAttrib(
-        "color", 3, GL_FLOAT, GL_FALSE, stride, sizeof( GLfloat ) * 3 ) );
-    jagDraw::DrawArraysPtr drawArrays( new jagDraw::DrawArrays( GL_TRIANGLE_STRIP, 0, 6 ) );
+    _drawables.resize( numTestCases );
 
-
-    // Tell all Jag3D objects how many contexts to expect.
-    _commands.setMaxContexts( numContexts );
-    _drawable.setMaxContexts( numContexts );
-
+    createSingleTriStrip( numVerts, _drawables[ 0 ] );
 
     return( true );
 }
@@ -215,11 +215,12 @@ bool BenchmarkTest::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& p
     const jagDraw::jagDrawContextID contextID( jagDraw::ContextSupport::instance()->getActiveContext() );
     jagDraw::DrawInfo& drawInfo( getDrawInfo( contextID ) );
 
+    _commands.execute( drawInfo );
+
     {
         JAG3D_PROFILE( "benchmark" );
-        _commands.execute( drawInfo );
-        _drawable.execute( drawInfo );
-        glFlush();
+        _drawables[ 0 ]->execute( drawInfo );
+        glFinish();
     }
     
     glFlush();
