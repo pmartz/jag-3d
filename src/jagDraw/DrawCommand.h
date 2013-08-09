@@ -420,13 +420,13 @@ class MultiArrayBase
 {
 public:
     MultiArrayBase( const jagDraw::GLsizeiVec countVec,
-                const jagDraw::GLvoidPtrArray indicesArray=jagDraw::GLvoidPtrArray() )
+                const jagDraw::GLvoidPtrVec indicesVec=jagDraw::GLvoidPtrVec() )
       : _countVec( countVec ),
-        _indicesArray( indicesArray )
+        _indicesVec( indicesVec )
     {}
     MultiArrayBase( const MultiArrayBase& rhs )
       : _countVec( rhs._countVec ),
-        _indicesArray( rhs._indicesArray )
+        _indicesVec( rhs._indicesVec )
     {}
     virtual ~MultiArrayBase()
     {}
@@ -439,16 +439,16 @@ public:
     jagDraw::GLsizeiVec& getCountArray() { return( _countVec ); }
     const jagDraw::GLsizeiVec& getCountArray() const { return( _countVec ); }
 
-    void setIndicesArray( const jagDraw::GLvoidPtrArray indicesArray )
+    void setIndices( const jagDraw::GLvoidPtrVec indicesVec )
     {
-        _indicesArray = indicesArray;
+        _indicesVec = indicesVec;
     }
-    jagDraw::GLvoidPtrArray& getIndicesArray() { return( _indicesArray ); }
-    const jagDraw::GLvoidPtrArray& getIndicesArray() const { return( _indicesArray ); }
+    jagDraw::GLvoidPtrVec& getIndices() { return( _indicesVec ); }
+    const jagDraw::GLvoidPtrVec& getIndices() const { return( _indicesVec ); }
 
 protected:
     jagDraw::GLsizeiVec _countVec;
-    jagDraw::GLvoidPtrArray _indicesArray;
+    jagDraw::GLvoidPtrVec _indicesVec;
 };
 
 
@@ -1095,7 +1095,7 @@ has a buffer object bound to GL_ELEMENT_ARRAY_BUFFER.
 \specGL{On each call to execute():
     \code
     // GL_ELEMENT_ARRAY_BUFFER bind (if necessary; see ElementArrayBuffer).
-    glMultiDrawElements( _mode\, &_countVec[ 0 ]\, _type\, (const GLvoid**)( _indicesArray.get() )\, _primcount );
+    glMultiDrawElements( _mode\, &_countVec[ 0 ]\, _type\, (const GLvoid**)( &_indicesVec[ 0 ] )\, _primcount );
     \endcode }
 \specDepend{ElementArrayBuffer}
 \specUsageBase{DrawCommand}
@@ -1109,7 +1109,7 @@ class MultiDrawElements : public DrawCommand,
 {
 public:
     MultiDrawElements( GLenum mode, const jagDraw::GLsizeiVec& count, GLenum type,
-            const jagDraw::GLvoidPtrArray& indices, GLsizei primcount,
+            const jagDraw::GLvoidPtrVec& indices, GLsizei primcount,
             const jagDraw::BufferObjectPtr elementBuffer=jagDraw::BufferObjectPtr() )
       : DrawCommand( MultiDrawElementsType, mode, 0, primcount ),
         DrawElementsBase( type, 0, elementBuffer ),
@@ -1140,7 +1140,7 @@ public:
     {
         if( _elementBuffer != NULL )
             _elementBuffer->execute( drawInfo );
-        glMultiDrawElements( _mode, &_countVec[ 0 ], _type, (const GLvoid**)( _indicesArray.get() ), _primcount );
+        glMultiDrawElements( _mode, &_countVec[ 0 ], _type, (const GLvoid**)( &_indicesVec[ 0 ] ), _primcount );
     }
 };
 
@@ -1579,8 +1579,8 @@ has a buffer object bound to GL_ELEMENT_ARRAY_BUFFER.
 \specGL{On each call to execute():
     \code
     // GL_ELEMENT_ARRAY_BUFFER bind (if necessary; see ElementArrayBuffer).
-    glMultiDrawElementsBaseVertex( _mode\, &_countVec[ 0 ]\, _type\, (const GLvoid**)( _indicesArray.get() )\,
-            _primcount\, _basevertexArray.get() );
+    glMultiDrawElementsBaseVertex( _mode\, &_countVec[ 0 ]\, _type\, (const GLvoid**)( &_indicesVec[ 0 ] )\,
+            _primcount\, &_basevertices[ 0 ] );
     \endcode }
 \specDepend{ElementArrayBuffer}
 \specUsageBase{DrawCommand}
@@ -1594,19 +1594,19 @@ class MultiDrawElementsBaseVertex : public DrawCommand,
 {
 public:
     MultiDrawElementsBaseVertex( GLenum mode, const jagDraw::GLsizeiVec& count, 
-            GLenum type, const jagDraw::GLvoidPtrArray& indices, GLsizei primcount,
-            const jagDraw::GLintArray& basevertex )
+            GLenum type, const jagDraw::GLvoidPtrVec& indices, GLsizei primcount,
+            const jagDraw::GLintVec& basevertex )
       : DrawCommand( MultiDrawElementsBaseVertexType, mode, 0, primcount ),
         DrawElementsBase( type ),
         MultiArrayBase( count, indices ),
-        _basevertexArray( basevertex )
+        _basevertices( basevertex )
     {}
     MultiDrawElementsBaseVertex( const MultiDrawElementsBaseVertex& rhs )
       : DrawCommand( rhs ),
         DrawElementsBase( rhs ),
-        MultiArrayBase( rhs )
+        MultiArrayBase( rhs ),
+        _basevertices( rhs._basevertices )
     {
-        _basevertexArray = rhs._basevertexArray;
     }
     virtual ~MultiDrawElementsBaseVertex()
     {}
@@ -1628,12 +1628,12 @@ public:
     {
         if( _elementBuffer != NULL )
             _elementBuffer->execute( drawInfo );
-        glMultiDrawElementsBaseVertex( _mode, &_countVec[ 0 ], _type, (const GLvoid**)( _indicesArray.get() ),
-            _primcount, _basevertexArray.get() );
+        glMultiDrawElementsBaseVertex( _mode, &_countVec[ 0 ], _type, (const GLvoid**)( &_indicesVec[ 0 ] ),
+            _primcount, &_basevertices[ 0 ] );
     }
 
 protected:
-    jagDraw::GLintArray _basevertexArray;
+    jagDraw::GLintVec _basevertices;
 };
 
 typedef jagBase::ptr< jagDraw::MultiDrawElementsBaseVertex >::shared_ptr MultiDrawElementsBaseVertexPtr;
