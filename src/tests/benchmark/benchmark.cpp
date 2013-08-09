@@ -162,7 +162,32 @@ void createSingleTriStrip( const unsigned int numVerts, jagDraw::DrawablePtr& dr
     drawable->setMaxContexts( 1 );
 }
 
-const size_t numTestCases( 1 );
+void createSingleTriangles( const unsigned int numVerts, jagDraw::DrawablePtr& drawable )
+{
+    drawable = jagDraw::DrawablePtr( new jagDraw::Drawable() );
+
+    jagDraw::GLuintVec elements;
+    unsigned int idx;
+    for( idx=0; idx<(numVerts-2); idx+=2 )
+    {
+        elements.push_back( idx );
+        elements.push_back( idx+1 );
+        elements.push_back( idx+2 );
+        elements.push_back( idx+2 );
+        elements.push_back( idx+1 );
+        elements.push_back( idx+3 );
+    }
+    jagBase::BufferPtr elbp( new jagBase::Buffer( elements.size() * sizeof( GLint ), (void*)&elements[0] ) );
+    jagDraw::BufferObjectPtr elbop( new jagDraw::BufferObject( GL_ELEMENT_ARRAY_BUFFER, elbp ) );
+    jagDraw::DrawElementsPtr drawElements( new jagDraw::DrawElements( GL_TRIANGLES, (const GLsizei) elements.size(), GL_UNSIGNED_INT, 0, elbop ) );
+
+    drawable->addDrawCommand( drawElements );
+
+    drawable->setMaxContexts( 1 );
+}
+
+
+const size_t numTestCases( 2 );
 const unsigned int numVerts( 10000000 );
 
 bool BenchmarkTest::startup( const unsigned int numContexts )
@@ -184,9 +209,10 @@ bool BenchmarkTest::startup( const unsigned int numContexts )
         _commands.setMaxContexts( 1 );
     }
 
+    // Create Drawables for all test cases
     _drawables.resize( numTestCases );
-
     createSingleTriStrip( numVerts, _drawables[ 0 ] );
+    createSingleTriangles( numVerts, _drawables[ 1 ] );
 
     return( true );
 }
@@ -216,10 +242,17 @@ bool BenchmarkTest::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& p
     jagDraw::DrawInfo& drawInfo( getDrawInfo( contextID ) );
 
     _commands.execute( drawInfo );
+    // Clear GL pipe before timing anything.
+    glFinish();
 
     {
-        JAG3D_PROFILE( "benchmark" );
+        JAG3D_PROFILE( "Single GL_TRIANGLE_STRIP" );
         _drawables[ 0 ]->execute( drawInfo );
+        glFinish();
+    }
+    {
+        JAG3D_PROFILE( "Single GL_TRIANGLES" );
+        _drawables[ 1 ]->execute( drawInfo );
         glFinish();
     }
     
