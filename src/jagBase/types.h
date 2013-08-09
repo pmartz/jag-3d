@@ -37,6 +37,7 @@ typedef jagBase::ptr< unsigned int >::shared_ptr UIntPtr;
 
 typedef std::vector< std::string > StringVec;
 
+typedef std::vector< gmtl::Point2f > Point2fVec;
 typedef std::vector< gmtl::Point3f > Point3fVec;
 typedef jagBase::ptr< gmtl::Point3f >::shared_array_ptr Point3fArray;
 

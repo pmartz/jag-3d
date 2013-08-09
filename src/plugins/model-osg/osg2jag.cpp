@@ -302,9 +302,6 @@ Osg2Jag::ArrayInfo Osg2Jag::asJagArray( const osg::Array* arrayIn )
 {
     ArrayInfo info;
 
-    typedef std::vector< gmtl::Point3f > Point3fArray;
-    typedef std::vector< gmtl::Point2f > Point2fArray;
-
     switch( arrayIn->getType() )
     {
     case osg::Array::Vec3ArrayType:
@@ -316,7 +313,7 @@ Osg2Jag::ArrayInfo Osg2Jag::asJagArray( const osg::Array* arrayIn )
         info._numElements = size;
         info._componentsPerElement = 3;
 
-        Point3fArray out;
+        jagBase::Point3fVec out;
         out.resize( size );
         unsigned int idx;
         for( idx=0; idx<size; idx++ )
@@ -341,7 +338,7 @@ Osg2Jag::ArrayInfo Osg2Jag::asJagArray( const osg::Array* arrayIn )
         info._numElements = size;
         info._componentsPerElement = 2;
 
-        Point2fArray out;
+        jagBase::Point2fVec out;
         out.resize( size );
         unsigned int idx;
         for( idx=0; idx<size; idx++ )

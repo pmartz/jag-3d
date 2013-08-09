@@ -153,14 +153,13 @@ bool DrawableDemo::startup( const unsigned int numContexts )
     jagDraw::DrawablePtr drawable( new jagDraw::Drawable() );
     jagDraw::CommandMapPtr commands( new jagDraw::CommandMap() );
     const float z = .5f;
-    typedef std::vector< gmtl::Point3f > Point3fArray;
 
     // Define first drawable: tri strip on the left.
     {
         commands->insert( prog );
         commands->insert( swizzleOffSet );
 
-        Point3fArray v3fa;
+        jagBase::Point3fVec v3fa;
         v3fa.push_back( gmtl::Point3f( -.9f, -.9f, z ) );
         v3fa.push_back( gmtl::Point3f( -.6f, -.9f, z ) );
         v3fa.push_back( gmtl::Point3f( -.7f, 0.f, z ) );
@@ -177,7 +176,7 @@ bool DrawableDemo::startup( const unsigned int numContexts )
             "vertex", 3, GL_FLOAT, GL_FALSE, 0, 0 ) );
         vaop->addVertexArrayCommand( verts, jagDraw::VertexArrayObject::Vertex );
 
-        Point3fArray c3fa;
+        jagBase::Point3fVec c3fa;
         c3fa.push_back( gmtl::Point3f( 1.f, 0.f, 0.f ) );
         c3fa.push_back( gmtl::Point3f( 0.f, 1.f, 0.f ) );
         c3fa.push_back( gmtl::Point3f( 0.f, 0.f, 1.f ) );
@@ -222,7 +221,7 @@ bool DrawableDemo::startup( const unsigned int numContexts )
 
         commands->insert( swizzleOnSet );
 
-        Point3fArray i3fa;
+        jagBase::Point3fVec i3fa;
         i3fa.push_back( gmtl::Point3f( -.3f, -.9f, z ) );
             i3fa.push_back( gmtl::Point3f( 1.f, 0.f, 0.f ) );
         i3fa.push_back( gmtl::Point3f( 0.f, -.9f, z ) );
@@ -258,7 +257,7 @@ bool DrawableDemo::startup( const unsigned int numContexts )
         commands->insert( prog2 );
         commands->insert( scaleSet );
 
-        Point3fArray i3fa;
+        jagBase::Point3fVec i3fa;
         i3fa.push_back( gmtl::Point3f( .3f, -.9f, z ) );
             i3fa.push_back( gmtl::Point3f( 1.f, 0.f, 0.f ) );
         i3fa.push_back( gmtl::Point3f( .6f, -.9f, z ) );
