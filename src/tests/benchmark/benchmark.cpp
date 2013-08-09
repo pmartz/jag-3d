@@ -149,7 +149,7 @@ bool BenchmarkTest::startup( const unsigned int numContexts )
 
     // Define first drawable: tri strip on the left.
     {
-        const unsigned int numVerts( 10000000 );
+        const unsigned int numVerts( 50000000 );
 
         _commands.insert( prog );
 
@@ -216,7 +216,7 @@ bool BenchmarkTest::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& p
     jagDraw::DrawInfo& drawInfo( getDrawInfo( contextID ) );
 
     {
-        JAG3D_PROFILE( "benchmark" )
+        JAG3D_PROFILE( "benchmark" );
         _commands.execute( drawInfo );
         _drawable.execute( drawInfo );
         glFlush();
