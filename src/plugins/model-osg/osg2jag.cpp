@@ -175,24 +175,24 @@ void Osg2Jag::apply( osg::Geometry* geom )
             "normal", info._componentsPerElement, info._type, GL_FALSE, 0, 0 ) );
         vaop->addVertexArrayCommand( attrib, jagDraw::VertexArrayObject::Normal );
     }
-   
-	
 
-	for( unsigned int idx = 0; idx < geom->getNumTexCoordArrays(); ++idx )
+
+
+    for( unsigned int idx = 0; idx < geom->getNumTexCoordArrays(); ++idx )
     {
         if( geom->getTexCoordArray( idx ) != NULL )
         {
-			ArrayInfo info( asJagArray( geom->getTexCoordArray( idx ) ) );
+            ArrayInfo info( asJagArray( geom->getTexCoordArray( idx ) ) );
             jagDraw::BufferObjectPtr bop( new jagDraw::BufferObject( GL_ARRAY_BUFFER, info._buffer ) );
             vaop->addVertexArrayCommand( bop, jagDraw::VertexArrayObject::TexCoord );
             std::ostringstream ostr;
-			std::cout << info._componentsPerElement << " texcoords" << std::endl;
+            ostr << "texcoord" << idx;
+            std::cout << info._componentsPerElement << " texcoords" << std::endl;
             jagDraw::VertexAttribPtr attrib( new jagDraw::VertexAttrib(
                 ostr.str(), info._componentsPerElement, info._type, GL_FALSE, 0, 0 ) );
             vaop->addVertexArrayCommand( attrib, jagDraw::VertexArrayObject::TexCoord );
         }
     }
-	
 
     commands->insert( vaop );
 
@@ -219,10 +219,10 @@ void Osg2Jag::apply( osg::Geometry* geom )
             const osg::DrawArrayLengths* dal( static_cast< const osg::DrawArrayLengths* >( ps ) );
             const unsigned int size( dal->size() );
 
-            jagDraw::GLintArray first( new GLint[ size ] );
-            jagDraw::GLsizeiArray count( new GLsizei[ size ] );
-            GLint* fp( first.get() );
-            GLsizei* cp( count.get() );
+            jagDraw::GLintVec first( size );
+            jagDraw::GLsizeiVec count( size );
+            GLint* fp( &first[ 0 ] );
+            GLsizei* cp( &count[ 0 ] );
 
             unsigned int idx;
             for( idx=0; idx<size; idx++ )
@@ -303,7 +303,7 @@ Osg2Jag::ArrayInfo Osg2Jag::asJagArray( const osg::Array* arrayIn )
     ArrayInfo info;
 
     typedef std::vector< gmtl::Point3f > Point3fArray;
-	typedef std::vector< gmtl::Point2f > Point2fArray;
+    typedef std::vector< gmtl::Point2f > Point2fArray;
 
     switch( arrayIn->getType() )
     {
@@ -332,7 +332,7 @@ Osg2Jag::ArrayInfo Osg2Jag::asJagArray( const osg::Array* arrayIn )
         info._buffer = bp;
         break;
     }
-	case osg::Array::Vec2ArrayType:
+    case osg::Array::Vec2ArrayType:
     {
         const osg::Vec2Array* array( static_cast< const osg::Vec2Array* >( arrayIn ) );
         const unsigned int size( array->size() );
@@ -350,7 +350,6 @@ Osg2Jag::ArrayInfo Osg2Jag::asJagArray( const osg::Array* arrayIn )
             gmtl::Point2f& p( out[ idx ] );
             p[ 0 ] = v[ 0 ];
             p[ 1 ] = v[ 1 ];
-           // p[ 2 ] = v[ 2 ];
         }
 
         jagBase::BufferPtr bp( new jagBase::Buffer( size * sizeof( gmtl::Point2f ), (void*)&( out[0] ) ) );

@@ -110,13 +110,13 @@ void Node::execute( DrawInfo& drawInfo )
     delta.execute( drawInfo );
     }
 
-	{
-		JAG3D_PROFILE( "Execute Drawable" );
-    BOOST_FOREACH( DrawablePtr drawable, _drawables )
     {
-        drawable->execute( drawInfo );
+        JAG3D_PROFILE( "Execute Drawable" );
+        BOOST_FOREACH( DrawablePtr drawable, _drawables )
+        {
+            drawable->execute( drawInfo );
+        }
     }
-	}
 
     JAG3D_ERROR_CHECK( "Node::execute()" );
 }

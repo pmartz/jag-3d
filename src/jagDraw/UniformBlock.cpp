@@ -122,8 +122,11 @@ void UniformBlock::execute( DrawInfo& drawInfo )
     if( drawInfo._current.contains( Program_t ) )
     {
         ProgramPtr prog( boost::dynamic_pointer_cast< Program >( drawInfo._current[ Program_t ] ) );
-        const Program::BlockInfo& blockInfo( prog->getUniformBlockInfo( _nameHash ) );
-        execute( drawInfo, blockInfo );
+        if( prog->hasUniformBlock( _nameHash ) )
+        {
+            const Program::BlockInfo& blockInfo( prog->getUniformBlockInfo( _nameHash ) );
+            execute( drawInfo, blockInfo );
+        }
     }
 }
 

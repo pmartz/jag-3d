@@ -263,7 +263,7 @@ void BufferAggregationVisitor::handleDrawable( jagDraw::DrawablePtr draw, const 
             jagDraw::MultiDrawArrays* mda( dynamic_cast< jagDraw::MultiDrawArrays* >( dcp.get() ) );
             if( mda != NULL )
             {
-                jagDraw::GLintArray& first( mda->getFirst() );
+                jagDraw::GLintVec& first( mda->getFirst() );
                 for( GLsizei idx = 0; idx < mda->getPrimcount(); ++idx )
                     first[ idx ] += (GLint)( offset );
             }
