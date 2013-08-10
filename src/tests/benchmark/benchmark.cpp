@@ -35,6 +35,12 @@
 #include <string>
 
 
+
+const size_t numTestCases( 5 );
+const unsigned int numVerts( 1000000 );
+const unsigned int trisPerCommand( 6 );
+
+
 using namespace std;
 namespace bpo = boost::program_options;
 
@@ -151,7 +157,7 @@ void createSingleTriStrip( const unsigned int numVerts, jagDraw::DrawablePtr& dr
 
     jagDraw::GLuintVec elements;
     unsigned int idx;
-    for( idx=0; idx<numVerts; idx++ )
+    for( idx=0; idx<numVerts; ++idx )
         elements.push_back( idx );
     jagBase::BufferPtr elbp( new jagBase::Buffer( elements.size() * sizeof( GLint ), (void*)&elements[0] ) );
     jagDraw::BufferObjectPtr elbop( new jagDraw::BufferObject( GL_ELEMENT_ARRAY_BUFFER, elbp ) );
@@ -161,7 +167,125 @@ void createSingleTriStrip( const unsigned int numVerts, jagDraw::DrawablePtr& dr
 
     drawable->setMaxContexts( 1 );
 }
+void createSeveralTriStrips( const unsigned int numVerts, const unsigned int trisPerCommand, jagDraw::DrawablePtr& drawable )
+{
+    drawable = jagDraw::DrawablePtr( new jagDraw::Drawable() );
 
+    jagDraw::GLuintVec elements;
+    const unsigned int vertsPerCommand( trisPerCommand + 2 );
+    const unsigned int totalTris( numVerts - 2 );
+    const unsigned int intCommandCount( totalTris/trisPerCommand );
+    const unsigned int totalCommands( ( (float)totalTris/(float)trisPerCommand == intCommandCount ) ?
+        intCommandCount : intCommandCount+1 );
+
+    unsigned int vertsRemaining( numVerts );
+    unsigned int startIdx( 0 );
+    for( unsigned int numCommands = totalCommands; numCommands > 0; --numCommands )
+    {
+        unsigned int idx;
+        unsigned int currentVertCount( std::min( vertsPerCommand, vertsRemaining ) );
+        for( idx=0; idx < currentVertCount; idx++ )
+            elements.push_back( idx + startIdx );
+        vertsRemaining -= trisPerCommand;
+        startIdx += trisPerCommand;
+    }
+
+    jagBase::BufferPtr elbp( new jagBase::Buffer( elements.size() * sizeof( GLint ), (void*)&elements[0] ) );
+    jagDraw::BufferObjectPtr elbop( new jagDraw::BufferObject( GL_ELEMENT_ARRAY_BUFFER, elbp ) );
+
+    vertsRemaining = numVerts;
+    startIdx = 0;
+    for( unsigned int numCommands = totalCommands; numCommands > 0; --numCommands )
+    {
+        unsigned int currentVertCount( std::min( vertsPerCommand, vertsRemaining ) );
+        jagDraw::DrawElementsPtr drawElements( new jagDraw::DrawElements( GL_TRIANGLE_STRIP,
+            (const GLsizei)currentVertCount, GL_UNSIGNED_INT, (const GLvoid*)(startIdx*sizeof(GLint)), elbop ) );
+        drawable->addDrawCommand( drawElements );
+        vertsRemaining -= trisPerCommand;
+        startIdx += vertsPerCommand;
+    }
+    std::cout << drawable->getDrawCommandVec().size() << std::endl;
+
+    drawable->setMaxContexts( 1 );
+}
+void createSingleTriStripRestart( const unsigned int numVerts, const unsigned int trisPerCommand, jagDraw::DrawablePtr& drawable )
+{
+    drawable = jagDraw::DrawablePtr( new jagDraw::Drawable() );
+
+    const unsigned int vertsPerCommand( trisPerCommand + 2 );
+
+    jagDraw::GLuintVec elements;
+    unsigned int vertsRemaining( numVerts );
+    unsigned int idx;
+    for( idx=0; idx<numVerts;  )
+    {
+        unsigned int currentVertCount( std::min( vertsPerCommand, vertsRemaining ) );
+        for( unsigned int n=0; n<currentVertCount; ++n )
+        {
+            elements.push_back( idx++ );
+        }
+        if( idx >= numVerts )
+            break;
+        elements.push_back( 0xffffffff );
+        idx -= 2;
+        vertsRemaining -= trisPerCommand;
+    }
+    jagBase::BufferPtr elbp( new jagBase::Buffer( elements.size() * sizeof( GLint ), (void*)&elements[0] ) );
+    jagDraw::BufferObjectPtr elbop( new jagDraw::BufferObject( GL_ELEMENT_ARRAY_BUFFER, elbp ) );
+
+    jagDraw::PrimitiveRestartPtr restart( new jagDraw::PrimitiveRestart( 0xffffffff ) );
+    drawable->addDrawCommand( restart );
+
+    jagDraw::DrawElementsPtr drawElements( new jagDraw::DrawElements( GL_TRIANGLE_STRIP, (const GLsizei) elements.size(), GL_UNSIGNED_INT, 0, elbop ) );
+    drawable->addDrawCommand( drawElements );
+
+    restart.reset( new jagDraw::PrimitiveRestart( 0, false ) );
+    drawable->addDrawCommand( restart );
+
+    drawable->setMaxContexts( 1 );
+}
+void createMultiTriStrip( const unsigned int numVerts, const unsigned int trisPerCommand, jagDraw::DrawablePtr& drawable )
+{
+    drawable = jagDraw::DrawablePtr( new jagDraw::Drawable() );
+
+    const unsigned int vertsPerCommand( trisPerCommand + 2 );
+    const unsigned int totalTris( numVerts - 2 );
+    const unsigned int intCommandCount( totalTris/trisPerCommand );
+    const GLsizei primCount( ( (float)totalTris/(float)trisPerCommand == intCommandCount ) ?
+        intCommandCount : intCommandCount+1 );
+
+    jagDraw::GLuintVec elements;
+    jagDraw::GLsizeiVec counts( primCount );
+    jagDraw::GLvoidPtrVec indices( primCount );
+
+    unsigned int vertsRemaining( numVerts );
+    unsigned int idx;
+    unsigned int prim( 0 );
+    for( idx=0; idx<numVerts;  )
+    {
+        unsigned int currentVertCount( std::min( vertsPerCommand, vertsRemaining ) );
+
+        indices[ prim ] = (GLvoid*)( elements.size() * sizeof( GLint ) );
+        counts[ prim ] = currentVertCount;
+        for( unsigned int n=0; n<currentVertCount; ++n )
+        {
+            elements.push_back( idx++ );
+        }
+        if( idx >= numVerts )
+            break;
+        idx -= 2;
+        vertsRemaining -= trisPerCommand;
+        ++prim;
+    }
+    jagBase::BufferPtr elbp( new jagBase::Buffer( elements.size() * sizeof( GLint ), (void*)&elements[0] ) );
+    jagDraw::BufferObjectPtr elbop( new jagDraw::BufferObject( GL_ELEMENT_ARRAY_BUFFER, elbp ) );
+
+    jagDraw::MultiDrawElementsPtr multiDrawElements(
+        new jagDraw::MultiDrawElements( GL_TRIANGLE_STRIP, counts, GL_UNSIGNED_INT, indices, primCount, elbop ) );
+    drawable->addDrawCommand( multiDrawElements );
+
+    drawable->setMaxContexts( 1 );
+}
 void createSingleTriangles( const unsigned int numVerts, jagDraw::DrawablePtr& drawable )
 {
     drawable = jagDraw::DrawablePtr( new jagDraw::Drawable() );
@@ -187,8 +311,6 @@ void createSingleTriangles( const unsigned int numVerts, jagDraw::DrawablePtr& d
 }
 
 
-const size_t numTestCases( 2 );
-const unsigned int numVerts( 10000000 );
 
 bool BenchmarkTest::startup( const unsigned int numContexts )
 {
@@ -212,7 +334,10 @@ bool BenchmarkTest::startup( const unsigned int numContexts )
     // Create Drawables for all test cases
     _drawables.resize( numTestCases );
     createSingleTriStrip( numVerts, _drawables[ 0 ] );
-    createSingleTriangles( numVerts, _drawables[ 1 ] );
+    createSeveralTriStrips( numVerts, trisPerCommand, _drawables[ 1 ] );
+    createSingleTriStripRestart( numVerts, trisPerCommand, _drawables[ 2 ] );
+    createMultiTriStrip( numVerts, trisPerCommand, _drawables[ 3 ] );
+    createSingleTriangles( numVerts, _drawables[ 4 ] );
 
     return( true );
 }
@@ -245,14 +370,34 @@ bool BenchmarkTest::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& p
     // Clear GL pipe before timing anything.
     glFinish();
 
+    if( true )
     {
-        JAG3D_PROFILE( "Single GL_TRIANGLE_STRIP" );
+        JAG3D_PROFILE( "Single GL_TRIANGLE_STRIP command" );
         _drawables[ 0 ]->execute( drawInfo );
         glFinish();
     }
+    if( true )
     {
-        JAG3D_PROFILE( "Single GL_TRIANGLES" );
+        JAG3D_PROFILE( "Several GL_TRIANGLE_STRIP commands" );
         _drawables[ 1 ]->execute( drawInfo );
+        glFinish();
+    }
+    if( true )
+    {
+        JAG3D_PROFILE( "Single GL_TRIANGLE_STRIP command with restart" );
+        _drawables[ 2 ]->execute( drawInfo );
+        glFinish();
+    }
+    if( true )
+    {
+        JAG3D_PROFILE( "Multi GL_TRIANGLE_STRIP command" );
+        _drawables[ 3 ]->execute( drawInfo );
+        glFinish();
+    }
+    if( true )
+    {
+        JAG3D_PROFILE( "Single GL_TRIANGLES command" );
+        _drawables[ 4 ]->execute( drawInfo );
         glFinish();
     }
     
