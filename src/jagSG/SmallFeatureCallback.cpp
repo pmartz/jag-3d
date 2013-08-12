@@ -29,12 +29,14 @@ namespace jagSG {
 
 SmallFeatureCallback::SmallFeatureCallback( const std::string& logName )
   : jagBase::LogBase( logName.empty() ? "jag.sg.coll.small" : logName ),
-    jagSG::Node::Callback()
+    jagSG::Node::Callback(),
+    _threshold( 3. )
 {
 }
 SmallFeatureCallback::SmallFeatureCallback( const SmallFeatureCallback& rhs )
   : jagBase::LogBase( "jag.sg.coll.small" ),
-    jagSG::Node::Callback( rhs )
+    jagSG::Node::Callback( rhs ),
+    _threshold( rhs._threshold )
 {
 }
 SmallFeatureCallback::~SmallFeatureCallback()
@@ -47,9 +49,19 @@ bool SmallFeatureCallback::operator()( jagSG::VisitorBase* /* visitor */, jagSG:
     jagSG::CollectionVisitor::CollectionInfo* ci( static_cast<
         jagSG::CollectionVisitor::CollectionInfo* >( info ) );
 
-    // Continue collection if window coord bound radius is > 10.0.
-    return( ci->getWinCLength( ci->getECBoundRadius() ) > 10. );
+    // Continue collection if window coord bound radius is >= the threshold.
+    return( ci->getWinCLength( ci->getECBoundRadius() ) >= _threshold );
 }
+
+void SmallFeatureCallback::setThreshold( const double threshold )
+{
+    _threshold = threshold;
+}
+double SmallFeatureCallback::getThreshold() const
+{
+    return( _threshold );
+}
+
 
 
 

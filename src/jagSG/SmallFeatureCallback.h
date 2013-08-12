@@ -48,7 +48,17 @@ public:
     \details TBD */
     virtual bool operator()( jagSG::VisitorBase* visitor, jagSG::Node::CallbackInfo* info );
 
+    /** \brief Set the screen space radius threshold.
+    \details Sets the threshold used by operator()() to determine whether
+    a bound passes the callback or not. A Node or Drawable will not be
+    collected by the CollectionVisitor if it's screen space radius is
+    smaller than this threshold value. Default: 2 pixel radius. */
+    void setThreshold( const double threshold );
+    /** \brief Get the screen space radius threshold. */
+    double getThreshold() const;
+
 protected:
+    double _threshold;
 };
 
 typedef jagBase::ptr< SmallFeatureCallback >::shared_ptr SmallFeatureCallbackPtr;
