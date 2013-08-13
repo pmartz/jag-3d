@@ -49,7 +49,7 @@ int _lastX, _lastY;
 float _lastNX, _lastNY;
 typedef std::vector< int > IntVec;
 IntVec _width, _height;
-bool _leftDrag, _rightDrag;
+static bool _leftDrag( false ), _middleDrag( false ), _rightDrag( false );
 
 static jagMx::MxGamePadPtr gamePad( jagMx::MxGamePadPtr( (jagMx::MxGamePad*)NULL ) );
 
@@ -160,12 +160,14 @@ void mouse( int button, int op, int x, int y )
 
     if( button == GLUT_LEFT_BUTTON )
         _leftDrag = ( op == GLUT_DOWN );
+    if( button == GLUT_MIDDLE_BUTTON )
+        _middleDrag = ( op == GLUT_DOWN );
     if( button == GLUT_RIGHT_BUTTON )
         _rightDrag = ( op == GLUT_DOWN );
 }
 void motion( int x, int y )
 {
-    if( !_leftDrag && !_rightDrag )
+    if( !_leftDrag && !_middleDrag && !_rightDrag )
         return;
 
     const int window( glutGetWindow() - 1 );
@@ -181,7 +183,17 @@ void motion( int x, int y )
     const float deltaX( nx - _lastNX );
     const float deltaY( ny - _lastNY );
 
-    if( _rightDrag )
+    if( _middleDrag || ( _leftDrag && _rightDrag ) )
+    {
+        if( ( deltaX == 0.f ) && ( deltaY == 0.f ) )
+            // Then we're really not dragging...
+            return;
+
+        gmtl::Planed panPlane( gmtl::Vec3d( 0., -1., 0. ), 0. );
+        gmtl::Vec3d panDelta( jagMx::pan( mxCore.get(), panPlane, deltaX, deltaY ) );
+        mxCore->moveLiteral( -panDelta );
+    }
+    else if( _rightDrag )
     {
         if( deltaY == 0.f )
             // Then we're really not dragging...
