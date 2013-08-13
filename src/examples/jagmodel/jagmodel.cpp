@@ -22,9 +22,7 @@
 
 #include <jagDraw/Common.h>
 #include <jagDraw/PerContextData.h>
-#include <jagSG/CollectionVisitor.h>
-#include <jagSG/Node.h>
-#include <jagSG/SmallFeatureCallback.h>
+#include <jagSG/Common.h>
 #include <jagDisk/ReadWrite.h>
 #include <jagBase/Profile.h>
 #include <jagBase/Version.h>
@@ -113,6 +111,8 @@ bool JagModel::startup( const unsigned int numContexts )
     _root = DemoInterface::readSceneGraphNodeUtil( _fileName );
         
 
+    jagSG::FrustumCullDistributionVisitor fcdv;
+    _root->accept( fcdv );
     jagSG::SmallFeatureDistributionVisitor sfdv;
     _root->accept( sfdv );
 
