@@ -132,7 +132,7 @@ osg::Vec4d JAGMX_EXPORT computePanPlane( osg::Node* scene, const jagMx::MxCore* 
 
 /** \brief Computes world coordinate movement in the given pan plane.
 \details This function computes literal xyz delta motion in the given \c panPlane. It does
-this by back-projecting the given delta NDX coordinates onto \c panPlane, along with the
+this by back-projecting the given delta NDC coordinates onto \c panPlane, along with the
 back-projection of the NDC origin onto that same plane. The returned value is the
 difference between these two projected values.
 
@@ -151,11 +151,8 @@ direction and view position.
 \return Literal xyz motion vector. In the typical use case (to pan the entire scene),
 pass the negated return value to MxCore::moveLiteral().
 */
-#if 0
-// TBD MxCoe Port
-osg::Vec3d JAGMX_EXPORT pan( const osg::Node* scene, const jagMx::MxCore* mxCore,
-    const osg::Vec4d panPlane, const double deltaNdcX, const double deltaNdcY );
-#endif
+gmtl::Vec3d JAGMX_EXPORT pan( /* const osg::Node* scene, */ const jagMx::MxCore* mxCore,
+    const gmtl::Planed& panPlane, const double deltaNdcX, const double deltaNdcY );
 
 
 /** \brief Utility routine for performing an intersection test (pick).

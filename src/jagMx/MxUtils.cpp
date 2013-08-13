@@ -142,11 +142,11 @@ bool intersect( osg::Vec3d& result, const osg::Vec3d& farPoint, osg::Node* scene
 }
 #endif
 
-#if 0
-// TBD MxCoe Port
-osg::Vec3d pan( const osg::Node* scene, const jagMx::MxCore* mxCore,
-    const osg::Vec4d panPlane, const double deltaNdcX, const double deltaNdcY )
+
+gmtl::Vec3d JAGMX_EXPORT pan( /* const osg::Node* scene, */ const jagMx::MxCore* mxCore,
+    const gmtl::Planed& panPlane, const double deltaNdcX, const double deltaNdcY )
 {
+#if 0
     const osg::BoundingSphere& bs = scene->getBound();
 
     // Get the view volume far plane value, and the distance from
@@ -154,11 +154,15 @@ osg::Vec3d pan( const osg::Node* scene, const jagMx::MxCore* mxCore,
     osg::Vec2d nearFar( jagMx::computeOptimalNearFar( mxCore->getPosition(), bs, mxCore->getOrtho() ) );
     double zNear( nearFar[ 0 ] ), zFar( nearFar[ 1 ] );
     const double distance = zFar - zNear;
+#else
+    const double zNear( 1. ), zFar( 500. );
+    const double distance = zFar - zNear;
+#endif
 
     // Create two points, both in NDC space, and lying on the far plane at the back
     // of the view volume. One is the xy origin, the other is the passed xy parameters.
-    osg::Vec4d farPoint0 = osg::Vec4d( 0., 0., 1., 1. );
-    osg::Vec4d farPoint1 = osg::Vec4d( deltaNdcX, deltaNdcY, 1., 1. );
+    gmtl::Vec4d farPoint0 = gmtl::Vec4d( 0., 0., 1., 1. );
+    gmtl::Vec4d farPoint1 = gmtl::Vec4d( deltaNdcX, deltaNdcY, 1., 1. );
     if( !( mxCore->getOrtho() ) )
     {
         // Not ortho, so w != 1.0. Multiply by the far plane distance.
@@ -169,33 +173,32 @@ osg::Vec3d pan( const osg::Node* scene, const jagMx::MxCore* mxCore,
 
     // Get inverse view & proj matrices to back-transform the
     // two clip coord far points into world space.
-    osg::Matrixd v = mxCore->getMatrix(); // This is the inverse of the view matrix.
-    osg::Matrixd proj = mxCore->computeProjection( nearFar );
-    osg::Matrixd p = osg::Matrixd::inverse( proj );
+    gmtl::Matrix44d v( mxCore->getMatrix() ); // This is the inverse of the view matrix.
+    gmtl::Matrix44d proj( mxCore->computeProjection( zNear, zFar ) );
+    gmtl::Matrix44d p;
+    gmtl::invert( p, proj );
 
-    osg::Vec4d wc0 = farPoint0 * p * v;
-    osg::Vec4d wc1 = farPoint1 * p * v;
+    gmtl::Vec4d wc0 = v * p * farPoint0;
+    gmtl::Vec4d wc1 = v * p * farPoint1;
 
-    const osg::Vec3d viewDir = mxCore->getDir();
-    const osg::Vec3d& pos = mxCore->getPosition();
+    const gmtl::Vec3d& viewDir( mxCore->getDir() );
+    const gmtl::Point3d& pos( mxCore->getPosition() );
 
     // Intersect the two world coord points with the pan plane.
-    osg::Vec3d result0, result1;
-    osg::Vec3d p1( wc0.x(), wc0.y(), wc0.z() );
-    osg::Vec3d p0 = mxCore->getOrtho() ? p1 - ( viewDir * distance ) : pos;
+    gmtl::Point3d result0, result1;
+    gmtl::Point3d p1( wc0[0], wc0[1], wc0[2] );
+    gmtl::Point3d p0 = mxCore->getOrtho() ? p1 - ( viewDir * distance ) : pos;
     intersectRayPlane( result0, panPlane, p0, p1 );
-    p1 = osg::Vec3d( wc1.x(), wc1.y(), wc1.z() );
+    p1.set( wc1[0], wc1[1], wc1[2] );
     p0 = mxCore->getOrtho() ? p1 - ( viewDir * distance ) : pos;
     intersectRayPlane( result1, panPlane, p0, p1 );
 
     // Subtract the two plane intersection points to get the delta world coord
     // motion and move the view center accordingly.
-    osg::Vec3d delta = result1 - result0;
-    osg::notify( osg::DEBUG_FP ) << "    delta " << delta << std::endl;
+    gmtl::Vec3d delta = result1 - result0;
     
     return( delta );
 }
-#endif
 
 
 #if 0
