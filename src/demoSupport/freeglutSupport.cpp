@@ -189,7 +189,7 @@ void motion( int x, int y )
             // Then we're really not dragging...
             return;
 
-        gmtl::Planed panPlane( gmtl::Vec3d( 0., -1., 0. ), 0. );
+        gmtl::Planed panPlane( -( mxCore->getDir() ), 0. );
         gmtl::Vec3d panDelta( jagMx::pan( mxCore.get(), panPlane, deltaX, deltaY ) );
         mxCore->moveLiteral( -panDelta );
     }
