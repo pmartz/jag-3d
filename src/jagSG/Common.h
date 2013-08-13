@@ -22,11 +22,14 @@
 #define __JAGSG_COMMON_H__ 1
 
 
-#include <jagSG/Node.h>
-#include <jagSG/Visitor.h>
 #include <jagSG/CollectionVisitor.h>
+#include <jagSG/FrustumCullCallback.h>
+#include <jagSG/IntersectVisitor.h>
+#include <jagSG/Node.h>
+#include <jagSG/NodeMaskCullCallback.h>
 #include <jagSG/SelectContainerCallback.h>
 #include <jagSG/SmallFeatureCallback.h>
+#include <jagSG/Visitor.h>
 
 
 // __JAGSG_COMMON_H__
