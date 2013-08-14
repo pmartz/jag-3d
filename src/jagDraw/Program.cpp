@@ -349,6 +349,12 @@ bool Program::link( unsigned int contextID )
                             // Some drivers append "[...]" to end of array names. Strip this.
                             nubName = nubName.substr( 0, nubName.find_last_of( '[' ) );
                         }
+                        if( nubName.find_last_of( '.' ) != nubName.npos )
+                        {
+                            // Some drivers combine block name and uniform name.
+                            // Strip the block name, leave only the uniform name.
+                            nubName = nubName.substr( nubName.find_last_of( '.' ) + 1 );
+                        }
                         const HashValue nubHash( createHash( nubName ) );
                         bi._offsets[ nubHash ] = nuOff[ uidx ];
                         if( JAG3D_LOG_INFO )
