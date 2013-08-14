@@ -115,6 +115,7 @@ void CollectionVisitor::visit( jagSG::Node& node )
     JAG3D_PROFILE( "setup" );
     JAG3D_TRACE( "visit()" );
 
+
     {
     JAG3D_PROFILE( "commandmap" );
     pushCommandMap( node.getCommandMap() );
@@ -394,10 +395,12 @@ double CollectionVisitor::CollectionInfo::getWinCLength( double ecSegmentLength 
 bool CollectionVisitor::CollectionInfo::inFrustum() const
 {
     const jagBase::TransformD::FTYPE frustum( _transform.getFrustum() );
-    if( _bound->getType() == jagDraw::Bound::Box_t )
-        return( gmtl::isInVolume( frustum, _bound->asAABox() ) );
+    jagDraw::BoundPtr bound( _bound->clone() );
+    bound->transform( _transform.getModel() );
+    if( bound->getType() == jagDraw::Bound::Box_t )
+        return( gmtl::isInVolume( frustum, bound->asAABox() ) );
     else
-        return( gmtl::isInVolume( frustum, _bound->asSphere() ) );
+        return( gmtl::isInVolume( frustum, bound->asSphere() ) );
 }
 
 
