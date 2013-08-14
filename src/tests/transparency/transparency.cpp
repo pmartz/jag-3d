@@ -187,7 +187,7 @@ bool Transparency::startup( const unsigned int numContexts )
 
 
     jagDraw::ShaderPtr vs( DemoInterface::readShaderUtil( "transparency.vert" ) );
-    jagDraw::ShaderPtr fs( DemoInterface::readShaderUtil( "jagmodel.frag" ) );
+    jagDraw::ShaderPtr fs( DemoInterface::readShaderUtil( "transparency.frag" ) );
 
     jagDraw::ProgramPtr prog;
     prog = jagDraw::ProgramPtr( new jagDraw::Program );

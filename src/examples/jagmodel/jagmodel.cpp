@@ -109,6 +109,8 @@ bool JagModel::startup( const unsigned int numContexts )
 
     // Prepare the scene graph.
     _root = DemoInterface::readSceneGraphNodeUtil( _fileName );
+    if( _root == NULL )
+        return( false );
         
 
     jagSG::FrustumCullDistributionVisitor fcdv;
@@ -135,25 +137,49 @@ bool JagModel::startup( const unsigned int numContexts )
     }
     commands->insert( prog );
 
-    // Test uniform blocks
-    jagDraw::UniformBlockPtr ubp( jagDraw::UniformBlockPtr(
-        new jagDraw::UniformBlock( "blockTest" ) ) );
-    ubp->addUniform( jagDraw::UniformPtr(
-        new jagDraw::Uniform( "ambientScene", .2f ) ) );
-    ubp->addUniform( jagDraw::UniformPtr(
-        new jagDraw::Uniform( "diffuseMat", gmtl::Point3f( 0.f, .7f, 0.9f ) ) ) );
+    // Set up lighting uniforms
+    jagDraw::UniformBlockPtr lights( jagDraw::UniformBlockPtr(
+        new jagDraw::UniformBlock( "LightingLight" ) ) );
+    gmtl::Vec3f dir( 0.f, 0.f, 1.f );
+    gmtl::normalize( dir );
+    gmtl::Point4f lightVec( dir[0], dir[1], dir[2], 0. );
+    lights->addUniform( jagDraw::UniformPtr(
+        new jagDraw::Uniform( "position", lightVec ) ) );
+    lights->addUniform( jagDraw::UniformPtr(
+        new jagDraw::Uniform( "ambient", gmtl::Point4f( 1.f, 1.f, 1.f, 1.f ) ) ) );
+    lights->addUniform( jagDraw::UniformPtr(
+        new jagDraw::Uniform( "diffuse", gmtl::Point4f( 1.f, 1.f, 1.f, 1.f ) ) ) );
+    lights->addUniform( jagDraw::UniformPtr(
+        new jagDraw::Uniform( "specular", gmtl::Point4f( 1.f, 1.f, 1.f, 1.f ) ) ) );
+
+    jagDraw::UniformBlockPtr backMaterials( jagDraw::UniformBlockPtr(
+        new jagDraw::UniformBlock( "LightingMaterialBack" ) ) );
+    backMaterials->addUniform( jagDraw::UniformPtr(
+        new jagDraw::Uniform( "ambient", gmtl::Point4f( .1f, .1f, .1f, 1.f ) ) ) );
+    backMaterials->addUniform( jagDraw::UniformPtr(
+        new jagDraw::Uniform( "diffuse", gmtl::Point4f( .7f, .7f, .7f, 1.f ) ) ) );
+    backMaterials->addUniform( jagDraw::UniformPtr(
+        new jagDraw::Uniform( "specular", gmtl::Point4f( .5f, .5f, .5f, 1.f ) ) ) );
+    backMaterials->addUniform( jagDraw::UniformPtr(
+        new jagDraw::Uniform( "shininess", 16.f ) ) );
+
+    jagDraw::UniformBlockPtr frontMaterials( jagDraw::UniformBlockPtr(
+        new jagDraw::UniformBlock( "LightingMaterialFront" ) ) );
+    frontMaterials->addUniform( jagDraw::UniformPtr(
+        new jagDraw::Uniform( "ambient", gmtl::Point4f( .1f, .1f, .1f, 1.f ) ) ) );
+    frontMaterials->addUniform( jagDraw::UniformPtr(
+        new jagDraw::Uniform( "diffuse", gmtl::Point4f( .7f, .7f, .7f, 1.f ) ) ) );
+    frontMaterials->addUniform( jagDraw::UniformPtr(
+        new jagDraw::Uniform( "specular", gmtl::Point4f( .5f, .5f, .5f, 1.f ) ) ) );
+    frontMaterials->addUniform( jagDraw::UniformPtr(
+        new jagDraw::Uniform( "shininess", 16.f ) ) );
+
     jagDraw::UniformBlockSetPtr ubsp( jagDraw::UniformBlockSetPtr(
         new jagDraw::UniformBlockSet() ) );
-    ubsp->insert( ubp );
+    ubsp->insert( lights );
+    ubsp->insert( backMaterials );
+    ubsp->insert( frontMaterials );
     commands->insert( ubsp );
-
-    gmtl::Vec3f lightVec( .5f, .7f, 1.f );
-    gmtl::normalize( lightVec );
-    jagDraw::UniformSetPtr usp( jagDraw::UniformSetPtr(
-        new jagDraw::UniformSet() ) );
-    usp->insert( jagDraw::UniformPtr(
-        new jagDraw::Uniform( "ecLightDir", lightVec ) ) );
-    commands->insert( usp );
 
 
     // We have potentially different views per window, so we keep an MxCore
