@@ -38,6 +38,7 @@ namespace jagDraw {
 UniformBlock::UniformBlock( const std::string& name, const std::string& logName )
   : DrawablePrep( UniformBlock_t ),
     ObjectIDOwner(),
+    SHARED_FROM_THIS( UniformBlock )(),
     jagBase::LogBase( logName.empty() ? "jag.draw.ublock" : logName ),
     _name( name )
 {
