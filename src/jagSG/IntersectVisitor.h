@@ -34,6 +34,8 @@
 #include <gmtl/Ray.h>
 #include <gmtl/Xforms.h>
 
+#include <deque>
+
 
 namespace jagSG {
 
@@ -71,13 +73,10 @@ public:
     /** \brief TBD
     \details TBD */
     virtual void visit( jagSG::Node& node ) {
-		pushCommandMap(node.getCommandMap());
-		pushMatrix(node.getTransform());
+        CommandMapStackHelper cmdh( *this, node.getCommandMap() );
+		MatrixStackHelper msh( *this, node.getTransform() );
 		intersect(node);
 		checkMaskAndTraverse(node);
-		popMatrix();
-		popCommandMap();
-	
 	}
 
 

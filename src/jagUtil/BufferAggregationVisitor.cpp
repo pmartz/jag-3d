@@ -108,8 +108,8 @@ void BufferAggregationVisitor::visit( jagSG::Node& node )
     }
     _nodeSet.insert( &node );
 
-    jagDraw::CommandMapPtr localCommands( node.getCommandMap() );
-    pushCommandMap( localCommands );
+    jagDraw::CommandMapPtr& localCommands( node.getCommandMap() );
+    CommandMapStackHelper cmsh( *this, localCommands );
 
 
     jagDraw::CommandMap& commands( _commandStack.back() );
@@ -127,7 +127,11 @@ void BufferAggregationVisitor::visit( jagSG::Node& node )
             jagDraw::DrawablePrepPtr& dp( (*localCommands)[ jagDraw::DrawablePrep::VertexArrayObject_t ] );
             jagDraw::VertexArrayObjectPtr localVAO( boost::static_pointer_cast< jagDraw::VertexArrayObject >( dp ) );
             if( localVAO == vaop )
+            {
                 localCommands->clear( jagDraw::DrawablePrep::VertexArrayObject_t );
+                if( localCommands->empty() )
+                    node.setCommandMap( jagDraw::CommandMapPtr( NULL ) );
+            }
         }
 
         // Step 2: Combine the current VAO into the master VAO and
@@ -157,8 +161,6 @@ void BufferAggregationVisitor::visit( jagSG::Node& node )
     }
 
     node.traverse( *this );
-
-    popCommandMap();
 }
 
 
