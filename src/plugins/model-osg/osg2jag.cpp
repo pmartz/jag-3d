@@ -292,6 +292,12 @@ void Osg2Jag::apply( osg::Geometry* geom )
     postTraverse();
 }
 
+void Osg2Jag::apply( osg::StateSet* stateSet )
+{
+    // Stub. TBD.
+}
+
+
 jagSG::NodePtr Osg2Jag::getJagScene()
 {
     return( _jagScene );
