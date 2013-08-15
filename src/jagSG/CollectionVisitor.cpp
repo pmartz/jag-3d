@@ -111,15 +111,11 @@ void CollectionVisitor::reset()
 
 void CollectionVisitor::visit( jagSG::Node& node )
 {
+    CommandMapStackHelper cmsh( *this, node.getCommandMap() );
+
     {
-    JAG3D_PROFILE( "setup" );
     JAG3D_TRACE( "visit()" );
-
-
-    {
-    JAG3D_PROFILE( "commandmap" );
-    pushCommandMap( node.getCommandMap() );
-    }
+    JAG3D_PROFILE( "setup" );
 
     _infoPtr->setNode( &node );
     jagDraw::BoundOwner* boundOwner( &node );
@@ -144,21 +140,16 @@ void CollectionVisitor::visit( jagSG::Node& node )
     {
         collectAndTraverse( node );
     }
-
-    {
-    JAG3D_PROFILE( "wrapup" );
-    popCommandMap();
-    }
 }
 
 void CollectionVisitor::collectAndTraverse( jagSG::Node& node )
 {
-    const bool modelDirty( node.getTransform() != gmtl::MAT_IDENTITY44D );
+    MatrixStackHelper msh( *this, node.getTransform() );
+
     {
     JAG3D_PROFILE( "collect operations" );
-    if( modelDirty )
+    if( msh.getDirty() )
     {
-        pushMatrix( node.getTransform() );
         _transform.setModel( _matrixStack.back() );
     }
 
@@ -216,11 +207,9 @@ void CollectionVisitor::collectAndTraverse( jagSG::Node& node )
 
     Visitor::visit( node );
 
-    if( modelDirty )
+    if( msh.getDirty() )
     {
-        popMatrix();
-        _transform.setModel( _matrixStack.empty() ?
-            gmtl::MAT_IDENTITY44D : _matrixStack.back() );
+        _transform.setModel( _matrixStack[ _matrixStack.size()-2 ] );
     }
 }
 

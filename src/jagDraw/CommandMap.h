@@ -255,8 +255,12 @@ public:
         if( contains( type ) )
         {
             _bits.flip( type );
-            _data[ type ] = DrawablePrepPtr( (DrawablePrep*)NULL );
+            _data.erase( type );
         }
+    }
+    bool empty() const
+    {
+        return( _data.empty() );
     }
 
     DrawablePrepPtr getData( DrawablePrep::CommandType type ) const

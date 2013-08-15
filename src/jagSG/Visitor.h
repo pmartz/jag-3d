@@ -83,13 +83,11 @@ derived class. As an example, a derived class might override visit() as follows:
     virtual void visit( jagSG::Node& node )
     {
         pushNode( node.shared_from_this() );
-        pushMatrix( node.getTransform() );
-        pushCommandMap( node.getCommandMap() );
+        MatrixStackHelper msh( *this, node.getTransform() );
+        CommandStackHelper cmsh( *this, node.getCommandMap() );
 
         node.traverse( *this );
 
-        popCommandMap();
-        popMatrix();
         popNode();
     }
 \endcode
@@ -100,16 +98,24 @@ public:
     VisitorBase( const std::string& logNameSuffix, const std::string& logName=std::string( "" ) )
       : jagBase::LogBase( logName.empty() ? std::string( "jag.sg.visit." ) + logNameSuffix : logName )
     {
+        _matrixStack.push_back( gmtl::MAT_IDENTITY44D );
+        _commandStack.push_back( jagDraw::CommandMap() );
     }
 
     VisitorBase( jagSG::Node& node, const std::string& logNameSuffix, const std::string& logName=std::string( "" ) )
       : jagBase::LogBase( logName.empty() ? std::string( "jag.sg.visit." ) + logNameSuffix : logName )
     {
+        _matrixStack.push_back( gmtl::MAT_IDENTITY44D );
+        _commandStack.push_back( jagDraw::CommandMap() );
+
         node.accept( *this );
     }
 
     VisitorBase( const VisitorBase& rhs )
-      : jagBase::LogBase( rhs )
+      : jagBase::LogBase( rhs ),
+        _nodeStack( rhs._nodeStack ),
+        _matrixStack( rhs._matrixStack ),
+        _commandStack( rhs._commandStack )
     {
     }
 
@@ -124,16 +130,14 @@ public:
     child Nodes. */
     virtual void visit( jagSG::Node& node )
     {
-        // Push stacks, if desired.
+        // Push stacks, if desired or necessary.
         //pushNode( node.shared_from_this() );
-        //pushMatrix( node.getTransform() );
-        //pushCommandMap( node.getCommandMap() );
+        //MatrixStackHelper msh( *this, node.getTransform() );
+        //CommandMapStackHelper cmsh( *this, node.getCommandMap() );
 
         node.traverse( *this );
 
-        // If stack was pushed, execute corresponding pop.
-        //popCommandMap();
-        //popMatrix();
+        // Execute corresponding pop.
         //popNode();
 
 
@@ -165,10 +169,15 @@ public:
         return( _nodeStack );
     }
 
-    void pushMatrix( const gmtl::Matrix44d& matrix )
+    /** \brief Push a matrix onto the stack.
+    \details If \c matrix is not identity, push the Matrix and return true.
+    Otherwise, do nothing and return false. */
+    bool pushMatrix( const gmtl::Matrix44d& matrix )
     {
-        const gmtl::Matrix44d newTop( _matrixStack.empty() ? matrix : _matrixStack.back() * matrix );
-        _matrixStack.push_back( newTop );
+        if( matrix.mState == gmtl::Matrix44d::IDENTITY )
+            return( false );
+        _matrixStack.push_back( _matrixStack.back() * matrix );
+        return( true );
     }
     void popMatrix()
     {
@@ -176,29 +185,22 @@ public:
     }
     void resetMatrix()
     {
-        _matrixStack.clear();
+        _matrixStack.resize( 1 );
     }
-    const jagBase::Matrix44dDeque& getMatrices() const
+    const jagBase::Matrix44dVec& getMatrices() const
     {
         return( _matrixStack );
     }
 
-    void pushCommandMap( const jagDraw::CommandMapPtr& commands )
+    /** \brief Push a CommandMap onto the stack.
+    \details If \c commands != NULL, push the CommandMap and return true.
+    Otherwise, do nothing and return false. */
+    bool pushCommandMap( const jagDraw::CommandMapPtr& commands )
     {
-        if( commands != NULL )
-        {
-            if( !( _commandStack.empty() ) )
-                _commandStack.push_back( _commandStack.back() + *commands );
-            else
-                _commandStack.push_back( *commands );
-        }
-        else
-        {
-            if( !( _commandStack.empty() ) )
-                _commandStack.push_back( _commandStack.back() );
-            else
-                _commandStack.push_back( jagDraw::CommandMap() );
-        }
+        if( ( commands == NULL ) || commands->empty() )
+            return( false );
+        _commandStack.push_back( _commandStack.back() + *commands );
+        return( true );
     }
     void popCommandMap()
     {
@@ -206,16 +208,59 @@ public:
     }
     void resetCommandMap()
     {
-        _commandStack.clear();
+        _commandStack.resize( 1 );
     }
     const jagDraw::CommandMapSimpleVec& getCommands() const
     {
         return( _commandStack );
     }
 
+
+    /** class MatrixStackHelper Visitor.h <jagSG/Visitor.h>
+    \brief Convenience function for pushing/popping the matrix stack. */
+    class MatrixStackHelper
+    {
+    public:
+        MatrixStackHelper( VisitorBase& visitorBase, const gmtl::Matrix44d& matrix )
+            : _visitorBase( visitorBase ),
+              _op( _visitorBase.pushMatrix( matrix ) )
+        {}
+        ~MatrixStackHelper()
+        {
+            if( _op )
+                _visitorBase.popMatrix();
+        }
+        bool getDirty() const { return( _op ); }
+
+    protected:
+        VisitorBase& _visitorBase;
+        bool _op;
+    };
+
+    /** class CommandMapStackHelper Visitor.h <jagSG/Visitor.h>
+    \brief Convenience function for pushing/popping the CommandMap stack. */
+    class CommandMapStackHelper
+    {
+    public:
+        CommandMapStackHelper( VisitorBase& visitorBase, const jagDraw::CommandMapPtr& commands )
+            : _visitorBase( visitorBase ),
+              _op( _visitorBase.pushCommandMap( commands ) )
+        {}
+        ~CommandMapStackHelper()
+        {
+            if( _op )
+                _visitorBase.popCommandMap();
+        }
+        bool getDirty() const { return( _op ); }
+
+    protected:
+        VisitorBase& _visitorBase;
+        bool _op;
+    };
+
 protected:
     NodeVec _nodeStack;
-    jagBase::Matrix44dDeque _matrixStack;
+    jagBase::Matrix44dVec _matrixStack;
     jagDraw::CommandMapSimpleVec _commandStack;
 };
 

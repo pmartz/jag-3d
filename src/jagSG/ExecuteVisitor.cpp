@@ -72,12 +72,11 @@ void ExecuteVisitor::visit( jagSG::Node& node )
 {
     JAG3D_TRACE( "visit()" );
 
-    pushCommandMap( node.getCommandMap() );
+    CommandMapStackHelper cmsh( *this, node.getCommandMap() );
+    MatrixStackHelper msh( *this, node.getTransform() );
 
-    const bool modelDirty( node.getTransform() != gmtl::MAT_IDENTITY44D );
-    if( modelDirty )
+    if( msh.getDirty() )
     {
-        pushMatrix( node.getTransform() );
         _transform.setModel( _matrixStack.back() );
     }
     if( _transform.getDirty() != 0 )
@@ -92,14 +91,10 @@ void ExecuteVisitor::visit( jagSG::Node& node )
     Visitor::visit( node );
 
 
-    if( modelDirty )
+    if( msh.getDirty() )
     {
-        popMatrix();
-        _transform.setModel( _matrixStack.empty() ?
-            gmtl::MAT_IDENTITY44D : _matrixStack.back() );
+        _transform.setModel( _matrixStack[ _matrixStack.size()-2 ] );
     }
-
-    popCommandMap();
 }
 
 
