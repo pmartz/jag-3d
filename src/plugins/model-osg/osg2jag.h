@@ -35,6 +35,7 @@ namespace osg {
     class MatrixTransform;
     class Geometry;
     class Array;
+    class StateSet;
 }
 
 
@@ -54,6 +55,7 @@ public:
 
 protected:
     void apply( osg::Geometry* geom );
+    void apply( osg::StateSet* stateSet );
 
     bool preTraverse( osg::Object* osgObject, const gmtl::Matrix44d& m=gmtl::MAT_IDENTITY44D );
     void postTraverse();
@@ -61,11 +63,11 @@ protected:
 
     jagSG::NodePtr _jagScene;
     jagSG::NodePtr _current;
-    // TBD I think we can get rid of _nodeStack when jagSG::Node supports parent.
-    jagSG::NodeVec _nodeStack;
+    jagSG::NodeVec _nodeStack; // Required to support multiparenting.
 
     typedef std::map< osg::Object*, jagSG::NodePtr > OSGObjectMap;
     OSGObjectMap _objInstances;
+    OSGObjectMap _ssInstances;
 
 
     struct ArrayInfo {
