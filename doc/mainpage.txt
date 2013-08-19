@@ -155,7 +155,7 @@ use the same include path. Then \ref BuildCMake "point CMake at the directory co
 Jag3D has the following required dependencies:
 \li <a href=http://pocoproject.org/download/index.html>Poco</a> developer release v1.5.1 or newer. Get the "Basic Edition".
 \li <a href=http://www.boost.org/users/download/>Boost</a> v1.48_0 or newer. Some libraries are required.
-\li <a href=http://sourceforge.net/projects/ggt/>Generic Graphics Toolkit (GMTL)</a> svn trunk r1284 or newer.
+\li <a href=http://sourceforge.net/projects/ggt/>Generic Graphics Toolkit (GMTL)</a> svn trunk r1286 or newer.
 
 Jag3D has the following optional dependencies:
 \li <a href=http://www.openscenegraph.org/projects/osg>OpenSceneGraph (OSG)</a> v3.0.1 or newer (v3.1.3 recommended).
