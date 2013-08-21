@@ -190,6 +190,9 @@ public:
     jagDraw::CommandMapPtr& getCommandMap();
     /** \overload */
     const jagDraw::CommandMapPtr& getCommandMap() const;
+    /** \brief TBD
+    \details TBD */
+    jagDraw::CommandMapPtr& getOrCreateCommandMap();
 
 
     /** \brief Drawables
