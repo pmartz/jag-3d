@@ -37,6 +37,12 @@ namespace jagUtil
 /** \class BufferAggregationVisitor BufferAggregationVisitor.h <jagUtil/BufferAggregationVisitor.h>
 \brief Combines vertex array and element array buffers.
 \details
+
+\specBegin
+\specTableBegin
+\specLog{jag.sg.visit.bufagg}
+\specTableEnd
+\specEnd
 */
 class JAGUTIL_EXPORT BufferAggregationVisitor : public jagSG::VisitorBase
 {

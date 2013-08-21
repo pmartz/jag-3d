@@ -34,7 +34,8 @@ namespace jagUtil
 
 
 BufferAggregationVisitor::BufferAggregationVisitor( jagSG::NodePtr node, const std::string& logName )
-    : jagSG::VisitorBase( logName.empty() ? "jag.util.bufagg" : logName )
+    : jagSG::VisitorBase( ( logName.empty() ? "bufagg" : logName ),
+                          ( logName.empty() ? "" : logName ) )
 {
     _vaop = jagDraw::VertexArrayObjectPtr( new jagDraw::VertexArrayObject() );
 
