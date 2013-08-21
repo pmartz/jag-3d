@@ -38,7 +38,7 @@ bool test()
     {
         CommandMap cmA, cmB;
         ProgramPtr progA( ProgramPtr( new Program() ) );
-        progA->_nametbd = "progA";
+        progA->setUserDataName( "progA" );
         cmA.insert( progA );
         if( !cmA.contains( DrawablePrep::Program_t ) )
         {
@@ -46,7 +46,7 @@ bool test()
             return( false );
         }
         ProgramPtr progB( ProgramPtr( new Program() ) );
-        progB->_nametbd = "progB";
+        progB->setUserDataName( "progB" );
         cmB.insert( progB );
         if( !cmB.contains( DrawablePrep::Program_t ) )
         {
@@ -60,9 +60,9 @@ bool test()
             std::cerr << "cmResult.contains( DrawablePrep::Program_t ) is false." << std::endl;
             return( false );
         }
-        if( cmResult[ DrawablePrep::Program_t ]->_nametbd != "progB" )
+        if( cmResult[ DrawablePrep::Program_t ]->getUserDataName() != "progB" )
         {
-            std::cerr << "cmResult[ DrawablePrep::Program_t ]->_nametbd != \"progB\"." << std::endl;
+            std::cerr << "cmResult[ DrawablePrep::Program_t ]->getUserDataName() != \"progB\"." << std::endl;
             return( false );
         }
     }
@@ -70,7 +70,7 @@ bool test()
     {
         CommandMap cmA, cmB;
         VertexArrayObjectPtr vaoA( VertexArrayObjectPtr( new VertexArrayObject() ) );
-        vaoA->_nametbd = "vaoA";
+        vaoA->setUserDataName( "vaoA" );
         cmA.insert( vaoA );
         if( !cmA.contains( DrawablePrep::VertexArrayObject_t ) )
         {
@@ -78,7 +78,7 @@ bool test()
             return( false );
         }
         VertexArrayObjectPtr vaoB( VertexArrayObjectPtr( new VertexArrayObject() ) );
-        vaoB->_nametbd = "vaoB";
+        vaoB->setUserDataName( "vaoB" );
         cmB.insert( vaoB );
         if( !cmB.contains( DrawablePrep::VertexArrayObject_t ) )
         {
@@ -92,9 +92,9 @@ bool test()
             std::cerr << "cmResult.contains( DrawablePrep::VertexArrayObject_t ) is false." << std::endl;
             return( false );
         }
-        if( cmResult[ DrawablePrep::VertexArrayObject_t ]->_nametbd != "vaoB" )
+        if( cmResult[ DrawablePrep::VertexArrayObject_t ]->getUserDataName() != "vaoB" )
         {
-            std::cerr << "cmResult[ DrawablePrep::VertexArrayObject_t ]->_nametbd != \"vaoB\"." << std::endl;
+            std::cerr << "cmResult[ DrawablePrep::VertexArrayObject_t ]->getUserDataName() != \"vaoB\"." << std::endl;
             return( false );
         }
     }
@@ -103,14 +103,14 @@ bool test()
         CommandMap cmA, cmB, cmC, current, delta;
 
         ProgramPtr progA( ProgramPtr( new Program() ) );
-        progA->_nametbd = "progA";
+        progA->setUserDataName( "progA" );
         cmA.insert( progA );
 
         VertexArrayObjectPtr vaoA( VertexArrayObjectPtr( new VertexArrayObject() ) );
-        vaoA->_nametbd = "vaoA";
+        vaoA->setUserDataName( "vaoA" );
         cmB.insert( vaoA );
         VertexArrayObjectPtr vaoB( VertexArrayObjectPtr( new VertexArrayObject() ) );
-        vaoB->_nametbd = "vaoB";
+        vaoB->setUserDataName( "vaoB" );
         cmC.insert( vaoB );
 
         delta = current << cmA;
@@ -119,9 +119,9 @@ bool test()
             std::cerr << "delta.contains( DrawablePrep::Program_t ) is false." << std::endl;
             return( false );
         }
-        if( delta[ DrawablePrep::Program_t ]->_nametbd != "progA" )
+        if( delta[ DrawablePrep::Program_t ]->getUserDataName() != "progA" )
         {
-            std::cerr << "delta[ DrawablePrep::Program_t ]->_nametbd != \"progA\"." << std::endl;
+            std::cerr << "delta[ DrawablePrep::Program_t ]->getUserDataName() != \"progA\"." << std::endl;
             return( false );
         }
         if( delta.contains( DrawablePrep::VertexArrayObject_t ) )
@@ -141,9 +141,9 @@ bool test()
             std::cerr << "delta.contains( DrawablePrep::VertexArrayObject_t ) is false." << std::endl;
             return( false );
         }
-        if( delta[ DrawablePrep::VertexArrayObject_t ]->_nametbd != "vaoA" )
+        if( delta[ DrawablePrep::VertexArrayObject_t ]->getUserDataName() != "vaoA" )
         {
-            std::cerr << "delta[ DrawablePrep::VertexArrayObject_t ]->_nametbd != \"vaoA\"." << std::endl;
+            std::cerr << "delta[ DrawablePrep::VertexArrayObject_t ]->getUserDataName() != \"vaoA\"." << std::endl;
             return( false );
         }
 
@@ -158,9 +158,9 @@ bool test()
             std::cerr << "delta.contains( DrawablePrep::VertexArrayObject_t ) is false." << std::endl;
             return( false );
         }
-        if( delta[ DrawablePrep::VertexArrayObject_t ]->_nametbd != "vaoB" )
+        if( delta[ DrawablePrep::VertexArrayObject_t ]->getUserDataName() != "vaoB" )
         {
-            std::cerr << "delta[ DrawablePrep::VertexArrayObject_t ]->_nametbd != \"vaoB\"." << std::endl;
+            std::cerr << "delta[ DrawablePrep::VertexArrayObject_t ]->getUserDataName() != \"vaoB\"." << std::endl;
             return( false );
         }
 

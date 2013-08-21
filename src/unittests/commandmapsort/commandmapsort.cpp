@@ -40,7 +40,7 @@ public:
     virtual void operator()( jagDraw::DrawablePrepPtr f )
     {
         std::cout << "  " << std::setw(18) <<
-            jagDraw::DrawablePrep::getCommandTypeString( f->getCommandType() ) << ":  " << f->_nametbd << std::endl;
+            jagDraw::DrawablePrep::getCommandTypeString( f->getCommandType() ) << ":  " << f->getUserDataName() << std::endl;
     }
 };
 class CountCommands : public jagDraw::CommandMap::Callback
@@ -91,13 +91,13 @@ public:
 
 bool test()
 {
-    jagDraw::ProgramPtr prog0( jagDraw::ProgramPtr( new jagDraw::Program() )); prog0->_nametbd=( "Program0" );
-    jagDraw::ProgramPtr prog1( jagDraw::ProgramPtr( new jagDraw::Program() )); prog1->_nametbd=( "Program1" );
+    jagDraw::ProgramPtr prog0( jagDraw::ProgramPtr( new jagDraw::Program() )); prog0->setUserDataName( "Program0" );
+    jagDraw::ProgramPtr prog1( jagDraw::ProgramPtr( new jagDraw::Program() )); prog1->setUserDataName( "Program1" );
 
-    jagDraw::TexturePtr tex0( jagDraw::TexturePtr( new jagDraw::Texture() )); tex0->_nametbd=( "Texture0" );
+    jagDraw::TexturePtr tex0( jagDraw::TexturePtr( new jagDraw::Texture() )); tex0->setUserDataName( "Texture0" );
     jagDraw::TextureSetPtr ts0( jagDraw::TextureSetPtr( new jagDraw::TextureSet() ) );
     (*ts0)[ GL_TEXTURE0 ] = tex0;
-    jagDraw::TexturePtr tex1( jagDraw::TexturePtr( new jagDraw::Texture() )); tex1->_nametbd=( "Texture1" );
+    jagDraw::TexturePtr tex1( jagDraw::TexturePtr( new jagDraw::Texture() )); tex1->setUserDataName( "Texture1" );
     jagDraw::TextureSetPtr ts1( jagDraw::TextureSetPtr( new jagDraw::TextureSet() ) );
     (*ts1)[ GL_TEXTURE0 ] = tex1;
 

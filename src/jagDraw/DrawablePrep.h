@@ -21,6 +21,7 @@
 #ifndef __JAGDRAW_DRAWABLE_PREP_H__
 #define __JAGDRAW_DRAWABLE_PREP_H__ 1
 
+#include <jagBase/UserDataOwner.h>
 #include <jagBase/ptr.h>
 
 #include <boost/thread/mutex.hpp>
@@ -41,12 +42,9 @@ typedef jagBase::ptr< jagDraw::DrawablePrep >::shared_ptr DrawablePrepPtr;
 \brief
 \details
 */
-class DrawablePrep
+class DrawablePrep : public jagBase::UserDataOwner
 {
 public:
-    // TBD temp, eventually have std::map< boost::any, boost::any >.
-    std::string _nametbd;
-
     typedef enum {
         Program_t,
         BufferObjectSet_t, // TBD not yet implemented
@@ -73,8 +71,7 @@ public:
         _uniqueID( UniqueID::instance()->generate( type ) )
     {}
     DrawablePrep( const DrawablePrep& rhs )
-      : _nametbd( rhs._nametbd ),
-        _type( rhs._type ),
+      : _type( rhs._type ),
         _uniqueID( UniqueID::instance()->generate( rhs._type ) )
     {}
     ~DrawablePrep() {}

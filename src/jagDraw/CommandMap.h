@@ -42,12 +42,10 @@ namespace jagDraw {
 class CommandMap : public ObjectIDOwner, public jagBase::UserDataOwner
 {
 public:
-    CommandMap( const std::string& name=std::string("") )
-      : _name( name )
+    CommandMap()
     {}
     CommandMap( const CommandMap& rhs )
       : ObjectIDOwner( rhs ),
-        _name( rhs._name ),
         _data( rhs._data ),
         _bits( rhs._bits ),
         _overrideBits( rhs._overrideBits ),
@@ -272,7 +270,6 @@ public:
     }
 
 
-    std::string _name;
     CommandMapType _data;
     std::bitset< DrawablePrep::MaxCommandType > _bits;
     std::bitset< DrawablePrep::MaxCommandType > _overrideBits;
