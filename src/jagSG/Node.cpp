@@ -195,6 +195,12 @@ const jagDraw::CommandMapPtr& Node::getCommandMap() const
 {
     return( _commands );
 }
+jagDraw::CommandMapPtr& Node::getOrCreateCommandMap()
+{
+    if( _commands == NULL )
+        _commands = jagDraw::CommandMapPtr( new jagDraw::CommandMap() );
+    return( _commands );
+}
 
 
 void Node::addDrawable( jagDraw::DrawablePtr& drawable )
