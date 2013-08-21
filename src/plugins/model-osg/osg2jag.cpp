@@ -26,6 +26,8 @@
 #include <osg/Geometry>
 #include <osg/Array>
 #include <osg/Vec3>
+#include <osg/StateSet>
+#include <osg/Material>
 
 #include <jagDraw/Node.h>
 #include <jagDraw/CommandMap.h>
@@ -38,11 +40,15 @@
 #include <gmtl/gmtl.h>
 
 #include <sstream>
-
+#include <osg/io_utils>
 
 static const std::string loggerName( "jag.plugin.model.osg2jag" );
 
 using namespace jagDraw;
+
+
+#define VEC4_TO_GMTL_PT4F(_v) \
+    gmtl::Point4f( (float)(_v[0]), (float)(_v[1]), (float)(_v[2]), (float)(_v[3]) )
 
 
 Osg2Jag::Osg2Jag()
@@ -59,7 +65,7 @@ void Osg2Jag::apply( osg::Node& osgNode )
 {
     JAG3D_TRACE_STATIC( loggerName, "apply( Node& )" );
 
-    if( !preTraverse( &osgNode ) )
+    if( !preTraverse( &osgNode, osgNode.getStateSet() ) )
         return;
     traverse( osgNode );
     postTraverse();
@@ -68,7 +74,7 @@ void Osg2Jag::apply( osg::MatrixTransform& osgNode )
 {
     JAG3D_TRACE_STATIC( loggerName, "apply( Transform& )" );
 
-    if( !preTraverse( &osgNode, asGmtlMatrix( osgNode.getMatrix() ) ) )
+    if( !preTraverse( &osgNode, osgNode.getStateSet(), asGmtlMatrix( osgNode.getMatrix() ) ) )
         return;
     traverse( osgNode );
     postTraverse();
@@ -77,7 +83,7 @@ void Osg2Jag::apply( osg::Geode& osgNode )
 {
     JAG3D_TRACE_STATIC( loggerName, "apply( Geode& )" );
 
-    if( !preTraverse( &osgNode ) )
+    if( !preTraverse( &osgNode, osgNode.getStateSet() ) )
         return;
 
     unsigned int idx;
@@ -91,7 +97,7 @@ void Osg2Jag::apply( osg::Geode& osgNode )
     postTraverse();
 }
 
-bool Osg2Jag::preTraverse( osg::Object* osgObject, const gmtl::Matrix44d& m )
+bool Osg2Jag::preTraverse( osg::Object* osgObject, osg::StateSet* stateSet, const gmtl::Matrix44d& m )
 {
     if( _jagScene == NULL )
     {
@@ -121,6 +127,8 @@ bool Osg2Jag::preTraverse( osg::Object* osgObject, const gmtl::Matrix44d& m )
         _current->setUserDataName( osgObject->getName() );
     _current->setTransform( m );
 
+    apply( stateSet );
+
     return( true );
 }
 void Osg2Jag::postTraverse()
@@ -141,11 +149,11 @@ void Osg2Jag::apply( osg::Geometry* geom )
         return;
     }
 
-    if( !preTraverse( geom ) )
+    if( !preTraverse( geom, geom->getStateSet() ) )
         return;
 
     DrawablePtr draw( DrawablePtr( new Drawable ) );
-    jagDraw::CommandMapPtr commands( jagDraw::CommandMapPtr( new jagDraw::CommandMap() ) );
+    jagDraw::CommandMapPtr& commands( _current->getOrCreateCommandMap() );
 
     jagDraw::VertexArrayObjectPtr vaop( new jagDraw::VertexArrayObject );
 
@@ -286,7 +294,6 @@ void Osg2Jag::apply( osg::Geometry* geom )
         }
     }
 
-    _current->setCommandMap( commands );
     _current->addDrawable( draw );
 
     postTraverse();
@@ -294,7 +301,75 @@ void Osg2Jag::apply( osg::Geometry* geom )
 
 void Osg2Jag::apply( osg::StateSet* stateSet )
 {
-    // Stub. TBD.
+    if( stateSet == NULL )
+        return;
+
+    OSGStateSetMap::iterator it( _ssInstances.find( stateSet ) );
+    if( it != _ssInstances.end() )
+    {
+        if( !( it->second->empty() ) )
+        {
+            // There are problems sharing command maps.
+            //_current->setCommandMap( it->second );
+            _current->setCommandMap( jagDraw::CommandMapPtr(
+                new jagDraw::CommandMap( *(it->second) ) ) );
+        }
+        return;
+    }
+
+    jagDraw::CommandMapPtr commands( jagDraw::CommandMapPtr( new jagDraw::CommandMap ) );
+    _ssInstances[ stateSet ] = commands;
+
+
+    jagDraw::UniformBlockSetPtr ubsp( jagDraw::UniformBlockSetPtr(
+        new jagDraw::UniformBlockSet() ) );
+
+    // Materials
+    osg::StateAttribute* sa( stateSet->getAttribute( osg::StateAttribute::MATERIAL ) );
+    if( sa != NULL )
+    {
+        osg::Material* m( static_cast< osg::Material* >( sa ) );
+
+        // TBD hack add light source info here until I can work out
+        // issues with how uniform block sets are handled in CommandMap.
+        jagDraw::UniformBlockPtr lights( jagDraw::UniformBlockPtr(
+            new jagDraw::UniformBlock( "LightingLight" ) ) );
+        gmtl::Vec3f dir( 0.f, 0.f, 1.f );
+        gmtl::normalize( dir );
+        gmtl::Point4f lightVec( dir[0], dir[1], dir[2], 0. );
+        lights->addUniform( jagDraw::UniformPtr(
+            new jagDraw::Uniform( "position", lightVec ) ) );
+        lights->addUniform( jagDraw::UniformPtr(
+            new jagDraw::Uniform( "ambient", gmtl::Point4f( 1.f, 1.f, 1.f, 1.f ) ) ) );
+        lights->addUniform( jagDraw::UniformPtr(
+            new jagDraw::Uniform( "diffuse", gmtl::Point4f( 1.f, 1.f, 1.f, 1.f ) ) ) );
+        lights->addUniform( jagDraw::UniformPtr(
+            new jagDraw::Uniform( "specular", gmtl::Point4f( 1.f, 1.f, 1.f, 1.f ) ) ) );
+
+        jagDraw::UniformBlockPtr frontMaterials( jagDraw::UniformBlockPtr(
+            new jagDraw::UniformBlock( "LightingMaterialFront" ) ) );
+        frontMaterials->addUniform( jagDraw::UniformPtr(
+            new jagDraw::Uniform( "ambient", VEC4_TO_GMTL_PT4F(m->getAmbient(osg::Material::FRONT)) ) ) );
+        frontMaterials->addUniform( jagDraw::UniformPtr(
+            new jagDraw::Uniform( "diffuse", VEC4_TO_GMTL_PT4F(m->getDiffuse(osg::Material::FRONT)) ) ) );
+        frontMaterials->addUniform( jagDraw::UniformPtr(
+            new jagDraw::Uniform( "specular", VEC4_TO_GMTL_PT4F(m->getSpecular(osg::Material::FRONT)) ) ) );
+        frontMaterials->addUniform( jagDraw::UniformPtr(
+            new jagDraw::Uniform( "shininess", m->getShininess( osg::Material::FRONT ) ) ) );
+
+        ubsp->insert( lights );
+        ubsp->insert( frontMaterials );
+    }
+
+    // Texture2D
+    {
+    }
+
+    if( !( ubsp->empty() ) )
+        commands->insert( ubsp );
+
+    if( !( commands->empty() ) )
+        _current->setCommandMap( commands );
 }
 
 
