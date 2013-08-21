@@ -88,6 +88,13 @@ public:
 
     /** \brief TBD
     \details TBD */
+    bool empty() const
+    {
+        return( _uniforms.empty() );
+    }
+
+    /** \brief TBD
+    \details TBD */
     virtual DrawablePrepPtr clone() { return( UniformBlockPtr( new UniformBlock( *this ) ) ); }
 
     /** \brief TBD
@@ -151,6 +158,12 @@ public:
         _map[ ubp->getNameHash() ] = ubp;
     }
 
+    /** \brief TBD
+    \details TBD */
+    bool empty() const
+    {
+        return( _map.empty() );
+    }
 
     typedef std::map< Program::HashValue, UniformBlockPtr > InternalMapType;
 

@@ -57,7 +57,7 @@ protected:
     void apply( osg::Geometry* geom );
     void apply( osg::StateSet* stateSet );
 
-    bool preTraverse( osg::Object* osgObject, const gmtl::Matrix44d& m=gmtl::MAT_IDENTITY44D );
+    bool preTraverse( osg::Object* osgObject, osg::StateSet* stateSet, const gmtl::Matrix44d& m=gmtl::MAT_IDENTITY44D );
     void postTraverse();
 
 
@@ -67,7 +67,9 @@ protected:
 
     typedef std::map< osg::Object*, jagSG::NodePtr > OSGObjectMap;
     OSGObjectMap _objInstances;
-    OSGObjectMap _ssInstances;
+
+    typedef std::map< osg::StateSet*, jagDraw::CommandMapPtr > OSGStateSetMap;
+    OSGStateSetMap _ssInstances;
 
 
     struct ArrayInfo {

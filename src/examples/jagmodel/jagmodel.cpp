@@ -118,7 +118,7 @@ bool JagModel::startup( const unsigned int numContexts )
     jagSG::SmallFeatureDistributionVisitor sfdv;
     _root->accept( sfdv );
 
-    jagUtil::BufferAggregationVisitor bav( _root );
+    //jagUtil::BufferAggregationVisitor bav( _root );
 
 
     jagDraw::ShaderPtr vs( DemoInterface::readShaderUtil( "jagmodel.vert" ) );
@@ -206,7 +206,7 @@ bool JagModel::startup( const unsigned int numContexts )
 
 bool JagModel::init()
 {
-    glClearColor( 0.f, 0.f, 0.f, 0.f );
+    glClearColor( 1.f, 0.f, 0.f, 0.f );
 
     glEnable( GL_DEPTH_TEST );
 
