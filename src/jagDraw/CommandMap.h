@@ -311,8 +311,8 @@ public:
                     return( false );
                 case 3: // both have it
                 {
-                    const DrawablePrepPtr a( lhs._data.find( type )->second );
-                    const DrawablePrepPtr b( rhs._data.find( type )->second );
+                    const DrawablePrepPtr& a( lhs._data.find( type )->second );
+                    const DrawablePrepPtr& b( rhs._data.find( type )->second );
                     if( *a < *b )
                         return( true );
                     if( *a > *b )
