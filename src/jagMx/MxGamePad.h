@@ -51,13 +51,15 @@ The "DPad" (above the left stick on many game pads) is not currently supported.
 
 This base class "has a" FunctionalMap that maps buttons to functions. See
 setButtons() and setFunctionalMap(). This base class creates a default
-FunctionalMap with a default button-to-function mapping. Derived classes don't
+FunctionalMap with a default button-to-function mapping suitable for use with
+a MS Xbox 360 game controller. Derived classes don't
 need to re-configure this mapping, but can if desired. The intention of this
 design is that the owning application will load a config file for the functional
 map that is specific to a particular game pad device and/or VR device SDK (such
 as DirectX or VR Juggler):
 
 \code
+// TBD update this code block for JAG.
 MxGamePad::setFunctionalMap( static_cast< FunctionalMap >(
         osgDB::readObjectFile( "my-gamepad-config.osg" ) ) );
 \endcode

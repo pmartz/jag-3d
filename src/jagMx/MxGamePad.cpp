@@ -42,15 +42,14 @@ MxGamePad::MxGamePad()
 
     // Create a default functional map.
     _map = FunctionalMapPtr( new jagMx::FunctionalMap );
-    _map->configure( Button0, FunctionalMap::JumpToWorldOrigin );
+    _map->configure( Button0, FunctionalMap::MoveModifyUpDown );
     _map->configure( Button1, FunctionalMap::LevelView );
-    _map->configure( Button2, FunctionalMap::MoveModifyUpDown );
+    _map->configure( Button2, FunctionalMap::JumpToWorldOrigin );
     _map->configure( Button3, FunctionalMap::JumpToHomePosition );
-    _map->configure( Button6, FunctionalMap::MoveModifyScaleSpeedDown );
-    _map->configure( Button7, FunctionalMap::MoveModifyScaleSpeedUp );
-    _map->configure( Button8, FunctionalMap::MoveModeWorld );
-    _map->configure( Button9, FunctionalMap::MoveModeConstrained );
-    _map->configure( Button10, FunctionalMap::RotateModeOrbit );
+    _map->configure( Button4, FunctionalMap::MoveModifyScaleSpeedDown );
+    _map->configure( Button5, FunctionalMap::MoveModifyScaleSpeedUp );
+    _map->configure( Button6, FunctionalMap::RotateModeOrbit );
+    _map->configure( Button7, FunctionalMap::RotateModeLocal );
 }
 MxGamePad::MxGamePad( const MxGamePad& rhs )
   : _leftStick( rhs._leftStick ),
