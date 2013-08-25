@@ -51,7 +51,8 @@ class JagModel : public DemoInterface
 public:
     JagModel()
       : DemoInterface( "jag.ex.jagmodel" ),
-        _fileName( "cow.osg" )
+        _fileName( "cow.osg" ),
+        _moveRate( 1. )
     {}
     virtual ~JagModel() {}
 
@@ -66,10 +67,18 @@ public:
         return( true );
     }
 
+    // Return a value to bontrol base gamepad move rate in the scene.
+    virtual double getMoveRate() const
+    {
+        return( _moveRate );
+    }
+
 protected:
     std::string _fileName;
 
     jagSG::NodePtr _root;
+
+    double _moveRate;
 };
 
 
@@ -111,6 +120,10 @@ bool JagModel::startup( const unsigned int numContexts )
     _root = DemoInterface::readSceneGraphNodeUtil( _fileName );
     if( _root == NULL )
         return( false );
+
+    // For gamepad speed control
+    _moveRate = _root->getBound()->getRadius();
+
         
 
     jagSG::FrustumCullDistributionVisitor fcdv;
