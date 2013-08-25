@@ -122,21 +122,24 @@ void MxGamePadDX::processButtons( const DIJOYSTATE2& devState, const double delt
 
     // Map DX GamePad buttons to base class button enums.
     if( devState.rgbButtons[ 0 ] )
-        buttons |= Button2;
+        buttons |= Button0;
     if( devState.rgbButtons[ 1 ] )
         buttons |= Button1;
     if( devState.rgbButtons[ 2 ] )
-        buttons |= Button3;
+        buttons |= Button2;
     if( devState.rgbButtons[ 3 ] )
-        buttons |= Button0;
-    if( devState.rgbButtons[ 4 ] )
-        buttons |= Button5;
-    if( devState.rgbButtons[ 5 ] )
-        buttons |= Button4;
+        buttons |= Button3;
     if( devState.rgbButtons[ 6 ] )
-        buttons |= Button7;
-    if( devState.rgbButtons[ 7 ] )
         buttons |= Button6;
+    if( devState.rgbButtons[ 7 ] )
+        buttons |= Button7;
+
+    // The two Xbox 360 controller front firing buttons are handled as one button
+    // in DirectInput, with negative and positive values.
+    if( devState.lZ > 0 )
+        buttons != Button4;
+    else if( devState.lZ < 0 )
+        buttons != Button5;
 
     // Must call into base class even if all buttons are zero
     // so that base class can detect deltas (press events).
@@ -150,7 +153,7 @@ void MxGamePadDX::processSticks( const DIJOYSTATE2& devState, const double delta
     // Left stick: Move.
     // Normalize values to range -1.0 to 1.0.
     // These are units to move in world coordinates per event or per frame.
-    x = normalizeAxisValue( devState.lX );
+    x = -normalizeAxisValue( devState.lX );
     y = normalizeAxisValue( devState.lY );
     setLeftStick( x, y, deltaSeconds );
 
@@ -162,8 +165,8 @@ void MxGamePadDX::processSticks( const DIJOYSTATE2& devState, const double delta
     //  y value around right/cross vector, positive values counterclockwise
     //    NOTE .lZ is positive when pulled back. This is the opposite of
     //    the left gamepad stick.
-    x = -normalizeAxisValue( devState.lRz );
-    y = normalizeAxisValue( devState.lZ );
+    x = -normalizeAxisValue( devState.lRx );
+    y = normalizeAxisValue( devState.lRy );
     setRightStick( x, y, deltaSeconds );
 }
 
