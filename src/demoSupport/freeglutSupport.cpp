@@ -126,7 +126,12 @@ void timer( int value )
 #ifdef DIRECTINPUT_ENABLED
     jagMx::MxGamePadDX* gp( dynamic_cast< jagMx::MxGamePadDX* >( gamePad.get() ) );
     if( gp != NULL )
+    {
+        // TBD really should only need to do this once.
+        if( di != NULL )
+            gp->setStickRate( di->getMoveRate() );
         redraw = gp->poll( 1./60. ); // TBD use a timer.
+    }
 #endif
 
     if( redraw )
@@ -275,7 +280,6 @@ int main( int argc, char* argv[] )
 
 #ifdef DIRECTINPUT_ENABLED
     gamePad = jagMx::MxGamePadDXPtr( new jagMx::MxGamePadDX() );
-    //gamePad->setStickRate( moveRate );
 #endif
 
 

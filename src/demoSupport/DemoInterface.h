@@ -101,6 +101,9 @@ public:
             return( _mxCore._data[ contextID ] );
     }
 
+    // Return a value to bontrol base gamepad move rate in the scene.
+    virtual double getMoveRate() const { return( 1. ); }
+
 protected:
     std::string _logName;
     bool _startupCalled;
