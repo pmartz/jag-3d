@@ -35,7 +35,8 @@ namespace jagUtil
 
 BufferAggregationVisitor::BufferAggregationVisitor( jagSG::NodePtr node, const std::string& logName )
     : jagSG::VisitorBase( ( logName.empty() ? "bufagg" : logName ),
-                          ( logName.empty() ? "" : logName ) )
+                          ( logName.empty() ? "" : logName ) ),
+    _combineElementBuffers( true )
 {
     _vaop = jagDraw::VertexArrayObjectPtr( new jagDraw::VertexArrayObject() );
 
@@ -77,7 +78,8 @@ BufferAggregationVisitor::BufferAggregationVisitor( jagSG::NodePtr node, const s
 #endif
 }
 BufferAggregationVisitor::BufferAggregationVisitor( const BufferAggregationVisitor& rhs )
-    : jagSG::VisitorBase( rhs )
+    : jagSG::VisitorBase( rhs ),
+    _combineElementBuffers( rhs._combineElementBuffers )
 {
     reset();
 }
@@ -113,6 +115,7 @@ void BufferAggregationVisitor::visit( jagSG::Node& node )
     CommandMapStackHelper cmsh( *this, localCommands );
 
 
+    // Get the VAO in effect at this Node.
     jagDraw::CommandMap& commands( _commandStack.back() );
     jagDraw::DrawablePrepPtr& drawablePrep( commands[ jagDraw::DrawablePrep::VertexArrayObject_t ] );
     jagDraw::VertexArrayObjectPtr vaop( boost::static_pointer_cast< jagDraw::VertexArrayObject >( drawablePrep ) );
@@ -255,7 +258,8 @@ void BufferAggregationVisitor::handleDrawable( jagDraw::DrawablePtr draw, const 
             _elementBuffers.insert( oldBuf.get() );
 
             offsetDrawElements( deBase, offset );
-            combineElementBuffer( deBase );
+            if( _combineElementBuffers )
+                combineElementBuffer( deBase );
         }
         else if( daBase != NULL )
         {

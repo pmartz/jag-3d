@@ -55,6 +55,15 @@ public:
 
     virtual void visit( jagSG::Node& node );
 
+    /** \brief Optionally combine element buffer objects.
+    \details By default, both array buffers and element index buffers
+    are combined. Pass 'false' to this function to disable combining
+    element index buffers but still combine array buffers. */
+    void setCombineElementBuffers( const bool combine=true )
+    {
+        _combineElementBuffers = combine;
+    }
+
 protected:
     void offsetDrawElements( jagDraw::DrawElementsBase* deBase, const size_t offset );
     void combineElementBuffer( jagDraw::DrawElementsBase* deBase );
@@ -62,6 +71,7 @@ protected:
 
     jagDraw::VertexArrayObjectPtr _vaop;
     jagDraw::BufferObjectPtr _elements;
+    bool _combineElementBuffers;
 
     typedef std::set< jagSG::Node* > NodeSet;
     NodeSet _nodeSet;
