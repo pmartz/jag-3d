@@ -132,10 +132,10 @@ void Node::computeBound( jagDraw::BoundPtr& bound, const jagDraw::CommandMap& co
 {
     JAG3D_PROFILE( "SGNode::computeBound" );
 
-    bound->setEmpty();
     if( getNumDrawables() + getNumChildren() == 0 )
         return;
 
+    bound->setEmpty();
     jagDraw::CommandMap newCommands( 
         ( _commands == NULL ) ? commands : commands + *_commands );
 

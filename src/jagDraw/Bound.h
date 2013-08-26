@@ -170,6 +170,10 @@ public:
     virtual void setEmpty( const bool empty=true )
     {
         _bound.setEmpty( empty );
+        if( empty )
+        {
+            _bound.mMin = _bound.mMax = gmtl::Point3d( 0., 0., 0. );
+        }
     }
     virtual bool getEmpty() const
     {
@@ -274,6 +278,11 @@ public:
     virtual void setEmpty( const bool empty=true )
     {
         _bound.setInitialized( !empty );
+        if( empty )
+        {
+            _bound.mCenter.set( 0., 0., 0. );
+            _bound.mRadius = 0.;
+        }
     }
     virtual bool getEmpty() const
     {
