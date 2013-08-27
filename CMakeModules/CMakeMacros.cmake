@@ -269,7 +269,7 @@ macro( _addVrjExecutable _category _exeName )
     unset( _allIncludes )
     set( _allIncludes
         ${_projectIncludes}
-        ${VRJUGGLER30_INCLUDE_DIRS}
+        ${VRJUGGLER_INCLUDE_DIRS}
         ${_includes}
         ${CPPDOM_INCLUDE_DIRS}
         ${_optionalDependencyIncludes}
@@ -281,7 +281,7 @@ macro( _addVrjExecutable _category _exeName )
 
     target_link_libraries( ${_localExeName}
         ${_libs}
-        ${VRJUGGLER30_LIBRARIES}
+        ${VRJUGGLER_LIBRARIES}
         ${CPPDOM_LIBRARIES}
         ${_projectLibraries}
         ${_optionalDependencyLibraries}

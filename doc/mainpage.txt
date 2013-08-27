@@ -189,8 +189,10 @@ The following CMake variables will probably need to be set in order to find the 
 \li FREEGLUT_STATIC Create as a BOOL and set to true, if you are using static freeglut libraries.
 \li DIRECTINPUT_ROOT_DIR
 
-For finding VRJuggler, set VJ_BASE_DIR in your environment. VRJuggler requires
-CppDOM, so you will also need to set CPPDOM_ROOT_DIR as a CMake variable.
+Finding VRJuggler in CMake requires flagpoll.
+VRJuggler has an external dependency on CppDOM, so you will also
+need to set CPPDOM_ROOT_DIR as a CMake variable.
+For finding VRJuggler at runtime, set VJ_BASE_DIR in your environment.
 
 Jag3D uses a helper macro to aid in finding OSG. Use the OSGInstallType pulldown menu
 in cmake-gui to select the OSG installation type. Click Configure, then supply any
@@ -233,6 +235,18 @@ corresponding \c .jagpi files.
 \li JAG3D_DATA_PATH should be set to a list of directories containing data files, such
 as the \c data directory in the Jag3D source tree.
 
+If you have built Jag3D with the optional OSG dependency, you can test loading
+and rendering models using the OSG plugin:
+\code
+jagmodel-freeglut -f dumptruck.osg
+\endcode
+
+For running any VRJuggler executable, specify a VRJ configuration file:
+\code
+jagmodel-vrj --jconf simstandalone.jconf -f dumptruck.osg
+\endcode
+VRJuggler configuration files are in the share\vrjuggler\data\configFiles
+folder of your VRJuggler install directory.
 
 \section JagCommits Mercurial (Hg) Guidelines for Jag3D Commits
 
