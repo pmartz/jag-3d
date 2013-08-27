@@ -46,11 +46,26 @@ set( VAPOR_FAIL_MESSAGE
 
 if( MSVC )
     set( VAPOR_LIBRARY_DIRS ${vpr_FLAGPOLL_LIBRARY_DIRS} ${Boost_LIBRARY_DIRS} )
+    string( REGEX REPLACE "[.]" "_" VAPOR_VERSION_STRING ${vpr_FLAGPOLL_MODULE_VERSION} )
+    find_library( VAPOR_LIBRARY NAMES "vpr-${VAPOR_VERSION_STRING}"
+                  HINTS ${vpr_FLAGPOLL_LIBRARY_DIRS} )
+    find_library( VAPOR_LIBRARY_DEBUG NAMES "vpr_d-${VAPOR_VERSION_STRING}"
+                  HINTS ${vpr_FLAGPOLL_LIBRARY_DIRS} )
     find_package_handle_standard_args( Vapor
-                                       REQUIRED_VARS VAPOR_LIBRARY_DIRS VAPOR_INCLUDE_DIR
+                                       REQUIRED_VARS VAPOR_LIBRARY VAPOR_INCLUDE_DIR
                                        VERSION_VAR vpr_FLAGPOLL_MODULE_VERSION
                                        FAIL_MESSAGE ${VAPOR_FAIL_MESSAGE} )
-    set( VAPOR_LIBRARIES )
+    if( VAPOR_LIBRARY_DEBUG )
+        set( VAPOR_LIBRARIES optimized ${VAPOR_LIBRARY} debug ${VAPOR_LIBRARY_DEBUG}
+                         ${CPPDOM_LIBRARIES}
+                         ${Boost_LIBRARIES} )
+    else()
+        set( VAPOR_LIBRARIES ${VAPOR_LIBRARY}
+                         ${CPPDOM_LIBRARIES}
+                         ${Boost_LIBRARIES} )
+    endif()
+    mark_as_advanced( VAPOR_LIBRARY )
+    mark_as_advanced( VAPOR_LIBRARY_DEBUG )
     mark_as_advanced( VAPOR_LIBRARY_DIRS )
     link_directories( ${VAPOR_LIBRARY_DIRS} )
 else()
