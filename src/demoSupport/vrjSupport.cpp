@@ -191,15 +191,16 @@ int main( int argc, char* argv[] )
     bpo::options_description desc( "Options" );
     // Add test/demo options
     desc.add_options()
-        ( "help,h", "Help text" );
+        ( "help,h", "Help text" )
 #if 0
-    // Not supported for VRJ; taken from config files.
-    desc.add_options()
-        ( "version", bpo::value< double >(), "OpenGL context version. Default: 4.0." );
-    // Not supported for VRJ; taken from config files.
-    desc.add_options()
-        ( "nwin", bpo::value< int >(), "Number of windows. Default: 1." );
+        // Not supported for VRJ; taken from config files.
+        ( "version,v", bpo::value< double >(), "OpenGL context version. Default: 4.0." )
+        ( "nwin", bpo::value< int >(), "Number of windows. Default: 1." )
+        ( "winsize,w", bpo::value< std::vector< int > >( &winsize )->multitoken(), "Window width and height. Default: 300 300." )
+        ( "no-ms", "Disable multisampling" )
 #endif
+        ( "jconf,j", bpo::value< std::string >(), "VRJ configuration file" )
+        ;
 
     DemoInterface* di( DemoInterface::create( desc ) );
 
@@ -217,23 +218,19 @@ int main( int argc, char* argv[] )
     Kernel* kernel = Kernel::instance();
     JagDemoApp* application = new JagDemoApp( di );
 
-#if( !defined( VRJ_USE_COCOA ) )
-    // IF not args passed to the program
-    //    Display usage information and exit
-    if (argc <= 1)
-    {
-        std::cout << "\n\n";
-        std::cout << "Usage: " << argv[0] << " vjconfigfile[0] vjconfigfile[1] ... vjconfigfile[n]" << std::endl;
-        std::exit(EXIT_FAILURE);
-    }
-#endif
-
     kernel->init( argc, argv );
 
     // Load any config files specified on the command line
-    for( int i = 1; i < argc; ++i )
+    if( vm.count( "jconf" ) > 0 )
     {
-        kernel->loadConfigFile( argv[i] );
+        std::string jconfName = vm[ "jconf" ].as< std::string >();
+        kernel->loadConfigFile( jconfName );
+    }
+    else
+    {
+        std::cerr << "'--jconf <jconfName>' is required." << std::endl;
+        std::cout << desc << std::endl;
+        return( 1 );
     }
 
     kernel->start();
