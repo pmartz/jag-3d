@@ -168,7 +168,7 @@ windowing toolkits. Jag3D's build infrastructure currently supports the
 following windowing toolkits:
 \li <a href=http://freeglut.sourceforge.net/>Freeglut</a> v2.8.0 or newer.
 \li <a href=http://code.google.com/p/vrjuggler/source/checkout>VRJuggler</a> git main trunk.
-\li <a href=http://qt-project.org/downloads>Qt</a> v5.0.0 or newer.
+\li <a href=http://qt-project.org/downloads>Qt</a> v4.8.3.
 
 Poco and Boost must be built as shared libraries / DLLs in order for Jag3D to work correctly.
 
