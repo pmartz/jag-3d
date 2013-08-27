@@ -159,7 +159,7 @@ bool JagModel::startup( const unsigned int numContexts )
     lights->addUniform( jagDraw::UniformPtr(
         new jagDraw::Uniform( "position", lightVec ) ) );
     lights->addUniform( jagDraw::UniformPtr(
-        new jagDraw::Uniform( "ambient", gmtl::Point4f( 1.f, 1.f, 1.f, 1.f ) ) ) );
+        new jagDraw::Uniform( "ambient", gmtl::Point4f( 0.f, 0.f, 0.f, 1.f ) ) ) );
     lights->addUniform( jagDraw::UniformPtr(
         new jagDraw::Uniform( "diffuse", gmtl::Point4f( 1.f, 1.f, 1.f, 1.f ) ) ) );
     lights->addUniform( jagDraw::UniformPtr(
@@ -263,7 +263,7 @@ bool JagModel::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj )
 
         // Set view and projection to define the collection frustum.
         viewMatrix = mxCore->getInverseMatrix();
-        collect.setViewProj( viewMatrix, mxCore->computeProjection( .1, 5000. ) );
+        collect.setViewProj( viewMatrix, mxCore->computeProjection( .1, 25000. ) );
 
         {
             JAG3D_PROFILE( "Collection traverse" );
