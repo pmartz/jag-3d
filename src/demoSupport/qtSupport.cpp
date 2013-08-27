@@ -113,6 +113,7 @@ int main( int argc, char** argv )
         ( "version,v", bpo::value< double  >(), "OpenGL context version. Default: 4.0." )
         ( "nwin", bpo::value< int >(), "Number of windows. Default: 1." )
         ( "winsize,w", bpo::value< std::vector< int > >( &winsize )->multitoken(), "Window width and height. Default: 300 300." )
+        ( "no-ms", "Disable multisampling" )
         ;
 
     // Create test/demo-specific DemoInterface, and allow it to
@@ -152,10 +153,14 @@ int main( int argc, char** argv )
         winsize.push_back( 300 ); winsize.push_back( 300 );
     }
 
+    QGL::FormatOption multisampleFlag( QGL::SampleBuffers );
+    if( vm.count( "no-ms" ) > 0 )
+        multisampleFlag = QGL::NoSampleBuffers;
+
 
     QApplication app( argc, argv );
 
-    QGLFormat glFormat( QGL::DoubleBuffer | QGL::Rgba | QGL::DepthBuffer | QGL::SampleBuffers );
+    QGLFormat glFormat( QGL::DoubleBuffer | QGL::Rgba | QGL::DepthBuffer | multisampleFlag );
     if( version >= 3.0 )
     {
         glFormat.setVersion( int( versionMajor ), int( versionMinor ) );

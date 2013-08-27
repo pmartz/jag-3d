@@ -238,6 +238,7 @@ int main( int argc, char* argv[] )
         ( "version,v", bpo::value< double >(), "OpenGL context version. Default: 4.0." )
         ( "nwin", bpo::value< int >(), "Number of windows. Default: 1." )
         ( "winsize,w", bpo::value< std::vector< int > >( &winsize )->multitoken(), "Window width and height. Default: 300 300." )
+        ( "no-ms", "Disable multisampling" )
         ;
 
     // Create test/demo-specific DemoInterface, and allow it to
@@ -277,6 +278,10 @@ int main( int argc, char* argv[] )
         winsize.push_back( 300 ); winsize.push_back( 300 );
     }
 
+    unsigned int multisampleFlag( GLUT_MULTISAMPLE );
+    if( vm.count( "no-ms" ) > 0 )
+        multisampleFlag = 0;
+
 
 #ifdef DIRECTINPUT_ENABLED
     gamePad = jagMx::MxGamePadDXPtr( new jagMx::MxGamePadDX() );
@@ -284,7 +289,7 @@ int main( int argc, char* argv[] )
 
 
     glutInit( &argc, argv );
-    glutInitDisplayMode( GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_MULTISAMPLE );
+    glutInitDisplayMode( GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | multisampleFlag );
     if( version >= 3.0 )
     {
         glutInitContextVersion( int( versionMajor ), int( versionMinor ) );
