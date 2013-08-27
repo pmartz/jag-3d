@@ -340,7 +340,7 @@ void Osg2Jag::apply( osg::StateSet* stateSet )
         lights->addUniform( jagDraw::UniformPtr(
             new jagDraw::Uniform( "position", lightVec ) ) );
         lights->addUniform( jagDraw::UniformPtr(
-            new jagDraw::Uniform( "ambient", gmtl::Point4f( 1.f, 1.f, 1.f, 1.f ) ) ) );
+            new jagDraw::Uniform( "ambient", gmtl::Point4f( 0.f, 0.f, 0.f, 1.f ) ) ) );
         lights->addUniform( jagDraw::UniformPtr(
             new jagDraw::Uniform( "diffuse", gmtl::Point4f( 1.f, 1.f, 1.f, 1.f ) ) ) );
         lights->addUniform( jagDraw::UniformPtr(
