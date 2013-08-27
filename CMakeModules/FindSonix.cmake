@@ -40,11 +40,22 @@ set( SONIX_FAIL_MESSAGE
 
 if( MSVC )
     set( SONIX_LIBRARY_DIRS ${sonix_FLAGPOLL_LIBRARY_DIRS} )
+    string( REGEX REPLACE "[.]" "_" SONIX_VERSION_STRING ${sonix_FLAGPOLL_MODULE_VERSION} )
+    find_library( SONIX_LIBRARY NAMES "sonix-${SONIX_VERSION_STRING}"
+                  HINTS ${sonix_FLAGPOLL_LIBRARY_DIRS} )
+    find_library( SONIX_LIBRARY_DEBUG NAMES "sonix_d-${SONIX_VERSION_STRING}"
+                  HINTS ${sonix_FLAGPOLL_LIBRARY_DIRS} )
     find_package_handle_standard_args( Sonix
                                        REQUIRED_VARS SONIX_LIBRARY_DIRS SONIX_INCLUDE_DIR
                                        VERSION_VAR sonix_FLAGPOLL_MODULE_VERSION
                                        FAIL_MESSAGE ${SONIX_FAIL_MESSAGE} )
-    set( SONIX_LIBRARIES )
+    if( SONIX_LIBRARY_DEBUG )
+        set( SONIX_LIBRARIES optimized ${SONIX_LIBRARY} debug ${SONIX_LIBRARY_DEBUG} ${VAPOR_LIBRARIES} )
+    else()
+        set( SONIX_LIBRARIES ${SONIX_LIBRARY} ${VAPOR_LIBRARIES} )
+    endif()
+    mark_as_advanced( SONIX_LIBRARY )
+    mark_as_advanced( SONIX_LIBRARY_DEBUG )
     mark_as_advanced( SONIX_LIBRARY_DIRS )
     link_directories( ${SONIX_LIBRARY_DIRS} )
 else()

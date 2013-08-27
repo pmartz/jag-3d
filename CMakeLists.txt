@@ -87,8 +87,6 @@ endif()
 option( JAG3D_USE_VRJ "If set and VR Juggler is found, Jag3D builds windowed executables with VR Juggler." ON )
 if( JAG3D_USE_VRJ )
     find_package( VRJuggler-OpenGL 3.0 )
-#     include( FindCppDOMHelper )
-#     include( FindVrjHelper )
 endif()
 
 #   Required dependencies:
