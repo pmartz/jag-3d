@@ -137,9 +137,9 @@ void MxGamePadDX::processButtons( const DIJOYSTATE2& devState, const double delt
     // The two Xbox 360 controller front firing buttons are handled as one button
     // in DirectInput, with negative and positive values.
     if( devState.lZ > 0 )
-        buttons != Button4;
+        buttons |= Button4;
     else if( devState.lZ < 0 )
-        buttons != Button5;
+        buttons |= Button5;
 
     // Must call into base class even if all buttons are zero
     // so that base class can detect deltas (press events).
