@@ -4,3 +4,4 @@ build
 src/jagBase/Version.h
 syntax: glob
 src/jagBase/Config.h
+src/gl3w/gl3w_gen.py
