@@ -26,7 +26,7 @@
 #include <jagBase/Config.h>
 
 #if defined( JAG3D_USE_GL3W )
-#  include <jagDraw/GL/gl3w.h>
+#  include <jagDraw/gl3w.h>
 #else
 #  ifndef GL_GLEXT_PROTOTYPES
 #    define GL_GLEXT_PROTOTYPES

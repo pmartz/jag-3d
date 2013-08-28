@@ -18,6 +18,7 @@
 *
 *************** <auto-copyright.pl END do not edit this line> ***************/
 
+#include <jagDraw/PlatformOpenGL.h>
 #include "osg2jag.h"
 
 #include <osg/Node>
