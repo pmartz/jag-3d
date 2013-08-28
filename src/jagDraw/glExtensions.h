@@ -127,6 +127,71 @@ GLAPI void APIENTRY glGetBufferPointervARB (GLenum target, GLenum pname, GLvoid 
 #endif
 #endif /* GL_ARB_vertex_buffer_object */
 
+#ifndef GL_EXT_shader_image_load_store
+#define GL_EXT_shader_image_load_store 1
+#define GL_MAX_IMAGE_UNITS_EXT            0x8F38
+#define GL_MAX_COMBINED_IMAGE_UNITS_AND_FRAGMENT_OUTPUTS_EXT 0x8F39
+#define GL_IMAGE_BINDING_NAME_EXT         0x8F3A
+#define GL_IMAGE_BINDING_LEVEL_EXT        0x8F3B
+#define GL_IMAGE_BINDING_LAYERED_EXT      0x8F3C
+#define GL_IMAGE_BINDING_LAYER_EXT        0x8F3D
+#define GL_IMAGE_BINDING_ACCESS_EXT       0x8F3E
+#define GL_IMAGE_1D_EXT                   0x904C
+#define GL_IMAGE_2D_EXT                   0x904D
+#define GL_IMAGE_3D_EXT                   0x904E
+#define GL_IMAGE_2D_RECT_EXT              0x904F
+#define GL_IMAGE_CUBE_EXT                 0x9050
+#define GL_IMAGE_BUFFER_EXT               0x9051
+#define GL_IMAGE_1D_ARRAY_EXT             0x9052
+#define GL_IMAGE_2D_ARRAY_EXT             0x9053
+#define GL_IMAGE_CUBE_MAP_ARRAY_EXT       0x9054
+#define GL_IMAGE_2D_MULTISAMPLE_EXT       0x9055
+#define GL_IMAGE_2D_MULTISAMPLE_ARRAY_EXT 0x9056
+#define GL_INT_IMAGE_1D_EXT               0x9057
+#define GL_INT_IMAGE_2D_EXT               0x9058
+#define GL_INT_IMAGE_3D_EXT               0x9059
+#define GL_INT_IMAGE_2D_RECT_EXT          0x905A
+#define GL_INT_IMAGE_CUBE_EXT             0x905B
+#define GL_INT_IMAGE_BUFFER_EXT           0x905C
+#define GL_INT_IMAGE_1D_ARRAY_EXT         0x905D
+#define GL_INT_IMAGE_2D_ARRAY_EXT         0x905E
+#define GL_INT_IMAGE_CUBE_MAP_ARRAY_EXT   0x905F
+#define GL_INT_IMAGE_2D_MULTISAMPLE_EXT   0x9060
+#define GL_INT_IMAGE_2D_MULTISAMPLE_ARRAY_EXT 0x9061
+#define GL_UNSIGNED_INT_IMAGE_1D_EXT      0x9062
+#define GL_UNSIGNED_INT_IMAGE_2D_EXT      0x9063
+#define GL_UNSIGNED_INT_IMAGE_3D_EXT      0x9064
+#define GL_UNSIGNED_INT_IMAGE_2D_RECT_EXT 0x9065
+#define GL_UNSIGNED_INT_IMAGE_CUBE_EXT    0x9066
+#define GL_UNSIGNED_INT_IMAGE_BUFFER_EXT  0x9067
+#define GL_UNSIGNED_INT_IMAGE_1D_ARRAY_EXT 0x9068
+#define GL_UNSIGNED_INT_IMAGE_2D_ARRAY_EXT 0x9069
+#define GL_UNSIGNED_INT_IMAGE_CUBE_MAP_ARRAY_EXT 0x906A
+#define GL_UNSIGNED_INT_IMAGE_2D_MULTISAMPLE_EXT 0x906B
+#define GL_UNSIGNED_INT_IMAGE_2D_MULTISAMPLE_ARRAY_EXT 0x906C
+#define GL_MAX_IMAGE_SAMPLES_EXT          0x906D
+#define GL_IMAGE_BINDING_FORMAT_EXT       0x906E
+#define GL_VERTEX_ATTRIB_ARRAY_BARRIER_BIT_EXT 0x00000001
+#define GL_ELEMENT_ARRAY_BARRIER_BIT_EXT  0x00000002
+#define GL_UNIFORM_BARRIER_BIT_EXT        0x00000004
+#define GL_TEXTURE_FETCH_BARRIER_BIT_EXT  0x00000008
+#define GL_SHADER_IMAGE_ACCESS_BARRIER_BIT_EXT 0x00000020
+#define GL_COMMAND_BARRIER_BIT_EXT        0x00000040
+#define GL_PIXEL_BUFFER_BARRIER_BIT_EXT   0x00000080
+#define GL_TEXTURE_UPDATE_BARRIER_BIT_EXT 0x00000100
+#define GL_BUFFER_UPDATE_BARRIER_BIT_EXT  0x00000200
+#define GL_FRAMEBUFFER_BARRIER_BIT_EXT    0x00000400
+#define GL_TRANSFORM_FEEDBACK_BARRIER_BIT_EXT 0x00000800
+#define GL_ATOMIC_COUNTER_BARRIER_BIT_EXT 0x00001000
+#define GL_ALL_BARRIER_BITS_EXT           0xFFFFFFFF
+typedef void (APIENTRYP PFNGLBINDIMAGETEXTUREEXTPROC) (GLuint index, GLuint texture, GLint level, GLboolean layered, GLint layer, GLenum access, GLint format);
+typedef void (APIENTRYP PFNGLMEMORYBARRIEREXTPROC) (GLbitfield barriers);
+#ifdef GL_GLEXT_PROTOTYPES
+GLAPI void APIENTRY glBindImageTextureEXT (GLuint index, GLuint texture, GLint level, GLboolean layered, GLint layer, GLenum access, GLint format);
+GLAPI void APIENTRY glMemoryBarrierEXT (GLbitfield barriers);
+#endif
+#endif /* GL_EXT_shader_image_load_store */
+
 #ifndef GL_NVX_conditional_render
 #define GL_NVX_conditional_render 1
 typedef void (APIENTRYP PFNGLBEGINCONDITIONALRENDERNVXPROC) (GLuint id);

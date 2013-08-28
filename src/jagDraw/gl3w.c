@@ -727,6 +727,8 @@ PFNGLMAPBUFFERARBPROC gl3wMapBufferARB;
 PFNGLUNMAPBUFFERARBPROC gl3wUnmapBufferARB;
 PFNGLGETBUFFERPARAMETERIVARBPROC gl3wGetBufferParameterivARB;
 PFNGLGETBUFFERPOINTERVARBPROC gl3wGetBufferPointervARB;
+PFNGLBINDIMAGETEXTUREEXTPROC gl3wBindImageTextureEXT;
+PFNGLMEMORYBARRIEREXTPROC gl3wMemoryBarrierEXT;
 PFNGLBEGINCONDITIONALRENDERNVXPROC gl3wBeginConditionalRenderNVX;
 PFNGLENDCONDITIONALRENDERNVXPROC gl3wEndConditionalRenderNVX;
 PFNGLMULTIDRAWARRAYSINDIRECTBINDLESSNVPROC gl3wMultiDrawArraysIndirectBindlessNV;
@@ -1749,6 +1751,8 @@ static void load_procs(void)
 	gl3wUnmapBufferARB = (PFNGLUNMAPBUFFERARBPROC) get_proc("glUnmapBufferARB");
 	gl3wGetBufferParameterivARB = (PFNGLGETBUFFERPARAMETERIVARBPROC) get_proc("glGetBufferParameterivARB");
 	gl3wGetBufferPointervARB = (PFNGLGETBUFFERPOINTERVARBPROC) get_proc("glGetBufferPointervARB");
+	gl3wBindImageTextureEXT = (PFNGLBINDIMAGETEXTUREEXTPROC) get_proc("glBindImageTextureEXT");
+	gl3wMemoryBarrierEXT = (PFNGLMEMORYBARRIEREXTPROC) get_proc("glMemoryBarrierEXT");
 	gl3wBeginConditionalRenderNVX = (PFNGLBEGINCONDITIONALRENDERNVXPROC) get_proc("glBeginConditionalRenderNVX");
 	gl3wEndConditionalRenderNVX = (PFNGLENDCONDITIONALRENDERNVXPROC) get_proc("glEndConditionalRenderNVX");
 	gl3wMultiDrawArraysIndirectBindlessNV = (PFNGLMULTIDRAWARRAYSINDIRECTBINDLESSNVPROC) get_proc("glMultiDrawArraysIndirectBindlessNV");

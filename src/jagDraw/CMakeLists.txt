@@ -18,6 +18,7 @@
 #
 #************** <auto-copyright.pl END do not edit this line> ***************
 
+
 set( _libName jagDraw )
 
 if( BUILD_SHARED_LIBS )
@@ -92,12 +93,12 @@ unset( _jagDrawGl3wHeaderFiles )
 unset( _jagDrawGl3wSourceFiles )
 if( JAG3D_USE_GL3W )
     set( _jagDrawGl3wHeaderFiles
-        gl3w.h
+        ${PROJECT_SOURCE_DIR}/src/jagDraw/gl3w.h
         glExtensions.h
         ContextSupportGl3w.h
     )
     set( _jagDrawGl3wSourceFiles
-        gl3w.c
+        ${PROJECT_SOURCE_DIR}/src/jagDraw/gl3w.c
         ContextSupportGl3w.cpp
     )
 endif()
@@ -110,6 +111,22 @@ _addLibrary( ${_libName}
     JAG_LIBRARIES
         jagBase
 )
+
+
+if( JAG3D_USE_GL3W )
+    # Generate gl3w.c and gl3w.h if out of data.
+    if( PYTHONINTERP_FOUND )
+        add_custom_command( 
+            OUTPUT
+                ${PROJECT_SOURCE_DIR}/src/jagDraw/gl3w.c
+                ${PROJECT_SOURCE_DIR}/src/jagDraw/gl3w.h
+            COMMAND
+                ${PYTHON_EXECUTABLE} ${PROJECT_SOURCE_DIR}/src/gl3w/gl3w_gen.py
+            MAIN_DEPENDENCY glExtensions.h
+            DEPENDS ${GL3_GLCOREARB_HEADER}/GL/glcorearb.h
+            COMMENT "Generating gl3w.c/.h..." )
+    endif()
+endif()
 
 install(
     DIRECTORY .
