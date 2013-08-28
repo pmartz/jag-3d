@@ -162,6 +162,7 @@ Jag3D has the following optional dependencies:
 Must be built for GL3 compatibility.
 \li <a href=http://www.stack.nl/~dimitri/doxygen/download.html >Doxygen</a>.
 \li Microsoft DirectX SDK (for gamepad support).
+\li Python (for regenerating gl3w.c and gl3w.h).
 
 Furthermore, in order to run any of the examples, you'll need one or more
 windowing toolkits. Jag3D's build infrastructure currently supports the
@@ -208,6 +209,19 @@ will be built only if the corresponding CMake variable is ON, and the windowing 
 found during CMake configuration.
 
 The variable JAG3D_USE_GL3W must be ON for Windows builds and OFF for all other platforms.
+
+\subsection BuildGl3w Generating gl3w.c and gl3w.h
+
+Jag3D includes a modified version of the gl3w Python script to auto-generate
+the gl3w.c and gl3w.h jagDraw module source files. If you are building with
+JAG3D_USE_GL3W selected in CMake, and you have Python installed on your system,
+then the gl3w.c and gl3w.h files will aitomatically be regenerated during build
+if either glcorearb.h or jagDraw/glExtensions.h have been modified.
+
+To add gl3w support for a new extension, simply copy that extension definition
+from the OpenGL registry's glext.h, into jagDraw/glExtensions.h, then rebuild.
+The project files will invoke Python with the gl3w_gen.py script to parse the
+OpenGL headers and generate jagDraw/gl3w.c and jagDraw/gl3w.h.
 
 \subsection BuildBuilding Build Jag3D
 
