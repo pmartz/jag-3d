@@ -73,7 +73,7 @@ public:
             );
     }
 
-    virtual ReadStatus read( const std::string& fileName ) const
+    virtual ReadStatus read( const std::string& fileName, const Options* /*options*/ ) const
     {
         JAG3D_INFO(
             std::string( "Using OSG v" ) + std::string( osgGetVersion() ) );
@@ -88,12 +88,12 @@ public:
         ImagePtr image( convertFromOsgImage( osgImage.get() ) );
         return( ReadStatus( boost::any( image ) ) );
     }
-    virtual ReadStatus read( std::istream& iStr ) const
+    virtual ReadStatus read( std::istream& iStr, const Options* /*options*/ ) const
     {
         return( ReadStatus() );
     }
 
-    virtual bool write( const std::string& fileName, const void* data ) const
+    virtual bool write( const std::string& fileName, const void* data, const Options* /*options*/ ) const
     {
         JAG3D_INFO(
             std::string( "Using OSG v" ) + std::string( osgGetVersion() ) );
@@ -101,7 +101,7 @@ public:
         osg::ref_ptr< osg::Image > osgImage( convertToOsgImage( (Image*)data ) );
         return( osgDB::writeImageFile( *osgImage, fileName ) );
     }
-    virtual bool write( std::ostream& oStr, const void* data ) const
+    virtual bool write( std::ostream& oStr, const void* data, const Options* /*options*/ ) const
     {
         return( false );
     }

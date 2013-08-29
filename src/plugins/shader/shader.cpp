@@ -59,7 +59,7 @@ public:
             isFrag( allLower ) );
     }
 
-    virtual ReadStatus read( const std::string& fileName ) const
+    virtual ReadStatus read( const std::string& fileName, const Options* options ) const
     {
         std::ifstream iStr( fileName.c_str() );
         if( !iStr )
@@ -77,13 +77,13 @@ public:
         else if( isFrag( extension ) )
             _type = GL_FRAGMENT_SHADER;
 
-        ReadStatus readStatus( read( iStr ) );
+        ReadStatus readStatus( read( iStr, options ) );
         _type = 0;
         iStr.close();
 
         return( readStatus );
     }
-    virtual ReadStatus read( std::istream& iStr ) const
+    virtual ReadStatus read( std::istream& iStr, const Options* /*options*/ ) const
     {
         // Get total file size. But because we're reading a text file,
         // the size of the actual data we read might be smaller. For

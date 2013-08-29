@@ -23,6 +23,7 @@
 
 
 #include <jagDisk/Export.h>
+#include <jagDisk/Options.h>
 #include <jagBase/LogBase.h>
 #include <Poco/Path.h>
 
@@ -103,24 +104,23 @@ public:
     }
 
     // Returns a boost::any containing a jagBase::ptr::shared_ptr.
-    virtual ReadStatus read( const std::string& /*fileName*/ ) const
+    virtual ReadStatus read( const std::string& /*fileName*/, const Options* options=NULL ) const
     {
         return( ReadStatus() );
     }
-    virtual bool write( const std::string& /*fileName*/, const void* /*data*/ ) const
+    virtual bool write( const std::string& /*fileName*/, const void* /*data*/, const Options* options=NULL ) const
     {
         return( false );
     }
 
-    virtual ReadStatus read( std::istream& /*iStr*/ ) const
+    virtual ReadStatus read( std::istream& /*iStr*/, const Options* options=NULL ) const
     {
         return( ReadStatus() );
     }
-    virtual bool write( std::ostream& /*oStr*/, const void* /*data*/ ) const
+    virtual bool write( std::ostream& /*oStr*/, const void* /*data*/, const Options* options=NULL ) const
     {
         return( false );
     }
-
 };
 
 typedef jagBase::ptr< jagDisk::ReaderWriter >::shared_ptr ReaderWriterPtr;

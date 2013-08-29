@@ -62,7 +62,7 @@ public:
             );
     }
 
-    virtual bool write( const std::string& fileName, const void* data ) const
+    virtual bool write( const std::string& fileName, const void* data, const Options* options ) const
     {
         std::ofstream oStr( fileName.c_str() );
         if( !oStr )
@@ -71,12 +71,12 @@ public:
             return( false );
         }
 
-        const bool result( write( oStr, data ) );
+        const bool result( write( oStr, data, options ) );
         oStr.close();
 
         return( result );
     }
-    virtual bool write( std::ostream& oStr, const void* data ) const
+    virtual bool write( std::ostream& oStr, const void* data, const Options* /*options*/ ) const
     {
         const jagSG::Node* node( static_cast< const jagSG::Node* >( data ) );
         if( node != NULL )
