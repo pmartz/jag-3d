@@ -25,9 +25,11 @@
 #include <jagDisk/Export.h>
 #include <Poco/Path.h>
 
+#include <boost/any.hpp>
 #include <jagBase/ptr.h>
 #include <string>
 #include <vector>
+#include <map>
 
 
 namespace jagDisk {
@@ -78,8 +80,50 @@ public:
     /** \brief Search the directory path list for \c fileName and return the full path. */
     Poco::Path findFile( const std::string& fileName ) const;
 
+
+    typedef std::map< std::string, boost::any > AnyMap;
+
+    /** \class OptionsEasyInit Options.H <jagDisk/Options.H>
+    */
+    class OptionsEasyInit
+    {
+    public:
+        OptionsEasyInit( AnyMap& anyMap )
+          : _anyMap( anyMap )
+        {}
+        ~OptionsEasyInit() {}
+
+        OptionsEasyInit& operator()( const std::string& name, const boost::any& value )
+        {
+            _anyMap[ name ] = value;
+            return( *this );
+        }
+
+    protected:
+        AnyMap& _anyMap;
+    };
+
+    OptionsEasyInit addOptions()
+    {
+        return( OptionsEasyInit( _anyMap ) );
+    }
+    bool hasOption( const std::string& name ) const
+    {
+        return( _anyMap.find( name ) != _anyMap.end() );
+    }
+    const boost::any getOption( const std::string& name ) const
+    {
+        AnyMap::const_iterator it( _anyMap.find( name ) );
+        if( it != _anyMap.end() )
+            return( *it );
+        else
+            return( boost::any() );
+    }
+
 protected:
     Poco::Path::StringVec _paths;
+
+    AnyMap _anyMap;
 };
 
 typedef jagBase::ptr< jagDisk::Options >::shared_ptr OptionsPtr;

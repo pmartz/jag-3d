@@ -47,7 +47,8 @@ Options::Options( const int initFlags )
     }
 }
 Options::Options( const Options& rhs )
-  : _paths( rhs._paths )
+  : _paths( rhs._paths ),
+  _anyMap( rhs._anyMap )
 {
 }
 Options::~Options()

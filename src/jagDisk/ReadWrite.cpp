@@ -58,7 +58,7 @@ boost::any read( const std::string& fileName, const Options* options )
             continue;
 
         JAG3D_TRACE_STATIC( logStr, "\tTrying loaded ReaderWriter subclass " + rwInfo._className );
-        ReadStatus readStatus( rw->read( fullName ) );
+        ReadStatus readStatus( rw->read( fullName, opt.get() ) );
         if( readStatus() )
         {
             JAG3D_TRACE_STATIC( logStr, "\tread(): Success." );
@@ -83,7 +83,7 @@ boost::any read( const std::string& fileName, const Options* options )
         BOOST_FOREACH( ReaderWriterPtr rw, pi->_readerWriters )
         {
             JAG3D_TRACE_STATIC( logStr, "\tTrying new ReaderWriter." );
-            ReadStatus readStatus( rw->read( fullName ) );
+            ReadStatus readStatus( rw->read( fullName, opt.get() ) );
             if( readStatus() )
                 return( *readStatus );
         }
@@ -105,6 +105,8 @@ bool write( const std::string& fileName, const void* data, const Options* option
     Poco::Path pathName( fileName );
     const std::string extension( pathName.getExtension() );
 
+    ConstOptionsPtr opt( options != NULL ? options : new Options() );
+
     // Try loaded ReaderWriters first.
     const ReaderWriterInfoVec& rwVec( pm->getLoadedReaderWriters() );
     BOOST_FOREACH( const ReaderWriterInfo& rwInfo, rwVec )
@@ -114,7 +116,7 @@ bool write( const std::string& fileName, const void* data, const Options* option
             continue;
 
         JAG3D_TRACE_STATIC( logStr, "\tTrying loaded ReaderWriter subclass " + rwInfo._className );
-        if( rw->write( fileName, data ) )
+        if( rw->write( fileName, data, opt.get() ) )
         {
             JAG3D_TRACE_STATIC( logStr, "\twrite(): Success." );
             return( true );
@@ -138,7 +140,7 @@ bool write( const std::string& fileName, const void* data, const Options* option
         BOOST_FOREACH( ReaderWriterPtr rw, pi->_readerWriters )
         {
             JAG3D_TRACE_STATIC( logStr, "\tTrying new ReaderWriter." );
-            if( rw->write( fileName, data ) )
+            if( rw->write( fileName, data, opt.get() ) )
             {
                 JAG3D_TRACE_STATIC( logStr, "\twrite(): Success." );
                 return( true );
