@@ -79,7 +79,7 @@ public:
         if( !( osgNode.valid() ) )
             return( ReadStatus() );
 
-        Osg2Jag osg2Jag;
+        Osg2Jag osg2Jag( options );
         osgNode->accept( osg2Jag );
         jagSG::NodePtr result( osg2Jag.getJagScene() );
         return( ReadStatus( boost::any( result ) ) );

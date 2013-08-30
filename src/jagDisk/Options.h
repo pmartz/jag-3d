@@ -115,7 +115,7 @@ public:
     {
         AnyMap::const_iterator it( _anyMap.find( name ) );
         if( it != _anyMap.end() )
-            return( *it );
+            return( it->second );
         else
             return( boost::any() );
     }

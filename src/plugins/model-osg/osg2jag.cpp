@@ -30,6 +30,7 @@
 #include <osg/StateSet>
 #include <osg/Material>
 
+#include <jagDisk/Options.h>
 #include <jagDraw/Node.h>
 #include <jagDraw/CommandMap.h>
 #include <jagDraw/Drawable.h>
@@ -52,11 +53,29 @@ using namespace jagDraw;
     gmtl::Point4f( (float)(_v[0]), (float)(_v[1]), (float)(_v[2]), (float)(_v[3]) )
 
 
-Osg2Jag::Osg2Jag()
+Osg2Jag::Osg2Jag( const jagDisk::Options* options )
   : osg::NodeVisitor( osg::NodeVisitor::TRAVERSE_ALL_CHILDREN ),
     _jagScene( jagSG::NodePtr( (jagSG::Node*)NULL ) ),
-    _current( jagSG::NodePtr( (jagSG::Node*)NULL ) )
+    _current( jagSG::NodePtr( (jagSG::Node*)NULL ) ),
+    _vertexAttribName( "vertex" ),
+    _normalAttribName( "normal" ),
+    _texCoordAttribName( "texcoord" )
 {
+    if( options != NULL )
+    {
+        try {
+            if( options->hasOption( "vertexAttribName" ) )
+                _vertexAttribName = boost::any_cast< std::string >( options->getOption( "vertexAttribName" ) );
+            if( options->hasOption( "normalAttribName" ) )
+                _normalAttribName = boost::any_cast< std::string >( options->getOption( "normalAttribName" ) );
+            if( options->hasOption( "texCoordAttribName" ) )
+                _texCoordAttribName = boost::any_cast< std::string >( options->getOption( "texCoordAttribName" ) );
+        }
+        catch( boost::bad_any_cast bac )
+        {
+            JAG3D_ERROR_STATIC( loggerName, "Unparsable jagDiskLLOptions: " + std::string( bac.what() ) );
+        }
+    }
 }
 Osg2Jag::~Osg2Jag()
 {
@@ -165,7 +184,7 @@ void Osg2Jag::apply( osg::Geometry* geom )
         vaop->addVertexArrayCommand( bop, jagDraw::VertexArrayObject::Vertex );
 
         jagDraw::VertexAttribPtr attrib( new jagDraw::VertexAttrib(
-            "vertex", info._componentsPerElement, info._type, GL_FALSE, 0, 0 ) );
+            _vertexAttribName, info._componentsPerElement, info._type, GL_FALSE, 0, 0 ) );
         vaop->addVertexArrayCommand( attrib, jagDraw::VertexArrayObject::Vertex );
     }
     if( ( geom->getNormalArray() != NULL ) &&
@@ -181,7 +200,7 @@ void Osg2Jag::apply( osg::Geometry* geom )
         vaop->addVertexArrayCommand( bop, jagDraw::VertexArrayObject::Normal );
 
         jagDraw::VertexAttribPtr attrib( new jagDraw::VertexAttrib(
-            "normal", info._componentsPerElement, info._type, GL_FALSE, 0, 0 ) );
+            _normalAttribName, info._componentsPerElement, info._type, GL_FALSE, 0, 0 ) );
         vaop->addVertexArrayCommand( attrib, jagDraw::VertexArrayObject::Normal );
     }
 
@@ -195,7 +214,7 @@ void Osg2Jag::apply( osg::Geometry* geom )
             jagDraw::BufferObjectPtr bop( new jagDraw::BufferObject( GL_ARRAY_BUFFER, info._buffer ) );
             vaop->addVertexArrayCommand( bop, jagDraw::VertexArrayObject::TexCoord );
             std::ostringstream ostr;
-            ostr << "texcoord" << idx;
+            ostr << _texCoordAttribName << idx;
             std::cout << info._componentsPerElement << " texcoords" << std::endl;
             jagDraw::VertexAttribPtr attrib( new jagDraw::VertexAttrib(
                 ostr.str(), info._componentsPerElement, info._type, GL_FALSE, 0, 0 ) );
