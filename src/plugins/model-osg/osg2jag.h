@@ -21,6 +21,9 @@
 #ifndef __OSG_2_JAG_H__
 #define __OSG_2_JAG_H__ 1
 
+
+#include <jagDisk/Options.h>
+
 #include <osg/NodeVisitor>
 #include <osg/Matrix>
 #include <jagBase/Buffer.h>
@@ -42,7 +45,7 @@ namespace osg {
 class Osg2Jag : public osg::NodeVisitor
 {
 public:
-    Osg2Jag();
+    Osg2Jag( const jagDisk::Options* options );
     ~Osg2Jag();
 
     virtual void apply( osg::Node& osgNode );
@@ -87,6 +90,10 @@ protected:
 
     static gmtl::Matrix44d asGmtlMatrix( const osg::Matrixd& m );
     static gmtl::Matrix44d asGmtlMatrix( const osg::Matrixf& m );
+
+    std::string _vertexAttribName;
+    std::string _normalAttribName;
+    std::string _texCoordAttribName;
 };
 
 

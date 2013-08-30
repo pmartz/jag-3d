@@ -118,9 +118,9 @@ protected:
 
 
 
-#define __READ_UTIL( _RESULT, _TYPE, _NAME ) \
+#define __READ_UTIL( _RESULT, _TYPE, _NAME, _OPT ) \
     { \
-        boost::any anyTemp( jagDisk::read( _NAME ) ); \
+        boost::any anyTemp( jagDisk::read( _NAME, _OPT ) ); \
         try { \
             _RESULT = boost::any_cast< _TYPE >( anyTemp ); \
         } \
@@ -134,22 +134,22 @@ protected:
         } \
     }
 
-    jagSG::NodePtr readSceneGraphNodeUtil( const std::string& fileName )
+    jagSG::NodePtr readSceneGraphNodeUtil( const std::string& fileName, const jagDisk::Options* options=NULL )
     {
         jagSG::NodePtr result;
-        __READ_UTIL( result, jagSG::NodePtr, fileName );
+        __READ_UTIL( result, jagSG::NodePtr, fileName, options );
         return( result );
     }
-    jagDraw::ImagePtr readImageUtil( const std::string& fileName )
+    jagDraw::ImagePtr readImageUtil( const std::string& fileName, const jagDisk::Options* options=NULL )
     {
         jagDraw::ImagePtr result;
-        __READ_UTIL( result, jagDraw::ImagePtr, fileName );
+        __READ_UTIL( result, jagDraw::ImagePtr, fileName, options );
         return( result );
     }
-    jagDraw::ShaderPtr readShaderUtil( const std::string& fileName )
+    jagDraw::ShaderPtr readShaderUtil( const std::string& fileName, const jagDisk::Options* options=NULL )
     {
         jagDraw::ShaderPtr result;
-        __READ_UTIL( result, jagDraw::ShaderPtr, fileName );
+        __READ_UTIL( result, jagDraw::ShaderPtr, fileName, options );
         return( result );
     }
 };

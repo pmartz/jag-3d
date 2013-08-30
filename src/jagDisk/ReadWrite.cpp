@@ -36,7 +36,8 @@ boost::any read( const std::string& fileName, const Options* options )
     const std::string logStr( "jag.disk.rw" );
     JAG3D_TRACE_STATIC( logStr, "read() for: " + fileName );
 
-    ConstOptionsPtr opt( options != NULL ? options : new Options() );
+    Options localOptions;
+    const Options* opt( options != NULL ? options : &localOptions );
     Poco::Path pathName( opt->findFile( fileName ) );
     if( !( pathName.isFile() ) )
     {
@@ -58,7 +59,7 @@ boost::any read( const std::string& fileName, const Options* options )
             continue;
 
         JAG3D_TRACE_STATIC( logStr, "\tTrying loaded ReaderWriter subclass " + rwInfo._className );
-        ReadStatus readStatus( rw->read( fullName, opt.get() ) );
+        ReadStatus readStatus( rw->read( fullName, opt ) );
         if( readStatus() )
         {
             JAG3D_TRACE_STATIC( logStr, "\tread(): Success." );
@@ -83,7 +84,7 @@ boost::any read( const std::string& fileName, const Options* options )
         BOOST_FOREACH( ReaderWriterPtr rw, pi->_readerWriters )
         {
             JAG3D_TRACE_STATIC( logStr, "\tTrying new ReaderWriter." );
-            ReadStatus readStatus( rw->read( fullName, opt.get() ) );
+            ReadStatus readStatus( rw->read( fullName, opt ) );
             if( readStatus() )
                 return( *readStatus );
         }
