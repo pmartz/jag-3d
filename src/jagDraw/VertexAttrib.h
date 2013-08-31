@@ -90,8 +90,16 @@ public:
         // TBD need an "explicit" mode where the location is set by the app
         // (because it uses glBindAttribLocation). This would avoid the table lookup.
 
-        ProgramPtr prog( boost::dynamic_pointer_cast< Program >( drawInfo._current[ DrawablePrep::Program_t ] ) );
-        GLint index( prog->getVertexAttribLocation( _indexHash ) );
+        GLint index;
+        if( drawInfo._current.contains( DrawablePrep::Program_t ) )
+        {
+            ProgramPtr prog( boost::dynamic_pointer_cast< Program >( drawInfo._current[ DrawablePrep::Program_t ] ) );
+            index = prog->getVertexAttribLocation( _indexHash );
+        }
+        else
+        {
+            index = glGetAttribLocation( drawInfo._externalProgramID, _name.c_str() );
+        }
         if( index == -1 )
         {
             // This vertex attrib isn't used in the shader.

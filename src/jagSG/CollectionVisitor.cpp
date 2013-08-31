@@ -86,8 +86,20 @@ void CollectionVisitor::reset()
     resetCommandMap();
     resetMatrix();
 
-    _drawTransformCallback = jagDraw::TransformCallbackPtr(
-        new jagDraw::TransformCallback() );
+    // TBD This seems very bad that we're allocating a new one of
+    // these in reset(), which means once per frame.
+    if( _drawTransformCallback == NULL )
+    {
+        _drawTransformCallback = jagDraw::TransformCallbackPtr(
+            new jagDraw::TransformCallback() );
+    }
+    else
+    {
+        // Use copy constructor to preserve any pre-existing settings
+        // (like custom matrix uniform names).
+        _drawTransformCallback.reset(
+            new jagDraw::TransformCallback( *_drawTransformCallback ) );
+    }
 
     _currentID = 0;
     if( _drawGraph != NULL )
