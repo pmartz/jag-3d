@@ -18,4 +18,5 @@
 #
 #************** <auto-copyright.pl END do not edit this line> ***************
 
+add_subdirectory( abuffer )
 add_subdirectory( jagmodel )
