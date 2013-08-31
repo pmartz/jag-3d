@@ -77,8 +77,8 @@ TransformCallbackPtr DrawGraph::getTransformCallback()
 }
 void DrawGraph::setViewProj( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj )
 {
-    _transformCallback->_transform.setView( view );
-    _transformCallback->_transform.setProj( proj );
+    _transformCallback->getTransform().setView( view );
+    _transformCallback->getTransform().setProj( proj );
 }
 
 
