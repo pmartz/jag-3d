@@ -344,12 +344,19 @@ void Uniform::execute( DrawInfo& drawInfo, const GLint loc ) const
 
 void Uniform::executeWithoutMap( DrawInfo& drawInfo ) const
 {
+    GLint loc;
     if( drawInfo._current.contains( Program_t ) )
     {
         ProgramPtr prog( boost::dynamic_pointer_cast< Program >( drawInfo._current[ Program_t ] ) );
-        const GLint loc( prog->getUniformLocation( _indexHash ) );
-        execute( drawInfo, loc );
+        loc = prog->getUniformLocation( _indexHash );
     }
+    else
+    {
+        // No current program. Assume external program is in use.
+        loc = glGetUniformLocation( drawInfo._externalProgramID, _name.c_str() );
+    }
+    if( loc != -1 )
+        execute( drawInfo, loc );
 }
 
 void Uniform::execute( DrawInfo& drawInfo )

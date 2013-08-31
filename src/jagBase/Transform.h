@@ -86,25 +86,30 @@ public:
 
 
     enum {
-        VIEW_PROJ = 0x1 << 0,
-        MODEL_VIEW_PROJ = 0x1 << 1,
-        MODEL_VIEW = 0x1 << 2,
-        MODEL_VIEW_INV_TRANS = 0x1 << 3,
-        MODEL_VIEW_INV_TRANS_4 = 0x1 << 4,
-        PROJ_INV = 0x1 << 5,
-        VIEW_INV = 0x1 << 6,
-        MODEL_INV = 0x1 << 7,
-        VIEW_PROJ_INV = 0x1 << 8,
-        MODEL_VIEW_PROJ_INV = 0x1 << 9,
-        MODEL_VIEW_INV = 0x1 << 10,
+        PROJ = 0x1 << 0,
+        VIEW = 0x1 << 1,
+        MODEL = 0x1 << 2,
+        VIEW_PROJ = 0x1 << 3,
+        MODEL_VIEW_PROJ = 0x1 << 4,
+        MODEL_VIEW = 0x1 << 5,
+        MODEL_VIEW_INV_TRANS = 0x1 << 6,
+        MODEL_VIEW_INV_TRANS_4 = 0x1 << 7,
+        PROJ_INV = 0x1 << 8,
+        VIEW_INV = 0x1 << 9,
+        MODEL_INV = 0x1 << 10,
+        VIEW_PROJ_INV = 0x1 << 11,
+        MODEL_VIEW_PROJ_INV = 0x1 << 12,
+        MODEL_VIEW_INV = 0x1 << 13,
 
-        ALL_PROJ = ( VIEW_PROJ |
+        ALL_PROJ = ( /* PROJ | */
+                     VIEW_PROJ |
                      MODEL_VIEW_PROJ |
                      PROJ_INV |
                      VIEW_PROJ_INV |
                      MODEL_VIEW_PROJ_INV ),
 
-        ALL_VIEW = ( VIEW_PROJ |
+        ALL_VIEW = ( /* VIEW | */
+                     VIEW_PROJ |
                      MODEL_VIEW_PROJ |
                      MODEL_VIEW |
                      MODEL_VIEW_INV_TRANS |
@@ -114,7 +119,8 @@ public:
                      MODEL_VIEW_PROJ_INV |
                      MODEL_VIEW_INV ),
 
-        ALL_MODEL = ( MODEL_VIEW_PROJ |
+        ALL_MODEL = ( /* MODEL | */
+                      MODEL_VIEW_PROJ |
                       MODEL_VIEW |
                       MODEL_VIEW_INV_TRANS |
                       MODEL_VIEW_INV_TRANS_4 |
@@ -172,6 +178,15 @@ public:
     {
         switch( matrix )
         {
+        case PROJ:
+            return( getProj() );
+            break;
+        case VIEW:
+            return( getView() );
+            break;
+        case MODEL:
+            return( getModel() );
+            break;
         case VIEW_PROJ:
             return( getViewProj() );
             break;

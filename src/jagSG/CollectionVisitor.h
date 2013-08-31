@@ -81,6 +81,17 @@ public:
     \details TBD */
     const jagDraw::DrawGraphPtr getDrawGraphTemplate() const;
 
+    /** \brief Get the TransformCallback that controls draw-time matrix uniforms.
+    \details CollectionVisitor inserts this into the DrawGraph to change
+    transform matrix uniforms possibly per DrawNode. Application code access this
+    object to specify which matrix uniforms are desired, and specify custom
+    matrix uniform names. */
+    jagDraw::TransformCallback* getTransformCallback()
+    {
+        return( _drawTransformCallback.get() );
+    }
+
+
 
     typedef enum {
         None = 0,

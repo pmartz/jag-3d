@@ -30,7 +30,8 @@ TransformCallback::TransformCallback()
     _transform(),
     _requiredUniforms( jagBase::TransformD::MODEL_VIEW_PROJ |
             jagBase::TransformD::MODEL_VIEW |
-            jagBase::TransformD::MODEL_VIEW_INV_TRANS )
+            jagBase::TransformD::MODEL_VIEW_INV_TRANS ),
+    _useMat4MVIT( false )
 {
     setDefaultMatrixUniformNames();
 }
@@ -38,6 +39,7 @@ TransformCallback::TransformCallback( const TransformCallback& rhs )
     : Node::Callback( rhs ),
     _transform( rhs._transform ),
     _requiredUniforms( rhs._requiredUniforms ),
+    _useMat4MVIT( rhs._useMat4MVIT ),
     _nameMap( rhs._nameMap )
 {
 }
@@ -71,7 +73,7 @@ bool TransformCallback::operator()( jagDraw::Node& node, jagDraw::DrawInfo& draw
             gmtl::Matrix33f mat3;
             gmtl::Matrix44f mat4;
             if( ( matrixBit == jagBase::TransformD::MODEL_VIEW_INV_TRANS ) &&
-                ( true /* !_use4x4MVIT */ ) )
+                ( !_useMat4MVIT ) )
             {
                 gmtl::convert( mat3, _transform.getMatrix3() );
                 uniform->setType( GL_FLOAT_MAT3 );

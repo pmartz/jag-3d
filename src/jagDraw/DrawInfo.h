@@ -58,6 +58,12 @@ struct JAGDRAW_EXPORT DrawInfo
     bind new Uniform and UniformBlock objects, amoung other things. */
     CommandMap _current;
 
+    /** \brief Support for external OpenGL programs.
+    \details To use an application-bound program with JAG rendering, do not
+    specify a Program object in the _current CommandMap. Instead, specify
+    the OpenGL program id here. */
+    GLuint _externalProgramID;
+
     /** \brief Buffer object ID most recently bound to GL_ELEMENT_ARRAY_BUFFER.
     \details Facilitates element buffer sharing and eliminates redundant
     element buffer binding by tracking the most recently bound element buffer
