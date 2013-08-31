@@ -21,6 +21,7 @@
 #ifndef __JAGBASE_TRANSFORM_H__
 #define __JAGBASE_TRANSFORM_H__ 1
 
+#include <jagBase/LogMacros.h>
 #include <gmtl/gmtl.h>
 
 
@@ -49,7 +50,7 @@ public:
         _vpY( 0 ),
         _vpWidth( 0 ),
         _vpHeight( 0 ),
-        _dirty( ALL_DIRTY )
+        _dirty( ALL_MATRICES )
     {
     }
     Transform( const Transform& rhs )
@@ -89,38 +90,41 @@ public:
         MODEL_VIEW_PROJ = 0x1 << 1,
         MODEL_VIEW = 0x1 << 2,
         MODEL_VIEW_INV_TRANS = 0x1 << 3,
-        PROJ_INV = 0x1 << 4,
-        VIEW_INV = 0x1 << 5,
-        MODEL_INV = 0x1 << 6,
-        VIEW_PROJ_INV = 0x1 << 7,
-        MODEL_VIEW_PROJ_INV = 0x1 << 8,
-        MODEL_VIEW_INV = 0x1 << 9,
+        MODEL_VIEW_INV_TRANS_4 = 0x1 << 4,
+        PROJ_INV = 0x1 << 5,
+        VIEW_INV = 0x1 << 6,
+        MODEL_INV = 0x1 << 7,
+        VIEW_PROJ_INV = 0x1 << 8,
+        MODEL_VIEW_PROJ_INV = 0x1 << 9,
+        MODEL_VIEW_INV = 0x1 << 10,
 
-        ALL_PROJ_DIRTY = ( VIEW_PROJ |
-                           MODEL_VIEW_PROJ |
-                           PROJ_INV |
-                           VIEW_PROJ_INV |
-                           MODEL_VIEW_PROJ_INV ),
+        ALL_PROJ = ( VIEW_PROJ |
+                     MODEL_VIEW_PROJ |
+                     PROJ_INV |
+                     VIEW_PROJ_INV |
+                     MODEL_VIEW_PROJ_INV ),
 
-        ALL_VIEW_DIRTY = ( VIEW_PROJ |
-                           MODEL_VIEW_PROJ |
-                           MODEL_VIEW |
-                           MODEL_VIEW_INV_TRANS |
-                           VIEW_INV |
-                           VIEW_PROJ_INV |
-                           MODEL_VIEW_PROJ_INV |
-                           MODEL_VIEW_INV ),
+        ALL_VIEW = ( VIEW_PROJ |
+                     MODEL_VIEW_PROJ |
+                     MODEL_VIEW |
+                     MODEL_VIEW_INV_TRANS |
+                     MODEL_VIEW_INV_TRANS_4 |
+                     VIEW_INV |
+                     VIEW_PROJ_INV |
+                     MODEL_VIEW_PROJ_INV |
+                     MODEL_VIEW_INV ),
 
-        ALL_MODEL_DIRTY = ( MODEL_VIEW_PROJ |
-                            MODEL_VIEW |
-                            MODEL_VIEW_INV_TRANS |
-                            MODEL_INV |
-                            MODEL_VIEW_PROJ_INV |
-                            MODEL_VIEW_INV ),
+        ALL_MODEL = ( MODEL_VIEW_PROJ |
+                      MODEL_VIEW |
+                      MODEL_VIEW_INV_TRANS |
+                      MODEL_VIEW_INV_TRANS_4 |
+                      MODEL_INV |
+                      MODEL_VIEW_PROJ_INV |
+                      MODEL_VIEW_INV ),
 
-        ALL_DIRTY = ( ALL_PROJ_DIRTY |
-                      ALL_VIEW_DIRTY |
-                      ALL_MODEL_DIRTY )
+        ALL_MATRICES = ( ALL_PROJ |
+                         ALL_VIEW |
+                         ALL_MODEL )
     };
 
     unsigned int getDirty()
@@ -137,18 +141,18 @@ public:
     {
         _proj = proj;
         _frustum.extractPlanes( _view, _proj );
-        _dirty |= ALL_PROJ_DIRTY;
+        _dirty |= ALL_PROJ;
     }
     void setView( const M4TYPE& view )
     {
         _view = view;
         _frustum.extractPlanes( _view, _proj );
-        _dirty |= ALL_VIEW_DIRTY;
+        _dirty |= ALL_VIEW;
     }
     void setModel( const M4TYPE& model )
     {
         _model = model;
-        _dirty |= ALL_MODEL_DIRTY;
+        _dirty |= ALL_MODEL;
     }
     void setViewport( const int x, const int y, const int width, const int height )
     {
@@ -159,6 +163,66 @@ public:
     }
 
 
+
+    /** \brief Get any matrix as a 4x4 matrix.
+    \details Provides access to all stored matrices, supported with
+    an internal switch. If MODEL_VIEW_INV_TRANS is requested, the 4x4
+    matrix with translation zeroed is returned. */
+    const M4TYPE& getMatrix4( const unsigned int matrix )
+    {
+        switch( matrix )
+        {
+        case VIEW_PROJ:
+            return( getViewProj() );
+            break;
+        default:
+            JAG3D_WARNING_STATIC( "jag.base.transform", "getMatrix4(): Invalid matrix parameter." );
+            // Intentional fallthrough
+        case MODEL_VIEW_PROJ:
+            return( getModelViewProj() );
+            break;
+        case MODEL_VIEW:
+            return( getModelView() );
+            break;
+        case MODEL_VIEW_INV_TRANS:
+            // App code asked for a 4x4 matrix, but passed the 3x3 mvit bit.
+            JAG3D_WARNING_STATIC( "jag.base.transform", "getMatrix4() called for 3x3 MODEL_VIEW_INV_TRANS." );
+            // Intentional fallthrough
+        case MODEL_VIEW_INV_TRANS_4:
+            return( getModelViewInvTrans4() );
+            break;
+        case PROJ_INV:
+            return( getProjInv() );
+            break;
+        case VIEW_INV:
+            return( getViewInv() );
+            break;
+        case MODEL_INV:
+            return( getModelInv() );
+            break;
+        case VIEW_PROJ_INV:
+            return( getViewProjInv() );
+            break;
+        case MODEL_VIEW_PROJ_INV:
+            return( getModelViewProjInv() );
+            break;
+        case MODEL_VIEW_INV:
+            return( getModelViewInv() );
+            break;
+        }
+    }
+    /** \brief Returns the 3x3 MODEL_VIEW_INV_TRANS matrix.
+    \details Requesting any other matrix will generate a warning. In the
+    furure, this function could support returning any matrix as orientation-only
+    (translation zeroed), but this is not currently supported. */
+    const M3TYPE& getMatrix3( const unsigned int matrix=MODEL_VIEW_INV_TRANS )
+    {
+        if( matrix != MODEL_VIEW_INV_TRANS )
+        {
+            JAG3D_WARNING_STATIC( "jag.base.transform", "getMatrix3(): matrix != MODEL_VIEW_INV_TRANS" );
+        }
+        return( getModelViewInvTrans() );
+    }
 
     const FTYPE& getFrustum()
     {
@@ -223,6 +287,26 @@ public:
             _dirty &= ~MODEL_VIEW_INV_TRANS;
         }
         return( _modelViewInvTrans );
+    }
+    /** \brief Get the 4x4 version of the MODEL_VIEW_INV_TRANS matrix.
+    \details Normally a 3x3 matrix, this function returns MODEL_VIEW_INV_TRANS
+    as a 4x4 matrix with final row and column set to zero and final element
+    set to 1. */
+    const M4TYPE& getModelViewInvTrans4()
+    {
+        if( _dirty & MODEL_VIEW_INV_TRANS_4 )
+        {
+            gmtl::transpose( _modelViewInvTrans4, getModelViewInv() );
+            _modelViewInvTrans4( 3, 0 ) =
+            _modelViewInvTrans4( 3, 1 ) =
+            _modelViewInvTrans4( 3, 2 ) =
+            _modelViewInvTrans4( 0, 3 ) =
+            _modelViewInvTrans4( 1, 3 ) =
+            _modelViewInvTrans4( 2, 3 ) = 0.;
+            _modelViewInvTrans4( 3, 3 ) = 1.;
+            _dirty &= ~MODEL_VIEW_INV_TRANS_4;
+        }
+        return( _modelViewInvTrans4 );
     }
 
     const M4TYPE& getProjInv()
@@ -291,6 +375,7 @@ protected:
     M4TYPE _modelViewProj;
     M4TYPE _modelView;
     M3TYPE _modelViewInvTrans;
+    M4TYPE _modelViewInvTrans4;
 
     M4TYPE _projInv;
     M4TYPE _viewInv;

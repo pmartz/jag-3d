@@ -366,6 +366,9 @@ void Uniform::execute( DrawInfo& drawInfo )
 
 void Uniform::setType( const GLenum type )
 {
+    if( _type == type )
+        return;
+
     _type = type;
     _isSampler = (
         ( _type == GL_SAMPLER_1D ) ||

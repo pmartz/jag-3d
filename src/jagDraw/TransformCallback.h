@@ -114,7 +114,7 @@ their values to shader code.
 
 There is some work still remaining to be done:
 
-\li The CollectionVisitor needs to be smarted about which jagDraw::Node objects
+\li The CollectionVisitor needs to be smarter about which jagDraw::Node objects
 actually get a reference to a TransformCallback. Ideally, the first Node that
 will be rendered during draw needs one, and subsequent Node objects need one only
 if their Transform (model matrix) changes. Currently, however, the COllectionVisitor
@@ -132,19 +132,46 @@ be made more efficient. We could allocate the Uniform on the stack, for example.
 /**@{*/
 
 
-/** \struct TransformCallback TransformCallback.h <TransformCallback/Node.h>
+/** \class TransformCallback TransformCallback.h <TransformCallback/Node.h>
 \brief A draw node execute callback that specifies transform uniforms.
 \details TBD */
-struct JAGDRAW_EXPORT TransformCallback : public jagDraw::Node::Callback
+class JAGDRAW_EXPORT TransformCallback : public jagDraw::Node::Callback
 {
+public:
     TransformCallback();
     TransformCallback( const TransformCallback& rhs );
     virtual ~TransformCallback();
 
     virtual bool operator()( jagDraw::Node& node, jagDraw::DrawInfo& drawInfo );
 
+    jagBase::TransformD& getTransform() { return( _transform ); }
+    const jagBase::TransformD& getTransform() const { return( _transform ); }
 
+    /** \brief Specify which matrices are sent as uniforms.
+    \details \c flags is from jagBase::Transform (VIEW_PROJ, MODEL_VIEW_PROJ, etc).
+    The default is MODEL_VIEW_PROJ | MODEL_VIEW | MODEL_VIEW_INV_TRANS ). */
+    void setRequiredMatrixUniforms( const unsigned int flags );
+    /** \brief Get flags for matrices that will be sent as uniforms. */
+    unsigned int getRequiredMatrixUniforms() const;
+
+    /** \brief Set the name that will be used for the specified matrix uniform.
+    \details TBD. */
+    void setMatrixUniformName( const unsigned int matrix, const std::string& name );
+    /** \brief Get the name that will be used for the specified matrix uniform.
+    \details TBD. */
+    std::string getMatrixUniformName( const unsigned int matrix ) const;
+    /** \brief Restore matrix uniform names to default values.
+    \details TBD. */
+    void setDefaultMatrixUniformNames();
+
+
+protected:
     jagBase::TransformD _transform;
+
+    unsigned int _requiredUniforms;
+
+    typedef std::map< unsigned int, std::string > UniformNameMap;
+    UniformNameMap _nameMap;
 };
 
 typedef jagBase::ptr< jagDraw::TransformCallback >::shared_ptr TransformCallbackPtr;
