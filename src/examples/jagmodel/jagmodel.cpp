@@ -142,12 +142,7 @@ bool JagModel::startup( const unsigned int numContexts )
     prog->attachShader( vs );
     prog->attachShader( fs );
 
-    jagDraw::CommandMapPtr commands( _root->getCommandMap() );
-    if( commands == NULL )
-    {
-        commands = jagDraw::CommandMapPtr( new jagDraw::CommandMap() );
-        _root->setCommandMap( commands );
-    }
+    jagDraw::CommandMapPtr commands( _root->getOrCreateCommandMap() );
     commands->insert( prog );
 
     // Set up lighting uniforms
