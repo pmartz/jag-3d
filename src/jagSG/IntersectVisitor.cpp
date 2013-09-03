@@ -194,8 +194,13 @@ void IntersectVisitor::intersect(jagSG::Node& node) {
 						
 						hitRecord hit;
 						hit.drawablePtr = node.getDrawable(i);
+						hit.dcp = dcp;
+						hit.vaop = vaop;
+						hit.tri = j;
 						hit.nodeVec = this->getNodes();
 						hit.hitPosition = rayf.getOrigin() + ((float)t)*rayf.getDir();
+						hit.u = u;
+						hit.v = v;
 						hits.push_back(hit);
 					}
 				}
