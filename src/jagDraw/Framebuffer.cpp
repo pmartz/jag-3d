@@ -71,20 +71,31 @@ void Framebuffer::execute( DrawInfo& drawInfo )
     if( anyDirty( contextID ) )
         attachAll( contextID );
 
-    // TBD need better support for this.
-    if( id == 0 )
-        glDrawBuffer( GL_BACK );
-    else
-        glDrawBuffer( GL_COLOR_ATTACHMENT0 );
+	// TBD need better support for this.
+	if( id == 0 )
+		glDrawBuffer( GL_BACK );
+	else {
 
-    if( _viewport )
+
+		std::vector<GLenum> buffers;
+		BOOST_FOREACH( AttachmentMap::value_type pair, _attachments ) 
+		{
+			buffers.push_back(pair.first);
+		}
+		glDrawBuffers(buffers.size(), &(buffers[0]));
+
+
+	}
+
+
+	if( _viewport )
         glViewport( _vpX, _vpY, _vpWidth, _vpHeight );
     if( _clear )
         glClear( _clearMask );
 
     JAG3D_FBO_ERROR_CHECK( "Framebuffer::execute()" );
     JAG3D_ERROR_CHECK( "Framebuffer::execute()" );
-}
+	}
 
 GLuint Framebuffer::getID( const jagDraw::jagDrawContextID contextID )
 {
