@@ -309,6 +309,11 @@ void convertMatrix( gmtl::Matrix44d& result, const NemoGraphics::Mat4f& in )
 
 void jagInit()
 {
+    const gmtl::Point3d jagCenter( jagRoot->getBound()->getCenter() );
+    const double radius( jagRoot->getBound()->getRadius() );
+    modelOffset = NemoGraphics::Vector3f( (float)jagCenter[0], (float)jagCenter[1], (float)jagCenter[2] );
+    viewPos.z *= ((float)radius * 1.75f);
+
     drawGraphTemplate.reset( new jagDraw::DrawGraph() );
     collect.setDrawGraphTemplate( drawGraphTemplate );
     drawGraphTemplate->resize( 1 );
