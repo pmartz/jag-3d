@@ -70,6 +70,11 @@ public:
         GLint& border, GLenum& format, GLenum& type,
         unsigned char** data );
 
+	void getDims(GLsizei& width, GLsizei& height) {
+		width = _width;
+		height = _height;
+	}
+
     /** \brief TBD
     \details TBD */
     void setCompressed( const GLint level, const GLenum internalFormat,

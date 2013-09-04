@@ -44,6 +44,10 @@ namespace jagSG {
 		jagSG::NodeVec nodeVec;
 		jagDraw::DrawablePtr drawablePtr;
 		gmtl::Point3f hitPosition;
+		jagDraw::VertexArrayObjectPtr vaop;
+		int tri;
+		jagDraw::DrawCommandPtr dcp;
+		float u, v;
 
 		//how do we decide type for the world coordinate point
 
