@@ -30,6 +30,7 @@
 #include <jagDraw/TransformCallback.h>
 #include <jagDraw/Uniform.h>
 #include <jagBase/ptr.h>
+#include <jagBase/gmtlSupport.h>
 
 
 namespace jagSG {
@@ -127,6 +128,26 @@ public:
     \details TBD */
     FrustumPlanes getFrustumPlanes() const;
 
+    typedef std::vector< gmtl::PlanedList > PlaneStack;
+
+    void pushPlanes()
+    {
+        gmtl::PlanedList& stackTop( _planeStack[ _planeStack.size()-1 ] );
+        _planeStack.push_back( stackTop );
+    }
+    void popPlanes()
+    {
+        _planeStack.pop_back();
+    }
+    void resetPlanes()
+    {
+        _planeStack.resize( 1 );
+    }
+    const PlaneStack& getPlanes() const
+    {
+        return( _planeStack );
+    }
+
 
     /** \brief TBD
     \details TBD */
@@ -137,8 +158,11 @@ public:
 
 
     /** \class CollectionInfo CollectionVisitor.h <jagBase/CollectionVisitor.h>
-    \brief TBD
-    \details TBD */
+    \brief Set of information passed to collection callbacks.
+    \details I'm starting to like this less and less. Seems like CollectionInfo
+    just has copies or references to info in the CollectionVisitor. Why not just
+    pass the CollectionVisitor to the collection callback?
+    This decision is TBD. */
     class JAGSG_EXPORT CollectionInfo : public Node::CallbackInfo
     {
     public:
@@ -148,7 +172,7 @@ public:
 
         /** \brief TBD
         \details Set by CollectionVisitor. */
-        void setFrustumPlanes( const FrustumPlanes _frustumPlanes );
+        void setFrustumPlanes( const FrustumPlanes frustumPlanes );
 
         /** \brief TBD
         \details Set by CollectionVisitor. */
@@ -190,7 +214,9 @@ protected:
 
     NearFarOps _nearFarOps;
     double _minECZ, _maxECZ;
+
     FrustumPlanes _frustumPlanes;
+    PlaneStack _planeStack;
 };
 
 typedef jagBase::ptr< jagSG::CollectionVisitor >::shared_ptr CollectionVisitorPtr;
