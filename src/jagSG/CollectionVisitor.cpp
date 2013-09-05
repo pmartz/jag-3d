@@ -341,6 +341,11 @@ CollectionVisitor::CollectionInfo::~CollectionInfo()
 {
 }
 
+void CollectionVisitor::CollectionInfo::setFrustumPlanes( const FrustumPlanes frustumPlanes )
+{
+    _frustumPlanes = frustumPlanes;
+}
+
 void CollectionVisitor::CollectionInfo::setBound( jagDraw::Bound* bound )
 {
     _ecDistanceDirty = true;
@@ -396,12 +401,10 @@ double CollectionVisitor::CollectionInfo::getWinCLength( double ecSegmentLength 
 bool CollectionVisitor::CollectionInfo::inFrustum() const
 {
     const jagBase::TransformD::FTYPE frustum( _transform.getFrustum() );
-    jagDraw::BoundPtr bound( _bound->clone() );
-    bound->transform( _transform.getModel() );
-    if( bound->getType() == jagDraw::Bound::Box_t )
-        return( gmtl::isInVolume( frustum, bound->asAABox() ) );
+    if( _bound->getType() == jagDraw::Bound::Box_t )
+        return( gmtl::isInVolume( frustum, _bound->asAABox() ) );
     else
-        return( gmtl::isInVolume( frustum, bound->asSphere() ) );
+        return( gmtl::isInVolume( frustum, _bound->asSphere() ) );
 }
 
 
