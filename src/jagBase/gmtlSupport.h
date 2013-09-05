@@ -3,6 +3,7 @@
 #define __JAGBASE_GMTL_SUPPORT_H__ 1
 
 #include <gmtl/gmtl.h>
+#include <list>
 
 
 namespace gmtl {
@@ -209,28 +210,91 @@ transform( const gmtl::Matrix<T,ROWS,COLS>& m, const gmtl::Sphere<T>& src )
 }
 
 
+/** \brief Containment test against list of planes.
+\details Compares \c s against the list of \c pl, removing planes
+that trivially accept \c s. This containment test is useful for
+hierarchical volume culling.
 
-/** \brief Check for potential containment.
-\details Returns true if the sphere is potentially inside the frustum.
-Returns false if the sphere is clearly outside the frustum.
-*/
-template<typename T>
-inline bool isPotentiallyContained(const Frustum<T>& f, const Sphere<T>& s)
+The code iterates over the elements of \c pl. If \c s is wholly
+outside of a plane (dot product considering radius is negative), iteration
+stops (no other planes are tested) and false is returned.
+
+If \c s is wholly within a plane (dot product considering radius is
+positive), the plane element is removed from the \c pl list.
+
+If all planes have been tested and \c s is not wholly outside any
+single plane, true is returned. Thus true is returned if any part of
+\c s is contained by the list of \c pl. */
+template< typename T >
+bool contains( std::list< gmtl::Plane< T > >& pl, const gmtl::Sphere< T >& s )
 {
-   for ( unsigned int i = 0; i < 6; ++i )
-   {
-      Vec<T, 3> norm( f.mPlanes[i].mNorm );
-      normalize( norm );
-      T dist = dot(norm, static_cast< Vec<T, 3> >(s.getCenter())) +
-          f.mPlanes[i].mOffset + T(s.getRadius());
-      if ( dist  < T(0.) )
-      {
-         return false;
-      }
-   }
-
-   return true;
+    std::list< gmtl::Plane< T > >::iterator it;
+    for( it = pl.begin(); it != pl.end(); ++it )
+    {
+        gmtl::Plane< T >& plane( *it );
+        T dist = gmtl::dot( plane.mNorm, static_cast< Vec<T, 3> >(s.getCenter())) + plane.mOffset;
+        if( dist <= -T(s.getRadius()) )
+        {
+            // Wholly outside the plane.
+            return( false );
+        }
+        if( dist >= T(s.getRadius()) )
+        {
+            // Wholly inside. Remove the plane from the list.
+            it = pl.erase( it );
+        }
+    }
+    // There were no complete rejections. Sphere is
+    // at least partially contained.
+    return( true );
 }
+/** \overload */
+template< typename T >
+bool contains( std::list< gmtl::Plane< T > >& pl, const gmtl::AABox< T >& b )
+{
+    const Point<T, 3>& min = b.getMin();
+    const Point<T, 3>& max = b.getMax();
+    Point<T, 3> p[8];
+    p[0] = min;
+    p[1] = max;
+    p[2] = Point<T, 3>(max[0], min[1], min[2]);
+    p[3] = Point<T, 3>(min[0], max[1], min[2]);
+    p[4] = Point<T, 3>(min[0], min[1], max[2]);
+    p[5] = Point<T, 3>(max[0], max[1], min[2]);
+    p[6] = Point<T, 3>(min[0], max[1], max[2]);
+    p[7] = Point<T, 3>(max[0], min[1], max[2]);
+
+    std::list< gmtl::Plane< T > >::iterator it;
+    for( it = p.begin(); it != p.end(); ++it )
+    {
+        gmtl::Plane< T >& plane( *it );
+        unsigned int neg( 0 ), pos( 0 );
+        for( unsigned int idx=0; idx<8; ++idx )
+        {
+            T dist = gmtl::dot( plane.mNorm, static_cast< Vec<T, 3> >(s.getCenter())) + plane.mOffset;
+            if( dist <= T( 0.0 ) )
+                ++neg;
+            else
+                ++pos;
+        }
+        if( pos == 0 )
+        {
+            // Wholly outside the plane.
+            return( false );
+        }
+        if( neg == 0 )
+        {
+            // Wholly inside. Remove the plane from the list.
+            it = p.erase( it );
+        }
+    }
+    // There were no complete rejections. Box is
+    // at least partially contained.
+    return( true );
+}
+
+typedef std::list< gmtl::Planef > PlanefList;
+typedef std::list< gmtl::Planed > PlanedList;
 
 
 // gmtl
