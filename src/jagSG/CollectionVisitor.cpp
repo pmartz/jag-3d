@@ -38,7 +38,7 @@ CollectionVisitor::CollectionVisitor()
   : Visitor( "collect" ),
     _currentNodes( NULL ),
     _nearFarOps( Default ),
-    _frustumPlanes( LeftRightTopBottomPlanes )
+    _frustumPlanes( LeftRightBottomTopPlanes )
 {
     reset();
 }
@@ -46,7 +46,7 @@ CollectionVisitor::CollectionVisitor( jagSG::Node& node )
   : Visitor( "collect" ),
     _currentNodes( NULL ),
     _nearFarOps( Default ),
-    _frustumPlanes( LeftRightTopBottomPlanes )
+    _frustumPlanes( LeftRightBottomTopPlanes )
 {
     reset();
     node.accept( *this );
@@ -85,6 +85,8 @@ void CollectionVisitor::reset()
 
     resetCommandMap();
     resetMatrix();
+
+    resetPlanes();
 
     // TBD This seems very bad that we're allocating a new one of
     // these in reset(), which means once per frame.
@@ -132,6 +134,7 @@ void CollectionVisitor::visit( jagSG::Node& node )
     _infoPtr->setNode( &node );
     jagDraw::BoundOwner* boundOwner( &node );
     _infoPtr->setBound( boundOwner->getBound( _commandStack.back() ).get() );
+    _infoPtr->setContainmentPlanes( getCurrentPlanes() );
     }
     Node::CallbackInfo* info( _infoPtr.get() );
 
@@ -157,6 +160,7 @@ void CollectionVisitor::visit( jagSG::Node& node )
 void CollectionVisitor::collectAndTraverse( jagSG::Node& node )
 {
     MatrixStackHelper msh( *this, node.getTransform() );
+    pushPlanes();
 
     {
     JAG3D_PROFILE( "collect operations" );
@@ -219,6 +223,7 @@ void CollectionVisitor::collectAndTraverse( jagSG::Node& node )
 
     Visitor::visit( node );
 
+    popPlanes();
     if( msh.getDirty() )
     {
         _transform.setModel( _matrixStack[ _matrixStack.size()-2 ] );
@@ -277,6 +282,7 @@ void CollectionVisitor::getNearFar( double& minECNear, double& maxECFar, const d
 void CollectionVisitor::setFrustumPlanes( const FrustumPlanes frustumPlanes )
 {
     _frustumPlanes = frustumPlanes;
+    resetPlanes();
 }
 CollectionVisitor::FrustumPlanes CollectionVisitor::getFrustumPlanes() const
 {
@@ -312,7 +318,6 @@ unsigned int CollectionVisitor::getCurrentNodeContainer() const
 CollectionVisitor::CollectionInfo::CollectionInfo( jagBase::TransformD& transform )
     : Node::CallbackInfo(),
       _transform( transform ),
-      _frustumPlanes( LeftRightTopBottomPlanes ),
       _bound( NULL )
     // Initialization of these variables is handled in setBound():
     //   _ecDistance
@@ -321,12 +326,14 @@ CollectionVisitor::CollectionInfo::CollectionInfo( jagBase::TransformD& transfor
     //   _ecRadiusDirty
     //   _wcLengthCoeff
     //   _wcLengthCoeffDirty
+    // Initialization of these variables is handled in setContainmentPlanes():
+    //   _planes
+    //   _indices
 {
 }
 CollectionVisitor::CollectionInfo::CollectionInfo( const CollectionInfo& rhs )
     : Node::CallbackInfo( rhs ),
       _transform( rhs._transform ),
-      _frustumPlanes( rhs._frustumPlanes ),
       _bound( rhs._bound )
     // Initialization of these variables is handled in setBound():
     //   _ecDistance
@@ -335,16 +342,15 @@ CollectionVisitor::CollectionInfo::CollectionInfo( const CollectionInfo& rhs )
     //   _ecRadiusDirty
     //   _wcLengthCoeff
     //   _wcLengthCoeffDirty
+    // Initialization of these variables is handled in setContainmentPlanes():
+    //   _planes
+    //   _indices
 {
 }
 CollectionVisitor::CollectionInfo::~CollectionInfo()
 {
 }
 
-void CollectionVisitor::CollectionInfo::setFrustumPlanes( const FrustumPlanes frustumPlanes )
-{
-    _frustumPlanes = frustumPlanes;
-}
 
 void CollectionVisitor::CollectionInfo::setBound( jagDraw::Bound* bound )
 {
@@ -398,13 +404,22 @@ double CollectionVisitor::CollectionInfo::getWinCLength( double ecSegmentLength 
     return( _wcLengthCoeff * ecSegmentLength );
 }
 
-bool CollectionVisitor::CollectionInfo::inFrustum() const
+void CollectionVisitor::CollectionInfo::setContainmentPlanes( CollectionVisitor::IndexList* indices )
+{
+    _indices = indices;
+
+    const gmtl::Frustumd& f( _transform.getFrustum() );
+    _planes.clear();
+    for( unsigned int idx=0; idx<6; ++idx )
+        _planes.push_back( f.mPlanes[ idx ] );
+}
+bool CollectionVisitor::CollectionInfo::isContained() const
 {
     const jagBase::TransformD::FTYPE frustum( _transform.getFrustum() );
     if( _bound->getType() == jagDraw::Bound::Box_t )
-        return( gmtl::isInVolume( frustum, _bound->asAABox() ) );
+        return( gmtl::contains( _planes, *_indices, _bound->asAABox() ) );
     else
-        return( gmtl::isInVolume( frustum, _bound->asSphere() ) );
+        return( gmtl::contains( _planes, *_indices, _bound->asSphere() ) );
 }
 
 

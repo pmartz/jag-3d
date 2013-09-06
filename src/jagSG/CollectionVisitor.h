@@ -111,15 +111,17 @@ public:
     \details TBD */
     void getNearFar( double& minECNear, double& maxECFar, const double ratio=( 1. / 2000. ) );
 
+    /** \brief TBD
+    \details Note: Shift amounts must match enumerants in GMTL Frustum.h */
     typedef enum {
-        LeftPlane = ( 0x1 << 0 ),
-        RightPlane = ( 0x1 << 1 ),
-        TopPlane = ( 0x1 << 2 ),
-        BottomPlane = ( 0x1 << 3 ),
-        NearPlane = ( 0x1 << 4 ),
-        FarPlane = ( 0x1 << 5 ),
-        LeftRightTopBottomPlanes = ( LeftPlane | RightPlane | TopPlane | BottomPlane ),
-        AllPlanes = ( LeftRightTopBottomPlanes | NearPlane | FarPlane )
+        LeftPlane = ( 0x1 << 0 ), // gmtl::Frustumd::PLANE_LEFT
+        RightPlane = ( 0x1 << 1 ), // gmtl::Frustumd::PLANE_RIGHT
+        BottomPlane = ( 0x1 << 2 ), // gmtl::Frustumd::PLANE_BOTTOM
+        TopPlane = ( 0x1 << 3 ), // gmtl::Frustumd::PLANE_TOP
+        NearPlane = ( 0x1 << 4 ), // gmtl::Frustumd::PLANE_NEAR
+        FarPlane = ( 0x1 << 5 ), // gmtl::Frustumd::PLANE_FAR
+        LeftRightBottomTopPlanes = ( LeftPlane | RightPlane | BottomPlane | TopPlane ),
+        AllPlanes = ( LeftRightBottomTopPlanes | NearPlane | FarPlane )
     } FrustumPlanes;
     /** \brief TBD
     \details TBD */
@@ -128,11 +130,13 @@ public:
     \details TBD */
     FrustumPlanes getFrustumPlanes() const;
 
-    typedef std::vector< gmtl::PlanedList > PlaneStack;
+    typedef std::list< unsigned int > IndexList;
+    typedef std::vector< IndexList > PlaneIndexStack;
+    typedef std::vector< gmtl::Planed > PlaneVec;
 
     void pushPlanes()
     {
-        gmtl::PlanedList& stackTop( _planeStack[ _planeStack.size()-1 ] );
+        const IndexList& stackTop( _planeStack[ _planeStack.size() - 1 ] );
         _planeStack.push_back( stackTop );
     }
     void popPlanes()
@@ -142,10 +146,21 @@ public:
     void resetPlanes()
     {
         _planeStack.resize( 1 );
+        IndexList& indices( _planeStack[ 0 ] );
+        indices.clear();
+        for( unsigned int bit=0; bit<6; ++bit )
+        {
+            if( ( _frustumPlanes & ( 0x1 << bit ) ) != 0 )
+                indices.push_back( bit );
+        }
     }
-    const PlaneStack& getPlanes() const
+    const PlaneIndexStack& getPlanes() const
     {
         return( _planeStack );
+    }
+    IndexList* getCurrentPlanes()
+    {
+        return( &( _planeStack[ _planeStack.size() - 1 ] ) );
     }
 
 
@@ -172,22 +187,21 @@ public:
 
         /** \brief TBD
         \details Set by CollectionVisitor. */
-        void setFrustumPlanes( const FrustumPlanes frustumPlanes );
-
-        /** \brief TBD
-        \details Set by CollectionVisitor. */
         void setBound( jagDraw::Bound* Bound );
 
         double getECBoundDistance() const;
         double getECBoundRadius() const;
         double getWinCLength( double ecSegmentLength ) const;
 
-        bool inFrustum() const;
+        /** \brief TBD
+        \details Set by CollectionVisitor. */
+        void setContainmentPlanes( IndexList* indices );
+        /** \brief Test bound against containment planes
+        \details TBD */
+        bool isContained() const;
 
     protected:
         jagBase::TransformD& _transform;
-
-        FrustumPlanes _frustumPlanes;
 
         jagDraw::Bound* _bound;
 
@@ -197,6 +211,9 @@ public:
         mutable bool _ecRadiusDirty;
         mutable double _wcLengthCoeff;
         mutable bool _wcLengthCoeffDirty;
+
+        PlaneVec _planes;
+        IndexList* _indices;
     };
     typedef jagBase::ptr< CollectionInfo >::shared_ptr CollectionInfoPtr;
 
@@ -216,7 +233,7 @@ protected:
     double _minECZ, _maxECZ;
 
     FrustumPlanes _frustumPlanes;
-    PlaneStack _planeStack;
+    PlaneIndexStack _planeStack;
 };
 
 typedef jagBase::ptr< jagSG::CollectionVisitor >::shared_ptr CollectionVisitorPtr;
