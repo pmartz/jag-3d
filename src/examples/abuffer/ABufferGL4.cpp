@@ -100,6 +100,7 @@ NemoGraphics::Vector2i moldpos;
 NemoGraphics::Vector3f viewPos(0.0, 0.0, -1.0);
 NemoGraphics::Vector3f viewOrient(0.0f, 0.0f, 0.0f);
 NemoGraphics::Vector3f modelOffset(-0.5f, -0.3f, -0.2f);	//Dragon
+float viewMoveRate( 1.f );
 //NemoGraphics::Vector3f viewOrient(0.0f, 200.0f, 0.0f);
 //NemoGraphics::Vector3f modelOffset(-0.53f, -0.2f, -0.35f);	//XYZRGB dragon
 bool mclicked;
@@ -309,6 +310,12 @@ void convertMatrix( gmtl::Matrix44d& result, const NemoGraphics::Mat4f& in )
 
 void jagInit()
 {
+    const gmtl::Point3d jagCenter( jagRoot->getBound()->getCenter() );
+    const double radius( jagRoot->getBound()->getRadius() );
+    modelOffset = NemoGraphics::Vector3f( -(float)jagCenter[0], -(float)jagCenter[1], -(float)jagCenter[2] );
+    viewPos.z *= ((float)radius * 1.75f);
+    viewMoveRate = (float)radius;
+
     drawGraphTemplate.reset( new jagDraw::DrawGraph() );
     collect.setDrawGraphTemplate( drawGraphTemplate );
     drawGraphTemplate->resize( 1 );
@@ -546,11 +553,15 @@ void keyboard(unsigned char key, int x, int y) {
 }
 
 
+unsigned int moveOp[] = { 1, 3, 2 };
 //Called when a mouse button is pressed or released
 void mouse_click(int button, int state, int x, int y){
 	mclicked=state;
 	moldpos=NemoGraphics::Vector2i(x, y);
-	mbutton=button;
+    if( state == GLUT_UP )
+	    mbutton ^= moveOp[button];
+    else if( state == GLUT_DOWN )
+	    mbutton |= moveOp[button];
 }
 
 //Called when a mouse move and a button is pressed
@@ -558,14 +569,14 @@ void mouse_motion(int x, int y){
 	NemoGraphics::Vector2i mmotion=NemoGraphics::Vector2i(x, y)-moldpos;
 	NemoGraphics::Vector2f mmotionf=NemoGraphics::Vector2f(mmotion)/NemoGraphics::Vector2f(windowSize);
 
-	if(mbutton==0){
+    if(mbutton==1){
 		viewOrient.x=viewOrient.x+mmotionf.y*100.0f;
 		viewOrient.y=viewOrient.y+mmotionf.x*100.0f;
-	}else if(mbutton==1){
+	}else if(mbutton==3){
 		viewPos.x=viewPos.x+mmotionf.x*1.0f;
 		viewPos.y=viewPos.y-mmotionf.y*1.0f;
 	}else if(mbutton==2){
-		viewPos.z=viewPos.z+mmotionf.y*1.0f;
+		viewPos.z=viewPos.z+mmotionf.y*viewMoveRate;
 	}
 	moldpos=NemoGraphics::Vector2i(x, y);
 }

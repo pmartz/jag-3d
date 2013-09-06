@@ -146,19 +146,20 @@ public:
     void setProj( const M4TYPE& proj )
     {
         _proj = proj;
-        _frustum.extractPlanes( _view, _proj );
         _dirty |= ALL_PROJ;
+        _frustum.extractPlanes( getModelView(), _proj );
     }
     void setView( const M4TYPE& view )
     {
         _view = view;
-        _frustum.extractPlanes( _view, _proj );
         _dirty |= ALL_VIEW;
+        _frustum.extractPlanes( getModelView(), _proj );
     }
     void setModel( const M4TYPE& model )
     {
         _model = model;
         _dirty |= ALL_MODEL;
+        _frustum.extractPlanes( getModelView(), _proj );
     }
     void setViewport( const int x, const int y, const int width, const int height )
     {

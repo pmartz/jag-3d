@@ -3,6 +3,8 @@
 #define __JAGBASE_GMTL_SUPPORT_H__ 1
 
 #include <gmtl/gmtl.h>
+#include <vector>
+#include <list>
 
 
 namespace gmtl {
@@ -209,28 +211,101 @@ transform( const gmtl::Matrix<T,ROWS,COLS>& m, const gmtl::Sphere<T>& src )
 }
 
 
+/** \brief Containment test against list of planes.
+\details Compares \c s against the vector of planes \c pl. Planes
+to test are specified by the list of \c indices. Indices are removed
+from the list when the indexed plane trivially accepts \c s. This
+containment test is useful for hierarchical volume culling.
 
-/** \brief Check for potential containment.
-\details Returns true if the sphere is potentially inside the frustum.
-Returns false if the sphere is clearly outside the frustum.
-*/
-template<typename T>
-inline bool isPotentiallyContained(const Frustum<T>& f, const Sphere<T>& s)
+The code iterates over the elements of \c indices. If \c s is wholly
+outside of the corresponding indexed plane (dot product considering
+radius is negative), iteration stops (no other planes are tested)
+and false is returned.
+
+If \c s is wholly within a plane (dot product considering radius is
+positive), the corresponding plane index is removed from \c indices.
+
+If all planes have been tested and \c s is not wholly outside any
+single plane, true is returned. Thus true is returned if any part of
+\c s is contained by the list of \c pl. */
+template< typename T >
+bool contains( const std::vector< gmtl::Plane< T > >& pl,
+              std::list< unsigned int >& indices,
+              const gmtl::Sphere< T >& s )
 {
-   for ( unsigned int i = 0; i < 6; ++i )
-   {
-      Vec<T, 3> norm( f.mPlanes[i].mNorm );
-      normalize( norm );
-      T dist = dot(norm, static_cast< Vec<T, 3> >(s.getCenter())) +
-          f.mPlanes[i].mOffset + T(s.getRadius());
-      if ( dist  < T(0.) )
-      {
-         return false;
-      }
-   }
-
-   return true;
+    std::list< unsigned int >::iterator it;
+    for( it = indices.begin(); it != indices.end(); )
+    {
+        const gmtl::Plane< T >& plane( pl[ *it ] );
+        T dist = gmtl::dot( plane.mNorm, static_cast< Vec<T, 3> >(s.getCenter())) + plane.mOffset;
+        if( dist <= -T(s.getRadius()) )
+        {
+            // Wholly outside the plane.
+            return( false );
+        }
+        if( dist >= T(s.getRadius()) )
+        {
+            // Wholly inside. Remove the plane from the list.
+            it = indices.erase( it );
+        }
+        else
+            ++it;
+    }
+    // There were no complete rejections. Sphere is
+    // at least partially contained.
+    return( true );
 }
+/** \overload */
+template< typename T >
+bool contains( const std::vector< gmtl::Plane< T > >& pl,
+              std::list< unsigned int >& indices,
+              const gmtl::AABox< T >& b )
+{
+    const Point<T, 3>& min = b.getMin();
+    const Point<T, 3>& max = b.getMax();
+    Point<T, 3> p[8];
+    p[0] = min;
+    p[1] = max;
+    p[2] = Point<T, 3>(max[0], min[1], min[2]);
+    p[3] = Point<T, 3>(min[0], max[1], min[2]);
+    p[4] = Point<T, 3>(min[0], min[1], max[2]);
+    p[5] = Point<T, 3>(max[0], max[1], min[2]);
+    p[6] = Point<T, 3>(min[0], max[1], max[2]);
+    p[7] = Point<T, 3>(max[0], min[1], max[2]);
+
+    std::list< unsigned int >::iterator it;
+    for( it = indices.begin(); it != indices.end(); )
+    {
+        const gmtl::Plane< T >& plane( pl[ *it ] );
+        unsigned int neg( 0 ), pos( 0 );
+        for( unsigned int idx=0; idx<8; ++idx )
+        {
+            T dist = gmtl::dot( plane.mNorm, p[ idx ] ) + plane.mOffset;
+            if( dist <= T( 0.0 ) )
+                ++neg;
+            else
+                ++pos;
+        }
+        if( pos == 0 )
+        {
+            // Wholly outside the plane.
+            return( false );
+        }
+        if( neg == 0 )
+        {
+            // Wholly inside. Remove the plane from the list.
+            it = indices.erase( it );
+        }
+        else
+            ++it;
+    }
+    // There were no complete rejections. Box is
+    // at least partially contained.
+    return( true );
+}
+
+typedef std::vector< gmtl::Planef > PlanefVec;
+typedef std::vector< gmtl::Planed > PlanedVec;
 
 
 // gmtl

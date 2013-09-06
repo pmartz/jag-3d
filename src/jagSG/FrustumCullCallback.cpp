@@ -22,6 +22,7 @@
 #include <jagSG/Node.h>
 #include <jagSG/Visitor.h>
 #include <jagSG/CollectionVisitor.h>
+#include <jagBase/Profile.h>
 
 
 namespace jagSG {
@@ -44,10 +45,12 @@ FrustumCullCallback::~FrustumCullCallback()
 
 bool FrustumCullCallback::operator()( jagSG::VisitorBase* /* visitor */, jagSG::Node::CallbackInfo* info )
 {
+    JAG3D_PROFILE( "frustum" );
+
     jagSG::CollectionVisitor::CollectionInfo* ci( static_cast<
         jagSG::CollectionVisitor::CollectionInfo* >( info ) );
 
-    return( ci->inFrustum() );
+    return( ci->isContained() );
 }
 
 
