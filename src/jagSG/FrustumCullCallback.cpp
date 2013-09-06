@@ -50,7 +50,7 @@ bool FrustumCullCallback::operator()( jagSG::VisitorBase* /* visitor */, jagSG::
     jagSG::CollectionVisitor::CollectionInfo* ci( static_cast<
         jagSG::CollectionVisitor::CollectionInfo* >( info ) );
 
-    return( ci->inFrustum() );
+    return( ci->isContained() );
 }
 
 
