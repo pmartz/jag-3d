@@ -46,23 +46,23 @@ recursive call sequence:
 <table border="0">
   <tr>
     <th><b>Node</b></th>
-	<th><b>VisitorBase</b></th>
+    <th><b>VisitorBase</b></th>
   </tr>
   <tr>
     <td>Node::accept()</td>
-	<td></td>
+    <td></td>
   </tr>
   <tr>
-	<td></td>
-	<td>VisitorBase::visit()</td>
+    <td></td>
+    <td>VisitorBase::visit()</td>
   </tr>
   <tr>
-	<td>Node::traverse()</td>
-	<td></td>
+    <td>Node::traverse()</td>
+    <td></td>
   </tr>
   <tr>
-	<td>Node::accept()</td>
-	<td>etc...</td>
+    <td>Node::accept()</td>
+    <td>etc...</td>
   </tr>
 </table>
 

@@ -59,7 +59,7 @@ class VisitorBase;
 \details TBD
 */
 class JAGSG_EXPORT Node : protected jagBase::LogBase,
-		public jagBase::UserDataOwner, 
+        public jagBase::UserDataOwner, 
         public jagDraw::ObjectIDOwner,
         public jagDraw::BoundOwner,
         public SHARED_FROM_THIS(Node)

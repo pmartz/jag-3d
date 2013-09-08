@@ -147,8 +147,8 @@ void Log::setPriority( int prio, const DestinationType dest, const std::string& 
         if( _console == NULL )
         {
             _console = new Poco::FormattingChannel( new Poco::PatternFormatter("%s: %t") );
-	        _console->setChannel( new Poco::ConsoleChannel );
-	        _console->open();
+            _console->setChannel( new Poco::ConsoleChannel );
+            _console->open();
         }
         logger.setChannel( _console );
     }
