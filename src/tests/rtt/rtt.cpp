@@ -97,7 +97,7 @@ jagDraw::DrawablePtr RttDemo::makeSceneDrawable(
     vs->addSourceString( std::string( vertShader ) );
 
 
-	//this now uses multiple inputs. This may not work at version 150 where it may have to be ifdeffed to use gl_Fragdata[]
+    //this now uses multiple inputs. This may not work at version 150 where it may have to be ifdeffed to use gl_Fragdata[]
     const char* fragShader =
 #if( POCO_OS == POCO_OS_MAC_OS_X )
         // In OSX 10.7/10.8, use GL 3.2 and GLSL 1.50
@@ -105,11 +105,11 @@ jagDraw::DrawablePtr RttDemo::makeSceneDrawable(
 #else
         "#version 400 \n"
 #endif
-		"layout (location = 0) out vec4 colorOut; \n"
-		"layout (location = 1) out vec4 colorOut2; \n"
+        "layout (location = 0) out vec4 colorOut; \n"
+        "layout (location = 1) out vec4 colorOut2; \n"
         "void main() { \n"
         "    colorOut = vec4( .5, .0, .0, 1.0 ); \n"
-		"    colorOut2 = vec4( .0, .5, .5, 1.0 ); \n"
+        "    colorOut2 = vec4( .0, .5, .5, 1.0 ); \n"
         "}";
     jagDraw::ShaderPtr fs( new jagDraw::Shader( GL_FRAGMENT_SHADER ) );
     fs->addSourceString( std::string( fragShader ) );
@@ -182,10 +182,10 @@ bool RttDemo::startup( const unsigned int numContexts )
     _textureFBO->setViewport( 0, 0, _texWidth, _texHeight );
     _textureFBO->setClear( GL_COLOR_BUFFER_BIT );
     _textureFBO->addAttachment( GL_COLOR_ATTACHMENT0, tex );
-	
+    
 
-	//create the second texture to render into
-	jagDraw::ImagePtr image2( new jagDraw::Image() );
+    //create the second texture to render into
+    jagDraw::ImagePtr image2( new jagDraw::Image() );
     image2->set( 0, GL_RGBA, _texWidth, _texHeight, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL );
     jagDraw::TexturePtr tex2( new jagDraw::Texture( GL_TEXTURE_2D, image2,
         jagDraw::SamplerPtr( new jagDraw::Sampler() ) ) );
@@ -193,7 +193,7 @@ bool RttDemo::startup( const unsigned int numContexts )
 
     // attach the second texture
     _textureFBO->addAttachment( GL_COLOR_ATTACHMENT1, tex2 );
-	
+    
 
     // Render the lines first.
     jagDraw::CommandMapPtr rttCommands( jagDraw::CommandMapPtr( new jagDraw::CommandMap( *commands ) ) );
@@ -233,7 +233,7 @@ bool RttDemo::startup( const unsigned int numContexts )
             "out vec4 colorOut; \n"
             "void main() { \n"
             //"    colorOut = texture2D( texture, tcOut ); \n"
-			"    colorOut = texture2D( texture, tcOut )+texture2D(texture2, tcOut);// + vec4( .5, 0., 0., 0. ); \n"
+            "    colorOut = texture2D( texture, tcOut )+texture2D(texture2, tcOut);// + vec4( .5, 0., 0., 0. ); \n"
             //"    colorOut = vec4( tcOut, 0., 1. ); \n"
             "}";
         jagDraw::ShaderPtr fs( new jagDraw::Shader( GL_FRAGMENT_SHADER ) );
@@ -274,18 +274,18 @@ bool RttDemo::startup( const unsigned int numContexts )
 
         // And a uniform for each sampler / texture unit.
         jagDraw::UniformPtr textureUniform( new jagDraw::Uniform( "texture", GL_SAMPLER_2D, (GLint)0 ) );
-		jagDraw::UniformPtr textureUniform2( new jagDraw::Uniform( "texture2", GL_SAMPLER_2D, (GLint)1 ) );
+        jagDraw::UniformPtr textureUniform2( new jagDraw::Uniform( "texture2", GL_SAMPLER_2D, (GLint)1 ) );
 
 
         jagDraw::UniformSetPtr uniformSet( jagDraw::UniformSetPtr( new jagDraw::UniformSet() ) );
         (*uniformSet)[ textureUniform->getNameHash() ] = textureUniform;
-		(*uniformSet)[ textureUniform2->getNameHash() ] = textureUniform2;
+        (*uniformSet)[ textureUniform2->getNameHash() ] = textureUniform2;
 
         jagDraw::TextureSetPtr textureSet( jagDraw::TextureSetPtr( new jagDraw::TextureSet() ) );
 
-		//add both textures to the texture set
+        //add both textures to the texture set
         (*textureSet)[ GL_TEXTURE0 ] = tex2;
-		 (*textureSet)[ GL_TEXTURE1 ] = tex;
+         (*textureSet)[ GL_TEXTURE1 ] = tex;
 
         jagDraw::CommandMapPtr quadCommands( jagDraw::CommandMapPtr( new jagDraw::CommandMap() ) );
         quadCommands->insert( prog );

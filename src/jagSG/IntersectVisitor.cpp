@@ -111,10 +111,10 @@ using namespace gmtl;
    }
 
 namespace jagSG {
-	
+    
 
-	
-	
+    
+    
 
 
 IntersectVisitor::IntersectVisitor( jagSG::NodePtr node, gmtl::Ray<double> ray )
@@ -122,7 +122,7 @@ IntersectVisitor::IntersectVisitor( jagSG::NodePtr node, gmtl::Ray<double> ray )
     
 {
     reset();
-	currentRay = ray;
+    currentRay = ray;
     node->accept( *this );
 }
 IntersectVisitor::IntersectVisitor( const IntersectVisitor& rhs )
@@ -139,106 +139,106 @@ IntersectVisitor::~IntersectVisitor()
 
 
 void IntersectVisitor::intersect(jagSG::Node& node) {
-		numNodes++;
-	
-	if(_rayDeque.size() <1)  
-		_rayDeque.push_back(currentRay);
-	else
-		_rayDeque.push_back(_rayDeque.back());
+        numNodes++;
+    
+    if(_rayDeque.size() <1)  
+        _rayDeque.push_back(currentRay);
+    else
+        _rayDeque.push_back(_rayDeque.back());
 
-		//2. transform the current ray by the inverse of the transform
-		gmtl::Matrix44d tMat = node.getTransform();
-		gmtl::xform(_rayDeque.back(), gmtl::invert(tMat), _rayDeque.back());
-		gmtl::Rayf rayf;
+        //2. transform the current ray by the inverse of the transform
+        gmtl::Matrix44d tMat = node.getTransform();
+        gmtl::xform(_rayDeque.back(), gmtl::invert(tMat), _rayDeque.back());
+        gmtl::Rayf rayf;
 
-		//copy the transformed ray to a float version of the same ray
-		rayf.mDir[0] = _rayDeque.back().mDir[0];
-		rayf.mDir[1] = _rayDeque.back().mDir[1];
-		rayf.mDir[2] = _rayDeque.back().mDir[2];
+        //copy the transformed ray to a float version of the same ray
+        rayf.mDir[0] = _rayDeque.back().mDir[0];
+        rayf.mDir[1] = _rayDeque.back().mDir[1];
+        rayf.mDir[2] = _rayDeque.back().mDir[2];
 
-		rayf.mOrigin[0] = _rayDeque.back().mOrigin[0];
-		rayf.mOrigin[1] = _rayDeque.back().mOrigin[1];
-		rayf.mOrigin[2] = _rayDeque.back().mOrigin[2];
+        rayf.mOrigin[0] = _rayDeque.back().mOrigin[0];
+        rayf.mOrigin[1] = _rayDeque.back().mOrigin[1];
+        rayf.mOrigin[2] = _rayDeque.back().mOrigin[2];
 
-		int oldNumHits = hits.size();
-	
-		node.traverse(*this);
-		if(node.getNumDrawables() > 0) {
-		
-		 const jagDraw::DrawablePrepPtr& drawablePrep( _commandStack.back()[ jagDraw::DrawablePrep::VertexArrayObject_t ] );
-	     const jagDraw::VertexArrayObjectPtr vaop( boost::static_pointer_cast< jagDraw::VertexArrayObject >( drawablePrep ) );
-		
+        int oldNumHits = hits.size();
+    
+        node.traverse(*this);
+        if(node.getNumDrawables() > 0) {
+        
+         const jagDraw::DrawablePrepPtr& drawablePrep( _commandStack.back()[ jagDraw::DrawablePrep::VertexArrayObject_t ] );
+         const jagDraw::VertexArrayObjectPtr vaop( boost::static_pointer_cast< jagDraw::VertexArrayObject >( drawablePrep ) );
+        
 
-		  jagDraw::BufferObjectPtr bop( boost::dynamic_pointer_cast< jagDraw::BufferObject >(
+          jagDraw::BufferObjectPtr bop( boost::dynamic_pointer_cast< jagDraw::BufferObject >(
         vaop->getVertexArrayCommand( jagDraw::VertexArrayCommand::BufferObject_t, jagDraw::VertexArrayObject::Vertex ) ) );
-		   
+           
     jagDraw::VertexAttribPtr verts( boost::dynamic_pointer_cast< jagDraw::VertexAttrib >(
         vaop->getVertexArrayCommand( jagDraw::VertexArrayCommand::VertexAttrib_t, jagDraw::VertexArrayObject::Vertex ) ) );
-		//3. intersect the triangles with the ray and record the hits
+        //3. intersect the triangles with the ray and record the hits
 
-	
-		for(auto i = 0; i < node.getNumDrawables(); i++) {
-			jagDraw::DrawCommandVec drawCommands = node.getDrawable(i)->getDrawCommandVec();
-			BOOST_FOREACH( jagDraw::DrawCommandPtr dcp, drawCommands )
-			{
-				jagDraw::TriangleSurfer<gmtl::Point3f> ts(bop,verts,dcp);
-				Point3f  *a, *b, *c;
-				double u, v, t;
-				numTriangles+=ts.getNumTriangles();
-				numDrawables++;
-				for(auto j = 0; j < ts.getNumTriangles(); j++) {
-					
-					ts.getTriangle(j, a, b, c);
-				
-					if(intersectLocal(*a, *b, *c,rayf, u, v, t)) {
-						
-						hitRecord hit;
-						hit.drawablePtr = node.getDrawable(i);
-						hit.dcp = dcp;
-						hit.vaop = vaop;
-						hit.tri = j;
-						hit.nodeVec = this->getNodes();
-						hit.hitPosition = rayf.getOrigin() + ((float)t)*rayf.getDir();
-						hit.u = u;
-						hit.v = v;
-						hits.push_back(hit);
-					}
-				}
-				
-			}
-		}
-		
-		}
-		
+    
+        for(auto i = 0; i < node.getNumDrawables(); i++) {
+            jagDraw::DrawCommandVec drawCommands = node.getDrawable(i)->getDrawCommandVec();
+            BOOST_FOREACH( jagDraw::DrawCommandPtr dcp, drawCommands )
+            {
+                jagDraw::TriangleSurfer<gmtl::Point3f> ts(bop,verts,dcp);
+                Point3f  *a, *b, *c;
+                double u, v, t;
+                numTriangles+=ts.getNumTriangles();
+                numDrawables++;
+                for(auto j = 0; j < ts.getNumTriangles(); j++) {
+                    
+                    ts.getTriangle(j, a, b, c);
+                
+                    if(intersectLocal(*a, *b, *c,rayf, u, v, t)) {
+                        
+                        hitRecord hit;
+                        hit.drawablePtr = node.getDrawable(i);
+                        hit.dcp = dcp;
+                        hit.vaop = vaop;
+                        hit.tri = j;
+                        hit.nodeVec = this->getNodes();
+                        hit.hitPosition = rayf.getOrigin() + ((float)t)*rayf.getDir();
+                        hit.u = u;
+                        hit.v = v;
+                        hits.push_back(hit);
+                    }
+                }
+                
+            }
+        }
+        
+        }
+        
 
 
-		//4. pass the transformed ray to all children
-		//in this case the recursion is handle by the ray stack and not by an explicit passign parameter
-		gmtl::Matrix44f matf;
-		for (auto i = 0; i < 16; i++) {
+        //4. pass the transformed ray to all children
+        //in this case the recursion is handle by the ray stack and not by an explicit passign parameter
+        gmtl::Matrix44f matf;
+        for (auto i = 0; i < 16; i++) {
 
-			matf.mData[i] = node.getTransform().mData[i];
-		}
-		
-		//4. transform all hits(at this level or lower) by the transform
-			for(auto i = oldNumHits; i < hits.size(); i++) {
-				
-				gmtl::xform(hits[i].hitPosition, matf, hits[i].hitPosition);
-				
-				
-			}
-		_rayDeque.pop_back();
+            matf.mData[i] = node.getTransform().mData[i];
+        }
+        
+        //4. transform all hits(at this level or lower) by the transform
+            for(auto i = oldNumHits; i < hits.size(); i++) {
+                
+                gmtl::xform(hits[i].hitPosition, matf, hits[i].hitPosition);
+                
+                
+            }
+        _rayDeque.pop_back();
 
-		
-		
+        
+        
 }
 
 void IntersectVisitor::reset()
 {
     JAG3D_TRACE( "reset()" );
-	numTriangles = 0;
-	numNodes = 0;
-	numDrawables = 0;
+    numTriangles = 0;
+    numNodes = 0;
+    numDrawables = 0;
     resetCommandMap();
     resetMatrix();
 

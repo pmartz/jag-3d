@@ -4,11 +4,11 @@
 
 
 //Number of layers in the A-Buffer
-#define ABUFFER_SIZE			16
+#define ABUFFER_SIZE            16
 //Mesh is loaded from a raw file instead of a formated file->requires assimp
-#define LOAD_RAW_MESH			1
+#define LOAD_RAW_MESH            1
 
-#define ABUFFER_PAGE_SIZE		4
+#define ABUFFER_PAGE_SIZE        4
 
 //Parameters
 enum ABufferAlgorithm{ABuffer_Basic, ABuffer_LinkedList};

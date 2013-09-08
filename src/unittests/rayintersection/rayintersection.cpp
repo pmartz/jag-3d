@@ -107,34 +107,34 @@ bool test()
 
 
 
-		std::cout << "testing a simple case of a ray intersection test" << std::endl;
-		{
-			NodePtr root( new Node() );
+        std::cout << "testing a simple case of a ray intersection test" << std::endl;
+        {
+            NodePtr root( new Node() );
             root->addChild( createQuad( gmtl::Point3f( 0., 0., 0. ), 10.f ) );
 
-			jagSG::IntersectVisitor iv(root, gmtl::Ray<double>(gmtl::Point3d(1,0,10), gmtl::Point3d(0,0,-1)));
+            jagSG::IntersectVisitor iv(root, gmtl::Ray<double>(gmtl::Point3d(1,0,10), gmtl::Point3d(0,0,-1)));
 
 
-			for(auto i = 0; i < iv.getHits().size(); i++)
-				std::cout << iv.getHits()[i].hitPosition << std::endl;
+            for(auto i = 0; i < iv.getHits().size(); i++)
+                std::cout << iv.getHits()[i].hitPosition << std::endl;
 
 
-		}
+        }
 
-		std::cout << "testing a graph with multiple levels" << std::endl;
-		{
-			NodePtr root( new Node() );
-			NodePtr xform = NodePtr(new Node());
-			root->addChild( xform);
-			xform->setTransform(gmtl::makeTrans<gmtl::Matrix44d>(gmtl::Vec3d(0,1.5,0)));
+        std::cout << "testing a graph with multiple levels" << std::endl;
+        {
+            NodePtr root( new Node() );
+            NodePtr xform = NodePtr(new Node());
+            root->addChild( xform);
+            xform->setTransform(gmtl::makeTrans<gmtl::Matrix44d>(gmtl::Vec3d(0,1.5,0)));
             xform->addChild( createQuad( gmtl::Point3f( 0., 0., 0. ), 10.f ) );
 
-			jagSG::IntersectVisitor iv(root, gmtl::Ray<double>(gmtl::Point3d(1,0,10), gmtl::Point3d(0,0,-1)));
+            jagSG::IntersectVisitor iv(root, gmtl::Ray<double>(gmtl::Point3d(1,0,10), gmtl::Point3d(0,0,-1)));
 
 
-			for(auto i = 0; i < iv.getHits().size(); i++)
-				std::cout << iv.getHits()[i].hitPosition << std::endl;
-		}
+            for(auto i = 0; i < iv.getHits().size(); i++)
+                std::cout << iv.getHits()[i].hitPosition << std::endl;
+        }
 
         std::cout << "Testing: Single quad accept using non-modified NodeMask (default is true)..." << std::endl;
         {
@@ -173,8 +173,8 @@ bool test()
             root->addChild( createQuad( gmtl::Point3f( 0., 0., 0. ), 10.f ) );
 
             // Second quad is in the same place but has it's NodeMask set to false
-			NodePtr second = createQuad( gmtl::Point3f( 0., 0., 0. ), 10.f );
-			second->setNodeMask(false);
+            NodePtr second = createQuad( gmtl::Point3f( 0., 0., 0. ), 10.f );
+            second->setNodeMask(false);
             root->addChild( second );
 
             NodeMaskCullDistributionVisitor fcdv;
@@ -196,21 +196,21 @@ bool test()
             }
         }
 
-		cv.reset();
+        cv.reset();
         std::cout << "Testing: ten quads quads, nine with the mask set to true and one with the nodemask set to false ..." << std::endl;
         {
             NodePtr root( new Node() );
             //root->addChild( createQuad( gmtl::Point3f( 0., 0., 0. ), 10.f ) );
 
             // All but the fifth child have the nodemask set to true explicitly
-			for(unsigned int i = 0; i < 10; i++) {
-				NodePtr child = createQuad( gmtl::Point3f( 0., 0., 0. ), 10.f );
-				if(i==4)
-					child->setNodeMask(false);
-				else
-					child->setNodeMask(true);
-				root->addChild( child );
-			}
+            for(unsigned int i = 0; i < 10; i++) {
+                NodePtr child = createQuad( gmtl::Point3f( 0., 0., 0. ), 10.f );
+                if(i==4)
+                    child->setNodeMask(false);
+                else
+                    child->setNodeMask(true);
+                root->addChild( child );
+            }
 
             NodeMaskCullDistributionVisitor fcdv;
             root->accept( fcdv );

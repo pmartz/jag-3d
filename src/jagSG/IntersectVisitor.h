@@ -40,19 +40,19 @@
 namespace jagSG {
 
 
-	struct hitRecord {
-		jagSG::NodeVec nodeVec;
-		jagDraw::DrawablePtr drawablePtr;
-		gmtl::Point3f hitPosition;
-		jagDraw::VertexArrayObjectPtr vaop;
-		int tri;
-		jagDraw::DrawCommandPtr dcp;
-		float u, v;
+    struct hitRecord {
+        jagSG::NodeVec nodeVec;
+        jagDraw::DrawablePtr drawablePtr;
+        gmtl::Point3f hitPosition;
+        jagDraw::VertexArrayObjectPtr vaop;
+        int tri;
+        jagDraw::DrawCommandPtr dcp;
+        float u, v;
 
-		//how do we decide type for the world coordinate point
+        //how do we decide type for the world coordinate point
 
 
-	};
+    };
 
 /** \class IntersectVisitor IntersectVisitor.h <jagSG/IntersectVisitor.h>
 \brief TBD
@@ -61,7 +61,7 @@ namespace jagSG {
 class JAGSG_EXPORT IntersectVisitor : public Visitor
 {
 public:
-	IntersectVisitor();
+    IntersectVisitor();
     IntersectVisitor( jagSG::NodePtr node, gmtl::Ray<double> ray );
     IntersectVisitor( const IntersectVisitor& rhs );
     virtual ~IntersectVisitor();
@@ -78,15 +78,15 @@ public:
     \details TBD */
     virtual void visit( jagSG::Node& node ) {
         CommandMapStackHelper cmdh( *this, node.getCommandMap() );
-		MatrixStackHelper msh( *this, node.getTransform() );
-		intersect(node);
-		checkMaskAndTraverse(node);
-	}
+        MatrixStackHelper msh( *this, node.getTransform() );
+        intersect(node);
+        checkMaskAndTraverse(node);
+    }
 
 
-	std::vector<hitRecord> getHits() {
-		return hits;
-	}
+    std::vector<hitRecord> getHits() {
+        return hits;
+    }
     
 
     
@@ -94,31 +94,31 @@ public:
 
     
 
-	int getNumTriangles() { return numTriangles;}
+    int getNumTriangles() { return numTriangles;}
 
 
-	int getNumNodes() { return numNodes;}
-	int getNumDrawables() { return numDrawables;}
+    int getNumNodes() { return numNodes;}
+    int getNumDrawables() { return numDrawables;}
 
   
 
 protected:
     
-	void checkMaskAndTraverse(jagSG::Node& node) {
-	}
-	void pushRay( gmtl::Ray<double> );
-	void popRay();
-	void intersect(jagSG::Node& node);
+    void checkMaskAndTraverse(jagSG::Node& node) {
+    }
+    void pushRay( gmtl::Ray<double> );
+    void popRay();
+    void intersect(jagSG::Node& node);
     unsigned int _currentID;
     
 
     jagBase::TransformD _transform;
-	std::vector<hitRecord> hits;
-	std::deque< gmtl::Ray<double> > _rayDeque;
-	gmtl::Ray<double> currentRay;
-	int numTriangles;
-	int numNodes;
-	int numDrawables;
+    std::vector<hitRecord> hits;
+    std::deque< gmtl::Ray<double> > _rayDeque;
+    gmtl::Ray<double> currentRay;
+    int numTriangles;
+    int numNodes;
+    int numDrawables;
 };
 
 typedef jagBase::ptr< jagSG::IntersectVisitor >::shared_ptr IntersectVisitorPtr;

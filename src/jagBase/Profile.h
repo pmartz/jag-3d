@@ -116,15 +116,15 @@ protected:
 class JAGBASE_EXPORT ProfileSample
 {
 public:
-	ProfileSample( const char * name )
-	{
-		ProfileManager::instance()->startProfile( name ); 
-	}
+    ProfileSample( const char * name )
+    {
+        ProfileManager::instance()->startProfile( name ); 
+    }
 
-	~ProfileSample( void )					
-	{
-		ProfileManager::instance()->stopProfile(); 
-	}
+    ~ProfileSample( void )                    
+    {
+        ProfileManager::instance()->stopProfile(); 
+    }
 };
 
 
@@ -200,12 +200,12 @@ protected:
 
 
 
-#define	JAG3D_PROFILE( name ) jagBase::ProfileSample __profile( name )
+#define    JAG3D_PROFILE( name ) jagBase::ProfileSample __profile( name )
 
 // JAG3D_ENABLE_PROFILING
 #else
 
-#define	JAG3D_PROFILE( name )
+#define    JAG3D_PROFILE( name )
 
 // JAG3D_ENABLE_PROFILING
 #endif

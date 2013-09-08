@@ -140,8 +140,8 @@ bool test()
             root->addChild( createQuad( gmtl::Point3f( 0., 0., 0. ), 10.f ) );
 
             // Second quad is in the same place but has it's NodeMask set to false
-			NodePtr second = createQuad( gmtl::Point3f( 0., 0., 0. ), 10.f );
-			second->setNodeMask(false);
+            NodePtr second = createQuad( gmtl::Point3f( 0., 0., 0. ), 10.f );
+            second->setNodeMask(false);
             root->addChild( second );
 
             NodeMaskCullDistributionVisitor fcdv;
@@ -163,21 +163,21 @@ bool test()
             }
         }
 
-		cv.reset();
+        cv.reset();
         std::cout << "Testing: ten quads quads, nine with the mask set to true and one with the nodemask set to false ..." << std::endl;
         {
             NodePtr root( new Node() );
             //root->addChild( createQuad( gmtl::Point3f( 0., 0., 0. ), 10.f ) );
 
             // All but the fifth child have the nodemask set to true explicitly
-			for(unsigned int i = 0; i < 10; i++) {
-				NodePtr child = createQuad( gmtl::Point3f( 0., 0., 0. ), 10.f );
-				if(i==4)
-					child->setNodeMask(false);
-				else
-					child->setNodeMask(true);
-				root->addChild( child );
-			}
+            for(unsigned int i = 0; i < 10; i++) {
+                NodePtr child = createQuad( gmtl::Point3f( 0., 0., 0. ), 10.f );
+                if(i==4)
+                    child->setNodeMask(false);
+                else
+                    child->setNodeMask(true);
+                root->addChild( child );
+            }
 
             NodeMaskCullDistributionVisitor fcdv;
             root->accept( fcdv );

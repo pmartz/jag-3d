@@ -47,7 +47,7 @@ bool NodeMaskCullCallback::operator()( jagSG::VisitorBase* /* visitor */, jagSG:
     jagSG::CollectionVisitor::CollectionInfo* ci( static_cast<
         jagSG::CollectionVisitor::CollectionInfo* >( info ) );
 
-	return( ci->getNode()->getNodeMask() );
+    return( ci->getNode()->getNodeMask() );
 }
 
 

@@ -29,7 +29,7 @@ set( _dxHeaders )
 set( _dxSources )
 set( _dxLibrary )
 if( DIRECTINPUT_FOUND )
-	add_definitions(-DDIRECTINPUT_ENABLED)
+    add_definitions(-DDIRECTINPUT_ENABLED)
     include_directories( ${DIRECTINPUT_INCLUDE_DIR} )
     set( _dxHeaders
         MxGamePadDX.h

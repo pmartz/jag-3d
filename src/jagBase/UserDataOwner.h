@@ -53,32 +53,32 @@ TBD Included are several helper functions for common uses of userData. These may
 */
 class UserDataOwner {
 public:
-	UserDataOwner() {}
-	UserDataOwner( const UserDataOwner& rhs )
+    UserDataOwner() {}
+    UserDataOwner( const UserDataOwner& rhs )
       : _userData( rhs._userData ) 
     {}
-	~UserDataOwner() {}
+    ~UserDataOwner() {}
 
 
     typedef std::map<std::string, Poco::Dynamic::Var> UserDataMap;
 
-	/** \brief Get the user data object
-	*/
-	UserDataMap& getUserData() {
-		return _userData;
-	}
+    /** \brief Get the user data object
+    */
+    UserDataMap& getUserData() {
+        return _userData;
+    }
 
-	/** \brief Set the value of a particular key
-	*/
-	void setUserDataPair(const std::string& key,const Poco::Dynamic::Var& value) {
-		_userData[key] = value;
-	}
+    /** \brief Set the value of a particular key
+    */
+    void setUserDataPair(const std::string& key,const Poco::Dynamic::Var& value) {
+        _userData[key] = value;
+    }
 
-	/** \brief Get the value associated with a particular key
-	*/
-	Poco::Dynamic::Var getUserDataValue(const std::string& key) {
-		return _userData[key];
-	}
+    /** \brief Get the value associated with a particular key
+    */
+    Poco::Dynamic::Var getUserDataValue(const std::string& key) {
+        return _userData[key];
+    }
 
 
     /** \brief Set the "name" key using the standard key naming convention.
@@ -99,11 +99,11 @@ public:
         return( value.convert< std::string >() );
     }
 
-	void setNodeMask(const bool nodeMask) {
-		_userData[ "__jag3d_NodeMask"  ] = nodeMask;  
-	}
+    void setNodeMask(const bool nodeMask) {
+        _userData[ "__jag3d_NodeMask"  ] = nodeMask;  
+    }
 
-	bool getNodeMask() const
+    bool getNodeMask() const
     {
         UserDataMap::const_iterator it( _userData.find( "__jag3d_NodeMask" ) );
         if( it == _userData.end() )
@@ -114,8 +114,8 @@ public:
     }
 
 protected:
-	UserDataMap _userData;
-	
+    UserDataMap _userData;
+    
 
 };
 // jagBase
