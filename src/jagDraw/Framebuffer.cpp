@@ -80,7 +80,11 @@ void Framebuffer::execute( DrawInfo& drawInfo )
         std::vector<GLenum> buffers;
         BOOST_FOREACH( AttachmentMap::value_type pair, _attachments ) 
         {
+			//we need a better way of sorting these out . . .
+			if(pair.first!=GL_DEPTH_ATTACHMENT)
             buffers.push_back(pair.first);
+			else
+				buffers.push_back(GL_NONE);
         }
         glDrawBuffers(buffers.size(), &(buffers[0]));
 
