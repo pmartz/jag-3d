@@ -76,6 +76,11 @@ bool test()
 
     Program::HashValue hashVal;
     hashVal = Program::createHash( "a" );
+    if( us0->find( hashVal ) == us0->end() )
+    {
+        std::cerr << "Add result: uniform 'a' not contained in set." << std::endl;
+        return( false );
+    }
     (*us0)[ hashVal ]->get( intVal );
     if( intVal != 1 )
     {
