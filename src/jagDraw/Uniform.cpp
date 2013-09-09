@@ -350,6 +350,13 @@ void Uniform::executeWithoutMap( DrawInfo& drawInfo ) const
         ProgramPtr prog( boost::dynamic_pointer_cast< Program >( drawInfo._current[ Program_t ] ) );
         loc = prog->getUniformLocation( _indexHash );
     }
+    else if( drawInfo._externalProgramID == 0 )
+    {
+        // This is an error. During the first frame, we are executing the
+        // TransformCallback before we bind the Program. This needs to be
+        // fixed. TBD.
+        loc = -1;
+    }
     else
     {
         // No current program. Assume external program is in use.
