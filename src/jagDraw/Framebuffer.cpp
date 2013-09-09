@@ -82,7 +82,7 @@ void Framebuffer::execute( DrawInfo& drawInfo )
         {
             buffers.push_back(pair.first);
         }
-        glDrawBuffers(buffers.size(), &(buffers[0]));
+        glDrawBuffers( (GLsizei)( buffers.size() ), &(buffers[0]));
 
 
     }
