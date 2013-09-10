@@ -265,55 +265,34 @@ typedef jagBase::ptr< jagDraw::UniformSet >::shared_ptr UniformSetPtr;
 /** \class UniformSet Uniform.h <jagDraw/Uniform.h>
 \brief TBD
 \details TBD */
-class UniformSet : public DrawablePrep
+class UniformSet : public DrawablePrepSet< Program::HashValue, UniformPtr, UniformSet, UniformSetPtr >
 {
+protected:
+    typedef DrawablePrepSet< Program::HashValue, UniformPtr, UniformSet, UniformSetPtr > SET_TYPE;
+
 public:
     UniformSet()
-      : DrawablePrep( UniformSet_t )
+        : SET_TYPE( DrawablePrep::UniformSet_t )
     {}
     UniformSet( const UniformSet& rhs )
-      : DrawablePrep( rhs ),
-        _map( rhs._map )
+        : SET_TYPE( rhs )
     {}
     ~UniformSet()
     {}
 
-    void insert( UniformPtr uniform )
+    /** \brief TBD
+    \details TBD */
+    virtual DrawablePrepPtr clone()
     {
-        _map[ uniform->getNameHash() ] = uniform;
+        return( UniformSetPtr( new UniformSet( *this ) ) );
     }
-    UniformPtr& operator[]( const Program::HashValue& key )
-    {
-        return( _map[ key ] );
-    }
-
-    virtual DrawablePrepPtr clone() { return( UniformSetPtr( new UniformSet( *this ) ) ); }
-
-    virtual DrawablePrepPtr combine( DrawablePrepPtr rhs )
-    {
-        // std::map::insert does NOT overwrite, so put rhs in result first,
-        // then insert the values held in this.
-        UniformSet* uniformSet( dynamic_cast< UniformSet* >( rhs.get() ) );
-        UniformSetPtr result( new UniformSet( *uniformSet ) );
-        result->_map.insert( _map.begin(), _map.end() );
-        return( result );
-    }
-
-
-    typedef std::map< Program::HashValue, UniformPtr > InternalMapType;
 
     /** \brief TBD
-    \details Override method from DrawablePrep. */
-    virtual void execute( DrawInfo& drawInfo )
+    \details TBD */
+    void insert( UniformPtr up )
     {
-        BOOST_FOREACH( const InternalMapType::value_type& dataPair, _map )
-        {
-            dataPair.second->execute( drawInfo );
-        }
+        operator[]( up->getNameHash() ) = up;
     }
-
-protected:
-    InternalMapType _map;
 };
 
 

@@ -128,64 +128,44 @@ typedef std::vector< UniformBlockPtr > UniformBlockVec;
 class UniformBlockSet;
 typedef jagBase::ptr< jagDraw::UniformBlockSet >::shared_ptr UniformBlockSetPtr;
 
-/** \class UniformBlockSet UniformBlockSet.h <jagDraw/UniformBlockSet.h>
-\brief TBD
-\details TBD */
-class UniformBlockSet : public DrawablePrep, public ObjectIDOwner
+class UniformBlockSet : public ObjectIDOwner,
+        public DrawablePrepSet< Program::HashValue, UniformBlockPtr, UniformBlockSet, UniformBlockSetPtr >
 {
+protected:
+    typedef DrawablePrepSet< Program::HashValue, UniformBlockPtr, UniformBlockSet, UniformBlockSetPtr > SET_TYPE;
+
 public:
     UniformBlockSet()
-      : DrawablePrep( UniformBlockSet_t ),
-        ObjectIDOwner()
+        : ObjectIDOwner(),
+        SET_TYPE( DrawablePrep::UniformBlockSet_t )
     {}
     UniformBlockSet( const UniformBlockSet& rhs )
-      : DrawablePrep( rhs ),
-        ObjectIDOwner( rhs ),
-        _map( rhs._map )
+        : ObjectIDOwner( rhs ),
+        SET_TYPE( rhs )
     {}
     ~UniformBlockSet()
     {}
 
-    UniformBlockPtr& operator[]( const Program::HashValue& key )
+
+    /** \brief TBD
+    \details TBD */
+    virtual DrawablePrepPtr clone()
     {
-        return( _map[ key ] );
+        return( UniformBlockSetPtr( new UniformBlockSet( *this ) ) );
     }
 
     /** \brief TBD
     \details TBD */
     void insert( UniformBlockPtr ubp )
     {
-        _map[ ubp->getNameHash() ] = ubp;
-    }
-
-    /** \brief TBD
-    \details TBD */
-    bool empty() const
-    {
-        return( _map.empty() );
-    }
-
-    typedef std::map< Program::HashValue, UniformBlockPtr > InternalMapType;
-
-    /** \brief TBD
-    \details TBD */
-    virtual DrawablePrepPtr clone() { return( UniformBlockSetPtr( new UniformBlockSet( *this ) ) ); }
-
-    /** \brief TBD
-    \details Override method from DrawablePrep. */
-    virtual void execute( DrawInfo& drawInfo )
-    {
-        BOOST_FOREACH( const InternalMapType::value_type& dataPair, _map )
-        {
-            dataPair.second->execute( drawInfo );
-        }
+        operator[]( ubp->getNameHash() ) = ubp;
     }
 
     /** \brief TBD
     \details Override method from ObjectIDOwner */
     virtual void setMaxContexts( const unsigned int numContexts )
     {
-        BOOST_FOREACH( const InternalMapType::value_type& dataPair, _map )
+        BOOST_FOREACH( const MAP_TYPE::value_type& dataPair, *this )
         {
             dataPair.second->setMaxContexts( numContexts );
         }
@@ -194,14 +174,11 @@ public:
     \details Override method from ObjectIDOwner */
     virtual void deleteID( const jagDraw::jagDrawContextID contextID )
     {
-        BOOST_FOREACH( const InternalMapType::value_type& dataPair, _map )
+        BOOST_FOREACH( const MAP_TYPE::value_type& dataPair, *this )
         {
             dataPair.second->deleteID( contextID );
         }
     }
-
-protected:
-    InternalMapType _map;
 };
 
 
