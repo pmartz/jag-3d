@@ -35,6 +35,7 @@
 #include <jagDraw/CommandMap.h>
 #include <jagDraw/Drawable.h>
 #include <jagDraw/BufferObject.h>
+#include <jagDraw/UniformBlock.h>
 #include <jagDraw/VertexAttrib.h>
 #include <jagDraw/VertexArrayObject.h>
 #include <jagDraw/types.h>
@@ -350,22 +351,6 @@ void Osg2Jag::apply( osg::StateSet* stateSet )
     {
         osg::Material* m( static_cast< osg::Material* >( sa ) );
 
-        // TBD hack add light source info here until I can work out
-        // issues with how uniform block sets are handled in CommandMap.
-        jagDraw::UniformBlockPtr lights( jagDraw::UniformBlockPtr(
-            new jagDraw::UniformBlock( "LightingLight" ) ) );
-        gmtl::Vec3f dir( 0.f, 0.f, 1.f );
-        gmtl::normalize( dir );
-        gmtl::Point4f lightVec( dir[0], dir[1], dir[2], 0. );
-        lights->addUniform( jagDraw::UniformPtr(
-            new jagDraw::Uniform( "position", lightVec ) ) );
-        lights->addUniform( jagDraw::UniformPtr(
-            new jagDraw::Uniform( "ambient", gmtl::Point4f( 0.f, 0.f, 0.f, 1.f ) ) ) );
-        lights->addUniform( jagDraw::UniformPtr(
-            new jagDraw::Uniform( "diffuse", gmtl::Point4f( 1.f, 1.f, 1.f, 1.f ) ) ) );
-        lights->addUniform( jagDraw::UniformPtr(
-            new jagDraw::Uniform( "specular", gmtl::Point4f( 1.f, 1.f, 1.f, 1.f ) ) ) );
-
         jagDraw::UniformBlockPtr frontMaterials( jagDraw::UniformBlockPtr(
             new jagDraw::UniformBlock( "LightingMaterialFront" ) ) );
         frontMaterials->addUniform( jagDraw::UniformPtr(
@@ -377,7 +362,6 @@ void Osg2Jag::apply( osg::StateSet* stateSet )
         frontMaterials->addUniform( jagDraw::UniformPtr(
             new jagDraw::Uniform( "shininess", m->getShininess( osg::Material::FRONT ) ) ) );
 
-        ubsp->insert( lights );
         ubsp->insert( frontMaterials );
     }
 

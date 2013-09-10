@@ -25,8 +25,10 @@
 #include <jagBase/ptr.h>
 
 #include <boost/thread/mutex.hpp>
+#include <boost/foreach.hpp>
 
 #include <vector>
+#include <map>
 
 
 namespace jagDraw {
@@ -66,13 +68,13 @@ public:
     typedef std::vector< CommandType > CommandTypeVec;
 
 
-    DrawablePrep( const CommandType type )
+    DrawablePrep( const CommandType type, const bool generateUniqueID=true )
       : _type( type ),
-        _uniqueID( UniqueID::instance()->generate( type ) )
+        _uniqueID( generateUniqueID ? UniqueID::instance()->generate( type ) : 0 )
     {}
-    DrawablePrep( const DrawablePrep& rhs )
+    DrawablePrep( const DrawablePrep& rhs, const bool generateUniqueID=true )
       : _type( rhs._type ),
-        _uniqueID( UniqueID::instance()->generate( rhs._type ) )
+        _uniqueID( generateUniqueID ? UniqueID::instance()->generate( rhs._type ) : 0 )
     {}
     ~DrawablePrep() {}
 
@@ -119,18 +121,20 @@ public:
 
     /** \brief TBD
     \details TBD */
-    virtual DrawablePrepPtr combine( DrawablePrepPtr rhs )
+    virtual DrawablePrepPtr combine( DrawablePrepPtr rhs ) const
     {
         return( rhs );
     }
 
-    bool operator== ( const DrawablePrep& rhs ) const
+    /** \brief TBD
+    \details TBD */
+    virtual bool operator== ( const DrawablePrep& rhs ) const
     {
         return( _uniqueID == rhs._uniqueID );
     }
     bool operator!= ( const DrawablePrep& rhs ) const
     {
-        return( _uniqueID != rhs._uniqueID );
+        return( !( operator==( rhs ) ) );
     }
 
     bool operator< ( const DrawablePrep& rhs ) const
@@ -159,7 +163,7 @@ protected:
         unsigned int generate( CommandType type )
         {
             boost::mutex::scoped_lock lock( _mutex );
-            const unsigned int typeUInt( (int)type );
+            const unsigned int typeUInt( ( unsigned int )type );
             if( typeUInt >= _ids.size() )
             {
                 while( typeUInt >= _ids.size() )
@@ -168,7 +172,7 @@ protected:
                     _ids[ _ids.size()-1 ] = 0;
                 }
             }
-            unsigned int id( _ids[ typeUInt ] );
+            const unsigned int id( _ids[ typeUInt ] );
             ++( _ids[ typeUInt ] );
             return( id );
         }
@@ -183,6 +187,74 @@ protected:
 };
 
 typedef std::vector< DrawablePrepPtr > DrawablePrepVec;
+
+
+
+/** \class DrawablePrepSet DrawablePrep.h <jagDraw/DrawablePrep.h>
+\brief TBD
+\details TBD
+*/
+template< typename KEY, class ELEMENT, class CLASS, class CLASS_PTR >
+class DrawablePrepSet : public DrawablePrep, public std::map< KEY, ELEMENT >
+{
+protected:
+    typedef std::map< KEY, ELEMENT > MAP_TYPE;
+
+public:
+    DrawablePrepSet( const CommandType type )
+        : DrawablePrep( type, false )
+    {}
+    DrawablePrepSet( const DrawablePrepSet& rhs )
+        : DrawablePrep( rhs, false ),
+        MAP_TYPE( rhs )
+    {}
+    ~DrawablePrepSet()
+    {}
+
+    /** \brief TBD
+    \details Override method from DrawablePrep. */
+    virtual void execute( DrawInfo& drawInfo )
+    {
+        BOOST_FOREACH( const MAP_TYPE::value_type& dataPair, *this )
+        {
+            dataPair.second->execute( drawInfo );
+        }
+    }
+
+    virtual DrawablePrepPtr combine( DrawablePrepPtr rhs ) const
+    {
+        // std::map::insert does NOT overwrite, so put rhs in result first,
+        // then insert the values held in this.
+        CLASS* right( static_cast< CLASS* >( rhs.get() ) );
+        CLASS_PTR result( new CLASS( *right ) );
+        static_cast< MAP_TYPE* >( (CLASS*)result.get() )->insert( begin(), end() );
+        return( result );
+    }
+
+    /** \brief TBD
+    \details TBD */
+    virtual bool operator== ( const DrawablePrep& rhs ) const
+    {
+        const MAP_TYPE* rSet( dynamic_cast< const MAP_TYPE* >( &rhs ) );
+
+        if( size() != rSet->size() )
+            return( false );
+
+        MAP_TYPE::const_iterator leftIt( begin() );
+        MAP_TYPE::const_iterator rightIt( rSet->begin() );
+        while( leftIt != end() )
+        {
+            if( leftIt->first != rightIt->first )
+                return( false );
+            if( leftIt->second != rightIt->second )
+                return( false );
+            ++leftIt;
+            ++rightIt;
+        }
+
+        return( true );
+    }
+};
 
 
 // jagDraw

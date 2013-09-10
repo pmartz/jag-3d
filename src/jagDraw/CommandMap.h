@@ -24,6 +24,7 @@
 #include <jagDraw/ObjectID.h>
 #include <jagDraw/DrawablePrep.h>
 #include <jagBase/LogMacros.h>
+#include <jagDraw/Error.h>
 
 #include <jagBase/ptr.h>
 #include <jagBase/UserDataOwner.h>
@@ -149,6 +150,13 @@ public:
         }
     }
 
+    /** \brief Return combination of commands in *this and \rhs.
+    \details Returns a new CommandMap equal to *this + \c rhs. Commands
+    in \c rhs take precedence over commands of the same type in *this,
+    obeying override and protect bits.
+
+    Used by jagSG during scene graph traversal to combine child commands
+    with parent commands for new entries on the CommandMap stack. */
     CommandMap operator+( const CommandMap& rhs ) const
     {
         std::set< DrawablePrep::CommandType > local;
@@ -178,9 +186,10 @@ public:
                 break;
             case 3: // both have it
             {
-                DrawablePrepPtr left( ( *_data.find( type ) ).second );
-                DrawablePrepPtr right( ( *rhs._data.find( type ) ).second );
-                if( left != right )
+                const DrawablePrepPtr& left( ( *_data.find( type ) ).second );
+                const DrawablePrepPtr& right( ( *rhs._data.find( type ) ).second );
+                if( ( left != right ) &&
+                    ( *left != *right ) )
                     result[ type ] = left->combine( right );
                 else
                     result[ type ] = left;
@@ -193,11 +202,18 @@ public:
         return( result );
     }
 
-    /*
-        * This operator does two things.  
-        * 1) it applies the rhs to the lhs 
-        * 2) it returns only the deltas
-        */
+    /* \brief Fold command from \c rhs into *this, returning the delta.
+    \details This operator does two things.  
+    \li applies \c rhs to *this;
+    \li returns only the delta.
+
+    This is used by the draw graph to determine which commands needs to
+    be executed (only the delta), and to track current commands in the
+    DrawInfo object.
+
+    Currently, override and protect bits are honored, allowing these
+    features in the draw traversal. However, this might be removed at
+    a future date for performance reasons. */
     CommandMap operator<<( CommandMap& rhs )
     {
         std::set< DrawablePrep::CommandType > local;
@@ -222,20 +238,23 @@ public:
             case 2: // rhs has it
                 if( _overrideBits.test( type ) == false || rhs._protectBits.test( type ) == true  )
                 {
-                    DrawablePrepPtr drawable( rhs._data[ type ] );
-                    insert( drawable, rhs._overrideBits[ type ] );
-                    result.insert( drawable, rhs._overrideBits[ type ] );
+                    DrawablePrepPtr command( rhs._data[ type ] );
+                    insert( command, rhs._overrideBits[ type ] );
+                    result.insert( command, rhs._overrideBits[ type ] );
                 }
                 break; 
 
             case 3: // both have it
-                if( *(_data[ type ]) != *(rhs._data[ type ]) )
+                DrawablePrepPtr& left( _data[ type ] );
+                DrawablePrepPtr& right( rhs._data[ type ] );
+                if( ( left != right ) &&
+                    ( *left != *right ) )
                 {
                     if( _overrideBits.test( type ) == false || rhs._protectBits.test( type ) == true ) 
                     {
-                        DrawablePrepPtr drawable( rhs._data[ type ] );
-                        insert( drawable, rhs._overrideBits[ type ] );
-                        result.insert( drawable, rhs._overrideBits[ type ] );
+                        left = left->combine( right );
+                        //insert( right, rhs._overrideBits[ type ] );
+                        result.insert( right, rhs._overrideBits[ type ] );
                     }
                 }
                 break;
