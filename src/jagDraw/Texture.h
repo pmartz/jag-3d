@@ -154,61 +154,49 @@ typedef jagBase::ptr< jagDraw::TextureSet >::shared_ptr TextureSetPtr;
 /** \class TextureSet Texture.h <jagDraw/Texture.h>
 \brief TBD
 \details TBD */
-class TextureSet : public DrawablePrep, public ObjectIDOwner
+class TextureSet : public ObjectIDOwner,
+        public DrawablePrepSet< unsigned int, TexturePtr, TextureSet, TextureSetPtr >
 {
+protected:
+    typedef DrawablePrepSet< unsigned int, TexturePtr, TextureSet, TextureSetPtr > SET_TYPE;
+
 public:
     TextureSet()
-      : DrawablePrep( TextureSet_t ),
-        ObjectIDOwner()
+      : ObjectIDOwner(),
+        SET_TYPE( TextureSet_t )
     {}
     TextureSet( const TextureSet& rhs )
-      : DrawablePrep( rhs ),
-        ObjectIDOwner( rhs )
+      : ObjectIDOwner( rhs ),
+        SET_TYPE( rhs )
     {}
     ~TextureSet()
     {}
 
-    TexturePtr& operator[]( const unsigned int key )
-    {
-        return( _map[ key ] );
-    }
-
-
-    typedef std::map< unsigned int, TexturePtr > InternalMapType;
 
     /** \brief TBD
     \details TBD */
-    virtual DrawablePrepPtr clone() const { return( TextureSetPtr( new TextureSet( *this ) ) ); }
+    virtual DrawablePrepPtr clone() const
+    {
+        return( TextureSetPtr( new TextureSet( *this ) ) );
+    }
 
     /** \brief TBD
     \details Override method from DrawablePrep. */
     virtual void execute( DrawInfo& drawInfo )
     {
-        BOOST_FOREACH( const InternalMapType::value_type& dataPair, _map )
+        BOOST_FOREACH( const MAP_TYPE::value_type& dataPair, *this )
         {
-            TexturePtr texture( dataPair.second );
+            const TexturePtr& texture( dataPair.second );
             texture->activate( drawInfo, dataPair.first );
             texture->execute( drawInfo );
         }
     }
 
     /** \brief TBD
-    \details TBD */
-    virtual DrawablePrepPtr combine( DrawablePrepPtr rhs )
-    {
-        // std::map::insert does NOT overwrite, so put rhs in result first,
-        // then insert the values held in this.
-        TextureSet* textureSet( dynamic_cast< TextureSet* >( rhs.get() ) );
-        TextureSetPtr result( new TextureSet( *textureSet ) );
-        result->_map.insert( _map.begin(), _map.end() );
-        return( result );
-    }
-
-    /** \brief TBD
     \details Override method from ObjectIDOwner */
     virtual void setMaxContexts( const unsigned int numContexts )
     {
-        BOOST_FOREACH( const InternalMapType::value_type& dataPair, _map )
+        BOOST_FOREACH( const MAP_TYPE::value_type& dataPair, *this )
         {
             dataPair.second->setMaxContexts( numContexts );
         }
@@ -217,14 +205,11 @@ public:
     \details Override method from ObjectIDOwner */
     virtual void deleteID( const jagDraw::jagDrawContextID contextID )
     {
-        BOOST_FOREACH( const InternalMapType::value_type& dataPair, _map )
+        BOOST_FOREACH( const MAP_TYPE::value_type& dataPair, *this )
         {
             dataPair.second->deleteID( contextID );
         }
     }
-
-protected:
-    InternalMapType _map;
 };
 
 
