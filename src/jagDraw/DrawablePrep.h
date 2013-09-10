@@ -108,7 +108,7 @@ public:
 
     /** \brief TBD
     \details TBD */
-    virtual DrawablePrepPtr clone() = 0;
+    virtual DrawablePrepPtr clone() const = 0;
 
     /** \brief Activate the DrawablePrep prior to calling execute().
     \details DrawablePrep objects usually do not require activation, so this is a no-op.

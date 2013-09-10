@@ -85,7 +85,7 @@ public:
 
     /** \brief TBD
     \details TBD */
-    virtual DrawablePrepPtr clone() { return( FramebufferPtr( new Framebuffer( *this ) ) ); }
+    virtual DrawablePrepPtr clone() const { return( FramebufferPtr( new Framebuffer( *this ) ) ); }
 
     /** \brief Bind the framebuffer ID.
     \details This function is an override from DrawablePrep.

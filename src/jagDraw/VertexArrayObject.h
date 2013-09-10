@@ -59,7 +59,7 @@ public:
 
     /** \brief TBD
     \details TBD */
-    virtual DrawablePrepPtr clone() { return( VertexArrayObjectPtr( new VertexArrayObject( *this ) ) ); }
+    virtual DrawablePrepPtr clone() const { return( VertexArrayObjectPtr( new VertexArrayObject( *this ) ) ); }
 
     /** \brief TBD
     \details TBD */
