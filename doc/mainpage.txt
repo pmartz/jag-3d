@@ -213,8 +213,8 @@ The variable JAG3D_USE_GL3W must be ON for Windows builds and OFF for all other 
 \subsection BuildGl3w Generating gl3w.c and gl3w.h
 
 Jag3D includes a modified version of the gl3w Python script to auto-generate
-the gl3w.c and gl3w.h jagDraw module source files. If you are building with
-JAG3D_USE_GL3W selected in CMake, and you have Python installed on your system,
+the gl3w.c and gl3w.h jagDraw module source files. If you are building with both
+JAG3D_USE_GL3W and JAG3D_USE_GL3W_AUTOGENERATE selected in CMake, and you have Python installed on your system,
 then the gl3w.c and gl3w.h files will aitomatically be regenerated during build
 if either glcorearb.h or jagDraw/glExtensions.h have been modified.
 
