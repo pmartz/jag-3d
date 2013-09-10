@@ -95,7 +95,7 @@ public:
 
     /** \brief TBD
     \details TBD */
-    virtual DrawablePrepPtr clone() { return( UniformBlockPtr( new UniformBlock( *this ) ) ); }
+    virtual DrawablePrepPtr clone() const { return( UniformBlockPtr( new UniformBlock( *this ) ) ); }
 
     /** \brief TBD
     \details TBD
@@ -149,7 +149,7 @@ public:
 
     /** \brief TBD
     \details TBD */
-    virtual DrawablePrepPtr clone()
+    virtual DrawablePrepPtr clone() const
     {
         return( UniformBlockSetPtr( new UniformBlockSet( *this ) ) );
     }

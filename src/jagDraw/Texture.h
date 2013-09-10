@@ -102,7 +102,7 @@ public:
 
     /** \brief TBD
     \details TBD */
-    virtual DrawablePrepPtr clone() { return( TexturePtr( new Texture( *this ) ) ); }
+    virtual DrawablePrepPtr clone() const { return( TexturePtr( new Texture( *this ) ) ); }
 
     /** \brief TBD
     \details Set the active texture.
@@ -178,7 +178,7 @@ public:
 
     /** \brief TBD
     \details TBD */
-    virtual DrawablePrepPtr clone() { return( TextureSetPtr( new TextureSet( *this ) ) ); }
+    virtual DrawablePrepPtr clone() const { return( TextureSetPtr( new TextureSet( *this ) ) ); }
 
     /** \brief TBD
     \details Override method from DrawablePrep. */

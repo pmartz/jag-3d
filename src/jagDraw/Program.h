@@ -74,7 +74,7 @@ public:
 
     /** \brief TBD
     \details TBD */
-    virtual DrawablePrepPtr clone() { return( ProgramPtr( new Program( *this ) ) ); }
+    virtual DrawablePrepPtr clone() const { return( ProgramPtr( new Program( *this ) ) ); }
 
     /** \brief Make this program the current program.
     \details Implicitly calls link() if necessary for this context,

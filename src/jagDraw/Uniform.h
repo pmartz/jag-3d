@@ -216,7 +216,7 @@ public:
 
     /** \brief TBD
     \details TBD */
-    virtual DrawablePrepPtr clone() { return( UniformPtr( new Uniform( *this ) ) ); }
+    virtual DrawablePrepPtr clone() const { return( UniformPtr( new Uniform( *this ) ) ); }
 
     /** \brief Execute the glUniform call.
     \details TBD */
@@ -282,7 +282,7 @@ public:
 
     /** \brief TBD
     \details TBD */
-    virtual DrawablePrepPtr clone()
+    virtual DrawablePrepPtr clone() const
     {
         return( UniformSetPtr( new UniformSet( *this ) ) );
     }

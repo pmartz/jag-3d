@@ -64,7 +64,7 @@ public:
 
     /** \brief TBD
     \details TBD */
-    virtual DrawablePrepPtr clone() { return( DrawablePrepPtr( new Sampler( *this ) ) ); }
+    virtual DrawablePrepPtr clone() const { return( DrawablePrepPtr( new Sampler( *this ) ) ); }
 
     /** \brief TBD
     \details TBD */
@@ -143,61 +143,49 @@ typedef jagBase::ptr< jagDraw::SamplerSet >::shared_ptr SamplerSetPtr;
 /** \class SamplerSet Sampler.h <jagDraw/Sampler.h>
 \brief TBD
 \details TBD */
-class SamplerSet : public DrawablePrep, public ObjectIDOwner
+class SamplerSet : public ObjectIDOwner,
+        public DrawablePrepSet< unsigned int, SamplerPtr, SamplerSet, SamplerSetPtr >
 {
+protected:
+    typedef DrawablePrepSet< unsigned int, SamplerPtr, SamplerSet, SamplerSetPtr > SET_TYPE;
+
 public:
     SamplerSet()
-      : DrawablePrep( SamplerSet_t ),
-        ObjectIDOwner()
+      : ObjectIDOwner(),
+        SET_TYPE( SamplerSet_t )
     {}
     SamplerSet( const SamplerSet& rhs )
-      : DrawablePrep( rhs ),
-        ObjectIDOwner( rhs )
+      : ObjectIDOwner( rhs ),
+        SET_TYPE( rhs )
     {}
     ~SamplerSet()
     {}
 
-    SamplerPtr& operator[]( const unsigned int key )
-    {
-        return( _map[ key ] );
-    }
-
-
-    typedef std::map< unsigned int, SamplerPtr > InternalMapType;
 
     /** \brief TBD
     \details TBD */
-    virtual DrawablePrepPtr clone() { return( SamplerSetPtr( new SamplerSet( *this ) ) ); }
+    virtual DrawablePrepPtr clone() const
+    {
+        return( SamplerSetPtr( new SamplerSet( *this ) ) );
+    }
 
     /** \brief TBD
     \details Override method from DrawablePrep. */
     virtual void execute( DrawInfo& drawInfo )
     {
-        BOOST_FOREACH( const InternalMapType::value_type& dataPair, _map )
+        BOOST_FOREACH( const MAP_TYPE::value_type& dataPair, *this )
         {
-            SamplerPtr sampler( dataPair.second );
+            const SamplerPtr& sampler( dataPair.second );
             sampler->activate( drawInfo, dataPair.first );
             sampler->execute( drawInfo );
         }
     }
 
     /** \brief TBD
-    \details TBD */
-    virtual DrawablePrepPtr combine( DrawablePrepPtr rhs )
-    {
-        // std::map::insert does NOT overwrite, so put rhs in result first,
-        // then insert the values held in this.
-        SamplerSet* samplerSet( dynamic_cast< SamplerSet* >( rhs.get() ) );
-        SamplerSetPtr result( new SamplerSet( *samplerSet ) );
-        result->_map.insert( _map.begin(), _map.end() );
-        return( result );
-    }
-
-    /** \brief TBD
     \details Override method from ObjectIDOwner */
     virtual void setMaxContexts( const unsigned int numContexts )
     {
-        BOOST_FOREACH( const InternalMapType::value_type& dataPair, _map )
+        BOOST_FOREACH( const MAP_TYPE::value_type& dataPair, *this )
         {
             dataPair.second->setMaxContexts( numContexts );
         }
@@ -206,14 +194,11 @@ public:
     \details Override method from ObjectIDOwner */
     virtual void deleteID( const jagDraw::jagDrawContextID contextID )
     {
-        BOOST_FOREACH( const InternalMapType::value_type& dataPair, _map )
+        BOOST_FOREACH( const MAP_TYPE::value_type& dataPair, *this )
         {
             dataPair.second->deleteID( contextID );
         }
     }
-
-protected:
-    InternalMapType _map;
 };
 
 
