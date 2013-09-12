@@ -57,6 +57,9 @@ public:
     Texture( const GLenum target, ImagePtr image=ImagePtr((Image*)NULL), const std::string& logName=std::string( "" ) );
     /** TBD Sampler should be orthogonal to Texture and should be in SamplerSet. */
     Texture( const GLenum target, ImagePtr image, SamplerPtr sampler, const std::string& logName=std::string( "" ) );
+    /** \brief Constructor for texture buffer usage.
+    \details Warning log message will be generates if \c target is not GL_TEXTURE_BUFFER. */
+    Texture( const GLenum target, GLenum bufferFormat, GLuint bufferID, const std::string& logName=std::string( "" ) );
     Texture( const Texture& rhs );
     virtual ~Texture();
 
@@ -138,6 +141,11 @@ protected:
     /** Imitial value: jagDraw::SamplerPtr().
     TBD Sampler should be orthogonal to Texture and should be in SamplerSet. */
     SamplerPtr _sampler;
+
+    /** Used if _target==GL_TEXTURE_BUFFER. Initial value: GL_NONE */
+    GLenum _bufferFormat;
+    /** Used if _target==GL_TEXTURE_BUFFER. Initial value: 0 */
+    GLuint _bufferID;
 
 
     void internalInit( const unsigned int contextID );
