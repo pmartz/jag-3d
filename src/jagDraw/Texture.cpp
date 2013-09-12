@@ -31,14 +31,18 @@ Texture::Texture( const std::string& logName )
   : DrawablePrep( Texture_t ),
     FramebufferAttachable(),
     jagBase::LogBase( logName.empty() ? "jag.draw.tex" : logName ),
-    _target( GL_NONE )
+    _target( GL_NONE ),
+    _bufferFormat( GL_NONE ),
+    _bufferID( 0 )
 {
 }
 Texture::Texture( const GLenum target, ImagePtr image, const std::string& logName )
   : DrawablePrep( Texture_t ),
     FramebufferAttachable(),
     jagBase::LogBase( logName.empty() ? "jag.draw.tex" : logName ),
-    _target( target )
+    _target( target ),
+    _bufferFormat( GL_NONE ),
+    _bufferID( 0 )
 {
     _image.resize( 1 );
     _image[ 0 ] = image;
@@ -48,10 +52,23 @@ Texture::Texture( const GLenum target, ImagePtr image, SamplerPtr sampler, const
     FramebufferAttachable(),
     jagBase::LogBase( logName.empty() ? "jag.draw.tex" : logName ),
     _target( target ),
-    _sampler( sampler )
+    _sampler( sampler ),
+    _bufferFormat( GL_NONE ),
+    _bufferID( 0 )
 {
     _image.resize( 1 );
     _image[ 0 ] = image;
+}
+Texture::Texture( const GLenum target, GLenum bufferFormat, GLuint bufferID, const std::string& logName )
+  : DrawablePrep( Texture_t ),
+    FramebufferAttachable(),
+    jagBase::LogBase( logName.empty() ? "jag.draw.tex" : logName ),
+    _target( target ),
+    _bufferFormat( bufferFormat ),
+    _bufferID( bufferID )
+{
+    if( _target != GL_TEXTURE_BUFFER )
+        JAG3D_WARNING( "Texture buffer constructor: Invalid target parameter." );
 }
 Texture::Texture( const Texture& rhs )
   : DrawablePrep( rhs ),
@@ -60,7 +77,9 @@ Texture::Texture( const Texture& rhs )
     jagBase::LogBase( rhs ),
     _target( rhs._target ),
     _image( rhs._image ),
-    _sampler( rhs._sampler )
+    _sampler( rhs._sampler ),
+    _bufferFormat( rhs._bufferFormat ),
+    _bufferID( rhs._bufferID )
 {
 }
 Texture::~Texture()
@@ -204,9 +223,6 @@ void Texture::attachToFBO( const jagDraw::jagDrawContextID contextID, const GLen
 
 void Texture::internalInit( const unsigned int contextID )
 {
-    if( _image.empty() )
-        return;
-
     JAG3D_TRACE( "internalInit" );
 
     glGenTextures( 1, &( _ids[ contextID ] ) );
@@ -225,27 +241,34 @@ void Texture::internalInit( const unsigned int contextID )
         _sampler->executeTexture( _target );
 #endif
 
-    if( ( _target != GL_TEXTURE_CUBE_MAP ) &&
-        ( _target != GL_PROXY_TEXTURE_CUBE_MAP ) )
+    if( !( _image.empty() ) )
     {
-        internalSpecifyTexImage( _target, _image[ 0 ] );
-    }
-    else
-    {
-        for( unsigned int idx=0; idx<6; idx++ )
+        if( ( _target != GL_TEXTURE_CUBE_MAP ) &&
+            ( _target != GL_PROXY_TEXTURE_CUBE_MAP ) )
         {
-            GLenum target;
-            switch( idx )
-            {
-            case 0: target = GL_TEXTURE_CUBE_MAP_POSITIVE_X; break;
-            case 1: target = GL_TEXTURE_CUBE_MAP_NEGATIVE_X; break;
-            case 2: target = GL_TEXTURE_CUBE_MAP_POSITIVE_Y; break;
-            case 3: target = GL_TEXTURE_CUBE_MAP_NEGATIVE_Y; break;
-            case 4: target = GL_TEXTURE_CUBE_MAP_POSITIVE_Z; break;
-            case 5: target = GL_TEXTURE_CUBE_MAP_NEGATIVE_Z; break;
-            }
-            internalSpecifyTexImage( target, _image[ 0 ] );
+            internalSpecifyTexImage( _target, _image[ 0 ] );
         }
+        else
+        {
+            for( unsigned int idx=0; idx<6; idx++ )
+            {
+                GLenum target;
+                switch( idx )
+                {
+                case 0: target = GL_TEXTURE_CUBE_MAP_POSITIVE_X; break;
+                case 1: target = GL_TEXTURE_CUBE_MAP_NEGATIVE_X; break;
+                case 2: target = GL_TEXTURE_CUBE_MAP_POSITIVE_Y; break;
+                case 3: target = GL_TEXTURE_CUBE_MAP_NEGATIVE_Y; break;
+                case 4: target = GL_TEXTURE_CUBE_MAP_POSITIVE_Z; break;
+                case 5: target = GL_TEXTURE_CUBE_MAP_NEGATIVE_Z; break;
+                }
+                internalSpecifyTexImage( target, _image[ 0 ] );
+            }
+        }
+    }
+    else if( _target == GL_TEXTURE_BUFFER )
+    {
+        glTexBuffer( _target, _bufferFormat, _bufferID );
     }
 
     glBindTexture( _target, 0 );
