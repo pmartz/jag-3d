@@ -126,8 +126,11 @@ public:
     {
         const size_t oldSize( getSize() );
         const size_t newSize( oldSize + rhs.getSize() );
+		
+		//this may need to be changed to use a different method for adding headroom to the buffer
+		//alternatively we could use something like std::vector which does this automatically
         if( newSize > _maxSize )
-            setMaxSize( newSize );
+            setMaxSize( newSize*2 );
         copy( rhs.getData(), rhs.getSize(), oldSize );
         _size = newSize;
     }
