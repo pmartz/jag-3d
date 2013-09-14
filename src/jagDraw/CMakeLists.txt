@@ -124,9 +124,7 @@ if( JAG3D_USE_GL3W AND JAG3D_USE_GL3W_AUTOGENERATE )
                 ${PYTHON_EXECUTABLE} ${PROJECT_SOURCE_DIR}/src/gl3w/gl3w_gen.py
             MAIN_DEPENDENCY glExtensions.h
             DEPENDS ${GL3_GLCOREARB_HEADER}/GL/glcorearb.h
-            COMMENT "Executing Python-based GL3W source code generation:" )
-    else()
-        message( STATUS "Unable to generate GL3W source because Python was not found." )
+            COMMENT "Generating gl3w.c/.h..." )
     endif()
 endif()
 
