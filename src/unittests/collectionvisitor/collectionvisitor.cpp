@@ -157,6 +157,56 @@ bool test()
     }
 
 
+    std::cout << "Near/Far computation..." << std::endl;
+
+    gmtl::AABoxd box( gmtl::Point3d( -1., -1., -1. ), gmtl::Point3d( 1., 1., 1. ) );
+    draw->setInitialBound( jagDraw::BoundPtr( new jagDraw::BoundAABox( box ) ) );
+    root = NodePtr( new Node() );
+    root->addDrawable( draw );
+
+    const gmtl::Point3d initialView( 0., 10., 0. );
+    const gmtl::Point3d initialCenter( 0., 0., 0. );
+    const gmtl::Vec3d initialUp( 0., 0., 1. );
+    const gmtl::Point3d secondView( 0., 9., 0. );
+    const gmtl::Point3d secondCenter( 0., 0., 0. );
+
+    cv.reset();
+    cv.setNearFarOps( jagSG::CollectionVisitor::Default );
+    gmtl::Matrix44d view, proj;
+    gmtl::setLookAt( view, initialView, initialCenter, initialUp );
+    gmtl::setPerspective( proj, 60., 1., 1., 100. );
+    cv.setViewProj( view, proj );
+    root->accept( cv );
+
+    // Get original near/far values.
+    double minZ, maxZ;
+    cv.getNearFar( minZ, maxZ );
+    if( ( minZ <= 0. ) || ( minZ >= maxZ ) )
+    {
+        std::cerr << "Computed near/far values are invalid." << std::endl;
+        return( false );
+    }
+
+    // If we use the same view matrix, the delta should be zero and
+    // we should get the original values.
+    double newMinZ, newMaxZ;
+    cv.recomputeNearFar( newMinZ, newMaxZ, view );
+    if( ( minZ != newMinZ ) || ( maxZ != newMaxZ ) )
+    {
+        std::cerr << "Recomputed near/far should match original near/far." << std::endl;
+        return( false );
+    }
+
+    // Move closer. Recomputed values should be less than original.
+    gmtl::setLookAt( view, secondView, initialCenter, initialUp );
+    cv.recomputeNearFar( newMinZ, newMaxZ, view );
+    if( ( minZ <= newMinZ ) || ( maxZ <= newMaxZ ) )
+    {
+        std::cerr << "Recomputed near/far should be less than original near/far." << std::endl;
+        return( false );
+    }
+
+
     return( true );
 }
 
