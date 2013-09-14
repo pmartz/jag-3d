@@ -111,6 +111,13 @@ public:
     \details TBD */
     void getNearFar( double& minECNear, double& maxECFar, const double ratio=( 1. / 2000. ) );
 
+    /** \brief Recompute near/far given a new view matrix.
+    \details This function computes the delta viewpoint motion from
+    the setViewProj() view matrix and the given \c view matrix, and
+    resturns as estimate of the optimal near and far values. This is
+    useful for performing collection once and draw multiple times. */
+    void recomputeNearFar( double& minECNear, double& maxECFar, const gmtl::Matrix44d& view, const double ratio=( 1. / 2000. ) );
+
     /** \brief TBD
     \details Note: Shift amounts must match enumerants in GMTL Frustum.h */
     typedef enum {

@@ -278,6 +278,33 @@ void CollectionVisitor::getNearFar( double& minECNear, double& maxECFar, const d
         minECNear = _minECZ;
     maxECFar = _maxECZ;
 }
+void CollectionVisitor::recomputeNearFar( double& minECNear, double& maxECFar, const gmtl::Matrix44d& view, const double ratio )
+{
+    // The transform we're interested in is Vd = V * Vn(-1), where:
+    //   V      = Original view matrix used during collection
+    //   Vn(-1) = New view matrix the app is using for next draw traversal.
+    //   Vd     = Inverse of the difference between the two matrices.
+    // Multiplying the eye coord origin (0,0,0) by Vd produces the
+    // change in view position from the original view matrix to the new
+    // view matrix. We add the z component of that change to the old
+    // computed near/far values to yield an approximation of the new
+    // near/far values.
+
+    gmtl::Matrix44d viewInv;
+    gmtl::invert( viewInv, view );
+    const gmtl::Point4d deltaEC = _transform.getView() * viewInv * gmtl::Point4d( 0., 0., 0., 1. );
+    const double newMinZ = _minECZ + deltaEC[ 2 ];
+    const double newMaxZ = _maxECZ + deltaEC[ 2 ];
+
+    // Scale and clamp as usual.
+    const double scaledNear( newMaxZ * ratio );
+    if( newMinZ < scaledNear )
+        minECNear = scaledNear;
+    else
+        minECNear = newMinZ;
+    maxECFar = newMaxZ;
+}
+
 
 void CollectionVisitor::setFrustumPlanes( const FrustumPlanes frustumPlanes )
 {
