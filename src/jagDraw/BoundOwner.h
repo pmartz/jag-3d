@@ -207,6 +207,7 @@ public:
     void setInitialBound( const BoundPtr& initialBound )
     {
         _initialBound = initialBound;
+        _bound = NULL;
         setBoundDirty();
     }
     /** \brief Return the _initialBound.
