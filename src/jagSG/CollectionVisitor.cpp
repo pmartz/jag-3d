@@ -192,8 +192,7 @@ void CollectionVisitor::collectAndTraverse( jagSG::Node& node )
         drawNode.setDistance( _infoPtr->getECBoundDistance() );
 
         // Set the model matrix.
-        if( _matrixStack.size() > 0 )
-            drawNode.setTransform( _matrixStack.back() );
+        drawNode.setTransform( _matrixStack.back() );
 
         // TBD transform. Need to do this on first draw node and then
         //   only on other draw nodes if they have a dirty model matrix.
