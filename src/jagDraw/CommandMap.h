@@ -288,6 +288,30 @@ public:
         return( p->second );
     }
 
+    bool operator==( const CommandMap& rhs ) const
+    {
+        if( ( _bits != rhs._bits ) ||
+            ( _overrideBits != rhs._overrideBits ) ||
+            ( _protectBits != rhs._protectBits ) ||
+            ( _data.size() != rhs._data.size() ) )
+            return( false );
+
+        CommandMapType::const_iterator leftIt( _data.begin() );
+        CommandMapType::const_iterator rightIt( rhs._data.begin() );
+        while( leftIt != _data.end() )
+        {
+            if( *( leftIt->second ) != *( rightIt->second ) )
+                return( false );
+            ++leftIt; ++rightIt;
+        }
+
+        return( true );
+    }
+    bool operator!=( const CommandMap& rhs ) const
+    {
+        return( !( operator==( rhs ) ) );
+    }
+
 
     CommandMapType _data;
     std::bitset< DrawablePrep::MaxCommandType > _bits;

@@ -182,24 +182,6 @@ void CollectionVisitor::collectAndTraverse( jagSG::Node& node )
     const unsigned int numDrawables( node.getNumDrawables() );
     if( collectDrawables && ( numDrawables > 0 ) )
     {
-        if( _currentNodes == NULL )
-            setCurrentNodeContainer( 0 );
-
-        _currentNodes->resize( _currentNodes->size()+1 );
-        jagDraw::Node& drawNode( (*_currentNodes)[ _currentNodes->size()-1 ] );
-
-        // Set eye coord distance (for distance-based render order control ).
-        drawNode.setDistance( _infoPtr->getECBoundDistance() );
-
-        // Set the model matrix.
-        drawNode.setTransform( _matrixStack.back() );
-
-        // TBD transform. Need to do this on first draw node and then
-        //   only on other draw nodes if they have a dirty model matrix.
-        //   But for now, do it everywhere.
-        // Model matrix is dirty; add callback to update the transform uniforms.
-        drawNode.getExecuteCallbacks().push_back( _drawTransformCallback );
-
         if( ( _nearFarOps & AutoCompute ) != 0 )
         {
             // Record changes to min near / max far.
@@ -207,11 +189,55 @@ void CollectionVisitor::collectAndTraverse( jagSG::Node& node )
             _maxECZ = std::max< double >( _maxECZ, maxDrawableECZ );
         }
 
+        // Determine if we really need to move to a new Draw Node, or can we
+        // just reuse the last Draw Node. If we do need a new Draw Node,
+        // determine whether we need an execute callback to specify the transform.
+        bool needNewDrawNode;
+        bool matrixChanged;
+        if( ( _currentNodes == NULL ) || _currentNodes->empty() )
+        {
+            if( _currentNodes == NULL )
+                setCurrentNodeContainer( 0 );
+            needNewDrawNode = true;
+            matrixChanged = true;
+        }
+        else
+        {
+            jagDraw::Node& lastDrawNode( (*_currentNodes)[ _currentNodes->size()-1 ] );
+            matrixChanged = ( _matrixStack.back() != lastDrawNode.getTransform() );
 
-        //JAG3D_WARNING( "TBD Must allocate new CommandMapPtr?" );
-        jagDraw::CommandMapPtr commands( new jagDraw::CommandMap(
-                _commandStack.back() ) );
-        drawNode.setCommandMap( commands );
+            const jagDraw::CommandMap& lastCommands( *( lastDrawNode.getCommandMap() ) );
+            needNewDrawNode = ( matrixChanged ||
+                ( _commandStack.back() != lastCommands ) );
+        }
+            needNewDrawNode = true;
+            matrixChanged = true;
+
+        if( needNewDrawNode )
+            _currentNodes->resize( _currentNodes->size()+1 );
+        jagDraw::Node& drawNode( (*_currentNodes)[ _currentNodes->size()-1 ] );
+
+        if( needNewDrawNode )
+        {
+            // Set eye coord distance (for distance-based render order control ).
+            drawNode.setDistance( _infoPtr->getECBoundDistance() );
+
+            // Model matrix changed; add callback to update the transform uniforms.
+            if( matrixChanged )
+            {
+                drawNode.getExecuteCallbacks().push_back( _drawTransformCallback );
+
+                // TBD for correctness, should probably do this even if
+                //   'matrixChanged' is false.
+                // Set the model matrix.
+                drawNode.setTransform( _matrixStack.back() );
+            }
+
+            //JAG3D_WARNING( "TBD Must allocate new CommandMapPtr?" );
+            jagDraw::CommandMapPtr commands( new jagDraw::CommandMap(
+                    _commandStack.back() ) );
+            drawNode.setCommandMap( commands );
+        }
 
         for( unsigned int idx=0; idx < numDrawables; ++idx )
         {
