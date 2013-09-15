@@ -19,6 +19,7 @@
 *************** <auto-copyright.pl END do not edit this line> ***************/
 
 #include <jagDraw/Common.h>
+#include <jagUtil/DrawGraphCountVisitor.h>
 #include <jagSG/Common.h>
 #include <jagDisk/ReadWrite.h>
 #include <jagBase/Log.h>
@@ -37,59 +38,6 @@
 namespace bpo = boost::program_options;
 
 std::string logstr( "jag.app.info" );
-
-
-
-class DrawGraphCountVisitor : public jagDraw::Visitor
-{
-public:
-    DrawGraphCountVisitor();
-    ~DrawGraphCountVisitor();
-
-    void reset();
-    void dump( std::ostream& ostr );
-
-    virtual bool visit( jagDraw::NodeContainer& nc );
-    virtual bool visit( jagDraw::Node& node, jagDraw::NodeContainer& nc );
-
-protected:
-    unsigned int _containers;
-    unsigned int _nodes;
-};
-
-DrawGraphCountVisitor::DrawGraphCountVisitor()
-    : jagDraw::Visitor( "count" )
-{
-    reset();
-}
-DrawGraphCountVisitor::~DrawGraphCountVisitor()
-{
-}
-
-void DrawGraphCountVisitor::reset()
-{
-    _containers = 0;
-    _nodes = 0;
-}
-void DrawGraphCountVisitor::dump( std::ostream& ostr )
-{
-    ostr << "            \tTotal" << std::endl;
-    ostr << "            \t-----" << std::endl;
-    ostr << " Containers:\t" << _containers << std::endl;
-    ostr << "      Nodes:\t" << _nodes << std::endl;
-}
-
-bool DrawGraphCountVisitor::visit( jagDraw::NodeContainer& nc )
-{
-    ++_containers;
-    return( true );
-}
-bool DrawGraphCountVisitor::visit( jagDraw::Node& node, jagDraw::NodeContainer& nc )
-{
-    ++_nodes;
-    return( true );
-}
-
 
 
 
@@ -231,7 +179,7 @@ int main( int argc, char** argv )
     jagSG::CollectionVisitor collect;
     root->accept( collect );
 
-    DrawGraphCountVisitor dgcv;
+    jagUtil::DrawGraphCountVisitor dgcv;
     dgcv.traverse( *( collect.getDrawGraph() ) );
     dgcv.dump( std::cout );
 

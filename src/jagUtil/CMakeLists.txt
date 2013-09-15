@@ -28,6 +28,7 @@ endif()
 set( _jagUtilHeaderFiles
     Export.h
     BufferAggregationVisitor.h
+    DrawGraphCountVisitor.h
     ResetBoundsVisitor.h
     Shapes.h
 )
