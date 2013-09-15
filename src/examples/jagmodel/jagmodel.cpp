@@ -25,6 +25,7 @@
 #include <jagSG/Common.h>
 #include <jagDisk/ReadWrite.h>
 #include <jagBase/Profile.h>
+#include <jagUtil/DrawGraphCountVisitor.h>
 #include <jagBase/Version.h>
 #include <jagBase/Log.h>
 #include <jagBase/LogMacros.h>
@@ -291,6 +292,14 @@ bool JagModel::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj )
 
         drawGraph->execute( drawInfo );
     }
+#ifdef JAG3D_ENABLE_PROFILING
+    {
+        // If profiling, dump out draw graph info.
+        jagUtil::DrawGraphCountVisitor dgcv;
+        dgcv.traverse( *( collect.getDrawGraph() ) );
+        dgcv.dump( std::cout );
+    }
+#endif
 
     glFlush();
 
