@@ -210,8 +210,6 @@ void CollectionVisitor::collectAndTraverse( jagSG::Node& node )
             needNewDrawNode = ( matrixChanged ||
                 ( _commandStack.back() != lastCommands ) );
         }
-            needNewDrawNode = true;
-            matrixChanged = true;
 
         if( needNewDrawNode )
             _currentNodes->resize( _currentNodes->size()+1 );
