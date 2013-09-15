@@ -152,15 +152,15 @@ void IntersectVisitor::intersect(jagSG::Node& node) {
         gmtl::Rayf rayf;
 
         //copy the transformed ray to a float version of the same ray
-        rayf.mDir[0] = _rayDeque.back().mDir[0];
-        rayf.mDir[1] = _rayDeque.back().mDir[1];
-        rayf.mDir[2] = _rayDeque.back().mDir[2];
+        rayf.mDir[0] = (float)( _rayDeque.back().mDir[0] );
+        rayf.mDir[1] = (float)( _rayDeque.back().mDir[1] );
+        rayf.mDir[2] = (float)( _rayDeque.back().mDir[2] );
 
-        rayf.mOrigin[0] = _rayDeque.back().mOrigin[0];
-        rayf.mOrigin[1] = _rayDeque.back().mOrigin[1];
-        rayf.mOrigin[2] = _rayDeque.back().mOrigin[2];
+        rayf.mOrigin[0] = (float)( _rayDeque.back().mOrigin[0] );
+        rayf.mOrigin[1] = (float)( _rayDeque.back().mOrigin[1] );
+        rayf.mOrigin[2] = (float)( _rayDeque.back().mOrigin[2] );
 
-        int oldNumHits = hits.size();
+        int oldNumHits = (int)( hits.size() );
     
         node.traverse(*this);
         if(node.getNumDrawables() > 0) {
@@ -199,8 +199,8 @@ void IntersectVisitor::intersect(jagSG::Node& node) {
                         hit.tri = j;
                         hit.nodeVec = this->getNodes();
                         hit.hitPosition = rayf.getOrigin() + ((float)t)*rayf.getDir();
-                        hit.u = u;
-                        hit.v = v;
+                        hit.u = (float)( u );
+                        hit.v = (float)( v );
                         hits.push_back(hit);
                     }
                 }
@@ -215,22 +215,15 @@ void IntersectVisitor::intersect(jagSG::Node& node) {
         //4. pass the transformed ray to all children
         //in this case the recursion is handle by the ray stack and not by an explicit passign parameter
         gmtl::Matrix44f matf;
-        for (auto i = 0; i < 16; i++) {
-
-            matf.mData[i] = node.getTransform().mData[i];
-        }
+        gmtl::convert( matf, node.getTransform() );
         
         //4. transform all hits(at this level or lower) by the transform
-            for(auto i = oldNumHits; i < hits.size(); i++) {
+        for(auto i = oldNumHits; i < hits.size(); i++) {
                 
-                gmtl::xform(hits[i].hitPosition, matf, hits[i].hitPosition);
+            gmtl::xform(hits[i].hitPosition, matf, hits[i].hitPosition);
                 
-                
-            }
-        _rayDeque.pop_back();
-
-        
-        
+        }
+    _rayDeque.pop_back();
 }
 
 void IntersectVisitor::reset()
