@@ -262,6 +262,53 @@ public:
         }
         return( result );
     }
+    void executeDelta( CommandMap& rhs, DrawInfo& drawInfo )
+    {
+        std::set< DrawablePrep::CommandType > local;
+        BOOST_FOREACH( CommandMapType::value_type dataPair, _data )
+        {
+            local.insert( dataPair.first );
+        }
+
+        BOOST_FOREACH( CommandMapType::value_type dataPair, rhs._data )
+        {
+            local.insert( dataPair.first );
+        }
+
+        BOOST_FOREACH( const DrawablePrep::CommandType& type, local )
+        {
+            switch( ( rhs._bits[ type ] << 1 ) | (int)( _bits[ type ] ) )
+            {
+            case 0:
+            case 1: // lhs has it
+                break;
+            case 2: // rhs has it
+                if( _overrideBits.test( type ) == false || rhs._protectBits.test( type ) == true  )
+                {
+                    DrawablePrepPtr command( rhs._data[ type ] );
+                    insert( command, rhs._overrideBits[ type ] );
+                    command->execute( drawInfo );
+                }
+                break; 
+
+            case 3: // both have it
+                DrawablePrepPtr& left( _data[ type ] );
+                DrawablePrepPtr& right( rhs._data[ type ] );
+                if( ( left != right ) &&
+                    ( *left != *right ) )
+                {
+                    if( _overrideBits.test( type ) == false || rhs._protectBits.test( type ) == true ) 
+                    {
+                        left = left->combine( right );
+                        //insert( right, rhs._overrideBits[ type ] );
+                        //result.insert( right, rhs._overrideBits[ type ] );
+                        left->execute( drawInfo );
+                    }
+                }
+                break;
+            }
+        }
+    }
 
     bool contains( DrawablePrep::CommandType type ) const
     {
