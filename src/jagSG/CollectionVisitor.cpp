@@ -415,8 +415,12 @@ double CollectionVisitor::CollectionInfo::getECBoundDistance() const
 {
     if( _ecDistanceDirty )
     {
-        const gmtl::Point3d ecCenter( _transform.getModelView() * _bound->getCenter() );
-        _ecDistance = -ecCenter[ 2 ];
+        const gmtl::Matrix44d& mv( _transform.getModelView() );
+        const gmtl::Point3d& c( _bound->getCenter() );
+        _ecDistance = -( mv( 2, 0 ) * c[ 0 ] +
+            mv( 2, 1 ) * c[ 1 ] +
+            mv( 2, 2 ) * c[ 2 ] +
+            mv( 2, 3 ) );
         _ecDistanceDirty = false;
     }
     return( _ecDistance );
