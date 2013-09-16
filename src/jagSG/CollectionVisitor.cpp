@@ -450,9 +450,12 @@ double CollectionVisitor::CollectionInfo::getWinCLength( double ecSegmentLength 
         int x, y, w, h;
         _transform.getViewport( x, y, w, h );
         const double* p( _transform.getProj().getData() );
-        const double ecZ( -getECBoundDistance() );
+        double ecZ( -getECBoundDistance() );
 
-        _wcLengthCoeff = ( 0.5 * w * p[0] ) / ( ecZ * p[11] + p[15] );
+        if( ecZ >= 0. )
+            _wcLengthCoeff = FLT_MAX;
+        else
+            _wcLengthCoeff = ( 0.5 * w * p[0] ) / ( ecZ * p[11] + p[15] );
         _wcLengthCoeffDirty = false;
     }
     return( _wcLengthCoeff * ecSegmentLength );
