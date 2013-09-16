@@ -106,8 +106,7 @@ void Node::execute( DrawInfo& drawInfo )
 
     {
     JAG3D_PROFILE( "CommandMap" );
-    CommandMap delta( drawInfo._current << (*_commands) );
-    delta.execute( drawInfo );
+    drawInfo._current.executeDelta( *_commands, drawInfo );
     }
 
     {
