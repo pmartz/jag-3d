@@ -240,7 +240,7 @@ bool JagModel::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj )
 
 #ifdef ENABLE_SORT
     jagDraw::DrawablePrep::CommandTypeVec plist;
-    plist.push_back( jagDraw::DrawablePrep::UniformSet_t );
+    plist.push_back( jagDraw::DrawablePrep::UniformBlockSet_t );
 #endif
 
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );

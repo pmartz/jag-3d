@@ -137,11 +137,11 @@ public:
         return( !( operator==( rhs ) ) );
     }
 
-    bool operator< ( const DrawablePrep& rhs ) const
+    virtual bool operator< ( const DrawablePrep& rhs ) const
     {
         return( _uniqueID < rhs._uniqueID );
     }
-    bool operator> ( const DrawablePrep& rhs ) const
+    virtual bool operator> ( const DrawablePrep& rhs ) const
     {
         return( _uniqueID > rhs._uniqueID );
     }
@@ -253,6 +253,57 @@ public:
         }
 
         return( true );
+    }
+
+    virtual bool operator< ( const DrawablePrep& rhs ) const
+    {
+        const MAP_TYPE* rSet( dynamic_cast< const MAP_TYPE* >( &rhs ) );
+
+        if( size() < rSet->size() )
+            return( true );
+        if( size() > rSet->size() )
+            return( false );
+
+        MAP_TYPE::const_iterator leftIt( begin() );
+        MAP_TYPE::const_iterator rightIt( rSet->begin() );
+        while( leftIt != end() )
+        {
+            if( leftIt->first < rightIt->first )
+                return( true );
+            if( leftIt->first > rightIt->first )
+                return( false );
+            if( *(leftIt->second) < *(rightIt->second) )
+                return( true );
+            ++leftIt;
+            ++rightIt;
+        }
+
+        return( false );
+    }
+    virtual bool operator> ( const DrawablePrep& rhs ) const
+    {
+        const MAP_TYPE* rSet( dynamic_cast< const MAP_TYPE* >( &rhs ) );
+
+        if( size() > rSet->size() )
+            return( true );
+        if( size() < rSet->size() )
+            return( false );
+
+        MAP_TYPE::const_iterator leftIt( begin() );
+        MAP_TYPE::const_iterator rightIt( rSet->begin() );
+        while( leftIt != end() )
+        {
+            if( leftIt->first > rightIt->first )
+                return( true );
+            if( leftIt->first < rightIt->first )
+                return( false );
+            if( *(leftIt->second) > *(rightIt->second) )
+                return( true );
+            ++leftIt;
+            ++rightIt;
+        }
+
+        return( false );
     }
 };
 
