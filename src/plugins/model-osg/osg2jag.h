@@ -65,6 +65,9 @@ protected:
     bool preTraverse( osg::Object* osgObject, osg::StateSet* stateSet, const gmtl::Matrix44d& m=gmtl::MAT_IDENTITY44D );
     void postTraverse();
 
+    jagDraw::UniformBlockPtr findMaterial( osg::Material* m );
+    void addMaterial( osg::Material* m, jagDraw::UniformBlockPtr ub );
+
 
     jagSG::NodePtr _jagScene;
     jagSG::NodePtr _current;
