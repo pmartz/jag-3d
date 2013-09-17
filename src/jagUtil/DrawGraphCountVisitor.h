@@ -48,6 +48,7 @@ public:
 protected:
     unsigned int _containers;
     unsigned int _nodes;
+    unsigned int _drawables;
 };
 
 DrawGraphCountVisitor::DrawGraphCountVisitor()
@@ -63,6 +64,7 @@ void DrawGraphCountVisitor::reset()
 {
     _containers = 0;
     _nodes = 0;
+    _drawables = 0;
 }
 void DrawGraphCountVisitor::dump( std::ostream& ostr )
 {
@@ -70,6 +72,7 @@ void DrawGraphCountVisitor::dump( std::ostream& ostr )
     ostr << "            \t-----" << std::endl;
     ostr << " Containers:\t" << _containers << std::endl;
     ostr << "      Nodes:\t" << _nodes << std::endl;
+    ostr << "  Drawables:\t" << _drawables << std::endl;
 }
 
 bool DrawGraphCountVisitor::visit( jagDraw::NodeContainer& nc )
@@ -80,6 +83,7 @@ bool DrawGraphCountVisitor::visit( jagDraw::NodeContainer& nc )
 bool DrawGraphCountVisitor::visit( jagDraw::Node& node, jagDraw::NodeContainer& nc )
 {
     ++_nodes;
+    _drawables += node.getNumDrawables();
     return( true );
 }
 
