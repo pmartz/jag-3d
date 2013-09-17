@@ -23,11 +23,12 @@
 
 
 #include <jagDisk/Options.h>
+#include <jagBase/Buffer.h>
+#include <jagSG/Node.h>
+#include <jagDraw/UniformBlock.h>
 
 #include <osg/NodeVisitor>
 #include <osg/Matrix>
-#include <jagBase/Buffer.h>
-#include <jagSG/Node.h>
 #include <osg/PrimitiveSet>
 
 #include <map>
@@ -39,6 +40,7 @@ namespace osg {
     class Geometry;
     class Array;
     class StateSet;
+    class Material;
 }
 
 
@@ -73,6 +75,9 @@ protected:
 
     typedef std::map< osg::StateSet*, jagDraw::CommandMapPtr > OSGStateSetMap;
     OSGStateSetMap _ssInstances;
+
+    typedef std::map< osg::Material*, jagDraw::UniformBlockPtr > OSGMaterialMap;
+    OSGMaterialMap _matInstances;
 
 
     struct ArrayInfo {

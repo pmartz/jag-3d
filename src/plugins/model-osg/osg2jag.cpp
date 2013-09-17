@@ -351,18 +351,30 @@ void Osg2Jag::apply( osg::StateSet* stateSet )
     {
         osg::Material* m( static_cast< osg::Material* >( sa ) );
 
-        jagDraw::UniformBlockPtr frontMaterials( jagDraw::UniformBlockPtr(
-            new jagDraw::UniformBlock( "LightingMaterialFront" ) ) );
-        frontMaterials->addUniform( jagDraw::UniformPtr(
-            new jagDraw::Uniform( "ambient", VEC4_TO_GMTL_PT4F(m->getAmbient(osg::Material::FRONT)) ) ) );
-        frontMaterials->addUniform( jagDraw::UniformPtr(
-            new jagDraw::Uniform( "diffuse", VEC4_TO_GMTL_PT4F(m->getDiffuse(osg::Material::FRONT)) ) ) );
-        frontMaterials->addUniform( jagDraw::UniformPtr(
-            new jagDraw::Uniform( "specular", VEC4_TO_GMTL_PT4F(m->getSpecular(osg::Material::FRONT)) ) ) );
-        frontMaterials->addUniform( jagDraw::UniformPtr(
-            new jagDraw::Uniform( "shininess", m->getShininess( osg::Material::FRONT ) ) ) );
+        OSGMaterialMap::iterator it( _matInstances.find( m ) );
+        if( it != _matInstances.end() )
+        {
+            if( it->second != NULL )
+            {
+                ubsp->insert( it->second );
+            }
+        }
+        else
+        {
+            jagDraw::UniformBlockPtr frontMaterials( jagDraw::UniformBlockPtr(
+                new jagDraw::UniformBlock( "LightingMaterialFront" ) ) );
+            frontMaterials->addUniform( jagDraw::UniformPtr(
+                new jagDraw::Uniform( "ambient", VEC4_TO_GMTL_PT4F(m->getAmbient(osg::Material::FRONT)) ) ) );
+            frontMaterials->addUniform( jagDraw::UniformPtr(
+                new jagDraw::Uniform( "diffuse", VEC4_TO_GMTL_PT4F(m->getDiffuse(osg::Material::FRONT)) ) ) );
+            frontMaterials->addUniform( jagDraw::UniformPtr(
+                new jagDraw::Uniform( "specular", VEC4_TO_GMTL_PT4F(m->getSpecular(osg::Material::FRONT)) ) ) );
+            frontMaterials->addUniform( jagDraw::UniformPtr(
+                new jagDraw::Uniform( "shininess", m->getShininess( osg::Material::FRONT ) ) ) );
 
-        ubsp->insert( frontMaterials );
+            _matInstances[ m ] = frontMaterials;
+            ubsp->insert( frontMaterials );
+        }
     }
 
     // Texture2D
