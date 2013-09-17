@@ -320,6 +320,33 @@ void Osg2Jag::apply( osg::Geometry* geom )
     postTraverse();
 }
 
+
+jagDraw::UniformBlockPtr Osg2Jag::findMaterial( osg::Material* m )
+{
+    // Find by address
+    OSGMaterialMap::iterator it( _matInstances.find( m ) );
+    if( it != _matInstances.end() )
+    {
+        return( it->second );
+    }
+
+    // Some models do not share materials, but we can work around
+    // that by looking up materials by their osg::Object name.
+    BOOST_FOREACH( OSGMaterialMap::value_type dataPair, _matInstances )
+    {
+        if( dataPair.second->getName() == m->getName() )
+        {
+            return( dataPair.second );
+        }
+    }
+
+    return( jagDraw::UniformBlockPtr( (jagDraw::UniformBlock*)NULL ) );
+}
+void Osg2Jag::addMaterial( osg::Material* m, jagDraw::UniformBlockPtr ub )
+{
+    _matInstances[ m ] = ub;
+}
+
 void Osg2Jag::apply( osg::StateSet* stateSet )
 {
     if( stateSet == NULL )
@@ -351,18 +378,11 @@ void Osg2Jag::apply( osg::StateSet* stateSet )
     {
         osg::Material* m( static_cast< osg::Material* >( sa ) );
 
-        OSGMaterialMap::iterator it( _matInstances.find( m ) );
-        if( it != _matInstances.end() )
+        UniformBlockPtr frontMaterials( findMaterial( m ) );
+        if( frontMaterials == NULL )
         {
-            if( it->second != NULL )
-            {
-                ubsp->insert( it->second );
-            }
-        }
-        else
-        {
-            jagDraw::UniformBlockPtr frontMaterials( jagDraw::UniformBlockPtr(
-                new jagDraw::UniformBlock( "LightingMaterialFront" ) ) );
+            frontMaterials = jagDraw::UniformBlockPtr(
+                new jagDraw::UniformBlock( "LightingMaterialFront" ) );
             frontMaterials->addUniform( jagDraw::UniformPtr(
                 new jagDraw::Uniform( "ambient", VEC4_TO_GMTL_PT4F(m->getAmbient(osg::Material::FRONT)) ) ) );
             frontMaterials->addUniform( jagDraw::UniformPtr(
@@ -371,10 +391,9 @@ void Osg2Jag::apply( osg::StateSet* stateSet )
                 new jagDraw::Uniform( "specular", VEC4_TO_GMTL_PT4F(m->getSpecular(osg::Material::FRONT)) ) ) );
             frontMaterials->addUniform( jagDraw::UniformPtr(
                 new jagDraw::Uniform( "shininess", m->getShininess( osg::Material::FRONT ) ) ) );
-
-            _matInstances[ m ] = frontMaterials;
-            ubsp->insert( frontMaterials );
+            addMaterial( m, frontMaterials );
         }
+        ubsp->insert( frontMaterials );
     }
 
     // Texture2D
