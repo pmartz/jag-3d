@@ -177,6 +177,10 @@ int main( int argc, char** argv )
     sgcv.dump( std::cout );
 
     jagSG::CollectionVisitor collect;
+    collect.setNearFarOps( jagSG::CollectionVisitor::None );
+    gmtl::Matrix44d proj;
+    gmtl::setOrtho( proj, -DBL_MAX, DBL_MAX, DBL_MAX, -DBL_MAX, DBL_MAX, -DBL_MAX );
+    collect.setViewProj( gmtl::MAT_IDENTITY44D, proj );
     root->accept( collect );
 
     jagUtil::DrawGraphCountVisitor dgcv;
