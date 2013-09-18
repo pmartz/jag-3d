@@ -176,8 +176,8 @@ bool TextureDemo::startup( const unsigned int numContexts )
         vaop->addVertexArrayCommand( iColor );
         commands->insert( vaop );
 
-        jagDraw::Node drawNode( commands );
-        drawNode.addDrawable( drawable );
+        jagDraw::DrawNodePtr drawNode( new jagDraw::Node( commands ) );
+        drawNode->addDrawable( drawable );
         _nodes.push_back( drawNode );
     }
 

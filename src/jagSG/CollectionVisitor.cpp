@@ -203,43 +203,43 @@ void CollectionVisitor::collectAndTraverse( jagSG::Node& node )
         }
         else
         {
-            jagDraw::Node& lastDrawNode( (*_currentNodes)[ _currentNodes->size()-1 ] );
-            matrixChanged = ( _matrixStack.back() != lastDrawNode.getTransform() );
+            jagDraw::DrawNodePtr& lastDrawNode( (*_currentNodes)[ _currentNodes->size()-1 ] );
+            matrixChanged = ( _matrixStack.back() != lastDrawNode->getTransform() );
 
-            const jagDraw::CommandMap& lastCommands( *( lastDrawNode.getCommandMap() ) );
+            const jagDraw::CommandMap& lastCommands( *( lastDrawNode->getCommandMap() ) );
             needNewDrawNode = ( matrixChanged ||
                 ( _commandStack.back() != lastCommands ) );
         }
 
         if( needNewDrawNode )
-            _currentNodes->resize( _currentNodes->size()+1 );
-        jagDraw::Node& drawNode( (*_currentNodes)[ _currentNodes->size()-1 ] );
+            _currentNodes->push_back( jagDraw::DrawNodePtr( new jagDraw::Node() ) );
+        jagDraw::DrawNodePtr& drawNode( (*_currentNodes)[ _currentNodes->size()-1 ] );
 
         if( needNewDrawNode )
         {
             // Set eye coord distance (for distance-based render order control ).
-            drawNode.setDistance( _infoPtr->getECBoundDistance() );
+            drawNode->setDistance( _infoPtr->getECBoundDistance() );
 
             // Model matrix changed; add callback to update the transform uniforms.
             if( matrixChanged )
             {
-                drawNode.getExecuteCallbacks().push_back( _drawTransformCallback );
+                drawNode->getExecuteCallbacks().push_back( _drawTransformCallback );
 
                 // TBD for correctness, should probably do this even if
                 //   'matrixChanged' is false.
                 // Set the model matrix.
-                drawNode.setTransform( _matrixStack.back() );
+                drawNode->setTransform( _matrixStack.back() );
             }
 
             //JAG3D_WARNING( "TBD Must allocate new CommandMapPtr?" );
             jagDraw::CommandMapPtr commands( new jagDraw::CommandMap(
                     _commandStack.back() ) );
-            drawNode.setCommandMap( commands );
+            drawNode->setCommandMap( commands );
         }
 
         for( unsigned int idx=0; idx < numDrawables; ++idx )
         {
-            drawNode.addDrawable( node.getDrawable( idx ) );
+            drawNode->addDrawable( node.getDrawable( idx ) );
         }
     }
     }

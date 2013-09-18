@@ -78,7 +78,7 @@ public:
                 break;
             BOOST_FOREACH( jagDraw::NodeContainer::value_type& node, nc )
             {
-                if( !( visit( node, nc ) ) )
+                if( !( visit( *node, nc ) ) )
                     break;
             }
         }

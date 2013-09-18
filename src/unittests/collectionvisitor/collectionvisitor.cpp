@@ -137,20 +137,20 @@ bool test()
         return( false );
     }
     const NodeContainer& nodes( (*drawGraph)[ 0 ] );
-    const jagDraw::Node& node( nodes[ 0 ] );
-    if( node.getCommandMap() != commands )
+    const jagDraw::DrawNodePtr& node( nodes[ 0 ] );
+    if( node->getCommandMap() != commands )
     {
         // TBD need to test for CommandMap equivalence.
         // Address comparison is insufficient.
         std::cerr << "KNOWN FAILURE: Wrong CommandMap." << std::endl;
         //return( false );
     }
-    if( node.getNumDrawables() != 1 )
+    if( node->getNumDrawables() != 1 )
     {
-        std::cerr << "Node num drawables " << node.getNumDrawables() << " != 1." << std::endl;
+        std::cerr << "Node num drawables " << node->getNumDrawables() << " != 1." << std::endl;
         return( false );
     }
-    if( node.getDrawableVec()[ 0 ] != draw )
+    if( node->getDrawableVec()[ 0 ] != draw )
     {
         std::cerr << "Drawable address mismatch." << std::endl;
         return( false );
