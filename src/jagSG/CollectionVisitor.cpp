@@ -193,18 +193,16 @@ void CollectionVisitor::collectAndTraverse( jagSG::Node& node )
         // just reuse the last Draw Node. If we do need a new Draw Node,
         // determine whether we need an execute callback to specify the transform.
         bool needNewDrawNode;
-        bool matrixChanged;
         if( ( _currentNodes == NULL ) || _currentNodes->empty() )
         {
             if( _currentNodes == NULL )
                 setCurrentNodeContainer( 0 );
             needNewDrawNode = true;
-            matrixChanged = true;
         }
         else
         {
             jagDraw::DrawNodePtr& lastDrawNode( (*_currentNodes)[ _currentNodes->size()-1 ] );
-            matrixChanged = ( _matrixStack.back() != lastDrawNode->getTransform() );
+            const bool matrixChanged( _matrixStack.back() != lastDrawNode->getTransform() );
 
             const jagDraw::CommandMap& lastCommands( *( lastDrawNode->getCommandMap() ) );
             needNewDrawNode = ( matrixChanged ||
@@ -221,15 +219,9 @@ void CollectionVisitor::collectAndTraverse( jagSG::Node& node )
             drawNode->setDistance( _infoPtr->getECBoundDistance() );
 
             // Model matrix changed; add callback to update the transform uniforms.
-            if( matrixChanged )
-            {
-                drawNode->getExecuteCallbacks().push_back( _drawTransformCallback );
-
-                // TBD for correctness, should probably do this even if
-                //   'matrixChanged' is false.
-                // Set the model matrix.
-                drawNode->setTransform( _matrixStack.back() );
-            }
+            drawNode->getExecuteCallbacks().push_back( _drawTransformCallback );
+            // Set the model matrix.
+            drawNode->setTransform( _matrixStack.back() );
 
             //JAG3D_WARNING( "TBD Must allocate new CommandMapPtr?" );
             jagDraw::CommandMapPtr commands( new jagDraw::CommandMap(
