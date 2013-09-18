@@ -139,19 +139,22 @@ void BufferObject::execute( DrawInfo& drawInfo )
     glBindBuffer( _target, id );
 
     if( _dirty )
-    {
-        if( _dirtySize == 0 )
-            glBufferData( _target, _buffer->getSize(), _buffer->getData(), _usage );
-        else
-        {
-            GLsizeiptr offset( (GLsizeiptr)_dirtyOffset );
-            GLsizeiptr size( (GLsizeiptr)_dirtySize );
-            glBufferSubData( _target, offset, size,
-                _buffer->getOffset( _dirtyOffset ) );
-        }
-        _dirty = false;
-    }
+        sendDirtyBufferData();
 }
+void BufferObject::sendDirtyBufferData()
+{
+    if( _dirtySize == 0 )
+        glBufferData( _target, _buffer->getSize(), _buffer->getData(), _usage );
+    else
+    {
+        GLsizeiptr offset( (GLsizeiptr)_dirtyOffset );
+        GLsizeiptr size( (GLsizeiptr)_dirtySize );
+        glBufferSubData( _target, offset, size,
+            _buffer->getOffset( _dirtyOffset ) );
+    }
+    _dirty = false;
+}
+
 
 void BufferObject::setBufferDirty( const bool dirty )
 {
@@ -245,6 +248,9 @@ void IndexedBufferObject::execute( DrawInfo& drawInfo )
 {
     const GLuint id( getID( drawInfo._id ) );
     glBindBufferBase( _target, _index, id );
+
+    if( _dirty )
+        sendDirtyBufferData();
 }
 
 

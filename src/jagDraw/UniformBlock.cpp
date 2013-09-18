@@ -40,7 +40,8 @@ UniformBlock::UniformBlock( const std::string& name, const std::string& logName 
     ObjectIDOwner(),
     SHARED_FROM_THIS( UniformBlock )(),
     jagBase::LogBase( logName.empty() ? "jag.draw.ublock" : logName ),
-    _name( name )
+    _name( name ),
+    _dirty( true )
 {
     _nameHash = Program::createHash( _name );
     JAG3D_TRACE( "Constructor: " + _name );
@@ -54,7 +55,8 @@ UniformBlock::UniformBlock( const UniformBlock& rhs )
     _nameHash( rhs._nameHash ),
     _uniforms( rhs._uniforms ),
     _bufferObject( rhs._bufferObject ),
-    _buffer( rhs._buffer )
+    _buffer( rhs._buffer ),
+    _dirty( rhs._dirty )
 {
     JAG3D_TRACE( "Copy constructor: " + _name );
 }
@@ -75,9 +77,7 @@ Program::HashValue UniformBlock::getNameHash() const
 void UniformBlock::addUniform( UniformPtr uniform )
 {
     _uniforms.push_back( uniform );
-
-    if( _bufferObject != NULL )
-        _bufferObject->setBufferDirty();
+    _dirty = true;
 }
 
 
@@ -90,21 +90,26 @@ void UniformBlock::execute( DrawInfo& drawInfo, const Program::BlockInfo& blockI
         JAG3D_TRACE( "execute(): " + _name + ", bindIndex: " + ostr.str() );
     }
 
-    if( _buffer->getSize() < blockInfo._minSize )
-        _buffer->setSize( blockInfo._minSize );
-
-    // TBD load uniforms into buffer
-    const Program::OffsetMap& offsets( blockInfo._offsets );
-    BOOST_FOREACH( const UniformPtr& uniform, _uniforms )
+    if( _dirty )
     {
-        Program::OffsetMap::const_iterator it( offsets.find( uniform->getNameHash() ) );
-        if( it != offsets.end() )
+        if( _buffer->getSize() < blockInfo._minSize )
+            _buffer->setSize( blockInfo._minSize );
+
+        // TBD load uniforms into buffer
+        const Program::OffsetMap& offsets( blockInfo._offsets );
+        BOOST_FOREACH( const UniformPtr& uniform, _uniforms )
         {
-            const GLuint offsetValue( it->second );
-            uniform->copyValue( _buffer->getOffset( offsetValue ) );
+            Program::OffsetMap::const_iterator it( offsets.find( uniform->getNameHash() ) );
+            if( it != offsets.end() )
+            {
+                const GLuint offsetValue( it->second );
+                uniform->copyValue( _buffer->getOffset( offsetValue ) );
+            }
         }
+        _bufferObject->setBufferDirty();
+
+        _dirty = false;
     }
-    _bufferObject->setBufferDirty();
 
     // bind 
     _bufferObject->setIndex( blockInfo._bindIndex );

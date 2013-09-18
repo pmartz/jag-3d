@@ -118,6 +118,8 @@ protected:
 
     UniformBufferPtr _bufferObject;
     jagBase::BufferPtr _buffer;
+
+    mutable bool _dirty;
 };
 
 typedef jagBase::ptr< const jagDraw::UniformBlock >::shared_ptr ConstUniformBlockPtr;
