@@ -158,10 +158,10 @@ bool test()
                 std::cerr << "Failed: NodeContainer incorrect size: " << nodes.size() << std::endl;
                 return( false );
             }
-            const jagDraw::Node& node( nodes[ 0 ] );
-            if( node.getNumDrawables() != 1 )
+            const jagDraw::DrawNodePtr& node( nodes[ 0 ] );
+            if( node->getNumDrawables() != 1 )
             {
-                std::cerr << "Node num drawables " << node.getNumDrawables() << " != 1." << std::endl;
+                std::cerr << "Node num drawables " << node->getNumDrawables() << " != 1." << std::endl;
                 return( false );
             }
         }
@@ -188,10 +188,10 @@ bool test()
                 std::cerr << "Failed: NodeContainer incorrect size: " << nodes.size() << std::endl;
                 return( false );
             }
-            const jagDraw::Node& node( nodes[ 0 ] );
-            if( node.getNumDrawables() != 1 )
+            const jagDraw::DrawNodePtr& node( nodes[ 0 ] );
+            if( node->getNumDrawables() != 1 )
             {
-                std::cerr << "Node num drawables " << node.getNumDrawables() << " != 1." << std::endl;
+                std::cerr << "Node num drawables " << node->getNumDrawables() << " != 1." << std::endl;
                 return( false );
             }
         }
@@ -223,10 +223,10 @@ bool test()
                 std::cerr << "Failed: NodeContainer incorrect size: " << nodes.size() << std::endl;
                 return( false );
             }
-            const jagDraw::Node& node( nodes[ 0 ] );
-            if( node.getNumDrawables() != 1 )
+            const jagDraw::DrawNodePtr& node( nodes[ 0 ] );
+            if( node->getNumDrawables() != 1 )
             {
-                std::cerr << "Node num drawables " << node.getNumDrawables() << " != 1." << std::endl;
+                std::cerr << "Node num drawables " << node->getNumDrawables() << " != 1." << std::endl;
                 return( false );
             }
         }

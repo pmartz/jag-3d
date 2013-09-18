@@ -101,14 +101,14 @@ bool test()
     jagDraw::TextureSetPtr ts1( jagDraw::TextureSetPtr( new jagDraw::TextureSet() ) );
     (*ts1)[ GL_TEXTURE0 ] = tex1;
 
-    jagDraw::DrawNodeSimpleVec nodes;
+    jagDraw::DrawNodeVec nodes;
     for( unsigned int idx=0; idx<8; ++idx )
     {
         jagDraw::CommandMapPtr commands( jagDraw::CommandMapPtr( new CommandMap() ) );
         commands->insert( ( ( idx & 0x1 ) == 0 ) ? prog0 : prog1 );
         commands->insert( ( ( idx & 0x4 ) == 0 ) ? ts0 : ts1 );
 
-        nodes.push_back( jagDraw::Node( commands ) );
+        nodes.push_back( jagDraw::DrawNodePtr( new jagDraw::Node( commands ) ) );
 
 #ifdef VERBOST_OUTPUT
         std::cout << "-----" << std::endl;
@@ -125,9 +125,10 @@ bool test()
 
         CountCommands cc;
         CommandMap current;
-        for( jagDraw::DrawNodeSimpleVec::const_iterator p = nodes.begin(); p != nodes.end(); ++p )
+        for( jagDraw::DrawNodeVec::const_iterator p = nodes.begin(); p != nodes.end(); ++p )
         {
-            CommandMap delta = current << *( p->getCommandMap() );
+            const jagDraw::DrawNodePtr& np( *p );
+            CommandMap delta = current << *( np->getCommandMap() );
 #ifdef VERBOST_OUTPUT
             std::cout << "-----" << std::endl;
             std::cout << p->getCommandMap()->_name << std::endl;
@@ -172,9 +173,10 @@ bool test()
 
         CountCommands cc;
         CommandMap current;
-        for( jagDraw::DrawNodeSimpleVec::const_iterator p = nodes.begin(); p != nodes.end(); p++ )
+        for( jagDraw::DrawNodeVec::const_iterator p = nodes.begin(); p != nodes.end(); p++ )
         {
-            CommandMap delta = current << *(  p->getCommandMap() );
+            const jagDraw::DrawNodePtr& np( *p );
+            CommandMap delta = current << *( np->getCommandMap() );
 #ifdef VERBOST_OUTPUT
             std::cout << "-----" << std::endl;
             std::cout << p->getCommandMap()->_name << std::endl;

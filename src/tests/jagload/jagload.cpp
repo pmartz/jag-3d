@@ -119,7 +119,7 @@ bool JagLoadDemo::startup( const unsigned int numContexts )
         return( false );
     }
 
-    jagDraw::Node& firstDrawNode( _drawNodes[ 0 ] );
+    jagDraw::DrawNodePtr& firstDrawNode( _drawNodes[ 0 ] );
 
     jagDraw::ShaderPtr vs( DemoInterface::readShaderUtil( "jagload.vert" ) );
     jagDraw::ShaderPtr fs( DemoInterface::readShaderUtil( "jagload.frag" ) );
@@ -129,11 +129,11 @@ bool JagLoadDemo::startup( const unsigned int numContexts )
     prog->attachShader( vs );
     prog->attachShader( fs );
 
-    jagDraw::CommandMapPtr commands( firstDrawNode.getCommandMap() );
+    jagDraw::CommandMapPtr commands( firstDrawNode->getCommandMap() );
     if( commands == NULL )
     {
         commands = jagDraw::CommandMapPtr( new jagDraw::CommandMap() );
-        firstDrawNode.setCommandMap( commands );
+        firstDrawNode->setCommandMap( commands );
     }
     commands->insert( prog );
 

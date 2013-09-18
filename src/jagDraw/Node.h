@@ -190,21 +190,15 @@ public:
     ~DrawNodeCommandSorter()
     {}
 
-    bool operator()( const Node& lhs, const Node& rhs ) const
+    bool operator()( const DrawNodePtr& lhs, const DrawNodePtr& rhs ) const
     {
-        const CommandMapPtr lhsCommands( lhs.getCommandMap() );
-        const CommandMapPtr rhsCommands( rhs.getCommandMap() );
+        const CommandMapPtr& lhsCommands( lhs->getCommandMap() );
+        const CommandMapPtr& rhsCommands( rhs->getCommandMap() );
 
         for( DrawablePrep::CommandTypeVec::const_iterator typeIter = _priorityVec.begin(); typeIter != _priorityVec.end(); ++typeIter )
         {
             switch( (int)( lhsCommands->_bits[ *typeIter ] ) | ( rhsCommands->_bits[ *typeIter ] << 1 ) )
             {
-                case 0:
-                    continue;
-                case 1:
-                    return( true );
-                case 2:
-                    return( false );
                 case 3: 
                 {
                     const DrawablePrepPtr a( lhsCommands->_data.find( *typeIter )->second );
@@ -215,6 +209,12 @@ public:
                         return( false );
                     break;
                 }
+                case 0:
+                    continue;
+                case 1:
+                    return( true );
+                case 2:
+                    return( false );
             }
         }
         return( false );
@@ -242,10 +242,10 @@ public:
     ~DrawNodeDistanceSorter()
     {}
 
-    bool operator()( const Node& lhs, const Node& rhs ) const
+    bool operator()( const DrawNodePtr& lhs, const DrawNodePtr& rhs ) const
     {
-        const double lDist( lhs.getDistance() );
-        const double rDist( rhs.getDistance() );
+        const double lDist( lhs->getDistance() );
+        const double rDist( rhs->getDistance() );
         if( lDist < rDist )
             return( _order == Ascending );
         else if( lDist > rDist )

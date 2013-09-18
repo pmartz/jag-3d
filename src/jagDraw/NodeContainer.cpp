@@ -36,7 +36,7 @@ NodeContainer::NodeContainer( const std::string& logName )
 {
 }
 NodeContainer::NodeContainer( const NodeContainer& rhs )
-  : DrawNodeSimpleVec( rhs ),
+  : DrawNodeVec( rhs ),
     jagBase::LogBase( "jag.draw.ncon" ),
     ObjectIDOwner( rhs ),
     _callbacks( rhs._callbacks )
@@ -48,7 +48,7 @@ NodeContainer::~NodeContainer()
 
 NodeContainer& NodeContainer::operator=( const NodeContainer& rhs )
 {
-    DrawNodeSimpleVec::operator=( rhs );
+    DrawNodeVec::operator=( rhs );
     ObjectIDOwner::operator=( rhs );
     // LogBase does not support (and doesn't need) assignment operator.
     //jagBase::LogBase::operator=( rhs );
@@ -80,24 +80,24 @@ void NodeContainer::execute( DrawInfo& drawInfo )
 }
 void NodeContainer::internalExecute( DrawInfo& drawInfo )
 {
-    BOOST_FOREACH( Node& node, *this )
+    BOOST_FOREACH( DrawNodePtr& node, *this )
     {
-        node.execute( drawInfo );
+        node->execute( drawInfo );
     }
 }
 
 void NodeContainer::setMaxContexts( const unsigned int numContexts )
 {
-    BOOST_FOREACH( Node& node, *this )
+    BOOST_FOREACH( DrawNodePtr& node, *this )
     {
-        node.setMaxContexts( numContexts );
+        node->setMaxContexts( numContexts );
     }
 }
 void NodeContainer::deleteID( const jagDraw::jagDrawContextID contextID )
 {
-    BOOST_FOREACH( Node& node, *this )
+    BOOST_FOREACH( DrawNodePtr& node, *this )
     {
-        node.deleteID( contextID );
+        node->deleteID( contextID );
     }
 }
 

@@ -37,7 +37,7 @@ namespace jagDraw {
 /** \class NodeContainer NodeContainer.h <jagDraw/NodeContainer.h>
 \brief TBD
 \details std::vector of draw graph Node objects. */
-class JAGDRAW_EXPORT NodeContainer : public jagDraw::DrawNodeSimpleVec,
+class JAGDRAW_EXPORT NodeContainer : public jagDraw::DrawNodeVec,
         protected jagBase::LogBase, public ObjectIDOwner
 {
 public:
@@ -96,57 +96,6 @@ protected:
 typedef jagBase::ptr< jagDraw::NodeContainer >::shared_ptr NodeContainerPtr;
 typedef std::vector< NodeContainerPtr > NodeContainerVec;
 typedef std::vector< NodeContainer > NodeContainerSimpleVec;
-
-
-#if 0
-class DrawNodeCommandSorter
-{
-public:
-    DrawNodeCommandSorter()
-    {}
-    DrawNodeCommandSorter( const DrawablePrep::CommandTypeVec& priorityVec ):
-        _priorityVec( priorityVec )
-    {}
-    DrawNodeCommandSorter( const DrawNodeCommandSorter& rhs )
-        : _priorityVec( rhs._priorityVec )
-    {}
-    ~DrawNodeCommandSorter()
-    {}
-
-    bool operator()( const Node& lhs, const Node& rhs ) const
-    {
-        const CommandMapPtr lhsCommands( lhs.getCommandMap() );
-        const CommandMapPtr rhsCommands( rhs.getCommandMap() );
-
-        for( DrawablePrep::CommandTypeVec::const_iterator typeIter = _priorityVec.begin(); typeIter != _priorityVec.end(); ++typeIter )
-        {
-            switch( (int)( lhsCommands->_bits[ *typeIter ] ) | ( rhsCommands->_bits[ *typeIter ] << 1 ) )
-            {
-                case 0:
-                    continue;
-                case 1:
-                    return( true );
-                case 2:
-                    return( false );
-                case 3: 
-                {
-                    const DrawablePrepPtr a( lhsCommands->_data.find( *typeIter )->second );
-                    const DrawablePrepPtr b( rhsCommands->_data.find( *typeIter )->second );
-                    if( *a < *b )
-                        return( true );
-                    if( *a > *b )
-                        return( false );
-                    break;
-                }
-            }
-        }
-        return( false );
-    }
-
-protected:
-    DrawablePrep::CommandTypeVec _priorityVec;
-};
-#endif
 
 
 // jagDraw

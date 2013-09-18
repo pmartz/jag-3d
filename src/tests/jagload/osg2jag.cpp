@@ -202,8 +202,8 @@ void Osg2Jag::apply( osg::Geometry* geom )
         }
     }
 
-    jagDraw::Node drawNode( commands );
-    drawNode.addDrawable( draw );
+    jagDraw::DrawNodePtr drawNode( new jagDraw::Node( commands ) );
+    drawNode->addDrawable( draw );
     _jagDrawNodes.push_back( drawNode );
 }
 
