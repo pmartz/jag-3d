@@ -42,14 +42,16 @@ Node::Node( CommandMapPtr commands, const std::string& logName )
 Node::Node( const std::string& logName )
     : jagBase::LogBase( logName ),
     ObjectIDOwner(),
+    jagBase::UserDataOwner(),
     _matrix( gmtl::MAT_IDENTITY44D ),
     _commands( ( CommandMap* )NULL ),
     _distance( 0. )
 {
 }
 Node::Node( const Node& rhs )
-  : jagBase::LogBase( "jag.draw.node" ),
+  : jagBase::LogBase( rhs ),
     ObjectIDOwner( rhs ),
+    jagBase::UserDataOwner( rhs ),
     _matrix( rhs._matrix ),
     _commands( rhs._commands ),
     _drawables( rhs._drawables ),
