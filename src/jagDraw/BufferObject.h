@@ -110,6 +110,8 @@ public:
 protected:
     void internalInit( const unsigned int contextID );
 
+    void sendDirtyBufferData();
+
     /** Default value: _target = GL_NONE */
     GLenum _target;
     /** Default value: _usage = GL_STATIC_DRAW */
