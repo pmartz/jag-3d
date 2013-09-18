@@ -228,8 +228,9 @@ bool JagModel::init()
     return( true );
 }
 
-// Don't bother until we have something worth sorting.
-#define ENABLE_SORT
+
+// Disable for now until sort for *Set classes is fixed.
+//#define ENABLE_SORT
 
 bool JagModel::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj )
 {
