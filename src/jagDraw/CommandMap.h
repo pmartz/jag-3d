@@ -232,31 +232,28 @@ public:
         {
             switch( ( rhs._bits[ type ] << 1 ) | (int)( _bits[ type ] ) )
             {
-            case 0:
-            case 1: // lhs has it
-                break;
-            case 2: // rhs has it
-                if( _overrideBits.test( type ) == false || rhs._protectBits.test( type ) == true  )
-                {
-                    DrawablePrepPtr command( rhs._data[ type ] );
-                    insert( command, rhs._overrideBits[ type ] );
-                    result.insert( command, rhs._overrideBits[ type ] );
-                }
-                break; 
-
             case 3: // both have it
+            {
                 DrawablePrepPtr& left( _data[ type ] );
                 DrawablePrepPtr& right( rhs._data[ type ] );
                 if( ( left != right ) &&
                     ( *left != *right ) )
                 {
-                    if( _overrideBits.test( type ) == false || rhs._protectBits.test( type ) == true ) 
-                    {
-                        left = left->combine( right );
-                        //insert( right, rhs._overrideBits[ type ] );
-                        result.insert( right, rhs._overrideBits[ type ] );
-                    }
+                    left = left->combine( right );
+                    //insert( right, rhs._overrideBits[ type ] );
+                    result.insert( right, rhs._overrideBits[ type ] );
                 }
+                break;
+            }
+            case 2: // rhs has it
+            {
+                DrawablePrepPtr command( rhs._data[ type ] );
+                insert( command );
+                result.insert( command );
+                break;
+            }
+            case 0:
+            case 1: // lhs has it
                 break;
             }
         }
