@@ -89,7 +89,7 @@ bool TransformCallback::operator()( jagDraw::Node& node, jagDraw::DrawInfo& draw
         }
         matrixBit <<= 1;
     }
-    _transform.setDirty( 0 );
+    //_transform.setDirty( 0 );
 
     return( true );
 }
