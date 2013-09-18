@@ -334,7 +334,7 @@ jagDraw::UniformBlockPtr Osg2Jag::findMaterial( osg::Material* m )
     // that by looking up materials by their osg::Object name.
     BOOST_FOREACH( OSGMaterialMap::value_type dataPair, _matInstances )
     {
-        if( dataPair.second->getName() == m->getName() )
+        if( dataPair.first->getName() == m->getName() )
         {
             return( dataPair.second );
         }
