@@ -25,6 +25,7 @@
 #include <jagDraw/Visitor.h>
 #include <jagDraw/NodeContainer.h>
 #include <jagDraw/Node.h>
+#include <jagDraw/CommandMap.h>
 
 #include <iostream>
 
@@ -49,6 +50,9 @@ protected:
     unsigned int _containers;
     unsigned int _nodes;
     unsigned int _drawables;
+
+    unsigned int _nonEmptyCommandMapDeltas;
+    jagDraw::CommandMap _commands;
 };
 
 DrawGraphCountVisitor::DrawGraphCountVisitor()
@@ -65,6 +69,7 @@ void DrawGraphCountVisitor::reset()
     _containers = 0;
     _nodes = 0;
     _drawables = 0;
+    _nonEmptyCommandMapDeltas = 0;
 }
 void DrawGraphCountVisitor::dump( std::ostream& ostr )
 {
@@ -73,6 +78,7 @@ void DrawGraphCountVisitor::dump( std::ostream& ostr )
     ostr << " Containers:\t" << _containers << std::endl;
     ostr << "      Nodes:\t" << _nodes << std::endl;
     ostr << "  Drawables:\t" << _drawables << std::endl;
+    ostr << "  CM deltas:\t" << _nonEmptyCommandMapDeltas << std::endl;
 }
 
 bool DrawGraphCountVisitor::visit( jagDraw::NodeContainer& nc )
@@ -84,6 +90,14 @@ bool DrawGraphCountVisitor::visit( jagDraw::Node& node, jagDraw::NodeContainer& 
 {
     ++_nodes;
     _drawables += node.getNumDrawables();
+
+    if( node.getCommandMap() != NULL )
+    {
+        jagDraw::CommandMap delta( _commands << *( node.getCommandMap() ) );
+        if( !( delta.empty() ) )
+            ++_nonEmptyCommandMapDeltas;
+    }
+
     return( true );
 }
 
