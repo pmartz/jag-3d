@@ -57,7 +57,12 @@ public:
     }
     /** \brief TBD
     \details TBD */
-    const CommandMapPtr getCommandMap() const
+    CommandMapPtr& getCommandMap()
+    {
+        return( _commands );
+    }
+    /** \override */
+    const CommandMapPtr& getCommandMap() const
     {
         return( _commands );
     }

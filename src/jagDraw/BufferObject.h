@@ -162,6 +162,10 @@ public:
     {}
 };
 
+typedef jagBase::ptr< jagDraw::ArrayBuffer >::shared_ptr ArrayBufferPtr;
+typedef std::vector< ArrayBufferPtr > ArrayBufferVec;
+
+
 /**
 \details One class for each buffer bind target. \gl{table 2.8}.
 */
@@ -176,6 +180,10 @@ public:
     {}
 };
 
+typedef jagBase::ptr< jagDraw::CopyReadBuffer >::shared_ptr CopyReadBufferPtr;
+typedef std::vector< CopyReadBufferPtr > CopyReadBufferVec;
+
+
 /**
 \details One class for each buffer bind target. \gl{table 2.8}.
 */
@@ -189,6 +197,10 @@ public:
         BufferObject( GL_COPY_WRITE_BUFFER, b, usage )
     {}
 };
+
+typedef jagBase::ptr< jagDraw::CopyWriteBuffer >::shared_ptr CopyWriteBufferPtr;
+typedef std::vector< CopyWriteBufferPtr > CopyWriteBufferVec;
+
 
 /**
 \details One class for each buffer bind target. \gl{table 2.8}.
@@ -205,6 +217,10 @@ public:
     {}
 #endif
 };
+
+typedef jagBase::ptr< jagDraw::DrawIndirectBuffer >::shared_ptr DrawIndirectBufferPtr;
+typedef std::vector< DrawIndirectBufferPtr > DrawIndirectBufferVec;
+
     
 /**
 \details One class for each buffer bind target. \gl{table 2.8}.
@@ -220,6 +236,10 @@ public:
     {}
 };
 
+typedef jagBase::ptr< jagDraw::ElementArrayBuffer >::shared_ptr ElementArrayBufferPtr;
+typedef std::vector< ElementArrayBufferPtr > ElementArrayBufferVec;
+
+
 /**
 \details One class for each buffer bind target. \gl{table 2.8}.
 */
@@ -233,6 +253,10 @@ public:
         BufferObject( GL_PIXEL_PACK_BUFFER, b, usage )
     {}
 };
+
+typedef jagBase::ptr< jagDraw::PixelPackBuffer >::shared_ptr PixelPackBufferPtr;
+typedef std::vector< PixelPackBufferPtr > PixelPackBufferVec;
+
 
 /**
 \details One class for each buffer bind target. \gl{table 2.8}.
@@ -248,6 +272,10 @@ public:
     {}
 };
 
+typedef jagBase::ptr< jagDraw::PixelUnpackBuffer >::shared_ptr PixelUnpackBufferPtr;
+typedef std::vector< PixelUnpackBufferPtr > PixelUnpackBufferVec;
+
+
 /**
 \details One class for each buffer bind target. \gl{table 2.8}.
 */
@@ -262,6 +290,10 @@ public:
     {}
 };
 
+typedef jagBase::ptr< jagDraw::TextureBuffer >::shared_ptr TextureBufferPtr;
+typedef std::vector< TextureBufferPtr > TextureBufferVec;
+
+
 /**
 \details One class for each buffer bind target. \gl{table 2.8}.
 */
@@ -275,6 +307,10 @@ public:
         IndexedBufferObject( GL_TRANSFORM_FEEDBACK_BUFFER, b, usage )
     {}
 };
+
+typedef jagBase::ptr< jagDraw::TransformFeedbackBuffer >::shared_ptr TransformFeedbackBufferPtr;
+typedef std::vector< TransformFeedbackBufferPtr > TransformFeedbackBufferVec;
+
 
 /**
 \details One class for each buffer bind target. \gl{table 2.8}.

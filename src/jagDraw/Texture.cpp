@@ -32,8 +32,7 @@ Texture::Texture( const std::string& logName )
     FramebufferAttachable(),
     jagBase::LogBase( logName.empty() ? "jag.draw.tex" : logName ),
     _target( GL_NONE ),
-    _bufferFormat( GL_NONE ),
-    _bufferID( 0 )
+    _bufferFormat( GL_NONE )
 {
 }
 Texture::Texture( const GLenum target, ImagePtr image, const std::string& logName )
@@ -41,8 +40,7 @@ Texture::Texture( const GLenum target, ImagePtr image, const std::string& logNam
     FramebufferAttachable(),
     jagBase::LogBase( logName.empty() ? "jag.draw.tex" : logName ),
     _target( target ),
-    _bufferFormat( GL_NONE ),
-    _bufferID( 0 )
+    _bufferFormat( GL_NONE )
 {
     _image.resize( 1 );
     _image[ 0 ] = image;
@@ -53,19 +51,18 @@ Texture::Texture( const GLenum target, ImagePtr image, SamplerPtr sampler, const
     jagBase::LogBase( logName.empty() ? "jag.draw.tex" : logName ),
     _target( target ),
     _sampler( sampler ),
-    _bufferFormat( GL_NONE ),
-    _bufferID( 0 )
+    _bufferFormat( GL_NONE )
 {
     _image.resize( 1 );
     _image[ 0 ] = image;
 }
-Texture::Texture( const GLenum target, GLenum bufferFormat, GLuint bufferID, const std::string& logName )
+Texture::Texture( const GLenum target, GLenum bufferFormat, TextureBufferPtr& textureBuffer, const std::string& logName )
   : DrawablePrep( Texture_t ),
     FramebufferAttachable(),
     jagBase::LogBase( logName.empty() ? "jag.draw.tex" : logName ),
     _target( target ),
     _bufferFormat( bufferFormat ),
-    _bufferID( bufferID )
+    _textureBuffer( textureBuffer )
 {
     if( _target != GL_TEXTURE_BUFFER )
         JAG3D_WARNING( "Texture buffer constructor: Invalid target parameter." );
@@ -79,7 +76,7 @@ Texture::Texture( const Texture& rhs )
     _image( rhs._image ),
     _sampler( rhs._sampler ),
     _bufferFormat( rhs._bufferFormat ),
-    _bufferID( rhs._bufferID )
+    _textureBuffer( rhs._textureBuffer )
 {
 }
 Texture::~Texture()
@@ -206,6 +203,9 @@ void Texture::setMaxContexts( const unsigned int numContexts )
     ObjectID::setMaxContexts( numContexts );
     if( _sampler != NULL )
         _sampler->setMaxContexts( numContexts );
+
+    if( _textureBuffer != NULL )
+        _textureBuffer->setMaxContexts( numContexts );
 }
 void Texture::deleteID( const jagDraw::jagDrawContextID contextID )
 {
@@ -268,7 +268,8 @@ void Texture::internalInit( const unsigned int contextID )
     }
     else if( _target == GL_TEXTURE_BUFFER )
     {
-        glTexBuffer( _target, _bufferFormat, _bufferID );
+        if( _textureBuffer != NULL )
+            glTexBuffer( _target, _bufferFormat, _textureBuffer->getID( contextID ) );
     }
 
     glBindTexture( _target, 0 );
