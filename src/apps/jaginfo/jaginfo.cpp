@@ -19,8 +19,9 @@
 *************** <auto-copyright.pl END do not edit this line> ***************/
 
 #include <jagDraw/Common.h>
-#include <jagUtil/DrawGraphCountVisitor.h>
 #include <jagSG/Common.h>
+#include <jagUtil/DrawGraphCountVisitor.h>
+#include <jagUtil/BufferAggregationVisitor.h>
 #include <jagDisk/ReadWrite.h>
 #include <jagBase/Log.h>
 #include <jagBase/LogMacros.h>
@@ -172,9 +173,15 @@ int main( int argc, char** argv )
     }
 
 
-    SceneGraphCountVisitor sgcv;
-    root->accept( sgcv );
-    sgcv.dump( std::cout );
+    {
+        jagUtil::BufferAggregationVisitor bav( root );
+    }
+
+    {
+        SceneGraphCountVisitor sgcv;
+        root->accept( sgcv );
+        sgcv.dump( std::cout );
+    }
 
     jagSG::CollectionVisitor collect;
     collect.setNearFarOps( jagSG::CollectionVisitor::None );
@@ -183,9 +190,22 @@ int main( int argc, char** argv )
     collect.setViewProj( gmtl::MAT_IDENTITY44D, proj );
     root->accept( collect );
 
-    jagUtil::DrawGraphCountVisitor dgcv;
-    dgcv.traverse( *( collect.getDrawGraph() ) );
-    dgcv.dump( std::cout );
+    jagDraw::DrawGraphPtr drawGraph( collect.getDrawGraph() );
+
+    {
+        jagDraw::DrawablePrep::CommandTypeVec plist;
+        plist.push_back( jagDraw::DrawablePrep::UniformBlockSet_t );
+        BOOST_FOREACH( jagDraw::NodeContainer& nc, *drawGraph )
+        {
+            std::sort( nc.begin(), nc.end(), jagDraw::DrawNodeCommandSorter( plist ) );
+        }
+    }
+
+    {
+        jagUtil::DrawGraphCountVisitor dgcv;
+        dgcv.traverse( *drawGraph );
+        dgcv.dump( std::cout );
+    }
 
     return( 0 );
 }
