@@ -29,6 +29,7 @@
 #include <jagDraw/ObjectID.h>
 #include <jagDraw/Image.h>
 #include <jagDraw/Sampler.h>
+#include <jagDraw/BufferObject.h>
 #include <jagDraw/CommandMap.h>
 #include <jagBase/LogBase.h>
 #include <jagBase/ptr.h>
@@ -59,7 +60,7 @@ public:
     Texture( const GLenum target, ImagePtr image, SamplerPtr sampler, const std::string& logName=std::string( "" ) );
     /** \brief Constructor for texture buffer usage.
     \details Warning log message will be generates if \c target is not GL_TEXTURE_BUFFER. */
-    Texture( const GLenum target, GLenum bufferFormat, GLuint bufferID, const std::string& logName=std::string( "" ) );
+    Texture( const GLenum target, GLenum bufferFormat, TextureBufferPtr& textureBuffer, const std::string& logName=std::string( "" ) );
     Texture( const Texture& rhs );
     virtual ~Texture();
 
@@ -145,7 +146,7 @@ protected:
     /** Used if _target==GL_TEXTURE_BUFFER. Initial value: GL_NONE */
     GLenum _bufferFormat;
     /** Used if _target==GL_TEXTURE_BUFFER. Initial value: 0 */
-    GLuint _bufferID;
+    TextureBufferPtr _textureBuffer;
 
 
     void internalInit( const unsigned int contextID );

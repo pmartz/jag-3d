@@ -26,6 +26,8 @@
 #include <jagBase/Log.h>
 #include <jagBase/LogMacros.h>
 #include <jagDisk/ReadWrite.h>
+#include <jagUtil/Shapes.h>
+
 #include <boost/program_options/options_description.hpp>
 #include <boost/program_options/variables_map.hpp>
 #include <gmtl/gmtl.h>
@@ -44,7 +46,8 @@ class TextureDemo : public DemoInterface
 public:
     TextureDemo()
       : DemoInterface( "jag.demo.texture" ),
-        _imageName( "balloon.jpg" )
+        _imageName( "balloon.jpg" ),
+        _texObj( false )
     {}
     virtual ~TextureDemo() {}
 
@@ -59,16 +62,22 @@ public:
     }
 
 protected:
+    bool init2D();
+    bool initTextureObject();
+
     jagDraw::NodeContainer _nodes;
 
     std::string _imageName;
+    bool _texObj;
 };
 
 
 DemoInterface* DemoInterface::create( bpo::options_description& desc )
 {
     desc.add_options()
-        ( "file,f", bpo::value< std::string >(), "Image to load. Default: balloon.jpg" );
+        ( "file,f", bpo::value< std::string >(), "Image to load. Default: balloon.jpg" )
+        ( "texobj", "Test texture object" )
+        ;
 
     return( new TextureDemo );
 }
@@ -77,14 +86,14 @@ bool TextureDemo::parseOptions( bpo::variables_map& vm )
 {
     if( vm.count( "file" ) > 0 )
         _imageName = vm[ "file" ].as< std::string >();
+
+    _texObj = ( vm.count( "texobj" ) > 0 );
+
     return( true );
 }
 
-bool TextureDemo::startup( const unsigned int numContexts )
+bool TextureDemo::init2D()
 {
-    DemoInterface::startup( numContexts );
-
-
     const char* vShaderSource =
 #if( POCO_OS == POCO_OS_MAC_OS_X )
         // In OSX 10.7/10.8, use GL 3.2 and GLSL 1.50
@@ -135,6 +144,8 @@ bool TextureDemo::startup( const unsigned int numContexts )
 
     // Load image using jagDisk plugin interface.
     jagDraw::ImagePtr image( DemoInterface::readImageUtil( _imageName ) );
+    if( image == NULL )
+        return( false );
 
 
     jagDraw::TexturePtr tex( new jagDraw::Texture( GL_TEXTURE_2D, image,
@@ -181,6 +192,82 @@ bool TextureDemo::startup( const unsigned int numContexts )
         _nodes.push_back( drawNode );
     }
 
+    return( true );
+}
+bool TextureDemo::initTextureObject()
+{
+#if( POCO_OS == POCO_OS_MAC_OS_X )
+    JAG3D_FATAL( "Mac OSX OpenGL does not support texture buffer." );
+    return( false );
+#endif
+
+    jagUtil::VNTCVec data;
+    const gmtl::Point3f corners[] = {
+        gmtl::Point3f( -.9f, -.9f, 0.f ),
+        gmtl::Point3f( .1f, -.9f, 0.f ),
+        gmtl::Point3f( -.9f, .1f, 0.f ),
+        gmtl::Point3f( .1f, .1f, 0.f ) };
+    const gmtl::Vec3f uVec( .8f, 0.f, 0.f );
+    const gmtl::Vec3f vVec( 0.f, .8f, 0.f );
+    for( unsigned int idx=0; idx<4; ++idx )
+    {
+        jagDraw::DrawNodePtr node( new jagDraw::Node() );
+
+        jagDraw::DrawablePtr quad( jagUtil::makePlane(
+            data, corners[ idx ], uVec, vVec ) );
+        node->addDrawable( quad );
+
+        jagDraw::CommandMapPtr commands( new jagDraw::CommandMap() );
+        node->setCommandMap( commands );
+
+        jagDraw::UniformSetPtr usp( new jagDraw::UniformSet() );
+        commands->insert( usp );
+        usp->insert( jagDraw::UniformPtr( new jagDraw::Uniform( "texture", GL_SAMPLER_2D, 0 ) ) );
+        usp->insert( jagDraw::UniformPtr( new jagDraw::Uniform( "index", (int)idx ) ) );
+
+        _nodes.push_back( node );
+    }
+
+    jagDraw::CommandMapPtr& commands( _nodes[ 0 ]->getCommandMap() );
+    commands->insert( jagUtil::createVertexArrayObject( data ) );
+
+    jagDraw::ShaderPtr vs( DemoInterface::readShaderUtil( "texobj.vert" ) );
+    jagDraw::ShaderPtr fs( DemoInterface::readShaderUtil( "texobj.frag" ) );
+
+    jagDraw::ProgramPtr prog;
+    prog = jagDraw::ProgramPtr( new jagDraw::Program );
+    prog->attachShader( vs );
+    prog->attachShader( fs );
+    commands->insert( prog );
+
+    float texData[] = {
+        1.f, 0.f, 0.f, 1.f,
+        0.f, 1.f, 0.f, 1.f,
+        0.f, 0.f, 1.f, 1.f,
+        .5f, .5f, .5f, 1.f
+    };
+    jagBase::BufferPtr bufferData( new jagBase::Buffer( sizeof( texData ), texData ) );
+    jagDraw::TextureBufferPtr textureBuffer( new jagDraw::TextureBuffer( bufferData ) );
+
+    jagDraw::TextureSetPtr ts( new jagDraw::TextureSet() );
+    commands->insert( ts );
+    jagDraw::TexturePtr texture( new jagDraw::Texture( GL_TEXTURE_BUFFER, GL_RGBA32F, textureBuffer ) );
+    (*ts)[ GL_TEXTURE0 ] = texture;
+
+    return( true );
+}
+
+bool TextureDemo::startup( const unsigned int numContexts )
+{
+    DemoInterface::startup( numContexts );
+
+    bool result;
+    if( _texObj )
+        result = initTextureObject();
+    else
+        result = init2D();
+    if( !result )
+        return( false );
 
     // Tell all Jag3D objects how many contexts to expect.
     _nodes.setMaxContexts( numContexts );
@@ -191,7 +278,7 @@ bool TextureDemo::startup( const unsigned int numContexts )
 
 bool TextureDemo::init()
 {
-    glClearColor( 1.f, 0.f, 0.f, 0.f );
+    glClearColor( 0.f, 0.f, 0.f, 0.f );
 
     // Auto-log the version string.
     jagBase::getVersionString();
