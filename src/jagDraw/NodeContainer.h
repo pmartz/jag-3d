@@ -45,6 +45,16 @@ public:
     NodeContainer( const NodeContainer& rhs );
     ~NodeContainer();
 
+    /** \brief Reset the NodeContainer.
+    \details If reset is enabled, clear the vector of draw Nodes.
+    Otherwise, do nothing. */
+    void reset();
+    /** \brief Enable or disable NodeContainer reset.
+    \details By default, reset is enabled. */
+    void setResetEnable( const bool enable );
+    /** \brief Get the current reset state. */
+    bool getResetEnable() const;
+
     NodeContainer& operator=( const NodeContainer& rhs );
 
 
@@ -91,6 +101,9 @@ public:
 
 protected:
     CallbackVec _callbacks;
+
+    /** Default value: true. */
+    bool _resetEnable;
 };
 
 typedef jagBase::ptr< jagDraw::NodeContainer >::shared_ptr NodeContainerPtr;

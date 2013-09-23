@@ -108,7 +108,7 @@ void CollectionVisitor::reset()
     {
         BOOST_FOREACH( jagDraw::DrawGraph::value_type& data, *_drawGraph )
         {
-            data.clear();
+            data.reset();
         }
         if( _currentID < _drawGraph->size() )
             _currentNodes = &( (*_drawGraph)[ _currentID ] );
