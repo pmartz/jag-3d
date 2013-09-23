@@ -66,7 +66,9 @@ Program::Program( const Program& rhs )
   : DrawablePrep( rhs ),
     ObjectID( rhs ),
     SHARED_FROM_THIS( Program )( rhs ),
-    jagBase::LogBase( rhs )
+    jagBase::LogBase( rhs ),
+    _uniformAliases( rhs._uniformAliases ),
+    _vertexAttribAliases( rhs._vertexAttribAliases )
 {
 }
 
@@ -281,9 +283,11 @@ bool Program::link( unsigned int contextID )
 
         Poco::LogStream& ls( _logStream->information() );
 
-        // Query uniforms and their locations
+
         logHeader( ls );
 
+        // Query uniforms and their locations
+        _uniformLocations.clear();
         GLint numUniforms;
         glGetProgramiv( id, GL_ACTIVE_UNIFORMS, &numUniforms );
         GLuintVec namedBlockUniformIndices;
@@ -310,6 +314,30 @@ bool Program::link( unsigned int contextID )
                 logValues( ls, hash, location, 0, uniformName, "default block" );
             _uniformLocations[ hash ] = location;
         }
+
+        // Make location entires for uniform aliases.
+        BOOST_FOREACH( const NameMap::value_type& dataPair, _uniformAliases )
+        {
+            const HashValue nameHash( createHash( dataPair.first ) );
+            const HashValue aliasHash( createHash( dataPair.second ) );
+            LocationMap::const_iterator nameIt( _uniformLocations.find( nameHash ) );
+            LocationMap::const_iterator aliasIt( _uniformLocations.find( aliasHash ) );
+
+            if( ( nameIt != _uniformLocations.end() ) && ( aliasIt != _uniformLocations.end() ) )
+            {
+                // Both are already in the location map.
+                JAG3D_WARNING( "Name \"" + dataPair.first + "\" and alias \"" + dataPair.second +
+                    "\" already found in _uniformLocations." );
+                continue;
+            }
+            if( nameIt != _uniformLocations.end() )
+                // The name is used in this program. Add a location entry for the alias.
+                _uniformLocations[ aliasHash ] = nameIt->second;
+            else if( aliasIt != _uniformLocations.end() )
+                // The alias is used in this program. Add a location entry for the name.
+                _uniformLocations[ nameHash ] = aliasIt->second;
+        }
+
 
         // Query uniform block info
         _blockInfo.clear();
@@ -365,7 +393,9 @@ bool Program::link( unsigned int contextID )
             }
         }
 
+
         // Query generic vertex attributes and their locations
+        _vertexAttribLocations.clear();
         GLint numAttribs;
         glGetProgramiv( id, GL_ACTIVE_ATTRIBUTES, &numAttribs );
         for( GLint idx = 0; idx < numAttribs; idx++ )
@@ -380,6 +410,30 @@ bool Program::link( unsigned int contextID )
                 logValues( ls, hash, location, 0, attribName, "vertex attrib" );
             _vertexAttribLocations[ createHash( attribName ) ] = location;
         }
+
+        // Make location entires for vertex attrib aliases.
+        BOOST_FOREACH( const NameMap::value_type& dataPair, _vertexAttribAliases )
+        {
+            const HashValue nameHash( createHash( dataPair.first ) );
+            const HashValue aliasHash( createHash( dataPair.second ) );
+            LocationMap::const_iterator nameIt( _vertexAttribLocations.find( nameHash ) );
+            LocationMap::const_iterator aliasIt( _vertexAttribLocations.find( aliasHash ) );
+
+            if( ( nameIt != _vertexAttribLocations.end() ) && ( aliasIt != _vertexAttribLocations.end() ) )
+            {
+                // Both are already in the location map.
+                JAG3D_WARNING( "Name \"" + dataPair.first + "\" and alias \"" + dataPair.second +
+                    "\" already found in _vertexAttribLocations." );
+                continue;
+            }
+            if( nameIt != _vertexAttribLocations.end() )
+                // The name is used in this program. Add a location entry for the alias.
+                _vertexAttribLocations[ aliasHash ] = nameIt->second;
+            else if( aliasIt != _vertexAttribLocations.end() )
+                // The alias is used in this program. Add a location entry for the name.
+                _vertexAttribLocations[ nameHash ] = aliasIt->second;
+        }
+
         glUseProgram( 0 );
     }
 
@@ -475,6 +529,15 @@ const Program::BlockInfo& Program::getUniformBlockInfo( const HashValue& h ) con
 const Program::BlockInfo& Program::getUniformBlockInfo( const std::string& s ) const
 {
     return( getUniformBlockInfo( createHash( s ) ) );
+}
+
+void Program::addUniformAlias( const std::string& name, const std::string& alias )
+{
+    _uniformAliases[ name ] = alias;
+}
+void Program::addVertexAttribAlias( const std::string& name, const std::string& alias )
+{
+    _vertexAttribAliases[ name ] = alias;
 }
 
 

@@ -200,6 +200,9 @@ public:
     /** \overload */
     const BlockInfo& getUniformBlockInfo( const std::string& s ) const;
 
+    void addUniformAlias( const std::string& name, const std::string& alias );
+    void addVertexAttribAlias( const std::string& name, const std::string& alias );
+
 private:
     void internalInit( const unsigned int contextID );
 
@@ -211,15 +214,19 @@ private:
     typedef std::map< HashValue, GLint > LocationMap;
     LocationMap _uniformLocations;
 
+    // Named uniform block support (aka interface blocks)
+    typedef std::map< HashValue, BlockInfo > BlockInfoMap;
+    BlockInfoMap _blockInfo;
+
     // Vertex attribute support
     LocationMap _vertexAttribLocations;
 
     typedef std::map< std::string, GLint > ExplicitLocationMap;
     ExplicitLocationMap _explicitVertexAttribLocations;
 
-    // Named uniform block support (aka interface blocks)
-    typedef std::map< HashValue, BlockInfo > BlockInfoMap;
-    BlockInfoMap _blockInfo;
+    typedef std::map< std::string, std::string > NameMap;
+    NameMap _uniformAliases;
+    NameMap _vertexAttribAliases;
 };
 
 typedef std::vector< ProgramPtr > ProgramVec;
