@@ -257,6 +257,12 @@ const jagDraw::DrawablePtr& Node::getDrawable( const unsigned int idx ) const
     
 void Node::addChild( NodePtr& node )
 {
+    if( node == NULL )
+    {
+        JAG3D_NOTICE( "addChild(): Attempt to add NULL child." );
+        return;
+    }
+
     _children.push_back( node );
     node->addParent( this );
     setBoundDirty();
