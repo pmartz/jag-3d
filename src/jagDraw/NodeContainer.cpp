@@ -32,18 +32,34 @@ namespace jagDraw {
 
 NodeContainer::NodeContainer( const std::string& logName )
   : jagBase::LogBase( logName.empty() ? "jag.draw.ncon" : logName ),
-    ObjectIDOwner()
+    ObjectIDOwner(),
+    _resetEnable( true )
 {
 }
 NodeContainer::NodeContainer( const NodeContainer& rhs )
   : DrawNodeVec( rhs ),
     jagBase::LogBase( "jag.draw.ncon" ),
     ObjectIDOwner( rhs ),
-    _callbacks( rhs._callbacks )
+    _callbacks( rhs._callbacks ),
+    _resetEnable( rhs._resetEnable )
 {
 }
 NodeContainer::~NodeContainer()
 {
+}
+
+void NodeContainer::reset()
+{
+    if( _resetEnable )
+        clear();
+}
+void NodeContainer::setResetEnable( const bool enable )
+{
+    _resetEnable = enable;
+}
+bool NodeContainer::getResetEnable() const
+{
+    return( _resetEnable );
 }
 
 NodeContainer& NodeContainer::operator=( const NodeContainer& rhs )
