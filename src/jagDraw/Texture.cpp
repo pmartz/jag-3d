@@ -23,6 +23,8 @@
 #include <jagDraw/Error.h>
 #include <jagBase/LogMacros.h>
 
+#include <boost/foreach.hpp>
+
 
 namespace jagDraw {
 
@@ -112,6 +114,8 @@ bool Texture::isProxy() const
 
 void Texture::setImage( ImagePtr image, const GLenum cubeTarget )
 {
+    markAllDirty();
+
     if( cubeTarget == GL_NONE )
     {
         _image.resize( 1 );
@@ -181,6 +185,9 @@ void Texture::execute( DrawInfo& drawInfo )
 
     glBindTexture( _target, getID( contextID ) );
 
+    if( _dirty[ contextID ] == GL_TRUE )
+        internalSpecifyTexImage( contextID );
+
     JAG3D_ERROR_CHECK( "Texture::execute()" );
 
 #ifndef GL_VERSION_3_3
@@ -206,6 +213,8 @@ void Texture::setMaxContexts( const unsigned int numContexts )
 
     if( _textureBuffer != NULL )
         _textureBuffer->setMaxContexts( numContexts );
+
+    _dirty._data.resize( numContexts );
 }
 void Texture::deleteID( const jagDraw::jagDrawContextID contextID )
 {
@@ -217,6 +226,10 @@ void Texture::deleteID( const jagDraw::jagDrawContextID contextID )
 void Texture::attachToFBO( const jagDraw::jagDrawContextID contextID, const GLenum attachment )
 {
     JAG3D_TRACE( "attachToFBO" );
+
+    if( _dirty[ contextID ] == GL_TRUE )
+        internalSpecifyTexImage( contextID );
+
     glFramebufferTexture( _fboTarget, attachment, getID( contextID ), _fboTextureLevel );
 }
 
@@ -241,6 +254,15 @@ void Texture::internalInit( const unsigned int contextID )
         _sampler->executeTexture( _target );
 #endif
 
+    internalSpecifyTexImage( contextID );
+
+    glBindTexture( _target, 0 );
+
+    JAG3D_ERROR_CHECK( "Texture::internalInit()" );
+}
+
+void Texture::internalSpecifyTexImage( const unsigned int contextID )
+{
     if( !( _image.empty() ) )
     {
         if( ( _target != GL_TEXTURE_CUBE_MAP ) &&
@@ -272,9 +294,7 @@ void Texture::internalInit( const unsigned int contextID )
             glTexBuffer( _target, _bufferFormat, _textureBuffer->getID( contextID ) );
     }
 
-    glBindTexture( _target, 0 );
-
-    JAG3D_ERROR_CHECK( "Texture::internalInit()" );
+    _dirty[ contextID ] = GL_FALSE;
 }
 
 void Texture::internalSpecifyTexImage( const GLenum target, ImagePtr image )
@@ -361,6 +381,15 @@ void Texture::internalSpecifyTexImage( const GLenum target, ImagePtr image )
         break;
     }
 }
+
+void Texture::markAllDirty()
+{
+    BOOST_FOREACH( GLboolean& item, _dirty._data )
+    {
+        item = GL_TRUE;
+    }
+}
+
 
 
 // jagDraw
