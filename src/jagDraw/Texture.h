@@ -150,7 +150,11 @@ protected:
 
 
     void internalInit( const unsigned int contextID );
+    void internalSpecifyTexImage( const unsigned int contextID );
     void internalSpecifyTexImage( const GLenum target, ImagePtr image );
+
+    void markAllDirty();
+    jagDraw::PerContextGLboolean _dirty;
 };
 
 typedef std::vector< TexturePtr > TextureVec;

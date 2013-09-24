@@ -225,9 +225,7 @@ void Framebuffer::dirtyAttachmentForAllContexts( const GLenum attachment )
 {
     BOOST_FOREACH( DirtyAttachmentMap& dirtyMap, _dirtyAttachments._data )
     {
-        DirtyAttachmentMap::iterator it( dirtyMap.find( attachment ) );
-        if( it != dirtyMap.end() )
-            it->second = true;
+        dirtyMap[ attachment ] = true;
     }
 }
 void Framebuffer::dirtyAllAttachments( const unsigned int contextID, const bool dirty )
