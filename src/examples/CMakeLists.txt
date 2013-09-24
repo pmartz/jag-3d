@@ -20,3 +20,4 @@
 
 add_subdirectory( abuffer )
 add_subdirectory( jagmodel )
+add_subdirectory( rtt )

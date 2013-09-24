@@ -20,8 +20,8 @@
 
 # Tests for jagDraw interface
 add_subdirectory( drawable )
+add_subdirectory( fbtest )
 add_subdirectory( jagload )
-add_subdirectory( rtt )
 add_subdirectory( texture )
 
 # Tests for jagSG interface
