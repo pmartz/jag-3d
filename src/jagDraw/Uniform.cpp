@@ -241,7 +241,12 @@ TYPE_METHOD_BODIES( gmtl::Matrix43d, GL_DOUBLE_MAT4x3 )
 
 void Uniform::execute( DrawInfo& drawInfo, const GLint loc ) const
 {
-    JAG3D_TRACE( "execute(): Uniform name \"" + _name + "\"." );
+    if( JAG3D_LOG_TRACE )
+    {
+        std::ostringstream ostr;
+        ostr << "execute(): Loc: " << loc << ", Name \"" << _name << "\".";
+        JAG3D_TRACE( ostr.str() );
+    }
 
     // This should NOT be necessary, as we should only be here if this
     // uniform is already in the drawInfo._uniformMap.
