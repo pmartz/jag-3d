@@ -118,6 +118,9 @@ std::string TransformCallback::getMatrixUniformName( const unsigned int matrix )
 }
 void TransformCallback::setDefaultMatrixUniformNames()
 {
+    _nameMap[ jagBase::TransformD::MODEL ] = "jagModelMatrix";
+    _nameMap[ jagBase::TransformD::VIEW ] = "jagViewMatrix";
+    _nameMap[ jagBase::TransformD::PROJ ] = "jagProjMatrix";
     _nameMap[ jagBase::TransformD::VIEW_PROJ ] = "jagViewProjMatrix";
     _nameMap[ jagBase::TransformD::MODEL_VIEW_PROJ ] = "jagModelViewProjMatrix";
     _nameMap[ jagBase::TransformD::MODEL_VIEW ] = "jagModelViewMatrix";
