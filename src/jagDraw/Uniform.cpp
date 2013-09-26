@@ -241,6 +241,8 @@ TYPE_METHOD_BODIES( gmtl::Matrix43d, GL_DOUBLE_MAT4x3 )
 
 void Uniform::execute( DrawInfo& drawInfo, const GLint loc ) const
 {
+    JAG3D_TRACE( "execute(): Uniform name \"" + _name + "\"." );
+
     // This should NOT be necessary, as we should only be here if this
     // uniform is already in the drawInfo._uniformMap.
     //drawInfo._uniformMap[ _indexHash ] = shared_from_this();

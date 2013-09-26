@@ -105,11 +105,19 @@ void Program::execute( DrawInfo& drawInfo )
         }
         if( !( link( contextID ) ) )
         {
-            JAG3D_ERROR( "Program link failed." );
+            std::ostringstream ostr;
+            ostr << "Program link failed, id: " << id << ".";
+            JAG3D_ERROR( ostr.str() );
             return;
         }
     }
 
+    if( JAG3D_LOG_TRACE )
+    {
+        std::ostringstream ostr;
+        ostr << "execute(): Executing glUseProgram( " << id << " );";
+        JAG3D_TRACE( ostr.str() );
+    }
     glUseProgram( id );
 
     // Iterate over active uniforms. If an active uniform matches a uniform
