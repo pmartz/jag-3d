@@ -324,10 +324,9 @@ void jagInit()
     jagDraw::TransformCallback* xformCB( collect.getTransformCallback() );
     xformCB->setMatrixUniformName( jagBase::TransformD::PROJ, "projectionMat" );
     xformCB->setMatrixUniformName( jagBase::TransformD::MODEL_VIEW, "modelViewMat" );
-    xformCB->setMatrixUniformName( jagBase::TransformD::MODEL_VIEW_INV_TRANS, "modelViewMatIT" );
+    xformCB->setMatrixUniformName( jagBase::TransformD::MODEL_VIEW_INV_TRANS_4, "modelViewMatIT" );
     xformCB->setRequiredMatrixUniforms( jagBase::TransformD::PROJ |
-        jagBase::TransformD::MODEL_VIEW | jagBase::TransformD::MODEL_VIEW_INV_TRANS );
-    xformCB->setMat4MVIT();
+        jagBase::TransformD::MODEL_VIEW | jagBase::TransformD::MODEL_VIEW_INV_TRANS_4 );
 
     jagRoot->setMaxContexts( 1 );
     drawInfo._id = 0;

@@ -64,6 +64,7 @@ public:
         _modelViewProj( rhs._modelViewProj ),
         _modelView( rhs._modelView ),
         _modelViewInvTrans( rhs._modelViewInvTrans ),
+        _modelViewInvTrans4( rhs._modelViewInvTrans4 ),
 
         _projInv( rhs._projInv ),
         _viewInv( rhs._viewInv ),
