@@ -154,19 +154,6 @@ public:
     /** \brief Get flags for matrices that will be sent as uniforms. */
     unsigned int getRequiredMatrixUniforms() const;
 
-    /** \brief Select use of mat3 or mat4 MODEL_VIEW_INV_TRANS
-    \details By default, the MODEL_VIEW_INV_TRANS matrix uniform is specified
-    as a mat3 (3x3 float matrix). For compatibility with existing OpenGL shader
-    code that expects a mat4, set this to true. */
-    void setMat4MVIT( const bool mat4MVIT=true )
-    {
-        _useMat4MVIT = mat4MVIT;
-    }
-    bool getMat4MVIT() const
-    {
-        return( _useMat4MVIT );
-    }
-
     /** \brief Set the name that will be used for the specified matrix uniform.
     \details TBD. */
     void setMatrixUniformName( const unsigned int matrix, const std::string& name );
@@ -182,10 +169,6 @@ protected:
     jagBase::TransformD _transform;
 
     unsigned int _requiredUniforms;
-
-    /** \brief Select mat3 or mat4 matrix uniform type for MODEL_VIEW_INV_TRANS.
-    \details Default value: _use4x4MVIT = false // mat3 */
-    bool _useMat4MVIT;
 
     typedef std::map< unsigned int, std::string > UniformNameMap;
     UniformNameMap _nameMap;
