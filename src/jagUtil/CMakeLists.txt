@@ -27,6 +27,7 @@ endif()
 
 set( _jagUtilHeaderFiles
     Export.h
+    ABuffer.h
     BufferAggregationVisitor.h
     DrawGraphCountVisitor.h
     ResetBoundsVisitor.h
@@ -34,6 +35,7 @@ set( _jagUtilHeaderFiles
 )
 
 set( _jagUtilSourceFiles
+    ABuffer.cpp
     BufferAggregationVisitor.cpp
     ResetBoundsVisitor.cpp
     Shapes.cpp
@@ -43,6 +45,7 @@ _addLibrary( ${_libName}
     ${_jagUtilHeaderFiles}
     ${_jagUtilSourceFiles}
     JAG_LIBRARIES
+        jagDisk
         jagSG
         jagDraw
         jagBase

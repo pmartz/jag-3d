@@ -21,8 +21,8 @@
 #include <demoSupport/DemoInterface.h>
 
 #include <jagDraw/Common.h>
-#include <jagDraw/PerContextData.h>
 #include <jagSG/Common.h>
+#include <jagUtil/ABuffer.h>
 #include <jagDisk/ReadWrite.h>
 #include <jagBase/Profile.h>
 #include <jagUtil/DrawGraphCountVisitor.h>
@@ -84,9 +84,9 @@ protected:
 
     double _moveRate;
 
-    jagDraw::DrawGraphPtr createDrawGraph( const unsigned int numContexts );
+    jagUtil::ABufferPtr _aBuffer;
 
-    jagDraw::FramebufferPtr _defaultFBO, _opaqueFBO;
+    jagDraw::FramebufferPtr _opaqueFBO;
     jagDraw::TexturePtr _opaqueBuffer, _depthBuffer;
     int _width, _height;
 };
@@ -108,374 +108,6 @@ bool ABufferJag::parseOptions( bpo::variables_map& vm )
 }
 
 
-#define ABUFFER_PAGE_SIZE 4
-
-struct ABufferContext
-{
-    ABufferContext()
-        : _needsInit( true ),
-          _texWidth( 0 ),
-          _texHeight( 0 ),
-          _queryRequested( false ),
-          _sharedPoolSize( 16 ),
-          _queryID( 0 ),
-          _pageIdxBuffID( 0 ),
-          _fragCountBuffID( 0 ),
-          _semaphoreBuffID( 0 ),
-          _sharedPageListBuffID( 0 ),
-          _sharedLinkListBuffID( 0 ),
-          _curSharedPageBuffID( 0 )
-    {
-    }
-
-    bool _needsInit;
-    int _texWidth, _texHeight;
-
-    typedef float AbufferType;
-
-    bool _queryRequested;
-    GLuint _queryID;
-
-    unsigned int _sharedPoolSize;
-    GLuint _pageIdxBuffID, _fragCountBuffID, _semaphoreBuffID;
-    GLuint64EXT _pageIdxAddress, _fragCountAddress, _semaphoreAddress;
-    GLuint _sharedPageListBuffID, _sharedLinkListBuffID;
-    GLuint64EXT _sharedPageListAddress, _sharedLinkListAddress;
-    GLuint _curSharedPageBuffID;
-    GLuint64EXT _curSharedPageAddress;
-
-    bool init()
-    {
-        if( _queryID == 0 )
-            glGenQueries( 1, &_queryID );
-
-		///Page idx storage///
-        if( _pageIdxBuffID == 0 )
-    	    glGenBuffers( 1, &_pageIdxBuffID );
-		glBindBuffer( GL_TEXTURE_BUFFER, _pageIdxBuffID );
-		glBufferData( GL_TEXTURE_BUFFER, _texWidth * _texHeight * sizeof( GLuint ), NULL, GL_STATIC_DRAW );
-		glMakeBufferResidentNV( GL_TEXTURE_BUFFER, GL_READ_WRITE );
-		glGetBufferParameterui64vNV( GL_TEXTURE_BUFFER, GL_BUFFER_GPU_ADDRESS_NV, &_pageIdxAddress );
-		JAG3D_ERROR_CHECK( "abufferPageIdxID" );
-
-		///per-pixel page counter///
-        if( _fragCountBuffID == 0 )
-		    glGenBuffers( 1, &_fragCountBuffID );
-		glBindBuffer( GL_TEXTURE_BUFFER, _fragCountBuffID );
-		glBufferData( GL_TEXTURE_BUFFER, _texWidth * _texHeight * sizeof( GLuint ), NULL, GL_STATIC_DRAW );
-		glMakeBufferResidentNV( GL_TEXTURE_BUFFER, GL_READ_WRITE );
-		glGetBufferParameterui64vNV( GL_TEXTURE_BUFFER, GL_BUFFER_GPU_ADDRESS_NV, &_fragCountAddress );
-		JAG3D_ERROR_CHECK( "abufferFragCountID" );
-
-		///Semaphore///
-        if( _semaphoreBuffID == 0 )
-		    glGenBuffers( 1, &_semaphoreBuffID );
-		glBindBuffer( GL_TEXTURE_BUFFER, _semaphoreBuffID );
-		glBufferData( GL_TEXTURE_BUFFER, _texWidth * _texHeight * sizeof( GLuint ), NULL, GL_STATIC_DRAW );
-		glMakeBufferResidentNV( GL_TEXTURE_BUFFER, GL_READ_WRITE );
-		glGetBufferParameterui64vNV( GL_TEXTURE_BUFFER, GL_BUFFER_GPU_ADDRESS_NV, &_semaphoreAddress );
-		JAG3D_ERROR_CHECK( "semaphoreTexID" );
-
-		///Shared page list///
-        if( _sharedPageListBuffID == 0 )
-		    glGenBuffers( 1, &_sharedPageListBuffID );
-		glBindBuffer( GL_TEXTURE_BUFFER, _sharedPageListBuffID );
-		glBufferData( GL_TEXTURE_BUFFER, _sharedPoolSize * sizeof( AbufferType ) * 4, NULL, GL_STATIC_DRAW );
-		glMakeBufferResidentNV( GL_TEXTURE_BUFFER, GL_READ_WRITE );
-		glGetBufferParameterui64vNV( GL_TEXTURE_BUFFER, GL_BUFFER_GPU_ADDRESS_NV, &_sharedPageListAddress ); 
-
-		///Shared link pointer list///
-        if( _sharedLinkListBuffID == 0 )
-		    glGenBuffers( 1, &_sharedLinkListBuffID );
-		glBindBuffer( GL_TEXTURE_BUFFER, _sharedLinkListBuffID );
-		glBufferData( GL_TEXTURE_BUFFER, _sharedPoolSize / ABUFFER_PAGE_SIZE * sizeof( GLuint ), NULL, GL_STATIC_DRAW );
-		glMakeBufferResidentNV( GL_TEXTURE_BUFFER, GL_READ_WRITE );
-		glGetBufferParameterui64vNV( GL_TEXTURE_BUFFER, GL_BUFFER_GPU_ADDRESS_NV, &_sharedLinkListAddress ); 
-
-	    ///Shared page counter///
-	    if( _curSharedPageBuffID == 0 )
-		    glGenBuffers( 1, &_curSharedPageBuffID );
-	    glBindBuffer( GL_ARRAY_BUFFER_ARB, _curSharedPageBuffID );
-	    glBufferData( GL_ARRAY_BUFFER_ARB, sizeof( GLuint ), NULL, GL_STATIC_DRAW );
-	    glMakeBufferResidentNV( GL_ARRAY_BUFFER_ARB, GL_READ_WRITE );
-	    glGetBufferParameterui64vNV( GL_ARRAY_BUFFER_ARB, GL_BUFFER_GPU_ADDRESS_NV, &_curSharedPageAddress );
-	    JAG3D_ERROR_CHECK( "curSharedPageBuffID" );
-
-        std::ostringstream ostr;
-        ostr << "[ABuffer Linked Lists] Memory usage: " <<
-            ( _sharedPoolSize * 4 * sizeof( float ) / 1024 ) / 1024.0f << "MB";
-        JAG3D_INFO_STATIC( "jag.ex.abuf", ostr.str() );
-
-        _needsInit = false;
-
-        return( true );
-    }
-
-    void assignUniforms( const GLuint prog )
-    {
-		glProgramUniformui64NV( prog, glGetUniformLocation( prog, "d_abufferPageIdx" ), _pageIdxAddress );
-		glProgramUniformui64NV( prog, glGetUniformLocation( prog, "d_abufferFragCount" ), _fragCountAddress );
-		glProgramUniformui64NV( prog, glGetUniformLocation( prog, "d_semaphore" ), _semaphoreAddress );
-
-		glProgramUniformui64NV( prog, glGetUniformLocation( prog, "d_sharedPageList" ), _sharedPageListAddress );
-		glProgramUniformui64NV( prog, glGetUniformLocation( prog, "d_sharedLinkList" ), _sharedLinkListAddress );
-
-	    glProgramUniformui64NV( prog, glGetUniformLocation( prog, "d_curSharedPage" ), _curSharedPageAddress );
-
-	    glProgramUniform1iEXT( prog, glGetUniformLocation( prog, "abufferSharedPoolSize" ), _sharedPoolSize );
-    }
-
-    bool managePool()
-    {
-	    GLuint lastFrameNumFrags( 0 );
-	    if( _queryRequested )
-        {
-		    glGetQueryObjectuiv( _queryID, GL_QUERY_RESULT, &lastFrameNumFrags );
-	
-		    //A fragments is not discarded each time a page fails to be allocated
-		    if( lastFrameNumFrags > 0 )
-            {
-			    _sharedPoolSize = _sharedPoolSize + ( lastFrameNumFrags / ABUFFER_PAGE_SIZE + 1 ) * ABUFFER_PAGE_SIZE * 2;
-                _needsInit = true;
-		    }
-		    _queryRequested = false;
-	    }
-
-	    return( lastFrameNumFrags > 0 );
-    }
-};
-typedef jagDraw::PerContextData< ABufferContext > PerContextABufferCntxt;
-PerContextABufferCntxt abufferCntxt;
-
-jagDraw::ProgramPtr _abufferRenderProgram;
-
-jagDraw::DrawGraphPtr ABufferJag::createDrawGraph( const unsigned int numContexts )
-{
-    // Create program for rendering into the abuffer.
-    {
-        jagDraw::ShaderPtr vs( DemoInterface::readShaderUtil( "abufferRender.vert" ) );
-        jagDraw::ShaderPtr fs( DemoInterface::readShaderUtil( "abufferRender.frag" ) );
-
-        _abufferRenderProgram.reset( new jagDraw::Program() );
-        _abufferRenderProgram->attachShader( vs );
-        _abufferRenderProgram->attachShader( fs );
-        _abufferRenderProgram->addVertexAttribAlias( "vertexPos", "vertex" );
-        _abufferRenderProgram->addVertexAttribAlias( "vertexNormal", "normal" );
-        _abufferRenderProgram->addUniformAlias( "projectionMat", "jagProjMatrix" );
-        _abufferRenderProgram->addUniformAlias( "modelViewMat", "jagModelViewMatrix" );
-        _abufferRenderProgram->addUniformAlias( "modelViewMatIT", "jagModelViewInvTrans4Matrix" );
-        _abufferRenderProgram->setMaxContexts( numContexts );
-    }
-
-    // We need 4 containers:
-    //   0: Opaque
-    //   1: Clear the ABuffer
-    //   2: ABuffer render
-    //   3: ABuffer resolve and opaque combine
-    jagDraw::DrawGraphPtr drawGraphTemplate( new jagDraw::DrawGraph() );
-    drawGraphTemplate->resize( 4 );
-
-    // Element 0: Opaque. Contents set by CollectionVisitor.
-    {
-        jagDraw::NodeContainer& nc( (*drawGraphTemplate)[ 0 ] );
-
-        struct OpaqueControlCallback : public jagDraw::NodeContainer::Callback
-        {
-            virtual bool operator()( jagDraw::NodeContainer& nc, jagDraw::DrawInfo& di )
-            {
-                // Enable depth test and face culling for opaque rendering.
-                glEnable( GL_DEPTH_TEST );
-                glDepthMask( GL_TRUE );
-                //glEnable(GL_CULL_FACE);
-
-                // Render the opaque geometry.
-                nc.internalExecute( di );
-
-                // Disable depth test and face culling for the rest of the frame.
-                glDisable( GL_DEPTH_TEST );
-                glDepthMask( GL_FALSE );
-                glDisable(GL_CULL_FACE);
-
-                // We've already rendered; return false to abort this NodeContainer.
-                return( false );
-            }
-        };
-
-        nc.getCallbacks().push_back(
-            jagDraw::NodeContainer::CallbackPtr(
-                new OpaqueControlCallback() ) );
-    }
-
-    // Element 1: Full screen tri pair to clear the ABuffer.
-    jagDraw::VertexArrayObjectPtr fstpVAO; // Shared with container elements 1 and 3.
-    jagDraw::DrawablePtr fstp; // Shared with container elements 1 and 3.
-    {
-        jagDraw::NodeContainer& nc( (*drawGraphTemplate)[ 1 ] );
-
-        jagDraw::CommandMapPtr commands( jagDraw::CommandMapPtr( new jagDraw::CommandMap() ) );
-
-        jagUtil::VNTCVec data;
-        fstp = jagUtil::makePlane( data, gmtl::Point3f( -1., -1., 0. ),
-            gmtl::Vec3f( 2., 0., 0. ), gmtl::Vec3f( 0., 2., 0. ) );
-        fstpVAO = jagUtil::createVertexArrayObject( data );
-        commands->insert( fstpVAO );
-
-        struct ABufferClearCallback : public jagDraw::NodeContainer::Callback
-        {
-            jagDraw::FramebufferPtr fbo;
-
-            virtual bool operator()( jagDraw::NodeContainer& nc, jagDraw::DrawInfo& di )
-            {
-                const jagDraw::jagDrawContextID contextID( di._id );
-
-                ABufferContext& abc( abufferCntxt[ contextID ] );
-                if( abc._needsInit )
-                    abc.init();
-
-                fbo->execute( di );
-                di._current.insert( fbo );
-                glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-
-                _clearProgram->execute( di );
-                abc.assignUniforms( _clearProgram->getID( contextID ) );
-
-                // Render the tri pair to clear the abuffer.
-                nc.internalExecute( di );
-
-                glMemoryBarrierEXT( GL_SHADER_GLOBAL_ACCESS_BARRIER_BIT_NV );
-
-                // We've already rendered; return false to abort this NodeContainer.
-                return( false );
-            }
-
-            jagDraw::ProgramPtr _clearProgram;
-        };
-        typedef jagBase::ptr< ABufferClearCallback >::shared_ptr ABufferClearCallbackPtr;
-        ABufferClearCallbackPtr abccb( ABufferClearCallbackPtr( new ABufferClearCallback() ) );
-        abccb->fbo = _defaultFBO;
-        nc.getCallbacks().push_back( abccb );
-
-        {
-            jagDraw::ShaderPtr vs( DemoInterface::readShaderUtil( "abufferClear.vert" ) );
-            jagDraw::ShaderPtr fs( DemoInterface::readShaderUtil( "abufferClear.frag" ) );
-
-            abccb->_clearProgram.reset( new jagDraw::Program() );
-            abccb->_clearProgram->attachShader( vs );
-            abccb->_clearProgram->attachShader( fs );
-            abccb->_clearProgram->addVertexAttribAlias( "vertexPos", "vertex" );
-            commands->insert( abccb->_clearProgram );
-        }
-
-        jagDraw::DrawNodePtr node( jagDraw::DrawNodePtr( new jagDraw::Node() ) );
-        node->setCommandMap( commands );
-        node->addDrawable( fstp );
-
-        nc.push_back( node );
-        nc.setResetEnable( false );
-    }
-
-    // Element 2: ABuffer. Contents set by CollectionVisitor.
-    {
-        jagDraw::NodeContainer& nc( (*drawGraphTemplate)[ 2 ] );
-
-        struct ABufferRenderCallback : public jagDraw::NodeContainer::Callback
-        {
-            virtual bool operator()( jagDraw::NodeContainer& nc, jagDraw::DrawInfo& di )
-            {
-                //return( false );
-                const jagDraw::jagDrawContextID contextID( di._id );
-
-                ABufferContext& abc( abufferCntxt[ contextID ] );
-
-                _abufferRenderProgram->execute( di );
-                abc.assignUniforms( _abufferRenderProgram->getID( contextID ) );
-
-                // Count fragments that were not discarded. This is an indication
-                // that we need to resize our page pool and re-render.
-                glBeginQuery( GL_SAMPLES_PASSED, abc._queryID );
-
-                // Render the tri pair to clear the abuffer.
-                nc.internalExecute( di );
-
-                glEndQuery( GL_SAMPLES_PASSED );
-                abc._queryRequested = true;
-
-                glMemoryBarrierEXT( GL_SHADER_GLOBAL_ACCESS_BARRIER_BIT_NV );
-
-                // We've already rendered; return false to abort this NodeContainer.
-                return( false );
-            }
-
-        };
-        typedef jagBase::ptr< ABufferRenderCallback >::shared_ptr ABufferRenderCallbackPtr;
-        ABufferRenderCallbackPtr abrcb( ABufferRenderCallbackPtr( new ABufferRenderCallback() ) );
-        nc.getCallbacks().push_back( abrcb );
-    }
-
-    // Element 3: Full sceen tri pair to resolve ABuffer & combine with opaque.
-    {
-        jagDraw::NodeContainer& nc( (*drawGraphTemplate)[ 3 ] );
-
-        struct ABufferResolveCallback : public jagDraw::NodeContainer::Callback
-        {
-            virtual bool operator()( jagDraw::NodeContainer& nc, jagDraw::DrawInfo& di )
-            {
-                const jagDraw::jagDrawContextID contextID( di._id );
-
-                ABufferContext& abc( abufferCntxt[ contextID ] );
-
-                _resolveProgram->execute( di );
-                abc.assignUniforms( _resolveProgram->getID( contextID ) );
-
-                // Render the tri pair to clear the abuffer.
-                nc.internalExecute( di );
-
-                bool needsRedraw( abc.managePool() );
-
-                // We've already rendered; return false to abort this NodeContainer.
-                return( false );
-            }
-
-            jagDraw::ProgramPtr _resolveProgram;
-        };
-        typedef jagBase::ptr< ABufferResolveCallback >::shared_ptr ABufferResolveCallbackPtr;
-        ABufferResolveCallbackPtr abrcb( ABufferResolveCallbackPtr( new ABufferResolveCallback() ) );
-        nc.getCallbacks().push_back( abrcb );
-
-        jagDraw::CommandMapPtr commands( jagDraw::CommandMapPtr( new jagDraw::CommandMap() ) );
-        commands->insert( fstpVAO );
-
-        {
-            jagDraw::ShaderPtr vs( DemoInterface::readShaderUtil( "abufferResolve.vert" ) );
-            jagDraw::ShaderPtr fs( DemoInterface::readShaderUtil( "abufferResolve.frag" ) );
-
-            abrcb->_resolveProgram.reset( new jagDraw::Program() );
-            abrcb->_resolveProgram->attachShader( vs );
-            abrcb->_resolveProgram->attachShader( fs );
-            abrcb->_resolveProgram->addVertexAttribAlias( "vertexPos", "vertex" );
-            commands->insert( abrcb->_resolveProgram );
-        }
-
-        jagDraw::TextureSetPtr texSet( jagDraw::TextureSetPtr( new jagDraw::TextureSet() ) );
-        (*texSet)[ GL_TEXTURE15 ] = _opaqueBuffer;
-        commands->insert( texSet );
-        jagDraw::UniformPtr sampler( jagDraw::UniformPtr( new jagDraw::Uniform( "opaqueBuffer", GL_SAMPLER_2D, 15 ) ) );
-        jagDraw::UniformSetPtr usp( jagDraw::UniformSetPtr( new jagDraw::UniformSet() ) );
-        usp->insert( sampler );
-        commands->insert( usp );
-
-        jagDraw::DrawNodePtr node( jagDraw::DrawNodePtr( new jagDraw::Node() ) );
-        node->setCommandMap( commands );
-        node->addDrawable( fstp );
-
-        nc.push_back( node );
-        nc.setResetEnable( false );
-    }
-
-    //drawGraphTemplate->resize( 3 );
-    return( drawGraphTemplate );
-}
-
 bool ABufferJag::startup( const unsigned int numContexts )
 {
     DemoInterface::startup( numContexts );
@@ -489,16 +121,9 @@ bool ABufferJag::startup( const unsigned int numContexts )
     }
 
 
-    // Create default FBO. First NodeContainer renders to _opaqueFBO,
-    // but other NodeContainers render directly to the window.
-    _defaultFBO = jagDraw::FramebufferPtr( new jagDraw::Framebuffer( GL_DRAW_FRAMEBUFFER ) );
-    _defaultFBO->setViewport( 0, 0, _width, _height );
-    _defaultFBO->setClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-    _defaultFBO->setMaxContexts( numContexts );
-
     // Create the texture used by _opaqueFBO to store the opaque
     // color buffer. After NodeContainer #0 renders into it, 
-    // NodeContainer #3 uses it during the abuffer resolve.
+    // ABuffer NodeContainer #3 uses it during the abuffer resolve.
     jagDraw::ImagePtr image( new jagDraw::Image() );
     image->set( 0, GL_RGBA, _width, _height, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL );
     _opaqueBuffer.reset( new jagDraw::Texture( GL_TEXTURE_2D, image,
@@ -517,14 +142,17 @@ bool ABufferJag::startup( const unsigned int numContexts )
     _depthBuffer->getSampler()->getSamplerState()->_magFilter = GL_NEAREST;
     _depthBuffer->setMaxContexts( numContexts );
 
-    // Prepare the draw graph.
-    // Node: createDrawGraph() initializes _abufferRenderProgram, so we must
-    // call createDrawGraph() before adding _abufferRenderProgram to a CommandMap.
-    jagDraw::DrawGraphPtr drawGraph( createDrawGraph( numContexts ) );
-    getCollectionVisitor().setDrawGraphTemplate( drawGraph );
-    // Tell draw graph how many contexts to expect.
-    drawGraph->setMaxContexts( numContexts );
+    // Create the ABuffer management object.
+    _aBuffer.reset( new jagUtil::ABuffer( _depthBuffer, _opaqueBuffer ) );
+    _aBuffer->setMaxContexts( numContexts );
 
+    // Obtain the draw graph from the ABuffer object.
+    // Default behavior is that the ABuffer owns NodeContainers 1-3, and we put
+    // all opaque geometry in NodeContainer 0.
+    jagDraw::DrawGraphPtr drawGraph( _aBuffer->createDrawGraphTemplate() );
+    getCollectionVisitor().setDrawGraphTemplate( drawGraph );
+
+    // TBD The ABuffer object needs to specify which matrices it needs.
     jagDraw::TransformCallback* xformCB( getCollectionVisitor().getTransformCallback() );
     xformCB->setRequiredMatrixUniforms(
         jagBase::TransformD::PROJ |
@@ -533,9 +161,6 @@ bool ABufferJag::startup( const unsigned int numContexts )
         jagBase::TransformD::MODEL_VIEW_INV_TRANS |
         jagBase::TransformD::MODEL_VIEW_INV_TRANS_4
         );
-
-    // Per context ABuffer data.
-    abufferCntxt._data.resize( numContexts );
 
 
     // Prepare the scene graph.
@@ -553,34 +178,27 @@ bool ABufferJag::startup( const unsigned int numContexts )
     _root->addChild( xformNode );
     xformNode->addChild( model );
     {
-        // Specify commands for abuffer rendering.
-        jagDraw::CommandMapPtr& commands( xformNode->getOrCreateCommandMap() );
-        commands->insert( _abufferRenderProgram );
-        commands->insert( _defaultFBO );
+        // Specify control objects for abuffer rendering.
+        jagDraw::CommandMapPtr commands;
+        jagSG::SelectContainerCallbackPtr sccb;
+        _aBuffer->getABufferControls( commands, sccb );
 
-        jagDraw::TextureSetPtr texSet( jagDraw::TextureSetPtr( new jagDraw::TextureSet() ) );
-        (*texSet)[ GL_TEXTURE14 ] = _depthBuffer;
-        commands->insert( texSet );
-        jagDraw::UniformPtr sampler( jagDraw::UniformPtr( new jagDraw::Uniform( "depthBuffer", GL_SAMPLER_2D, 14 ) ) );
-        jagDraw::UniformSetPtr usp( jagDraw::UniformSetPtr( new jagDraw::UniformSet() ) );
-        usp->insert( sampler );
-        commands->insert( usp );
+        xformNode->setCommandMap( commands );
+        xformNode->getCollectionCallbacks().push_back( sccb );
     }
-    // ABuffer container is container #2.
-    xformNode->getCollectionCallbacks().push_back(
-        jagSG::Node::CallbackPtr( new jagSG::SelectContainerCallback( 2 ) ) );
 
 
     // For gamepad speed control
     _moveRate = _root->getBound()->getRadius();
 
-        
 
+    // Prepare for culling.
     jagSG::FrustumCullDistributionVisitor fcdv;
     _root->accept( fcdv );
     jagSG::SmallFeatureDistributionVisitor sfdv;
     _root->accept( sfdv );
 
+    // Optimize VAO and element buffers.
     jagUtil::BufferAggregationVisitor bav( _root );
 
 
@@ -757,7 +375,8 @@ bool ABufferJag::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj
         collect.getNearFar( minNear, maxFar );
         drawGraph->setViewProj( viewMatrix, mxCore->computeProjection( minNear, maxFar ) );
 
-        drawGraph->execute( drawInfo );
+        // The ABuffer object handles rendering.
+        _aBuffer->renderFrame( collect, drawInfo );
     }
 #ifdef JAG3D_ENABLE_PROFILING
     {
@@ -783,11 +402,10 @@ void ABufferJag::reshape( const int w, const int h )
     _width = w;
     _height = h;
 
+    _aBuffer->reshape( w, h );
+
+    // TBD reshape _opaqueBuffer and _depthBuffer.
+
     const jagDraw::jagDrawContextID contextID( jagDraw::ContextSupport::instance()->getActiveContext() );
     _mxCore._data[ contextID ]->setAspect( ( double ) w / ( double ) h );
-
-    ABufferContext& abc( abufferCntxt[ contextID ] );
-    abc._texWidth = w;
-    abc._texHeight = h;
-    abc._needsInit = true;
 }
