@@ -79,6 +79,8 @@ public:
     /** \brief Call this function for a window resize event. */
     void reshape( const int w, const int h );
 
+    static unsigned int getRequiredMatrixUniforms();
+
 protected:
     void internalInit();
 

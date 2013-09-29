@@ -155,12 +155,8 @@ bool ABufferJag::startup( const unsigned int numContexts )
     // TBD The ABuffer object needs to specify which matrices it needs.
     jagDraw::TransformCallback* xformCB( getCollectionVisitor().getTransformCallback() );
     xformCB->setRequiredMatrixUniforms(
-        jagBase::TransformD::PROJ |
-        jagBase::TransformD::MODEL_VIEW_PROJ |
-        jagBase::TransformD::MODEL_VIEW |
-        jagBase::TransformD::MODEL_VIEW_INV_TRANS |
-        jagBase::TransformD::MODEL_VIEW_INV_TRANS_4
-        );
+        xformCB->getRequiredMatrixUniforms() |
+        _aBuffer->getRequiredMatrixUniforms() );
 
 
     // Prepare the scene graph.
