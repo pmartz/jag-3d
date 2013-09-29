@@ -71,107 +71,135 @@ coherent uniform uint *d_curSharedPage;
 //Access functions
 #if ABUFFER_USE_TEXTURES
 
-bool semaphoreAcquire(ivec2 coords){
-        return imageAtomicExchange(semaphoreImg, coords, 1U)==0U;
+bool semaphoreAcquire(ivec2 coords)
+{
+    return imageAtomicExchange(semaphoreImg, coords, 1U)==0U;
 }
-void semaphoreRelease(ivec2 coords){
-        imageAtomicExchange(semaphoreImg, coords, 0U);
+void semaphoreRelease(ivec2 coords)
+{
+    imageAtomicExchange(semaphoreImg, coords, 0U);
 }
-bool getSemaphore(ivec2 coords){
-        return imageLoad(semaphoreImg, coords).x==0U;
+bool getSemaphore(ivec2 coords)
+{
+    return imageLoad(semaphoreImg, coords).x==0U;
 }
-void setSemaphore(ivec2 coords, bool val){
-        imageStore(semaphoreImg, coords, uvec4(val ? 1U : 0U, 0U, 0U, 0U));
-}
-
-uint getPixelCurrentPage(ivec2 coords){
-        return imageLoad(abufferPageIdxImg, coords).x;
-}
-void setPixelCurrentPage(ivec2 coords, uint newpageidx){
-        imageStore(abufferPageIdxImg, coords, uvec4(newpageidx, 0U, 0U, 0U) );
+void setSemaphore(ivec2 coords, bool val)
+{
+    imageStore(semaphoreImg, coords, uvec4(val ? 1U : 0U, 0U, 0U, 0U));
 }
 
-uint getPixelFragCounter(ivec2 coords){
-        return imageLoad(abufferFragCountImg, coords).x;
+uint getPixelCurrentPage(ivec2 coords)
+{
+    return imageLoad(abufferPageIdxImg, coords).x;
 }
-void setPixelFragCounter(ivec2 coords, uint val){
-        imageStore(abufferFragCountImg, coords, uvec4(val, 0U, 0U, 0U) );
+void setPixelCurrentPage(ivec2 coords, uint newpageidx)
+{
+    imageStore(abufferPageIdxImg, coords, uvec4(newpageidx, 0U, 0U, 0U) );
 }
-uint pixelFragCounterAtomicAdd(ivec2 coords, uint val){
-        return imageAtomicAdd(abufferFragCountImg, coords, val);
+
+uint getPixelFragCounter(ivec2 coords)
+{
+    return imageLoad(abufferFragCountImg, coords).x;
+}
+void setPixelFragCounter(ivec2 coords, uint val)
+{
+    imageStore(abufferFragCountImg, coords, uvec4(val, 0U, 0U, 0U) );
+}
+uint pixelFragCounterAtomicAdd(ivec2 coords, uint val)
+{
+    return imageAtomicAdd(abufferFragCountImg, coords, val);
 }
 
 #else
 
-bool semaphoreAcquire(ivec2 coords){
-        return atomicExchange(d_semaphore+coords.x+coords.y*SCREEN_WIDTH, 0U) != 0U;
+bool semaphoreAcquire(ivec2 coords)
+{
+    return atomicExchange(d_semaphore+coords.x+coords.y*SCREEN_WIDTH, 0U) != 0U;
 }
-void semaphoreRelease(ivec2 coords){
-        atomicExchange(d_semaphore+coords.x+coords.y*SCREEN_WIDTH, 1U);
+void semaphoreRelease(ivec2 coords)
+{
+    atomicExchange(d_semaphore+coords.x+coords.y*SCREEN_WIDTH, 1U);
 }
-bool getSemaphore(ivec2 coords){
-        return d_semaphore[coords.x+coords.y*SCREEN_WIDTH]==0U;
+bool getSemaphore(ivec2 coords)
+{
+    return d_semaphore[coords.x+coords.y*SCREEN_WIDTH]==0U;
 }
-void setSemaphore(ivec2 coords, bool val){
-        d_semaphore[coords.x+coords.y*SCREEN_WIDTH]=val ? 0U : 1U;
-}
-
-uint getPixelCurrentPage(ivec2 coords){
-        return d_abufferPageIdx[coords.x+coords.y*SCREEN_WIDTH];
-}
-void setPixelCurrentPage(ivec2 coords, uint newpageidx){
-        d_abufferPageIdx[coords.x+coords.y*SCREEN_WIDTH]=newpageidx;
+void setSemaphore(ivec2 coords, bool val)
+{
+    d_semaphore[coords.x+coords.y*SCREEN_WIDTH]=val ? 0U : 1U;
 }
 
-uint getPixelFragCounter(ivec2 coords){
-        return d_abufferFragCount[coords.x+coords.y*SCREEN_WIDTH];
+uint getPixelCurrentPage(ivec2 coords)
+{
+    return d_abufferPageIdx[coords.x+coords.y*SCREEN_WIDTH];
 }
-void setPixelFragCounter(ivec2 coords, uint val){
-        d_abufferFragCount[coords.x+coords.y*SCREEN_WIDTH]=val;
+void setPixelCurrentPage(ivec2 coords, uint newpageidx)
+{
+    d_abufferPageIdx[coords.x+coords.y*SCREEN_WIDTH]=newpageidx;
 }
-uint pixelFragCounterAtomicAdd(ivec2 coords, uint val){
-        return atomicAdd(d_abufferFragCount+coords.x+coords.y*SCREEN_WIDTH, val);
+
+uint getPixelFragCounter(ivec2 coords)
+{
+    return d_abufferFragCount[coords.x+coords.y*SCREEN_WIDTH];
+}
+void setPixelFragCounter(ivec2 coords, uint val)
+{
+    d_abufferFragCount[coords.x+coords.y*SCREEN_WIDTH]=val;
+}
+uint pixelFragCounterAtomicAdd(ivec2 coords, uint val)
+{
+    return atomicAdd(d_abufferFragCount+coords.x+coords.y*SCREEN_WIDTH, val);
 }
 
 #endif
 
 
 #if SHAREDPOOL_USE_TEXTURES
-uint sharedPoolGetLink(uint pageNum){
-        return imageLoad(sharedLinkListImg, (int)(pageNum) ).x;
+uint sharedPoolGetLink(uint pageNum)
+{
+    return imageLoad(sharedLinkListImg, (int)(pageNum) ).x;
 }
-void sharedPoolSetLink(uint pageNum, uint pointer){
-        imageStore(sharedLinkListImg, (int)(pageNum), uvec4(pointer, 0U, 0U, 0U) );
+void sharedPoolSetLink(uint pageNum, uint pointer)
+{
+    imageStore(sharedLinkListImg, (int)(pageNum), uvec4(pointer, 0U, 0U, 0U) );
 }
 
-vec4 sharedPoolGetValue(uint index){
-        return imageLoad(sharedPageListImg, (int)index);
+vec4 sharedPoolGetValue(uint index)
+{
+    return imageLoad(sharedPageListImg, (int)index);
 }
-void sharedPoolSetValue(uint index, vec4 val){
-        imageStore(sharedPageListImg, (int)(index), val);
+void sharedPoolSetValue(uint index, vec4 val)
+{
+    imageStore(sharedPageListImg, (int)(index), val);
 }
 #else
-uint sharedPoolGetLink(uint pageNum){
-        return d_sharedLinkList[(int)pageNum];
+uint sharedPoolGetLink(uint pageNum)
+{
+    return d_sharedLinkList[(int)pageNum];
 }
-void sharedPoolSetLink(uint pageIdx, uint pointer){
-        d_sharedLinkList[(int)pageIdx]=pointer;
+void sharedPoolSetLink(uint pageIdx, uint pointer)
+{
+    d_sharedLinkList[(int)pageIdx]=pointer;
 }
 
-vec4 sharedPoolGetValue(uint index){
-        return d_sharedPageList[(int)index];
+vec4 sharedPoolGetValue(uint index)
+{
+    return d_sharedPageList[(int)index];
 }
-void sharedPoolSetValue(uint index, vec4 val){
-        d_sharedPageList[(int)index]=val;
+void sharedPoolSetValue(uint index, vec4 val)
+{
+    d_sharedPageList[(int)index]=val;
 }
 #endif
 
 
-void setSharedPageCounter(uint val){
-        (*d_curSharedPage)=val;
+void setSharedPageCounter(uint val)
+{
+    (*d_curSharedPage)=val;
 }
-uint sharedPageCounterAtomicAdd(uint val){
-        return atomicAdd(d_curSharedPage, val);
+uint sharedPageCounterAtomicAdd(uint val)
+{
+    return atomicAdd(d_curSharedPage, val);
 }
 
 #endif  //ABUFFERLINKEDLIST_HGLSL
@@ -186,14 +214,15 @@ smooth in vec3 fragNormal;
 
 
 //Shade using green-white strips
-vec3 shadeStrips(vec3 texcoord){
-        vec3 col;
-        float i=floor(texcoord.x*6.0f);
+vec3 shadeStrips(vec3 texcoord)
+{
+    vec3 col;
+    float i=floor(texcoord.x*6.0f);
 
-        col.rgb=fract(i*0.5f) == 0.0f ? vec3(0.4f, 0.85f, 0.0f) : vec3(1.0f);
-        col.rgb*=texcoord.z;
+    col.rgb=fract(i*0.5f) == 0.0f ? vec3(0.4f, 0.85f, 0.0f) : vec3(1.0f);
+    col.rgb*=texcoord.z;
 
-        return col;
+    return col;
 }
 
 
@@ -307,9 +336,10 @@ void main(void)
 
 out vec4 outFragColor;
 
-void main(void) {
-        vec3 col=shadeStrips(fragTexCoord);
-        outFragColor=vec4(col, 1.0f);
+void main(void)
+{
+    vec3 col=shadeStrips(fragTexCoord);
+    outFragColor=vec4(col, 1.0f);
 }
 
 #endif  //#if USE_ABUFFER
