@@ -436,6 +436,18 @@ void ABuffer::internalInit()
     _callback.reset( new jagSG::SelectContainerCallback( _startContainer + 1 ) );
 }
 
+unsigned int ABuffer::getRequiredMatrixUniforms()
+{
+    return(
+        jagBase::TransformD::PROJ |
+        jagBase::TransformD::MODEL_VIEW_PROJ |
+        jagBase::TransformD::MODEL_VIEW |
+        jagBase::TransformD::MODEL_VIEW_INV_TRANS |
+        jagBase::TransformD::MODEL_VIEW_INV_TRANS_4
+        );
+}
+
+
 
 
 
