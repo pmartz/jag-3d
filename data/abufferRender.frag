@@ -252,8 +252,8 @@ void main(void)
         ///Manual critical section => This can most probably be optimized !
         int ii=0; //prevents infinite loops
         bool leaveLoop = false;
-        while (!leaveLoop && ii<1000) {
-
+        while (!leaveLoop && ii<1000)
+        {
             //Aquire semaphore
             if ( semaphoreAcquire(coords) )
             {
