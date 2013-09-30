@@ -23,18 +23,34 @@ uniform mat4 projectionMat;
 uniform mat4 modelViewMat;
 uniform mat4 modelViewMatIT;
 
+uniform LightingLight {
+    vec4 position;
+    vec4 ambient, diffuse, specular;
+} light;
+uniform LightingMaterialFront {
+    vec4 ambient, diffuse, specular;
+    float shininess;
+} front;
+
 in vec3 vertexPos;
 in vec3 vertexNormal;
 
+smooth out vec4 ecVertex;
 smooth out vec4 fragPos;
 smooth out vec3 fragTexCoord;
 
 smooth out vec3 fragNormal;
 
+struct Products {
+    vec4 ambient, diffuse, specular;
+};
+out Products frontProduct;
+
 
 void main()
 {
-    vec4 pos = projectionMat * modelViewMat * vec4( vertexPos.xyz, 1.0f );
+    ecVertex = modelViewMat * vec4( vertexPos.xyz, 1.0f );
+    vec4 pos = projectionMat * ecVertex;
 
     vec3 normalEye = normalize( (modelViewMatIT*vec4(vertexNormal, 1.0f)).xyz );
 
@@ -44,4 +60,8 @@ void main()
     fragNormal = normalEye;
     fragPos = pos;
     gl_Position = pos;
+
+    frontProduct.ambient = front.ambient * light.ambient;
+    frontProduct.diffuse = front.diffuse * light.diffuse;
+    frontProduct.specular = front.specular * light.specular;
 }
