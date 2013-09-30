@@ -34,7 +34,8 @@
 
 #define ABUFFER_RESOLVE_USE_SORTING 1
 #define ABUFFER_RESOLVE_ALPHA_CORRECTION 1
-#define ABUFFER_RESOLVE_GELLY 1
+#define ABUFFER_RESOLVE_GELLY 0
+#define ABUFFER_RESOLVE_CAD 1
 
 #define ABUFFER_DISPNUMFRAGMENTS 0
 
@@ -361,7 +362,7 @@ void bitonicSort( int n )
 
 // Don't use this. Get background from opaqueBuffer texture.
 //const vec4 backgroundColor=vec4(BACKGROUND_COLOR_R, BACKGROUND_COLOR_G, BACKGROUND_COLOR_B, 0.0f);
-const float fragmentAlpha=0.5f;
+const float fragmentAlpha=0.25f;
 
 //Blend fragments front-to-back
 vec4 resolveAlphaBlend(int abNumFrag);
@@ -372,72 +373,95 @@ vec4 resolveGelly(int abNumFrag);
 //Blend fragments front-to-back
 vec4 resolveAlphaBlend(int abNumFrag, vec4 backgroundColor )
 {
-    vec4 finalColor=vec4(0.0f);
+#if ABUFFER_RESOLVE_CAD
+
+    // This is an attempt to support CAD models with interior co-planar geometry.
+    // The idea is to use 1/2 the frontmost color as the color for all
+    // fragments except the frontmost fragment. This sacrifices seeing the color
+    // of underlying fragments, but eliminates flickering from z-fighting.
+
+    vec4 finalColor = backgroundColor;
+    vec4 frontColor = vec4( fragmentList[ 0 ].rgb, fragmentAlpha );
+    vec4 color = vec4( frontColor.rgb * 0.5, fragmentAlpha );
+    // Blend back to front.
+    for( int i = abNumFrag - 1; i >= 0; i-- )
+    {
+        if( i == 0 )
+            color = frontColor;
+        finalColor = ( color * color.a ) + finalColor * ( 1.f - color.a );
+    }
+    return( finalColor );
+
+#else
+
+    // Original ABuffer example code for alpha blend resolve.
+
+    vec4 finalColor = vec4( 0.0f );
 
     const float sigma = 30.0f;
-    float thickness=fragmentList[0].w/2.0f;
+    float thickness = fragmentList[0].w * .5f;
 
-    finalColor=vec4(0.0f);
     for(int i=0; i<abNumFrag; i++)
     {
-        vec4 frag=fragmentList[i];
+        vec4 frag = fragmentList[ i ];
 
         vec4 col;
-        col.rgb=frag.rgb;
-        col.w=fragmentAlpha;    //uses constant alpha
+        col.rgb = frag.rgb;
+        col.w = fragmentAlpha;    //uses constant alpha
 
 #if ABUFFER_RESOLVE_ALPHA_CORRECTION
-        if(i%2==abNumFrag%2)
-            thickness=(fragmentList[i+1].w-frag.w)*0.5f;
-        col.w=1.0f-pow(1.0f-col.w, thickness* sigma );
+        if( i % 2 == abNumFrag % 2 )
+            thickness = ( fragmentList[ i+1 ].w - frag.w ) * 0.5f;
+        col.w= 1.0f - pow( 1.0f - col.w, thickness * sigma );
 #endif
 
-        col.rgb=col.rgb*col.w;
+        col.rgb = col.rgb * col.w;
 
-        finalColor=finalColor+col*(1.0f-finalColor.a);
+        finalColor = finalColor + col * ( 1.0f - finalColor.a );
     }
 
-    finalColor=finalColor+backgroundColor*(1.0f-finalColor.a);
+    finalColor = finalColor + backgroundColor * ( 1.0f - finalColor.a );
 
     return finalColor;
+
+#endif
 }
 
 //Blend fragments front-to-back
 vec4 resolveGelly(int abNumFrag, vec4 backgroundColor )
 {
     float thickness=0.0f;
-    vec4 accumColor= backgroundColor; //vec4(0.0f);
+    vec4 accumColor = backgroundColor; //vec4(0.0f);
 
     vec4 prevFrag;
     for(int i=0; i<abNumFrag; i++)
     {
-        vec4 frag=fragmentList[i];
+        vec4 frag = fragmentList[i];
 
-        if(i%2==1)
+        if( i%2 == 1 )
         {
-            thickness+=frag.w-prevFrag.w;
+            thickness += frag.w - prevFrag.w;
         }
 
         vec4 col;
-        col.rgb=frag.rgb;
-        col.w=fragmentAlpha;    //uses constant alpha
+        col.rgb = frag.rgb;
+        col.w = fragmentAlpha;    //uses constant alpha
 
-        col.rgb=col.rgb*col.w;
-        accumColor=accumColor+col*(1.0f-accumColor.a);
+        col.rgb = col.rgb * col.w;
+        accumColor = accumColor + col * ( 1.0f - accumColor.a );
 
-        prevFrag=frag;
+        prevFrag = frag;
     }
-    accumColor=accumColor+backgroundColor*(1.0f-accumColor.a);
+    accumColor = accumColor + backgroundColor * ( 1.0f - accumColor.a );
 
-
-    //thickness=fragmentList[abNumFrag-1].w-fragmentList[0].w;
+    //thickness = fragmentList[ abNumFrag - 1 ].w - fragmentList[ 0 ].w;
     float sigma = 20.0f;
-    float Ia = exp(-sigma*thickness);
+    float Ia = exp( -sigma * thickness );
     float ka = 0.9f;
 
-    vec4 finalColor=vec4(0.0f);
+    vec4 finalColor = vec4( 0.0f );
     //finalColor = ka * Ia + (1.0-ka) * fragmentList[0]; //Same as Louis Bavoil 2005
-    finalColor = ka * Ia + (1.0-ka) * accumColor;   //Uses accumulated Color
+    finalColor = ka * Ia + ( 1.0 - ka ) * accumColor;   //Uses accumulated Color
 
     const vec4 jade = vec4(0.4f, 0.14f, 0.11f, 1.0f)* 8.0f;
     const vec4 green = vec4(0.3f, 0.7f, 0.1f, 1.0f)* 4.0f;
@@ -446,8 +470,6 @@ vec4 resolveGelly(int abNumFrag, vec4 backgroundColor )
 
     return finalColor;
 }
-
-#endif
 
 
 
