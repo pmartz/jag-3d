@@ -226,6 +226,41 @@ vec3 shadeStrips(vec3 texcoord)
 }
 
 
+const vec4 lightModelAmbient = vec4( 0., 0., 0., 0. );
+smooth in vec4 ecVertex;
+
+uniform LightingLight {
+    vec4 position;
+    vec4 ambient, diffuse, specular;
+} light;
+uniform LightingMaterialFront {
+    vec4 ambient, diffuse, specular;
+    float shininess;
+} front;
+
+struct Products {
+    vec4 ambient, diffuse, specular;
+};
+in Products frontProduct;
+
+// 'normal' must be normalized.
+vec4 lighting( in vec4 ambProd, in vec4 diffProd, in vec4 specProd, in float specExp,
+    in vec3 viewVec, in vec3 normal, in vec3 lightVec )
+{
+    float diffDot = dot( normal, lightVec );
+    vec4 diff = diffProd * max( diffDot, 0. );
+
+    vec4 spec = vec4( 0., 0., 0., 0. );
+    if( ( specExp > 0. ) && ( diffDot > 0. ) )
+    {
+        vec3 reflectVec = reflect( lightVec, normal ); // lightVec and normal are already normalized,
+        spec = specProd * pow( max( dot( reflectVec, viewVec ), 0. ), specExp );
+    }
+
+    return( ambProd + diff + spec );
+}
+
+
 // Opaque pass depth buffer.
 uniform sampler2D depthBuffer;
 
@@ -306,7 +341,16 @@ void main(void)
         vec3 col;
 
         //Choose what we store per fragment
-#if ABUFFER_RESOLVE_GELLY==0
+#if 1
+        vec3 lightVec = light.position.xyz;
+        if( light.position.w > 0.001 )
+            lightVec = normalize( lightVec - ecVertex.xyz );
+        vec3 viewVec = normalize( ecVertex.xyz );
+        vec3 normal = normalize( fragNormal );
+        col = lighting( frontProduct.ambient + lightModelAmbient,
+            frontProduct.diffuse, frontProduct.specular,
+            front.shininess, viewVec, normal, lightVec ).rgb;
+#elif ABUFFER_RESOLVE_GELLY==0
         //Store color strips
         col=shadeStrips(fragTexCoord);
 #else
