@@ -132,7 +132,9 @@ WARN_LOGFILE           =
 INPUT                  = "${PROJECT_SOURCE_DIR}/src/jagBase" \
                          "${PROJECT_SOURCE_DIR}/src/jagDisk" \
                          "${PROJECT_SOURCE_DIR}/src/jagDraw" \
+                         "${PROJECT_SOURCE_DIR}/src/jagMx" \
                          "${PROJECT_SOURCE_DIR}/src/jagSG" \
+                         "${PROJECT_SOURCE_DIR}/src/jagUtil" \
                          "${PROJECT_SOURCE_DIR}/src/plugins" \
                          "${PROJECT_SOURCE_DIR}/doc"
 INPUT_ENCODING         = UTF-8
