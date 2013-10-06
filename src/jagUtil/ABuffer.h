@@ -49,7 +49,12 @@ typedef jagDraw::PerContextData< ABufferContext > PerContextABufferCntxt;
 
 
 /** \class ABuffer ABuffer.h <jagDraw/ABuffer.h>
-*/
+\brief Support for a-buffer order independent transparency.
+\details This is a port of the OpenGL a-buffer sample code available from
+http://blog.icare3d.org/2010/07/opengl-40-abuffer-v20-linked-lists-of.html.
+The code has been ported to work with the JAG scene graph and draw graph
+data structures. It supports opaque rendering and blending with a secondary
+color buffer. */
 class JAGUTIL_EXPORT ABuffer
 {
 public:
@@ -64,7 +69,9 @@ public:
     /** \brief TBD
     \details TBD
     \param numContexts Maximum number of OpenGL contexts.
-    \param startContainer Index of the DrawGraph's NodeContainer for ABuffer rendering. */
+    \param startContainer Index of the DrawGraph's NodeContainer for ABuffer rendering.
+    NodeContainers numbers \c startContainer through \c startContainer + 2 are reserved
+    for use by the ABuffer class. */
     jagDraw::DrawGraphPtr& createDrawGraphTemplate( const unsigned int startContainer=1 );
 
     /** \brief Get the CommandMap and collection callback for a-buffer geometry. 
@@ -79,7 +86,34 @@ public:
     /** \brief Call this function for a window resize event. */
     void reshape( const int w, const int h );
 
+    /** \brief Bitflags indicating matrix uniforms required by ABuffer shader code.
+    \details Application code should bitwise-OR these flags into the TransformCallback class.
+    Here's an example, for use with jagSG::CollectionVisitor:
+    \code
+    jagDraw::TransformCallback* xformCB( CollectionVisitor::getTransformCallback() );
+    xformCB->setRequiredMatrixUniforms( xformCB->getRequiredMatrixUniforms() |
+        ABuffer::getRequiredMatrixUniforms() );
+    \endcode */
     static unsigned int getRequiredMatrixUniforms();
+
+
+    typedef enum {
+        RESOLVE_GELLY, /*!< Uses the gelly resolve from the originaal icare3d.org example code. */
+        RESOLVE_ALPHA_BLEND, /*!< Uses the alpha blend resolve from the originaal icare3d.org example code. */
+
+        /// Uses a modified alpha blend that sacrifices interior geometry color
+        /// in order to eliminate co-planar geometry z-fighting artifacts, which
+        /// commonly occur with CAD models that were designed for manufacturing rather
+        /// than visual rendering.
+        RESOLVE_ALPHA_BLEND_CAD
+    } ResolveMethod;
+
+    /** \brief Specify the a-buffer resolve algorithm.
+    \details Controls how the linked list of fragment data is combined into
+    a final color. The default is RESOLVE_ALPHA_BLEND_CAD. */
+    void setResolveMethod( const ResolveMethod resolveMethod );
+    /** \brief Get the resolve algorithm. */
+    ResolveMethod getResolveMethod() const;
 
 protected:
     void internalInit();
@@ -96,6 +130,7 @@ protected:
     jagDraw::DrawGraphPtr _drawGraphTemplate;
 
     jagDraw::ProgramPtr _clearProgram, _renderProgram, _resolveProgram;
+    ResolveMethod _resolveMethod;
 
     unsigned int _numContexts;
 

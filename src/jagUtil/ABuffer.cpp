@@ -52,6 +52,7 @@ ABuffer::ABuffer()
     : _startContainer( 1 ),
       _width( 0 ),
       _height( 0 ),
+      _resolveMethod( RESOLVE_ALPHA_BLEND_CAD ),
       _numContexts( 0 )
 {
 }
@@ -62,6 +63,7 @@ ABuffer::ABuffer( jagDraw::TexturePtr& depthBuffer, jagDraw::TexturePtr& colorBu
       _startContainer( 1 ),
       _width( 0 ),
       _height( 0 ),
+      _resolveMethod( RESOLVE_ALPHA_BLEND_CAD ),
       _numContexts( 0 )
 {
 }
@@ -72,6 +74,7 @@ ABuffer::ABuffer( const ABuffer& rhs )
       _startContainer( rhs._startContainer ),
       _width( rhs._width ),
       _height( rhs._height ),
+      _resolveMethod( rhs._resolveMethod ),
       _numContexts( rhs._numContexts )
 {
 }
@@ -445,6 +448,17 @@ unsigned int ABuffer::getRequiredMatrixUniforms()
         jagBase::TransformD::MODEL_VIEW_INV_TRANS |
         jagBase::TransformD::MODEL_VIEW_INV_TRANS_4
         );
+}
+
+void ABuffer::setResolveMethod( const ResolveMethod resolveMethod )
+{
+    _resolveMethod = resolveMethod;
+
+    // TBD mark all contexts as needing to re-init.
+}
+ABuffer::ResolveMethod ABuffer::getResolveMethod() const
+{
+    return( _resolveMethod );
 }
 
 
