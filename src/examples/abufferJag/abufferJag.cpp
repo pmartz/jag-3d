@@ -412,15 +412,24 @@ bool ABufferJag::keyCommand( const int command )
         break;
     case (int)'g':
         _aBuffer->setResolveMethod( jagUtil::ABuffer::RESOLVE_GELLY );
+        JAG3D_CRITICAL_STATIC( _logName, "Using " + jagUtil::ABuffer::resolveMethodToString( _aBuffer->getResolveMethod() ) );
         break;
     case (int)'a':
         _aBuffer->setResolveMethod( jagUtil::ABuffer::RESOLVE_ALPHA_BLEND );
+        JAG3D_CRITICAL_STATIC( _logName, "Using " + jagUtil::ABuffer::resolveMethodToString( _aBuffer->getResolveMethod() ) );
         break;
     case (int)'c':
         _aBuffer->setResolveMethod( jagUtil::ABuffer::RESOLVE_ALPHA_BLEND_CAD );
+        JAG3D_CRITICAL_STATIC( _logName, "Using " + jagUtil::ABuffer::resolveMethodToString( _aBuffer->getResolveMethod() ) );
+        break;
+
+    case (int)'t':
+        _aBuffer->setFragmentAlpha( _aBuffer->getFragmentAlpha() - 0.033f );
+        break;
+    case (int)'T':
+        _aBuffer->setFragmentAlpha( _aBuffer->getFragmentAlpha() + 0.033f );
         break;
     }
 
-    JAG3D_CRITICAL_STATIC( _logName, "Using " + jagUtil::ABuffer::resolveMethodToString( _aBuffer->getResolveMethod() ) );
     return( true ); // cause redraw.
 }

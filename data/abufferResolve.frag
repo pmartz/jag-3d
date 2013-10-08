@@ -360,7 +360,6 @@ void bitonicSort( int n )
 
 // Don't use this. Get background from opaqueBuffer texture.
 //const vec4 backgroundColor=vec4(BACKGROUND_COLOR_R, BACKGROUND_COLOR_G, BACKGROUND_COLOR_B, 0.0f);
-const float fragmentAlpha=0.25f;
 
 //Blend fragments front-to-back
 vec4 resolveAlphaBlend(int abNumFrag);
@@ -376,8 +375,8 @@ vec4 resolveAlphaBlendCAD( int abNumFrag, vec4 backgroundColor )
     // of underlying fragments, but eliminates flickering from z-fighting.
 
     vec4 finalColor = backgroundColor;
-    vec4 frontColor = vec4( fragmentList[ 0 ].rgb, fragmentAlpha );
-    vec4 color = vec4( frontColor.rgb * 0.5, fragmentAlpha );
+    vec4 frontColor = vec4( fragmentList[ 0 ].rgb, FRAGMENT_ALPHA );
+    vec4 color = vec4( frontColor.rgb * 0.5f, FRAGMENT_ALPHA );
     // Blend back to front.
     for( int i = abNumFrag - 1; i >= 0; i-- )
     {
@@ -403,7 +402,7 @@ vec4 resolveAlphaBlend(int abNumFrag, vec4 backgroundColor )
 
         vec4 col;
         col.rgb = frag.rgb;
-        col.w = fragmentAlpha;    //uses constant alpha
+        col.w = FRAGMENT_ALPHA;    //uses constant alpha
 
 #if ABUFFER_RESOLVE_ALPHA_CORRECTION
         if( i % 2 == abNumFrag % 2 )
@@ -439,7 +438,7 @@ vec4 resolveGelly(int abNumFrag, vec4 backgroundColor )
 
         vec4 col;
         col.rgb = frag.rgb;
-        col.w = fragmentAlpha;    //uses constant alpha
+        col.w = FRAGMENT_ALPHA;    //uses constant alpha
 
         col.rgb = col.rgb * col.w;
         accumColor = accumColor + col * ( 1.0f - accumColor.a );
