@@ -54,13 +54,17 @@ typedef jagDraw::PerContextData< ABufferContext > PerContextABufferCntxt;
 http://blog.icare3d.org/2010/07/opengl-40-abuffer-v20-linked-lists-of.html.
 The code has been ported to work with the JAG scene graph and draw graph
 data structures. It supports opaque rendering and blending with a secondary
-color buffer. */
-class JAGUTIL_EXPORT ABuffer
+color buffer.
+
+\logname jag.util.abuf
+*/
+class JAGUTIL_EXPORT ABuffer : public jagBase::LogBase
 {
 public:
-    ABuffer();
+    ABuffer( const std::string& logName=std::string( "" ) );
     ABuffer( jagDraw::TexturePtr& depthBuffer, jagDraw::TexturePtr& colorBuffer0,
-        jagDraw::TexturePtr& colorBuffer1=jagDraw::TexturePtr((jagDraw::Texture*)NULL) );
+        jagDraw::TexturePtr& colorBuffer1=jagDraw::TexturePtr((jagDraw::Texture*)NULL),
+        const std::string& logName=std::string( "" ) );
     ABuffer( const ABuffer& rhs );
     ~ABuffer();
 
