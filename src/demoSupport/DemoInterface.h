@@ -84,8 +84,8 @@ public:
     /** Called prior to exit. */
     virtual bool shutdown() { return( true ); }
 
-    /** Simple interface for passing key press events. */
-    virtual void keyCommand( const int command ) {}
+    /** Simple interface for passing key press events. Return true to redraw. */
+    virtual bool keyCommand( const int command ) { return( false ); }
 
     jagDraw::DrawInfo& getDrawInfo( const jagDraw::jagDrawContextID contextID )
     {
