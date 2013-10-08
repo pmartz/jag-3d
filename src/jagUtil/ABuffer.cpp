@@ -450,6 +450,21 @@ void ABuffer::internalInit()
 
 void ABuffer::shaderSetResolve( jagDraw::ShaderPtr& shader )
 {
+    jagBase::StringVec& sourceVec( shader->getSourceVec() );
+    sourceVec.resize( sourceVec.size() + 1 );
+    for( size_t idx=sourceVec.size()-1; idx>0; --idx )
+        sourceVec[ idx ] = sourceVec[ idx - 1 ];
+
+    const std::string on( "1" );
+    const std::string off( "0" );
+    const std::string eoln( "\n" );
+    sourceVec[ 0 ] =
+        std::string( "#define RESOLVE_GELLY " ) +
+        ( ( _resolveMethod == RESOLVE_GELLY ) ? on : off ) + eoln +
+        std::string( "#define RESOLVE_ALPHA_BLEND " ) +
+        ( ( _resolveMethod == RESOLVE_ALPHA_BLEND ) ? on : off ) + eoln +
+        std::string( "#define RESOLVE_ALPHA_BLEND_CAD " ) +
+        ( ( _resolveMethod == RESOLVE_ALPHA_BLEND_CAD ) ? on : off ) + eoln;
 }
 
 
