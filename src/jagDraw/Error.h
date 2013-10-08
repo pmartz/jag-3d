@@ -33,7 +33,10 @@ namespace jagDraw
 {
 
 
-/** \defgroup jagDrawError Error Utilities */
+/** \defgroup jagDrawError Error Utilities
+\logname jag.draw.glerror
+\logname jag.draw.glerror.fbo
+*/
 /*@{*/
 
 #ifndef JAG3D_ENABLE_ERROR_CHECKS

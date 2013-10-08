@@ -86,7 +86,7 @@ Set a Poco::Logger's priority and destination (console or log file) using the ja
     jagBase::Log::instance()->setPriority( 4, "jag.draw" );
 
     // Send any OpenGL errors to the log file.
-    jagBase::Log::instance()->setPriority( 3, jagBase::Log::LogFile, "jag.draw.error" );
+    jagBase::Log::instance()->setPriority( 3, jagBase::Log::LogFile, "jag.draw.glerror" );
 
     // Turn on debugging for jagDraw context handling.
     jagBase::Log::instance()->setPriority( 8, "jag.draw.ctx" );
