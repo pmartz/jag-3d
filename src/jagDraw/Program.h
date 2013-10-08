@@ -46,6 +46,7 @@ typedef jagBase::ptr< Program >::shared_ptr ProgramPtr;
 /** \class Program Program.h <jagDraw/Program.h>
 \brief
 \details \gl{section 2.11.2}.
+\logname jag.draw.program
 */
 class JAGDRAW_EXPORT Program : public DrawablePrep,
             public ObjectID, public SHARED_FROM_THIS(Program),
@@ -71,6 +72,14 @@ public:
     \gl{section 2.11.2}.
     */
     void attachShader( ShaderPtr shader );
+    /** \brief Detach all attached shaders.
+    \details Useful for changing shader code on the fly. TBD This is sort of
+    a sledgehammer approach; We really need more flexibility here. */
+    void detachAllShaders();
+
+    /** \brief Force a re-link for all contexts.
+    \details TBD */
+    void forceRelink();
 
     /** \brief TBD
     \details TBD */
@@ -209,6 +218,10 @@ private:
     ShaderVec _shaders;
 
     PerContextGLboolean _linkStatus;
+
+    void internalDetach( const unsigned int contextID );
+    ShaderVec _detachedShaders;
+    PerContextGLboolean _detached;
 
     // Support for uniforms in the default uniform block
     typedef std::map< HashValue, GLint > LocationMap;

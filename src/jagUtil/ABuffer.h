@@ -126,6 +126,8 @@ public:
 protected:
     void internalInit();
 
+    void shaderSetResolve( jagDraw::ShaderPtr& shader );
+
     jagDraw::TexturePtr _colorBuffer0, _colorBuffer1;
     jagDraw::TexturePtr _depthBuffer;
     unsigned int _startContainer;
