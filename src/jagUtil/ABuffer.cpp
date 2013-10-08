@@ -457,8 +457,9 @@ unsigned int ABuffer::getRequiredMatrixUniforms()
 
 void ABuffer::setResolveMethod( const ResolveMethod resolveMethod )
 {
+    JAG3D_DEBUG( "Resolve method: " + resolveMethodToString( resolveMethod ) );
+
     _resolveMethod = resolveMethod;
-    JAG3D_CRITICAL( "Resolve method: " + resolveMethodToString( resolveMethod ) );
 
     // TBD mark all contexts as needing to re-init.
 }

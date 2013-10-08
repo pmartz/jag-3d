@@ -49,10 +49,6 @@ public:
     virtual bool startup( const unsigned int numContexts );
     virtual bool init();
     virtual bool frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj );
-    virtual bool shutdown()
-    {
-        return( true );
-    }
 
 protected:
     jagDraw::DrawableVec _drawableVec;
