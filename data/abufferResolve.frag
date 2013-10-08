@@ -34,8 +34,6 @@
 
 #define ABUFFER_RESOLVE_USE_SORTING 1
 #define ABUFFER_RESOLVE_ALPHA_CORRECTION 1
-#define ABUFFER_RESOLVE_GELLY 0
-#define ABUFFER_RESOLVE_CAD 1
 
 #define ABUFFER_DISPNUMFRAGMENTS 0
 
@@ -370,11 +368,8 @@ vec4 resolveAlphaBlend(int abNumFrag);
 vec4 resolveGelly(int abNumFrag);
 
 
-//Blend fragments front-to-back
-vec4 resolveAlphaBlend(int abNumFrag, vec4 backgroundColor )
+vec4 resolveAlphaBlendCAD( int abNumFrag, vec4 backgroundColor )
 {
-#if ABUFFER_RESOLVE_CAD
-
     // This is an attempt to support CAD models with interior co-planar geometry.
     // The idea is to use 1/2 the frontmost color as the color for all
     // fragments except the frontmost fragment. This sacrifices seeing the color
@@ -391,11 +386,12 @@ vec4 resolveAlphaBlend(int abNumFrag, vec4 backgroundColor )
         finalColor = ( color * color.a ) + finalColor * ( 1.f - color.a );
     }
     return( finalColor );
+}
 
-#else
-
-    // Original ABuffer example code for alpha blend resolve.
-
+// Original ABuffer example code for alpha blend resolve.
+//Blend fragments front-to-back
+vec4 resolveAlphaBlend(int abNumFrag, vec4 backgroundColor )
+{
     vec4 finalColor = vec4( 0.0f );
 
     const float sigma = 30.0f;
@@ -423,8 +419,6 @@ vec4 resolveAlphaBlend(int abNumFrag, vec4 backgroundColor )
     finalColor = finalColor + backgroundColor * ( 1.0f - finalColor.a );
 
     return finalColor;
-
-#endif
 }
 
 //Blend fragments front-to-back
@@ -526,12 +520,15 @@ void main(void)
                 //Sort fragments in local memory array
                 bubbleSort(abNumFrag);
 
-#       if ABUFFER_RESOLVE_GELLY
+#       if RESOLVE_GELLY
                 //We want to sort and apply gelly shader
                 outFragColor=resolveGelly(abNumFrag, backgroundColor );
-#       else
+#       elif RESOLVE_ALPHA_BLEND
                 //We want to sort and blend fragments
                 outFragColor=resolveAlphaBlend(abNumFrag, backgroundColor );
+#       else
+                // Resolve alpha blend for CAD coplanar geometry.
+                outFragColor = resolveAlphaBlendCAD( abNumFrag, backgroundColor );
 #       endif
 
 #   endif
