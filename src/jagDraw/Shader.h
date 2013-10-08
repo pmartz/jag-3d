@@ -37,6 +37,7 @@ namespace jagDraw {
 
 /** \class Shader Shader.h <jagDraw/Shader.h>
 \brief TBD.
+\logname jag.draw.shader
 */
 class JAGDRAW_EXPORT Shader : public ObjectID, protected jagBase::LogBase
 {
@@ -46,6 +47,7 @@ public:
     ~Shader();
 
     void addSourceString( const std::string& source );
+    jagBase::StringVec& getSourceVec();
 
     /** \brief Get the OpenGL shader object ID for the specified \c contextID.
     \details If an ID hasn't already been created for \c contextID, getId() calls
