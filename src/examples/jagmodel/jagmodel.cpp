@@ -63,10 +63,6 @@ public:
     virtual bool init();
     virtual bool frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj );
     virtual void reshape( const int w, const int h );
-    virtual bool shutdown()
-    {
-        return( true );
-    }
 
     // Return a value to bontrol base gamepad move rate in the scene.
     virtual double getMoveRate() const

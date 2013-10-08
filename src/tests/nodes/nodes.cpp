@@ -55,10 +55,6 @@ public:
     virtual bool init();
     virtual bool frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj );
     virtual void reshape( const int w, const int h );
-    virtual bool shutdown()
-    {
-        return( true );
-    }
 
 protected:
     jagSG::NodePtr makeScene( const gmtl::Point3f& offset, const gmtl::Matrix44d& trans=gmtl::MAT_IDENTITY44D );
