@@ -66,10 +66,7 @@ public:
     virtual bool init();
     virtual bool frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj );
     virtual void reshape( const int w, const int h );
-    virtual bool shutdown()
-    {
-        return( true );
-    }
+    virtual void keyCommand( const int command );
 
     // Return a value to bontrol base gamepad move rate in the scene.
     virtual double getMoveRate() const
@@ -404,4 +401,20 @@ void ABufferJag::reshape( const int w, const int h )
 
     const jagDraw::jagDrawContextID contextID( jagDraw::ContextSupport::instance()->getActiveContext() );
     _mxCore._data[ contextID ]->setAspect( ( double ) w / ( double ) h );
+}
+
+void ABufferJag::keyCommand( const int command )
+{
+    switch( command )
+    {
+    case (int)'g':
+        _aBuffer->setResolveMethod( jagUtil::ABuffer::RESOLVE_GELLY );
+        break;
+    case (int)'a':
+        _aBuffer->setResolveMethod( jagUtil::ABuffer::RESOLVE_ALPHA_BLEND );
+        break;
+    case (int)'c':
+        _aBuffer->setResolveMethod( jagUtil::ABuffer::RESOLVE_ALPHA_BLEND_CAD );
+        break;
+    }
 }

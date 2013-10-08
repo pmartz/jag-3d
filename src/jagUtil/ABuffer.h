@@ -109,7 +109,8 @@ public:
         /// in order to eliminate co-planar geometry z-fighting artifacts, which
         /// commonly occur with CAD models that were designed for manufacturing rather
         /// than visual rendering.
-        RESOLVE_ALPHA_BLEND_CAD
+        RESOLVE_ALPHA_BLEND_CAD,
+        UNSPECIFIED /*!< Behavior is identical to RESOLVE_ALPHA_BLEND_CAD. */
     } ResolveMethod;
 
     /** \brief Specify the a-buffer resolve algorithm.
@@ -118,6 +119,9 @@ public:
     void setResolveMethod( const ResolveMethod resolveMethod );
     /** \brief Get the resolve algorithm. */
     ResolveMethod getResolveMethod() const;
+
+    static std::string resolveMethodToString( const ResolveMethod& resolveMethod );
+    static ResolveMethod stringToResolveMethod( const std::string& resolveMethod );
 
 protected:
     void internalInit();

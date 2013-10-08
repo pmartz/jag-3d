@@ -458,12 +458,35 @@ unsigned int ABuffer::getRequiredMatrixUniforms()
 void ABuffer::setResolveMethod( const ResolveMethod resolveMethod )
 {
     _resolveMethod = resolveMethod;
+    JAG3D_CRITICAL( "Resolve method: " + resolveMethodToString( resolveMethod ) );
 
     // TBD mark all contexts as needing to re-init.
 }
 ABuffer::ResolveMethod ABuffer::getResolveMethod() const
 {
     return( _resolveMethod );
+}
+
+std::string ABuffer::resolveMethodToString( const ResolveMethod& resolveMethod )
+{
+    switch( resolveMethod )
+    {
+    case RESOLVE_GELLY: return( "RESOLVE_GELLY" ); break;
+    case RESOLVE_ALPHA_BLEND: return( "RESOLVE_ALPHA_BLEND" ); break;
+    case RESOLVE_ALPHA_BLEND_CAD: return( "RESOLVE_ALPHA_BLEND_CAD" ); break;
+    default: return( "UNSPECIFIED" ); break;
+    }
+}
+ABuffer::ResolveMethod ABuffer::stringToResolveMethod( const std::string& resolveMethod )
+{
+    if( resolveMethod == "RESOLVE_GELLY" )
+        return( RESOLVE_GELLY );
+    else if( resolveMethod == "RESOLVE_ALPHA_BLEND" )
+        return( RESOLVE_ALPHA_BLEND );
+    else if( resolveMethod == "RESOLVE_ALPHA_BLEND_CAD" )
+        return( RESOLVE_ALPHA_BLEND_CAD );
+    else
+        return( UNSPECIFIED );
 }
 
 

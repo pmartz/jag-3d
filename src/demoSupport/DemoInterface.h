@@ -82,7 +82,10 @@ public:
     /** Called on window resize. */
     virtual void reshape( const int w, const int h ) {}
     /** Called prior to exit. */
-    virtual bool shutdown() = 0;
+    virtual bool shutdown() { return( true ); }
+
+    /** Simple interface for passing key press events. */
+    virtual void keyCommand( const int command ) {}
 
     jagDraw::DrawInfo& getDrawInfo( const jagDraw::jagDrawContextID contextID )
     {
