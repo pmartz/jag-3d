@@ -120,13 +120,22 @@ public:
     /** \brief Get the resolve algorithm. */
     ResolveMethod getResolveMethod() const;
 
+    /** \brief Enum / string conversion. */
     static std::string resolveMethodToString( const ResolveMethod& resolveMethod );
+    /** \brief Enum / string conversion. */
     static ResolveMethod stringToResolveMethod( const std::string& resolveMethod );
+
+    /** \brief Set the alpha value assigned to every fragment in the linked list.
+    \details \c fragmentAlpha is clamped to the range 0.0 - 1.0.
+    Default value: 0.2f */
+    void setFragmentAlpha( const float fragmentAlpha );
+    /** \brief Get the fragment alpha value. */
+    float getFragmentAlpha() const;
 
 protected:
     void internalInit();
 
-    void shaderSetResolve( jagDraw::ShaderPtr& shader );
+    void shaderResolveParameters( jagDraw::ShaderPtr& shader );
 
     jagDraw::TexturePtr _colorBuffer0, _colorBuffer1;
     jagDraw::TexturePtr _depthBuffer;
@@ -141,6 +150,7 @@ protected:
 
     jagDraw::ProgramPtr _clearProgram, _renderProgram, _resolveProgram;
     ResolveMethod _resolveMethod;
+    float _fragmentAlpha;
 
     unsigned int _numContexts;
 

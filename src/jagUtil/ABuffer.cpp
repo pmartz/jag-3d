@@ -37,6 +37,7 @@
 
 #include <string>
 #include <sstream>
+#include <iomanip>
 
 
 namespace jagUtil
@@ -49,6 +50,7 @@ ABuffer::ABuffer( const std::string& logName )
       _width( 0 ),
       _height( 0 ),
       _resolveMethod( RESOLVE_ALPHA_BLEND_CAD ),
+      _fragmentAlpha( 0.2f ),
       _numContexts( 0 )
 {
 }
@@ -63,6 +65,7 @@ ABuffer::ABuffer( jagDraw::TexturePtr& depthBuffer, jagDraw::TexturePtr& colorBu
       _width( 0 ),
       _height( 0 ),
       _resolveMethod( RESOLVE_ALPHA_BLEND_CAD ),
+      _fragmentAlpha( 0.2f ),
       _numContexts( 0 )
 {
 }
@@ -75,6 +78,7 @@ ABuffer::ABuffer( const ABuffer& rhs )
       _width( rhs._width ),
       _height( rhs._height ),
       _resolveMethod( rhs._resolveMethod ),
+      _fragmentAlpha( rhs._fragmentAlpha ),
       _numContexts( rhs._numContexts )
 {
 }
@@ -410,7 +414,7 @@ void ABuffer::internalInit()
         jagDraw::ShaderPtr vs; __READ_UTIL( vs, "abufferResolve.vert", "jag.util.abuf" );
         jagDraw::ShaderPtr fs; __READ_UTIL( fs, "abufferResolve.frag", "jag.util.abuf" );
 
-        shaderSetResolve( fs );
+        shaderResolveParameters( fs );
 
         if( _resolveProgram == NULL )
             _resolveProgram.reset( new jagDraw::Program() );
@@ -448,23 +452,31 @@ void ABuffer::internalInit()
     _callback.reset( new jagSG::SelectContainerCallback( _startContainer + 1 ) );
 }
 
-void ABuffer::shaderSetResolve( jagDraw::ShaderPtr& shader )
+void ABuffer::shaderResolveParameters( jagDraw::ShaderPtr& shader )
 {
     jagBase::StringVec& sourceVec( shader->getSourceVec() );
     sourceVec.resize( sourceVec.size() + 1 );
     for( size_t idx=sourceVec.size()-1; idx>0; --idx )
         sourceVec[ idx ] = sourceVec[ idx - 1 ];
 
+    std::ostringstream alpha;
+    alpha << std::fixed << std::setw( 7 ) << std::setprecision( 4 ) << _fragmentAlpha << "f";
     const std::string on( "1" );
     const std::string off( "0" );
     const std::string eoln( "\n" );
     sourceVec[ 0 ] =
+
+        // Resolve method
         std::string( "#define RESOLVE_GELLY " ) +
         ( ( _resolveMethod == RESOLVE_GELLY ) ? on : off ) + eoln +
         std::string( "#define RESOLVE_ALPHA_BLEND " ) +
         ( ( _resolveMethod == RESOLVE_ALPHA_BLEND ) ? on : off ) + eoln +
         std::string( "#define RESOLVE_ALPHA_BLEND_CAD " ) +
-        ( ( _resolveMethod == RESOLVE_ALPHA_BLEND_CAD ) ? on : off ) + eoln;
+        ( ( _resolveMethod == RESOLVE_ALPHA_BLEND_CAD ) ? on : off ) + eoln +
+        
+        // Fragment slpha value
+        std::string( "#define FRAGMENT_ALPHA " ) + alpha.str() + eoln
+        ;
 }
 
 
@@ -515,6 +527,23 @@ ABuffer::ResolveMethod ABuffer::stringToResolveMethod( const std::string& resolv
         return( RESOLVE_ALPHA_BLEND_CAD );
     else
         return( UNSPECIFIED );
+}
+
+void ABuffer::setFragmentAlpha( const float fragmentAlpha )
+{
+    if( _fragmentAlpha == fragmentAlpha )
+        return;
+    _fragmentAlpha = fragmentAlpha;
+
+    if( _fragmentAlpha < 0.f ) _fragmentAlpha = 0.f;
+    else if( _fragmentAlpha > 1.f ) _fragmentAlpha = 1.f;
+
+    // Rebuild shaders.
+    internalInit();
+}
+float ABuffer::getFragmentAlpha() const
+{
+    return( _fragmentAlpha );
 }
 
 
