@@ -48,16 +48,20 @@ namespace jagUtil
 {
 
 
-ABuffer::ABuffer()
-    : _startContainer( 1 ),
+ABuffer::ABuffer( const std::string& logName )
+    : jagBase::LogBase( logName.empty() ? "jag.util.abuf" : logName ),
+      _startContainer( 1 ),
       _width( 0 ),
       _height( 0 ),
       _resolveMethod( RESOLVE_ALPHA_BLEND_CAD ),
       _numContexts( 0 )
 {
 }
-ABuffer::ABuffer( jagDraw::TexturePtr& depthBuffer, jagDraw::TexturePtr& colorBuffer0, jagDraw::TexturePtr& colorBuffer1 )
-    : _colorBuffer0( colorBuffer0 ),
+ABuffer::ABuffer( jagDraw::TexturePtr& depthBuffer, jagDraw::TexturePtr& colorBuffer0,
+                 jagDraw::TexturePtr& colorBuffer1,
+                 const std::string& logName )
+    : jagBase::LogBase( logName.empty() ? "jag.util.abuf" : logName ),
+      _colorBuffer0( colorBuffer0 ),
       _colorBuffer1( colorBuffer1 ),
       _depthBuffer( depthBuffer ),
       _startContainer( 1 ),
@@ -68,7 +72,8 @@ ABuffer::ABuffer( jagDraw::TexturePtr& depthBuffer, jagDraw::TexturePtr& colorBu
 {
 }
 ABuffer::ABuffer( const ABuffer& rhs )
-    : _colorBuffer0( rhs._colorBuffer0 ),
+    : jagBase::LogBase( rhs ),
+      _colorBuffer0( rhs._colorBuffer0 ),
       _colorBuffer1( rhs._colorBuffer1 ),
       _depthBuffer( rhs._depthBuffer ),
       _startContainer( rhs._startContainer ),
