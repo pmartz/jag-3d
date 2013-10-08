@@ -53,6 +53,11 @@ void Shader::addSourceString( const std::string& source )
 {
     _sourceVec.push_back( source );
 }
+jagBase::StringVec& Shader::getSourceVec()
+{
+    return( _sourceVec );
+}
+
 
 GLuint Shader::getID( const unsigned int contextID )
 {
