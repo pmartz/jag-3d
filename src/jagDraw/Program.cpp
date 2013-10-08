@@ -82,6 +82,29 @@ Program::~Program()
 void Program::attachShader( ShaderPtr shader )
 {
     _shaders.push_back( shader );
+    forceRelink();
+}
+void Program::detachAllShaders()
+{
+    BOOST_FOREACH( ShaderPtr& shader, _shaders )
+    {
+        _detachedShaders.push_back( shader );
+    }
+    for( unsigned int idx=0; idx<_detached._data.size(); ++idx )
+    {
+        _detached[ idx ] = GL_FALSE;
+    }
+    _shaders.clear();
+
+    forceRelink();
+}
+
+void Program::forceRelink()
+{
+    for( unsigned int idx=0; idx<_linkStatus._data.size(); ++idx )
+    {
+        _linkStatus[ idx ] = GL_FALSE;
+    }
 }
 
 void Program::execute( DrawInfo& drawInfo )
@@ -187,6 +210,7 @@ void Program::setMaxContexts( const unsigned int numContexts )
     ObjectID::setMaxContexts( numContexts );
 
     _linkStatus._data.resize( numContexts );
+    _detached._data.resize( numContexts );
 
     BOOST_FOREACH( const ShaderVec::value_type& shader, _shaders )
     {
@@ -250,7 +274,10 @@ bool Program::link( unsigned int contextID )
     {
         glBindAttribLocation( id, it.second, it.first.c_str() );
     }
-    
+
+    // Detach any shaders pending detachment.
+    internalDetach( contextID );
+
     // Attach all shaders to this program object.
     bool abortLink( false );
     JAG3D_TRACE( "  link(): Attaching shaders." );
@@ -546,6 +573,39 @@ void Program::addUniformAlias( const std::string& name, const std::string& alias
 void Program::addVertexAttribAlias( const std::string& name, const std::string& alias )
 {
     _vertexAttribAliases[ name ] = alias;
+}
+
+
+void Program::internalDetach( const unsigned int contextID )
+{
+    JAG3D_TRACE( "internalDetach()" );
+
+    const GLuint id( getID( contextID ) );
+
+    // Detach shaders for the specified context.
+    if( _detached[ contextID ] == GL_FALSE )
+    {
+        _detached[ contextID ] = GL_TRUE;
+        BOOST_FOREACH( ShaderPtr& shader, _detachedShaders )
+        {
+            const GLuint shaderID( shader->getID( contextID ) );
+            glDetachShader( id, shaderID );
+        }
+    }
+
+    // Clean up. If all shaders have been detached on all
+    // contexts, then clear the list of detached shaders.
+    bool allDetached( true );
+    for( unsigned int idx=0; idx< _detached._data.size(); ++idx )
+    {
+        if( _detached[ idx ] == GL_FALSE )
+        {
+            allDetached = false;
+            break;
+        }
+    }
+    if( allDetached )
+        _detachedShaders.clear();
 }
 
 

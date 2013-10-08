@@ -31,14 +31,9 @@
 #include <jagBase/Log.h>
 #include <jagBase/LogMacros.h>
 
-#include <jagUtil/BufferAggregationVisitor.h>
-
-#include <boost/program_options/options_description.hpp>
-#include <boost/program_options/variables_map.hpp>
 #include <gmtl/gmtl.h>
 
 #include <boost/foreach.hpp>
-#include <boost/make_shared.hpp>
 
 #include <string>
 #include <sstream>
@@ -381,13 +376,16 @@ void ABuffer::internalInit()
             JAG3D_FATAL_STATIC( _LOG, "Can't load \"" + std::string(_NAME) + "\"." ); \
             return; \
         } \
+        _RESULT->setMaxContexts( _numContexts ); \
     }
 
     {
         jagDraw::ShaderPtr vs; __READ_UTIL( vs, "abufferClear.vert", "jag.util.abuf" );
         jagDraw::ShaderPtr fs; __READ_UTIL( fs, "abufferClear.frag", "jag.util.abuf" );
 
-        _clearProgram.reset( new jagDraw::Program() );
+        if( _clearProgram == NULL )
+            _clearProgram.reset( new jagDraw::Program() );
+        _clearProgram->detachAllShaders();
         _clearProgram->attachShader( vs );
         _clearProgram->attachShader( fs );
         _clearProgram->addVertexAttribAlias( "vertexPos", "vertex" );
@@ -397,7 +395,9 @@ void ABuffer::internalInit()
         jagDraw::ShaderPtr vs; __READ_UTIL( vs, "abufferRender.vert", "jag.util.abuf" );
         jagDraw::ShaderPtr fs; __READ_UTIL( fs, "abufferRender.frag", "jag.util.abuf" );
 
-        _renderProgram.reset( new jagDraw::Program() );
+        if( _renderProgram == NULL )
+            _renderProgram.reset( new jagDraw::Program() );
+        _renderProgram->detachAllShaders();
         _renderProgram->attachShader( vs );
         _renderProgram->attachShader( fs );
         _renderProgram->addVertexAttribAlias( "vertexPos", "vertex" );
@@ -410,7 +410,11 @@ void ABuffer::internalInit()
         jagDraw::ShaderPtr vs; __READ_UTIL( vs, "abufferResolve.vert", "jag.util.abuf" );
         jagDraw::ShaderPtr fs; __READ_UTIL( fs, "abufferResolve.frag", "jag.util.abuf" );
 
-        _resolveProgram.reset( new jagDraw::Program() );
+        shaderSetResolve( fs );
+
+        if( _resolveProgram == NULL )
+            _resolveProgram.reset( new jagDraw::Program() );
+        _resolveProgram->detachAllShaders();
         _resolveProgram->attachShader( vs );
         _resolveProgram->attachShader( fs );
         _resolveProgram->addVertexAttribAlias( "vertexPos", "vertex" );
@@ -444,6 +448,11 @@ void ABuffer::internalInit()
     _callback.reset( new jagSG::SelectContainerCallback( _startContainer + 1 ) );
 }
 
+void ABuffer::shaderSetResolve( jagDraw::ShaderPtr& shader )
+{
+}
+
+
 unsigned int ABuffer::getRequiredMatrixUniforms()
 {
     return(
@@ -459,9 +468,12 @@ void ABuffer::setResolveMethod( const ResolveMethod resolveMethod )
 {
     JAG3D_DEBUG( "Resolve method: " + resolveMethodToString( resolveMethod ) );
 
+    if( _resolveMethod == resolveMethod )
+        return;
     _resolveMethod = resolveMethod;
 
-    // TBD mark all contexts as needing to re-init.
+    // Rebuild shaders.
+    internalInit();
 }
 ABuffer::ResolveMethod ABuffer::getResolveMethod() const
 {
