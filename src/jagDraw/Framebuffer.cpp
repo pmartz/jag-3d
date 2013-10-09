@@ -74,23 +74,19 @@ void Framebuffer::execute( DrawInfo& drawInfo )
     // TBD need better support for this.
     if( id == 0 )
         glDrawBuffer( GL_BACK );
-    else {
-
-
+    else
+    {
         std::vector<GLenum> buffers;
         BOOST_FOREACH( AttachmentMap::value_type pair, _attachments ) 
         {
-			//we need a better way of sorting these out . . .
-			if(pair.first!=GL_DEPTH_ATTACHMENT)
-            buffers.push_back(pair.first);
-			else
-				buffers.push_back(GL_NONE);
+            //we need a better way of sorting these out . . .
+            if( pair.first!=GL_DEPTH_ATTACHMENT )
+                buffers.push_back(pair.first);
+            else
+                buffers.push_back(GL_NONE);
         }
         glDrawBuffers( (GLsizei)( buffers.size() ), &(buffers[0]));
-
-
     }
-
 
     if( _viewport )
         glViewport( _vpX, _vpY, _vpWidth, _vpHeight );
@@ -99,7 +95,7 @@ void Framebuffer::execute( DrawInfo& drawInfo )
 
     JAG3D_FBO_ERROR_CHECK( "Framebuffer::execute()" );
     JAG3D_ERROR_CHECK( "Framebuffer::execute()" );
-    }
+}
 
 GLuint Framebuffer::getID( const jagDraw::jagDrawContextID contextID )
 {
