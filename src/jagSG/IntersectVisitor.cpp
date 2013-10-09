@@ -43,7 +43,7 @@
 using namespace gmtl;
 
 /**
-    * Tests if the given triangle and ray intersect with each other.
+    * Tests if the given triangle and ray intersect with each other. Adapted from GMTL.
     *
     *  @param a,b,c - the triangle vertices (ccw ordering)
     *  @param ray - the ray
@@ -54,8 +54,6 @@ using namespace gmtl;
     *  @return true if the ray intersects the triangle.
     *  @see from http://www.acm.org/jgt/papers/MollerTrumbore97/code.html
     */
-   
-
    template<class DATA_TYPE>
    bool intersectLocal(Point<DATA_TYPE,3> &a, Point<DATA_TYPE,3> &b, Point<DATA_TYPE,3> &c, const Ray<DATA_TYPE>& ray,
                   double& u, double& v, double& t)
@@ -124,6 +122,7 @@ IntersectVisitor::IntersectVisitor( jagSG::NodePtr node, gmtl::Ray<double> ray )
     reset();
     currentRay = ray;
     node->accept( *this );
+	numNamed = 0;
 }
 IntersectVisitor::IntersectVisitor( const IntersectVisitor& rhs )
   : Visitor( rhs )
@@ -175,8 +174,25 @@ void IntersectVisitor::intersect(jagSG::Node& node) {
     jagDraw::VertexAttribPtr verts( boost::dynamic_pointer_cast< jagDraw::VertexAttrib >(
         vaop->getVertexArrayCommand( jagDraw::VertexArrayCommand::VertexAttrib_t, jagDraw::VertexArrayObject::Vertex ) ) );
         //3. intersect the triangles with the ray and record the hits
+	bool boundIntersect;
+	if(node.getBound()->getType()==jagDraw::Bound::Box_t)  {
+		double a, b;
+		boundIntersect = gmtl::intersectAABoxRay<double>(node.getBound()->asAABox(), _rayDeque.back(), a, b);
+	}
+	else
+	{
+		double a,b;
+		int nh;
+		boundIntersect = gmtl::intersectVolume<double>(node.getBound()->asSphere(), _rayDeque.back(), nh, a, b);
+	}
 
-    
+	
+	if(boundIntersect)
+	{
+		//std::cout << node.getUserDataName() << "NODENAME" << std::endl;
+		//if(node.getUserDataName() != "") {
+		//	numNamed++;
+		//}
         for(auto i = 0; i < node.getNumDrawables(); i++) {
             jagDraw::DrawCommandVec drawCommands = node.getDrawable(i)->getDrawCommandVec();
             BOOST_FOREACH( jagDraw::DrawCommandPtr dcp, drawCommands )
@@ -206,7 +222,8 @@ void IntersectVisitor::intersect(jagSG::Node& node) {
                 }
                 
             }
-        }
+		}
+		}
         
         }
         
@@ -232,6 +249,7 @@ void IntersectVisitor::reset()
     numTriangles = 0;
     numNodes = 0;
     numDrawables = 0;
+	numNamed = 0;
     resetCommandMap();
     resetMatrix();
 
