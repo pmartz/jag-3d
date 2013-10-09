@@ -47,6 +47,7 @@ namespace jagUtil
 ABuffer::ABuffer( const std::string& logName )
     : jagBase::LogBase( logName.empty() ? "jag.util.abuf" : logName ),
       _startContainer( 1 ),
+      _secondaryEnable( false ),
       _width( 0 ),
       _height( 0 ),
       _resolveMethod( RESOLVE_ALPHA_BLEND_CAD ),
@@ -62,6 +63,7 @@ ABuffer::ABuffer( jagDraw::TexturePtr& depthBuffer, jagDraw::TexturePtr& colorBu
       _colorBuffer1( colorBuffer1 ),
       _depthBuffer( depthBuffer ),
       _startContainer( 1 ),
+      _secondaryEnable( colorBuffer1 != NULL ),
       _width( 0 ),
       _height( 0 ),
       _resolveMethod( RESOLVE_ALPHA_BLEND_CAD ),
@@ -289,7 +291,7 @@ jagDraw::DrawGraphPtr& ABuffer::createDrawGraphTemplate( const unsigned int star
         if( _colorBuffer1 != NULL )
         {
             (*texSet)[ GL_TEXTURE15 ] = _colorBuffer1;
-            jagDraw::UniformPtr sampler( jagDraw::UniformPtr( new jagDraw::Uniform( "addBuffer", GL_SAMPLER_2D, 15 ) ) );
+            jagDraw::UniformPtr sampler( jagDraw::UniformPtr( new jagDraw::Uniform( "secondaryBuffer", GL_SAMPLER_2D, 15 ) ) );
             usp->insert( sampler );
         }
 
@@ -468,15 +470,19 @@ void ABuffer::shaderResolveParameters( jagDraw::ShaderPtr& shader )
 
         // Resolve method
         std::string( "#define RESOLVE_GELLY " ) +
-        ( ( _resolveMethod == RESOLVE_GELLY ) ? on : off ) + eoln +
+            ( ( _resolveMethod == RESOLVE_GELLY ) ? on : off ) + eoln +
         std::string( "#define RESOLVE_ALPHA_BLEND " ) +
-        ( ( _resolveMethod == RESOLVE_ALPHA_BLEND ) ? on : off ) + eoln +
+            ( ( _resolveMethod == RESOLVE_ALPHA_BLEND ) ? on : off ) + eoln +
         std::string( "#define RESOLVE_ALPHA_BLEND_CAD " ) +
-        ( ( _resolveMethod == RESOLVE_ALPHA_BLEND_CAD ) ? on : off ) + eoln +
+            ( ( _resolveMethod == RESOLVE_ALPHA_BLEND_CAD ) ? on : off ) + eoln +
         
         // Fragment slpha value
-        std::string( "#define FRAGMENT_ALPHA " ) + alpha.str() + eoln
-        ;
+        std::string( "#define FRAGMENT_ALPHA " ) + alpha.str() + eoln +
+
+        // Enable secondary color buffer
+        std::string( "#define USE_SECONDARY_COLOR_BUFFER " ) +
+            ( _secondaryEnable ? on : off ) + eoln +
+        eoln;
 }
 
 
@@ -544,6 +550,20 @@ void ABuffer::setFragmentAlpha( const float fragmentAlpha )
 float ABuffer::getFragmentAlpha() const
 {
     return( _fragmentAlpha );
+}
+
+void ABuffer::setSecondaryColorBufferEnable( const bool secondaryEnable )
+{
+    if( _secondaryEnable == secondaryEnable )
+        return;
+    _secondaryEnable = secondaryEnable;
+
+    // Rebuild shaders.
+    internalInit();
+}
+bool ABuffer::getSecondaryColorBufferEnable() const
+{
+    return( _secondaryEnable );
 }
 
 

@@ -483,6 +483,11 @@ void fillFragmentArray(int pageIdx, int abNumFrag);
 // Opaque color buffer.
 uniform sampler2D opaqueBuffer;
 
+#if USE_SECONDARY_COLOR_BUFFER
+// Secondary color buffer (e.g., for glow effect).
+uniform sampler2D secondaryBuffer;
+#endif
+
 // Texture coordinates for opaque color buffer.
 smooth in vec2 tc;
 
@@ -551,6 +556,11 @@ void main(void)
             // from the opaque pass.
             outFragColor = backgroundColor;
         }
+
+#if USE_SECONDARY_COLOR_BUFFER
+        // Add secondary (glow effect) color buffer value.
+        outFragColor += vec4( texture2D( secondaryBuffer, tc ).rgb, 0.f );
+#endif
     }
 }
 

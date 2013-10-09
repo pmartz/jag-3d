@@ -132,6 +132,14 @@ public:
     /** \brief Get the fragment alpha value. */
     float getFragmentAlpha() const;
 
+    /** \brief Enable or disable the secondary color buffer.
+    \details If enabled, _colorBuffer1 will be added to the final resolve color.
+    Default value: Default is true if \c colorBuffer1 is non-NULL during construction.
+    Default is false otherwise. */
+    void setSecondaryColorBufferEnable( const bool secondaryEnable=true );
+    /** \brief Get enable state of secondary color buffer. */
+    bool getSecondaryColorBufferEnable() const;
+
 protected:
     void internalInit();
 
@@ -140,6 +148,7 @@ protected:
     jagDraw::TexturePtr _colorBuffer0, _colorBuffer1;
     jagDraw::TexturePtr _depthBuffer;
     unsigned int _startContainer;
+    bool _secondaryEnable;
 
     int _width, _height;
 
