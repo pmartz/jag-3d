@@ -100,7 +100,7 @@ public:
     int getNumNodes() { return numNodes;}
     int getNumDrawables() { return numDrawables;}
 
-  
+	int getNumNamed() { return numNamed;}
 
 protected:
     
@@ -119,6 +119,7 @@ protected:
     int numTriangles;
     int numNodes;
     int numDrawables;
+	int numNamed;
 };
 
 typedef jagBase::ptr< jagSG::IntersectVisitor >::shared_ptr IntersectVisitorPtr;
