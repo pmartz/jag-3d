@@ -329,19 +329,21 @@ void ABuffer::renderFrame( jagSG::CollectionVisitor& collect, jagDraw::DrawInfo&
 
     // Render the ABuffer, possibly multiple times if necessary
     // to ensure proper page pool size.
+    jagDraw::NodeContainer& clear( (*drawGraph)[ _startContainer ] );
+    jagDraw::NodeContainer& render( (*drawGraph)[ _startContainer + 1 ] );
+    jagDraw::NodeContainer& resolve( (*drawGraph)[ _startContainer + 2 ] );
     bool frameOK( false );
     while( !frameOK )
     {
-        // Render the 3 NodeContainers starting with index _startContainer.
-        //   Clear, a-buffer render, and resolve.
-        idx = _startContainer;
-        while( idx < _startContainer + 3 )
-            (*drawGraph)[ idx++ ].execute( drawInfo );
+        clear.execute( drawInfo );
+        render.execute( drawInfo );
+        resolve.execute( drawInfo );
 
         // managePool() returns true if 0 pixels exceeded the page pool.
         // In that case, the frame is OK and doesn't need to be re-rendered.
         frameOK = _abufferCntxt._data[ contextID ].managePool();
     }
+    idx += 3;
 
     // Render anything that comes after the ABuffer.
     while( idx < drawGraph->size() )
