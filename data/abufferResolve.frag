@@ -22,9 +22,6 @@
 //Macros changed from the C++ side
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
-#define BACKGROUND_COLOR_R 1.000000f
-#define BACKGROUND_COLOR_G 1.000000f
-#define BACKGROUND_COLOR_B 1.000000f
 
 #define ABUFFER_SIZE 16
 #define ABUFFER_PAGE_SIZE 4
@@ -358,9 +355,6 @@ void bitonicSort( int n )
 #endif
 
 
-// Don't use this. Get background from opaqueBuffer texture.
-//const vec4 backgroundColor=vec4(BACKGROUND_COLOR_R, BACKGROUND_COLOR_G, BACKGROUND_COLOR_B, 0.0f);
-
 //Blend fragments front-to-back
 vec4 resolveAlphaBlend(int abNumFrag);
 //Compute gelly shader
@@ -375,14 +369,16 @@ vec4 resolveAlphaBlendCAD( int abNumFrag, vec4 backgroundColor )
     // of underlying fragments, but eliminates flickering from z-fighting.
 
     vec4 finalColor = backgroundColor;
-    vec4 frontColor = vec4( fragmentList[ 0 ].rgb, FRAGMENT_ALPHA );
-    vec4 color = vec4( frontColor.rgb * 0.5f, FRAGMENT_ALPHA );
+    vec4 frontColor = fragmentList[ 0 ];
+    vec4 color = frontColor * 0.5f;
+    float alpha = FRAGMENT_ALPHA;
+    float oneMinusAlpha = 1.f - FRAGMENT_ALPHA;
     // Blend back to front.
     for( int i = abNumFrag - 1; i >= 0; i-- )
     {
         if( i == 0 )
             color = frontColor;
-        finalColor = ( color * color.a ) + finalColor * ( 1.f - color.a );
+        finalColor = ( color * alpha ) + ( finalColor * oneMinusAlpha );
     }
     return( finalColor );
 }
@@ -544,7 +540,7 @@ void main(void)
             }
             else
             {
-                // No abuffer fragments. Just pait the background color
+                // No abuffer fragments. Just paint the background color
                 // from the opaque pass.
                 outFragColor = backgroundColor;
             }
@@ -552,7 +548,7 @@ void main(void)
         else
         {
             // pageIdx == 0 indicates nothing was marked as transparent
-            // so nothing in the abuffer. Just pait the background color
+            // so nothing in the abuffer. Just paint the background color
             // from the opaque pass.
             outFragColor = backgroundColor;
         }
