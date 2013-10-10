@@ -418,7 +418,7 @@ void ABuffer::internalInit()
         jagDraw::ShaderPtr vs; __READ_UTIL( vs, "abufferResolve.vert", "jag.util.abuf" );
         jagDraw::ShaderPtr fs; __READ_UTIL( fs, "abufferResolve.frag", "jag.util.abuf" );
 
-        shaderResolveParameters( fs );
+        fs->insertSourceString( shaderResolveParameters() );
 
         if( _resolveProgram == NULL )
             _resolveProgram.reset( new jagDraw::Program() );
@@ -456,19 +456,14 @@ void ABuffer::internalInit()
     _callback.reset( new jagSG::SelectContainerCallback( _startContainer + 1 ) );
 }
 
-void ABuffer::shaderResolveParameters( jagDraw::ShaderPtr& shader )
+std::string ABuffer::shaderResolveParameters() const
 {
-    jagBase::StringVec& sourceVec( shader->getSourceVec() );
-    sourceVec.resize( sourceVec.size() + 1 );
-    for( size_t idx=sourceVec.size()-1; idx>0; --idx )
-        sourceVec[ idx ] = sourceVec[ idx - 1 ];
-
     std::ostringstream alpha;
     alpha << std::fixed << std::setw( 7 ) << std::setprecision( 4 ) << _fragmentAlpha << "f";
     const std::string on( "1" );
     const std::string off( "0" );
     const std::string eoln( "\n" );
-    sourceVec[ 0 ] =
+    return( std::string(
 
         // Resolve method
         std::string( "#define RESOLVE_GELLY " ) +
@@ -484,7 +479,8 @@ void ABuffer::shaderResolveParameters( jagDraw::ShaderPtr& shader )
         // Enable secondary color buffer
         std::string( "#define USE_SECONDARY_COLOR_BUFFER " ) +
             ( _secondaryEnable ? on : off ) + eoln +
-        eoln;
+        eoln
+    ) );
 }
 
 

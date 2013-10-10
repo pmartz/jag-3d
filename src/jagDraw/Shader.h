@@ -47,6 +47,8 @@ public:
     ~Shader();
 
     void addSourceString( const std::string& source );
+    void insertSourceString( const std::string& source, const unsigned int index=0 );
+    unsigned int getNumSourceStrings() const;
     jagBase::StringVec& getSourceVec();
 
     /** \brief Get the OpenGL shader object ID for the specified \c contextID.
