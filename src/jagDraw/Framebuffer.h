@@ -169,6 +169,9 @@ public:
     \specFuncEnd
     */
     void setClear( const GLbitfield mask, const bool enable=true );
+    /** \brief TBD
+    \details Default value is 0.f, 0.f, 0.f, 0.f. */
+    void setClearColor( const GLfloat r, const GLfloat g, const GLfloat b, const GLfloat a );
 
 
     typedef std::map< GLenum, FramebufferAttachablePtr > AttachmentMap;
@@ -220,6 +223,7 @@ protected:
     GLint _vpX, _vpY;
     GLsizei _vpWidth, _vpHeight;
     GLbitfield _clearMask;
+    GLfloat _clearColor[ 4 ];
 };
 
 typedef std::vector< FramebufferPtr > FramebufferVec;
