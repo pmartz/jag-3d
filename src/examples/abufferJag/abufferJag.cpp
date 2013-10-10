@@ -84,7 +84,7 @@ protected:
     jagUtil::ABufferPtr _aBuffer;
 
     jagDraw::FramebufferPtr _opaqueFBO;
-    jagDraw::TexturePtr _opaqueBuffer, _depthBuffer;
+    jagDraw::TexturePtr _opaqueBuffer, _secondaryBuffer, _depthBuffer;
     int _width, _height;
 };
 
@@ -119,8 +119,9 @@ bool ABufferJag::startup( const unsigned int numContexts )
 
 
     // Create the texture used by _opaqueFBO to store the opaque
-    // color buffer. After NodeContainer #0 renders into it, 
-    // ABuffer NodeContainer #3 uses it during the abuffer resolve.
+    // color buffer. After our opaque NodeContainer #0 renders into it, 
+    // the ABuffer class's third NodeContainer uses it during the
+    // abuffer resolve.
     jagDraw::ImagePtr image( new jagDraw::Image() );
     image->set( 0, GL_RGBA, _width, _height, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL );
     _opaqueBuffer.reset( new jagDraw::Texture( GL_TEXTURE_2D, image,
@@ -128,6 +129,15 @@ bool ABufferJag::startup( const unsigned int numContexts )
     _opaqueBuffer->getSampler()->getSamplerState()->_minFilter = GL_NEAREST;
     _opaqueBuffer->getSampler()->getSamplerState()->_magFilter = GL_NEAREST;
     _opaqueBuffer->setMaxContexts( numContexts );
+
+    // Create second color buffer for glow effect.
+    image.reset( new jagDraw::Image() );
+    image->set( 0, GL_RGBA, _width, _height, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL );
+    _secondaryBuffer.reset( new jagDraw::Texture( GL_TEXTURE_2D, image,
+        jagDraw::SamplerPtr( new jagDraw::Sampler() ) ) );
+    _secondaryBuffer->getSampler()->getSamplerState()->_minFilter = GL_NEAREST;
+    _secondaryBuffer->getSampler()->getSamplerState()->_magFilter = GL_NEAREST;
+    _secondaryBuffer->setMaxContexts( numContexts );
 
     // Depth texture used as depth buffer for opaque pass.
     // Also used during abuffer render to discard occluded fragments.
@@ -140,8 +150,9 @@ bool ABufferJag::startup( const unsigned int numContexts )
     _depthBuffer->setMaxContexts( numContexts );
 
     // Create the ABuffer management object.
-    _aBuffer.reset( new jagUtil::ABuffer( _depthBuffer, _opaqueBuffer ) );
+    _aBuffer.reset( new jagUtil::ABuffer( _depthBuffer, _opaqueBuffer, _secondaryBuffer ) );
     _aBuffer->setMaxContexts( numContexts );
+    _aBuffer->setSecondaryColorBufferEnable( false );
 
     // Obtain the draw graph from the ABuffer object.
     // Default behavior is that the ABuffer owns NodeContainers 1-3, and we put
@@ -149,7 +160,7 @@ bool ABufferJag::startup( const unsigned int numContexts )
     jagDraw::DrawGraphPtr drawGraph( _aBuffer->createDrawGraphTemplate() );
     getCollectionVisitor().setDrawGraphTemplate( drawGraph );
 
-    // TBD The ABuffer object needs to specify which matrices it needs.
+    // Allow ABuffer object to specify which matrices it needs.
     jagDraw::TransformCallback* xformCB( getCollectionVisitor().getTransformCallback() );
     xformCB->setRequiredMatrixUniforms(
         xformCB->getRequiredMatrixUniforms() |
@@ -219,8 +230,9 @@ bool ABufferJag::startup( const unsigned int numContexts )
     _opaqueFBO.reset( new jagDraw::Framebuffer( GL_DRAW_FRAMEBUFFER ) );
     _opaqueFBO->setViewport( 0, 0, _width, _height );
     _opaqueFBO->setClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-    _opaqueFBO->addAttachment( GL_COLOR_ATTACHMENT0, _opaqueBuffer );
     _opaqueFBO->addAttachment( GL_DEPTH_ATTACHMENT, _depthBuffer );
+    _opaqueFBO->addAttachment( GL_COLOR_ATTACHMENT0, _opaqueBuffer );
+    _opaqueFBO->addAttachment( GL_COLOR_ATTACHMENT1, _secondaryBuffer );
     commands->insert( _opaqueFBO );
 
     // Set up lighting uniforms
@@ -293,8 +305,6 @@ bool ABufferJag::startup( const unsigned int numContexts )
 
 bool ABufferJag::init()
 {
-    glClearColor( 1.f, 1.f, 1.f, 0.f );
-
     glEnable( GL_DEPTH_TEST );
 
     // Auto-log the version string.
