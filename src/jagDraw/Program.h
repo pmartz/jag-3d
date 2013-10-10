@@ -221,7 +221,7 @@ private:
 
     void internalDetach( const unsigned int contextID );
     ShaderVec _detachedShaders;
-    PerContextGLboolean _detached;
+    PerContextGLboolean _needsDetach;
 
     // Support for uniforms in the default uniform block
     typedef std::map< HashValue, GLint > LocationMap;
