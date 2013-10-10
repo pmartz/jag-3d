@@ -70,6 +70,11 @@ Program::Program( const Program& rhs )
     _uniformAliases( rhs._uniformAliases ),
     _vertexAttribAliases( rhs._vertexAttribAliases )
 {
+    _needsDetach._data.resize( rhs._needsDetach._data.size() );
+    for( unsigned int idx=0; idx < _needsDetach._data.size(); ++idx )
+    {
+        _needsDetach[ idx ] = GL_FALSE;
+    }
 }
 
 Program::~Program()
@@ -90,9 +95,9 @@ void Program::detachAllShaders()
     {
         _detachedShaders.push_back( shader );
     }
-    for( unsigned int idx=0; idx<_detached._data.size(); ++idx )
+    for( unsigned int idx=0; idx<_needsDetach._data.size(); ++idx )
     {
-        _detached[ idx ] = GL_FALSE;
+        _needsDetach[ idx ] = GL_TRUE;
     }
     _shaders.clear();
 
@@ -210,7 +215,13 @@ void Program::setMaxContexts( const unsigned int numContexts )
     ObjectID::setMaxContexts( numContexts );
 
     _linkStatus._data.resize( numContexts );
-    _detached._data.resize( numContexts );
+
+    const unsigned int oldSize( ( const unsigned int )( _needsDetach._data.size() ) );
+    _needsDetach._data.resize( numContexts );
+    for( unsigned int idx = oldSize; idx < _needsDetach._data.size(); ++idx )
+    {
+        _needsDetach[ idx ] = GL_FALSE;
+    }
 
     BOOST_FOREACH( const ShaderVec::value_type& shader, _shaders )
     {
@@ -266,6 +277,7 @@ bool Program::link( unsigned int contextID )
         _logStream->debug() << "  ContextID: " << contextID <<
             ", object ID: " << id << std::endl;
     }
+    JAG3D_ERROR_CHECK( "Program::link(), after getID()" );
 
     // Loop over explicitly specified vertex attrib locations and
     // set them in this program object.
@@ -472,6 +484,7 @@ bool Program::link( unsigned int contextID )
         glUseProgram( 0 );
     }
 
+    JAG3D_ERROR_CHECK( "Program::link()" );
     return( true );
 }
 
@@ -506,7 +519,6 @@ unsigned int Program::getNumActiveAttribs( const GLuint id ) const
 void Program::internalInit( const unsigned int contextID )
 {
     const GLuint id( glCreateProgram() );
-    JAG3D_ERROR_CHECK( "Program::internalInit()" );
     if( id == 0 )
     {
         JAG3D_ERROR( "glCreateProgram() returned program ID 0." );
@@ -514,6 +526,8 @@ void Program::internalInit( const unsigned int contextID )
 
     _ids[ contextID ] = id;
     _linkStatus[ contextID ] = GL_FALSE;
+
+    JAG3D_ERROR_CHECK( "Program::internalInit()" );
 }
 
 
@@ -582,23 +596,40 @@ void Program::internalDetach( const unsigned int contextID )
 
     const GLuint id( getID( contextID ) );
 
-    // Detach shaders for the specified context.
-    if( _detached[ contextID ] == GL_FALSE )
+    GLint numShaders;
+    glGetProgramiv( id, GL_ATTACHED_SHADERS, &numShaders );
+    if( numShaders > 0 )
     {
-        _detached[ contextID ] = GL_TRUE;
-        BOOST_FOREACH( ShaderPtr& shader, _detachedShaders )
+        // Get list of attached shader ID.
+        GLuintVec idList; idList.resize( numShaders );
+        glGetAttachedShaders( id, (GLsizei) numShaders, &( (GLsizei) numShaders ), &(idList[0]) );
+
+        // Detach shaders for the specified context.
+        if( _needsDetach[ contextID ] == GL_TRUE )
         {
-            const GLuint shaderID( shader->getID( contextID ) );
-            glDetachShader( id, shaderID );
+            JAG3D_TRACE( "Found GL_TRUE entry in _needsDetach" );
+            _needsDetach[ contextID ] = GL_FALSE;
+            BOOST_FOREACH( ShaderPtr& shader, _detachedShaders )
+            {
+                const GLuint shaderID( shader->getID( contextID ) );
+                // Only detach the shader if it's already attached.
+                // Calling glDetachShader on a shader that is not attached will
+                // generate INVALID_OPERATION.
+                BOOST_FOREACH( GLuint attachedShader, idList )
+                {
+                    if( attachedShader == shaderID )
+                        glDetachShader( id, shaderID );
+                }
+            }
         }
     }
 
     // Clean up. If all shaders have been detached on all
     // contexts, then clear the list of detached shaders.
     bool allDetached( true );
-    for( unsigned int idx=0; idx< _detached._data.size(); ++idx )
+    for( unsigned int idx = 0; idx < _needsDetach._data.size(); ++idx )
     {
-        if( _detached[ idx ] == GL_FALSE )
+        if( _needsDetach[ idx ] == GL_TRUE )
         {
             allDetached = false;
             break;
@@ -606,6 +637,8 @@ void Program::internalDetach( const unsigned int contextID )
     }
     if( allDetached )
         _detachedShaders.clear();
+
+    JAG3D_ERROR_CHECK( "Program::internalDetach()" );
 }
 
 

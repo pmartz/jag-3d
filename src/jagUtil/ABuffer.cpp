@@ -393,7 +393,8 @@ void ABuffer::internalInit()
 
         if( _clearProgram == NULL )
             _clearProgram.reset( new jagDraw::Program() );
-        _clearProgram->detachAllShaders();
+        else
+            _clearProgram->detachAllShaders();
         _clearProgram->attachShader( vs );
         _clearProgram->attachShader( fs );
         _clearProgram->addVertexAttribAlias( "vertexPos", "vertex" );
@@ -405,7 +406,8 @@ void ABuffer::internalInit()
 
         if( _renderProgram == NULL )
             _renderProgram.reset( new jagDraw::Program() );
-        _renderProgram->detachAllShaders();
+        else
+            _renderProgram->detachAllShaders();
         _renderProgram->attachShader( vs );
         _renderProgram->attachShader( fs );
         _renderProgram->addVertexAttribAlias( "vertexPos", "vertex" );
@@ -422,7 +424,8 @@ void ABuffer::internalInit()
 
         if( _resolveProgram == NULL )
             _resolveProgram.reset( new jagDraw::Program() );
-        _resolveProgram->detachAllShaders();
+        else
+            _resolveProgram->detachAllShaders();
         _resolveProgram->attachShader( vs );
         _resolveProgram->attachShader( fs );
         _resolveProgram->addVertexAttribAlias( "vertexPos", "vertex" );
