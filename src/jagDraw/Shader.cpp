@@ -53,6 +53,17 @@ void Shader::addSourceString( const std::string& source )
 {
     _sourceVec.push_back( source );
 }
+void Shader::insertSourceString( const std::string& source, const unsigned int index )
+{
+    _sourceVec.resize( _sourceVec.size() + 1 );
+    for( size_t idx = _sourceVec.size()-1; idx > index; --idx )
+        _sourceVec[ idx ] = _sourceVec[ idx - 1 ];
+    _sourceVec[ index ] = source;
+}
+unsigned int Shader::getNumSourceStrings() const
+{
+    return( ( unsigned int )( _sourceVec.size() ) );
+}
 jagBase::StringVec& Shader::getSourceVec()
 {
     return( _sourceVec );
