@@ -91,7 +91,10 @@ void Framebuffer::execute( DrawInfo& drawInfo )
     if( _viewport )
         glViewport( _vpX, _vpY, _vpWidth, _vpHeight );
     if( _clear )
+    {
+        glClearColor( _clearColor[ 0 ], _clearColor[ 1 ], _clearColor[ 2 ], _clearColor[ 3 ] );
         glClear( _clearMask );
+    }
 
     JAG3D_FBO_ERROR_CHECK( "Framebuffer::execute()" );
     JAG3D_ERROR_CHECK( "Framebuffer::execute()" );
@@ -171,6 +174,14 @@ void Framebuffer::setClear( const GLbitfield mask, const bool enable )
     _clearMask = mask;
     _clear = enable;
 }
+void Framebuffer::setClearColor( const GLfloat r, const GLfloat g, const GLfloat b, const GLfloat a )
+{
+    _clearColor[ 0 ] = r;
+    _clearColor[ 1 ] = g;
+    _clearColor[ 2 ] = b;
+    _clearColor[ 3 ] = a;
+}
+
 
 
 void Framebuffer::addAttachment( const GLenum attachment, FramebufferAttachablePtr buffer )
