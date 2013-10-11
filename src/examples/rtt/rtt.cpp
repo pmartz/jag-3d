@@ -436,9 +436,8 @@ void RTTExample::reshape( const int w, const int h )
     // Recreate textures, set FBO viewports, etc.
     _defaultFBO->setViewport( 0, 0, _width, _height );
 
-    jagDraw::ImagePtr image( new jagDraw::Image() );
-    image->set( 0, GL_RGBA, _width, _height, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL );
-    _colorBuffer->setImage( image );
+    _colorBuffer->getImage()->set( 0, GL_RGBA, _width, _height, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL );
+    _colorBuffer->markAllDirty();
 
     jagDraw::RenderbufferPtr depthBuffer;
     depthBuffer.reset( new jagDraw::Renderbuffer( GL_DEPTH_COMPONENT, _width, _height ) );

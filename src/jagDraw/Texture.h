@@ -132,6 +132,17 @@ public:
     \gl{section 4.4.2} */
     virtual void attachToFBO( const jagDraw::jagDrawContextID contextID, const GLenum attachment );
 
+    /** \brief Mark the Texture dirty for all contexts.
+    \details On next execute(), if the Texture is dirty for the current context,
+    the texture image will be re-dubmitted to OpenGL. markAllDirty() does not
+    delete any existing OpenGL texture IDs, rather existing OpenGL IDs are re-used
+    with new Image (texel) data.
+
+    In a typical use case, an application might change the Image data used
+    by a texture. Texture has no way to know that its Image has been altered,
+    so the app must call markAllDirty() to effect the change. */
+    void markAllDirty();
+
 protected:
     /** GL_TEXTURE_1D, GL_TEXTURE_2D, etc.<br>
     Initial Value: GL_NONE */
@@ -153,7 +164,6 @@ protected:
     void internalSpecifyTexImage( const unsigned int contextID );
     void internalSpecifyTexImage( const GLenum target, ImagePtr image );
 
-    void markAllDirty();
     jagDraw::PerContextGLboolean _dirty;
 };
 
