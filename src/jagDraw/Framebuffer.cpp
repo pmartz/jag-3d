@@ -40,7 +40,14 @@ Framebuffer::Framebuffer( GLenum target, const std::string& logName )
     _vpWidth( 0 ),
     _vpHeight( 0 ),
     _clearMask( 0 )
+
+	
 {
+	_clearColor[0] = 1.0;
+	_clearColor[1] = 1.0;
+	_clearColor[2] = 1.0;
+	_clearColor[3]  = 0.0;
+
 }
 Framebuffer::Framebuffer( const Framebuffer& rhs )
   : DrawablePrep( rhs ),
