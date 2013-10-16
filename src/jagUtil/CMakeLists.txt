@@ -28,15 +28,19 @@ endif()
 set( _jagUtilHeaderFiles
     Export.h
     ABuffer.h
+    Blur.h
     BufferAggregationVisitor.h
     DrawGraphCountVisitor.h
+    QuadNode.h
     ResetBoundsVisitor.h
     Shapes.h
 )
 
 set( _jagUtilSourceFiles
     ABuffer.cpp
+    Blur.cpp
     BufferAggregationVisitor.cpp
+    QuadNode.cpp
     ResetBoundsVisitor.cpp
     Shapes.cpp
 )
