@@ -23,8 +23,8 @@
 #include <jagDraw/Common.h>
 #include <jagDraw/PerContextData.h>
 #include <jagSG/Common.h>
-#include <jagDisk/ReadWrite.h>
 #include <jagBase/Profile.h>
+#include <jagUtil/QuadNode.h>
 #include <jagUtil/DrawGraphCountVisitor.h>
 #include <jagUtil/Shapes.h>
 #include <jagBase/Version.h>
@@ -82,7 +82,8 @@ protected:
 
     jagDraw::DrawGraphPtr createDrawGraph();
 
-    jagDraw::FramebufferPtr _defaultFBO, _rttFBO;
+    jagUtil::QuadNodePtr _quadNode;
+    jagDraw::FramebufferPtr _rttFBO;
     jagDraw::TexturePtr _colorBuffer;
     int _width, _height;
 
@@ -114,68 +115,37 @@ jagDraw::DrawGraphPtr RTTExample::createDrawGraph()
     drawGraphTemplate->resize( 2 );
 
     // Element 0: Scene render to texture. Contents set by CollectionVisitor.
+    // We don't need to do any setup on this NodeContainer.
+
+    // Element 1: Full sceen tri pair to display texture.
     {
+        // Use QuadNode utility to create a full screen quad in the draw graph.
+        _quadNode.reset( new jagUtil::QuadNode( _colorBuffer ) );
+
+        // Add this single draw Node to this container.
+        (*drawGraphTemplate)[ 1 ].push_back( _quadNode );
+
+        // Never reset this container.
+        (*drawGraphTemplate)[ 1 ].setResetEnable( false );
+
         struct DepthContaolCallback : public jagDraw::NodeContainer::Callback
         {
             virtual bool operator()( jagDraw::NodeContainer& nc, jagDraw::DrawInfo& di )
             {
-                // Enable depth test for scene rendering.
-                glEnable( GL_DEPTH_TEST );
-                // Render the scene geometry.
-                nc.internalExecute( di );
-                // Disable depth test for the full screen tri pair in next NodeContainer.
+                // Disable depth test for QuadNode rendering.
                 glDisable( GL_DEPTH_TEST );
+                // Render the geometry.
+                nc.internalExecute( di );
+                // Enable depth test for next frame.
+                glEnable( GL_DEPTH_TEST );
                 // We've already rendered; return false to abort this NodeContainer.
                 return( false );
             }
         };
 
-        (*drawGraphTemplate)[ 0 ].getCallbacks().push_back(
+        (*drawGraphTemplate)[ 1 ].getCallbacks().push_back(
             jagDraw::NodeContainer::CallbackPtr(
                 new DepthContaolCallback() ) );
-    }
-
-    // Element 1: Full sceen tri pair to display texture.
-    {
-        jagDraw::CommandMapPtr commands( jagDraw::CommandMapPtr( new jagDraw::CommandMap() ) );
-        jagDraw::TextureSetPtr texSet( jagDraw::TextureSetPtr( new jagDraw::TextureSet() ) );
-        (*texSet)[ GL_TEXTURE0 ] = _colorBuffer;
-        commands->insert( texSet );
-
-        jagUtil::VNTCVec data;
-        jagDraw::DrawablePtr fstp( jagUtil::makePlane( data, gmtl::Point3f( -1., -1., 0. ),
-            gmtl::Vec3f( 2., 0., 0. ), gmtl::Vec3f( 0., 2., 0. ) ) );
-        commands->insert( jagUtil::createVertexArrayObject( data ) );
-
-        _defaultFBO = jagDraw::FramebufferPtr( new jagDraw::Framebuffer( GL_DRAW_FRAMEBUFFER ) );
-        _defaultFBO->setViewport( 0, 0, _width, _height );
-        _defaultFBO->setClear( 0 );
-        commands->insert( _defaultFBO );
-
-        {
-            jagDraw::ShaderPtr vs( DemoInterface::readShaderUtil( "rttResolve.vert" ) );
-            jagDraw::ShaderPtr fs( DemoInterface::readShaderUtil( "rttResolve.frag" ) );
-
-            jagDraw::ProgramPtr prog( jagDraw::ProgramPtr( new jagDraw::Program() ) );
-            prog->attachShader( vs );
-            prog->attachShader( fs );
-            commands->insert( prog );
-
-            jagDraw::UniformPtr sampler( jagDraw::UniformPtr( new jagDraw::Uniform( "opaque", GL_SAMPLER_2D, 0 ) ) );
-            jagDraw::UniformSetPtr usp( jagDraw::UniformSetPtr( new jagDraw::UniformSet() ) );
-            usp->insert( sampler );
-            commands->insert( usp );
-        }
-
-        jagDraw::DrawNodePtr node( jagDraw::DrawNodePtr( new jagDraw::Node() ) );
-        node->setCommandMap( commands );
-        node->addDrawable( fstp );
-
-        // Add this single draw Node to this container.
-        (*drawGraphTemplate)[ 1 ].push_back( node );
-
-        // Never reset this container.
-        (*drawGraphTemplate)[ 1 ].setResetEnable( false );
     }
 
     return( drawGraphTemplate );
@@ -411,7 +381,7 @@ bool RTTExample::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj
         // If profiling, dump out draw graph info.
         jagUtil::DrawGraphCountVisitor dgcv;
         dgcv.traverse( *( collect.getDrawGraph() ) );
-        dgcv.dump( std::cout );
+        dgcv.dump( std::cout ); 
     }
 #endif
 
@@ -433,8 +403,9 @@ void RTTExample::reshape( const int w, const int h )
     const jagDraw::jagDrawContextID contextID( jagDraw::ContextSupport::instance()->getActiveContext() );
     _mxCore._data[ contextID ]->setAspect( ( double ) w / ( double ) h );
 
-    // Recreate textures, set FBO viewports, etc.
-    _defaultFBO->setViewport( 0, 0, _width, _height );
+    // Recreate textures, set FBO viewports, resize QuadNodes, etc.
+
+    _quadNode->reshape( _width, _height );
 
     _colorBuffer->getImage()->set( 0, GL_RGBA, _width, _height, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL );
     _colorBuffer->markAllDirty();
