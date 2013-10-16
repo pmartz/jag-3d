@@ -133,7 +133,7 @@ protected:
         } \
         if( _RESULT == NULL ) \
         { \
-            JAG3D_FATAL_STATIC( _logName, "Can't load \"" + _NAME + "\"." ); \
+            JAG3D_FATAL_STATIC( _logName, std::string("Can't load \"") + std::string(_NAME) + std::string("\".") ); \
         } \
     }
 
