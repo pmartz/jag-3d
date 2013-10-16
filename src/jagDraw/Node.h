@@ -38,7 +38,9 @@ namespace jagDraw {
 /** \class Node Node.h <jagDraw/Node.h>
 \brief TBD
 \details jagDraw::Node associates a CommandMap with a collection of Drawables.
-The CommandMap must not be NULL. */
+The CommandMap must not be NULL.
+
+\logname jag.draw.node */
 class JAGDRAW_EXPORT Node : protected jagBase::LogBase, public ObjectIDOwner, public jagBase::UserDataOwner
 {
 public:

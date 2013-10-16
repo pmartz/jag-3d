@@ -48,7 +48,7 @@ struct ABufferContext;
 typedef jagDraw::PerContextData< ABufferContext > PerContextABufferCntxt;
 
 
-/** \class ABuffer ABuffer.h <jagDraw/ABuffer.h>
+/** \class ABuffer ABuffer.h <jagUtil/ABuffer.h>
 \brief Support for a-buffer order independent transparency.
 \details This is a port of the OpenGL a-buffer sample code available from
 http://blog.icare3d.org/2010/07/opengl-40-abuffer-v20-linked-lists-of.html.
@@ -72,7 +72,6 @@ public:
 
     /** \brief TBD
     \details TBD
-    \param numContexts Maximum number of OpenGL contexts.
     \param startContainer Index of the DrawGraph's NodeContainer for ABuffer rendering.
     NodeContainers numbers \c startContainer through \c startContainer + 2 are reserved
     for use by the ABuffer class. */
