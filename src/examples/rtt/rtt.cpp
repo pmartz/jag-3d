@@ -128,7 +128,7 @@ jagDraw::DrawGraphPtr RTTExample::createDrawGraph()
         // Never reset this container.
         (*drawGraphTemplate)[ 1 ].setResetEnable( false );
 
-        struct DepthContaolCallback : public jagDraw::NodeContainer::Callback
+        struct DepthControlCallback : public jagDraw::NodeContainer::Callback
         {
             virtual bool operator()( jagDraw::NodeContainer& nc, jagDraw::DrawInfo& di )
             {
@@ -145,7 +145,7 @@ jagDraw::DrawGraphPtr RTTExample::createDrawGraph()
 
         (*drawGraphTemplate)[ 1 ].getCallbacks().push_back(
             jagDraw::NodeContainer::CallbackPtr(
-                new DepthContaolCallback() ) );
+                new DepthControlCallback() ) );
     }
 
     return( drawGraphTemplate );
