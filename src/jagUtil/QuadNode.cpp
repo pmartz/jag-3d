@@ -79,6 +79,61 @@ QuadNode::~QuadNode()
 {
 }
 
+
+// Convenience utility for reading shader source.
+#define __READ_UTIL( _RESULT, _TYPE, _NAME ) \
+    { \
+        boost::any anyTemp( jagDisk::read( _NAME ) ); \
+        try { \
+            _RESULT = boost::any_cast< _TYPE >( anyTemp ); \
+        } \
+        catch( boost::bad_any_cast bac ) \
+        { \
+            bac.what(); \
+        } \
+        if( _RESULT == NULL ) \
+        { \
+            JAG3D_FATAL( std::string("Can't load \"") + std::string(_NAME) + std::string("\".") ); \
+            return; \
+        } \
+    }
+
+void QuadNode::setShaders( const std::string& fragName, const std::string& vertName )
+{
+    const std::string localVertName( vertName.empty() ? "quadNode.vert" : vertName );
+    jagDraw::ShaderPtr vs, fs;
+    __READ_UTIL( vs, jagDraw::ShaderPtr, localVertName );
+    __READ_UTIL( fs, jagDraw::ShaderPtr, fragName );
+
+    // Tell the fragment shader how many textures to combine.
+    fs->insertSourceString( getTextureCountString() );
+
+    jagDraw::ProgramPtr prog( jagDraw::ProgramPtr( new jagDraw::Program() ) );
+    prog->attachShader( vs );
+    prog->attachShader( fs );
+
+    internalInit( prog );
+}
+void QuadNode::setShaders( jagDraw::ShaderPtr& frag, jagDraw::ShaderPtr& vert )
+{
+    jagDraw::ShaderPtr localVert( vert );
+    if( vert == NULL )
+    {
+        __READ_UTIL( localVert, jagDraw::ShaderPtr, "quadNode.vert" );
+    }
+
+    jagDraw::ProgramPtr prog( jagDraw::ProgramPtr( new jagDraw::Program() ) );
+    prog->attachShader( localVert );
+    prog->attachShader( frag );
+
+    internalInit( prog );
+}
+void QuadNode::setProgram( jagDraw::ProgramPtr& program )
+{
+    internalInit( program );
+}
+
+
 void QuadNode::setMaxContexts( const unsigned int numContexts )
 {
     _numContexts = numContexts;
@@ -100,7 +155,7 @@ void QuadNode::reshape( const int w, const int h )
     _fbo->setViewport( 0, 0, _width, _height );
 }
 
-void QuadNode::internalInit()
+void QuadNode::internalInit( jagDraw::ProgramPtr& program )
 {
     _commands.reset( new jagDraw::CommandMap() );
 
@@ -133,42 +188,38 @@ void QuadNode::internalInit()
         _fbo->addAttachment( GL_COLOR_ATTACHMENT0, _outputBuffer );
     _commands->insert( _fbo );
 
-    // Load shaders and create program.
-#define __READ_UTIL( _RESULT, _TYPE, _NAME ) \
-    { \
-        boost::any anyTemp( jagDisk::read( _NAME ) ); \
-        try { \
-            _RESULT = boost::any_cast< _TYPE >( anyTemp ); \
-        } \
-        catch( boost::bad_any_cast bac ) \
-        { \
-            bac.what(); \
-        } \
-        if( _RESULT == NULL ) \
-        { \
-            JAG3D_FATAL( std::string("Can't load \"") + std::string(_NAME) + std::string("\".") ); \
-            return; \
-        } \
+    if( program != NULL )
+    {
+        // Use app-supplied program.
+        _commands->insert( program );
     }
-    jagDraw::ShaderPtr vs, fs;
-    __READ_UTIL( vs, jagDraw::ShaderPtr, "quadNode.vert" );
-    __READ_UTIL( fs, jagDraw::ShaderPtr, "quadNode.frag" );
-#undef __READ_UTIL
+    else // Use default program.
+    {
+        // Load shaders and create program.
+        jagDraw::ShaderPtr vs, fs;
+        __READ_UTIL( vs, jagDraw::ShaderPtr, "quadNode.vert" );
+        __READ_UTIL( fs, jagDraw::ShaderPtr, "quadNode.frag" );
 
-    // Tell the fragment shader how many textures to combine.
-    std::ostringstream texCount;
-    texCount << std::min< unsigned int >( (unsigned int)(_inputBuffers.size()), 4 ) << "\n";
-    fs->insertSourceString( std::string( "#define TEXTURE_COUNT " ) +
-        std::string( texCount.str() ) );
+        // Tell the fragment shader how many textures to combine.
+        fs->insertSourceString( getTextureCountString() );
 
-    jagDraw::ProgramPtr prog( jagDraw::ProgramPtr( new jagDraw::Program() ) );
-    prog->attachShader( vs );
-    prog->attachShader( fs );
-    _commands->insert( prog );
+        jagDraw::ProgramPtr prog( jagDraw::ProgramPtr( new jagDraw::Program() ) );
+        prog->attachShader( vs );
+        prog->attachShader( fs );
+        _commands->insert( prog );
+    }
 
 
     this->setCommandMap( _commands );
     this->addDrawable( fstp );
+}
+
+std::string QuadNode::getTextureCountString() const
+{
+    std::ostringstream texCount;
+    texCount << std::min< unsigned int >( (unsigned int)(_inputBuffers.size()), 4 ) << "\n";
+    return( std::string( "#define TEXTURE_COUNT " ) +
+        std::string( texCount.str() ) );
 }
 
 

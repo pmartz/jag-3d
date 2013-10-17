@@ -26,6 +26,8 @@
 #include <jagDraw/Texture.h>
 #include <jagDraw/Framebuffer.h>
 #include <jagDraw/CommandMap.h>
+#include <jagDraw/Shader.h>
+#include <jagDraw/Program.h>
 #include <jagBase/ptr.h>
 #include <jagBase/LogBase.h>
 
@@ -45,14 +47,40 @@ class JAGUTIL_EXPORT QuadNode : public jagDraw::Node
 {
 public:
     QuadNode( const std::string& logName=std::string( "" ) );
+    /** Constructor for one input texture. */
     QuadNode( jagDraw::TexturePtr inputBuffer,
         jagDraw::TexturePtr outputBuffer=jagDraw::TexturePtr((jagDraw::Texture*)NULL),
         const std::string& logName=std::string( "" ) );
+    /** Constructor for multiple input textures. */
     QuadNode( jagDraw::TextureVec& inputBuffers,
         jagDraw::TexturePtr outputBuffer=jagDraw::TexturePtr((jagDraw::Texture*)NULL),
         const std::string& logName=std::string( "" ) );
     QuadNode( const QuadNode& rhs );
     ~QuadNode();
+
+    /** \brief Explicit rendering control.
+    \details By default, QuadNode uses its own shaders, which adds samples from
+    up to four textures to create the final color value. To produce a different final
+    color value, the app should supply its own shaders or program.
+
+    Note that the addShaders() methods are designed so that apps can use a default
+    vertex shader and specify only the fragment shader. In this case, data/quadNode.vert
+    is used as the vertex shader, which writes texture coord outputs as follow:
+    \code
+    out vec2 tc;
+    \endcode
+    Application fragment shader code should declare:
+    \code
+    in vec2 tc;
+    \endcode
+    for compatibility.
+    */
+    void setShaders( const std::string& fragName, const std::string& vertName="" );
+    /** \overload */
+    void setShaders( jagDraw::ShaderPtr& frag,
+        jagDraw::ShaderPtr& vert=jagDraw::ShaderPtr((jagDraw::Shader*)NULL) );
+    /** \overload */
+    void setProgram( jagDraw::ProgramPtr& program );
 
     virtual void setMaxContexts( const unsigned int numContexts );
 
@@ -60,7 +88,8 @@ public:
     void reshape( const int w, const int h );
 
 protected:
-    void internalInit();
+    void internalInit( jagDraw::ProgramPtr& program=jagDraw::ProgramPtr((jagDraw::Program*)NULL) );
+    std::string getTextureCountString() const;
 
     jagDraw::TextureVec _inputBuffers;
     jagDraw::TexturePtr _outputBuffer;
