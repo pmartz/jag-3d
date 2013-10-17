@@ -24,7 +24,7 @@
 #include <jagUtil/Export.h>
 #include <jagDraw/DrawGraph.h>
 #include <jagDraw/CommandMap.h>
-#include <jagDraw/Framebuffer.h>
+#include <jagUtil/QuadNode.h>
 #include <jagDraw/Texture.h>
 #include <jagDraw/Program.h>
 #include <jagDraw/PerContextData.h>
@@ -71,15 +71,12 @@ protected:
 
     jagDraw::TexturePtr _inputBuffer, _outputBuffer;
 
+    unsigned int _numContexts;
     int _width, _height;
 
     jagDraw::NodeContainer _container;
-    jagDraw::FramebufferPtr _fbo;
+    jagUtil::QuadNodePtr _hQuad, _vQuad;
     jagDraw::TexturePtr _intermediateBuffer;
-
-    jagDraw::ProgramPtr _hBlurProg, _vBlurProg;
-
-    unsigned int _numContexts;
 };
 
 typedef jagBase::ptr< Blur >::shared_ptr BlurPtr;

@@ -21,8 +21,7 @@
 #include <jagUtil/Blur.h>
 
 #include <jagDraw/Common.h>
-#include <jagDisk/ReadWrite.h>
-#include <jagUtil/Shapes.h>
+#include <jagUtil/QuadNode.h>
 #include <jagBase/Log.h>
 #include <jagBase/LogMacros.h>
 
@@ -41,9 +40,9 @@ namespace jagUtil
 
 Blur::Blur( const std::string& logName )
     : jagBase::LogBase( logName.empty() ? "jag.util.blur" : logName ),
+      _numContexts( 0 ),
       _width( 0 ),
-      _height( 0 ),
-      _numContexts( 0 )
+      _height( 0 )
 {
 }
 Blur::Blur( jagDraw::TexturePtr& inputBuffer, jagDraw::TexturePtr& outputBuffer,
@@ -51,18 +50,18 @@ Blur::Blur( jagDraw::TexturePtr& inputBuffer, jagDraw::TexturePtr& outputBuffer,
     : jagBase::LogBase( logName.empty() ? "jag.util.blur" : logName ),
       _inputBuffer( inputBuffer ),
       _outputBuffer( outputBuffer ),
+      _numContexts( 0 ),
       _width( 0 ),
-      _height( 0 ),
-      _numContexts( 0 )
+      _height( 0 )
 {
 }
 Blur::Blur( const Blur& rhs )
     : jagBase::LogBase( rhs ),
       _inputBuffer( rhs._inputBuffer ),
       _outputBuffer( rhs._outputBuffer ),
+      _numContexts( rhs._numContexts ),
       _width( rhs._width ),
-      _height( rhs._height ),
-      _numContexts( rhs._numContexts )
+      _height( rhs._height )
 {
 }
 Blur::~Blur()
@@ -73,13 +72,10 @@ void Blur::setMaxContexts( const unsigned int numContexts )
 {
     _numContexts = numContexts;
 
-    if( _fbo == NULL )
+    if( _vQuad == NULL )
         internalInit();
 
-    _fbo->setMaxContexts( numContexts );
     _container.setMaxContexts( numContexts );
-    _hBlurProg->setMaxContexts( numContexts );
-    _vBlurProg->setMaxContexts( numContexts );
 }
 
 jagDraw::NodeContainer& Blur::getNodeContainer()
@@ -92,10 +88,11 @@ void Blur::reshape( const int w, const int h )
     _width = w;
     _height = h;
 
-    if( _fbo == NULL )
+    if( _vQuad == NULL )
         internalInit();
 
-    _fbo->setViewport( 0, 0, _width, _height );
+    _hQuad->reshape( w, h );
+    _vQuad->reshape( w, h );
 
     _intermediateBuffer->getImage()->set( 0, GL_RGBA, _width, _height, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL );
     _intermediateBuffer->markAllDirty();
@@ -103,596 +100,30 @@ void Blur::reshape( const int w, const int h )
 
 void Blur::internalInit()
 {
+    // Create the intermediate color buffer.
+    jagDraw::ImagePtr image( new jagDraw::Image() );
+    image->set( 0, GL_RGBA, _width, _height, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL );
+    _intermediateBuffer.reset( new jagDraw::Texture( GL_TEXTURE_2D, image,
+        jagDraw::SamplerPtr( new jagDraw::Sampler() ) ) );
+    _intermediateBuffer->getSampler()->getSamplerState()->_minFilter = GL_NEAREST;
+    _intermediateBuffer->getSampler()->getSamplerState()->_magFilter = GL_NEAREST;
+
+    // Create the horizontal blur.
+    _hQuad.reset( new QuadNode( _inputBuffer, _intermediateBuffer ) );
+    //_hQuad->setShaders( "blurHorizontal.frag" );
+
+    // Create the vertical blur.
+    _vQuad.reset( new QuadNode( _intermediateBuffer, _outputBuffer ) );
+    //_vQuad->setShaders( "blurVertical.frag" );
+
+    // Configure the NodeContainer.
+    _container.clear();
+    _container.setResetEnable( false );
+    // TBD add depth control.
+    _container.push_back( _hQuad );
+    _container.push_back( _vQuad );
 }
 
-
-
-
-
-#if 0
-jagDraw::DrawGraphPtr& ABuffer::createDrawGraphTemplate( const unsigned int startContainer )
-{
-    if( _commands == NULL )
-        internalInit();
-
-    if( _drawGraphTemplate == NULL )
-        _drawGraphTemplate.reset( new jagDraw::DrawGraph() );
-
-    // ABuffer needs 3 NodeContainers:
-    //   sc:   Clear the ABuffer
-    //   sc+1: ABuffer render
-    //   sc+2: ABuffer resolve and opaque combine
-    // where sc is _startContainer.
-    // _startContainer is typically 1, leaving NodeContainer 0 for application use
-    // (such as rendering opaque geometry into the _depthBuffer and _colorBufferN.
-    _startContainer = startContainer;
-    _drawGraphTemplate->resize( startContainer + 3 );
-
-
-    // First, create the full screen tri pair used by the first and last NodeContainers.
-    jagDraw::VertexArrayObjectPtr fstpVAO;
-    jagDraw::DrawablePtr fstp;
-    {
-        jagUtil::VNTCVec data;
-        fstp = jagUtil::makePlane( data, gmtl::Point3f( -1., -1., 0. ),
-            gmtl::Vec3f( 2., 0., 0. ), gmtl::Vec3f( 0., 2., 0. ) );
-        fstpVAO = jagUtil::createVertexArrayObject( data );
-    }
-
-
-    // Element 1: Full screen tri pair to clear the ABuffer.
-    {
-        jagDraw::NodeContainer& nc( (*_drawGraphTemplate)[ _startContainer ] );
-
-        struct ABufferClearCallback : public jagDraw::NodeContainer::Callback
-        {
-            ABufferClearCallback( PerContextABufferCntxt& abc )
-                : _abufferCntxt( abc )
-            {}
-
-            virtual bool operator()( jagDraw::NodeContainer& nc, jagDraw::DrawInfo& di )
-            {
-                const jagDraw::jagDrawContextID contextID( di._id );
-                ABufferContext& abc( _abufferCntxt[ contextID ] );
-
-                if( abc._needsInit )
-                    abc.init();
-
-                _clearProgram->execute( di );
-                abc.assignUniforms( _clearProgram->getID( contextID ) );
-
-                // Set OpenGL state for a-buffer rendering.
-                glDisable( GL_DEPTH_TEST );
-                glDepthMask( GL_FALSE );
-                glDisable( GL_CULL_FACE );
-
-                // Render the tri pair to clear the abuffer.
-                nc.internalExecute( di );
-
-                glMemoryBarrierEXT( GL_SHADER_GLOBAL_ACCESS_BARRIER_BIT_NV );
-
-                // We've already rendered; return false to abort this NodeContainer.
-                return( false );
-            }
-
-            jagDraw::ProgramPtr _clearProgram;
-            PerContextABufferCntxt& _abufferCntxt;
-        };
-        typedef jagBase::ptr< ABufferClearCallback >::shared_ptr ABufferClearCallbackPtr;
-        ABufferClearCallbackPtr abccb( ABufferClearCallbackPtr( new ABufferClearCallback( _abufferCntxt ) ) );
-        abccb->_clearProgram = _clearProgram;
-        nc.getCallbacks().push_back( abccb );
-
-
-        jagDraw::CommandMapPtr commands( jagDraw::CommandMapPtr( new jagDraw::CommandMap() ) );
-        commands->insert( fstpVAO );
-        commands->insert( _clearProgram );
-
-        jagDraw::DrawNodePtr node( jagDraw::DrawNodePtr( new jagDraw::Node() ) );
-        node->setCommandMap( commands );
-        node->addDrawable( fstp );
-
-        nc.push_back( node );
-        nc.setResetEnable( false );
-    }
-
-    // Element 2: ABuffer. Contents set by CollectionVisitor.
-    {
-        jagDraw::NodeContainer& nc( (*_drawGraphTemplate)[ _startContainer + 1 ] );
-
-        struct ABufferRenderCallback : public jagDraw::NodeContainer::Callback
-        {
-            ABufferRenderCallback( PerContextABufferCntxt& abc )
-                : _abufferCntxt( abc )
-            {}
-
-            virtual bool operator()( jagDraw::NodeContainer& nc, jagDraw::DrawInfo& di )
-            {
-                const jagDraw::jagDrawContextID contextID( di._id );
-                ABufferContext& abc( _abufferCntxt[ contextID ] );
-
-                _renderProgram->execute( di );
-                abc.assignUniforms( _renderProgram->getID( contextID ) );
-
-                // Count fragments that were not discarded. This is an indication
-                // that we need to resize our page pool and re-render.
-                glBeginQuery( GL_SAMPLES_PASSED, abc._queryID );
-
-                // Render the tri pair to clear the abuffer.
-                nc.internalExecute( di );
-
-                glEndQuery( GL_SAMPLES_PASSED );
-                abc._queryRequested = true;
-
-                glMemoryBarrierEXT( GL_SHADER_GLOBAL_ACCESS_BARRIER_BIT_NV );
-
-                // We've already rendered; return false to abort this NodeContainer.
-                return( false );
-            }
-
-            jagDraw::ProgramPtr _renderProgram;
-            PerContextABufferCntxt& _abufferCntxt;
-        };
-        typedef jagBase::ptr< ABufferRenderCallback >::shared_ptr ABufferRenderCallbackPtr;
-        ABufferRenderCallbackPtr abrcb( ABufferRenderCallbackPtr( new ABufferRenderCallback( _abufferCntxt ) ) );
-        abrcb->_renderProgram = _renderProgram;
-        nc.getCallbacks().push_back( abrcb );
-    }
-
-    // Element 3: Full sceen tri pair to resolve ABuffer & combine with opaque.
-    {
-        jagDraw::NodeContainer& nc( (*_drawGraphTemplate)[ _startContainer + 2 ] );
-
-        struct ABufferResolveCallback : public jagDraw::NodeContainer::Callback
-        {
-            ABufferResolveCallback( PerContextABufferCntxt& abc )
-                : _abufferCntxt( abc )
-            {}
-
-            virtual bool operator()( jagDraw::NodeContainer& nc, jagDraw::DrawInfo& di )
-            {
-                const jagDraw::jagDrawContextID contextID( di._id );
-
-                ABufferContext& abc( _abufferCntxt[ contextID ] );
-
-                _resolveProgram->execute( di );
-                abc.assignUniforms( _resolveProgram->getID( contextID ) );
-
-                // Render the tri pair to clear the abuffer.
-                nc.internalExecute( di );
-
-                glEnable( GL_DEPTH_TEST );
-                glDepthMask( GL_TRUE );
-                glEnable( GL_CULL_FACE );
-
-                // We've already rendered; return false to abort this NodeContainer.
-                return( false );
-            }
-
-            jagDraw::ProgramPtr _resolveProgram;
-            PerContextABufferCntxt& _abufferCntxt;
-        };
-        typedef jagBase::ptr< ABufferResolveCallback >::shared_ptr ABufferResolveCallbackPtr;
-        ABufferResolveCallbackPtr abrcb( ABufferResolveCallbackPtr( new ABufferResolveCallback( _abufferCntxt ) ) );
-        abrcb->_resolveProgram = _resolveProgram;
-        nc.getCallbacks().push_back( abrcb );
-
-
-        jagDraw::CommandMapPtr commands( jagDraw::CommandMapPtr( new jagDraw::CommandMap() ) );
-        commands->insert( fstpVAO );
-        commands->insert( _resolveProgram );
-
-        jagDraw::TextureSetPtr texSet( jagDraw::TextureSetPtr( new jagDraw::TextureSet() ) );
-        commands->insert( texSet );
-        jagDraw::UniformSetPtr usp( jagDraw::UniformSetPtr( new jagDraw::UniformSet() ) );
-        commands->insert( usp );
-
-        (*texSet)[ GL_TEXTURE14 ] = _colorBuffer0;
-        jagDraw::UniformPtr sampler( jagDraw::UniformPtr( new jagDraw::Uniform( "opaqueBuffer", GL_SAMPLER_2D, 14 ) ) );
-        usp->insert( sampler );
-        if( _colorBuffer1 != NULL )
-        {
-            (*texSet)[ GL_TEXTURE15 ] = _colorBuffer1;
-            jagDraw::UniformPtr sampler( jagDraw::UniformPtr( new jagDraw::Uniform( "secondaryBuffer", GL_SAMPLER_2D, 15 ) ) );
-            usp->insert( sampler );
-        }
-
-        jagDraw::DrawNodePtr node( jagDraw::DrawNodePtr( new jagDraw::Node() ) );
-        node->setCommandMap( commands );
-        node->addDrawable( fstp );
-
-        nc.push_back( node );
-        nc.setResetEnable( false );
-    }
-
-    _drawGraphTemplate->setMaxContexts( _numContexts );
-
-    return( _drawGraphTemplate );
-}
-
-void ABuffer::getABufferControls( jagDraw::CommandMapPtr& commands, jagSG::SelectContainerCallbackPtr& callback )
-{
-    if( _commands == NULL )
-        internalInit();
-
-    commands = _commands;
-    callback = _callback;
-}
-
-void ABuffer::renderFrame( jagSG::CollectionVisitor& collect, jagDraw::DrawInfo& drawInfo )
-{
-    const unsigned int contextID( drawInfo._id );
-    jagDraw::DrawGraphPtr drawGraph( collect.getDrawGraph() );
-
-    // Draw everything that comes before the ABuffer.
-    unsigned int idx( 0 );
-    while( idx < _startContainer )
-        (*drawGraph)[ idx++ ].execute( drawInfo );
-
-    // Render the ABuffer, possibly multiple times if necessary
-    // to ensure proper page pool size.
-    jagDraw::NodeContainer& clear( (*drawGraph)[ _startContainer ] );
-    jagDraw::NodeContainer& render( (*drawGraph)[ _startContainer + 1 ] );
-    jagDraw::NodeContainer& resolve( (*drawGraph)[ _startContainer + 2 ] );
-    bool frameOK( false );
-    while( !frameOK )
-    {
-        clear.execute( drawInfo );
-        render.execute( drawInfo );
-        resolve.execute( drawInfo );
-
-        // managePool() returns true if 0 pixels exceeded the page pool.
-        // In that case, the frame is OK and doesn't need to be re-rendered.
-        frameOK = _abufferCntxt._data[ contextID ].managePool();
-    }
-    idx += 3;
-
-    // Render anything that comes after the ABuffer.
-    while( idx < drawGraph->size() )
-        (*drawGraph)[ idx++ ].execute( drawInfo );
-}
-
-void ABuffer::reshape( const int w, const int h )
-{
-    _width = w;
-    _height = h;
-
-    if( _commands == NULL )
-        internalInit();
-
-    _defaultFBO->setViewport( 0, 0, _width, _height );
-
-    BOOST_FOREACH( ABufferContext& data, _abufferCntxt._data )
-    {
-        data._texWidth = w;
-        data._texHeight = h;
-    }
-}
-
-void ABuffer::internalInit()
-{
-#define __READ_UTIL( _RESULT, _NAME, _LOG ) \
-    { \
-        boost::any anyTemp( jagDisk::read( std::string(_NAME) ) ); \
-        try { \
-            _RESULT = boost::any_cast< jagDraw::ShaderPtr >( anyTemp ); \
-        } \
-        catch( boost::bad_any_cast bac ) \
-        { \
-            bac.what(); \
-        } \
-        if( _RESULT == NULL ) \
-        { \
-            JAG3D_FATAL_STATIC( _LOG, "Can't load \"" + std::string(_NAME) + "\"." ); \
-            return; \
-        } \
-        _RESULT->setMaxContexts( _numContexts ); \
-    }
-
-    {
-        jagDraw::ShaderPtr vs; __READ_UTIL( vs, "abufferClear.vert", "jag.util.abuf" );
-        jagDraw::ShaderPtr fs; __READ_UTIL( fs, "abufferClear.frag", "jag.util.abuf" );
-
-        if( _clearProgram == NULL )
-            _clearProgram.reset( new jagDraw::Program() );
-        else
-            _clearProgram->detachAllShaders();
-        _clearProgram->attachShader( vs );
-        _clearProgram->attachShader( fs );
-        _clearProgram->addVertexAttribAlias( "vertexPos", "vertex" );
-    }
-    // Create program for rendering into the abuffer.
-    {
-        jagDraw::ShaderPtr vs; __READ_UTIL( vs, "abufferRender.vert", "jag.util.abuf" );
-        jagDraw::ShaderPtr fs; __READ_UTIL( fs, "abufferRender.frag", "jag.util.abuf" );
-
-        if( _renderProgram == NULL )
-            _renderProgram.reset( new jagDraw::Program() );
-        else
-            _renderProgram->detachAllShaders();
-        _renderProgram->attachShader( vs );
-        _renderProgram->attachShader( fs );
-        _renderProgram->addVertexAttribAlias( "vertexPos", "vertex" );
-        _renderProgram->addVertexAttribAlias( "vertexNormal", "normal" );
-        _renderProgram->addUniformAlias( "projectionMat", "jagProjMatrix" );
-        _renderProgram->addUniformAlias( "modelViewMat", "jagModelViewMatrix" );
-        _renderProgram->addUniformAlias( "modelViewMatIT", "jagModelViewInvTrans4Matrix" );
-    }
-    {
-        jagDraw::ShaderPtr vs; __READ_UTIL( vs, "abufferResolve.vert", "jag.util.abuf" );
-        jagDraw::ShaderPtr fs; __READ_UTIL( fs, "abufferResolve.frag", "jag.util.abuf" );
-
-        fs->insertSourceString( shaderResolveParameters() );
-
-        if( _resolveProgram == NULL )
-            _resolveProgram.reset( new jagDraw::Program() );
-        else
-            _resolveProgram->detachAllShaders();
-        _resolveProgram->attachShader( vs );
-        _resolveProgram->attachShader( fs );
-        _resolveProgram->addVertexAttribAlias( "vertexPos", "vertex" );
-    }
-#undef __READ_UTIL
-
-    // Create default FBO. First NodeContainer renders to _opaqueFBO,
-    // but other NodeContainers render directly to the window.
-    _defaultFBO.reset( new jagDraw::Framebuffer( GL_DRAW_FRAMEBUFFER ) );
-    _defaultFBO->setViewport( 0, 0, _width, _height );
-    _defaultFBO->setClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-
-
-    // This is the CommandMap that the app must attach to any transparent geometry.
-    {
-        _commands.reset( new jagDraw::CommandMap() );
-        _commands->insert( _renderProgram );
-        _commands->insert( _defaultFBO );
-
-        jagDraw::TextureSetPtr texSet( jagDraw::TextureSetPtr( new jagDraw::TextureSet() ) );
-        (*texSet)[ GL_TEXTURE13 ] = _depthBuffer;
-        _commands->insert( texSet );
-        jagDraw::UniformPtr sampler( jagDraw::UniformPtr( new jagDraw::Uniform( "depthBuffer", GL_SAMPLER_2D, 13 ) ) );
-        jagDraw::UniformSetPtr usp( jagDraw::UniformSetPtr( new jagDraw::UniformSet() ) );
-        usp->insert( sampler );
-        _commands->insert( usp );
-    }
-
-    // This is the NodeContainer selection callback that the app must attach to any transparent geometry.
-    // ABuffer container is container the next container after _startContainer.
-    _callback.reset( new jagSG::SelectContainerCallback( _startContainer + 1 ) );
-}
-
-std::string ABuffer::shaderResolveParameters() const
-{
-    std::ostringstream alpha;
-    alpha << std::fixed << std::setw( 7 ) << std::setprecision( 4 ) << _fragmentAlpha << "f";
-    const std::string on( "1" );
-    const std::string off( "0" );
-    const std::string eoln( "\n" );
-    return( std::string(
-
-        // Resolve method
-        std::string( "#define RESOLVE_GELLY " ) +
-            ( ( _resolveMethod == RESOLVE_GELLY ) ? on : off ) + eoln +
-        std::string( "#define RESOLVE_ALPHA_BLEND " ) +
-            ( ( _resolveMethod == RESOLVE_ALPHA_BLEND ) ? on : off ) + eoln +
-        std::string( "#define RESOLVE_ALPHA_BLEND_CAD " ) +
-            ( ( _resolveMethod == RESOLVE_ALPHA_BLEND_CAD ) ? on : off ) + eoln +
-        
-        // Fragment slpha value
-        std::string( "#define FRAGMENT_ALPHA " ) + alpha.str() + eoln +
-
-        // Enable secondary color buffer
-        std::string( "#define USE_SECONDARY_COLOR_BUFFER " ) +
-            ( _secondaryEnable ? on : off ) + eoln +
-        eoln
-    ) );
-}
-
-
-unsigned int ABuffer::getRequiredMatrixUniforms()
-{
-    return(
-        jagBase::TransformD::PROJ |
-        jagBase::TransformD::MODEL_VIEW_PROJ |
-        jagBase::TransformD::MODEL_VIEW |
-        jagBase::TransformD::MODEL_VIEW_INV_TRANS |
-        jagBase::TransformD::MODEL_VIEW_INV_TRANS_4
-        );
-}
-
-void ABuffer::setResolveMethod( const ResolveMethod resolveMethod )
-{
-    JAG3D_DEBUG( "Resolve method: " + resolveMethodToString( resolveMethod ) );
-
-    if( _resolveMethod == resolveMethod )
-        return;
-    _resolveMethod = resolveMethod;
-
-    // Rebuild shaders.
-    internalInit();
-}
-ABuffer::ResolveMethod ABuffer::getResolveMethod() const
-{
-    return( _resolveMethod );
-}
-
-std::string ABuffer::resolveMethodToString( const ResolveMethod& resolveMethod )
-{
-    switch( resolveMethod )
-    {
-    case RESOLVE_GELLY: return( "RESOLVE_GELLY" ); break;
-    case RESOLVE_ALPHA_BLEND: return( "RESOLVE_ALPHA_BLEND" ); break;
-    case RESOLVE_ALPHA_BLEND_CAD: return( "RESOLVE_ALPHA_BLEND_CAD" ); break;
-    default: return( "UNSPECIFIED" ); break;
-    }
-}
-ABuffer::ResolveMethod ABuffer::stringToResolveMethod( const std::string& resolveMethod )
-{
-    if( resolveMethod == "RESOLVE_GELLY" )
-        return( RESOLVE_GELLY );
-    else if( resolveMethod == "RESOLVE_ALPHA_BLEND" )
-        return( RESOLVE_ALPHA_BLEND );
-    else if( resolveMethod == "RESOLVE_ALPHA_BLEND_CAD" )
-        return( RESOLVE_ALPHA_BLEND_CAD );
-    else
-        return( UNSPECIFIED );
-}
-
-void ABuffer::setFragmentAlpha( const float fragmentAlpha )
-{
-    if( _fragmentAlpha == fragmentAlpha )
-        return;
-    _fragmentAlpha = fragmentAlpha;
-
-    if( _fragmentAlpha < 0.f ) _fragmentAlpha = 0.f;
-    else if( _fragmentAlpha > 1.f ) _fragmentAlpha = 1.f;
-
-    // Rebuild shaders.
-    internalInit();
-}
-float ABuffer::getFragmentAlpha() const
-{
-    return( _fragmentAlpha );
-}
-
-void ABuffer::setSecondaryColorBufferEnable( const bool secondaryEnable )
-{
-    if( _secondaryEnable == secondaryEnable )
-        return;
-    _secondaryEnable = secondaryEnable;
-
-    // Rebuild shaders.
-    internalInit();
-}
-bool ABuffer::getSecondaryColorBufferEnable() const
-{
-    return( _secondaryEnable );
-}
-
-
-
-
-
-#define ABUFFER_PAGE_SIZE 4
-
-ABufferContext::ABufferContext()
-    : _needsInit( true ),
-        _texWidth( 0 ),
-        _texHeight( 0 ),
-        _queryRequested( false ),
-        _sharedPoolSize( 16 ),
-        _queryID( 0 ),
-        _pageIdxBuffID( 0 ),
-        _fragCountBuffID( 0 ),
-        _semaphoreBuffID( 0 ),
-        _sharedPageListBuffID( 0 ),
-        _sharedLinkListBuffID( 0 ),
-        _curSharedPageBuffID( 0 )
-{
-}
-
-bool ABufferContext::init()
-{
-	JAG3D_ERROR_CHECK( "Start of ABufferContext::init()" );
-
-    if( _queryID == 0 )
-        glGenQueries( 1, &_queryID );
-
-	///Page idx storage///
-    if( _pageIdxBuffID == 0 )
-    	glGenBuffers( 1, &_pageIdxBuffID );
-	glBindBuffer( GL_TEXTURE_BUFFER, _pageIdxBuffID );
-	glBufferData( GL_TEXTURE_BUFFER, _texWidth * _texHeight * sizeof( GLuint ), NULL, GL_STATIC_DRAW );
-	glMakeBufferResidentNV( GL_TEXTURE_BUFFER, GL_READ_WRITE );
-	glGetBufferParameterui64vNV( GL_TEXTURE_BUFFER, GL_BUFFER_GPU_ADDRESS_NV, &_pageIdxAddress );
-	JAG3D_ERROR_CHECK( "abufferPageIdxID" );
-
-	///per-pixel page counter///
-    if( _fragCountBuffID == 0 )
-		glGenBuffers( 1, &_fragCountBuffID );
-	glBindBuffer( GL_TEXTURE_BUFFER, _fragCountBuffID );
-	glBufferData( GL_TEXTURE_BUFFER, _texWidth * _texHeight * sizeof( GLuint ), NULL, GL_STATIC_DRAW );
-	glMakeBufferResidentNV( GL_TEXTURE_BUFFER, GL_READ_WRITE );
-	glGetBufferParameterui64vNV( GL_TEXTURE_BUFFER, GL_BUFFER_GPU_ADDRESS_NV, &_fragCountAddress );
-	JAG3D_ERROR_CHECK( "abufferFragCountID" );
-
-	///Semaphore///
-    if( _semaphoreBuffID == 0 )
-		glGenBuffers( 1, &_semaphoreBuffID );
-	glBindBuffer( GL_TEXTURE_BUFFER, _semaphoreBuffID );
-	glBufferData( GL_TEXTURE_BUFFER, _texWidth * _texHeight * sizeof( GLuint ), NULL, GL_STATIC_DRAW );
-	glMakeBufferResidentNV( GL_TEXTURE_BUFFER, GL_READ_WRITE );
-	glGetBufferParameterui64vNV( GL_TEXTURE_BUFFER, GL_BUFFER_GPU_ADDRESS_NV, &_semaphoreAddress );
-	JAG3D_ERROR_CHECK( "semaphoreTexID" );
-
-	///Shared page list///
-    if( _sharedPageListBuffID == 0 )
-		glGenBuffers( 1, &_sharedPageListBuffID );
-	glBindBuffer( GL_TEXTURE_BUFFER, _sharedPageListBuffID );
-	glBufferData( GL_TEXTURE_BUFFER, _sharedPoolSize * sizeof( AbufferType ) * 4, NULL, GL_STATIC_DRAW );
-	glMakeBufferResidentNV( GL_TEXTURE_BUFFER, GL_READ_WRITE );
-	glGetBufferParameterui64vNV( GL_TEXTURE_BUFFER, GL_BUFFER_GPU_ADDRESS_NV, &_sharedPageListAddress ); 
-
-	///Shared link pointer list///
-    if( _sharedLinkListBuffID == 0 )
-		glGenBuffers( 1, &_sharedLinkListBuffID );
-	glBindBuffer( GL_TEXTURE_BUFFER, _sharedLinkListBuffID );
-	glBufferData( GL_TEXTURE_BUFFER, _sharedPoolSize / ABUFFER_PAGE_SIZE * sizeof( GLuint ), NULL, GL_STATIC_DRAW );
-	glMakeBufferResidentNV( GL_TEXTURE_BUFFER, GL_READ_WRITE );
-	glGetBufferParameterui64vNV( GL_TEXTURE_BUFFER, GL_BUFFER_GPU_ADDRESS_NV, &_sharedLinkListAddress ); 
-
-	///Shared page counter///
-	if( _curSharedPageBuffID == 0 )
-		glGenBuffers( 1, &_curSharedPageBuffID );
-	glBindBuffer( GL_ARRAY_BUFFER_ARB, _curSharedPageBuffID );
-	glBufferData( GL_ARRAY_BUFFER_ARB, sizeof( GLuint ), NULL, GL_STATIC_DRAW );
-	glMakeBufferResidentNV( GL_ARRAY_BUFFER_ARB, GL_READ_WRITE );
-	glGetBufferParameterui64vNV( GL_ARRAY_BUFFER_ARB, GL_BUFFER_GPU_ADDRESS_NV, &_curSharedPageAddress );
-	JAG3D_ERROR_CHECK( "curSharedPageBuffID" );
-
-    std::ostringstream ostr;
-    ostr << "[ABuffer Linked Lists] Memory usage: " <<
-        ( _sharedPoolSize * 4 * sizeof( float ) / 1024 ) / 1024.0f << "MB";
-    JAG3D_INFO_STATIC( "jag.ex.abuf", ostr.str() );
-
-    _needsInit = false;
-
-    return( true );
-}
-
-void ABufferContext::assignUniforms( const GLuint prog )
-{
-	glProgramUniformui64NV( prog, glGetUniformLocation( prog, "d_abufferPageIdx" ), _pageIdxAddress );
-	glProgramUniformui64NV( prog, glGetUniformLocation( prog, "d_abufferFragCount" ), _fragCountAddress );
-	glProgramUniformui64NV( prog, glGetUniformLocation( prog, "d_semaphore" ), _semaphoreAddress );
-
-	glProgramUniformui64NV( prog, glGetUniformLocation( prog, "d_sharedPageList" ), _sharedPageListAddress );
-	glProgramUniformui64NV( prog, glGetUniformLocation( prog, "d_sharedLinkList" ), _sharedLinkListAddress );
-
-	glProgramUniformui64NV( prog, glGetUniformLocation( prog, "d_curSharedPage" ), _curSharedPageAddress );
-
-	glProgramUniform1iEXT( prog, glGetUniformLocation( prog, "abufferSharedPoolSize" ), _sharedPoolSize );
-}
-
-bool ABufferContext::managePool()
-{
-	GLuint lastFrameNumFrags( 0 );
-	if( _queryRequested )
-    {
-		glGetQueryObjectuiv( _queryID, GL_QUERY_RESULT, &lastFrameNumFrags );
-	
-		//A fragments is not discarded each time a page fails to be allocated
-		if( lastFrameNumFrags > 0 )
-        {
-			_sharedPoolSize = _sharedPoolSize + ( lastFrameNumFrags / ABUFFER_PAGE_SIZE + 1 ) * ABUFFER_PAGE_SIZE * 2;
-            _needsInit = true;
-		}
-		_queryRequested = false;
-	}
-
-	return( lastFrameNumFrags == 0 );
-}
-#endif
 
 // jagUtil
 }
