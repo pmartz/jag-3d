@@ -73,7 +73,21 @@ public:
     \code
     in vec2 tc;
     \endcode
-    for compatibility.
+    to access these values.
+
+    Furthermore, QuadNode will insert a CPP definition into fragment shader source
+    as follows:
+    \code
+    #define TEXTURE COUNT <n>
+    \endcode
+    where \c <n> is the number of input textures.
+
+    Finally, texture samplers should be defined in custom fragment shader source as follows:
+    \code
+    uniform sampler2D texture0;
+    uniform sampler2D texture1;
+    \\ etc.
+    \endcode
     */
     void setShaders( const std::string& fragName, const std::string& vertName="" );
     /** \overload */
