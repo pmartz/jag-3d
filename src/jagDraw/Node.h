@@ -63,7 +63,7 @@ public:
     {
         return( _commands );
     }
-    /** \override */
+    /** \overload */
     const CommandMapPtr& getCommandMap() const
     {
         return( _commands );
