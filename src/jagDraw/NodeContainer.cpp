@@ -69,6 +69,7 @@ NodeContainer& NodeContainer::operator=( const NodeContainer& rhs )
     // LogBase does not support (and doesn't need) assignment operator.
     //jagBase::LogBase::operator=( rhs );
     _callbacks = rhs._callbacks;
+    _resetEnable = rhs._resetEnable;
     return( *this );
 }
 
