@@ -55,23 +55,23 @@ protected:
     jagDraw::CommandMap _commands;
 };
 
-DrawGraphCountVisitor::DrawGraphCountVisitor()
+inline DrawGraphCountVisitor::DrawGraphCountVisitor()
     : jagDraw::Visitor( "count" )
 {
     reset();
 }
-DrawGraphCountVisitor::~DrawGraphCountVisitor()
+inline DrawGraphCountVisitor::~DrawGraphCountVisitor()
 {
 }
 
-void DrawGraphCountVisitor::reset()
+inline void DrawGraphCountVisitor::reset()
 {
     _containers = 0;
     _nodes = 0;
     _drawables = 0;
     _nonEmptyCommandMapDeltas = 0;
 }
-void DrawGraphCountVisitor::dump( std::ostream& ostr )
+inline void DrawGraphCountVisitor::dump( std::ostream& ostr )
 {
     ostr << "            \tTotal" << std::endl;
     ostr << "            \t-----" << std::endl;
@@ -81,12 +81,12 @@ void DrawGraphCountVisitor::dump( std::ostream& ostr )
     ostr << "  CM deltas:\t" << _nonEmptyCommandMapDeltas << std::endl;
 }
 
-bool DrawGraphCountVisitor::visit( jagDraw::NodeContainer& nc )
+inline bool DrawGraphCountVisitor::visit( jagDraw::NodeContainer& nc )
 {
     ++_containers;
     return( true );
 }
-bool DrawGraphCountVisitor::visit( jagDraw::Node& node, jagDraw::NodeContainer& nc )
+inline bool DrawGraphCountVisitor::visit( jagDraw::Node& node, jagDraw::NodeContainer& nc )
 {
     ++_nodes;
     _drawables += node.getNumDrawables();
