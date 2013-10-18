@@ -77,11 +77,22 @@ public:
     for use by the ABuffer class. */
     jagDraw::DrawGraphPtr& createDrawGraphTemplate( const unsigned int startContainer=1 );
 
+    /** \brief Get the startiing NodeContainer index.
+    \details Use the createDrawGraphTemplate() method to set the start container.
+    Default is 1, leaving container 0 for the application.
+    ABuffer uses three containers, so the app may also use containers with
+    index > _startContainer + 2. */
+    unsigned int getStartContainer() const;
     /** \brief Get the CommandMap and collection callback for a-buffer geometry. 
     \details Calling code should assign this CommandMap and Node::Callback to the
     jagSG root node of any subgraphs that are to be rendered using the a-buffer
     algorithm. */
     void getABufferControls( jagDraw::CommandMapPtr& commands, jagSG::SelectContainerCallbackPtr& callback );
+    /** \overload */
+    void getABufferControls( jagSG::SelectContainerCallbackPtr& callback );
+    /** \brief Get the NodeContainer index for transparent geometry rendering.
+    \details Equivalent to getStartContainer() + 1. */
+    unsigned int getTransparentNodeContainer() const;
 
     /** \brief Call this function to render a frame. */
     void renderFrame( jagSG::CollectionVisitor& collect, jagDraw::DrawInfo& drawInfo );

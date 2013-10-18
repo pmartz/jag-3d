@@ -80,6 +80,11 @@ void Blur::setMaxContexts( const unsigned int numContexts )
 
 jagDraw::NodeContainer& Blur::getNodeContainer()
 {
+    if( _vQuad == NULL )
+        internalInit();
+
+    setMaxContexts( _numContexts );
+
     return( _container );
 }
 
