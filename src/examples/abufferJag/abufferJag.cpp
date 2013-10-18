@@ -23,6 +23,7 @@
 #include <jagDraw/Common.h>
 #include <jagSG/Common.h>
 #include <jagUtil/ABuffer.h>
+#include <jagUtil/Blur.h>
 #include <jagDisk/ReadWrite.h>
 #include <jagBase/Profile.h>
 #include <jagUtil/DrawGraphCountVisitor.h>
@@ -84,7 +85,9 @@ protected:
     jagUtil::ABufferPtr _aBuffer;
 
     jagDraw::FramebufferPtr _opaqueFBO;
-    jagDraw::TexturePtr _opaqueBuffer, _secondaryBuffer, _depthBuffer;
+    jagDraw::TexturePtr _opaqueBuffer, _secondaryBuffer, _glowBuffer, _depthBuffer;
+    jagUtil::BlurPtr _blur;
+
     int _width, _height;
 };
 
@@ -131,17 +134,21 @@ bool ABufferJag::startup( const unsigned int numContexts )
     _opaqueBuffer->setMaxContexts( numContexts );
 
     // Create second color buffer for glow effect.
-    image.reset( new jagDraw::Image() );
-    image->set( 0, GL_RGBA, _width, _height, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL );
     _secondaryBuffer.reset( new jagDraw::Texture( GL_TEXTURE_2D, image,
         jagDraw::SamplerPtr( new jagDraw::Sampler() ) ) );
     _secondaryBuffer->getSampler()->getSamplerState()->_minFilter = GL_NEAREST;
     _secondaryBuffer->getSampler()->getSamplerState()->_magFilter = GL_NEAREST;
     _secondaryBuffer->setMaxContexts( numContexts );
 
+    // Create glow effect output buffer
+    _glowBuffer.reset( new jagDraw::Texture( GL_TEXTURE_2D, image,
+        jagDraw::SamplerPtr( new jagDraw::Sampler() ) ) );
+    _glowBuffer->getSampler()->getSamplerState()->_minFilter = GL_NEAREST;
+    _glowBuffer->getSampler()->getSamplerState()->_magFilter = GL_NEAREST;
+    _glowBuffer->setMaxContexts( numContexts );
+
     // Depth texture used as depth buffer for opaque pass.
     // Also used during abuffer render to discard occluded fragments.
-    image.reset( new jagDraw::Image() );
     image->set( 0, GL_DEPTH_COMPONENT, _width, _height, 1, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, NULL );
     _depthBuffer.reset( new jagDraw::Texture( GL_TEXTURE_2D, image,
         jagDraw::SamplerPtr( new jagDraw::Sampler() ) ) );
@@ -150,14 +157,20 @@ bool ABufferJag::startup( const unsigned int numContexts )
     _depthBuffer->setMaxContexts( numContexts );
 
     // Create the ABuffer management object.
-    _aBuffer.reset( new jagUtil::ABuffer( _depthBuffer, _opaqueBuffer, _secondaryBuffer ) );
+    _aBuffer.reset( new jagUtil::ABuffer( _depthBuffer, _opaqueBuffer, _glowBuffer ) );
     _aBuffer->setMaxContexts( numContexts );
-    _aBuffer->setSecondaryColorBufferEnable( false );
+    //_aBuffer->setSecondaryColorBufferEnable( false );
 
     // Obtain the draw graph from the ABuffer object.
     // Default behavior is that the ABuffer owns NodeContainers 1-3, and we put
     // all opaque geometry in NodeContainer 0.
-    jagDraw::DrawGraphPtr drawGraph( _aBuffer->createDrawGraphTemplate() );
+    jagDraw::DrawGraphPtr drawGraph( _aBuffer->createDrawGraphTemplate( 2 ) );
+
+    // Create blur effect NodeContainer
+    _blur.reset( new jagUtil::Blur( _secondaryBuffer, _glowBuffer ) );
+    _blur->setMaxContexts( numContexts );
+    (*drawGraph)[ 1 ] = _blur->getNodeContainer();
+
     getCollectionVisitor().setDrawGraphTemplate( drawGraph );
 
     // Allow ABuffer object to specify which matrices it needs.
@@ -214,7 +227,7 @@ bool ABufferJag::startup( const unsigned int numContexts )
 
     // Create opaque CommandMap.
     jagDraw::ShaderPtr vs( DemoInterface::readShaderUtil( "jagmodel.vert" ) );
-    jagDraw::ShaderPtr fs( DemoInterface::readShaderUtil( "jagmodel.frag" ) );
+    jagDraw::ShaderPtr fs( DemoInterface::readShaderUtil( "abufferJagGlow.frag" ) );
 
     jagDraw::ProgramPtr prog;
     prog = jagDraw::ProgramPtr( new jagDraw::Program );
@@ -379,6 +392,7 @@ bool ABufferJag::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj
         drawGraph->setViewProj( viewMatrix, mxCore->computeProjection( minNear, maxFar ) );
 
         // The ABuffer object handles rendering.
+        // This line replaces drawGraph->execute( drawInfo );
         _aBuffer->renderFrame( collect, drawInfo );
     }
 #ifdef JAG3D_ENABLE_PROFILING
@@ -406,9 +420,25 @@ void ABufferJag::reshape( const int w, const int h )
     _height = h;
 
     _aBuffer->reshape( w, h );
+    _blur->reshape( w, h );
 
     // TBD reshape _opaqueBuffer and _depthBuffer.
+    jagDraw::ImagePtr image( new jagDraw::Image() );
+    image->set( 0, GL_RGBA, w, h, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL );
+    _opaqueBuffer->setImage( image );
+    _opaqueBuffer->markAllDirty();
+    _secondaryBuffer->setImage( image );
+    _secondaryBuffer->markAllDirty();
+    _glowBuffer->setImage( image );
+    _glowBuffer->markAllDirty();
 
+    image.reset( new jagDraw::Image() );
+    image->set( 0, GL_DEPTH_COMPONENT, w, h, 1, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, NULL );
+    _depthBuffer->setImage( image );
+    _depthBuffer->markAllDirty();
+
+
+    // Set aspect for all matrix control objects.
     const jagDraw::jagDrawContextID contextID( jagDraw::ContextSupport::instance()->getActiveContext() );
     _mxCore._data[ contextID ]->setAspect( ( double ) w / ( double ) h );
 }
