@@ -159,7 +159,6 @@ bool ABufferJag::startup( const unsigned int numContexts )
     // Create the ABuffer management object.
     _aBuffer.reset( new jagUtil::ABuffer( _depthBuffer, _opaqueBuffer, _glowBuffer ) );
     _aBuffer->setMaxContexts( numContexts );
-    //_aBuffer->setSecondaryColorBufferEnable( false );
 
     // Obtain the draw graph from the ABuffer object.
     // Default behavior is that the ABuffer owns NodeContainers 1-3, and we put
@@ -243,6 +242,7 @@ bool ABufferJag::startup( const unsigned int numContexts )
     _opaqueFBO.reset( new jagDraw::Framebuffer( GL_DRAW_FRAMEBUFFER ) );
     _opaqueFBO->setViewport( 0, 0, _width, _height );
     _opaqueFBO->setClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+    _opaqueFBO->setClearColor( 0.f, 0.f, 0.f, 0.f );
     _opaqueFBO->addAttachment( GL_DEPTH_ATTACHMENT, _depthBuffer );
     _opaqueFBO->addAttachment( GL_COLOR_ATTACHMENT0, _opaqueBuffer );
     _opaqueFBO->addAttachment( GL_COLOR_ATTACHMENT1, _secondaryBuffer );
