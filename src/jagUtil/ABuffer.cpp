@@ -94,7 +94,7 @@ void ABuffer::setMaxContexts( const unsigned int numContexts )
 
     _abufferCntxt._data.resize( numContexts );
 
-    if( _commands == NULL )
+    if( _callback == NULL )
         internalInit();
 
     _clearProgram->setMaxContexts( numContexts );
@@ -110,7 +110,7 @@ void ABuffer::setMaxContexts( const unsigned int numContexts )
 
 jagDraw::DrawGraphPtr& ABuffer::createDrawGraphTemplate( const unsigned int startContainer )
 {
-    if( _commands == NULL )
+    if( _callback == NULL )
         internalInit();
 
     if( _drawGraphTemplate == NULL )
@@ -125,6 +125,7 @@ jagDraw::DrawGraphPtr& ABuffer::createDrawGraphTemplate( const unsigned int star
     // (such as rendering opaque geometry into the _depthBuffer and _colorBufferN.
     _startContainer = startContainer;
     _drawGraphTemplate->resize( startContainer + 3 );
+    _callback->setContainer( _startContainer + 1 );
 
 
     // First, create the full screen tri pair used by the first and last NodeContainers.
@@ -308,13 +309,26 @@ jagDraw::DrawGraphPtr& ABuffer::createDrawGraphTemplate( const unsigned int star
     return( _drawGraphTemplate );
 }
 
+unsigned int ABuffer::getStartContainer() const
+{
+    return( _startContainer );
+}
 void ABuffer::getABufferControls( jagDraw::CommandMapPtr& commands, jagSG::SelectContainerCallbackPtr& callback )
 {
-    if( _commands == NULL )
+    if( _callback == NULL )
         internalInit();
-
     commands = _commands;
     callback = _callback;
+}
+void ABuffer::getABufferControls( jagSG::SelectContainerCallbackPtr& callback )
+{
+    if( _callback == NULL )
+        internalInit();
+    callback = _callback;
+}
+unsigned int ABuffer::getTransparentNodeContainer() const
+{
+    return( getStartContainer() + 1 );
 }
 
 void ABuffer::renderFrame( jagSG::CollectionVisitor& collect, jagDraw::DrawInfo& drawInfo )
@@ -355,7 +369,7 @@ void ABuffer::reshape( const int w, const int h )
     _width = w;
     _height = h;
 
-    if( _commands == NULL )
+    if( _callback == NULL )
         internalInit();
 
     _defaultFBO->setViewport( 0, 0, _width, _height );
