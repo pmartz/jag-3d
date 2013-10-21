@@ -24,6 +24,7 @@
 #include <jagUtil/QuadNode.h>
 #include <jagBase/Log.h>
 #include <jagBase/LogMacros.h>
+#include <jagDisk/ReadWrite.h>
 
 #include <gmtl/gmtl.h>
 
@@ -78,6 +79,38 @@ void Blur::setMaxContexts( const unsigned int numContexts )
     _container.setMaxContexts( numContexts );
 }
 
+
+// Convenience utility for reading shader source.
+#define __READ_UTIL( _RESULT, _TYPE, _NAME ) \
+    { \
+        boost::any anyTemp( jagDisk::read( _NAME ) ); \
+        try { \
+            _RESULT = boost::any_cast< _TYPE >( anyTemp ); \
+        } \
+        catch( boost::bad_any_cast bac ) \
+        { \
+            bac.what(); \
+        } \
+        if( _RESULT == NULL ) \
+        { \
+            JAG3D_FATAL( std::string("Can't load \"") + std::string(_NAME) + std::string("\".") ); \
+            return; \
+        } \
+    }
+
+void Blur::setShaders( const std::string& fragStage0, const std::string& fragStage1 )
+{
+    jagDraw::ShaderPtr stage0, stage1;
+    __READ_UTIL( stage0, jagDraw::ShaderPtr, fragStage0 );
+    __READ_UTIL( stage1, jagDraw::ShaderPtr, fragStage1 );
+
+    internalInit( stage0, stage1 );
+}
+void Blur::setShaders( jagDraw::ShaderPtr& fragStage0, jagDraw::ShaderPtr& fragStage1 )
+{
+    internalInit( fragStage0, fragStage1 );
+}
+
 jagDraw::NodeContainer& Blur::getNodeContainer()
 {
     if( _vQuad == NULL )
@@ -103,7 +136,7 @@ void Blur::reshape( const int w, const int h )
     _intermediateBuffer->markAllDirty();
 }
 
-void Blur::internalInit()
+void Blur::internalInit( jagDraw::ShaderPtr& fragStage0, jagDraw::ShaderPtr& fragStage1 )
 {
     // Create the intermediate color buffer.
     jagDraw::ImagePtr image( new jagDraw::Image() );
@@ -115,11 +148,17 @@ void Blur::internalInit()
 
     // Create the horizontal blur.
     _hQuad.reset( new QuadNode( _inputBuffer, _intermediateBuffer ) );
-    _hQuad->setShaders( "blurHorizontal.frag" );
+    if( fragStage0 != NULL )
+        _hQuad->setShaders( fragStage0 );
+    else
+        _hQuad->setShaders( "blurHorizontal.frag" );
 
     // Create the vertical blur.
     _vQuad.reset( new QuadNode( _intermediateBuffer, _outputBuffer ) );
-    _vQuad->setShaders( "blurVertical.frag" );
+    if( fragStage1 != NULL )
+        _vQuad->setShaders( fragStage1 );
+    else
+        _vQuad->setShaders( "blurVertical.frag" );
 
     // Configure the NodeContainer.
     _container.clear();

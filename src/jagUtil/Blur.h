@@ -65,15 +65,37 @@ public:
 
     void setMaxContexts( const unsigned int numContexts );
 
-    /** \brief TBD
-    \details TBD */
+    /** \brief Get the BLur NodeContainer.
+    \details In typical usage, application code should copy this
+    NodeContainer into the DrawGraph template passed to
+    jagSG::CollectionVisitor. */
     jagDraw::NodeContainer& getNodeContainer();
+
+    /** \brief Set custom fragment shaders by name.
+    \details Use this method to override the default vlur effect fragment shaders.
+    Fragment shader code should declare the following variables:
+    \code
+    uniform sampler2D texture0;
+    in vec2 tc;
+    \endcode
+    Blue executes in two passes. The \c texture0 input to \c fragStage0 is
+    the \c inputBuffer passed to the constructor. The \c texture0 input to
+    \c fragStage1 is the output of \c fragStage0.
+
+    The default shaders are:
+    \li stage 0: data/blurHorizontal.frag
+    \li stage 1: data/blurVertical.frag
+    */
+    void setShaders( const std::string& fragStage0, const std::string& fragStage1 );
+    /** \overload */
+    void setShaders( jagDraw::ShaderPtr& fragStage0, jagDraw::ShaderPtr& fragStage1 );
 
     /** \brief Call this function for a window resize event. */
     void reshape( const int w, const int h );
 
 protected:
-    void internalInit();
+    void internalInit( jagDraw::ShaderPtr& fragStage0=jagDraw::ShaderPtr((jagDraw::Shader*)NULL),
+        jagDraw::ShaderPtr& fragStage1=jagDraw::ShaderPtr((jagDraw::Shader*)NULL) );
 
     jagDraw::TexturePtr _inputBuffer, _outputBuffer;
 
