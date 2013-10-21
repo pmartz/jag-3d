@@ -309,6 +309,39 @@ jagDraw::DrawGraphPtr& ABuffer::createDrawGraphTemplate( const unsigned int star
     return( _drawGraphTemplate );
 }
 
+
+void ABuffer::setTransparencyEnable( jagSG::Node& node, const bool enable )
+{
+    if( _callback == NULL )
+        internalInit();
+
+    if( enable )
+    {
+        // Set for ABuffer transparency rendering.
+
+        // Save original CommandMap.
+        node.setUserDataPair( "ABufferOriginalCommandMap", node.getCommandMap() );
+
+        // Set new CommandMap.
+        if( node.getCommandMap() != NULL )
+            node.setCommandMap( jagDraw::CommandMapPtr( new jagDraw::CommandMap(
+                *_commands + *( node.getCommandMap() ) ) ) );
+        else
+            node.setCommandMap( _commands );
+
+        // Specify NodeContainer selection callback.
+        node.getCollectionCallbacks().addUnique( _callback );
+    }
+    else
+    {
+        // Restore to non-ABuffer.
+        jagDraw::CommandMapPtr commands(
+            node.getUserDataValue( "ABufferOriginalCommandMap" ).extract< jagDraw::CommandMapPtr >() );
+
+        // Remove NodeContainer selection callback.
+        node.getCollectionCallbacks().remove( _callback );
+    }
+}
 unsigned int ABuffer::getStartContainer() const
 {
     return( _startContainer );

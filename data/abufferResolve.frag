@@ -495,7 +495,12 @@ void main(void)
 
     if(coords.x>=0 && coords.y>=0 && coords.x<SCREEN_WIDTH && coords.y<SCREEN_HEIGHT )
     {
-        vec4 backgroundColor = vec4( texture2D( opaqueBuffer, tc ).rgb, 0.f );
+        vec4 backgroundColor = vec4( texture2D( opaqueBuffer, tc ).rgb, 0.f )
+#if USE_SECONDARY_COLOR_BUFFER
+            // Add secondary (glow effect) color buffer value.
+            + vec4( texture2D( secondaryBuffer, tc ).rgb, 0.f )
+#endif
+        ;
 
         int pageIdx=(int)getPixelCurrentPage(coords);
 
@@ -552,11 +557,6 @@ void main(void)
             // from the opaque pass.
             outFragColor = backgroundColor;
         }
-
-#if USE_SECONDARY_COLOR_BUFFER
-        // Add secondary (glow effect) color buffer value.
-        outFragColor += vec4( texture2D( secondaryBuffer, tc ).rgb, 0.f );
-#endif
     }
 }
 
