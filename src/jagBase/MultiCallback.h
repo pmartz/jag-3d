@@ -39,6 +39,35 @@ class MultiCallback : public std::vector< CB_TYPE >
 {
 public:
     typedef std::vector< CB_TYPE > DataVec;
+
+    bool contains( const CB_TYPE& cb )
+    {
+        for( DataVec::const_iterator it = begin(); it != end(); ++it )
+        {
+            if( *it == cb )
+                return( true );
+        }
+        return( false );
+    }
+
+    void addUnique( const CB_TYPE& cb )
+    {
+        if( contains( cb ) )
+            return;
+        push_back( cb );
+    }
+
+    void remove( const CB_TYPE& cb )
+    {
+        for( DataVec::const_iterator it = begin(); it != end(); ++it )
+        {
+            if( *it == cb )
+            {
+                erase( it );
+                break;
+            }
+        }
+    }
 };
 
 

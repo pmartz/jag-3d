@@ -77,6 +77,19 @@ public:
     for use by the ABuffer class. */
     jagDraw::DrawGraphPtr& createDrawGraphTemplate( const unsigned int startContainer=1 );
 
+
+    /** \name Transparency Control Support
+    \details Methods for controlling which parts of the scene graph are
+    rendered using the ABuffer transparency algorithm, and which are
+    rendered by normal (opaque) means. */
+    /**@{*/
+
+    /** \brief Convenience utility for toggling ABuffer transparancy at the jagSG::Node level.
+    \details If \c enable is true, this method saves the Node's existing CommandMap (of any)
+    as user data, replaces the CommandMap with one required for ABuffer rendering, and adds a
+    jagSG::SelectContainerCallback to route collected Drawables into the ABuffer's render
+    NodeContainer. If \c enable is false, \c node is restored to its original state. */
+    void setTransparencyEnable( jagSG::Node& node, const bool enable=true );
     /** \brief Get the startiing NodeContainer index.
     \details Use the createDrawGraphTemplate() method to set the start container.
     Default is 1, leaving container 0 for the application.
@@ -93,6 +106,9 @@ public:
     /** \brief Get the NodeContainer index for transparent geometry rendering.
     \details Equivalent to getStartContainer() + 1. */
     unsigned int getTransparentNodeContainer() const;
+
+    /**@}*/
+
 
     /** \brief Call this function to render a frame. */
     void renderFrame( jagSG::CollectionVisitor& collect, jagDraw::DrawInfo& drawInfo );

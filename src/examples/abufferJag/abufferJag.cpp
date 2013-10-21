@@ -193,15 +193,7 @@ bool ABufferJag::startup( const unsigned int numContexts )
     gmtl::setTrans( xformNode->getTransform(), gmtl::Vec3d( 0., model->getBound()->getRadius() * -1.5, 0. ) );
     _root->addChild( xformNode );
     xformNode->addChild( model );
-    {
-        // Specify control objects for abuffer rendering.
-        jagDraw::CommandMapPtr commands;
-        jagSG::SelectContainerCallbackPtr sccb;
-        _aBuffer->getABufferControls( commands, sccb );
-
-        xformNode->setCommandMap( commands );
-        xformNode->getCollectionCallbacks().push_back( sccb );
-    }
+    _aBuffer->setTransparencyEnable( *xformNode );
 
 
     // For gamepad speed control
