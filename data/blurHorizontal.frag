@@ -1,35 +1,27 @@
 #version 400
 
+#define PCT_BLUR 0.018f
+
 uniform sampler2D texture0;
-#if( TEXTURE_COUNT > 1 )
-uniform sampler2D texture1;
-#endif
-#if( TEXTURE_COUNT > 2 )
-uniform sampler2D texture2;
-#endif
-#if( TEXTURE_COUNT > 3 )
-uniform sampler2D texture3;
-#endif
 
 in vec2 tc;
 out vec4 finalColor;
 
+vec4 getSample( float offset, float weight )
+{
+    vec4 c = texture2D( texture0, vec2( tc.s + offset, tc.t ) ) * weight;
+    if( c.a == 0.f )
+        c.rgb = vec3( 0.f );
+    return( c );
+}
+
 void main()
 {
-    finalColor = 
-#if( TEXTURE_COUNT == 0 )
-        vec4( 0., 0., 0., 0. )
-#else
-        texture2D( texture0, tc )
-#endif
-#if( TEXTURE_COUNT > 1 )
-        + texture2D( texture1, tc )
-#endif
-#if( TEXTURE_COUNT > 2 )
-        + texture2D( texture2, tc )
-#endif
-#if( TEXTURE_COUNT > 3 )
-        + texture2D( texture3, tc )
-#endif
-        ;
+    vec4 s0 = getSample( -PCT_BLUR, 0.15f );
+    vec4 s1 = getSample( -PCT_BLUR*0.5f, 0.2f );
+    vec4 s2 = getSample( 0.f, 0.3f );
+    vec4 s3 = getSample( PCT_BLUR*0.5f, 0.2f );
+    vec4 s4 = getSample( PCT_BLUR, 0.15f );
+
+    finalColor = s0 + s1 + s2 + s3 + s4;
 }

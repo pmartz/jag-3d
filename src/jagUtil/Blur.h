@@ -44,7 +44,13 @@ namespace jagUtil
 
 /** \class Blur Blur.h <jagUtil/Blur.h>
 \brief Support for a simple 2-part blur effect.
-\details TBD
+\details
+
+The default shaders blur color values with non-zero alpha and
+ignore color values with zero alpha. For this to work properly,
+the input color buffer should be cleared to a color value with
+zero alpha, then color values to be blurred should be written
+with non-zero alpha.
 
 \logname jag.util.blur
 */
