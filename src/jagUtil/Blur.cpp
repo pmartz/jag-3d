@@ -115,11 +115,11 @@ void Blur::internalInit()
 
     // Create the horizontal blur.
     _hQuad.reset( new QuadNode( _inputBuffer, _intermediateBuffer ) );
-    //_hQuad->setShaders( "blurHorizontal.frag" );
+    _hQuad->setShaders( "blurHorizontal.frag" );
 
     // Create the vertical blur.
     _vQuad.reset( new QuadNode( _intermediateBuffer, _outputBuffer ) );
-    //_vQuad->setShaders( "blurVertical.frag" );
+    _vQuad->setShaders( "blurVertical.frag" );
 
     // Configure the NodeContainer.
     _container.clear();
