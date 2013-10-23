@@ -629,7 +629,13 @@ void Program::internalDetach( const unsigned int contextID )
     bool allDetached( true );
     for( unsigned int idx = 0; idx < _needsDetach._data.size(); ++idx )
     {
-        if( _needsDetach[ idx ] == GL_TRUE )
+        if( ( contextID == idx ) && ( numShaders == 0 ) )
+        {
+            // There were no shaders attached on this context. Could happen
+            // if Shader objects were added, but replaced prior to link.
+            _needsDetach[ idx ] = GL_FALSE;
+        }
+        else if( _needsDetach[ idx ] == GL_TRUE )
         {
             allDetached = false;
             break;
