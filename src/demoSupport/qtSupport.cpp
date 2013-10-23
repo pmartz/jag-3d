@@ -172,15 +172,16 @@ int main( int argc, char** argv )
     }
 
     std::vector< GLWidget* > _widgetVec;
-    while( nwin-- )
+    for( unsigned int idx=0; idx< nwin; ++idx )
     {
         GLWidget* w = new GLWidget( glFormat );
         _widgetVec.push_back( w );
         w->resize( winsize[ 0 ], winsize[ 1 ] );
-        w->show();
     }
-    if( !( di->startup( jagDraw::ContextSupport::instance()->getNumRegisteredContexts() ) ) )
+    if( !( di->startup( nwin ) ) )
         return( 1 );
+    for( unsigned int idx=0; idx< nwin; ++idx )
+        _widgetVec[ idx ]->show();
 
     return( app.exec() );
 
