@@ -170,6 +170,7 @@ protected:
     void internalInit();
 
     std::string shaderResolveParameters() const;
+    std::string shaderSizeParameters() const;
 
     jagDraw::TexturePtr _colorBuffer0, _colorBuffer1;
     jagDraw::TexturePtr _depthBuffer;

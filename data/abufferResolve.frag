@@ -20,9 +20,6 @@
 #define ABUFFERLINKEDLIST_HGLSL
 
 //Macros changed from the C++ side
-#define SCREEN_WIDTH 800
-#define SCREEN_HEIGHT 600
-
 #define ABUFFER_SIZE 16
 #define ABUFFER_PAGE_SIZE 4
 

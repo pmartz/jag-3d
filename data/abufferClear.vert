@@ -9,8 +9,6 @@
 #define BACKGROUND_COLOR_B 1.000000f
 #define BACKGROUND_COLOR_G 1.000000f
 #define BACKGROUND_COLOR_R 1.000000f
-#define SCREEN_HEIGHT 600
-#define SCREEN_WIDTH 800
 #define ABUFFER_SIZE 16
 /**
  * Fast Single-pass A-Buffer using OpenGL 4.0
