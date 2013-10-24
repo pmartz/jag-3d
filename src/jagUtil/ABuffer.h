@@ -203,6 +203,8 @@ struct ABufferContext
     ABufferContext();
 
 
+    std::string _logName;
+
     bool _needsInit;
     int _texWidth, _texHeight;
 

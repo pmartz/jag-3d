@@ -93,6 +93,9 @@ void ABuffer::setMaxContexts( const unsigned int numContexts )
     _numContexts = numContexts;
 
     _abufferCntxt._data.resize( numContexts );
+    BOOST_FOREACH( ABufferContext& data, _abufferCntxt._data )
+        data._logName = _logger.name();
+
 
     if( _callback == NULL )
         internalInit();
@@ -413,6 +416,7 @@ void ABuffer::reshape( const int w, const int h )
     {
         data._texWidth = w;
         data._texHeight = h;
+        data._needsInit = true;
     }
 }
 
@@ -723,7 +727,7 @@ bool ABufferContext::init()
     std::ostringstream ostr;
     ostr << "[ABuffer Linked Lists] Memory usage: " <<
         ( _sharedPoolSize * 4 * sizeof( float ) / 1024 ) / 1024.0f << "MB";
-    JAG3D_INFO_STATIC( "jag.ex.abuf", ostr.str() );
+    JAG3D_INFO_STATIC( _logName, ostr.str() );
 
     _needsInit = false;
 
@@ -754,6 +758,9 @@ bool ABufferContext::managePool()
 		//A fragments is not discarded each time a page fails to be allocated
 		if( lastFrameNumFrags > 0 )
         {
+            std::ostringstream ostr;
+            ostr << lastFrameNumFrags;
+            JAG3D_DEBUG_STATIC( _logName, std::string( ostr.str() ) + std::string( " discarded pixels." ) );
 			_sharedPoolSize = _sharedPoolSize + ( lastFrameNumFrags / ABUFFER_PAGE_SIZE + 1 ) * ABUFFER_PAGE_SIZE * 2;
             _needsInit = true;
 		}
