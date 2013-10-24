@@ -443,16 +443,11 @@ bool ABufferJag::keyCommand( const int command )
     default:
         return( false ); // Unhandled. Do not redraw.
         break;
-    case (int)'g':
-        _aBuffer->setResolveMethod( jagUtil::ABuffer::RESOLVE_GELLY );
-        JAG3D_CRITICAL_STATIC( _logName, "Using " + jagUtil::ABuffer::resolveMethodToString( _aBuffer->getResolveMethod() ) );
-        break;
+
     case (int)'a':
-        _aBuffer->setResolveMethod( jagUtil::ABuffer::RESOLVE_ALPHA_BLEND );
-        JAG3D_CRITICAL_STATIC( _logName, "Using " + jagUtil::ABuffer::resolveMethodToString( _aBuffer->getResolveMethod() ) );
-        break;
-    case (int)'c':
-        _aBuffer->setResolveMethod( jagUtil::ABuffer::RESOLVE_ALPHA_BLEND_CAD );
+        _aBuffer->setResolveMethod( jagUtil::ABuffer::ResolveMethod( _aBuffer->getResolveMethod() + 1 ) );
+        if( _aBuffer->getResolveMethod() == jagUtil::ABuffer::UNSPECIFIED )
+            _aBuffer->setResolveMethod( jagUtil::ABuffer::RESOLVE_GELLY );
         JAG3D_CRITICAL_STATIC( _logName, "Using " + jagUtil::ABuffer::resolveMethodToString( _aBuffer->getResolveMethod() ) );
         break;
 
