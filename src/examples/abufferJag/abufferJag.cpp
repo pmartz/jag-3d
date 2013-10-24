@@ -329,6 +329,8 @@ bool ABufferJag::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj
     if( !getStartupCalled() )
         return( true );
 
+    JAG3D_TRACE_STATIC( _logName, "frame()" );
+
     JAG3D_PROFILE( "frame" );
 
 #ifdef ENABLE_SORT
