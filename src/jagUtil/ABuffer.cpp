@@ -402,11 +402,13 @@ void ABuffer::reshape( const int w, const int h )
     _width = w;
     _height = h;
 
-    if( _callback == NULL )
-        internalInit();
+    // Rebuild shaders.
+    internalInit();
 
     _defaultFBO->setViewport( 0, 0, _width, _height );
 
+    // TBD Actually need to store w and h possibly different per context.
+    // There's no guarantee all displays will be the same size.
     BOOST_FOREACH( ABufferContext& data, _abufferCntxt._data )
     {
         data._texWidth = w;
@@ -438,6 +440,8 @@ void ABuffer::internalInit()
         jagDraw::ShaderPtr vs; __READ_UTIL( vs, "abufferClear.vert", "jag.util.abuf" );
         jagDraw::ShaderPtr fs; __READ_UTIL( fs, "abufferClear.frag", "jag.util.abuf" );
 
+        fs->insertSourceString( shaderSizeParameters() );
+
         if( _clearProgram == NULL )
             _clearProgram.reset( new jagDraw::Program() );
         else
@@ -450,6 +454,8 @@ void ABuffer::internalInit()
     {
         jagDraw::ShaderPtr vs; __READ_UTIL( vs, "abufferRender.vert", "jag.util.abuf" );
         jagDraw::ShaderPtr fs; __READ_UTIL( fs, "abufferRender.frag", "jag.util.abuf" );
+
+        fs->insertSourceString( shaderSizeParameters() );
 
         if( _renderProgram == NULL )
             _renderProgram.reset( new jagDraw::Program() );
@@ -467,6 +473,7 @@ void ABuffer::internalInit()
         jagDraw::ShaderPtr vs; __READ_UTIL( vs, "abufferResolve.vert", "jag.util.abuf" );
         jagDraw::ShaderPtr fs; __READ_UTIL( fs, "abufferResolve.frag", "jag.util.abuf" );
 
+        fs->insertSourceString( shaderSizeParameters() );
         fs->insertSourceString( shaderResolveParameters() );
 
         if( _resolveProgram == NULL )
@@ -481,14 +488,16 @@ void ABuffer::internalInit()
 
     // Create default FBO. First NodeContainer renders to _opaqueFBO,
     // but other NodeContainers render directly to the window.
-    _defaultFBO.reset( new jagDraw::Framebuffer( GL_DRAW_FRAMEBUFFER ) );
+    if( _defaultFBO == NULL )
+        _defaultFBO.reset( new jagDraw::Framebuffer( GL_DRAW_FRAMEBUFFER ) );
     _defaultFBO->setViewport( 0, 0, _width, _height );
     _defaultFBO->setClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
 
     // This is the CommandMap that the app must attach to any transparent geometry.
     {
-        _commands.reset( new jagDraw::CommandMap() );
+        if( _commands == NULL )
+            _commands.reset( new jagDraw::CommandMap() );
         _commands->insert( _renderProgram );
         _commands->insert( _defaultFBO );
 
@@ -503,9 +512,25 @@ void ABuffer::internalInit()
 
     // This is the NodeContainer selection callback that the app must attach to any transparent geometry.
     // ABuffer container is container the next container after _startContainer.
-    _callback.reset( new jagSG::SelectContainerCallback( _startContainer + 1 ) );
+    if( _callback == NULL )
+        _callback.reset( new jagSG::SelectContainerCallback( _startContainer + 1 ) );
 }
 
+std::string ABuffer::shaderSizeParameters() const
+{
+    std::ostringstream wStr, hStr;
+    wStr << _width;
+    hStr << _height;
+
+    const std::string eoln( "\n" );
+    return( std::string(
+
+        // Width and height
+        std::string( "#define SCREEN_WIDTH " ) + wStr.str() + eoln +
+        std::string( "#define SCREEN_HEIGHT " ) + hStr.str() + eoln +
+        eoln
+    ) );
+}
 std::string ABuffer::shaderResolveParameters() const
 {
     std::ostringstream alpha;

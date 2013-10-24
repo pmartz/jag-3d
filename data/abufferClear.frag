@@ -21,8 +21,6 @@
 #define ABUFFERLINKEDLIST_HGLSL
 
 //Macros changed from the C++ side
-#define SCREEN_WIDTH 800
-#define SCREEN_HEIGHT 600
 #define BACKGROUND_COLOR_R 1.000000f
 #define BACKGROUND_COLOR_G 1.000000f
 #define BACKGROUND_COLOR_B 1.000000f
