@@ -44,7 +44,9 @@ typedef jagBase::ptr< jagDraw::Texture >::shared_ptr TexturePtr;
 
 /** \class Texture Texture.h <jagDraw/Texture.h>
 \brief TBD
-\details TBD
+\details
+
+\logname jag.draw.tex
 */
 class JAGDRAW_EXPORT Texture : public DrawablePrep,
         public FramebufferAttachable, public ObjectID,

@@ -48,6 +48,8 @@ typedef jagBase::ptr< jagDraw::Framebuffer >::shared_ptr FramebufferPtr;
 \details
 \gl{section 4.4}.
 
+\logname jag.draw.fbo
+
 \specBegin Framebuffer
 
 Framebuffer supports the following functionality:
