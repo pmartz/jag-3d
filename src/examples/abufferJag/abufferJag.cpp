@@ -411,10 +411,7 @@ void ABufferJag::reshape( const int w, const int h )
     _width = w;
     _height = h;
 
-    _aBuffer->reshape( w, h );
-    _blur->reshape( w, h );
 
-    // TBD reshape _opaqueBuffer and _depthBuffer.
     jagDraw::ImagePtr image( new jagDraw::Image() );
     image->set( 0, GL_RGBA, w, h, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL );
     _opaqueBuffer->setImage( image );
@@ -429,6 +426,10 @@ void ABufferJag::reshape( const int w, const int h )
     _depthBuffer->setImage( image );
     _depthBuffer->markAllDirty();
 
+    _opaqueFBO->setViewport( 0, 0, w, h );
+
+    _blur->reshape( w, h );
+    _aBuffer->reshape( w, h );
 
     // Set aspect for all matrix control objects.
     const jagDraw::jagDrawContextID contextID( jagDraw::ContextSupport::instance()->getActiveContext() );
