@@ -351,6 +351,7 @@ void ABuffer::setTransparencyEnable( jagSG::Node& node, const bool enable )
         // Restore to non-ABuffer.
         jagDraw::CommandMapPtr commands(
             node.getUserDataValue( "ABufferOriginalCommandMap" ).extract< jagDraw::CommandMapPtr >() );
+        node.setCommandMap( commands );
 
         // Remove NodeContainer selection callback.
         node.getCollectionCallbacks().remove( _callback );
