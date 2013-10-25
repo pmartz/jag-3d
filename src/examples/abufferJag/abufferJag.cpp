@@ -84,6 +84,7 @@ protected:
 
     jagUtil::ABufferPtr _aBuffer;
 
+    jagSG::NodePtr _abufNode;
     jagDraw::FramebufferPtr _opaqueFBO;
     jagDraw::TexturePtr _opaqueBuffer, _secondaryBuffer, _glowBuffer, _depthBuffer;
     jagUtil::BlurPtr _blur;
@@ -189,11 +190,11 @@ bool ABufferJag::startup( const unsigned int numContexts )
     _root->addChild( model );
 
     // Add translated model instance for ABuffer transparency
-    jagSG::NodePtr xformNode( jagSG::NodePtr( new jagSG::Node() ) );
-    gmtl::setTrans( xformNode->getTransform(), gmtl::Vec3d( 0., model->getBound()->getRadius() * -1.5, 0. ) );
-    _root->addChild( xformNode );
-    xformNode->addChild( model );
-    _aBuffer->setTransparencyEnable( *xformNode );
+    _abufNode.reset( new jagSG::Node() );
+    gmtl::setTrans( _abufNode->getTransform(), gmtl::Vec3d( 0., model->getBound()->getRadius() * -1.5, 0. ) );
+    _root->addChild( _abufNode );
+    _abufNode->addChild( model );
+    _aBuffer->setTransparencyEnable( *_abufNode );
 
 
     // For gamepad speed control
@@ -446,24 +447,32 @@ bool ABufferJag::keyCommand( const int command )
         return( false ); // Unhandled. Do not redraw.
         break;
 
-    case (int)'a':
+    case (int)'g': // Toggle glow
+        break;
+
+    case (int)'e': // Toggle transparency
+        _aBuffer->toggleTransparencyEnable( *_abufNode );
+        break;
+
+    case (int)'a': // Cycle transparency resolve methods
         _aBuffer->setResolveMethod( jagUtil::ABuffer::ResolveMethod( _aBuffer->getResolveMethod() + 1 ) );
         if( _aBuffer->getResolveMethod() == jagUtil::ABuffer::UNSPECIFIED )
             _aBuffer->setResolveMethod( jagUtil::ABuffer::RESOLVE_GELLY );
         JAG3D_CRITICAL_STATIC( _logName, "Using " + jagUtil::ABuffer::resolveMethodToString( _aBuffer->getResolveMethod() ) );
         break;
 
-    case (int)'t':
+    case (int)'t': // Decrease/increate fragment alpha.
         _aBuffer->setFragmentAlpha( _aBuffer->getFragmentAlpha() - 0.033f );
         break;
     case (int)'T':
         _aBuffer->setFragmentAlpha( _aBuffer->getFragmentAlpha() + 0.033f );
         break;
+
+	case (int)'f': // Decrease/increase maximum fragments per pixel.
+		_aBuffer->setMaxFragments( max<int>(_aBuffer->getMaxFragments()-5,5));
+		break;
 	case (int)'F':
 		_aBuffer->setMaxFragments( _aBuffer->getMaxFragments() + 5);
-		break;
-	case (int)'f':
-		_aBuffer->setMaxFragments( max<int>(_aBuffer->getMaxFragments()-5,5));
 		break;
     }
 

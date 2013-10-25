@@ -90,6 +90,11 @@ public:
     jagSG::SelectContainerCallback to route collected Drawables into the ABuffer's render
     NodeContainer. If \c enable is false, \c node is restored to its original state. */
     void setTransparencyEnable( jagSG::Node& node, const bool enable=true );
+    /** \brief Convenience utility to toggle transparency at the jagSG::Node level.
+    \details Determines current transparency state by checking for presense or absence
+    of our NodeContainer selection callback, then calls setTransparencyEnable() to
+    invert the current state. */
+    void toggleTransparencyEnable( jagSG::Node& node );
     /** \brief Get the startiing NodeContainer index.
     \details Use the createDrawGraphTemplate() method to set the start container.
     Default is 1, leaving container 0 for the application.
