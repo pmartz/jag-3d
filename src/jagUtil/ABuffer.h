@@ -158,6 +158,23 @@ public:
     /** \brief Get the fragment alpha value. */
     float getFragmentAlpha() const;
 
+    /** \brief Set the maximum fragments per pixel.
+    \details ABuffer shader code uses a temporary buffer to sort the stored
+    fragments per pixel. Set the size of this buffer with setMaxFragments().
+    If the buffer is too small, incorrect rendering will occur. Too large of
+    a saze is wasteful of GPU core memory and may impede performance.
+
+    The buffer is declared in data/abufferResolve.frag as:
+    \code
+    vec4 fragmentList[ABUFFER_SIZE];
+    \endcode
+    setMaxFragments() controls the value of the ABUFFER_SIZE constant.
+
+    The default value is 16. */
+    void setMaxFragments( const unsigned int maxFragments );
+    /** \brief Get the maximum fragments per pixel. */
+    unsigned int getMaxFragments() const;
+
     /** \brief Enable or disable the secondary color buffer.
     \details If enabled, _colorBuffer1 will be added to the final resolve color.
     Default value: Default is true if \c colorBuffer1 is non-NULL during construction.
@@ -187,6 +204,7 @@ protected:
     jagDraw::ProgramPtr _clearProgram, _renderProgram, _resolveProgram;
     ResolveMethod _resolveMethod;
     float _fragmentAlpha;
+    unsigned int _maxFragments;
 
     unsigned int _numContexts;
 
