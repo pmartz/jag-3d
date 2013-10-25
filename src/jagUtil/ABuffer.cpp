@@ -356,6 +356,11 @@ void ABuffer::setTransparencyEnable( jagSG::Node& node, const bool enable )
         node.getCollectionCallbacks().remove( _callback );
     }
 }
+void ABuffer::toggleTransparencyEnable( jagSG::Node& node )
+{
+    const bool currentlyEnabled( node.getCollectionCallbacks().contains( _callback ) );
+    setTransparencyEnable( node, !currentlyEnabled );
+}
 unsigned int ABuffer::getStartContainer() const
 {
     return( _startContainer );
