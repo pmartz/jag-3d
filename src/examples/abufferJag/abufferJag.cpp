@@ -459,6 +459,12 @@ bool ABufferJag::keyCommand( const int command )
     case (int)'T':
         _aBuffer->setFragmentAlpha( _aBuffer->getFragmentAlpha() + 0.033f );
         break;
+	case (int)'F':
+		_aBuffer->setMaxFragments( _aBuffer->getMaxFragments() + 5);
+		break;
+	case (int)'f':
+		_aBuffer->setMaxFragments( max<int>(_aBuffer->getMaxFragments()-5,5));
+		break;
     }
 
     return( true ); // cause redraw.
