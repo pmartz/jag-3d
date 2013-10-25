@@ -389,6 +389,9 @@ void ABuffer::renderFrame( jagSG::CollectionVisitor& collect, jagDraw::DrawInfo&
     const unsigned int contextID( drawInfo._id );
     jagDraw::DrawGraphPtr drawGraph( collect.getDrawGraph() );
 
+    // From jagDraw::DrawGraph::execute():
+    drawInfo.startFrame();
+
     // Draw everything that comes before the ABuffer.
     unsigned int idx( 0 );
     while( idx < _startContainer )
