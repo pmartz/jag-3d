@@ -48,12 +48,10 @@ TransformCallback::~TransformCallback()
 
 bool TransformCallback::operator()( jagDraw::Node& node, jagDraw::DrawInfo& drawInfo )
 {
-    if( !drawInfo._startFrame &&
-        ( drawInfo._transform == node.getTransform() ) )
+    if( drawInfo._transform == node.getTransform() )
     {
         return( true );
     }
-    drawInfo.startFrame( false );
     drawInfo._transform = node.getTransform();
 
     _transform.setModel( node.getTransform() );

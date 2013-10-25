@@ -46,9 +46,6 @@ struct JAGDRAW_EXPORT DrawInfo
     void startFrame( const bool startFrame=true );
 
 
-    /** \brief Set to true just before the render traversal. */
-    bool _startFrame;
-
     /** Jag context identifier. */
     jagDrawContextID _id;
 
