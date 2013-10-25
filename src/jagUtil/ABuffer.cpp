@@ -162,6 +162,8 @@ jagDraw::DrawGraphPtr& ABuffer::createDrawGraphTemplate( const unsigned int star
 
                 _clearProgram->execute( di );
                 abc.assignUniforms( _clearProgram->getID( contextID ) );
+                _fbo->execute( di );
+                di._current.insert( _fbo );
 
                 // Set OpenGL state for a-buffer rendering.
                 glDisable( GL_DEPTH_TEST );
@@ -179,10 +181,12 @@ jagDraw::DrawGraphPtr& ABuffer::createDrawGraphTemplate( const unsigned int star
 
             jagDraw::ProgramPtr _clearProgram;
             PerContextABufferCntxt& _abufferCntxt;
+            jagDraw::FramebufferPtr _fbo;
         };
         typedef jagBase::ptr< ABufferClearCallback >::shared_ptr ABufferClearCallbackPtr;
         ABufferClearCallbackPtr abccb( ABufferClearCallbackPtr( new ABufferClearCallback( _abufferCntxt ) ) );
         abccb->_clearProgram = _clearProgram;
+        abccb->_fbo = _defaultFBO;
         nc.getCallbacks().push_back( abccb );
 
 
@@ -259,6 +263,8 @@ jagDraw::DrawGraphPtr& ABuffer::createDrawGraphTemplate( const unsigned int star
 
                 _resolveProgram->execute( di );
                 abc.assignUniforms( _resolveProgram->getID( contextID ) );
+                _fbo->execute( di );
+                di._current.insert( _fbo );
 
                 // Render the tri pair to clear the abuffer.
                 nc.internalExecute( di );
@@ -273,10 +279,12 @@ jagDraw::DrawGraphPtr& ABuffer::createDrawGraphTemplate( const unsigned int star
 
             jagDraw::ProgramPtr _resolveProgram;
             PerContextABufferCntxt& _abufferCntxt;
+            jagDraw::FramebufferPtr _fbo;
         };
         typedef jagBase::ptr< ABufferResolveCallback >::shared_ptr ABufferResolveCallbackPtr;
         ABufferResolveCallbackPtr abrcb( ABufferResolveCallbackPtr( new ABufferResolveCallback( _abufferCntxt ) ) );
         abrcb->_resolveProgram = _resolveProgram;
+        abrcb->_fbo = _defaultFBO;
         nc.getCallbacks().push_back( abrcb );
 
 
