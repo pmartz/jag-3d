@@ -52,6 +52,8 @@ in Products backProduct;
 in Products frontProduct;
 
 
+uniform vec4 glowColor;
+
 out vec4 fragData[ 2 ];
 
 
@@ -91,5 +93,5 @@ void main( void )
             front.shininess, viewVec, normal, lightVec );
     }
     fragData[ 0 ] = color;
-    fragData[ 1 ] = vec4( 0., 0.6, 0., 1. );
+    fragData[ 1 ] = glowColor;
 }

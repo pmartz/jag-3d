@@ -88,6 +88,7 @@ protected:
     jagDraw::FramebufferPtr _opaqueFBO;
     jagDraw::TexturePtr _opaqueBuffer, _secondaryBuffer, _glowBuffer, _depthBuffer;
     jagUtil::BlurPtr _blur;
+    jagDraw::UniformPtr _glowColor;
 
     int _width, _height;
 };
@@ -108,6 +109,13 @@ bool ABufferJag::parseOptions( bpo::variables_map& vm )
     return( true );
 }
 
+
+static gmtl::Point4f glowColors[] = {
+    gmtl::Point4f( 0.f, 0.5f, 0.f, 1.f ),
+    gmtl::Point4f( 1.f, 0.f,  0.f, 1.f ),
+    gmtl::Point4f( 0.f, 0.f,  0.f, 0.f )
+};
+static unsigned int glowIndex( 0 );
 
 bool ABufferJag::startup( const unsigned int numContexts )
 {
@@ -187,7 +195,16 @@ bool ABufferJag::startup( const unsigned int numContexts )
 
     // Add model instance as opaque
     _root.reset( new jagSG::Node );
-    _root->addChild( model );
+    jagSG::NodePtr opaqueNode( jagSG::NodePtr( new jagSG::Node() ) );
+    opaqueNode->addChild( model );
+    _root->addChild( opaqueNode );
+    {
+        // Add glow uniform to opaquwNode.
+        _glowColor.reset( new jagDraw::Uniform( "glowColor", glowColors[ glowIndex ] ) );
+        jagDraw::UniformSetPtr usp( jagDraw::UniformSetPtr( new jagDraw::UniformSet() ) );
+        usp->insert( _glowColor );
+        opaqueNode->getOrCreateCommandMap()->insert( usp );
+    }
 
     // Add translated model instance for ABuffer transparency
     _abufNode.reset( new jagSG::Node() );
@@ -448,6 +465,10 @@ bool ABufferJag::keyCommand( const int command )
         break;
 
     case (int)'g': // Toggle glow
+        ++glowIndex;
+        if( glowIndex >= sizeof( glowColors ) / sizeof( gmtl::Point4f ) )
+            glowIndex = 0;
+        _glowColor->set( glowColors[ glowIndex ] );
         break;
 
     case (int)'e': // Toggle transparency
