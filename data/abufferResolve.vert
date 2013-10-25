@@ -9,7 +9,6 @@
 #define BACKGROUND_COLOR_B 1.000000f
 #define BACKGROUND_COLOR_G 1.000000f
 #define BACKGROUND_COLOR_R 1.000000f
-#define ABUFFER_SIZE 16
 /**
  * Fast Single-pass A-Buffer using OpenGL 4.0
  * Copyright Cyril Crassin, June 2010
