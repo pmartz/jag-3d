@@ -246,6 +246,14 @@ bool ABufferJag::startup( const unsigned int numContexts )
     jagDraw::CommandMapPtr commands( _root->getOrCreateCommandMap() );
     commands->insert( prog );
 
+    {
+        // Root node needs a default value for glowColor uniform.
+        jagDraw::UniformPtr glowUniform( jagDraw::UniformPtr( new jagDraw::Uniform( "glowColor", gmtl::Point4f(0.f,0.f,0.f,0.f) ) ) );
+        jagDraw::UniformSetPtr usp( jagDraw::UniformSetPtr( new jagDraw::UniformSet() ) );
+        usp->insert( glowUniform );
+        commands->insert( usp );
+    }
+
     // Create a framebuffer object. The color texture will store opaque
     // rendering. The depth texture is shared with ABuffer to avoid
     // rendering behind opaque geometry.
