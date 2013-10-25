@@ -52,6 +52,7 @@ ABuffer::ABuffer( const std::string& logName )
       _height( 0 ),
       _resolveMethod( RESOLVE_ALPHA_BLEND_CAD ),
       _fragmentAlpha( 0.2f ),
+      _maxFragments( 16 ),
       _numContexts( 0 )
 {
 }
@@ -68,6 +69,7 @@ ABuffer::ABuffer( jagDraw::TexturePtr& depthBuffer, jagDraw::TexturePtr& colorBu
       _height( 0 ),
       _resolveMethod( RESOLVE_ALPHA_BLEND_CAD ),
       _fragmentAlpha( 0.2f ),
+      _maxFragments( 16 ),
       _numContexts( 0 )
 {
 }
@@ -81,6 +83,7 @@ ABuffer::ABuffer( const ABuffer& rhs )
       _height( rhs._height ),
       _resolveMethod( rhs._resolveMethod ),
       _fragmentAlpha( rhs._fragmentAlpha ),
+      _maxFragments( rhs._maxFragments ),
       _numContexts( rhs._numContexts )
 {
 }
@@ -547,6 +550,8 @@ std::string ABuffer::shaderResolveParameters() const
 {
     std::ostringstream alpha;
     alpha << std::fixed << std::setw( 7 ) << std::setprecision( 4 ) << _fragmentAlpha << "f";
+    std::ostringstream maxfrags;
+    maxfrags << _maxFragments;
     const std::string on( "1" );
     const std::string off( "0" );
     const std::string eoln( "\n" );
@@ -562,6 +567,9 @@ std::string ABuffer::shaderResolveParameters() const
         
         // Fragment slpha value
         std::string( "#define FRAGMENT_ALPHA " ) + alpha.str() + eoln +
+
+        // Maximum fragments per pixel
+        std::string( "#define ABUFFER_SIZE " ) + maxfrags.str() + eoln +
 
         // Enable secondary color buffer
         std::string( "#define USE_SECONDARY_COLOR_BUFFER " ) +
@@ -635,6 +643,20 @@ void ABuffer::setFragmentAlpha( const float fragmentAlpha )
 float ABuffer::getFragmentAlpha() const
 {
     return( _fragmentAlpha );
+}
+
+void ABuffer::setMaxFragments( const unsigned int maxFragments )
+{
+    if( _maxFragments == maxFragments )
+        return;
+    _maxFragments = maxFragments;
+
+    // Rebuild shaders.
+    internalInit();
+}
+unsigned int ABuffer::getMaxFragments() const
+{
+    return( _maxFragments );
 }
 
 void ABuffer::setSecondaryColorBufferEnable( const bool secondaryEnable )
