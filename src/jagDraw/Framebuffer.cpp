@@ -75,6 +75,13 @@ void Framebuffer::execute( DrawInfo& drawInfo )
     const GLuint id( getID( contextID )  );
     glBindFramebuffer( _target, id );
 
+    if( JAG3D_LOG_TRACE )
+    {
+        std::ostringstream ostr;
+        ostr << "Target: " << std::hex << _target << ", ID: " << std::dec << id;
+        JAG3D_TRACE( ostr.str() );
+    }
+
     if( anyDirty( contextID ) )
         attachAll( contextID );
 
