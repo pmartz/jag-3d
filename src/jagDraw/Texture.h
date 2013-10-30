@@ -120,13 +120,13 @@ public:
     virtual void execute( DrawInfo& drawInfo );
 
     /** \brief TBD
-    Override from ObjectID. */
+    \details Override from ObjectID. */
     virtual GLuint getID( const jagDraw::jagDrawContextID contextID );
     /** \brief TBD
-    Override from ObjectID. */
+    \details Override from ObjectID. */
     virtual void setMaxContexts( const unsigned int numContexts );
     /** \brief TBD
-    Override from ObjectID. */
+    \details Override from ObjectID. */
     virtual void deleteID( const jagDraw::jagDrawContextID contextID );
 
     /** \brief TBD
@@ -140,10 +140,14 @@ public:
     delete any existing OpenGL texture IDs, rather existing OpenGL IDs are re-used
     with new Image (texel) data.
 
-    In a typical use case, an application might change the Image data used
-    by a texture. Texture has no way to know that its Image has been altered,
+    In a typical use case, an application might change the Image data values used
+    by a texture. Texture has no way to know that its Image paramaters have been altered,
     so the app must call markAllDirty() to effect the change. */
     void markAllDirty();
+
+    /** \brief Check if the Texture is dirty for the given \c contextID.
+    \details Override from base class FramebufferAttachable. */
+    virtual bool isDirty( const unsigned int contextID ) const;
 
 protected:
     /** GL_TEXTURE_1D, GL_TEXTURE_2D, etc.<br>

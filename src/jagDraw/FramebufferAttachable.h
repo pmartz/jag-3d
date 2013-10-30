@@ -54,6 +54,10 @@ public:
 
     /** \brief TBD
     \details TBD */
+    virtual bool isDirty( const unsigned int contextID ) const = 0;
+
+    /** \brief TBD
+    \details TBD */
     virtual void attachToFBO( const jagDraw::jagDrawContextID contextID, const GLenum attachment ) = 0;
 
     /** \brief TBD

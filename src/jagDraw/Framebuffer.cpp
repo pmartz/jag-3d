@@ -82,8 +82,7 @@ void Framebuffer::execute( DrawInfo& drawInfo )
         JAG3D_TRACE( ostr.str() );
     }
 
-    if( anyDirty( contextID ) )
-        attachAll( contextID );
+    cleanDirtyAttachments( contextID );
 
     // TBD need better support for this.
     if( id == 0 )
@@ -279,6 +278,22 @@ bool Framebuffer::anyDirty(  const unsigned int contextID  ) const
     }
     return( false );
 }
+void Framebuffer::cleanDirtyAttachments( const unsigned int contextID )
+{
+    if( anyDirty( contextID ) )
+        attachAll( contextID );
+    else
+    {
+        // If any one of the attached images claims to be dirty, attach it.
+        BOOST_FOREACH( AttachmentMap::value_type pair, _attachments )
+        {
+            if( pair.second->isDirty( contextID ) )
+                pair.second->attachToFBO( contextID, pair.first );
+        }
+    }
+
+    JAG3D_FBO_ERROR_CHECK( "Framebuffer::cleanDirtyAttachments()" );
+}
 
 
 
@@ -335,11 +350,23 @@ GLuint Renderbuffer::getID( const jagDraw::jagDrawContextID contextID )
 
     return( _ids[ contextID ] );
 }
+void Renderbuffer::setMaxContexts( const unsigned int numContexts )
+{
+    ObjectID::setMaxContexts( numContexts );
+
+    _dirty._data.resize( numContexts );
+    BOOST_FOREACH( GLboolean& dirty, _dirty._data )
+    {
+        dirty = GL_TRUE;
+    }
+}
 
 void Renderbuffer::attachToFBO( const jagDraw::jagDrawContextID contextID, const GLenum attachment )
 {
     JAG3D_TRACE( "attachToFBO" );
     glFramebufferRenderbuffer( _fboTarget, attachment, GL_RENDERBUFFER, getID( contextID ) );
+
+    _dirty._data[ contextID ] = GL_FALSE;
 }
 
 void Renderbuffer::internalInit( const unsigned int contextID )
@@ -361,6 +388,14 @@ void Renderbuffer::internalInit( const unsigned int contextID )
     glBindRenderbuffer( GL_RENDERBUFFER, 0 );
 
     JAG3D_ERROR_CHECK( "Renderbuffer::internalInit()" );
+}
+
+bool Renderbuffer::isDirty( const unsigned int contextID ) const
+{
+    if( contextID < _dirty._data.size() )
+        return( _dirty._data[ contextID ] == GL_TRUE );
+    else
+        return( GL_TRUE );
 }
 
 

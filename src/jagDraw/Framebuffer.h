@@ -117,15 +117,15 @@ public:
     virtual void execute( DrawInfo& drawInfo );
 
     /** \brief TBD
-    Override from ObjectID. */
+    \details Override from ObjectID. */
     virtual GLuint getID( const jagDraw::jagDrawContextID contextID );
 
     /** \brief TBD
-    Override from ObjectID. */
+    \details Override from ObjectID. */
     virtual void setMaxContexts( const unsigned int numContexts );
 
     /** \brief TBD
-    Override from ObjectID. */
+    \details Override from ObjectID. */
     virtual void deleteID( const jagDraw::jagDrawContextID contextID );
 
 
@@ -212,6 +212,7 @@ protected:
     void dirtyAttachmentForAllContexts( const GLenum attachment );
     void dirtyAllAttachments( const unsigned int contextID, const bool dirty=true );
     bool anyDirty( const unsigned int contextID ) const;
+    void cleanDirtyAttachments( const unsigned int contextID );
 
     GLenum _target;
     AttachmentMap _attachments;
@@ -247,12 +248,19 @@ public:
     virtual ~Renderbuffer();
 
     /** \brief TBD
-    Override from DrawablePrep. */
+    \details Override from DrawablePrep. */
     virtual void execute( DrawInfo& drawInfo );
 
+    /** \brief Check if the Renderbuffer is dirty for the given \c contextID.
+    \details Override from base class FramebufferAttachable. */
+    virtual bool isDirty( const unsigned int contextID ) const;
+
     /** \brief TBD
-    Override from ObjectID. */
+    \details Override from ObjectID. */
     virtual GLuint getID( const jagDraw::jagDrawContextID contextID );
+    /** \brief TBD
+    \details Override from ObjectID. */
+    virtual void setMaxContexts( const unsigned int numContexts );
 
     /** \brief TBD
     \details Override from FramebufferAttachable.
@@ -265,6 +273,8 @@ protected:
     GLsizei _samples;
     GLenum _internalFormat;
     GLsizei _width, _height;
+
+    jagDraw::PerContextGLboolean _dirty;
 };
 
 typedef jagBase::ptr< jagDraw::Renderbuffer >::shared_ptr RenderbufferPtr;
