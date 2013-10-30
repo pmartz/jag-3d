@@ -143,6 +143,7 @@ void Blur::internalInit( jagDraw::ShaderPtr& fragStage0, jagDraw::ShaderPtr& fra
     image->set( 0, GL_RGBA, _width, _height, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL );
     _intermediateBuffer.reset( new jagDraw::Texture( GL_TEXTURE_2D, image,
         jagDraw::SamplerPtr( new jagDraw::Sampler() ) ) );
+    _intermediateBuffer->setUserDataName( "Blur intermediateBuffer" );
     _intermediateBuffer->getSampler()->getSamplerState()->_minFilter = GL_NEAREST;
     _intermediateBuffer->getSampler()->getSamplerState()->_magFilter = GL_NEAREST;
 
