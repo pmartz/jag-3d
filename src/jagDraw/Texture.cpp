@@ -217,6 +217,10 @@ void Texture::setMaxContexts( const unsigned int numContexts )
         _textureBuffer->setMaxContexts( numContexts );
 
     _dirty._data.resize( numContexts );
+    BOOST_FOREACH( GLboolean& dirty, _dirty._data )
+    {
+        dirty = GL_TRUE;
+    }
 }
 void Texture::deleteID( const jagDraw::jagDrawContextID contextID )
 {
@@ -229,10 +233,15 @@ void Texture::attachToFBO( const jagDraw::jagDrawContextID contextID, const GLen
 {
     JAG3D_TRACE( "attachToFBO() \"" + getUserDataName() + "\"" );
 
+    const GLuint texID( getID( contextID ) );
     if( _dirty[ contextID ] == GL_TRUE )
+    {
+        glBindTexture( _target, texID );
         internalSpecifyTexImage( contextID );
+        glBindTexture( _target, 0 );
+    }
 
-    glFramebufferTexture( _fboTarget, attachment, getID( contextID ), _fboTextureLevel );
+    glFramebufferTexture( _fboTarget, attachment, texID, _fboTextureLevel );
 }
 
 
@@ -397,6 +406,14 @@ void Texture::markAllDirty()
         item = GL_TRUE;
     }
 }
+bool Texture::isDirty( const unsigned int contextID ) const
+{
+    if( contextID < _dirty._data.size() )
+        return( _dirty._data[ contextID ] == GL_TRUE );
+    else
+        return( GL_TRUE );
+}
+
 
 
 
