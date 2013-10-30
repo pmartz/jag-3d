@@ -65,6 +65,9 @@ coherent uniform vec4 *d_sharedPageList;
 //Next available page in the shared pool
 coherent uniform uint *d_curSharedPage;
 
+uniform int screenWidth;
+uniform int screenHeight;
+
 
 //Access functions
 #if ABUFFER_USE_TEXTURES
@@ -102,33 +105,33 @@ uint pixelFragCounterAtomicAdd(ivec2 coords, uint val){
 #else
 
 bool semaphoreAcquire(ivec2 coords){
-        return atomicExchange(d_semaphore+coords.x+coords.y*SCREEN_WIDTH, 0U) != 0U;
+        return atomicExchange(d_semaphore+coords.x+coords.y*screenWidth, 0U) != 0U;
 }
 void semaphoreRelease(ivec2 coords){
-        atomicExchange(d_semaphore+coords.x+coords.y*SCREEN_WIDTH, 1U);
+        atomicExchange(d_semaphore+coords.x+coords.y*screenWidth, 1U);
 }
 bool getSemaphore(ivec2 coords){
-        return d_semaphore[coords.x+coords.y*SCREEN_WIDTH]==0U;
+        return d_semaphore[coords.x+coords.y*screenWidth]==0U;
 }
 void setSemaphore(ivec2 coords, bool val){
-        d_semaphore[coords.x+coords.y*SCREEN_WIDTH]=val ? 0U : 1U;
+        d_semaphore[coords.x+coords.y*screenWidth]=val ? 0U : 1U;
 }
 
 uint getPixelCurrentPage(ivec2 coords){
-        return d_abufferPageIdx[coords.x+coords.y*SCREEN_WIDTH];
+        return d_abufferPageIdx[coords.x+coords.y*screenWidth];
 }
 void setPixelCurrentPage(ivec2 coords, uint newpageidx){
-        d_abufferPageIdx[coords.x+coords.y*SCREEN_WIDTH]=newpageidx;
+        d_abufferPageIdx[coords.x+coords.y*screenWidth]=newpageidx;
 }
 
 uint getPixelFragCounter(ivec2 coords){
-        return d_abufferFragCount[coords.x+coords.y*SCREEN_WIDTH];
+        return d_abufferFragCount[coords.x+coords.y*screenWidth];
 }
 void setPixelFragCounter(ivec2 coords, uint val){
-        d_abufferFragCount[coords.x+coords.y*SCREEN_WIDTH]=val;
+        d_abufferFragCount[coords.x+coords.y*screenWidth]=val;
 }
 uint pixelFragCounterAtomicAdd(ivec2 coords, uint val){
-        return atomicAdd(d_abufferFragCount+coords.x+coords.y*SCREEN_WIDTH, val);
+        return atomicAdd(d_abufferFragCount+coords.x+coords.y*screenWidth, val);
 }
 
 #endif
@@ -184,7 +187,7 @@ void main(void) {
 
         ivec2 coords=ivec2(gl_FragCoord.xy);
 
-        if(coords.x>=0 && coords.y>=0 && coords.x<SCREEN_WIDTH && coords.y<SCREEN_HEIGHT )
+        if(coords.x>=0 && coords.y>=0 && coords.x<screenWidth && coords.y<screenHeight )
         {
                 setPixelCurrentPage(coords, 0U);
                 setPixelFragCounter(coords, 0U);
