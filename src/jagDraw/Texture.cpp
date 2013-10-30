@@ -114,6 +114,8 @@ bool Texture::isProxy() const
 
 void Texture::setImage( ImagePtr image, const GLenum cubeTarget )
 {
+    JAG3D_TRACE( "setImage() \"" + getUserDataName() + "\"" );
+
     markAllDirty();
 
     if( cubeTarget == GL_NONE )
@@ -166,7 +168,7 @@ SamplerPtr Texture::getSampler() const
 
 void Texture::activate( DrawInfo& drawInfo, const unsigned int unit )
 {
-    JAG3D_TRACE( "activate" );
+    JAG3D_TRACE( "activate() \"" + getUserDataName() + "\"" );
 
     GLenum localUnit( ( unit >= GL_TEXTURE0 ) ? unit : GL_TEXTURE0 + unit );
     glActiveTexture( localUnit );
@@ -179,7 +181,7 @@ void Texture::activate( DrawInfo& drawInfo, const unsigned int unit )
 
 void Texture::execute( DrawInfo& drawInfo )
 {
-    JAG3D_TRACE( "execute" );
+    JAG3D_TRACE( "execute() \"" + getUserDataName() + "\"" );
 
     const unsigned int contextID( drawInfo._id );
 
@@ -225,7 +227,7 @@ void Texture::deleteID( const jagDraw::jagDrawContextID contextID )
 
 void Texture::attachToFBO( const jagDraw::jagDrawContextID contextID, const GLenum attachment )
 {
-    JAG3D_TRACE( "attachToFBO" );
+    JAG3D_TRACE( "attachToFBO() \"" + getUserDataName() + "\"" );
 
     if( _dirty[ contextID ] == GL_TRUE )
         internalSpecifyTexImage( contextID );
@@ -236,7 +238,7 @@ void Texture::attachToFBO( const jagDraw::jagDrawContextID contextID, const GLen
 
 void Texture::internalInit( const unsigned int contextID )
 {
-    JAG3D_TRACE( "internalInit" );
+    JAG3D_TRACE( "internalInit() \"" + getUserDataName() + "\"" );
 
     glGenTextures( 1, &( _ids[ contextID ] ) );
     const GLint id( _ids[ contextID ] );
@@ -263,6 +265,8 @@ void Texture::internalInit( const unsigned int contextID )
 
 void Texture::internalSpecifyTexImage( const unsigned int contextID )
 {
+    JAG3D_TRACE( "internalSpecifyTexImage() \"" + getUserDataName() + "\"" );
+
     if( !( _image.empty() ) )
     {
         if( ( _target != GL_TEXTURE_CUBE_MAP ) &&
@@ -299,6 +303,8 @@ void Texture::internalSpecifyTexImage( const unsigned int contextID )
 
 void Texture::internalSpecifyTexImage( const GLenum target, ImagePtr image )
 {
+    JAG3D_TRACE( "internalSpecifyTexImage(ImagePtr) \"" + getUserDataName() + "\"" );
+
     GLint level( 0 );
     GLenum internalFormat( GL_NONE );
     GLsizei width( 0 ), height( 0 ), depth( 0 );
@@ -384,6 +390,8 @@ void Texture::internalSpecifyTexImage( const GLenum target, ImagePtr image )
 
 void Texture::markAllDirty()
 {
+    JAG3D_TRACE( "markAllDirty() \"" + getUserDataName() + "\"" );
+
     BOOST_FOREACH( GLboolean& item, _dirty._data )
     {
         item = GL_TRUE;
