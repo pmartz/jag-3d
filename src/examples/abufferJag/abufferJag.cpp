@@ -138,6 +138,7 @@ bool ABufferJag::startup( const unsigned int numContexts )
     image->set( 0, GL_RGBA, _width, _height, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL );
     _opaqueBuffer.reset( new jagDraw::Texture( GL_TEXTURE_2D, image,
         jagDraw::SamplerPtr( new jagDraw::Sampler() ) ) );
+    _opaqueBuffer->setUserDataName( "opaqueBuffer" );
     _opaqueBuffer->getSampler()->getSamplerState()->_minFilter = GL_NEAREST;
     _opaqueBuffer->getSampler()->getSamplerState()->_magFilter = GL_NEAREST;
     _opaqueBuffer->setMaxContexts( numContexts );
@@ -145,6 +146,7 @@ bool ABufferJag::startup( const unsigned int numContexts )
     // Create second color buffer for glow effect.
     _secondaryBuffer.reset( new jagDraw::Texture( GL_TEXTURE_2D, image,
         jagDraw::SamplerPtr( new jagDraw::Sampler() ) ) );
+    _secondaryBuffer->setUserDataName( "secondaryBuffer" );
     _secondaryBuffer->getSampler()->getSamplerState()->_minFilter = GL_NEAREST;
     _secondaryBuffer->getSampler()->getSamplerState()->_magFilter = GL_NEAREST;
     _secondaryBuffer->setMaxContexts( numContexts );
@@ -152,6 +154,7 @@ bool ABufferJag::startup( const unsigned int numContexts )
     // Create glow effect output buffer
     _glowBuffer.reset( new jagDraw::Texture( GL_TEXTURE_2D, image,
         jagDraw::SamplerPtr( new jagDraw::Sampler() ) ) );
+    _glowBuffer->setUserDataName( "glowBuffer" );
     _glowBuffer->getSampler()->getSamplerState()->_minFilter = GL_NEAREST;
     _glowBuffer->getSampler()->getSamplerState()->_magFilter = GL_NEAREST;
     _glowBuffer->setMaxContexts( numContexts );
@@ -161,6 +164,7 @@ bool ABufferJag::startup( const unsigned int numContexts )
     image->set( 0, GL_DEPTH_COMPONENT, _width, _height, 1, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, NULL );
     _depthBuffer.reset( new jagDraw::Texture( GL_TEXTURE_2D, image,
         jagDraw::SamplerPtr( new jagDraw::Sampler() ) ) );
+    _depthBuffer->setUserDataName( "depthBuffer" );
     _depthBuffer->getSampler()->getSamplerState()->_minFilter = GL_NEAREST;
     _depthBuffer->getSampler()->getSamplerState()->_magFilter = GL_NEAREST;
     _depthBuffer->setMaxContexts( numContexts );
@@ -168,6 +172,7 @@ bool ABufferJag::startup( const unsigned int numContexts )
     // Create the ABuffer management object.
     _aBuffer.reset( new jagUtil::ABuffer( _depthBuffer, _opaqueBuffer, _glowBuffer ) );
     _aBuffer->setMaxContexts( numContexts );
+    //_aBuffer->setSecondaryColorBufferEnable( false );
 
     // Obtain the draw graph from the ABuffer object.
     // Default behavior is that the ABuffer owns NodeContainers 1-3, and we put
@@ -443,16 +448,12 @@ void ABufferJag::reshape( const int w, const int h )
     jagDraw::ImagePtr image( new jagDraw::Image() );
     image->set( 0, GL_RGBA, w, h, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL );
     _opaqueBuffer->setImage( image );
-    _opaqueBuffer->markAllDirty();
     _secondaryBuffer->setImage( image );
-    _secondaryBuffer->markAllDirty();
     _glowBuffer->setImage( image );
-    _glowBuffer->markAllDirty();
 
     image.reset( new jagDraw::Image() );
     image->set( 0, GL_DEPTH_COMPONENT, w, h, 1, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, NULL );
     _depthBuffer->setImage( image );
-    _depthBuffer->markAllDirty();
 
     _opaqueFBO->setViewport( 0, 0, w, h );
 

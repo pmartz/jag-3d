@@ -266,8 +266,6 @@ jagDraw::DrawGraphPtr& ABuffer::createDrawGraphTemplate( const unsigned int star
 
                 _resolveProgram->execute( di );
                 abc.assignUniforms( _resolveProgram->getID( contextID ) );
-                _fbo->execute( di );
-                di._current.insert( _fbo );
 
                 // Render the tri pair to clear the abuffer.
                 nc.internalExecute( di );
@@ -282,12 +280,10 @@ jagDraw::DrawGraphPtr& ABuffer::createDrawGraphTemplate( const unsigned int star
 
             jagDraw::ProgramPtr _resolveProgram;
             PerContextABufferCntxt& _abufferCntxt;
-            jagDraw::FramebufferPtr _fbo;
         };
         typedef jagBase::ptr< ABufferResolveCallback >::shared_ptr ABufferResolveCallbackPtr;
         ABufferResolveCallbackPtr abrcb( ABufferResolveCallbackPtr( new ABufferResolveCallback( _abufferCntxt ) ) );
         abrcb->_resolveProgram = _resolveProgram;
-        abrcb->_fbo = _defaultFBO;
         nc.getCallbacks().push_back( abrcb );
 
 
@@ -388,6 +384,7 @@ void ABuffer::renderFrame( jagSG::CollectionVisitor& collect, jagDraw::DrawInfo&
 {
     const unsigned int contextID( drawInfo._id );
     jagDraw::DrawGraphPtr drawGraph( collect.getDrawGraph() );
+    ABufferContext& abc( _abufferCntxt._data[ contextID ] );
 
     // From jagDraw::DrawGraph::execute():
     drawInfo.startFrame();
@@ -411,7 +408,7 @@ void ABuffer::renderFrame( jagSG::CollectionVisitor& collect, jagDraw::DrawInfo&
 
         // managePool() returns true if 0 pixels exceeded the page pool.
         // In that case, the frame is OK and doesn't need to be re-rendered.
-        frameOK = _abufferCntxt._data[ contextID ].managePool();
+        frameOK = abc.managePool();
     }
     idx += 3;
 
@@ -424,9 +421,6 @@ void ABuffer::reshape( const int w, const int h )
 {
     _width = w;
     _height = h;
-
-    // Rebuild shaders.
-    internalInit();
 
     _defaultFBO->setViewport( 0, 0, _width, _height );
 
@@ -464,8 +458,6 @@ void ABuffer::internalInit()
         jagDraw::ShaderPtr vs; __READ_UTIL( vs, "abufferClear.vert", "jag.util.abuf" );
         jagDraw::ShaderPtr fs; __READ_UTIL( fs, "abufferClear.frag", "jag.util.abuf" );
 
-        fs->insertSourceString( shaderSizeParameters() );
-
         if( _clearProgram == NULL )
             _clearProgram.reset( new jagDraw::Program() );
         else
@@ -478,8 +470,6 @@ void ABuffer::internalInit()
     {
         jagDraw::ShaderPtr vs; __READ_UTIL( vs, "abufferRender.vert", "jag.util.abuf" );
         jagDraw::ShaderPtr fs; __READ_UTIL( fs, "abufferRender.frag", "jag.util.abuf" );
-
-        fs->insertSourceString( shaderSizeParameters() );
 
         if( _renderProgram == NULL )
             _renderProgram.reset( new jagDraw::Program() );
@@ -497,7 +487,6 @@ void ABuffer::internalInit()
         jagDraw::ShaderPtr vs; __READ_UTIL( vs, "abufferResolve.vert", "jag.util.abuf" );
         jagDraw::ShaderPtr fs; __READ_UTIL( fs, "abufferResolve.frag", "jag.util.abuf" );
 
-        fs->insertSourceString( shaderSizeParameters() );
         fs->insertSourceString( shaderResolveParameters() );
 
         if( _resolveProgram == NULL )
@@ -515,7 +504,7 @@ void ABuffer::internalInit()
     if( _defaultFBO == NULL )
         _defaultFBO.reset( new jagDraw::Framebuffer( GL_DRAW_FRAMEBUFFER ) );
     _defaultFBO->setViewport( 0, 0, _width, _height );
-    _defaultFBO->setClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+    _defaultFBO->setClear( 0 ); // No need to clear anything.
 
 
     // This is the CommandMap that the app must attach to any transparent geometry.
@@ -540,21 +529,6 @@ void ABuffer::internalInit()
         _callback.reset( new jagSG::SelectContainerCallback( _startContainer + 1 ) );
 }
 
-std::string ABuffer::shaderSizeParameters() const
-{
-    std::ostringstream wStr, hStr;
-    wStr << _width;
-    hStr << _height;
-
-    const std::string eoln( "\n" );
-    return( std::string(
-
-        // Width and height
-        std::string( "#define SCREEN_WIDTH " ) + wStr.str() + eoln +
-        std::string( "#define SCREEN_HEIGHT " ) + hStr.str() + eoln +
-        eoln
-    ) );
-}
 std::string ABuffer::shaderResolveParameters() const
 {
     std::ostringstream alpha;
@@ -775,16 +749,19 @@ bool ABufferContext::init()
 
 void ABufferContext::assignUniforms( const GLuint prog )
 {
-	glProgramUniformui64NV( prog, glGetUniformLocation( prog, "d_abufferPageIdx" ), _pageIdxAddress );
-	glProgramUniformui64NV( prog, glGetUniformLocation( prog, "d_abufferFragCount" ), _fragCountAddress );
-	glProgramUniformui64NV( prog, glGetUniformLocation( prog, "d_semaphore" ), _semaphoreAddress );
+    glProgramUniformui64NV( prog, glGetUniformLocation( prog, "d_abufferPageIdx" ), _pageIdxAddress );
+    glProgramUniformui64NV( prog, glGetUniformLocation( prog, "d_abufferFragCount" ), _fragCountAddress );
+    glProgramUniformui64NV( prog, glGetUniformLocation( prog, "d_semaphore" ), _semaphoreAddress );
 
-	glProgramUniformui64NV( prog, glGetUniformLocation( prog, "d_sharedPageList" ), _sharedPageListAddress );
-	glProgramUniformui64NV( prog, glGetUniformLocation( prog, "d_sharedLinkList" ), _sharedLinkListAddress );
+    glProgramUniformui64NV( prog, glGetUniformLocation( prog, "d_sharedPageList" ), _sharedPageListAddress );
+    glProgramUniformui64NV( prog, glGetUniformLocation( prog, "d_sharedLinkList" ), _sharedLinkListAddress );
 
-	glProgramUniformui64NV( prog, glGetUniformLocation( prog, "d_curSharedPage" ), _curSharedPageAddress );
+    glProgramUniformui64NV( prog, glGetUniformLocation( prog, "d_curSharedPage" ), _curSharedPageAddress );
 
-	glProgramUniform1iEXT( prog, glGetUniformLocation( prog, "abufferSharedPoolSize" ), _sharedPoolSize );
+    glProgramUniform1iEXT( prog, glGetUniformLocation( prog, "abufferSharedPoolSize" ), _sharedPoolSize );
+
+    glProgramUniform1iEXT( prog, glGetUniformLocation( prog, "screenWidth" ), _texWidth );
+    glProgramUniform1iEXT( prog, glGetUniformLocation( prog, "screenHeight" ), _texHeight );
 }
 
 bool ABufferContext::managePool()
@@ -800,6 +777,7 @@ bool ABufferContext::managePool()
             std::ostringstream ostr;
             ostr << lastFrameNumFrags;
             JAG3D_DEBUG_STATIC( _logName, std::string( ostr.str() ) + std::string( " discarded pixels." ) );
+
 			_sharedPoolSize = _sharedPoolSize + ( lastFrameNumFrags / ABUFFER_PAGE_SIZE + 1 ) * ABUFFER_PAGE_SIZE * 2;
             _needsInit = true;
 		}

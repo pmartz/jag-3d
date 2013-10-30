@@ -59,6 +59,9 @@ coherent uniform vec4 *d_sharedPageList;
 //Next available page in the shared pool
 coherent uniform uint *d_curSharedPage;
 
+uniform int screenWidth;
+uniform int screenHeight;
+
 
 //Access functions
 #if ABUFFER_USE_TEXTURES
@@ -106,41 +109,41 @@ uint pixelFragCounterAtomicAdd(ivec2 coords, uint val)
 
 bool semaphoreAcquire(ivec2 coords)
 {
-    return atomicExchange(d_semaphore+coords.x+coords.y*SCREEN_WIDTH, 0U) != 0U;
+    return atomicExchange(d_semaphore+coords.x+coords.y*screenWidth, 0U) != 0U;
 }
 void semaphoreRelease(ivec2 coords)
 {
-    atomicExchange(d_semaphore+coords.x+coords.y*SCREEN_WIDTH, 1U);
+    atomicExchange(d_semaphore+coords.x+coords.y*screenWidth, 1U);
 }
 bool getSemaphore(ivec2 coords)
 {
-    return d_semaphore[coords.x+coords.y*SCREEN_WIDTH]==0U;
+    return d_semaphore[coords.x+coords.y*screenWidth]==0U;
 }
 void setSemaphore(ivec2 coords, bool val)
 {
-    d_semaphore[coords.x+coords.y*SCREEN_WIDTH]=val ? 0U : 1U;
+    d_semaphore[coords.x+coords.y*screenWidth]=val ? 0U : 1U;
 }
 
 uint getPixelCurrentPage(ivec2 coords)
 {
-    return d_abufferPageIdx[coords.x+coords.y*SCREEN_WIDTH];
+    return d_abufferPageIdx[coords.x+coords.y*screenWidth];
 }
 void setPixelCurrentPage(ivec2 coords, uint newpageidx)
 {
-    d_abufferPageIdx[coords.x+coords.y*SCREEN_WIDTH]=newpageidx;
+    d_abufferPageIdx[coords.x+coords.y*screenWidth]=newpageidx;
 }
 
 uint getPixelFragCounter(ivec2 coords)
 {
-    return d_abufferFragCount[coords.x+coords.y*SCREEN_WIDTH];
+    return d_abufferFragCount[coords.x+coords.y*screenWidth];
 }
 void setPixelFragCounter(ivec2 coords, uint val)
 {
-    d_abufferFragCount[coords.x+coords.y*SCREEN_WIDTH]=val;
+    d_abufferFragCount[coords.x+coords.y*screenWidth]=val;
 }
 uint pixelFragCounterAtomicAdd(ivec2 coords, uint val)
 {
-    return atomicAdd(d_abufferFragCount+coords.x+coords.y*SCREEN_WIDTH, val);
+    return atomicAdd(d_abufferFragCount+coords.x+coords.y*screenWidth, val);
 }
 
 #endif
@@ -461,8 +464,6 @@ vec4 resolveGelly(int abNumFrag, vec4 backgroundColor )
 //Whole number pixel offsets (not necessary just to test the layout keyword !)
 layout(pixel_center_integer) in vec4 gl_FragCoord;
 
-//Input interpolated fragment position
-smooth in vec4 fragPos;
 //Output fragment color
 out vec4 outFragColor;
 
@@ -480,21 +481,19 @@ uniform sampler2D opaqueBuffer;
 uniform sampler2D secondaryBuffer;
 #endif
 
-// Texture coordinates for opaque color buffer.
-smooth in vec2 tc;
-
 
 //Resolve A-Buffer and blend sorted fragments
 void main(void)
  {
     ivec2 coords=ivec2(gl_FragCoord.xy);
 
-    if(coords.x>=0 && coords.y>=0 && coords.x<SCREEN_WIDTH && coords.y<SCREEN_HEIGHT )
+    if(coords.x>=0 && coords.y>=0 && coords.x<screenWidth && coords.y<screenHeight )
     {
-        vec4 backgroundColor = vec4( texture2D( opaqueBuffer, tc ).rgb, 0.f )
+        vec2 tca = gl_FragCoord.xy / vec2( screenWidth, screenHeight );
+        vec4 backgroundColor = vec4( texture2D( opaqueBuffer, tca ).rgb, 0.f )
 #if USE_SECONDARY_COLOR_BUFFER
             // Add secondary (glow effect) color buffer value.
-            + vec4( texture2D( secondaryBuffer, tc ).rgb, 0.f )
+            + vec4( texture2D( secondaryBuffer, tca ).rgb, 0.f )
 #endif
         ;
 
