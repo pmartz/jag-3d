@@ -36,6 +36,7 @@ Texture::Texture( const std::string& logName )
     _target( GL_NONE ),
     _bufferFormat( GL_NONE )
 {
+    determineBindQuery();
 }
 Texture::Texture( const GLenum target, ImagePtr image, const std::string& logName )
   : DrawablePrep( Texture_t ),
@@ -44,6 +45,8 @@ Texture::Texture( const GLenum target, ImagePtr image, const std::string& logNam
     _target( target ),
     _bufferFormat( GL_NONE )
 {
+    determineBindQuery();
+
     _image.resize( 1 );
     _image[ 0 ] = image;
 }
@@ -55,6 +58,8 @@ Texture::Texture( const GLenum target, ImagePtr image, SamplerPtr sampler, const
     _sampler( sampler ),
     _bufferFormat( GL_NONE )
 {
+    determineBindQuery();
+
     _image.resize( 1 );
     _image[ 0 ] = image;
 }
@@ -66,6 +71,8 @@ Texture::Texture( const GLenum target, GLenum bufferFormat, TextureBufferPtr& te
     _bufferFormat( bufferFormat ),
     _textureBuffer( textureBuffer )
 {
+    determineBindQuery();
+
     if( _target != GL_TEXTURE_BUFFER )
         JAG3D_WARNING( "Texture buffer constructor: Invalid target parameter." );
 }
@@ -80,6 +87,7 @@ Texture::Texture( const Texture& rhs )
     _bufferFormat( rhs._bufferFormat ),
     _textureBuffer( rhs._textureBuffer )
 {
+    determineBindQuery();
 }
 Texture::~Texture()
 {
@@ -90,6 +98,8 @@ Texture::~Texture()
 void Texture::setTarget( const GLenum target )
 {
     _target = target;
+
+    determineBindQuery();
 }
 GLenum Texture::getTarget() const
 {
@@ -236,12 +246,34 @@ void Texture::attachToFBO( const jagDraw::jagDrawContextID contextID, const GLen
     const GLuint texID( getID( contextID ) );
     if( _dirty[ contextID ] == GL_TRUE )
     {
+        // Must bind in order to undirty the texture.
+        // However, we don't want to change the texture binding.
+        // Instead, we save and restore it.
+        //
+        // TBD There might be a more general way to do this, such as having
+        // CommandMap::operator<< detect that a DrawablePrep is dirty
+        // and needs to be in the delta even if it otherwise would noe.
+        GLint saveID;
+        if( _bindQuery != GL_NONE )
+        {
+            // This is dumb. Why can't I do something like this instead:
+            // glGetTexParameteriv( _target, GL_TEXTURE_BINDING, &saveID );
+            // Having to keep a _bindQuery that parallels the _target is stupid.
+            glGetIntegerv( _bindQuery, &saveID );
+        }
+
         glBindTexture( _target, texID );
         internalSpecifyTexImage( contextID );
-        glBindTexture( _target, 0 );
+
+        if( _bindQuery != GL_NONE )
+        {
+            glBindTexture( _target, saveID );
+        }
     }
 
     glFramebufferTexture( _fboTarget, attachment, texID, _fboTextureLevel );
+
+    JAG3D_ERROR_CHECK( "Texture::attachToFBO()" );
 }
 
 
@@ -414,7 +446,28 @@ bool Texture::isDirty( const unsigned int contextID ) const
         return( GL_TRUE );
 }
 
-
+void Texture::determineBindQuery()
+{
+    switch( _target )
+    {
+    case GL_TEXTURE_1D: _bindQuery = GL_TEXTURE_BINDING_1D; break;
+    case GL_TEXTURE_2D: _bindQuery = GL_TEXTURE_BINDING_2D; break;
+    case GL_TEXTURE_3D: _bindQuery = GL_TEXTURE_BINDING_3D; break;
+    case GL_TEXTURE_1D_ARRAY: _bindQuery = GL_TEXTURE_BINDING_1D_ARRAY; break;
+    case GL_TEXTURE_2D_ARRAY: _bindQuery = GL_TEXTURE_BINDING_2D_ARRAY; break;
+#ifdef GL_VERSION_4_0
+    case GL_TEXTURE_CUBE_MAP_ARRAY: _bindQuery = GL_TEXTURE_BINDING_CUBE_MAP_ARRAY; break;
+#endif
+    case GL_TEXTURE_RECTANGLE: _bindQuery = GL_TEXTURE_BINDING_RECTANGLE; break;
+    case GL_TEXTURE_BUFFER: _bindQuery = GL_TEXTURE_BINDING_BUFFER; break;
+    case GL_TEXTURE_2D_MULTISAMPLE: _bindQuery = GL_TEXTURE_BINDING_2D_MULTISAMPLE; break;
+    case GL_TEXTURE_2D_MULTISAMPLE_ARRAY: _bindQuery = GL_TEXTURE_BINDING_2D_MULTISAMPLE_ARRAY; break;
+    default:
+        // Not queriable. Proxy texture?
+        _bindQuery = GL_NONE;
+        break;
+    }
+}
 
 
 // jagDraw
