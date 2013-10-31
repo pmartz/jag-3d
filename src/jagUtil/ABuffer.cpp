@@ -419,7 +419,6 @@ void ABuffer::renderFrame( jagSG::CollectionVisitor& collect, jagDraw::DrawInfo&
 
 void ABuffer::reshape( const int w, const int h )
 {
-    std::cout << "reshape" << std::endl;
     _width = w;
     _height = h;
 
