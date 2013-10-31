@@ -189,31 +189,15 @@ void CollectionVisitor::collectAndTraverse( jagSG::Node& node )
             _maxECZ = std::max< double >( _maxECZ, maxDrawableECZ );
         }
 
-        // Determine if we really need to move to a new Draw Node, or can we
-        // just reuse the last Draw Node. If we do need a new Draw Node,
-        // determine whether we need an execute callback to specify the transform.
-        bool needNewDrawNode;
-        if( ( _currentNodes == NULL ) || _currentNodes->empty() )
-        {
-            if( _currentNodes == NULL )
-                setCurrentNodeContainer( 0 );
-            needNewDrawNode = true;
-        }
-        else
-        {
-            jagDraw::DrawNodePtr& lastDrawNode( (*_currentNodes)[ _currentNodes->size()-1 ] );
-            const bool matrixChanged( _matrixStack.back() != lastDrawNode->getTransform() );
-
-            const jagDraw::CommandMap& lastCommands( *( lastDrawNode->getCommandMap() ) );
-            needNewDrawNode = ( matrixChanged ||
-                ( _commandStack.back() != lastCommands ) );
-        }
-
-        if( needNewDrawNode )
-            _currentNodes->push_back( jagDraw::DrawNodePtr( new jagDraw::Node() ) );
+        // Get a new jagDraw::Node.
+        // Note: We can't re-use an existing jagDraw::Node, as that
+        // potentially breaks DrawGraph sorting by depth.
+        if( _currentNodes == NULL )
+            setCurrentNodeContainer( 0 );
+        _currentNodes->push_back( jagDraw::DrawNodePtr( new jagDraw::Node() ) );
         jagDraw::DrawNodePtr& drawNode( (*_currentNodes)[ _currentNodes->size()-1 ] );
 
-        if( needNewDrawNode )
+        // Init the jagDraw::Node.
         {
             // Set eye coord distance (for distance-based render order control ).
             drawNode->setDistance( _infoPtr->getECBoundDistance() );
