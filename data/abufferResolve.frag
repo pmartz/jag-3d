@@ -386,31 +386,32 @@ vec4 resolveAlphaBlendCAD( int abNumFrag, vec4 backgroundColor )
 //Blend fragments front-to-back
 vec4 resolveAlphaBlend(int abNumFrag, vec4 backgroundColor )
 {
-    vec4 finalColor = vec4( 0.0f );
+    vec4 finalColor=vec4(0.0f);
 
     const float sigma = 30.0f;
-    float thickness = fragmentList[0].w * .5f;
+    float thickness=fragmentList[0].w/2.0f;
 
+    finalColor=vec4(0.0f);
     for(int i=0; i<abNumFrag; i++)
     {
-        vec4 frag = fragmentList[ i ];
-
+        vec4 frag=fragmentList[i];
+		
         vec4 col;
-        col.rgb = frag.rgb;
-        col.w = FRAGMENT_ALPHA;    //uses constant alpha
+        col.rgb=frag.rgb;
+        col.w=FRAGMENT_ALPHA;	//uses constant alpha
 
 #if ABUFFER_RESOLVE_ALPHA_CORRECTION
-        if( i % 2 == abNumFrag % 2 )
-            thickness = ( fragmentList[ i+1 ].w - frag.w ) * 0.5f;
-        col.w= 1.0f - pow( 1.0f - col.w, thickness * sigma );
+        if(i%2==abNumFrag%2)
+            thickness=(fragmentList[i+1].w-frag.w)*0.5f;
+        col.w=1.0f-pow(1.0f-col.w, thickness* sigma );
 #endif
 
-        col.rgb = col.rgb * col.w;
+        col.rgb=col.rgb*col.w;
 
-        finalColor = finalColor + col * ( 1.0f - finalColor.a );
+        finalColor=finalColor+col*(1.0f-finalColor.a);
     }
 
-    finalColor = finalColor + backgroundColor * ( 1.0f - finalColor.a );
+    finalColor=finalColor+backgroundColor*(1.0f-finalColor.a);
 
     return finalColor;
 }
