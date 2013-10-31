@@ -112,7 +112,11 @@ public:
 
     /** \brief TBD
     \details Set the active texture.
-    Override from DrawablePrep. */
+    Override from DrawablePrep.
+
+    TBD GL 4.0 spec 3.8.1 says "A texture object may be bound
+    to more than one texture unit simultaneously." Need to make
+    sure JAG supports this. */
     virtual void activate( DrawInfo& drawInfo, const unsigned int unit );
 
     /** \brief TBD
@@ -153,6 +157,9 @@ protected:
     /** GL_TEXTURE_1D, GL_TEXTURE_2D, etc.<br>
     Initial Value: GL_NONE */
     GLenum _target;
+    /** GLenum used to query the current binding. Set when _target changes. */
+    GLenum _bindQuery;
+    void determineBindQuery();
 
     /** Imitial value: empty() == true */
     ImageVec _image;
