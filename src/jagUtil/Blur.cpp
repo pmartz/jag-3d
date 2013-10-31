@@ -113,9 +113,6 @@ void Blur::setShaders( jagDraw::ShaderPtr& fragStage0, jagDraw::ShaderPtr& fragS
 
 jagDraw::NodeContainer& Blur::getNodeContainer()
 {
-    if( _vQuad == NULL )
-        internalInit();
-
     setMaxContexts( _numContexts );
 
     return( _container );
