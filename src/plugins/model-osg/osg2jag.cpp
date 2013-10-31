@@ -216,7 +216,6 @@ void Osg2Jag::apply( osg::Geometry* geom )
             vaop->addVertexArrayCommand( bop, jagDraw::VertexArrayObject::TexCoord );
             std::ostringstream ostr;
             ostr << _texCoordAttribName << idx;
-            std::cout << info._componentsPerElement << " texcoords" << std::endl;
             jagDraw::VertexAttribPtr attrib( new jagDraw::VertexAttrib(
                 ostr.str(), info._componentsPerElement, info._type, GL_FALSE, 0, 0 ) );
             vaop->addVertexArrayCommand( attrib, jagDraw::VertexArrayObject::TexCoord );
