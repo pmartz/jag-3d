@@ -417,3 +417,16 @@ void RTTExample::reshape( const int w, const int h )
     _rttFBO->setViewport( 0, 0, _width, _height );
     _rttFBO->addAttachment( GL_DEPTH_ATTACHMENT, depthBuffer );
 }
+
+
+/** \defgroup exampleJagRTT The rtt Example
+This example demonstrates rendering to texture and the jagUtil::QuadNode utility.
+
+Command line options:
+\li --help,-h Help text
+\li --version,-v OpenGL context version. Default: 4.0.
+\li --nwin Number of windows. Default: 1.
+\li --winsize,-w Window width and height. Default: 800 600.
+\li --no-ms Disable multisampling
+\li --file,-f Model to load.
+*/
