@@ -35,6 +35,9 @@
 namespace jagDraw {
 
 
+/** \addtogroup jagDrawDrawGraph Draw Graph Data Structure */
+/*@{*/
+
 /** \class DrawGraph DrawGraph.h <jagDraw/DrawGraph.h>
 \brief TBD
 \details std::vector of draw graph Node objects. */
@@ -109,6 +112,9 @@ protected:
 
 typedef jagBase::ptr< jagDraw::DrawGraph >::shared_ptr DrawGraphPtr;
 typedef std::vector< DrawGraphPtr > DrawGraphVec;
+
+
+/*@}*/
 
 
 // jagDraw

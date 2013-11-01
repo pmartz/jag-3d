@@ -33,6 +33,9 @@
 namespace jagSG {
 
 
+/** \addtogroup jagSGSceneGraph The Scene Graph */
+/*@{*/
+
 /** \class VisitorBase Visitor.h <jagSG/Visitor.h>
 \brief %Visitor design pattern, "visitor" component: base class.
 \details See http://en.wikipedia.org/wiki/Visitor_pattern
@@ -319,6 +322,9 @@ protected:
 };
 
 typedef jagBase::ptr< jagSG::Visitor >::shared_ptr VisitorPtr;
+
+
+/*@}*/
 
 
 // jagSG

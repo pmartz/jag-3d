@@ -32,7 +32,7 @@ namespace jagMx
 
 
 /** \class MxCore MxCore.h <jagMx/MxCore.h>
-\brief A GUI-independent class for managing model, view, and projection matrices.
+\brief A GUI- and device-independent class for managing model, view, and projection matrices.
 \details TBD.
 
 MxCore support multiple types of move modes to translate the position:

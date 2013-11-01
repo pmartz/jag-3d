@@ -35,7 +35,7 @@ namespace jagMx
 {
 
 
-/** \defgroup mxutils Utilities for MxCore-based device interface classes.
+/** \defgroup jagMxUtil Utilities for MxCore-based Classes and Applications
 */
 /*@{*/
 

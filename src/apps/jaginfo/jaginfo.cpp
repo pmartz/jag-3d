@@ -209,3 +209,34 @@ int main( int argc, char** argv )
 
     return( 0 );
 }
+
+
+/** \defgroup appJagInfo The jaginfo Application
+This application displays information about the scene graph and draw graph
+for a loaded model.
+
+Example output:
+\code
+> jaginfo -f <some-model>
+                Total   Unique
+                -----   ------
+      Nodes:    113     113
+CommandMaps:    29      29
+  Drawables:    28      28
+                Total
+                -----
+ Containers:    1
+      Nodes:    28
+  Drawables:    28
+  CM deltas:    7
+\endcode
+The first section of the output shows counts for the scene graph.
+
+The second section shows counts for the draw graph, including CM deltas
+(non-empty changes in the CommandMap during the draw traversal, i.e.,
+OpenGL state changes).
+
+Command line options:
+\li --help,-h Help text
+\li --file,-f Model to load.
+*/

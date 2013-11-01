@@ -312,3 +312,16 @@ void JagModel::reshape( const int w, const int h )
     const jagDraw::jagDrawContextID contextID( jagDraw::ContextSupport::instance()->getActiveContext() );
     _mxCore._data[ contextID ]->setAspect( ( double ) w / ( double ) h );
 }
+
+
+/** \defgroup exampleJagModel The jagmodel Example
+This is a simple model loader and viewer.
+
+Command line options:
+\li --help,-h Help text
+\li --version,-v OpenGL context version. Default: 4.0.
+\li --nwin Number of windows. Default: 1.
+\li --winsize,-w Window width and height. Default: 800 600.
+\li --no-ms Disable multisampling
+\li --file,-f Model to load.
+*/

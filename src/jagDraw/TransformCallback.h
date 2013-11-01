@@ -30,6 +30,10 @@
 namespace jagDraw {
 
 
+/** \addtogroup jagDrawDrawGraph Draw Graph Data Structure */
+/*@{*/
+
+
 /** \addtogroup NearFarComputation Near and Far Plane Computation
 \brief Support for computed near/far with draw traversal callbacks.
 \details JAG supports non-atomic collection and draw traversals. That is,
@@ -177,6 +181,7 @@ protected:
 typedef jagBase::ptr< jagDraw::TransformCallback >::shared_ptr TransformCallbackPtr;
 
 
+/**@}*/
 /**@}*/
 
 

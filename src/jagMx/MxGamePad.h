@@ -34,6 +34,9 @@
 namespace jagMx {
 
 
+/** \addtogroup jagMxGamepad Gamepad Device Support */
+/*@{*/
+
 /** \class MxGamePad MxGamePad.h <jagMx/MxGamePad.h>
 \brief A base class to support various GamePad SDKs.
 
@@ -314,6 +317,9 @@ protected:
 };
 
 typedef jagBase::ptr< jagMx::MxGamePad >::shared_ptr MxGamePadPtr;
+
+
+/*@}*/
 
 
 // jagMx

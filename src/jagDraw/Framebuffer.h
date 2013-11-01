@@ -37,6 +37,9 @@
 namespace jagDraw {
 
 
+/** \addtogroup jagDrawGLCommands OpenGL Commands.
+/*@{*/
+
 class Renderbuffer;
 
 class Framebuffer;
@@ -279,6 +282,9 @@ protected:
 
 typedef jagBase::ptr< jagDraw::Renderbuffer >::shared_ptr RenderbufferPtr;
 typedef std::vector< RenderbufferPtr > RenderbufferVec;
+
+
+/*@}*/
 
 
 // jagDraw

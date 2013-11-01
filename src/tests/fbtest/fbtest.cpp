@@ -69,7 +69,7 @@ DemoInterface* DemoInterface::create( bpo::options_description& desc )
 {
     jagBase::Log::instance()->setPriority( jagBase::Log::PrioNotice, jagBase::Log::Console );
     jagBase::Log::instance()->setPriority( jagBase::Log::PrioTrace, "jag.draw.tex" );
-    jagBase::Log::instance()->setPriority( jagBase::Log::PrioTrace, "jag.draw.fbo" );
+    jagBase::Log::instance()->setPriority( jagBase::Log::PrioDebug, "jag.draw.fbo" );
 
     return( new RttDemo );
 }
@@ -153,6 +153,8 @@ bool RttDemo::startup( const unsigned int numContexts )
 
     // Create an FBO for the default framebuffer (the window)
     _defaultFBO = jagDraw::FramebufferPtr( new jagDraw::Framebuffer( GL_DRAW_FRAMEBUFFER ) );
+    _defaultFBO->setClearColor( 0., 0., 1., 1. );
+    _defaultFBO->setClear( GL_COLOR_BUFFER_BIT );
     _defaultFBO->setViewport( 0, 0, 300, 300 );
 
     jagDraw::CommandMapPtr commands( jagDraw::CommandMapPtr( new jagDraw::CommandMap() ) );
@@ -173,13 +175,6 @@ bool RttDemo::startup( const unsigned int numContexts )
         jagDraw::SamplerPtr( new jagDraw::Sampler() ) ) );
     tex->getSampler()->getSamplerState()->_minFilter = GL_LINEAR;
 
-    // Create an FBO and attach the texture.
-    _textureFBO = jagDraw::FramebufferPtr( new jagDraw::Framebuffer( GL_DRAW_FRAMEBUFFER ) );
-    _textureFBO->setViewport( 0, 0, _texWidth, _texHeight );
-    _textureFBO->setClear( GL_COLOR_BUFFER_BIT );
-    _textureFBO->addAttachment( GL_COLOR_ATTACHMENT0, tex );
-    
-
     //create the second texture to render into
     jagDraw::ImagePtr image2( new jagDraw::Image() );
     image2->set( 0, GL_RGBA, _texWidth, _texHeight, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL );
@@ -187,7 +182,12 @@ bool RttDemo::startup( const unsigned int numContexts )
         jagDraw::SamplerPtr( new jagDraw::Sampler() ) ) );
     tex2->getSampler()->getSamplerState()->_minFilter = GL_LINEAR;
 
-    // attach the second texture
+    // Create an FBO and attach textureS.
+    _textureFBO = jagDraw::FramebufferPtr( new jagDraw::Framebuffer( GL_DRAW_FRAMEBUFFER ) );
+    _textureFBO->setViewport( 0, 0, _texWidth, _texHeight );
+    _textureFBO->setClear( GL_COLOR_BUFFER_BIT );
+    _textureFBO->setClearColor( 0., 0., 0., 1. );
+    _textureFBO->addAttachment( GL_COLOR_ATTACHMENT0, tex );
     _textureFBO->addAttachment( GL_COLOR_ATTACHMENT1, tex2 );
     
 
@@ -308,7 +308,7 @@ bool RttDemo::startup( const unsigned int numContexts )
 
 bool RttDemo::init()
 {
-    glClearColor( 0.f, 0.f, 1.f, 0.f );
+    glDisable( GL_DEPTH_TEST );
 
     // Auto-log the version string.
     jagBase::getVersionString();

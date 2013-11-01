@@ -34,6 +34,9 @@
 namespace jagDraw {
 
 
+/** \addtogroup jagDrawVertexData Vertex Data and Vertex Attributes */
+/*@{*/
+
 /** \class VertexAttrib VertexAttrib.h <jagDraw/VertexAttrib.h>
 \brief
 \details \gl{section 2.8}.
@@ -206,6 +209,9 @@ public:
 
 typedef jagBase::ptr< jagDraw::VertexAttribI >::shared_ptr VertexAttribIPtr;
 typedef std::vector< VertexAttribIPtr > VertexAttribIVec;
+
+
+/*@}*/
 
 
 // jagDraw

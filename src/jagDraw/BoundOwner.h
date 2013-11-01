@@ -32,6 +32,9 @@
 namespace jagDraw {
 
 
+/** \addtogroup jagDrawBound Bounding Volume Management */
+/*@{*/
+
 /** \class BoundOwner BoundOwner.h <jagDraw/BoundOwner.h>
 \brief Common base class for objects that own bounding volumes.
 \details Currently the two derived classes are jagDraw::Drawable and
@@ -319,6 +322,9 @@ protected:
     /** Default value: _computeBoundCallback = ComputeBoundCallbackPtr() */
     ComputeBoundCallbackPtr _computeBoundCallback;
 };
+
+
+/*@}*/
 
 
 // jagDraw

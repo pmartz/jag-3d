@@ -36,6 +36,9 @@
 namespace jagDraw {
 
 
+/** \addtogroup jagDrawGLCommands OpenGL Commands.
+/*@{*/
+
 // forward
 struct SamplerState;
 
@@ -200,6 +203,9 @@ public:
         }
     }
 };
+
+
+/*@}*/
 
 
 // jagDraw

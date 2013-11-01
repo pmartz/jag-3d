@@ -32,8 +32,11 @@
 namespace jagSG {
 
 
+/** \addtogroup jagSGCollection CollectionVisitor and Controls */
+/*@{*/
+
 /** \class SelectContainerCallback SelectContainerCallback.h <jagSG/SelectContainerCallback.h>
-\brief TBD
+\brief Change the draw graph NodeContainer that the CollectionVisitor stores Drawables in.
 \details TBD
 */
 class JAGSG_EXPORT SelectContainerCallback : protected jagBase::LogBase,
@@ -57,6 +60,9 @@ protected:
 };
 
 typedef jagBase::ptr< SelectContainerCallback >::shared_ptr SelectContainerCallbackPtr;
+
+
+/*@}*/
 
 
 // jagSG

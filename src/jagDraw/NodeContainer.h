@@ -34,6 +34,9 @@
 namespace jagDraw {
 
 
+/** \addtogroup jagDrawDrawGraph Draw Graph Data Structure */
+/*@{*/
+
 /** \class NodeContainer NodeContainer.h <jagDraw/NodeContainer.h>
 \brief TBD
 \details std::vector of draw graph Node objects. */
@@ -109,6 +112,9 @@ protected:
 typedef jagBase::ptr< jagDraw::NodeContainer >::shared_ptr NodeContainerPtr;
 typedef std::vector< NodeContainerPtr > NodeContainerVec;
 typedef std::vector< NodeContainer > NodeContainerSimpleVec;
+
+
+/*@}*/
 
 
 // jagDraw

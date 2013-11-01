@@ -31,6 +31,9 @@
 namespace jagDraw {
 
 
+/** \addtogroup jagDrawVertexData Vertex Data and Vertex Attributes */
+/*@{*/
+
 struct DrawInfo;
 
 
@@ -79,6 +82,9 @@ protected:
 
 typedef jagBase::ptr< jagDraw::VertexArrayCommand >::shared_ptr VertexArrayCommandPtr;
 typedef std::vector< VertexArrayCommandPtr > VertexArrayCommandVec;
+
+
+/*@}*/
 
 
 // jagDraw

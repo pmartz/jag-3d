@@ -36,6 +36,9 @@
 namespace jagSG {
 
 
+/** \addtogroup jagSGCollection CollectionVisitor and Controls */
+/*@{*/
+
 /** \class CollectionVisitor CollectionVisitor.h <jagSG/CollectionVisitor.h>
 \brief TBD
 \details TBD
@@ -244,6 +247,9 @@ protected:
 };
 
 typedef jagBase::ptr< jagSG::CollectionVisitor >::shared_ptr CollectionVisitorPtr;
+
+
+/*@}*/
 
 
 // jagSG

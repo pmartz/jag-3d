@@ -32,6 +32,9 @@
 namespace jagSG {
 
 
+/** \addtogroup jagSGCollection CollectionVisitor and Controls */
+/*@{*/
+
 /** \class SmallFeatureCallback SmallFeatureCallback.h <jagSG/SmallFeatureCallback.h>
 \brief TBD
 \details TBD
@@ -81,6 +84,9 @@ public:
 protected:
     SmallFeatureCallbackPtr _cb;
 };
+
+
+/*@}*/
 
 
 // jagSG
