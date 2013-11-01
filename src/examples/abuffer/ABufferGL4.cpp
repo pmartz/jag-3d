@@ -78,7 +78,7 @@ namespace bpo = boost::program_options;
 jagSG::NodePtr jagRoot;
 
 //Filename of the mesh to use
-const std::string modelDir( "C:/Projects/JAG/projectinfo/a-buffer/ABufferGL4LinkedList/" );
+const std::string modelDir( "" );
 const std::string modelNames[]={
     modelDir + std::string("models/dragon_vrip.ply"),
     modelDir + std::string("models/happy_vrip.ply"),
