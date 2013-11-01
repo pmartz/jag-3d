@@ -104,8 +104,8 @@ jagDraw::DrawablePtr RttDemo::makeSceneDrawable(
         "layout (location = 0) out vec4 colorOut; \n"
         "layout (location = 1) out vec4 colorOut2; \n"
         "void main() { \n"
-        "    colorOut = vec4( .5, .0, .0, 1.0 ); \n"
-        "    colorOut2 = vec4( .0, .5, .5, 1.0 ); \n"
+        "    colorOut = vec4( 1., .0, .0, 1.0 ); \n"
+        "    colorOut2 = vec4( .0, 1., 1., 1.0 ); \n"
         "}";
     jagDraw::ShaderPtr fs( new jagDraw::Shader( GL_FRAGMENT_SHADER ) );
     fs->addSourceString( std::string( fragShader ) );
@@ -153,8 +153,8 @@ bool RttDemo::startup( const unsigned int numContexts )
 
     // Create an FBO for the default framebuffer (the window)
     _defaultFBO = jagDraw::FramebufferPtr( new jagDraw::Framebuffer( GL_DRAW_FRAMEBUFFER ) );
-    _defaultFBO->setClearColor( 0., 0., 1., 1. );
-    _defaultFBO->setClear( GL_COLOR_BUFFER_BIT );
+    _defaultFBO->setUserDataName( "defaultFBO" );
+    _defaultFBO->setClear( 0 );
     _defaultFBO->setViewport( 0, 0, 300, 300 );
 
     jagDraw::CommandMapPtr commands( jagDraw::CommandMapPtr( new jagDraw::CommandMap() ) );
@@ -174,19 +174,20 @@ bool RttDemo::startup( const unsigned int numContexts )
     jagDraw::TexturePtr tex( new jagDraw::Texture( GL_TEXTURE_2D, image,
         jagDraw::SamplerPtr( new jagDraw::Sampler() ) ) );
     tex->getSampler()->getSamplerState()->_minFilter = GL_LINEAR;
+    tex->setUserDataName( "texture0" );
 
     //create the second texture to render into
-    jagDraw::ImagePtr image2( new jagDraw::Image() );
-    image2->set( 0, GL_RGBA, _texWidth, _texHeight, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL );
-    jagDraw::TexturePtr tex2( new jagDraw::Texture( GL_TEXTURE_2D, image2,
+    jagDraw::TexturePtr tex2( new jagDraw::Texture( GL_TEXTURE_2D, image,
         jagDraw::SamplerPtr( new jagDraw::Sampler() ) ) );
     tex2->getSampler()->getSamplerState()->_minFilter = GL_LINEAR;
+    tex2->setUserDataName( "texture1" );
 
     // Create an FBO and attach textureS.
     _textureFBO = jagDraw::FramebufferPtr( new jagDraw::Framebuffer( GL_DRAW_FRAMEBUFFER ) );
-    _textureFBO->setViewport( 0, 0, _texWidth, _texHeight );
-    _textureFBO->setClear( GL_COLOR_BUFFER_BIT );
+    _textureFBO->setUserDataName( "textureFBO" );
     _textureFBO->setClearColor( 0., 0., 0., 1. );
+    _textureFBO->setClear( GL_COLOR_BUFFER_BIT );
+    _textureFBO->setViewport( 0, 0, _texWidth, _texHeight );
     _textureFBO->addAttachment( GL_COLOR_ATTACHMENT0, tex );
     _textureFBO->addAttachment( GL_COLOR_ATTACHMENT1, tex2 );
     
@@ -228,8 +229,7 @@ bool RttDemo::startup( const unsigned int numContexts )
             "in vec2 tcOut; \n"
             "out vec4 colorOut; \n"
             "void main() { \n"
-            //"    colorOut = texture2D( texture, tcOut ); \n"
-            "    colorOut = texture2D( texture, tcOut )+texture2D(texture2, tcOut);// + vec4( .5, 0., 0., 0. ); \n"
+            "    colorOut = texture2D( texture, tcOut ) + texture2D(texture2, tcOut);// + vec4( .5, 0., 0., 0. ); \n"
             //"    colorOut = vec4( tcOut, 0., 1. ); \n"
             "}";
         jagDraw::ShaderPtr fs( new jagDraw::Shader( GL_FRAGMENT_SHADER ) );
@@ -281,7 +281,7 @@ bool RttDemo::startup( const unsigned int numContexts )
 
         //add both textures to the texture set
         (*textureSet)[ GL_TEXTURE0 ] = tex2;
-         (*textureSet)[ GL_TEXTURE1 ] = tex;
+        (*textureSet)[ GL_TEXTURE1 ] = tex;
 
         jagDraw::CommandMapPtr quadCommands( jagDraw::CommandMapPtr( new jagDraw::CommandMap() ) );
         quadCommands->insert( prog );
@@ -332,6 +332,7 @@ bool RttDemo::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj )
     if( ( ( ++_frames / 100 ) & 0x1 ) == 0 )
     {
         // Render lines to the window.
+        glClearColor( 0.f, 0.f, 1.f, 1. );
         glClear( GL_COLOR_BUFFER_BIT );
         _windowNodes.execute( drawInfo );
     }
