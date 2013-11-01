@@ -40,6 +40,11 @@
 namespace jagDraw {
 
 
+/** \addtogroup jagDrawDataStore Geometry and OpenGL Command Data Storage */
+/*@{*/
+
+/** \class CommandMap CommandMap.h <jagDraw/CommandMap.h>
+*/
 class CommandMap : public ObjectIDOwner, public jagBase::UserDataOwner
 {
 public:
@@ -414,6 +419,9 @@ public:
 protected:
     DrawablePrep::CommandTypeVec _priorityVec;
 };
+
+
+/*@}*/
 
 
 // jagDraw

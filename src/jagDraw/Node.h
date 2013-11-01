@@ -35,6 +35,9 @@
 namespace jagDraw {
 
 
+/** \addtogroup jagDrawDrawGraph Draw Graph Data Structure */
+/*@{*/
+
 /** \class Node Node.h <jagDraw/Node.h>
 \brief TBD
 \details jagDraw::Node associates a CommandMap with a collection of Drawables.
@@ -263,6 +266,9 @@ public:
 protected:
     SortOrder _order;
 };
+
+
+/*@}*/
 
 
 // jagDraw

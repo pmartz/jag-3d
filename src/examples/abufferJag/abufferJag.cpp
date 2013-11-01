@@ -508,3 +508,23 @@ bool ABufferJag::keyCommand( const int command )
 
     return( true ); // cause redraw.
 }
+
+
+/** \defgroup exampleJagABufferJag The abufferJag Example
+This example demonstrates use of jagUtil::Blur and jagUtil::ABuffer.
+
+Command line options:
+\li --help,-h Help text
+\li --version,-v OpenGL context version. Default: 4.0.
+\li --nwin Number of windows. Default: 1.
+\li --winsize,-w Window width and height. Default: 800 600.
+\li --no-ms Disable multisampling
+\li --file,-f Model to load.
+
+Key controls:
+\li g Toggle glow
+\li e Toggle transparency
+\li a Cycle transparency resolve methods
+\li t/T Decrease/increate fragment alpha.
+\li f/F Decrease/increase maximum fragments per pixel.
+*/

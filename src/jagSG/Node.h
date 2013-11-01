@@ -45,6 +45,9 @@ namespace jagDraw {
 namespace jagSG {
 
 
+/** \addtogroup jagSGSceneGraph The Scene Graph */
+/*@{*/
+
 class Node;
 typedef jagBase::ptr< jagSG::Node >::shared_ptr NodePtr;
 typedef std::vector< NodePtr > NodeVec;
@@ -295,6 +298,9 @@ protected:
 
     BoundDirtyCallbackPtr _boundDirtyCallback;
 };
+
+
+/*@}*/
 
 
 // jagSG

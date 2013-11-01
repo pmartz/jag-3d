@@ -44,6 +44,9 @@ namespace jagDraw {
 struct DrawInfo;
 
 
+/** \addtogroup jagDrawDataStore Geometry and OpenGL Command Data Storage */
+/*@{*/
+
 /** \class Drawable Drawable.h <jagDraw/Drawable.h>
 \brief A collection of DrawCommand objects for rendering geometry.
 \details Stores zero or more DrawCommand objects, and provides an interface for
@@ -211,6 +214,9 @@ protected:
 
 typedef jagBase::ptr< jagDraw::Drawable >::shared_ptr DrawablePtr;
 typedef std::vector< DrawablePtr > DrawableVec;
+
+
+/*@}*/
 
 
 // jagDraw

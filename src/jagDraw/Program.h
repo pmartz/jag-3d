@@ -37,6 +37,9 @@
 namespace jagDraw {
 
 
+/** \addtogroup jagDrawGLCommands OpenGL Commands.
+/*@{*/
+
 struct DrawInfo;
 
 class Program;
@@ -243,6 +246,9 @@ private:
 };
 
 typedef std::vector< ProgramPtr > ProgramVec;
+
+
+/*@}*/
 
 
 // jagDraw

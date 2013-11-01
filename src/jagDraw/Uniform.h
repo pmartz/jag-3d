@@ -41,6 +41,9 @@
 namespace jagDraw {
 
 
+/** \addtogroup jagDrawGLCommands OpenGL Commands.
+/*@{*/
+
 struct DrawInfo;
 
 class Uniform;
@@ -294,6 +297,9 @@ public:
         operator[]( up->getNameHash() ) = up;
     }
 };
+
+
+/*@}*/
 
 
 // jagDraw

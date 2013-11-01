@@ -32,6 +32,9 @@
 namespace jagSG {
 
 
+/** \addtogroup jagSGCollection CollectionVisitor and Controls */
+/*@{*/
+
 /** \class NodeMaskCullCallback NodeMaskCullCallback.h <jagSG/NodeMaskCullCallback.h>
 \brief Culls based on the NodeMask stored in a Node.
 \details TBD
@@ -71,6 +74,9 @@ public:
 protected:
     NodeMaskCullCallbackPtr _cb;
 };
+
+
+/*@}*/
 
 
 // jagSG

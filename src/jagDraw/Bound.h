@@ -41,6 +41,9 @@ class Bound;
 typedef jagBase::ptr< Bound >::shared_ptr BoundPtr;
 
 
+/** \addtogroup jagDrawBound Bounding Volume Management */
+/*@{*/
+
 /** \class Bound Bound.h <jagDraw/Bound.h>
 \brief TBD
 \details TBD
@@ -306,6 +309,9 @@ public:
 protected:
     gmtl::Sphered _bound;
 };
+
+
+/*@}*/
 
 
 // jagDraw

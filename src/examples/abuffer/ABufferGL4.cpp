@@ -1,4 +1,9 @@
-/**
+/** \defgroup exampleJagABuffer The abuffer Example
+This is a simple example of adding JAG model loading and rendering to an
+existing OpenGL example with minimal invasiveness. The original ABuffer
+example source can be downloaded from here:
+http://blog.icare3d.org/2010/07/opengl-40-abuffer-v20-linked-lists-of.html
+
  * Fast Single-pass A-Buffer using OpenGL 4.0 V2.0 : Linked Lists
  * Copyright Cyril Crassin, June/July 2010
  *
@@ -25,7 +30,16 @@
  *
  * This example also uses Direct State Access to remove 
  * multiple bindings. (EXT_direct_state_access)
-**/
+
+ Command line options:
+\li --help,-h Help text
+\li --version,-v OpenGL context version. Default: 4.0.
+\li --winsize,-w Window width and height. Default: 300 300.
+\li --file,-f Model to load.
+
+Key controls:
+\li See concole output
+*/
 
 #include <jagSG/Common.h>
 #include <jagDraw/Common.h>
@@ -57,6 +71,8 @@
 #include <boost/program_options/variables_map.hpp>
 #include <boost/program_options/parsers.hpp>
 namespace bpo = boost::program_options;
+
+
 
 // If rendering a JAG model:
 jagSG::NodePtr jagRoot;

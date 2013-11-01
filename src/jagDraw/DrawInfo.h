@@ -35,6 +35,9 @@
 namespace jagDraw {
 
 
+/** \addtogroup jagDrawDrawGraph Draw Graph Data Structure */
+/*@{*/
+
 /** \class DrawInfo DrawInfo.h <jagDraw/DrawInfo.h>
 \brief Draw-traversal control information.
 \details Contains information used to execute and optimize the draw traversal.
@@ -111,6 +114,9 @@ struct JAGDRAW_EXPORT DrawInfo
 };
 
 typedef PerContextData< DrawInfo > PerContextDrawInfo;
+
+
+/*@}*/
 
 
 // jagDraw

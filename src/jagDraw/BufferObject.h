@@ -39,6 +39,9 @@ namespace jagDraw {
 struct DrawInfo;
 
 
+/** \addtogroup jagDrawGLCommands OpenGL Commands.
+/*@{*/
+
 /** \class BufferObject BufferObject.h <jagDraw/BufferObject.h>
 \brief A context-safe wrapper for OpenGL buffer objects.
 \details \gl{section 2.9}.
@@ -328,6 +331,9 @@ public:
 
 typedef jagBase::ptr< jagDraw::UniformBuffer >::shared_ptr UniformBufferPtr;
 typedef std::vector< UniformBufferPtr > UniformBufferVec;
+
+
+/*@}*/
 
 
 // jagDraw

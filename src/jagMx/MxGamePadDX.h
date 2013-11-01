@@ -34,6 +34,9 @@
 namespace jagMx {
 
 
+/** \addtogroup jagMxGamepad Gamepad Device Support */
+/*@{*/
+
 /** \class MxGamePadDX MxGamePadDX.h <jagMx/MxGamePadDX.h>
 \brief A DirectInput implementation of the MxGamePad class.
 */
@@ -90,6 +93,9 @@ protected:
 };
 
 typedef jagBase::ptr< jagMx::MxGamePadDX >::shared_ptr MxGamePadDXPtr;
+
+
+/*@}*/
 
 
 // jagMx

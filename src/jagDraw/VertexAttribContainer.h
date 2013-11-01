@@ -34,6 +34,9 @@
 namespace jagDraw {
 
 
+/** \addtogroup jagDrawVertexData Vertex Data and Vertex Attributes */
+/*@{*/
+
 /** VertexAttribContainer VertexAttribContainer.h <jagDraw/VertexAttribContainer.h>
 \brief Iteration over vertex attribute data
 \details Given a buffer of data, a vertex attribute describing that data,
@@ -195,6 +198,9 @@ protected:
     size_t _step;
     size_t _offset;
 };
+
+
+/*@}*/
 
 
 // jagDraw

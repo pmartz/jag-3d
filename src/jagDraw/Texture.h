@@ -38,6 +38,9 @@
 namespace jagDraw {
 
 
+/** \addtogroup jagDrawGLCommands OpenGL Commands.
+/*@{*/
+
 class Texture;
 typedef jagBase::ptr< jagDraw::Texture >::shared_ptr TexturePtr;
 
@@ -247,6 +250,9 @@ public:
         }
     }
 };
+
+
+/*@}*/
 
 
 // jagDraw

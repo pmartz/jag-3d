@@ -35,6 +35,9 @@
 namespace jagDraw {
 
 
+/** \addtogroup jagDrawGLCommands OpenGL Commands.
+/*@{*/
+
 /** \class Shader Shader.h <jagDraw/Shader.h>
 \brief TBD.
 \logname jag.draw.shader
@@ -76,6 +79,9 @@ protected:
 
 typedef jagBase::ptr< jagDraw::Shader >::shared_ptr ShaderPtr;
 typedef std::vector< ShaderPtr > ShaderVec;
+
+
+/*@}*/
 
 
 // jagDraw

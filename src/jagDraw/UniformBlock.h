@@ -40,6 +40,9 @@
 namespace jagDraw {
 
 
+/** \addtogroup jagDrawGLCommands OpenGL Commands.
+/*@{*/
+
 struct DrawInfo;
 
 class UniformBlock;
@@ -182,6 +185,9 @@ public:
         }
     }
 };
+
+
+/*@}*/
 
 
 // jagDraw

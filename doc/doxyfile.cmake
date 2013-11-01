@@ -137,6 +137,8 @@ INPUT                  = "${PROJECT_SOURCE_DIR}/src/jagBase" \
                          "${PROJECT_SOURCE_DIR}/src/jagSG" \
                          "${PROJECT_SOURCE_DIR}/src/jagUtil" \
                          "${PROJECT_SOURCE_DIR}/src/plugins" \
+                         "${PROJECT_SOURCE_DIR}/src/apps" \
+                         "${PROJECT_SOURCE_DIR}/src/examples" \
                          "${PROJECT_SOURCE_DIR}/doc"
 INPUT_ENCODING         = UTF-8
 FILE_PATTERNS          = *.cpp *.h *.txt

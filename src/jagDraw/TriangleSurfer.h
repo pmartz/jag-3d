@@ -36,6 +36,8 @@ namespace jagDraw {
 
 
 
+/** \addtogroup jagDrawVertexData Vertex Data and Vertex Attributes */
+/*@{*/
 
 /** \class TriangleSurfer TriangleSurfer.h <jagDraw/Triangle.h>
 \brief TBD
@@ -131,6 +133,9 @@ public:
     size_t _step;
     size_t _offset;
 };
+
+
+/*@}*/
 
 
 // jagDraw

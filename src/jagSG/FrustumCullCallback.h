@@ -32,6 +32,9 @@
 namespace jagSG {
 
 
+/** \addtogroup jagSGCollection CollectionVisitor and Controls */
+/*@{*/
+
 /** \class FrustumCullCallback FrustumCullCallback.h <jagSG/FrustumCullCallback.h>
 \brief TBD
 \details TBD
@@ -71,6 +74,9 @@ public:
 protected:
     FrustumCullCallbackPtr _cb;
 };
+
+
+/*@}*/
 
 
 // jagSG

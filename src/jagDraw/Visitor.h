@@ -36,6 +36,9 @@
 namespace jagDraw {
 
 
+/** \addtogroup jagDrawDrawGraph Draw Graph Data Structure */
+/*@{*/
+
 /** \class Visitor Visitor.h <jagDraw/Visitor.h>
 \brief %Visitor design pattern, "visitor" component: base class.
 \details See http://en.wikipedia.org/wiki/Visitor_pattern
@@ -97,6 +100,9 @@ public:
 };
 
 typedef jagBase::ptr< jagDraw::Visitor >::shared_ptr VisitorPtr;
+
+
+/*@}*/
 
 
 // jagDraw

@@ -17,21 +17,28 @@ You are reading Doxygen documentation generated from the Jag3D source. This docu
 also comprises the JAG specification itself.
 
 Jag3D consists of the following components:
-\li jagBase: Logging, pointer, version, math, and other shared components.
-\li jagDisk: File loading interface.
-\li jagDraw: OpenGL-based rendering module, supporting multiple rendering contexts
+\li \ref jagBase "jagBase": Logging, pointer, version, math, and other shared components.
+\li \ref jagDisk "jagDisk": File loading interface.
+\li \ref jagDraw "jagDraw": OpenGL-based rendering module, supporting multiple rendering contexts
 and retained mode rendering.
-\li jagSG: Scene graph support.
-\li Plugins: Support for a variety of data file formats.
-\li Examples: Examples of typical usage.
-\li Unit tests: Regression test suite.
+\li \ref jagMx "jagMx": Matrix manipulation and input device utilities.
+\li \ref jagSG "jagSG": Scene graph support.
+\li \ref jagUtil "jagUtil": Optional utinities.
+\li \ref Plugins "Plugins": Support for a variety of data file formats.
+\li \ref Apps "Apps": JAG-based application software.
+\li \ref Examples "Examples": Examples of typical usage.
+\li \ref Tests "Tests": Images-based tests.
+\li \ref UnitTests "Unit Tests": Regression test suite.
 
 
 \subsection jagBase
 
 \li \link jagBase::Transform Utility for model, view, and projection matrices \endlink
-\li \ref jagVersion "Version Utilities"
-\li \ref jagBaseLogging "Message Logging Utilities"
+\li \ref jagVersion "Version ytilities"
+\li \ref jagBaseLogging "Message logging ytilities"
+\li \link jagBase::MultiCallback Base class for multiple callback pattern \endlink
+\li \link jagBase::UserDataOwner Base class for classes containing  user-specified data \endlink
+\li \ref jagBaseProfile "Profiling utilities"
 
 
 \subsection jagDisk
@@ -46,7 +53,8 @@ analogous system, but uses Poco for platform-independent plugin loading.
 \subsection jagDraw
 
 This module contains host-side data store and multi-context support
-for many OpenGL commands.
+for many OpenGL commands. It also contains draw graph elements and
+support classes.
 
 This is the only module that executes OpenGL commands. All jagDraw
 OpenGL code is compatible with an OpenGL v4.0 core profile / forward
@@ -54,56 +62,113 @@ compatible (GL4cpfc) context. (Note that Jag3D currently supports OSX 10.7,
 which is OpenGL 3.2 core profile, but this support is likely to be dropped as
 soon as OSX moves forward with a more current OpenGL version.)
 
-Direct OpenGL support:
-\li \ref jagVersion "OpenGL Version Queries"
-\li \ref OpenGLAbstraction "OpenGL Abstraction Support"
-\li \ref jagDrawError "OpenGL Errors"
-\li \link jagDraw::VertexAttrib Generic Vertex Attributes \endlink
-\li \link jagDraw::VertexArrayObject Vertex Array Objects \endlink
-\li \link jagDraw::DrawCommand Drawing commands \endlink
-\li \link jagDraw::BufferObject Buffer Objects \endlink
-\li \link jagDraw::Shader Shader Objects \endlink
-\li \link jagDraw::Program Program Objects \endlink
-\li \link jagDraw::Uniform Uniform Variables \endlink
-\li \link jagDraw::UniformBlock Uniform Blocks \endlink
-\li \link jagDraw::Framebuffer Framebuffer Objects \endlink
-\li \link jagDraw::Texture Texture Objects \endlink
+\li \ref jagVersion "OpenGL version queries"
+\li \ref OpenGLAbstraction "OpenGL abstraction support (image data, contexts, per-context data, object IDs, framebuffer attachable, etc.)"
+\li \ref jagDrawError "OpenGL errors"
+\li \ref jagDrawBound "Bounding volume management"
+\li \ref jagDrawDrawGraph "Draw graph data structure"
+\li \link jagDraw::DrawCommand OpenGL drawing commands \endlink
+\li \ref jagDrawGLCommands "OpenGL commands (program, texture, framebuffer, uniform, etc.)"
+\li \ref jagDrawVertexData "Vertex data and vertex attributes"
+\li \ref jagDrawDataStore "Geometry and OpenGL Command data storage"
 
-Higher level constructs:
-\li \link jagDraw::Drawable Drawable Objects \endlink
-\li \link jagDraw::CommandMap Support for storing and sorting collections of commands \endlink
-\li \link jagDraw::DrawInfo Render-time management \endlink
-\li \link jagDraw::Node Association of DrawablePrep objects and Drawables \endlink
+
+\subsection jagMx
+
+This module supports view and projection matrix manipulation.
+It also provides gamepad abstraction for driving a view matrix,
+and a DirectX-based gamepad implementation
+
+\li \link jagMx::MxCore View and projection matrix control \endlink
+\li \ref jagMxGamepad "Gamepad device support"
+\li \ref jagMxUtil "Matrix and viewing utilities"
 
 
 \subsection jagSG
 
-This module provides scene graph functionality layered on top of jagDraw and jagBase.
-Scene graphs can be created programmatically, or by using a jagDisk plugin
-to create a scene graph from a loaded model file.
+This module provides scene graph functionality layered on top of jagDraw and
+jagBase. Scene graphs can be created programmatically, or by using a jagDisk
+plugin to create a scene graph from a loaded model file.
 
-\li \link jagSG::Node Scene graph data structure element \endlink
-\li \link jagSG::VisitorBase Base class to support Visitor design pattern. \endlink
-\li \link jagSG::Visitor Visitor with child Node traversal control \endlink
-\li \link jagSG::ExecuteVisitor Immediate mode traverse-and-render \endlink
-\li jagSG::CullVisitor - Not yet implemented; under development
+To draw data stored in a scene graph, convert it to a draw graph with the
+jagSG::CollectionVisitor. Then call jagDraw::DrawGraph::execute(), or traverse
+the draw graph explicitly and execute() its contents.
+
+\li \ref jagSGSceneGraph "Scene graph node and traversal"
+\li \ref jagSGCollection "Collection: converting scene graph to draw graph"
+\li \link jagSG::IntersectVisitor Intersection testing \endlink
+\li \link jagSG::ExecuteVisitor (Deprecated) Immediate mode traverse-and-draw \endlink
 
 
-\subsection ProjectRoadmap Upcoming Work and Project Notes
+\subsection jagUtil
 
-For inclusion in v0.00.04:
-\li OSG-based model loading plugin.
+Contains a variety of optimization and effects utilities.
 
-For inclusion in v0.00.06:
-\li Need to implement CullVisitor.
-\li "State sorting" (sorting Drawables based on the commands that configure GL for
-rendering) is implemented but currently untested.
+\li \link jagUtil::ABuffer Support for the a-buffer order independent transparency algorithm \endlink
+\li \link jagUtil::Blur Support for 2-pass screen space separable blur \endlink
+\li \link jagUtil::BufferAggregationVisitor Aggregate multiple buffer objects to reduce bind calls \endlink
+\li \link jagUtil::DrawGraphCountVisitor Count objects in a draw graph \endlink
+\li \link jagUtil::QuadNode A convenience specialization of jagDraw::Node for drawing screen space quads \endlink
+\li \link jagUtil::ResetBoundsVisitor Cause all bounding volumes to be recomputed \endlink
+\li \ref jagUtilShapes "Rudimentary shape rendering (plane, sphere, cylinder, etc.)"
 
-For inclusion in v0.00.08:
-\li Attachable user data.
-\li debug text export plugin.
 
-Beyond v0.00.08:
+\subsection Plugins
+
+Plugins provide support for loading and exporting different types of data.
+
+\li \ref PluginSupport "Plugin Interface and Utilities"
+\li \link OSGImageRW OSG-based image data support \endlink
+\li \link OSGModelRW OSG-based model data support \endlink
+\li \link ShaderRW Text file shader source support \endlink
+\li \link TextDump Debug dump to text file \endlink
+
+
+\subsection Apps
+
+\li \ref appJagInfo
+
+
+\subsection Examples
+
+\li \ref exampleJagABuffer
+\li \ref exampleJagABufferJag
+\li \ref exampleJagModel
+\li \ref exampleJagRTT
+
+
+\subsection Tests
+
+A set of test programs that create images. In a future release,
+image-based regression testing will be added. For now, the tests
+must be verified visually.
+
+
+\subsection UnitTests
+
+A set of CTest regression tests that verify JAG functionality.
+To run the tests in Visual Studio, right-click on the RUN_TESTS
+target and select Build. For Linux makefile builds, type the following:
+\code
+make tests
+\endcode
+
+
+\section ProjectRoadmap Upcoming Work and Project Notes
+
+The current release is v0.01.00, released 2 November, 2013.
+
+For inclusion in v0.02.00 (date TBD):
+- Tuning to improve performance of collection and draw traversals.
+  - Possible rewrite of the jagDraw::CommandMap class.
+- Source repo and namespace re-organization (this is <a href="https://code.google.com/p/jag-3d/issues/detail?id=32">issue 32</a>).
+- Features and bug fixes for GIS and CAD applications.
+
+For inclusion in v0.03.00 (date TBD):
+- OpenGL resource management (this is <a href="https://code.google.com/p/jag-3d/issues/detail?id=3">issue 3</a>).
+- Features and bug fixes for GIS and CAD applications.
+
+Beyond v0.03.00:
 \li Open Asset Import model loading plugin.
 \li Vertex array objects and uniform blocks need to track changes. Uniform blocks,
 in particular, always copy their values into the block.
