@@ -89,6 +89,7 @@ protected:
     jagDraw::TexturePtr _opaqueBuffer, _secondaryBuffer, _glowBuffer, _depthBuffer;
     jagUtil::BlurPtr _blur;
     jagDraw::UniformPtr _glowColor;
+    jagSG::NodeMaskCullCallbackPtr _opaqueToggleCB;
 
     int _width, _height;
 };
@@ -209,6 +210,11 @@ bool ABufferJag::startup( const unsigned int numContexts )
         jagDraw::UniformSetPtr usp( jagDraw::UniformSetPtr( new jagDraw::UniformSet() ) );
         usp->insert( _glowColor );
         opaqueNode->getOrCreateCommandMap()->insert( usp );
+
+        // Allow opaqueNode to be toggled/masked.
+        _opaqueToggleCB.reset( new jagSG::NodeMaskCullCallback() );
+        _opaqueToggleCB->setOverride( jagSG::NodeMaskCullCallback::OVERRIDE_TRUE );
+        opaqueNode->getCollectionCallbacks().push_back( _opaqueToggleCB );
     }
 
     // Add translated model instance for ABuffer transparency
@@ -484,6 +490,13 @@ bool ABufferJag::keyCommand( const int command )
         _aBuffer->toggleTransparencyEnable( *_abufNode );
         break;
 
+    case (int)'o': // Toggle opaque
+        if( _opaqueToggleCB->getOverride() == jagSG::NodeMaskCullCallback::OVERRIDE_TRUE )
+            _opaqueToggleCB->setOverride( jagSG::NodeMaskCullCallback::OVERRIDE_FALSE );
+        else
+            _opaqueToggleCB->setOverride( jagSG::NodeMaskCullCallback::OVERRIDE_TRUE );
+        break;
+
     case (int)'a': // Cycle transparency resolve methods
         _aBuffer->setResolveMethod( jagUtil::ABuffer::ResolveMethod( _aBuffer->getResolveMethod() + 1 ) );
         if( _aBuffer->getResolveMethod() == jagUtil::ABuffer::UNSPECIFIED )
@@ -524,6 +537,7 @@ Command line options:
 Key controls:
 \li g Toggle glow
 \li e Toggle transparency
+\li o Toggle opaque
 \li a Cycle transparency resolve methods
 \li t/T Decrease/increate fragment alpha.
 \li f/F Decrease/increase maximum fragments per pixel.
