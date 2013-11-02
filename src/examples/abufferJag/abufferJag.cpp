@@ -111,6 +111,34 @@ bool ABufferJag::parseOptions( bpo::variables_map& vm )
 }
 
 
+/** \struct ForceFramebufferExecute
+\brief A NodeContainer callback that forces a Framebuffer execution.
+\details This is useful is the NodeContainer is empty (as a result of
+nothing beind collected). If the geometry would normally execute a
+Framebuffer using RTT, client code would typically want the glClear()
+call to create an empty texture. This callback ensures that always happens. */
+struct ForceFramebufferExecute : public jagDraw::NodeContainer::Callback
+{
+    ForceFramebufferExecute( jagDraw::FramebufferPtr& fbo )
+        : _fbo( fbo )
+    {}
+
+    virtual bool operator()( jagDraw::NodeContainer& nc, jagDraw::DrawInfo& di )
+    {
+        const jagDraw::jagDrawContextID contextID( di._id );
+
+        _fbo->execute( di );
+        di._current.insert( _fbo );
+
+        return( true );
+    }
+
+protected:
+    jagDraw::FramebufferPtr _fbo;
+};
+typedef jagBase::ptr< ForceFramebufferExecute >::shared_ptr ForceFramebufferExecutePtr;
+
+
 static gmtl::Point4f glowColors[] = {
     gmtl::Point4f( 0.f, 0.5f, 0.f, 1.f ),
     gmtl::Point4f( 1.f, 0.f,  0.f, 1.f ),
@@ -170,6 +198,18 @@ bool ABufferJag::startup( const unsigned int numContexts )
     _depthBuffer->getSampler()->getSamplerState()->_magFilter = GL_NEAREST;
     _depthBuffer->setMaxContexts( numContexts );
 
+    // Create a framebuffer object. The color texture will store opaque
+    // rendering. The depth texture is shared with ABuffer to avoid
+    // rendering behind opaque geometry.
+    _opaqueFBO.reset( new jagDraw::Framebuffer( GL_DRAW_FRAMEBUFFER ) );
+    _opaqueFBO->setViewport( 0, 0, _width, _height );
+    _opaqueFBO->setClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+    _opaqueFBO->setClearColor( .15f, .1f, .5f, 0.f ); // Must clear alpha to 0 for glow.
+    _opaqueFBO->addAttachment( GL_DEPTH_ATTACHMENT, _depthBuffer );
+    _opaqueFBO->addAttachment( GL_COLOR_ATTACHMENT0, _opaqueBuffer );
+    _opaqueFBO->addAttachment( GL_COLOR_ATTACHMENT1, _secondaryBuffer );
+
+
     // Create the ABuffer management object.
     _aBuffer.reset( new jagUtil::ABuffer( _depthBuffer, _opaqueBuffer, _glowBuffer ) );
     _aBuffer->setMaxContexts( numContexts );
@@ -180,7 +220,12 @@ bool ABufferJag::startup( const unsigned int numContexts )
     // all opaque geometry in NodeContainer 0.
     jagDraw::DrawGraphPtr drawGraph( _aBuffer->createDrawGraphTemplate( 2 ) );
 
-    // Create blur effect NodeContainer
+    // Force Framebuffer::execute() on first NodeContainer so that we
+    // get a glClear() on the FBO even when it container no jagDraw Nodes.
+    ForceFramebufferExecutePtr fbocb( ForceFramebufferExecutePtr( new ForceFramebufferExecute( _opaqueFBO ) ) );
+    (*drawGraph)[ 0 ].getCallbacks().push_back( fbocb );
+
+    // Create blur effect for second NodeContainer
     _blur.reset( new jagUtil::Blur( _secondaryBuffer, _glowBuffer ) );
     _blur->setMaxContexts( numContexts );
     (*drawGraph)[ 1 ] = _blur->getNodeContainer();
@@ -265,16 +310,7 @@ bool ABufferJag::startup( const unsigned int numContexts )
         commands->insert( usp );
     }
 
-    // Create a framebuffer object. The color texture will store opaque
-    // rendering. The depth texture is shared with ABuffer to avoid
-    // rendering behind opaque geometry.
-    _opaqueFBO.reset( new jagDraw::Framebuffer( GL_DRAW_FRAMEBUFFER ) );
-    _opaqueFBO->setViewport( 0, 0, _width, _height );
-    _opaqueFBO->setClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-    _opaqueFBO->setClearColor( .15f, .1f, .5f, 0.f ); // Must clear alpha to 0 for glow.
-    _opaqueFBO->addAttachment( GL_DEPTH_ATTACHMENT, _depthBuffer );
-    _opaqueFBO->addAttachment( GL_COLOR_ATTACHMENT0, _opaqueBuffer );
-    _opaqueFBO->addAttachment( GL_COLOR_ATTACHMENT1, _secondaryBuffer );
+    // Set the FBO for main rendering.
     commands->insert( _opaqueFBO );
 
     // Set up lighting uniforms
