@@ -78,6 +78,7 @@ protected:
 DemoInterface* DemoInterface::create( bpo::options_description& desc )
 {
     jagBase::Log::instance()->setPriority( jagBase::Log::PrioDebug, jagBase::Log::Console );
+    jagBase::Log::instance()->setPriority( jagBase::Log::PrioWarning, "jag.draw.ctx" );
 
     return( new JagLoadDemo );
 }

@@ -1,4 +1,6 @@
 /** \defgroup exampleJagABuffer The abuffer Example
+Note: This example builds with freeglut only.
+
 This is a simple example of adding JAG model loading and rendering to an
 existing OpenGL example with minimal invasiveness. The original ABuffer
 example source can be downloaded from here:
