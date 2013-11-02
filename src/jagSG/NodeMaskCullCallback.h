@@ -51,7 +51,20 @@ public:
     \details TBD */
     virtual bool operator()( jagSG::VisitorBase* visitor, jagSG::Node::CallbackInfo* info );
 
+
+    typedef enum {
+        OVERRIDE_TRUE, ///< operator() always returns true. */
+        OVERRIDE_FALSE, ///< operator() always returns false. */
+        OVERRIDE_OFF ///< operator() uses the UserData node mask. */
+    } OverrideMode;
+    /** \brief Override the UserData node mask to force an enable or disable.
+    \details Default value: OVERRIDE_OFF */
+    void setOverride( const OverrideMode override );
+    /** \brief Get the current override mode. */
+    OverrideMode getOverride() const;
+
 protected:
+    OverrideMode _override;
 };
 
 typedef jagBase::ptr< NodeMaskCullCallback >::shared_ptr NodeMaskCullCallbackPtr;

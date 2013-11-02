@@ -29,12 +29,14 @@ namespace jagSG {
 
 NodeMaskCullCallback::NodeMaskCullCallback( const std::string& logName )
   : jagBase::LogBase( logName.empty() ? "jag.sg.coll.nodemask" : logName ),
-    jagSG::Node::Callback()
+    jagSG::Node::Callback(),
+    _override( OVERRIDE_OFF )
 {
 }
 NodeMaskCullCallback::NodeMaskCullCallback( const NodeMaskCullCallback& rhs )
   : jagBase::LogBase( "jag.sg.coll.nodemask" ),
-    jagSG::Node::Callback( rhs )
+    jagSG::Node::Callback( rhs ),
+    _override( rhs._override )
 {
 }
 NodeMaskCullCallback::~NodeMaskCullCallback()
@@ -44,12 +46,27 @@ NodeMaskCullCallback::~NodeMaskCullCallback()
 
 bool NodeMaskCullCallback::operator()( jagSG::VisitorBase* /* visitor */, jagSG::Node::CallbackInfo* info )
 {
-    jagSG::CollectionVisitor::CollectionInfo* ci( static_cast<
-        jagSG::CollectionVisitor::CollectionInfo* >( info ) );
+    if( _override == OVERRIDE_OFF )
+    {
+        jagSG::CollectionVisitor::CollectionInfo* ci( static_cast<
+            jagSG::CollectionVisitor::CollectionInfo* >( info ) );
 
-    return( ci->getNode()->getNodeMask() );
+        return( ci->getNode()->getNodeMask() );
+    }
+    else
+    {
+        return( _override == OVERRIDE_TRUE );
+    }
 }
 
+void NodeMaskCullCallback::setOverride( const OverrideMode override )
+{
+    _override = override;
+}
+NodeMaskCullCallback::OverrideMode NodeMaskCullCallback::getOverride() const
+{
+    return( _override );
+}
 
 
 
