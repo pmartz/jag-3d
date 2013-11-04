@@ -99,6 +99,17 @@ Jag3D class constructors obtain references to subordinate Loggers.
 By default, the root Logger ("jag") is configured with priority 0 (silent) and
 destination jagBase::Log::Console.
 
+Jag3D support environment variables to change log defaults. To set the root Logger to
+priority trace, export set JAG3D_LOG_PRIORITY to priority "notice":
+\code
+export JAG3D_LOG_PRIORITY=notice
+\endcode
+To set multiple Logger priorities, use JAG3D_LOG_PRIORITIES. For example:
+\code
+export JAG3D_LOG_PRIORITIES=jag.base.version info,jag.draw.ctx debug,jag.disk critical
+\endcode
+Note that environment variable values are case insensitive.
+
 The default log file name is "jag3d.log" and Jag3D writes it to the current directory.
 You can change the default log file name with either of the following methods:
 \li Call jagBase::Log::setLogFileName( const std::string& ).

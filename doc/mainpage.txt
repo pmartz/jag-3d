@@ -156,7 +156,7 @@ make tests
 
 \section ProjectRoadmap Upcoming Work and Project Notes
 
-The current release is v0.01.00, released 2 November, 2013.
+The current release is v0.01.00, released 4 November, 2013.
 
 For inclusion in v0.02.00 (date TBD):
 - Tuning to improve performance of collection and draw traversals.
@@ -326,6 +326,22 @@ jagmodel-vrj --jconf simstandalone.jconf -f dumptruck.osg
 \endcode
 VRJuggler configuration files are in the share\vrjuggler\data\configFiles
 folder of your VRJuggler install directory.
+
+With the \c simstandalone.jconf file, use the numeric keypad to navigate in
+interactive examples and tests. Here are a few commands:
+\li 8 - moves forward
+\li 2 - moves back
+\li 4 - moves left
+\li 6 - moves right
+\li 9 - moves up
+\li 7 - moves down
+\li 6 + ctrl - rot right
+\li 4 + ctrl - rot left
+\li 8 + ctrl - rot up
+\li 2 + ctrl - rot down
+\li 7 + ctrl - rot ccw
+\li 9 + ctrl - rot cw
+
 
 \section JagCommits Mercurial (Hg) Guidelines for Jag3D Commits
 
