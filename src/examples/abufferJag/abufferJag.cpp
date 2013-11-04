@@ -426,7 +426,10 @@ bool ABufferJag::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj
         JAG3D_PROFILE( "Collection" );
 
         // Set view and projection to define the collection frustum.
-        viewMatrix = mxCore->getInverseMatrix();
+        if( view.mState != gmtl::Matrix44d::IDENTITY )
+            viewMatrix = view;
+        else
+            viewMatrix = mxCore->getInverseMatrix();
         collect.setViewProj( viewMatrix, mxCore->computeProjection( .1, 25000. ) );
 
         {
