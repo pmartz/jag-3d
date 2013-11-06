@@ -84,7 +84,7 @@ protected:
 
     jagUtil::ABufferPtr _aBuffer;
 
-    jagSG::NodePtr _abufNode;
+    jagSG::NodePtr _abufNode, _abufOpaqueChild;
     jagDraw::FramebufferPtr _opaqueFBO;
     jagDraw::TexturePtr _opaqueBuffer, _secondaryBuffer, _glowBuffer, _depthBuffer;
     jagUtil::BlurPtr _blur;
@@ -269,6 +269,12 @@ bool ABufferJag::startup( const unsigned int numContexts )
     _abufNode->addChild( model );
     _aBuffer->setTransparencyEnable( *_abufNode );
 
+	_abufOpaqueChild.reset(new jagSG::Node() );
+	 gmtl::setTrans( _abufOpaqueChild->getTransform(), gmtl::Vec3d( model->getBound()->getRadius() * -1.5,0., 0. ) );
+	 _abufOpaqueChild->addChild(model);
+	 _abufNode->addChild(_abufOpaqueChild);
+
+	 
 
     // For gamepad speed control
     _moveRate = _root->getBound()->getRadius();
@@ -356,8 +362,8 @@ bool ABufferJag::startup( const unsigned int numContexts )
     ubsp->insert( backMaterials );
     ubsp->insert( frontMaterials );
     commands->insert( ubsp );
-
-
+	_aBuffer->setOpaqueCommandMap(commands);
+	_aBuffer->setTransparencyEnable( *_abufOpaqueChild,false );
     // We have potentially different views per window, so we keep an MxCore
     // per context. Initialize the MxCore objects and create default views.
     const jagDraw::BoundPtr bound( _root->getBound() );
