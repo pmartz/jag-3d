@@ -95,6 +95,12 @@ public:
     of our NodeContainer selection callback, then calls setTransparencyEnable() to
     invert the current state. */
     void toggleTransparencyEnable( jagSG::Node& node );
+    /** \brief Set a CommandMap to use for toggling to non-transparent.
+    \details When setting a Node to be opaque (via setTransparencyEnagle(node,false)
+    or by toggleTransparencyEnable(), if the Node's UserData does not contain a
+    saved CommandMap, use the specified \c commands. \c commands should contain
+    at least a jagDraw::Program and a jagDraw::Framebuffer. */
+    void setOpaqueCommandMap( const jagDraw::CommandMapPtr& commands );
     /** \brief Get the startiing NodeContainer index.
     \details Use the createDrawGraphTemplate() method to set the start container.
     Default is 1, leaving container 0 for the application.
@@ -202,7 +208,7 @@ protected:
     int _width, _height;
 
     jagDraw::FramebufferPtr _defaultFBO;
-    jagDraw::CommandMapPtr _commands;
+    jagDraw::CommandMapPtr _commands, _opaqueCommands;
     jagSG::SelectContainerCallbackPtr _callback;
     jagDraw::DrawGraphPtr _drawGraphTemplate;
 

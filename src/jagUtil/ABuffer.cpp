@@ -344,10 +344,18 @@ void ABuffer::setTransparencyEnable( jagSG::Node& node, const bool enable )
     }
     else
     {
-        // Restore to non-ABuffer.
-        jagDraw::CommandMapPtr commands(
-            node.getUserDataValue( "ABufferOriginalCommandMap" ).extract< jagDraw::CommandMapPtr >() );
-        node.setCommandMap( commands );
+        if( node.hasUserData( "ABufferOriginalCommandMap" ) )
+        {
+            // Restore to non-ABuffer.
+            jagDraw::CommandMapPtr commands(
+                node.getUserDataValue( "ABufferOriginalCommandMap" ).extract< jagDraw::CommandMapPtr >() );
+            node.setCommandMap( commands );
+        }
+        else
+        {
+            node.setCommandMap( jagDraw::CommandMapPtr( new jagDraw::CommandMap(
+                *( node.getCommandMap() ) + *_opaqueCommands ) ) );
+        }
 
         // Remove NodeContainer selection callback.
         node.getCollectionCallbacks().remove( _callback );
@@ -357,6 +365,10 @@ void ABuffer::toggleTransparencyEnable( jagSG::Node& node )
 {
     const bool currentlyEnabled( node.getCollectionCallbacks().contains( _callback ) );
     setTransparencyEnable( node, !currentlyEnabled );
+}
+void ABuffer::setOpaqueCommandMap( const jagDraw::CommandMapPtr& commands )
+{
+    _opaqueCommands = commands;
 }
 unsigned int ABuffer::getStartContainer() const
 {
