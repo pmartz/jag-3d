@@ -336,8 +336,10 @@ void ABuffer::setTransparencyEnable( jagSG::Node& node, const bool enable )
         if( node.getCommandMap() != NULL )
             node.setCommandMap( jagDraw::CommandMapPtr( new jagDraw::CommandMap(
                 *_commands + *( node.getCommandMap() ) ) ) );
-        else
-            node.setCommandMap( _commands );
+        else 
+			node.setCommandMap( _commands );
+			
+		
 
         // Specify NodeContainer selection callback.
         node.getCollectionCallbacks().addUnique( _callback );
@@ -353,8 +355,17 @@ void ABuffer::setTransparencyEnable( jagSG::Node& node, const bool enable )
         }
         else
         {
-            node.setCommandMap( jagDraw::CommandMapPtr( new jagDraw::CommandMap(
-                *( node.getCommandMap() ) + *_opaqueCommands ) ) );
+			
+			 if( node.getCommandMap() != NULL )  
+				 node.setCommandMap( jagDraw::CommandMapPtr( new jagDraw::CommandMap(
+					*( node.getCommandMap() ) + *_opaqueCommands ) ) );
+			 
+			 else
+				 node.setCommandMap(_opaqueCommands);
+				
+			 
+			 
+			
         }
 
         // Remove NodeContainer selection callback.
