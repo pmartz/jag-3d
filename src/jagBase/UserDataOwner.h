@@ -68,6 +68,13 @@ public:
         return _userData;
     }
 
+    /** \brief Is the UserData present?
+    */
+    bool hasUserData( const std::string& key )
+    {
+        return( _userData.find( key ) != _userData.end() );
+    }
+
     /** \brief Set the value of a particular key
     */
     void setUserDataPair(const std::string& key,const Poco::Dynamic::Var& value) {
