@@ -530,15 +530,19 @@ bool ABufferJag::keyCommand( const int command )
         _glowColor->set( glowColors[ glowIndex ] );
         break;
 
-    case (int)'e': // Toggle transparency
-        _aBuffer->toggleTransparencyEnable( *_abufNode );
-        break;
-
     case (int)'o': // Toggle opaque
         if( _opaqueToggleCB->getOverride() == jagSG::NodeMaskCullCallback::OVERRIDE_TRUE )
             _opaqueToggleCB->setOverride( jagSG::NodeMaskCullCallback::OVERRIDE_FALSE );
         else
             _opaqueToggleCB->setOverride( jagSG::NodeMaskCullCallback::OVERRIDE_TRUE );
+        break;
+
+    case (int)'e': // Toggle transparency
+        _aBuffer->toggleTransparencyEnable( *_abufNode );
+        break;
+
+    case (int)'c': // Toggle transparent child
+        _aBuffer->toggleTransparencyEnable( *_abufOpaqueChild );
         break;
 
     case (int)'a': // Cycle transparency resolve methods
@@ -579,9 +583,10 @@ Command line options:
 \li --file,-f Model to load.
 
 Key controls:
-\li g Toggle glow
-\li e Toggle transparency
-\li o Toggle opaque
+\li g Toggle opaque object's glow effect
+\li o Toggle opaque object on/off
+\li e Toggle transparent subgraph to opaque
+\li c Toggle transparent child to opaque
 \li a Cycle transparency resolve methods
 \li t/T Decrease/increate fragment alpha.
 \li f/F Decrease/increase maximum fragments per pixel.
