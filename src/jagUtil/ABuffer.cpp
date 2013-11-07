@@ -50,6 +50,7 @@ ABuffer::ABuffer( const std::string& logName )
       _secondaryEnable( false ),
       _width( 0 ),
       _height( 0 ),
+      _opaqueContainer( 0 ),
       _resolveMethod( RESOLVE_ALPHA_BLEND_CAD ),
       _fragmentAlpha( 0.2f ),
       _maxFragments( 16 ),
@@ -67,6 +68,7 @@ ABuffer::ABuffer( jagDraw::TexturePtr& depthBuffer, jagDraw::TexturePtr& colorBu
       _secondaryEnable( colorBuffer1 != NULL ),
       _width( 0 ),
       _height( 0 ),
+      _opaqueContainer( 0 ),
       _resolveMethod( RESOLVE_ALPHA_BLEND_CAD ),
       _fragmentAlpha( 0.2f ),
       _maxFragments( 16 ),
@@ -81,6 +83,8 @@ ABuffer::ABuffer( const ABuffer& rhs )
       _startContainer( rhs._startContainer ),
       _width( rhs._width ),
       _height( rhs._height ),
+      _opaqueCommands( rhs._opaqueCommands ),
+      _opaqueContainer( rhs._opaqueContainer ),
       _resolveMethod( rhs._resolveMethod ),
       _fragmentAlpha( rhs._fragmentAlpha ),
       _maxFragments( rhs._maxFragments ),
@@ -325,51 +329,73 @@ void ABuffer::setTransparencyEnable( jagSG::Node& node, const bool enable )
     if( _callback == NULL )
         internalInit();
 
+    /*
+    Get commandmap from node.
+    if enable
+      if commandmap == abuf commandmap
+        return
+      else if commandmap == opaque commandmap
+        set it to null
+      if commandmap == null
+        set abuf commandmap
+      else
+        save commandmap as user data
+        set commandmap + abuf commandmap
+      remove opaque nodecontainer
+      set abuf nodecontainer
+    else if disable
+      if commandmap == opaque commandmap
+        return
+      if user data commandmap exists
+        set user data commandmap
+      else if commandmap == null
+        set opaque command map
+      else
+        set commandmap + opaque command map
+      remove abuf nodecontainer
+      set opaque nodecontainer
+    */
+
+    jagDraw::CommandMapPtr commands( node.getCommandMap() );
     if( enable )
     {
-        // Set for ABuffer transparency rendering.
+        if( commands == _commands )
+            // This is a redundant enable.
+            return;
+        else if( commands == _opaqueCommands )
+            commands = NULL;
 
-        // Save original CommandMap.
-        node.setUserDataPair( "ABufferOriginalCommandMap", node.getCommandMap() );
-
-        // Set new CommandMap.
-        if( node.getCommandMap() != NULL )
-            node.setCommandMap( jagDraw::CommandMapPtr( new jagDraw::CommandMap(
-                *_commands + *( node.getCommandMap() ) ) ) );
-        else 
-			node.setCommandMap( _commands );
-			
-		
-
-        // Specify NodeContainer selection callback.
-        node.getCollectionCallbacks().addUnique( _callback );
-    }
-    else
-    {
-        if( node.hasUserData( "ABufferOriginalCommandMap" ) )
-        {
-            // Restore to non-ABuffer.
-            jagDraw::CommandMapPtr commands(
-                node.getUserDataValue( "ABufferOriginalCommandMap" ).extract< jagDraw::CommandMapPtr >() );
-            node.setCommandMap( commands );
-        }
+        if( commands == NULL )
+            node.setCommandMap( _commands );
         else
         {
-			
-			 if( node.getCommandMap() != NULL )  
-				 node.setCommandMap( jagDraw::CommandMapPtr( new jagDraw::CommandMap(
-					*( node.getCommandMap() ) + *_opaqueCommands ) ) );
-			 
-			 else
-				 node.setCommandMap(_opaqueCommands);
-				
-			 
-			 
-			
+            node.setUserDataPair( "ABufferOriginalCommandMap", commands );
+            node.setCommandMap( jagDraw::CommandMapPtr( new jagDraw::CommandMap(
+                *commands + *_commands ) ) );
         }
-
-        // Remove NodeContainer selection callback.
+        // Specify NodeContainer selection callback.
+        node.getCollectionCallbacks().remove( _opaqueCallback );
+        node.getCollectionCallbacks().addUnique( _callback );
+    }
+    else // disable
+    {
+        if( commands == _opaqueCommands )
+            // This is a redundant disable.
+            return;
+        if( node.hasUserData( "ABufferOriginalCommandMap" ) )
+        {
+            jagDraw::CommandMapPtr savedCommands( node.getUserDataValue(
+                "ABufferOriginalCommandMap" ).extract< jagDraw::CommandMapPtr >() );
+            node.setCommandMap( savedCommands );
+        }
+        else if( commands == NULL )
+            node.setCommandMap( _opaqueCommands );
+        else
+            node.setCommandMap( jagDraw::CommandMapPtr( new jagDraw::CommandMap(
+                *commands + *_opaqueCommands ) ) );
+        // Specify the opaque NodeContainer selection callback.
         node.getCollectionCallbacks().remove( _callback );
+        node.getCollectionCallbacks().addUnique( _opaqueCallback );
     }
 }
 void ABuffer::toggleTransparencyEnable( jagSG::Node& node )
@@ -377,9 +403,14 @@ void ABuffer::toggleTransparencyEnable( jagSG::Node& node )
     const bool currentlyEnabled( node.getCollectionCallbacks().contains( _callback ) );
     setTransparencyEnable( node, !currentlyEnabled );
 }
-void ABuffer::setOpaqueCommandMap( const jagDraw::CommandMapPtr& commands )
+void ABuffer::setOpaqueControls( const jagDraw::CommandMapPtr& opaqueCommands, const unsigned int opaqueContainer )
 {
-    _opaqueCommands = commands;
+    if( _callback == NULL )
+        internalInit();
+
+    _opaqueCommands = opaqueCommands;
+    _opaqueContainer = opaqueContainer;
+    _opaqueCallback->setContainer( _opaqueContainer );
 }
 unsigned int ABuffer::getStartContainer() const
 {
@@ -549,7 +580,13 @@ void ABuffer::internalInit()
     // This is the NodeContainer selection callback that the app must attach to any transparent geometry.
     // ABuffer container is container the next container after _startContainer.
     if( _callback == NULL )
-        _callback.reset( new jagSG::SelectContainerCallback( _startContainer + 1 ) );
+        _callback.reset( new jagSG::SelectContainerCallback() );
+    _callback->setContainer( _startContainer + 1 );
+
+    // Opaque container, for restoring a node to opaque status.
+    if( _opaqueCallback == NULL )
+        _opaqueCallback.reset( new jagSG::SelectContainerCallback() );
+    _opaqueCallback->setContainer( _opaqueContainer );
 }
 
 std::string ABuffer::shaderResolveParameters() const

@@ -100,7 +100,7 @@ public:
     or by toggleTransparencyEnable(), if the Node's UserData does not contain a
     saved CommandMap, use the specified \c commands. \c commands should contain
     at least a jagDraw::Program and a jagDraw::Framebuffer. */
-    void setOpaqueCommandMap( const jagDraw::CommandMapPtr& commands );
+    void setOpaqueControls( const jagDraw::CommandMapPtr& commands, const unsigned int opaqueContainer=0 );
     /** \brief Get the startiing NodeContainer index.
     \details Use the createDrawGraphTemplate() method to set the start container.
     Default is 1, leaving container 0 for the application.
@@ -209,7 +209,8 @@ protected:
 
     jagDraw::FramebufferPtr _defaultFBO;
     jagDraw::CommandMapPtr _commands, _opaqueCommands;
-    jagSG::SelectContainerCallbackPtr _callback;
+    unsigned int _opaqueContainer;
+    jagSG::SelectContainerCallbackPtr _callback, _opaqueCallback;
     jagDraw::DrawGraphPtr _drawGraphTemplate;
 
     jagDraw::ProgramPtr _clearProgram, _renderProgram, _resolveProgram;
