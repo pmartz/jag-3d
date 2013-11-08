@@ -16,6 +16,7 @@ macro( _abufferExecutable _category _exeName )
     add_executable( ${_localExeName}
         ${_sources}
     )
+    set_property( TARGET ${_localExeName} PROPERTY DEBUG_OUTPUT_NAME "${_localExeName}${CMAKE_DEBUG_POSTFIX}" )
 
     unset( _allIncludes )
     set( _allIncludes

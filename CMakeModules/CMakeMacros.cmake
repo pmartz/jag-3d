@@ -125,6 +125,7 @@ endmacro()
 
 macro( _addNonWindowedExecutable _category _exeName )
     add_executable( ${_exeName} ${ARGN} )
+    set_property( TARGET ${_exeName} PROPERTY DEBUG_OUTPUT_NAME "${_exeName}${CMAKE_DEBUG_POSTFIX}" )
 
     include_directories(
         ${_projectIncludes}
@@ -163,6 +164,7 @@ macro( _addFreeglutExecutable _category _exeName )
         ${PROJECT_SOURCE_DIR}/src/demoSupport/freeglutSupport.cpp
         ${_sources}
     )
+    set_property( TARGET ${_localExeName} PROPERTY DEBUG_OUTPUT_NAME "${_localExeName}${CMAKE_DEBUG_POSTFIX}" )
 
     unset( _allIncludes )
     set( _allIncludes
@@ -215,6 +217,7 @@ macro( _addQtExecutable _category _exeName )
         ${_mocFiles}
         ${_sources}
     )
+    set_property( TARGET ${_localExeName} PROPERTY DEBUG_OUTPUT_NAME "${_localExeName}${CMAKE_DEBUG_POSTFIX}" )
 
     unset( _allIncludes )
     set( _allIncludes
@@ -265,6 +268,7 @@ macro( _addVrjExecutable _category _exeName )
         ${PROJECT_SOURCE_DIR}/src/demoSupport/vrjSupport.cpp
         ${_sources}
     )
+    set_property( TARGET ${_localExeName} PROPERTY DEBUG_OUTPUT_NAME "${_localExeName}${CMAKE_DEBUG_POSTFIX}" )
 
     unset( _allIncludes )
     set( _allIncludes
