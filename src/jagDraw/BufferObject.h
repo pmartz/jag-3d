@@ -39,7 +39,7 @@ namespace jagDraw {
 struct DrawInfo;
 
 
-/** \addtogroup jagDrawGLCommands OpenGL Commands.
+/** \addtogroup jagDrawGLCommands OpenGL Commands */
 /*@{*/
 
 /** \class BufferObject BufferObject.h <jagDraw/BufferObject.h>

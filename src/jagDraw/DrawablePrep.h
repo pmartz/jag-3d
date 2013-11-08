@@ -34,7 +34,7 @@
 namespace jagDraw {
 
 
-/** \addtogroup jagDrawGLCommands OpenGL Commands.
+/** \addtogroup jagDrawGLCommands OpenGL Commands */
 /*@{*/
 
 struct DrawInfo;

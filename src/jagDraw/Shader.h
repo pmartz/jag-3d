@@ -35,7 +35,7 @@
 namespace jagDraw {
 
 
-/** \addtogroup jagDrawGLCommands OpenGL Commands.
+/** \addtogroup jagDrawGLCommands OpenGL Commands */
 /*@{*/
 
 /** \class Shader Shader.h <jagDraw/Shader.h>

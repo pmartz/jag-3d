@@ -31,7 +31,7 @@ namespace jagUtil
 {
 
 
-/** \addtogroup jagUtilShapes Rudimentary shape support
+/** \addtogroup jagUtilShapes Rudimentary Shape Support
 /*@{*/
 
 typedef struct {
