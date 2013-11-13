@@ -81,6 +81,17 @@ public:
         return( _moveRate );
     }
 
+    virtual WinSizeType defaultWinSize() const
+    {
+        WinSizeType ws;
+        ws.push_back( 800 ); ws.push_back( 600 );
+        return( ws );
+    }
+    virtual bool defaultMultisample() const
+    {
+        return( false );
+    }
+
 protected:
     std::string _fileName;
 

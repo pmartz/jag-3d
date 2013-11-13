@@ -110,8 +110,38 @@ public:
             return( _mxCore._data[ contextID ] );
     }
 
-    // Return a value to bontrol base gamepad move rate in the scene.
-    virtual double getMoveRate() const { return( 1. ); }
+    /** Return a value to control base gamepad move rate in the scene. */
+    virtual double getMoveRate() const
+    {
+        return( 1. );
+    }
+
+    /** \brief Default command line values.
+    \details Demo code overrides these methods to change
+    the default behavior for command line options that are
+    used by all demo code. */
+    virtual double defaultOpenGLVersion() const
+    {
+#if( POCO_OS == POCO_OS_MAC_OS_X )
+        // In OSX 10.7/10.8, use GL 3.2 and GLSL 1.50
+        return( 3.2 );
+#else
+        return( 4.0 );
+#endif
+    }
+    virtual unsigned int defaultNumWindows() const
+    {
+        return( 1 );
+    }
+    typedef std::vector< int > WinSizeType;
+    virtual WinSizeType defaultWinSize() const
+    {
+        return( WinSizeType( 2, 300 ) );
+    }
+    virtual bool defaultMultisample() const
+    {
+        return( true );
+    }
 
 protected:
     std::string _logName;
