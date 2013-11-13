@@ -240,7 +240,7 @@ void motion( int x, int y )
 
 int main( int argc, char* argv[] )
 {
-    std::vector< int > winsize;
+    DemoInterface::WinSizeType winsize;
     bpo::options_description desc( "Options" );
     // Add test/demo options
     desc.add_options()
@@ -266,31 +266,26 @@ int main( int argc, char* argv[] )
         return( 1 );
     }
 
-#if( POCO_OS == POCO_OS_MAC_OS_X )
-    // In OSX 10.7/10.8, use GL 3.2 and GLSL 1.50
-    double version( 3.2 );
-#else
-    double version( 4.0 );
-#endif
+    double version( di->defaultOpenGLVersion() );
     if( vm.count( "version" ) > 0 )
         version = vm[ "version" ].as< double >();
     double versionMajor;
     modf( version, &versionMajor );
     float versionMinor = (float)( version * 10. - versionMajor * 10. );
 
-    int nwin( 1 );
+    int nwin( di->defaultNumWindows() );
     if( vm.count( "nwin" ) > 0 )
         nwin = vm[ "nwin" ].as< int >();
 
     if( winsize.size() != 2 )
-    {
-        winsize.clear();
-        winsize.push_back( 300 ); winsize.push_back( 300 );
-    }
+        winsize = di->defaultWinSize();
 
     unsigned int multisampleFlag( GLUT_MULTISAMPLE );
-    if( vm.count( "no-ms" ) > 0 )
+    if( ( vm.count( "no-ms" ) > 0 ) ||
+        !( di->defaultMultisample() ) )
+    {
         multisampleFlag = 0;
+    }
 
 
 #ifdef DIRECTINPUT_ENABLED
