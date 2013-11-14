@@ -56,6 +56,7 @@ float _lastNX, _lastNY;
 typedef std::vector< int > IntVec;
 IntVec _width, _height;
 static bool _leftDrag( false ), _middleDrag( false ), _rightDrag( false );
+unsigned int _nWin;
 
 static jagMx::MxGamePadPtr gamePad( jagMx::MxGamePadPtr( (jagMx::MxGamePad*)NULL ) );
 
@@ -234,7 +235,11 @@ void motion( int x, int y )
     _lastNX = nx;
     _lastNY = ny;
 
-    glutPostRedisplay();
+    if( di->mouseMotionRedrawsAllWindows() )
+        for( unsigned int idx=0; idx<_nWin; ++idx )
+            glutPostWindowRedisplay( idx+1 );
+    else
+        glutPostRedisplay();
 }
 
 
@@ -276,6 +281,7 @@ int main( int argc, char* argv[] )
     int nwin( di->defaultNumWindows() );
     if( vm.count( "nwin" ) > 0 )
         nwin = vm[ "nwin" ].as< int >();
+    _nWin = nwin;
 
     if( winsize.size() != 2 )
         winsize = di->defaultWinSize();
