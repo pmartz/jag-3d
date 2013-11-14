@@ -143,6 +143,16 @@ public:
         return( true );
     }
 
+    /** \brief Control window updates after mouse motion.
+    \details If this method returns false, only the window
+    receiving the mouse motion event will redraw after processing
+    that event. Override this method and return true to cause
+    all windows to redraw after the mouse motion event. */
+    virtual bool mouseMotionRedrawsAllWindows() const
+    {
+        return( false );
+    }
+
 protected:
     std::string _logName;
     bool _startupCalled;
