@@ -283,7 +283,7 @@ protected:
     GLenum _internalFormat;
     GLsizei _width, _height;
 
-    jagDraw::PerContextGLboolean _dirty;
+    jagDraw::PerContextBool _dirty;
 };
 
 typedef jagBase::ptr< jagDraw::Renderbuffer >::shared_ptr RenderbufferPtr;

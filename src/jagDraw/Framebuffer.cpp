@@ -361,9 +361,9 @@ void Renderbuffer::setMaxContexts( const unsigned int numContexts )
     ObjectID::setMaxContexts( numContexts );
 
     _dirty._data.resize( numContexts );
-    BOOST_FOREACH( GLboolean& dirty, _dirty._data )
+    for( unsigned int idx=0; idx < _dirty._data.size(); ++idx )
     {
-        dirty = GL_TRUE;
+        _dirty._data[ idx ] = true;
     }
 }
 
@@ -372,7 +372,7 @@ void Renderbuffer::attachToFBO( const jagDraw::jagDrawContextID contextID, const
     JAG3D_TRACE( "attachToFBO" );
     glFramebufferRenderbuffer( _fboTarget, attachment, GL_RENDERBUFFER, getID( contextID ) );
 
-    _dirty._data[ contextID ] = GL_FALSE;
+    _dirty._data[ contextID ] = false;
 }
 
 void Renderbuffer::internalInit( const unsigned int contextID )
@@ -399,9 +399,9 @@ void Renderbuffer::internalInit( const unsigned int contextID )
 bool Renderbuffer::isDirty( const unsigned int contextID ) const
 {
     if( contextID < _dirty._data.size() )
-        return( _dirty._data[ contextID ] == GL_TRUE );
+        return( _dirty._data[ contextID ] );
     else
-        return( GL_TRUE );
+        return( true );
 }
 
 

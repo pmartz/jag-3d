@@ -186,7 +186,7 @@ protected:
     void internalSpecifyTexImage( const unsigned int contextID );
     void internalSpecifyTexImage( const GLenum target, ImagePtr image );
 
-    jagDraw::PerContextGLboolean _dirty;
+    jagDraw::PerContextBool _dirty;
 };
 
 typedef std::vector< TexturePtr > TextureVec;

@@ -79,7 +79,7 @@ Program::Program( const Program& rhs )
     _needsDetach._data.resize( rhs._needsDetach._data.size() );
     for( unsigned int idx=0; idx < _needsDetach._data.size(); ++idx )
     {
-        _needsDetach[ idx ] = GL_FALSE;
+        _needsDetach[ idx ] = false;
     }
 }
 
@@ -103,7 +103,7 @@ void Program::detachAllShaders()
     }
     for( unsigned int idx=0; idx<_needsDetach._data.size(); ++idx )
     {
-        _needsDetach[ idx ] = GL_TRUE;
+        _needsDetach[ idx ] = true;
     }
     _shaders.clear();
 
@@ -114,7 +114,7 @@ void Program::forceRelink()
 {
     for( unsigned int idx=0; idx<_linkStatus._data.size(); ++idx )
     {
-        _linkStatus[ idx ] = GL_FALSE;
+        _linkStatus[ idx ] = false;
     }
 }
 
@@ -127,9 +127,9 @@ void Program::execute( DrawInfo& drawInfo )
 
     const unsigned int contextID( ( unsigned int )( drawInfo._id ) );
     const GLuint id( getID( contextID ) );
-    const GLboolean& linked( _linkStatus[ contextID ] );
+    const bool& linked( _linkStatus[ contextID ] );
 
-    if( linked == GL_FALSE )
+    if( !linked )
     {
         if( id == 0 )
         {
@@ -220,13 +220,18 @@ void Program::setMaxContexts( const unsigned int numContexts )
 {
     ObjectID::setMaxContexts( numContexts );
 
+    unsigned int oldSize( ( const unsigned int )( _linkStatus._data.size() ) );
     _linkStatus._data.resize( numContexts );
+    for( unsigned int idx = oldSize; idx < _linkStatus._data.size(); ++idx )
+    {
+        _linkStatus[ idx ] = false;
+    }
 
-    const unsigned int oldSize( ( const unsigned int )( _needsDetach._data.size() ) );
+    oldSize = ( const unsigned int )( _needsDetach._data.size() );
     _needsDetach._data.resize( numContexts );
     for( unsigned int idx = oldSize; idx < _needsDetach._data.size(); ++idx )
     {
-        _needsDetach[ idx ] = GL_FALSE;
+        _needsDetach[ idx ] = false;
     }
 
     BOOST_FOREACH( const ShaderVec::value_type& shader, _shaders )
@@ -323,11 +328,11 @@ bool Program::link( unsigned int contextID )
         printInfoLog( id );
         glDeleteProgram( id );
         _ids[ contextID ] = 0;
-        _linkStatus[ contextID ] = GL_FALSE;
+        _linkStatus[ contextID ] = false;
         return( false );
     }
 
-    _linkStatus[ contextID ] = GL_TRUE;
+    _linkStatus[ contextID ] = true;
     {
         glUseProgram( id );
 
@@ -531,7 +536,7 @@ void Program::internalInit( const unsigned int contextID )
     }
 
     _ids[ contextID ] = id;
-    _linkStatus[ contextID ] = GL_FALSE;
+    _linkStatus[ contextID ] = false;
 
     JAG3D_ERROR_CHECK( "Program::internalInit()" );
 }
@@ -611,10 +616,10 @@ void Program::internalDetach( const unsigned int contextID )
         glGetAttachedShaders( id, (GLsizei) numShaders, &( (GLsizei) numShaders ), &(idList[0]) );
 
         // Detach shaders for the specified context.
-        if( _needsDetach[ contextID ] == GL_TRUE )
+        if( _needsDetach[ contextID ] )
         {
-            JAG3D_TRACE( "Found GL_TRUE entry in _needsDetach" );
-            _needsDetach[ contextID ] = GL_FALSE;
+            JAG3D_TRACE( "Found 'true' entry in _needsDetach" );
+            _needsDetach[ contextID ] = false;
             BOOST_FOREACH( ShaderPtr& shader, _detachedShaders )
             {
                 const GLuint shaderID( shader->getID( contextID ) );
@@ -639,9 +644,9 @@ void Program::internalDetach( const unsigned int contextID )
         {
             // There were no shaders attached on this context. Could happen
             // if Shader objects were added, but replaced prior to link.
-            _needsDetach[ idx ] = GL_FALSE;
+            _needsDetach[ idx ] = false;
         }
-        else if( _needsDetach[ idx ] == GL_TRUE )
+        else if( _needsDetach[ idx ] )
         {
             allDetached = false;
             break;

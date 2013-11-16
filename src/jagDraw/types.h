@@ -44,8 +44,10 @@ arrays for base OpenGL types. Examples:
 \li GLenumVec: A std::vector of GLenum.
 \li GLenumArray: A shared_array_ptr of GLenum.
 */
+#define DEFINE_PER_CTX(__type,__name ) \
+    typedef PerContextData< __type > PerContext##__name;
 #define DEFINE_TYPE_ARRAYS(__type) \
-    typedef PerContextData< __type > PerContext##__type; \
+    DEFINE_PER_CTX(__type,__type) \
     typedef std::vector< __type > __type##Vec; \
     typedef jagBase::ptr< __type >::shared_array_ptr __type##Array;
 
@@ -69,7 +71,15 @@ typedef PerContextData< GLvoid* > PerContextGLvoidPtr;
 typedef std::vector< GLvoid* > GLvoidPtrVec;
 typedef jagBase::ptr< GLvoid* >::shared_array_ptr GLvoidPtrArray;
 
+// Just define PerContext* -- Other types defined in jagBase/types.h.
+DEFINE_PER_CTX(bool,Bool);
+DEFINE_PER_CTX(unsigned char,UChar);
+DEFINE_PER_CTX(unsigned int,UInt);
+DEFINE_PER_CTX(float,Float);
+DEFINE_PER_CTX(double,Double);
+
 #undef DEFINE_TYPE_ARRAYS
+#undef DEFINE_PER_CTX
 
 
 // jagDraw
