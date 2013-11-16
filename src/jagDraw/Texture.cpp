@@ -203,7 +203,7 @@ void Texture::execute( DrawInfo& drawInfo )
 
     glBindTexture( _target, getID( contextID ) );
 
-    if( _dirty[ contextID ] == GL_TRUE )
+    if( _dirty[ contextID ] )
         internalSpecifyTexImage( contextID );
 
     JAG3D_ERROR_CHECK( "Texture::execute()" );
@@ -233,9 +233,9 @@ void Texture::setMaxContexts( const unsigned int numContexts )
         _textureBuffer->setMaxContexts( numContexts );
 
     _dirty._data.resize( numContexts );
-    BOOST_FOREACH( GLboolean& dirty, _dirty._data )
+    for( unsigned int idx=0; idx < _dirty._data.size(); ++idx )
     {
-        dirty = GL_TRUE;
+        _dirty._data[ idx ] = true;
     }
 }
 void Texture::deleteID( const jagDraw::jagDrawContextID contextID )
@@ -250,7 +250,7 @@ void Texture::attachToFBO( const jagDraw::jagDrawContextID contextID, const GLen
     JAG3D_TRACE( "attachToFBO() \"" + getUserDataName() + "\"" );
 
     const GLuint texID( getID( contextID ) );
-    if( _dirty[ contextID ] == GL_TRUE )
+    if( _dirty[ contextID ] )
     {
         // Must bind in order to undirty the texture.
         // However, we don't want to change the texture binding.
@@ -345,7 +345,7 @@ void Texture::internalSpecifyTexImage( const unsigned int contextID )
             glTexBuffer( _target, _bufferFormat, _textureBuffer->getID( contextID ) );
     }
 
-    _dirty[ contextID ] = GL_FALSE;
+    _dirty[ contextID ] = false;
 }
 
 void Texture::internalSpecifyTexImage( const GLenum target, ImagePtr image )
@@ -439,17 +439,17 @@ void Texture::markAllDirty()
 {
     JAG3D_TRACE( "markAllDirty() \"" + getUserDataName() + "\"" );
 
-    BOOST_FOREACH( GLboolean& item, _dirty._data )
+    for( unsigned int idx=0; idx < _dirty._data.size(); ++idx )
     {
-        item = GL_TRUE;
+        _dirty._data[ idx ] = true;
     }
 }
 bool Texture::isDirty( const unsigned int contextID ) const
 {
     if( contextID < _dirty._data.size() )
-        return( _dirty._data[ contextID ] == GL_TRUE );
+        return( _dirty._data[ contextID ] );
     else
-        return( GL_TRUE );
+        return( true );
 }
 
 void Texture::determineBindQuery()

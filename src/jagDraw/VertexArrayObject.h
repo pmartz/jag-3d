@@ -139,7 +139,7 @@ public:
 protected:
     void internalInit( const unsigned int contextID );
 
-    PerContextGLboolean _initialized;
+    PerContextBool _initialized;
 
     VertexArrayCommandVec _commands;
 

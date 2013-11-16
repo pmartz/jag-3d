@@ -37,16 +37,22 @@
 namespace jagBase {
 
 
-typedef jagBase::ptr< unsigned char >::shared_array_ptr UCharArray;
-typedef jagBase::ptr< unsigned int >::shared_ptr UIntPtr;
+#define DEFINE_TYPE_ARRAYS(__type,__name) \
+    typedef std::vector< __type > __name##Vec; \
+    typedef jagBase::ptr< __type >::shared_array_ptr __name##Array;
 
-typedef std::vector< std::string > StringVec;
+DEFINE_TYPE_ARRAYS(gmtl::Point2f,Point2f);
+DEFINE_TYPE_ARRAYS(gmtl::Point3f,Point3f);
+DEFINE_TYPE_ARRAYS(gmtl::Matrix44d,Matrix44d);
+DEFINE_TYPE_ARRAYS(bool,Bool);
+DEFINE_TYPE_ARRAYS(unsigned char,UChar);
+DEFINE_TYPE_ARRAYS(unsigned int,UIhar);
+DEFINE_TYPE_ARRAYS(float,Float);
+DEFINE_TYPE_ARRAYS(double,Double);
+DEFINE_TYPE_ARRAYS(std::string,String);
 
-typedef std::vector< gmtl::Point2f > Point2fVec;
-typedef std::vector< gmtl::Point3f > Point3fVec;
-typedef jagBase::ptr< gmtl::Point3f >::shared_array_ptr Point3fArray;
+#undef DEFINE_TYPE_ARRAYS
 
-typedef std::vector< gmtl::Matrix44d > Matrix44dVec;
 
 // jagBase
 }

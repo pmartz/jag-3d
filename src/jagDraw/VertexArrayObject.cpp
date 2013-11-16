@@ -76,15 +76,15 @@ void VertexArrayObject::execute( DrawInfo& drawInfo )
     const unsigned int contextID( drawInfo._id );
 
     glBindVertexArray( getID( contextID ) );
-    GLboolean& initialized( _initialized[ contextID ] );
+    bool& initialized( _initialized[ contextID ] );
 
-    if( initialized == GL_FALSE )
+    if( !initialized )
     {
         BOOST_FOREACH( VertexArrayCommandPtr& vac, _commands )
         {
             vac->execute( drawInfo );
         }
-        initialized = GL_TRUE;
+        initialized = true;
     }
 }
 
@@ -103,6 +103,10 @@ void VertexArrayObject::setMaxContexts( const unsigned int numContexts )
     ObjectID::setMaxContexts( numContexts );
 
     _initialized._data.resize( numContexts );
+    for( unsigned int idx=0; idx < _initialized._data.size(); idx++ )
+    {
+        _initialized[ idx ] = false;
+    }
 
     BOOST_FOREACH( VertexArrayCommandPtr& vac, _commands )
     {
@@ -124,10 +128,9 @@ void VertexArrayObject::addVertexArrayCommand( VertexArrayCommandPtr vacp, const
 {
     _commands.push_back( vacp );
 
-    unsigned int idx;
-    for( idx=0; idx < _initialized._data.size(); idx++ )
+    for( unsigned int idx=0; idx < _initialized._data.size(); idx++ )
     {
-        _initialized[ idx ] = GL_FALSE;
+        _initialized[ idx ] = false;
     }
 
     if( usage == Vertex )
@@ -263,7 +266,7 @@ size_t VertexArrayObject::combine( const VertexArrayObject& rhs )
 void VertexArrayObject::internalInit( const unsigned int contextID )
 {
     glGenVertexArrays( 1, &( _ids[ contextID ] ) );
-    _initialized[ contextID ] = GL_FALSE;
+    _initialized[ contextID ] = false;
 
     JAG3D_ERROR_CHECK( "VertexArrayObject::internalInit()" );
 }
