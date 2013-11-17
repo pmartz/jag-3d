@@ -103,10 +103,7 @@ void VertexArrayObject::setMaxContexts( const unsigned int numContexts )
     ObjectID::setMaxContexts( numContexts );
 
     _initialized._data.resize( numContexts );
-    for( unsigned int idx=0; idx < _initialized._data.size(); idx++ )
-    {
-        _initialized[ idx ] = false;
-    }
+    markAllDirty();
 
     BOOST_FOREACH( VertexArrayCommandPtr& vac, _commands )
     {
@@ -127,17 +124,42 @@ void VertexArrayObject::setMaxContexts( const unsigned int numContexts )
 void VertexArrayObject::addVertexArrayCommand( VertexArrayCommandPtr vacp, const UsageHint& usage )
 {
     _commands.push_back( vacp );
-
-    for( unsigned int idx=0; idx < _initialized._data.size(); idx++ )
-    {
-        _initialized[ idx ] = false;
-    }
-
     if( usage == Vertex )
-    {
         _vertices.push_back( vacp );
+
+    markAllDirty();
+}
+void VertexArrayObject::removeVertexArrayCommand( const VertexArrayCommandPtr vacp )
+{
+    VertexArrayCommandVec::iterator it;
+    for( it = _commands.begin(); it != _commands.end(); ++it )
+    {
+        if( vacp == *it )
+        {
+            _commands.erase( it );
+
+            // Also erase from vertices, if present. We don't know the actual
+            // usage, but if it was added with usage VERTICES, then we'll
+            // find it here and erase it.
+            VertexArrayCommandVec::iterator vIt;
+            for( vIt = _vertices.begin(); vIt != _vertices.end(); ++vIt )
+            if( vacp == *vIt )
+                _vertices.erase( vIt );
+
+            markAllDirty();
+        }
     }
 }
+void VertexArrayObject::removeVertexArrayCommand( const std::string& userDataName )
+{
+    BOOST_FOREACH( VertexArrayCommandPtr item, _commands )
+    {
+        const std::string targetName( item->getUserDataName() );
+        if( targetName == userDataName )
+            removeVertexArrayCommand( item );
+    }
+}
+
 VertexArrayCommandPtr VertexArrayObject::getVertexArrayCommand( const VertexArrayCommand::Type& type, const UsageHint& usage ) const
 {
     if( usage == Vertex )
@@ -166,6 +188,24 @@ VertexArrayCommandVec& VertexArrayObject::getVertexArrayCommandList()
 const VertexArrayCommandVec& VertexArrayObject::getVertexArrayCommandList() const
 {
     return( _commands );
+}
+
+void VertexArrayObject::markAllDirty()
+{
+    for( unsigned int idx=0; idx < _initialized._data.size(); idx++ )
+    {
+        _initialized[ idx ] = false;
+    }
+}
+bool VertexArrayObject::isDirty( const unsigned int contextID ) const
+{
+    if( contextID < _initialized._data.size() )
+    {
+        const bool& initialized( _initialized[ contextID ] );
+        return( !initialized );
+    }
+    else
+        return( true );
 }
 
 
