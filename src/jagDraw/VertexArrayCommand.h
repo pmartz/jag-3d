@@ -28,7 +28,7 @@
 #define __JAGDRAW_VERTEX_ARRAY_COMMAND_H__ 1
 
 #include <jagDraw/Export.h>
-#include <jagDraw/ObjectID.h>
+#include <jagBase/UserDataOwner.h>
 #include <jagBase/ptr.h>
 
 #include <vector>
@@ -47,7 +47,7 @@ struct DrawInfo;
 \brief
 \details
 */
-class /*JAGDRAW_EXPORT*/ VertexArrayCommand
+class /*JAGDRAW_EXPORT*/ VertexArrayCommand : public jagBase::UserDataOwner
 {
 public:
     /** \brief TBD
@@ -59,11 +59,13 @@ public:
     } Type;
 
     VertexArrayCommand( const Type type )
-      : _type( type )
+      : UserDataOwner(),
+        _type( type )
     {
     }
     VertexArrayCommand( const VertexArrayCommand& rhs )
-      : _type( rhs._type )
+      : UserDataOwner( rhs ),
+        _type( rhs._type )
     {
     }
     ~VertexArrayCommand()
