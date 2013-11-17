@@ -61,7 +61,7 @@ struct PerContextData
     }
     const T& operator[]( const unsigned int idx ) const
     {
-        return( ( T& )( _data[ idx ] ) );
+        return( ( const T& )( _data[ idx ] ) );
     }
 
     std::vector< T > _data;
