@@ -106,6 +106,12 @@ public:
     void addVertexArrayCommand( VertexArrayCommandPtr vacp, const UsageHint& usage=Unspecified );
     /** \brief TBD
     \details TBD */
+    void removeVertexArrayCommand( const VertexArrayCommandPtr vacp );
+    /** \brief TBD
+    \details TBD */
+    void removeVertexArrayCommand( const std::string& userDataName );
+    /** \brief TBD
+    \details TBD */
     VertexArrayCommandPtr getVertexArrayCommand( const VertexArrayCommand::Type& type, const UsageHint& usage ) const;
 
     /** \brief TBD
@@ -114,6 +120,13 @@ public:
     /** \brief TBD
     \details TBD */
     const VertexArrayCommandVec& getVertexArrayCommandList() const;
+
+    /** \brief TBD
+    \details TBD */
+    void markAllDirty();
+    /** \brief TBD
+    \details TBD */
+    bool isDirty( const unsigned int contextID ) const;
 
 
     /** \name VertexArrayObject Aggregation
