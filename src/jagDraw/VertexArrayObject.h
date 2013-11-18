@@ -123,7 +123,7 @@ public:
 
     /** \brief TBD
     \details TBD */
-    void markAllDirty();
+    void markAllDirty( const bool dirty=true );
     /** \brief TBD
     \details TBD */
     bool isDirty( const unsigned int contextID ) const;
@@ -152,7 +152,7 @@ public:
 protected:
     void internalInit( const unsigned int contextID );
 
-    PerContextBool _initialized;
+    PerContextBool _dirty;
 
     VertexArrayCommandVec _commands;
 

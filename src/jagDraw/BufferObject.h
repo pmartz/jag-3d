@@ -74,6 +74,10 @@ public:
     virtual ~BufferObject();
 
 
+    /** \brief Override from ObjectID.
+    \details TBD */
+    virtual void setMaxContexts( const unsigned int numContexts );
+
     virtual GLuint getID( const jagDraw::jagDrawContextID contextID );
 
     virtual bool isSameKind( const VertexArrayCommand& rhs ) const;
@@ -93,10 +97,10 @@ public:
     virtual void execute( DrawInfo& drawInfo );
 
 
-    /** \brief Mark the entire buffer as dirty.
+    /** \brief Mark the entire buffer dirty for all contexts.
     \details During next BufferObject::execute(), send down
     entire buffer data with a glBufferData() call. */
-    void setBufferDirty( const bool dirty=true );
+    void markAllDirty( const bool dirty=true );
 
     /** \brief Mark a segment of the buffer as dirty.
     \details During next BufferObject::execute(), send down
@@ -107,6 +111,10 @@ public:
     Note: Currently, BufferObject stores only a single dirty
     range. Need support for a list of dirty ranges. */
     void setBufferRangeDirty( const size_t offset, const size_t size, const bool dirty=true );
+
+    /** \brief Override from base class VertexArrayCommand.
+    \details Return true if any part of the buffer object is dirty. */
+    virtual bool isDirty( const unsigned int contextID );
 
 
     // TBD need to get context ID, probably as a param?
@@ -119,7 +127,7 @@ public:
 protected:
     void internalInit( const unsigned int contextID );
 
-    void sendDirtyBufferData();
+    void sendDirtyBufferData( const unsigned int contextID );
 
     /** Default value: _target = GL_NONE */
     GLenum _target;
@@ -128,7 +136,7 @@ protected:
 
     jagBase::BufferPtr _buffer;
 
-    bool _dirty;
+    PerContextBool _dirty;
     size_t _dirtyOffset, _dirtySize;
 };
 

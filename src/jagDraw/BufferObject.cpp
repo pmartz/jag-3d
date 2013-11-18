@@ -40,7 +40,6 @@ BufferObject::BufferObject( const GLenum target, const std::string& logName )
     VertexArrayCommand( VertexArrayCommand::BufferObject_t ),
     _target( target ),
     _usage( GL_STATIC_DRAW ),
-    _dirty( true ),
     _dirtyOffset( 0 ),
     _dirtySize( 0 )
 {
@@ -52,7 +51,6 @@ BufferObject::BufferObject( const GLenum target, const jagBase::BufferPtr b, con
     _target( target ),
     _usage( usage ),
     _buffer( b ),
-    _dirty( true ),
     _dirtyOffset( 0 ),
     _dirtySize( 0 )
 {
@@ -64,10 +62,10 @@ BufferObject::BufferObject( const BufferObject& rhs )
     _target( rhs._target ),
     _usage( rhs._usage ),
     _buffer( rhs._buffer ),
-    _dirty( rhs._dirty ),
     _dirtyOffset( rhs._dirtyOffset ),
     _dirtySize( rhs._dirtySize )
 {
+    markAllDirty();
 }
 BufferObject::~BufferObject() 
 {
@@ -97,7 +95,7 @@ bool BufferObject::isSameKind( const VertexArrayCommand& rhs ) const
 void BufferObject::setBuffer( jagBase::BufferPtr b ) 
 {
     _buffer = b;
-    setBufferDirty( true );
+    markAllDirty();
 }
 const jagBase::BufferPtr& BufferObject::getBuffer() const
 {
@@ -129,7 +127,8 @@ GLenum BufferObject::getUsage() const
 
 void BufferObject::execute( DrawInfo& drawInfo )
 {
-    const GLuint id( getID( drawInfo._id ) );
+    const unsigned int contextID( drawInfo._id );
+    const GLuint id( getID( contextID ) );
     if( _target == GL_ELEMENT_ARRAY_BUFFER )
     {
         if( drawInfo._elementBufferID == id )
@@ -142,10 +141,10 @@ void BufferObject::execute( DrawInfo& drawInfo )
 
     glBindBuffer( _target, id );
 
-    if( _dirty )
-        sendDirtyBufferData();
+    if( _dirty[ contextID ] )
+        sendDirtyBufferData( contextID );
 }
-void BufferObject::sendDirtyBufferData()
+void BufferObject::sendDirtyBufferData( const unsigned int contextID )
 {
     if( _dirtySize == 0 )
         glBufferData( _target, _buffer->getSize(), _buffer->getData(), _usage );
@@ -156,21 +155,35 @@ void BufferObject::sendDirtyBufferData()
         glBufferSubData( _target, offset, size,
             _buffer->getOffset( _dirtyOffset ) );
     }
-    _dirty = false;
+    _dirty[ contextID ] = false;
 }
 
 
-void BufferObject::setBufferDirty( const bool dirty )
-{
-    _dirty = dirty;
-    _dirtyOffset = _dirtySize = 0;
-}
 void BufferObject::setBufferRangeDirty( const size_t offset, const size_t size, const bool dirty )
 {
-    _dirty = dirty;
+    markAllDirty( dirty );
     _dirtyOffset = offset;
     _dirtySize = size;
 }
+void BufferObject::markAllDirty( const bool dirty )
+{
+    for( unsigned int idx=0; idx < _dirty._data.size(); ++idx )
+        _dirty[ idx ] = dirty;
+    _dirtyOffset = _dirtySize = 0;
+}
+bool BufferObject::isDirty( const unsigned int contextID )
+{
+    return( _dirty[ contextID ] != 0 );
+}
+
+void BufferObject::setMaxContexts( const unsigned int numContexts )
+{
+    ObjectID::setMaxContexts( numContexts );
+
+    _dirty._data.resize( numContexts );
+    markAllDirty();
+}
+
 
 void BufferObject::subData( GLsizeiptr offset, GLsizeiptr size, const GLvoid* data )
 {
@@ -222,7 +235,7 @@ void BufferObject::internalInit( const unsigned int contextID )
     glBindBuffer( _target, id );
     glBufferData( _target, _buffer->getSize(), _buffer->getData(), _usage );
     glBindBuffer( _target, 0 );
-    _dirty = false;
+    _dirty[ contextID ] = false;
 
     JAG3D_ERROR_CHECK( "BufferObject::internalInit() glBufferData()" );
 }
@@ -250,11 +263,12 @@ IndexedBufferObject::~IndexedBufferObject()
 
 void IndexedBufferObject::execute( DrawInfo& drawInfo )
 {
-    const GLuint id( getID( drawInfo._id ) );
+    const unsigned int contextID( drawInfo._id );
+    const GLuint id( getID( contextID ) );
     glBindBufferBase( _target, _index, id );
 
-    if( _dirty )
-        sendDirtyBufferData();
+    if( _dirty[ contextID ] )
+        sendDirtyBufferData( contextID );
 }
 
 

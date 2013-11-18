@@ -84,6 +84,21 @@ public:
 
     virtual void execute( DrawInfo& drawInfo ) = 0;
 
+    /** \brief Detect a change in vertex array command data.
+    \details This is kind of a TBD hack. There are two types of
+    vertex array commands: VertexAttrib, and BufferObject. Right now,
+    JAG supports only dynamic BufferObject. BufferObject overrides this
+    and returns true if data is dirty on the given context.
+
+    VertexAttrib can not override this, as VertexAttrib is not an
+    ObjectID or ObjectIDOwner, and as a result has to setMaxContexts()
+    support, so there's no way for it to keep a per context array of
+    dirty flags. */
+    virtual bool isDirty( const unsigned int contextID )
+    {
+        return( false );
+    }
+
 protected:
     Type _type;
 };

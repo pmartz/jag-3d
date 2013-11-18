@@ -46,7 +46,7 @@ VertexArrayObject::VertexArrayObject()
 VertexArrayObject::VertexArrayObject( const VertexArrayObject& rhs )
   : DrawablePrep( rhs ),
     ObjectID( rhs ),
-    _initialized( rhs._initialized ),
+    _dirty( rhs._dirty ),
     _commands( rhs._commands ),
     _vertices( rhs._vertices )
 {
@@ -63,7 +63,8 @@ VertexArrayObject& VertexArrayObject::operator=( const VertexArrayObject& rhs )
     //DrawablePrep::operator=( rhs );
     // TBD doesn't exist, and probably not what we want anyway.
     //ObjectID::operator=( rhs );
-    _initialized._data.clear();
+    _dirty._data.clear();
+    markAllDirty();
     _commands = rhs._commands;
     _vertices = rhs._vertices;
 
@@ -74,17 +75,21 @@ VertexArrayObject& VertexArrayObject::operator=( const VertexArrayObject& rhs )
 void VertexArrayObject::execute( DrawInfo& drawInfo )
 {
     const unsigned int contextID( drawInfo._id );
-
     glBindVertexArray( getID( contextID ) );
-    bool& initialized( _initialized[ contextID ] );
 
-    if( !initialized )
+    bool dirty( false );
+    BOOST_FOREACH( VertexArrayCommandPtr& vac, _commands )
+    {
+        if( dirty = vac->isDirty( contextID ) )
+            break;
+    }
+    if( dirty || _dirty[ contextID ] )
     {
         BOOST_FOREACH( VertexArrayCommandPtr& vac, _commands )
         {
             vac->execute( drawInfo );
         }
-        initialized = true;
+        _dirty[ contextID ] = false;
     }
 }
 
@@ -102,7 +107,7 @@ void VertexArrayObject::setMaxContexts( const unsigned int numContexts )
 {
     ObjectID::setMaxContexts( numContexts );
 
-    _initialized._data.resize( numContexts );
+    _dirty._data.resize( numContexts );
     markAllDirty();
 
     BOOST_FOREACH( VertexArrayCommandPtr& vac, _commands )
@@ -190,20 +195,17 @@ const VertexArrayCommandVec& VertexArrayObject::getVertexArrayCommandList() cons
     return( _commands );
 }
 
-void VertexArrayObject::markAllDirty()
+void VertexArrayObject::markAllDirty( const bool dirty )
 {
-    for( unsigned int idx=0; idx < _initialized._data.size(); idx++ )
+    for( unsigned int idx=0; idx < _dirty._data.size(); idx++ )
     {
-        _initialized[ idx ] = false;
+        _dirty[ idx ] = dirty;
     }
 }
 bool VertexArrayObject::isDirty( const unsigned int contextID ) const
 {
-    if( contextID < _initialized._data.size() )
-    {
-        const bool& initialized( _initialized[ contextID ] );
-        return( !initialized );
-    }
+    if( contextID < _dirty._data.size() )
+        return( _dirty[ contextID ] != 0 );
     else
         return( true );
 }
@@ -306,7 +308,7 @@ size_t VertexArrayObject::combine( const VertexArrayObject& rhs )
 void VertexArrayObject::internalInit( const unsigned int contextID )
 {
     glGenVertexArrays( 1, &( _ids[ contextID ] ) );
-    _initialized[ contextID ] = false;
+    _dirty[ contextID ] = true;
 
     JAG3D_ERROR_CHECK( "VertexArrayObject::internalInit()" );
 }
