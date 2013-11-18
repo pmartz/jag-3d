@@ -447,7 +447,7 @@ void Texture::markAllDirty()
 bool Texture::isDirty( const unsigned int contextID ) const
 {
     if( contextID < _dirty._data.size() )
-        return( _dirty._data[ contextID ] );
+        return( _dirty._data[ contextID ] != 0 );
     else
         return( true );
 }

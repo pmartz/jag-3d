@@ -399,7 +399,7 @@ void Renderbuffer::internalInit( const unsigned int contextID )
 bool Renderbuffer::isDirty( const unsigned int contextID ) const
 {
     if( contextID < _dirty._data.size() )
-        return( _dirty._data[ contextID ] );
+        return( _dirty._data[ contextID ] != 0 );
     else
         return( true );
 }

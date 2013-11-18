@@ -44,7 +44,10 @@ namespace jagBase {
 DEFINE_TYPE_ARRAYS(gmtl::Point2f,Point2f);
 DEFINE_TYPE_ARRAYS(gmtl::Point3f,Point3f);
 DEFINE_TYPE_ARRAYS(gmtl::Matrix44d,Matrix44d);
-DEFINE_TYPE_ARRAYS(bool,Bool);
+// WARNING: BoolVen and BoolArray are identical to UCharVec and
+// UCharArray. This is so that T& operator[]() semantics will work
+// (they would fail in, e.g., std::vector<bool>).
+DEFINE_TYPE_ARRAYS(unsigned char,Bool);
 DEFINE_TYPE_ARRAYS(unsigned char,UChar);
 DEFINE_TYPE_ARRAYS(unsigned int,UIhar);
 DEFINE_TYPE_ARRAYS(float,Float);

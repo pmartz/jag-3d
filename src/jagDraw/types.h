@@ -72,11 +72,14 @@ typedef std::vector< GLvoid* > GLvoidPtrVec;
 typedef jagBase::ptr< GLvoid* >::shared_array_ptr GLvoidPtrArray;
 
 // Just define PerContext* -- Other types defined in jagBase/types.h.
-DEFINE_PER_CTX(bool,Bool);
 DEFINE_PER_CTX(unsigned char,UChar);
 DEFINE_PER_CTX(unsigned int,UInt);
 DEFINE_PER_CTX(float,Float);
 DEFINE_PER_CTX(double,Double);
+// WARNING: PerContextBool is identical to PerContextUCharVec.
+// This is so that T& operator[]() semantics will work
+// (they would fail in, e.g., std::vector<bool>).
+DEFINE_PER_CTX(unsigned char,Bool);
 
 #undef DEFINE_TYPE_ARRAYS
 #undef DEFINE_PER_CTX

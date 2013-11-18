@@ -127,7 +127,7 @@ void Program::execute( DrawInfo& drawInfo )
 
     const unsigned int contextID( ( unsigned int )( drawInfo._id ) );
     const GLuint id( getID( contextID ) );
-    const bool& linked( _linkStatus[ contextID ] );
+    const bool& linked( _linkStatus[ contextID ] != 0 );
 
     if( !linked )
     {

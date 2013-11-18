@@ -112,7 +112,7 @@ void UniformBlock::execute( DrawInfo& drawInfo, const Program::BlockInfo& blockI
                 uniform->copyValue( _buffer->getOffset( offsetValue ) );
             }
         }
-        _bufferObject->setBufferDirty();
+        _bufferObject->markAllDirty();
 
         _dirty = false;
     }
