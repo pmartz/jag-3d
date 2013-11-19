@@ -130,7 +130,10 @@ void CollectionVisitor::visit( jagSG::Node& node )
     CommandMapStackHelper cmsh( *this, node.getCommandMap() );
 
     {
-    JAG3D_TRACE( "visit()" );
+    if( JAG3D_LOG_TRACE )
+    {
+        JAG3D_TRACE( "visit() - \"" + node.getUserDataName() + "\"" );
+    }
     JAG3D_PROFILE( "setup" );
 
     _infoPtr->setNode( &node );

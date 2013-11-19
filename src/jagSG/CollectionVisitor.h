@@ -44,6 +44,8 @@ namespace jagSG {
 /** \class CollectionVisitor CollectionVisitor.h <jagSG/CollectionVisitor.h>
 \brief TBD
 \details TBD
+
+\logname jag.sg.visit.collect
 */
 class JAGSG_EXPORT CollectionVisitor : public Visitor
 {
