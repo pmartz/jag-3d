@@ -1,7 +1,6 @@
 /*************** <auto-copyright.rb BEGIN do not edit this line> **************
  
  Copyright 2012-2014 by Ames Laboratory and Skew Matrix Software, LLC
- arising from the use of this software.
  
  Permission is granted to anyone to use this software for any purpose,
  including commercial applications, and to alter it and redistribute it
