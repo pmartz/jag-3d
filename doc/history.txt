@@ -1,0 +1,17 @@
+----------------------------------------------------------------------
+
+19 Nov 2013  v0.01.02
+  * Adopt zlib license.
+  * Dynamic data in VAO is now supported. VAO re-specifies buffer
+    object data if all or part of the buffer object is dirty.
+
+----------------------------------------------------------------------
+
+ 9 Nov 2013  v0.01.01
+  * Adopt MIT license.
+
+----------------------------------------------------------------------
+
+ 4 Nov 2013  v0.01.00
+  * First significant release.
+  * License is LGPL.
