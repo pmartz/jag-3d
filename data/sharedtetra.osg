@@ -1,0 +1,32 @@
+Group {
+  nodeMask 0xffffffff
+  cullingActive TRUE
+  num_children 2
+  ProxyNode {
+    name "Tetra"
+    UniqueID ProxyNode_0
+    nodeMask 0xffffffff
+    cullingActive TRUE
+    Center 0 0 0
+    ExtRefMode       LOAD_IMMEDIATELY
+    Radius -1
+    FileNameList 1 {
+      tetra.osg
+    }
+    num_children 0
+  }
+  MatrixTransform {
+    name "TransTetra"
+    nodeMask 0xffffffff
+    cullingActive TRUE
+    referenceFrame RELATIVE
+    Matrix {
+      1 0 0 0
+      0 1 0 0
+      0 0 1 0
+      2 0 -2 1
+    }
+    num_children 1
+    Use ProxyNode_0
+  }
+}
