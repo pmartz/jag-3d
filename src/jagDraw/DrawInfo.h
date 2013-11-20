@@ -78,6 +78,16 @@ struct JAGDRAW_EXPORT DrawInfo
     gmtl::Matrix44d _transform;
 
 
+    typedef enum {
+        DRAW_BOUND = ( 0x1 << 0 ), //< Draw bound containing all Drawables within a draw node.
+    } ControlFlags;
+    /** \brief Specify draw traversal control flags.
+    \details Bitwise-OR enums from ControlFlags to alter behavior of the
+    draw traversal. Currently, the jagDraw::Node::execute() method respects
+    one enum, DRAW_BOUND. */
+    unsigned int _controlFlags;
+
+
     typedef std::map< Program::HashValue, UniformPtr > UniformMap;
 
     /** \brief List of active uniforms during draw.

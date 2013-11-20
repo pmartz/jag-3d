@@ -103,7 +103,7 @@ template< class DATA_TYPE >
 void extendVolume( Sphere<DATA_TYPE>& container,
                    const AABox<DATA_TYPE>& box )
 {
-   // Can't extend by an empty sphere
+   // Can't extend by an empty box
    if (! box.isInitialized())
    {
       return;
@@ -154,6 +154,13 @@ void convert( gmtl::Matrix< float, ROWS, COLS >& result, const gmtl::Matrix< dou
     for (unsigned int x = 0; x < ROWS * COLS; ++x)
         result.mData[x] = (float)rhs.mData[x];
     result.mState = rhs.mState;
+}
+/** \brief Convert a Point to a C array of floats. */
+template<class DATA_TYPE, unsigned SIZE>
+void convert( float* result, const gmtl::VecBase<DATA_TYPE,SIZE>& v )
+{
+    for (unsigned int x = 0; x < SIZE; ++x)
+        result[x] = (float)( v[x] );
 }
 
 /** \brief Transform a Sphere by a matrix. */

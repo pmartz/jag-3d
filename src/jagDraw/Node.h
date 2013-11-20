@@ -40,9 +40,18 @@ namespace jagDraw {
 /*@{*/
 
 /** \class Node Node.h <jagDraw/Node.h>
-\brief TBD
-\details jagDraw::Node associates a CommandMap with a collection of Drawables.
-The CommandMap must not be NULL.
+\brief The draw graph node element.
+\details The draw graph is a list of NodeContainers, and a NodeCOntainer
+is a list of Nodes.
+
+Node associates a CommandMap with a collection of Drawables.
+The CommandMap must not be NULL. Node also contains a list of Callbacks
+that are executed prior to the CommandMap and Drawables.
+
+Node optionally supports rendering a wireframe box around the bound
+extents of all attached Drawables. This is controlled by
+DrawInfo::_controlFlags. Bound rendering requires a special Program
+and VertexArrayObject be in effect.
 
 \logname jag.draw.node */
 class JAGDRAW_EXPORT Node : protected jagBase::LogBase, public ObjectIDOwner, public jagBase::UserDataOwner
@@ -159,8 +168,20 @@ public:
     const ExecuteCallbacks& getExecuteCallbacks() const;
 
 
-    /** \brief TBD
-    \details TBD */
+    /** \brief Execute the attaches Callbacks, CommandMap and Drawables.
+    \details Executes the contents of the jagDraw::Node.
+
+    If any attached callback returns false, execute() immediately returns
+    without executing any subsequent callbacks, the CommandMap, or any of
+    the Drawables.
+    
+    If DrawwInfo::_controlFlags has the DRAW_BOUND bit set, then
+    the attahced CommandMap and Drawables are not executed. Rather, execute()
+    specifies uniforms and a DrawCommand to render a wireframe representation
+    of a box around the attached Drawables. Drawing the bound requies a
+    special Program and VertexArrayObject be in effect, which is the application's
+    responsibility. They can be set in application code, or in a NodeContainer
+    callback, for example. */
     virtual void execute( DrawInfo& drawInfo );
 
     /** \brief Tell the contained ObjectID objects how many contexts to expect.
@@ -176,6 +197,10 @@ protected:
     gmtl::Matrix44d _matrix;
     CommandMapPtr _commands;
     DrawableVec _drawables;
+
+    void initBoundDrawable();
+    void setBoundUniforms( DrawInfo& drawInfo );
+    DrawablePtr _boundDrawable;
 
     double _distance;
 
