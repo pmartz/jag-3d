@@ -31,7 +31,8 @@ DrawInfo::DrawInfo()
       _id( 0 ),
       _externalProgramID( 0 ),
       _elementBufferID( 0 ),
-      _transform()
+      _transform(),
+      _controlFlags( 0 )
 {
 }
 

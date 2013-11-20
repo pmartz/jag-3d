@@ -22,6 +22,10 @@
 #include <jagDraw/Node.h>
 #include <jagDraw/DrawablePrep.h>
 #include <jagDraw/DrawInfo.h>
+#include <jagDraw/Drawable.h>
+#include <jagDraw/DrawCommand.h>
+#include <jagDraw/CommandMap.h>
+#include <jagDraw/Program.h>
 #include <jagDraw/Error.h>
 #include <jagBase/Profile.h>
 #include <jagBase/LogMacros.h>
@@ -107,17 +111,30 @@ void Node::execute( DrawInfo& drawInfo )
     }
     }
 
+    if( drawInfo._controlFlags & DrawInfo::DRAW_BOUND )
     {
-    JAG3D_PROFILE( "CommandMap" );
-    CommandMap delta( drawInfo._current << (*_commands) );
-    delta.execute( drawInfo );
+        // This draw traversal renders bounding volumes only.
+        if( _boundDrawable == NULL )
+            initBoundDrawable();
+        setBoundUniforms( drawInfo );
+        _boundDrawable->execute( drawInfo );
     }
-
+    else
     {
-        JAG3D_PROFILE( "Execute Drawable" );
-        BOOST_FOREACH( DrawablePtr drawable, _drawables )
+        // Default draw traversal. Process attached CommandMap and Drawables
+        // in the usual manner.
         {
-            drawable->execute( drawInfo );
+        JAG3D_PROFILE( "CommandMap" );
+        CommandMap delta( drawInfo._current << (*_commands) );
+        delta.execute( drawInfo );
+        }
+
+        {
+            JAG3D_PROFILE( "Execute Drawable" );
+            BOOST_FOREACH( DrawablePtr drawable, _drawables )
+            {
+                drawable->execute( drawInfo );
+            }
         }
     }
 
@@ -148,6 +165,40 @@ void Node::deleteID( const jagDraw::jagDrawContextID contextID )
     {
         drawable->deleteID( contextID );
     }
+}
+
+void Node::initBoundDrawable()
+{
+    _boundDrawable.reset( new jagDraw::Drawable() );
+    _boundDrawable->addDrawCommand( jagDraw::DrawCommandPtr(
+        new jagDraw::DrawArrays( GL_POINTS, 0, 1 ) ) );
+}
+void Node::setBoundUniforms( DrawInfo& drawInfo )
+{
+    CommandMap& current( drawInfo._current );
+    if( !( current.contains( DrawablePrep::Program_t ) ) )
+    {
+        JAG3D_ERROR( "setBoundUniforms(): Current CommandMap does not contain Program_t." );
+        return;
+    }
+
+    gmtl::AABoxd totalBound;
+    BOOST_FOREACH( DrawablePtr drawable, _drawables )
+        gmtl::extendVolume( totalBound, drawable->getBound( current )->asAABox() );
+    float bbMinFloats[ 3 ], bbMaxFloats[ 3 ];
+    gmtl::convert( bbMinFloats, totalBound.getMin() );
+    gmtl::convert( bbMaxFloats, totalBound.getMax() );
+
+    static Program::HashValue bbMinHash( Program::createHash( "jag3d_bbMin" ) );
+    static Program::HashValue bbMaxHash( Program::createHash( "jag3d_bbMax" ) );
+
+    jagDraw::ProgramPtr prog( boost::dynamic_pointer_cast< Program >( current[ DrawablePrep::Program_t ] ) );
+    GLint loc( prog->getUniformLocation( bbMinHash ) );
+    if( loc != -1 )
+        glUniform3fv( loc, 1, bbMinFloats );
+    loc = prog->getUniformLocation( bbMaxHash );
+    if( loc != -1 )
+        glUniform3fv( loc, 1, bbMaxFloats );
 }
 
 
