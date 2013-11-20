@@ -64,9 +64,6 @@ void Drawable::execute( DrawInfo& drawInfo )
     JAG3D_TRACE( "Drawable::execute" );
 
     const size_t sz( _drawCommands.size() );
-    if( sz == 0 )
-        return;
-
     for( size_t idx = 0; idx < sz; ++idx )
         _drawCommands[ idx ]->execute( drawInfo );
 
