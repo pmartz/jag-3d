@@ -54,6 +54,7 @@ public:
     JagModel()
       : DemoInterface( "jag.ex.jagmodel" ),
         _fileName( "cow.osg" ),
+        _drawBound( false ),
         _moveRate( 1. )
     {}
     virtual ~JagModel() {}
@@ -83,6 +84,9 @@ protected:
 
     jagSG::NodePtr _root;
 
+    bool _drawBound;
+    jagDraw::ProgramPtr _boundProgram;
+
     double _moveRate;
 };
 
@@ -90,6 +94,7 @@ protected:
 DemoInterface* DemoInterface::create( bpo::options_description& desc )
 {
     desc.add_options()
+        ( "bound", "Render draw graph Node bounds." )
         ( "file,f", bpo::value< std::string >(), "Model to load. Default: cow.osg" );
 
     return( new JagModel );
@@ -99,6 +104,9 @@ bool JagModel::parseOptions( bpo::variables_map& vm )
 {
     if( vm.count( "file" ) > 0 )
         _fileName = vm[ "file" ].as< std::string >();
+
+    _drawBound = ( vm.count( "bound" ) > 0 );
+
     return( true );
 }
 
@@ -193,6 +201,20 @@ bool JagModel::startup( const unsigned int numContexts )
     ubsp->insert( backMaterials );
     ubsp->insert( frontMaterials );
     commands->insert( ubsp );
+
+
+    {
+        jagDraw::ShaderPtr vs( DemoInterface::readShaderUtil( "bound.vert" ) );
+        jagDraw::ShaderPtr gs( DemoInterface::readShaderUtil( "bound.geom" ) );
+        jagDraw::ShaderPtr fs( DemoInterface::readShaderUtil( "bound.frag" ) );
+
+        _boundProgram.reset( new jagDraw::Program() );
+        _boundProgram->attachShader( vs );
+        _boundProgram->attachShader( gs );
+        _boundProgram->attachShader( fs );
+
+        _boundProgram->setMaxContexts( numContexts );
+    }
 
 
     // We have potentially different views per window, so we keep an MxCore
@@ -304,6 +326,19 @@ bool JagModel::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj )
         dgcv.dump( std::cout );
     }
 #endif
+
+    if( _drawBound )
+    {
+        // Execute the draw graph a second time, but this time
+        // render only the draw graph Node bounds.
+        jagDraw::DrawGraphPtr drawGraph( collect.getDrawGraph() );
+
+        _boundProgram->execute( drawInfo );
+        drawInfo._current.insert( _boundProgram );
+        drawInfo._controlFlags |= jagDraw::DrawInfo::DRAW_BOUND;
+        drawGraph->execute( drawInfo );
+        drawInfo._controlFlags &= ~jagDraw::DrawInfo::DRAW_BOUND;
+    }
 
     glFlush();
 

@@ -50,8 +50,8 @@ that are executed prior to the CommandMap and Drawables.
 
 Node optionally supports rendering a wireframe box around the bound
 extents of all attached Drawables. This is controlled by
-DrawInfo::_controlFlags. Bound rendering requires a special Program
-and VertexArrayObject be in effect.
+DrawInfo::_controlFlags. Bound rendering requires a special Program.
+See the example source jagModel.cpp.
 
 \logname jag.draw.node */
 class JAGDRAW_EXPORT Node : protected jagBase::LogBase, public ObjectIDOwner, public jagBase::UserDataOwner
@@ -194,13 +194,11 @@ public:
     virtual void deleteID( const jagDraw::jagDrawContextID contextID );
 
 protected:
+    void setBoundUniforms( DrawInfo& drawInfo );
+
     gmtl::Matrix44d _matrix;
     CommandMapPtr _commands;
     DrawableVec _drawables;
-
-    void initBoundDrawable();
-    void setBoundUniforms( DrawInfo& drawInfo );
-    DrawablePtr _boundDrawable;
 
     double _distance;
 

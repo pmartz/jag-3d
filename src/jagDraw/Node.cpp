@@ -114,10 +114,12 @@ void Node::execute( DrawInfo& drawInfo )
     if( drawInfo._controlFlags & DrawInfo::DRAW_BOUND )
     {
         // This draw traversal renders bounding volumes only.
-        if( _boundDrawable == NULL )
-            initBoundDrawable();
+        // Requires a program that accepts a single point as input,
+        // with uniforms for MVP matrix and BB min & max. Generates
+        // bounding volume primitives in geometry shader. See
+        // data/bound.* shader source.
         setBoundUniforms( drawInfo );
-        _boundDrawable->execute( drawInfo );
+        glDrawArrays( GL_POINTS, 0, 1 );
     }
     else
     {
@@ -167,12 +169,6 @@ void Node::deleteID( const jagDraw::jagDrawContextID contextID )
     }
 }
 
-void Node::initBoundDrawable()
-{
-    _boundDrawable.reset( new jagDraw::Drawable() );
-    _boundDrawable->addDrawCommand( jagDraw::DrawCommandPtr(
-        new jagDraw::DrawArrays( GL_POINTS, 0, 1 ) ) );
-}
 void Node::setBoundUniforms( DrawInfo& drawInfo )
 {
     CommandMap& current( drawInfo._current );
@@ -199,6 +195,8 @@ void Node::setBoundUniforms( DrawInfo& drawInfo )
     loc = prog->getUniformLocation( bbMaxHash );
     if( loc != -1 )
         glUniform3fv( loc, 1, bbMaxFloats );
+
+    JAG3D_ERROR_CHECK( "setBoundUniforms()" );
 }
 
 
