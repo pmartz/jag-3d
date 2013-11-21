@@ -68,14 +68,24 @@ Program::Program( const Program& rhs )
     ObjectID( rhs ),
     SHARED_FROM_THIS( Program )( rhs ),
     jagBase::LogBase( rhs ),
+    _shaders( rhs._shaders ),
+    _parameters( rhs._parameters ),
+    _explicitVertexAttribLocations( rhs._explicitVertexAttribLocations ),
     _uniformAliases( rhs._uniformAliases ),
     _vertexAttribAliases( rhs._vertexAttribAliases )
 {
+    unsigned int idx;
+    _linkStatus._data.resize( rhs._linkStatus._data.size() );
+    for( idx=0; idx < _linkStatus._data.size(); ++idx )
+        _linkStatus[ idx ] = false;
+
     _needsDetach._data.resize( rhs._needsDetach._data.size() );
-    for( unsigned int idx=0; idx < _needsDetach._data.size(); ++idx )
-    {
+    for( idx=0; idx < _needsDetach._data.size(); ++idx )
         _needsDetach[ idx ] = false;
-    }
+
+    _parametersDirty._data.resize( rhs._parametersDirty._data.size() );
+    for( idx=0; idx < _parametersDirty._data.size(); ++idx )
+        _parametersDirty[ idx ] = true;
 }
 
 Program::~Program()
@@ -168,6 +178,18 @@ void Program::execute( DrawInfo& drawInfo )
         if( ubIt != drawInfo._uniformBlockMap.end() )
             ubIt->second->execute( drawInfo, it.second );
     }
+
+    // Set program parameters, if dirty.
+    if( _parametersDirty[ contextID ] != 0 )
+    {
+#ifdef GL_VERSION_4_1
+        BOOST_FOREACH( const ParameterMap::value_type& item, _parameters )
+            glProgramParameteri( id, item.first, item.second );
+#endif
+        _parametersDirty[ contextID ] = false;
+    }
+
+    JAG3D_ERROR_CHECK( "Program::execute()" );
 }
 
 
@@ -183,22 +205,20 @@ GLuint Program::getExplicitAttribLocation( const std::string& name ) const
     return( ( it != _explicitVertexAttribLocations.end() ) ? it->second : -1 );
 }
 
-#ifdef GL_VERSION_4_1
 void Program::setParameter( GLenum pname, GLint value )
 {
-    const unsigned int contextID( 0 );
-    const GLuint id( getID( contextID ) );
-
-    glProgramParameteri( id, pname, value );
+    _parameters[ pname ] = value;
+    for( unsigned int idx=0; idx < _parametersDirty._data.size(); ++idx )
+        _parametersDirty[ idx ] = true;
 }
-#endif
-
-void Program::get( GLenum pname, GLint *params )
+bool Program::getParameter( GLenum pname, GLint *params ) const
 {
-    const unsigned int contextID( 0 );
-    const GLuint id( getID( contextID ) );
+    ParameterMap::const_iterator it( _parameters.find( pname ) );
+    if( it == _parameters.end() )
+        return( false );
 
-    glGetProgramiv( id, pname, params );
+    *params = it->second;
+    return( true );
 }
 
 GLuint Program::getID( const unsigned int contextID )
@@ -218,16 +238,17 @@ void Program::setMaxContexts( const unsigned int numContexts )
     unsigned int oldSize( ( const unsigned int )( _linkStatus._data.size() ) );
     _linkStatus._data.resize( numContexts );
     for( unsigned int idx = oldSize; idx < _linkStatus._data.size(); ++idx )
-    {
         _linkStatus[ idx ] = false;
-    }
 
     oldSize = ( const unsigned int )( _needsDetach._data.size() );
     _needsDetach._data.resize( numContexts );
     for( unsigned int idx = oldSize; idx < _needsDetach._data.size(); ++idx )
-    {
         _needsDetach[ idx ] = false;
-    }
+
+    oldSize = ( const unsigned int )( _parametersDirty._data.size() );
+    _parametersDirty._data.resize( numContexts );
+    for( unsigned int idx = oldSize; idx < _parametersDirty._data.size(); ++idx )
+        _parametersDirty[ idx ] = true;
 
     BOOST_FOREACH( const ShaderVec::value_type& shader, _shaders )
     {
