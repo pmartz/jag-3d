@@ -147,12 +147,21 @@ public:
 
 
 
-#ifdef GL_VERSION_4_1
-    // TBD need to get context ID, probably as a param?
-    void setParameter( GLenum pname, GLint value ); // Used for Geometry Shaders 
-#endif
-    // TBD need to get context ID, probably as a param?
-    void get( GLenum pname, GLint* params );
+    /** \brief Set a program parameter.
+    \details Associates a \c value with a \c pname and marks
+    the parameter list as dirty. On next call to execute(),
+    all parameters will be sent to OpenGL following the call to
+    glUseProgram().
+    
+    Note there is no way to remove a parameter. If you with to
+    restore a parameter setting to a default value, call setParameter()
+    and pass the default for \c value. */
+    void setParameter( GLenum pname, GLint value );
+    /** \brief Get a previously set program parameter.
+    \details Returns the set value in \c params and returns
+    true, if \c pname was previously set. If \c pname was
+    not set, returns false and leaves \c params unchanged. */
+    bool getParameter( GLenum pname, GLint* params ) const;
 
     void printInfoLog( const GLuint id );
 
@@ -226,6 +235,10 @@ private:
     void internalDetach( const unsigned int contextID );
     ShaderVec _detachedShaders;
     PerContextBool _needsDetach;
+
+    typedef std::map< GLenum, GLint > ParameterMap;
+    ParameterMap _parameters;
+    PerContextBool _parametersDirty;
 
     // Support for uniforms in the default uniform block
     typedef std::map< HashValue, GLint > LocationMap;
