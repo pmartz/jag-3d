@@ -127,6 +127,7 @@ void CollectionVisitor::reset()
 void CollectionVisitor::visit( jagSG::Node& node )
 {
     CommandMapStackHelper cmsh( *this, node.getCommandMap() );
+    pushPlanes();
 
     {
     if( JAG3D_LOG_TRACE )
@@ -134,6 +135,7 @@ void CollectionVisitor::visit( jagSG::Node& node )
         JAG3D_TRACE( "visit() - \"" + node.getUserDataName() + "\"" );
     }
     JAG3D_PROFILE( "setup" );
+
 
     _infoPtr->setNode( &node );
     jagDraw::BoundOwner* boundOwner( &node );
@@ -159,12 +161,12 @@ void CollectionVisitor::visit( jagSG::Node& node )
     {
         collectAndTraverse( node );
     }
+    popPlanes();
 }
 
 void CollectionVisitor::collectAndTraverse( jagSG::Node& node )
 {
     MatrixStackHelper msh( *this, node.getTransform() );
-    pushPlanes();
 
     {
     JAG3D_PROFILE( "collect operations" );
@@ -226,7 +228,6 @@ void CollectionVisitor::collectAndTraverse( jagSG::Node& node )
 
     Visitor::visit( node );
 
-    popPlanes();
     if( msh.getDirty() )
     {
         _transform.setModel( _matrixStack[ _matrixStack.size()-2 ] );
