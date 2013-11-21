@@ -367,4 +367,5 @@ Command line options:
 \li --winsize,-w Window width and height. Default: 800 600.
 \li --no-ms Disable multisampling
 \li --file,-f Model to load.
+\li --bound Rendering draw graph Node bound outlines.
 */
