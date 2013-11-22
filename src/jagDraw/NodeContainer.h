@@ -62,6 +62,13 @@ public:
     NodeContainer& operator=( const NodeContainer& rhs );
 
 
+    /** \brief Grow the NodeContainer size by one.
+    \details Get a Node, either from the _nodeCache, or by allocating
+    one. Then push it onto the back of this NodeCntainer. Returns a
+    reference to the newly added Node. */
+    jagDraw::DrawNodePtr& grow();
+
+
     /** \struct Callback
     \brief TBD
     \details TBD */
@@ -104,6 +111,8 @@ public:
     virtual void deleteID( const jagDraw::jagDrawContextID contextID );
 
 protected:
+    jagDraw::DrawNodeVec _nodeCache;
+
     CallbackVec _callbacks;
 
     /** Default value: true. */

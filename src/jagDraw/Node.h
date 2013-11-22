@@ -63,6 +63,14 @@ public:
     ~Node();
 
 
+    /** \brief Remove drawables and execute callbacks */
+    void reset()
+    {
+        _drawables.clear();
+        _executeCallbacks.clear();
+    }
+
+
     /** \brief Add a drawable prep command, such as a uniform or a shader program.
     \details All drawable prep commands are executed by the Drawale in order, and prior to
     issuing any of the vertex array commands (see addVertexArrayCommand()). */
