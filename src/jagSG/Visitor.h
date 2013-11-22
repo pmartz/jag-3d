@@ -201,6 +201,7 @@ public:
     Otherwise, do nothing and return false. */
     bool pushCommandMap( const jagDraw::CommandMapPtr& commands )
     {
+        JAG3D_PROFILE( "CM stack processing" );
         if( ( commands == NULL ) || commands->empty() )
             return( false );
         _commandStack.push_back( _commandStack.back() + *commands );
@@ -208,6 +209,7 @@ public:
     }
     void popCommandMap()
     {
+        JAG3D_PROFILE( "CM stack processing" );
         _commandStack.pop_back();
     }
     void resetCommandMap()

@@ -149,11 +149,13 @@ public:
 
     void pushPlanes()
     {
+        JAG3D_PROFILE( "Plane stack processing" );
         const IndexList& stackTop( _planeStack[ _planeStack.size() - 1 ] );
         _planeStack.push_back( stackTop );
     }
     void popPlanes()
     {
+        JAG3D_PROFILE( "Plane stack processing" );
         _planeStack.pop_back();
     }
     void resetPlanes()
