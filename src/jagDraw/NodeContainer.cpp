@@ -44,6 +44,7 @@ NodeContainer::NodeContainer( const NodeContainer& rhs )
     _callbacks( rhs._callbacks ),
     _resetEnable( rhs._resetEnable )
 {
+    // Note: Do not copy _nodeCache, cache of free draw Nodes.
 }
 NodeContainer::~NodeContainer()
 {
@@ -52,7 +53,14 @@ NodeContainer::~NodeContainer()
 void NodeContainer::reset()
 {
     if( _resetEnable )
+    {
+        BOOST_FOREACH( DrawNodePtr node, *this )
+        {
+            node->reset();
+            _nodeCache.push_back( node );
+        }
         clear();
+    }
 }
 void NodeContainer::setResetEnable( const bool enable )
 {
@@ -69,9 +77,22 @@ NodeContainer& NodeContainer::operator=( const NodeContainer& rhs )
     ObjectIDOwner::operator=( rhs );
     // LogBase does not support (and doesn't need) assignment operator.
     //jagBase::LogBase::operator=( rhs );
+    // Note: Do not copy _nodeCache, cache of free draw Nodes.
     _callbacks = rhs._callbacks;
     _resetEnable = rhs._resetEnable;
     return( *this );
+}
+
+jagDraw::DrawNodePtr& NodeContainer::grow()
+{
+    if( _nodeCache.size() > 1 )
+    {
+        push_back( _nodeCache.back() );
+        _nodeCache.pop_back();
+    }
+    else
+        push_back( jagDraw::DrawNodePtr( new jagDraw::Node() ) );
+    return( back() );
 }
 
 

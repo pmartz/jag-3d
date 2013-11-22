@@ -200,8 +200,7 @@ void CollectionVisitor::collectAndTraverse( jagSG::Node& node )
         // potentially breaks DrawGraph sorting by depth.
         if( _currentNodes == NULL )
             setCurrentNodeContainer( 0 );
-        _currentNodes->push_back( jagDraw::DrawNodePtr( new jagDraw::Node() ) );
-        jagDraw::DrawNodePtr& drawNode( (*_currentNodes)[ _currentNodes->size()-1 ] );
+        jagDraw::DrawNodePtr& drawNode( _currentNodes->grow() );
 
         // Init the jagDraw::Node.
         {
