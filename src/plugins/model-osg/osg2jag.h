@@ -60,7 +60,7 @@ public:
 
 
 protected:
-    void apply( osg::Geometry* geom );
+    void apply( osg::Geometry* geom, const bool storeInParent=false );
     void apply( osg::StateSet* stateSet );
 
     bool preTraverse( osg::Object* osgObject, osg::StateSet* stateSet, const gmtl::Matrix44d& m=gmtl::MAT_IDENTITY44D );
