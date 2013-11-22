@@ -108,11 +108,20 @@ void Osg2Jag::apply( osg::Geode& osgNode )
     if( !preTraverse( &osgNode, osgNode.getStateSet() ) )
         return;
 
+    // storeInParent indicates that apply(Geometry) should not
+    // create a new jagSG::Node, but rather store its jagDraw::CommandMap
+    // and jagDraw::Drawable in the jagSG::Node corresponding to this
+    // osg::Geode.
+    bool storeInParent(
+        ( osgNode.getNumDrawables() == 1 ) &&
+        ( osgNode.getDrawable( 0 )->getNumParents() == 1 ) &&
+        ( osgNode.getStateSet() == NULL )
+        );
     unsigned int idx;
     for( idx=0; idx<osgNode.getNumDrawables(); idx++ )
     {
         if( osgNode.getDrawable( idx )->asGeometry() != NULL )
-            apply( osgNode.getDrawable( idx )->asGeometry() );
+            apply( osgNode.getDrawable( idx )->asGeometry(), storeInParent );
     }
 
     traverse( osgNode );
@@ -161,7 +170,7 @@ void Osg2Jag::postTraverse()
 }
 
 
-void Osg2Jag::apply( osg::Geometry* geom )
+void Osg2Jag::apply( osg::Geometry* geom, const bool storeInParent )
 {
     JAG3D_TRACE_STATIC( loggerName, "Geometry" );
 
@@ -171,8 +180,13 @@ void Osg2Jag::apply( osg::Geometry* geom )
         return;
     }
 
-    if( !preTraverse( geom, geom->getStateSet() ) )
-        return;
+    if( !storeInParent )
+    {
+        if( !preTraverse( geom, geom->getStateSet() ) )
+            return;
+    }
+    else
+        apply( geom->getStateSet() );
 
     DrawablePtr draw( DrawablePtr( new Drawable ) );
     jagDraw::CommandMapPtr& commands( _current->getOrCreateCommandMap() );
@@ -317,7 +331,8 @@ void Osg2Jag::apply( osg::Geometry* geom )
 
     _current->addDrawable( draw );
 
-    postTraverse();
+    if( !storeInParent )
+        postTraverse();
 }
 
 
