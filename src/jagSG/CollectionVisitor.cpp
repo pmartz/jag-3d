@@ -188,11 +188,14 @@ void CollectionVisitor::collectAndTraverse( jagSG::Node& node )
     const unsigned int numDrawables( node.getNumDrawables() );
     if( collectDrawables && ( numDrawables > 0 ) )
     {
+        {
+        JAG3D_PROFILE( "collect min/maxZ" );
         if( ( _nearFarOps & AutoCompute ) != 0 )
         {
             // Record changes to min near / max far.
             _minECZ = std::min< double >( _minECZ, _infoPtr->getECBoundDistance() - _infoPtr->getECBoundRadius() );
             _maxECZ = std::max< double >( _maxECZ, maxDrawableECZ );
+        }
         }
 
         // Get a new jagDraw::Node.
@@ -204,6 +207,8 @@ void CollectionVisitor::collectAndTraverse( jagSG::Node& node )
 
         // Init the jagDraw::Node.
         {
+            {
+            JAG3D_PROFILE( "collect node setup" );
             // Set eye coord distance (for distance-based render order control ).
             drawNode->setDistance( _infoPtr->getECBoundDistance() );
 
@@ -212,10 +217,14 @@ void CollectionVisitor::collectAndTraverse( jagSG::Node& node )
             // Set the model matrix.
             drawNode->setTransform( _matrixStack.back() );
 
+            {
+            JAG3D_PROFILE( "CM copy" );
             //JAG3D_WARNING( "TBD Must allocate new CommandMapPtr?" );
             jagDraw::CommandMapPtr commands( new jagDraw::CommandMap(
                     _commandStack.back() ) );
             drawNode->setCommandMap( commands );
+            }
+            }
         }
 
         for( unsigned int idx=0; idx < numDrawables; ++idx )
