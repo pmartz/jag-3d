@@ -19,7 +19,7 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#include <jagDisk/Options.h>
+#include <jag/disk/Options.h>
 #include <jag/base/LogMacros.h>
 #include <Poco/Path.h>
 #include <Poco/File.h>
@@ -28,7 +28,8 @@
 #include <boost/foreach.hpp>
 
 
-namespace jagDisk {
+namespace jag {
+namespace disk {
 
 
 Options::Options( const int initFlags )
@@ -110,5 +111,6 @@ Poco::Path Options::findFile( const std::string& fileName ) const
 }
 
 
-// jagDisk
+// namespace jag::disk::
+}
 }

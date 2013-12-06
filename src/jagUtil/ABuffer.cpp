@@ -24,7 +24,7 @@
 #include <jagDraw/Common.h>
 #include <jagDraw/PerContextData.h>
 #include <jagSG/Common.h>
-#include <jagDisk/ReadWrite.h>
+#include <jag/disk/ReadWrite.h>
 #include <jag/base/Profile.h>
 #include <jagUtil/DrawGraphCountVisitor.h>
 #include <jagUtil/Shapes.h>
@@ -493,7 +493,7 @@ void ABuffer::internalInit()
 {
 #define __READ_UTIL( _RESULT, _NAME, _LOG ) \
     { \
-        boost::any anyTemp( jagDisk::read( std::string(_NAME) ) ); \
+        boost::any anyTemp( jag::disk::read( std::string(_NAME) ) ); \
         try { \
             _RESULT = boost::any_cast< jagDraw::ShaderPtr >( anyTemp ); \
         } \

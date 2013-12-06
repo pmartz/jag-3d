@@ -19,9 +19,9 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#include <jagDisk/ReadWrite.h>
-#include <jagDisk/PluginManager.h>
-#include <jagDisk/Options.h>
+#include <jag/disk/ReadWrite.h>
+#include <jag/disk/PluginManager.h>
+#include <jag/disk/Options.h>
 #include <jag/base/LogMacros.h>
 #include <Poco/File.h>
 
@@ -29,7 +29,8 @@
 #include <boost/foreach.hpp>
 
 
-namespace jagDisk {
+namespace jag {
+namespace disk {
 
 
 boost::any read( const std::string& fileName, const Options* options )
@@ -157,5 +158,6 @@ bool write( const std::string& fileName, const void* data, const Options* option
 }
 
 
-// jagDisk
+// namespace jag::disk::
+}
 }

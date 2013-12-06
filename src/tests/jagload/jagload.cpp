@@ -27,7 +27,7 @@
 #include <jag/base/Version.h>
 #include <jag/base/Log.h>
 #include <jag/base/LogMacros.h>
-#include <jagDisk/ReadWrite.h>
+#include <jag/disk/ReadWrite.h>
 #include <boost/program_options/options_description.hpp>
 #include <gmtl/gmtl.h>
 

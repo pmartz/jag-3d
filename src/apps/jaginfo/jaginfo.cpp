@@ -23,7 +23,7 @@
 #include <jagSG/Common.h>
 #include <jagUtil/DrawGraphCountVisitor.h>
 #include <jagUtil/BufferAggregationVisitor.h>
-#include <jagDisk/ReadWrite.h>
+#include <jag/disk/ReadWrite.h>
 #include <jag/base/Log.h>
 #include <jag/base/LogMacros.h>
 
@@ -162,7 +162,7 @@ int main( int argc, char** argv )
     }
 
 
-    boost::any anyRoot( jagDisk::read( fileName ) );
+    boost::any anyRoot( jag::disk::read( fileName ) );
     jagSG::NodePtr root;
     try {
         root = boost::any_cast< jagSG::NodePtr >( anyRoot );

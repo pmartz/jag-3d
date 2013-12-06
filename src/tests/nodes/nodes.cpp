@@ -26,7 +26,7 @@
 #include <jagSG/ExecuteVisitor.h>
 #include <jagDraw/PerContextData.h>
 #include <jag/base/Transform.h>
-#include <jagDisk/ReadWrite.h>
+#include <jag/disk/ReadWrite.h>
 #include <jag/base/Version.h>
 #include <jag/base/Log.h>
 #include <jag/base/LogMacros.h>

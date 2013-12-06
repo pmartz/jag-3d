@@ -19,12 +19,12 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#ifndef __JAGDISK_PLUGIN_MANAGER_H__
-#define __JAGDISK_PLUGIN_MANAGER_H__ 1
+#ifndef __JAG_DISK_PLUGIN_MANAGER_H__
+#define __JAG_DISK_PLUGIN_MANAGER_H__ 1
 
 
-#include <jagDisk/Export.h>
-#include <jagDisk/ReaderWriter.h>
+#include <jag/disk/Export.h>
+#include <jag/disk/ReaderWriter.h>
 #include <jag/base/LogBase.h>
 #include <jag/base/types.h>
 
@@ -33,14 +33,15 @@
 #include <set>
 
 
-namespace jagDisk {
+namespace jag {
+namespace disk {
 
 
 /** \addtogroup PluginSupport Plugin Support
 */
 /**@{*/
 
-/** \class ReaderWriterInfo PluginManager.h <jagDisk/PluginManager.h>
+/** \class ReaderWriterInfo PluginManager.h <jag/disk/PluginManager.h>
 \brief A collection of information for classes exported from a plugin.
 \details Plugins create an instance of ReaderWriterInfo for each class (ReaderWriterInfo-derived class)
 exported by the plugin. The constructor automatically registers all information with the PluginManager
@@ -77,7 +78,7 @@ static ReaderWriterInfo staticRWRegistration_##_className( \
 
 
 
-/** \class PluginManager PluginManager.h <jagDisk/PluginManager.h>
+/** \class PluginManager PluginManager.h <jag/disk/PluginManager.h>
 \brief A singleton for managing plugins, plugin search paths, and plugin contents.
 \details The PluginManager provides an interface for finding plugins, loading them,
 and creating instances of classes contained in plugin.
@@ -214,9 +215,10 @@ bool operator<( const PluginManager::PluginInfo& lhs, const PluginManager::Plugi
 /**@}*/
 
 
-// jagDisk
+// namespace jag::disk::
+}
 }
 
 
-// __JAGDISK_PLUGIN_MANAGER_H__
+// __JAG_DISK_PLUGIN_MANAGER_H__
 #endif

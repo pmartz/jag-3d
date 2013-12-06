@@ -19,8 +19,8 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#include <jagDisk/PluginManager.h>
-#include <jagDisk/ReaderWriter.h>
+#include <jag/disk/PluginManager.h>
+#include <jag/disk/ReaderWriter.h>
 #include <Poco/ClassLibrary.h>
 #include <Poco/Path.h>
 #include <Poco/String.h>
@@ -32,7 +32,7 @@
 
 
 using namespace jagDraw;
-using namespace jagDisk;
+using namespace jag::disk;
 
 
 /** \addtogroup PluginSupport Plugin Support

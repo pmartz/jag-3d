@@ -4,7 +4,6 @@ endif()
 
 add_subdirectory( jag )
 
-add_subdirectory( jagDisk )
 add_subdirectory( jagDraw )
 add_subdirectory( jagMx )
 add_subdirectory( jagSG )

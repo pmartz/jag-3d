@@ -25,7 +25,7 @@
 #include <jagSG/Common.h>
 #include <jagUtil/ABuffer.h>
 #include <jagUtil/Blur.h>
-#include <jagDisk/ReadWrite.h>
+#include <jag/disk/ReadWrite.h>
 #include <jag/base/Profile.h>
 #include <jagUtil/DrawGraphCountVisitor.h>
 #include <jagUtil/Shapes.h>
