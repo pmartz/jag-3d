@@ -30,7 +30,7 @@
 #include <jagSG/CollectionVisitor.h>
 #include <jagMx/MxCore.h>
 #include <jagDisk/ReadWrite.h>
-#include <jagBase/LogMacros.h>
+#include <jag/base/LogMacros.h>
 
 #include <gmtl/gmtl.h>
 

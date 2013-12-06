@@ -22,14 +22,14 @@
 #ifndef __JAGDRAW_COMMAND_NODE_PTR_H__
 #define __JAGDRAW_COMMAND_NODE_PTR_H__ 1
 
-#include <jagBase/ptr.h>
+#include <jag/base/ptr.h>
 #include <vector>
 
 namespace jagDraw {
 
 
 class CommandNode;
-typedef jagBase::ptr< jagDraw::CommandNode >::shared_ptr CommandNodePtr;
+typedef jag::base::ptr< jagDraw::CommandNode >::shared_ptr CommandNodePtr;
 typedef std::vector< CommandNodePtr > CommandNodeVec;
 typedef std::vector< jagDraw::CommandNode > CommandNodeSimpleVec;
 

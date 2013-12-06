@@ -21,7 +21,7 @@
 
 
 #include <jagMx/MxGamePad.h>
-#include <jagBase/LogMacros.h>
+#include <jag/base/LogMacros.h>
 
 #include <gmtl/gmtl.h>
 

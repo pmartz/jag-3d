@@ -23,16 +23,16 @@
 #define __JAGDRAW_DRAWABLE_H__ 1
 
 #include <jagDraw/Export.h>
-#include <jagBase/LogBase.h>
+#include <jag/base/LogBase.h>
 #include <jagDraw/ObjectID.h>
 #include <jagDraw/Bound.h>
 #include <jagDraw/BoundOwner.h>
-#include <jagBase/Notifier.h>
+#include <jag/base/Notifier.h>
 #include <jagDraw/VertexArrayObject.h>
 #include <jagDraw/VertexArrayCommand.h>
 #include <jagDraw/DrawCommand.h>
-#include <jagBase/ptr.h>
-#include <jagBase/UserDataOwner.h>
+#include <jag/base/ptr.h>
+#include <jag/base/UserDataOwner.h>
 
 #include <boost/thread/mutex.hpp>
 
@@ -96,10 +96,10 @@ See member functions for additional specification requirements.
 \specEnd
 
 */
-class JAGDRAW_EXPORT Drawable : protected jagBase::LogBase,
+class JAGDRAW_EXPORT Drawable : protected jag::base::LogBase,
         public ObjectIDOwner, public BoundOwner,
-        public jagBase::UserDataOwner,
-        public jagBase::Notifier
+        public jag::base::UserDataOwner,
+        public jag::base::Notifier
 {
 public:
     Drawable( const std::string& logName=std::string( "" ) );
@@ -213,7 +213,7 @@ protected:
     DrawCommandVec _drawCommands;
 };
 
-typedef jagBase::ptr< jagDraw::Drawable >::shared_ptr DrawablePtr;
+typedef jag::base::ptr< jagDraw::Drawable >::shared_ptr DrawablePtr;
 typedef std::vector< DrawablePtr > DrawableVec;
 
 

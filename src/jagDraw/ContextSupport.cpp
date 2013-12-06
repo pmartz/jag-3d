@@ -33,8 +33,8 @@ using std::isinf;
 using std::isnan;
 #endif
 
-#include <jagBase/Log.h>
-#include <jagBase/LogMacros.h>
+#include <jag/base/Log.h>
+#include <jag/base/LogMacros.h>
 #include <Poco/NumberFormatter.h>
 #include <Poco/Format.h>
 #include <boost/foreach.hpp>
@@ -62,7 +62,7 @@ ContextSupport* ContextSupport::instance()
 }
 
 ContextSupport::ContextSupport()
-  : jagBase::LogBase( "jag.draw.ctx" )
+  : jag::base::LogBase( "jag.draw.ctx" )
 {
 }
 ContextSupport::~ContextSupport()

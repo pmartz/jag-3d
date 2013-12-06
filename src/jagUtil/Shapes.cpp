@@ -21,7 +21,7 @@
 
 #include <jagUtil/Shapes.h>
 #include <jagDraw/VertexAttrib.h>
-#include <jagBase/LogMacros.h>
+#include <jag/base/LogMacros.h>
 #include <gmtl/gmtl.h>
 
 
@@ -31,7 +31,7 @@ namespace jagUtil
 
 jagDraw::VertexArrayObjectPtr createVertexArrayObject( const VNTCVec& data )
 {
-    jagBase::BufferPtr ibp( new jagBase::Buffer( data.size() * sizeof( jagUtil::VertexNormalTexCoordStruct ), (void*)&data[0] ) );
+    jag::base::BufferPtr ibp( new jag::base::Buffer( data.size() * sizeof( jagUtil::VertexNormalTexCoordStruct ), (void*)&data[0] ) );
     jagDraw::BufferObjectPtr ibop( new jagDraw::BufferObject( GL_ARRAY_BUFFER, ibp ) );
 
     const GLsizei stride( sizeof( jagUtil::VertexNormalTexCoordStruct ) );
@@ -101,7 +101,7 @@ static void addPlaneData( VNTCVec& data,
     jagDraw::DrawElementsPtr de( jagDraw::DrawElementsPtr( new jagDraw::DrawElements
         ( GL_TRIANGLES, count, GL_UNSIGNED_INT, 0,
         jagDraw::BufferObjectPtr( new jagDraw::ElementArrayBuffer(
-            jagBase::BufferPtr( new jagBase::Buffer( indices.size()*sizeof(unsigned int), &( indices[ 0 ] ) )))))));
+            jag::base::BufferPtr( new jag::base::Buffer( indices.size()*sizeof(unsigned int), &( indices[ 0 ] ) )))))));
     geom->addDrawCommand( de );
 }
 

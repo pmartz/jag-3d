@@ -22,7 +22,7 @@
 #include <jagMx/MxCore.h>
 #include <jagMx/MxUtils.h>
 
-#include <jagBase/LogMacros.h>
+#include <jag/base/LogMacros.h>
 #include <gmtl/gmtl.h>
 
 #include <algorithm>

@@ -19,9 +19,9 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#include <jagBase/Profile.h>
-#include <jagBase/Log.h>
-#include <jagBase/LogMacros.h>
+#include <jag/base/Profile.h>
+#include <jag/base/Log.h>
+#include <jag/base/LogMacros.h>
 
 #include <boost/foreach.hpp>
 
@@ -30,8 +30,8 @@
 
 
 
-namespace jagBase
-{
+namespace jag {
+namespace base {
 
 
 #ifdef JAG3D_ENABLE_PROFILING
@@ -39,7 +39,7 @@ namespace jagBase
 
 
 // TBD Need singleton manager to cleanup/delete singletons.
-ProfileManager* ProfileManager::_s_instance( new jagBase::ProfileManager() );
+ProfileManager* ProfileManager::_s_instance( new jag::base::ProfileManager() );
 
 
 ProfileManager::ProfileManager()
@@ -181,7 +181,7 @@ void ProfileVisitor::traverse( ProfileNodePtr node )
 
 ProfileDump::ProfileDump( const std::string& logName )
     : ProfileVisitor(),
-      jagBase::LogBase( logName.empty() ? "jag.prof" : logName ),
+      jag::base::LogBase( logName.empty() ? "jag.prof" : logName ),
       _depth( 0 )
 {
 }
@@ -252,5 +252,6 @@ void ProfileDump::visit( ProfileNodePtr node )
 #endif
 
 
-// jagBase
+// jag/base
+}
 }

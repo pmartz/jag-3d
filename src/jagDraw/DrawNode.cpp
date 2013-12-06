@@ -27,8 +27,8 @@
 #include <jagDraw/CommandMap.h>
 #include <jagDraw/Program.h>
 #include <jagDraw/Error.h>
-#include <jagBase/Profile.h>
-#include <jagBase/LogMacros.h>
+#include <jag/base/Profile.h>
+#include <jag/base/LogMacros.h>
 
 #include <boost/foreach.hpp>
 
@@ -37,7 +37,7 @@ namespace jagDraw {
 
 
 DrawNode::DrawNode( CommandMapPtr commands, const std::string& logName )
-  : jagBase::LogBase( logName.empty() ? "jag.draw.node" : logName ),
+  : jag::base::LogBase( logName.empty() ? "jag.draw.node" : logName ),
     ObjectIDOwner(),
     _matrix( gmtl::MAT_IDENTITY44D ),
     _commands( commands ),
@@ -45,18 +45,18 @@ DrawNode::DrawNode( CommandMapPtr commands, const std::string& logName )
 {
 }
 DrawNode::DrawNode( const std::string& logName )
-    : jagBase::LogBase( logName ),
+    : jag::base::LogBase( logName ),
     ObjectIDOwner(),
-    jagBase::UserDataOwner(),
+    jag::base::UserDataOwner(),
     _matrix( gmtl::MAT_IDENTITY44D ),
     _commands( ( CommandMap* )NULL ),
     _distance( 0. )
 {
 }
 DrawNode::DrawNode( const DrawNode& rhs )
-  : jagBase::LogBase( rhs ),
+  : jag::base::LogBase( rhs ),
     ObjectIDOwner( rhs ),
-    jagBase::UserDataOwner( rhs ),
+    jag::base::UserDataOwner( rhs ),
     _matrix( rhs._matrix ),
     _commands( rhs._commands ),
     _drawables( rhs._drawables ),

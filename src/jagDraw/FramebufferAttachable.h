@@ -26,7 +26,7 @@
 #include <jagDraw/Export.h>
 #include <jagDraw/ContextSupport.h>
 #include <jagDraw/PlatformOpenGL.h>
-#include <jagBase/ptr.h>
+#include <jag/base/ptr.h>
 
 
 namespace jagDraw {
@@ -79,7 +79,7 @@ protected:
 
 /*@}*/
 
-typedef jagBase::ptr< jagDraw::FramebufferAttachable >::shared_ptr FramebufferAttachablePtr;
+typedef jag::base::ptr< jagDraw::FramebufferAttachable >::shared_ptr FramebufferAttachablePtr;
 typedef std::vector< FramebufferAttachablePtr > FramebufferAttachableVec;
 
 

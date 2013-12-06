@@ -19,14 +19,17 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#include <jagBase/UserDataOwner.h>
+#include <jag/base/UserDataOwner.h>
 
 
 using namespace std;
 #include <iostream>
 
 
-namespace jagBase {
+namespace jag {
+namespace base {
 
 
+// namespace jag::base::
+}
 }

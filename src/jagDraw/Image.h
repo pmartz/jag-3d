@@ -26,8 +26,8 @@
 #include <jagDraw/Export.h>
 #include <jagDraw/PlatformOpenGL.h>
 #include <jagDraw/PixelStore.h>
-#include <jagBase/LogBase.h>
-#include <jagBase/ptr.h>
+#include <jag/base/LogBase.h>
+#include <jag/base/ptr.h>
 
 
 namespace jagDraw {
@@ -40,7 +40,7 @@ namespace jagDraw {
 \brief TBD
 \details TBD
 */
-class JAGDRAW_EXPORT Image : protected jagBase::LogBase
+class JAGDRAW_EXPORT Image : protected jag::base::LogBase
 {
 public:
     Image( const std::string& logName=std::string( "" ) );
@@ -120,7 +120,7 @@ protected:
 
 /*@}*/
 
-typedef jagBase::ptr< jagDraw::Image >::shared_ptr ImagePtr;
+typedef jag::base::ptr< jagDraw::Image >::shared_ptr ImagePtr;
 typedef std::vector< ImagePtr > ImageVec;
 
 

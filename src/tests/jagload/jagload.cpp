@@ -23,10 +23,10 @@
 
 #include <jagDraw/Common.h>
 #include <jagDraw/PerContextData.h>
-#include <jagBase/Transform.h>
-#include <jagBase/Version.h>
-#include <jagBase/Log.h>
-#include <jagBase/LogMacros.h>
+#include <jag/base/Transform.h>
+#include <jag/base/Version.h>
+#include <jag/base/Log.h>
+#include <jag/base/LogMacros.h>
 #include <jagDisk/ReadWrite.h>
 #include <boost/program_options/options_description.hpp>
 #include <gmtl/gmtl.h>
@@ -78,8 +78,8 @@ protected:
 
 DemoInterface* DemoInterface::create( bpo::options_description& desc )
 {
-    jagBase::Log::instance()->setPriority( jagBase::Log::PrioDebug, jagBase::Log::Console );
-    jagBase::Log::instance()->setPriority( jagBase::Log::PrioWarning, "jag.draw.ctx" );
+    jag::base::Log::instance()->setPriority( jag::base::Log::PrioDebug, jag::base::Log::Console );
+    jag::base::Log::instance()->setPriority( jag::base::Log::PrioWarning, "jag.draw.ctx" );
 
     return( new JagLoadDemo );
 }
@@ -182,7 +182,7 @@ bool JagLoadDemo::init()
     glEnable( GL_DEPTH_TEST );
 
     // Auto-log the version string.
-    jagBase::getVersionString();
+    jag::base::getVersionString();
 
     // Auto-log the OpenGL version string.
     jagDraw::getOpenGLVersionString();
@@ -201,7 +201,7 @@ bool JagLoadDemo::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& pro
     jagDraw::DrawInfo& drawInfo( getDrawInfo( contextID ) );
 
     // Systems such as VRJ will pass view and projection matrices.
-    jagBase::TransformD transformInfo;
+    jag::base::TransformD transformInfo;
     if( view.mState != gmtl::Matrix44f::IDENTITY || proj.mState != gmtl::Matrix44f::IDENTITY )
     {
         transformInfo.setProj( proj );

@@ -25,11 +25,11 @@
 
 #include <jagDraw/Export.h>
 #include <jagDraw/Command.h>
-#include <jagBase/LogBase.h>
+#include <jag/base/LogBase.h>
 #include <jagDraw/ObjectID.h>
 #include <jagDraw/Shader.h>
 #include <jagDraw/PerContextData.h>
-#include <jagBase/ptr.h>
+#include <jag/base/ptr.h>
 
 #include <map>
 #include <vector>
@@ -44,7 +44,7 @@ namespace jagDraw {
 struct DrawInfo;
 
 class Program;
-typedef jagBase::ptr< Program >::shared_ptr ProgramPtr;
+typedef jag::base::ptr< Program >::shared_ptr ProgramPtr;
 
 
 /** \class Program Program.h <jagDraw/Program.h>
@@ -54,7 +54,7 @@ typedef jagBase::ptr< Program >::shared_ptr ProgramPtr;
 */
 class JAGDRAW_EXPORT Program : public Command,
             public ObjectID, public SHARED_FROM_THIS(Program),
-            protected jagBase::LogBase
+            protected jag::base::LogBase
 {
 public:
     // TBD seems out of place. Not sure why these matrices need special

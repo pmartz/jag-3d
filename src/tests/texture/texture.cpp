@@ -23,9 +23,9 @@
 
 #include <jagDraw/Common.h>
 #include <jagDraw/Texture.h>
-#include <jagBase/Version.h>
-#include <jagBase/Log.h>
-#include <jagBase/LogMacros.h>
+#include <jag/base/Version.h>
+#include <jag/base/Log.h>
+#include <jag/base/LogMacros.h>
 #include <jagDisk/ReadWrite.h>
 #include <jagUtil/Shapes.h>
 
@@ -175,7 +175,7 @@ bool TextureDemo::init2D()
             i3fa.push_back( 0.f ); i3fa.push_back( 1.f );
         i3fa.push_back( .9f ); i3fa.push_back( .9f ); i3fa.push_back( z );
             i3fa.push_back( 1.f ); i3fa.push_back( 1.f );
-        jagBase::BufferPtr ibp( new jagBase::Buffer( i3fa.size() * sizeof( float ), (void*)&i3fa[0] ) );
+        jag::base::BufferPtr ibp( new jag::base::Buffer( i3fa.size() * sizeof( float ), (void*)&i3fa[0] ) );
         jagDraw::BufferObjectPtr ibop( new jagDraw::BufferObject( GL_ARRAY_BUFFER, ibp ) );
 
         jagDraw::VertexArrayObjectPtr vaop( new jagDraw::VertexArrayObject );
@@ -243,7 +243,7 @@ bool TextureDemo::initTextureObject()
         0.f, 0.f, 1.f, 1.f,
         .5f, .5f, .5f, 1.f
     };
-    jagBase::BufferPtr bufferData( new jagBase::Buffer( sizeof( texData ), texData ) );
+    jag::base::BufferPtr bufferData( new jag::base::Buffer( sizeof( texData ), texData ) );
     jagDraw::TextureBufferPtr textureBuffer( new jagDraw::TextureBuffer( bufferData ) );
 
     jagDraw::TextureSetPtr ts( new jagDraw::TextureSet() );
@@ -278,7 +278,7 @@ bool TextureDemo::init()
     glClearColor( 0.f, 0.f, 0.f, 0.f );
 
     // Auto-log the version string.
-    jagBase::getVersionString();
+    jag::base::getVersionString();
 
     // Auto-log the OpenGL version string.
     jagDraw::getOpenGLVersionString();

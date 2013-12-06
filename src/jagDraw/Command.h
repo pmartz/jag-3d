@@ -22,8 +22,8 @@
 #ifndef __JAGDRAW_COMMAND_H__
 #define __JAGDRAW_COMMAND_H__ 1
 
-#include <jagBase/UserDataOwner.h>
-#include <jagBase/ptr.h>
+#include <jag/base/UserDataOwner.h>
+#include <jag/base/ptr.h>
 
 #include <boost/thread/mutex.hpp>
 #include <boost/foreach.hpp>
@@ -41,14 +41,14 @@ namespace jagDraw {
 struct DrawInfo;
 
 class Command;
-typedef jagBase::ptr< jagDraw::Command >::shared_ptr DrawablePrepPtr;
+typedef jag::base::ptr< jagDraw::Command >::shared_ptr DrawablePrepPtr;
 
 
 /** \class Command Command.h <jagDraw/Command.h>
 \brief
 \details
 */
-class Command : public jagBase::UserDataOwner
+class Command : public jag::base::UserDataOwner
 {
 public:
     typedef enum {

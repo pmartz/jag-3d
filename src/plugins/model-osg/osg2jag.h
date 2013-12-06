@@ -24,7 +24,7 @@
 
 
 #include <jagDisk/Options.h>
-#include <jagBase/Buffer.h>
+#include <jag/base/Buffer.h>
 #include <jagSG/Node.h>
 #include <jagDraw/UniformBlock.h>
 
@@ -85,7 +85,7 @@ protected:
 
 
     struct ArrayInfo {
-        jagBase::BufferPtr _buffer;
+        jag::base::BufferPtr _buffer;
         GLenum _type;
         unsigned int _numElements;
         unsigned int _componentsPerElement;

@@ -26,8 +26,8 @@
 #include <jagDraw/DrawNodeContainer.h>
 #include <jagDraw/DrawNode.h>
 #include <jagDraw/CommandMap.h>
-#include <jagBase/LogBase.h>
-#include <jagBase/ptr.h>
+#include <jag/base/LogBase.h>
+#include <jag/base/ptr.h>
 
 #include <boost/foreach.hpp>
 
@@ -57,16 +57,16 @@ traversal. Returning false from Visitir::visit(Node&) halts traversal
 for the current NodeContainer. Returning false from
 Visitir::visit(NodeContainer&) halts traversal for the DrawGraph.
 */
-class Visitor : protected jagBase::LogBase
+class Visitor : protected jag::base::LogBase
 {
 public:
     Visitor( const std::string& logNameSuffix, const std::string& logName=std::string( "" ) )
-      : jagBase::LogBase( logName.empty() ? std::string( "jag.draw.visit." ) + logNameSuffix : logName )
+      : jag::base::LogBase( logName.empty() ? std::string( "jag.draw.visit." ) + logNameSuffix : logName )
     {
     }
 
     Visitor( const jagDraw::Visitor& rhs )
-      : jagBase::LogBase( rhs )
+      : jag::base::LogBase( rhs )
     {
     }
 
@@ -100,7 +100,7 @@ public:
     }
 };
 
-typedef jagBase::ptr< jagDraw::Visitor >::shared_ptr VisitorPtr;
+typedef jag::base::ptr< jagDraw::Visitor >::shared_ptr VisitorPtr;
 
 
 /*@}*/

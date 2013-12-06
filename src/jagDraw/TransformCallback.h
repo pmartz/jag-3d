@@ -24,8 +24,8 @@
 
 #include <jagDraw/Export.h>
 #include <jagDraw/DrawNode.h>
-#include <jagBase/Transform.h>
-#include <jagBase/ptr.h>
+#include <jag/base/Transform.h>
+#include <jag/base/ptr.h>
 
 
 namespace jagDraw {
@@ -55,7 +55,7 @@ per draw graph (in multidisplay or multicontext situations).
 To meet these needs, JAG supports the concept of a draw traversal callback
 that can be attach to each draw graph Node: Node::Callback. Draw
 graph executeion calls Node::execute() on each draw graph Node.
-Node::execute() iterates over the jagBase::MultiCallback vector of
+Node::execute() iterates over the jag::base::MultiCallback vector of
 Callback objects, and if all return true, the Node's Drawable
 objects are executed. If any Callback returns false, Node::execute()
 immediately returns.
@@ -149,11 +149,11 @@ public:
 
     virtual bool operator()( jagDraw::DrawNode& node, jagDraw::DrawInfo& drawInfo );
 
-    jagBase::TransformD& getTransform() { return( _transform ); }
-    const jagBase::TransformD& getTransform() const { return( _transform ); }
+    jag::base::TransformD& getTransform() { return( _transform ); }
+    const jag::base::TransformD& getTransform() const { return( _transform ); }
 
     /** \brief Specify which matrices are sent as uniforms.
-    \details \c flags is from jagBase::Transform (VIEW_PROJ, MODEL_VIEW_PROJ, etc).
+    \details \c flags is from jag::base::Transform (VIEW_PROJ, MODEL_VIEW_PROJ, etc).
     The default is MODEL_VIEW_PROJ | MODEL_VIEW | MODEL_VIEW_INV_TRANS ). */
     void setRequiredMatrixUniforms( const unsigned int flags );
     /** \brief Get flags for matrices that will be sent as uniforms. */
@@ -171,7 +171,7 @@ public:
 
 
 protected:
-    jagBase::TransformD _transform;
+    jag::base::TransformD _transform;
 
     unsigned int _requiredUniforms;
 
@@ -179,7 +179,7 @@ protected:
     UniformNameMap _nameMap;
 };
 
-typedef jagBase::ptr< jagDraw::TransformCallback >::shared_ptr TransformCallbackPtr;
+typedef jag::base::ptr< jagDraw::TransformCallback >::shared_ptr TransformCallbackPtr;
 
 
 /**@}*/

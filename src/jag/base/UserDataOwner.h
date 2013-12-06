@@ -19,8 +19,8 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#ifndef __JAGBASE_USER_DATA_OWNER_H__
-#define __JAGBASE_USER_DATA_OWNER_H__ 1
+#ifndef __JAG_BASE_USER_DATA_OWNER_H__
+#define __JAG_BASE_USER_DATA_OWNER_H__ 1
 
 #include <Poco/Foundation.h>
 #if( POCO_OS == POCO_OS_MAC_OS_X )
@@ -31,8 +31,8 @@ using std::isinf;
 using std::isnan;
 #endif
 
-#include <jagBase/Config.h>
-#include <jagBase/ptr.h>
+#include <jag/base/Config.h>
+#include <jag/base/ptr.h>
 #include <Poco/Logger.h>
 #include <Poco/LogStream.h>
 #include <Poco/NullChannel.h>
@@ -40,13 +40,13 @@ using std::isnan;
 #include <map>
 #include <string>
 
-namespace jagBase
-{
+namespace jag {
+namespace base {
 
 
 
 
-/** \class UserDataOwner UserDataOwner.h <jagBase/UserDataOwner.h>
+/** \class UserDataOwner UserDataOwner.h <jag/base/UserDataOwner.h>
 \brief Enables storage and retrieval of arbitrary user specified data in Jag3D classes
 \details Uses std::map and Poco::Dynamic::var to provide access to arbitrary value stored on a string key. 
 Derived classes can store arbitrary user data on string keys that can be used by the specific application without needing to create additional derived classes.
@@ -124,12 +124,13 @@ public:
 
 protected:
     UserDataMap _userData;
-    
-
 };
-// jagBase
+
+
+// namespace jag::base::
+}
 }
 
 
-// __JAGBASE_LOG_BASE_H__
+// __JAG_BASE_LOG_BASE_H__
 #endif

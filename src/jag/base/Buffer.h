@@ -19,21 +19,22 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#ifndef __JAGBASE_BUFFER_H__
-#define __JAGBASE_BUFFER_H__ 1
+#ifndef __JAG_BASE_BUFFER_H__
+#define __JAG_BASE_BUFFER_H__ 1
 
 
-#include <jagBase/ptr.h>
-#include <jagBase/types.h>
+#include <jag/base/ptr.h>
+#include <jag/base/types.h>
 
 #include <cstring>
 #include <assert.h>
 
 
-namespace jagBase {
+namespace jag {
+namespace base {
 
 
-/** \class Buffer Buffer.h <jagBase/Buffer.h>
+/** \class Buffer Buffer.h <jag/base/Buffer.h>
 \brief A generic memory buffer.
 */
 class Buffer
@@ -137,16 +138,18 @@ public:
     }
 
 protected:
-    jagBase::UCharArray _data;
+    jag::base::UCharArray _data;
     size_t _size;
     size_t _maxSize;
 };
 
-typedef jagBase::ptr< jagBase::Buffer >::shared_ptr BufferPtr;
+typedef jag::base::ptr< jag::base::Buffer >::shared_ptr BufferPtr;
 
 
+// namespace jag::base::
+}
 }
 
 
-// __JAGBASE_BUFFER_H__
+// __JAG_BASE_BUFFER_H__
 #endif

@@ -18,8 +18,8 @@
     distribution.
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
-#ifndef __JAGBASE_GMTL_SUPPORT_H__
-#define __JAGBASE_GMTL_SUPPORT_H__ 1
+#ifndef __JAG_BASE_GMTL_SUPPORT_H__
+#define __JAG_BASE_GMTL_SUPPORT_H__ 1
 
 #include <gmtl/gmtl.h>
 #include <vector>
@@ -334,9 +334,9 @@ typedef std::vector< gmtl::Planef > PlanefVec;
 typedef std::vector< gmtl::Planed > PlanedVec;
 
 
-// gmtl
+// namespace gmtl::
 }
 
 
-// __JAGBASE_GMTL_SUPPORT_H__
+// __JAG_BASE_GMTL_SUPPORT_H__
 #endif

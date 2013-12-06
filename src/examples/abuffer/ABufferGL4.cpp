@@ -340,11 +340,11 @@ void jagInit()
 
     // Specify the names of FFP transform emulation matrix uniforms.
     jagDraw::TransformCallback* xformCB( collect.getTransformCallback() );
-    xformCB->setMatrixUniformName( jagBase::TransformD::PROJ, "projectionMat" );
-    xformCB->setMatrixUniformName( jagBase::TransformD::MODEL_VIEW, "modelViewMat" );
-    xformCB->setMatrixUniformName( jagBase::TransformD::MODEL_VIEW_INV_TRANS_4, "modelViewMatIT" );
-    xformCB->setRequiredMatrixUniforms( jagBase::TransformD::PROJ |
-        jagBase::TransformD::MODEL_VIEW | jagBase::TransformD::MODEL_VIEW_INV_TRANS_4 );
+    xformCB->setMatrixUniformName( jag::base::TransformD::PROJ, "projectionMat" );
+    xformCB->setMatrixUniformName( jag::base::TransformD::MODEL_VIEW, "modelViewMat" );
+    xformCB->setMatrixUniformName( jag::base::TransformD::MODEL_VIEW_INV_TRANS_4, "modelViewMatIT" );
+    xformCB->setRequiredMatrixUniforms( jag::base::TransformD::PROJ |
+        jag::base::TransformD::MODEL_VIEW | jag::base::TransformD::MODEL_VIEW_INV_TRANS_4 );
 
     jagRoot->setMaxContexts( 1 );
     drawInfo._id = 0;

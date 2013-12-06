@@ -21,7 +21,7 @@
 
 
 #include <jagMx/MxGamePadDX.h>
-#include <jagBase/LogMacros.h>
+#include <jag/base/LogMacros.h>
 
 #include <windows.h>
 #include <dinput.h>

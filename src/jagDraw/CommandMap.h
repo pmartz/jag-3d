@@ -25,11 +25,11 @@
 #include <jagDraw/ObjectID.h>
 #include <jagDraw/Command.h>
 #include <jagDraw/CommandNodePtr.h>
-#include <jagBase/LogMacros.h>
+#include <jag/base/LogMacros.h>
 #include <jagDraw/Error.h>
 
-#include <jagBase/ptr.h>
-#include <jagBase/UserDataOwner.h>
+#include <jag/base/ptr.h>
+#include <jag/base/UserDataOwner.h>
 
 #include <boost/foreach.hpp>
 
@@ -47,7 +47,7 @@ namespace jagDraw {
 
 /** \class CommandMap CommandMap.h <jagDraw/CommandMap.h>
 */
-class CommandMap : public ObjectIDOwner, public jagBase::UserDataOwner
+class CommandMap : public ObjectIDOwner, public jag::base::UserDataOwner
 {
 public:
     CommandMap()
@@ -370,7 +370,7 @@ public:
     std::bitset< Command::MaxCommandType > _protectBits;
 };
 
-typedef jagBase::ptr< jagDraw::CommandMap >::shared_ptr CommandMapPtr;
+typedef jag::base::ptr< jagDraw::CommandMap >::shared_ptr CommandMapPtr;
 typedef std::vector< jagDraw::CommandMapPtr > CommandMapVec;
 typedef std::vector< jagDraw::CommandMap > CommandMapSimpleVec;
 

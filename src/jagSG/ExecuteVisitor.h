@@ -24,9 +24,9 @@
 
 #include <jagSG/Export.h>
 #include <jagSG/Visitor.h>
-#include <jagBase/Transform.h>
+#include <jag/base/Transform.h>
 #include <jagDraw/Uniform.h>
-#include <jagBase/ptr.h>
+#include <jag/base/ptr.h>
 
 
 namespace jagSG {
@@ -61,10 +61,10 @@ protected:
     void updateTransformUniforms();
 
     jagDraw::DrawInfo& _drawInfo;
-    jagBase::TransformD _transform;
+    jag::base::TransformD _transform;
 };
 
-typedef jagBase::ptr< jagSG::ExecuteVisitor >::shared_ptr ExecuteVisitorPtr;
+typedef jag::base::ptr< jagSG::ExecuteVisitor >::shared_ptr ExecuteVisitorPtr;
 
 
 // jagSG

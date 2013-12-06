@@ -25,10 +25,10 @@
 
 #include <jagDisk/Export.h>
 #include <jagDisk/Options.h>
-#include <jagBase/LogBase.h>
+#include <jag/base/LogBase.h>
 #include <Poco/Path.h>
 
-#include <jagBase/ptr.h>
+#include <jag/base/ptr.h>
 #include <boost/any.hpp>
 #include <string>
 #include <vector>
@@ -47,7 +47,7 @@ namespace jagDisk {
 \brief Container for the result of a plugin read() operation.
 \details Contains a boolean result and a boost::any. If the
 result is true, boost::any holds a valid read result (usually
-a jagBase::ptr::shared_ptr). */
+a jag::base::ptr::shared_ptr). */
 class JAGDISK_EXPORT ReadStatus
 {
 public:
@@ -88,7 +88,7 @@ protected:
 \brief
 \details
 */
-class JAGDISK_EXPORT ReaderWriter : protected jagBase::LogBase
+class JAGDISK_EXPORT ReaderWriter : protected jag::base::LogBase
 {
 public:
     ReaderWriter( const std::string& logNameSuffix, const std::string& logName=std::string( "" ) );
@@ -104,7 +104,7 @@ public:
         return( false );
     }
 
-    // Returns a boost::any containing a jagBase::ptr::shared_ptr.
+    // Returns a boost::any containing a jag::base::ptr::shared_ptr.
     virtual ReadStatus read( const std::string& /*fileName*/, const Options* options=NULL ) const
     {
         return( ReadStatus() );
@@ -124,7 +124,7 @@ public:
     }
 };
 
-typedef jagBase::ptr< jagDisk::ReaderWriter >::shared_ptr ReaderWriterPtr;
+typedef jag::base::ptr< jagDisk::ReaderWriter >::shared_ptr ReaderWriterPtr;
 typedef std::vector< ReaderWriterPtr > ReaderWriterVec;
 
 

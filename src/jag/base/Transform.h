@@ -19,17 +19,18 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#ifndef __JAGBASE_TRANSFORM_H__
-#define __JAGBASE_TRANSFORM_H__ 1
+#ifndef __JAG_BASE_TRANSFORM_H__
+#define __JAG_BASE_TRANSFORM_H__ 1
 
-#include <jagBase/LogMacros.h>
+#include <jag/base/LogMacros.h>
 #include <gmtl/gmtl.h>
 
 
-namespace jagBase {
+namespace jag {
+namespace base {
 
 
-/** \class Transform Transform.h <jagBase/Transform.h>
+/** \class Transform Transform.h <jag/base/Transform.h>
 \brief A class for tracking model, view, and projection matrices.
 \details Utility for storing the traditional OpenGL FFP model, view, and projection
 matrices, matrices derived from them (concatenation, inverse, normal, etc), the
@@ -411,9 +412,10 @@ typedef Transform< float > TransformF;
 typedef Transform< double > TransformD;
 
 
-// jagBase
+// namespace jag::base::
+}
 }
 
 
-// __JAGBASE_TRANSFORM_H__
+// __JAG_BASE_TRANSFORM_H__
 #endif

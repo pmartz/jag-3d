@@ -40,7 +40,7 @@
 #include <jagDraw/VertexAttrib.h>
 #include <jagDraw/VertexArrayObject.h>
 #include <jagDraw/types.h>
-#include <jagBase/LogMacros.h>
+#include <jag/base/LogMacros.h>
 #include <gmtl/gmtl.h>
 
 #include <sstream>
@@ -444,7 +444,7 @@ Osg2Jag::ArrayInfo Osg2Jag::asJagArray( const osg::Array* arrayIn )
         info._numElements = size;
         info._componentsPerElement = 3;
 
-        jagBase::Point3fVec out;
+        jag::base::Point3fVec out;
         out.resize( size );
         unsigned int idx;
         for( idx=0; idx<size; idx++ )
@@ -456,7 +456,7 @@ Osg2Jag::ArrayInfo Osg2Jag::asJagArray( const osg::Array* arrayIn )
             p[ 2 ] = v[ 2 ];
         }
 
-        jagBase::BufferPtr bp( new jagBase::Buffer( size * sizeof( gmtl::Point3f ), (void*)&( out[0] ) ) );
+        jag::base::BufferPtr bp( new jag::base::Buffer( size * sizeof( gmtl::Point3f ), (void*)&( out[0] ) ) );
         info._buffer = bp;
         break;
     }
@@ -469,7 +469,7 @@ Osg2Jag::ArrayInfo Osg2Jag::asJagArray( const osg::Array* arrayIn )
         info._numElements = size;
         info._componentsPerElement = 2;
 
-        jagBase::Point2fVec out;
+        jag::base::Point2fVec out;
         out.resize( size );
         unsigned int idx;
         for( idx=0; idx<size; idx++ )
@@ -480,7 +480,7 @@ Osg2Jag::ArrayInfo Osg2Jag::asJagArray( const osg::Array* arrayIn )
             p[ 1 ] = v[ 1 ];
         }
 
-        jagBase::BufferPtr bp( new jagBase::Buffer( size * sizeof( gmtl::Point2f ), (void*)&( out[0] ) ) );
+        jag::base::BufferPtr bp( new jag::base::Buffer( size * sizeof( gmtl::Point2f ), (void*)&( out[0] ) ) );
         info._buffer = bp;
         break;
     }
@@ -513,7 +513,7 @@ Osg2Jag::ArrayInfo Osg2Jag::asJagArray( const osg::VectorGLubyte* arrayIn )
     for( idx=0; idx<size; idx++ )
         out[ idx ] = (*arrayIn)[ idx ];
 
-    jagBase::BufferPtr bp( new jagBase::Buffer( size * sizeof( GLubyte ), (void*)&out[0] ) );
+    jag::base::BufferPtr bp( new jag::base::Buffer( size * sizeof( GLubyte ), (void*)&out[0] ) );
     info._buffer = bp;
     return( info );
 }
@@ -533,7 +533,7 @@ Osg2Jag::ArrayInfo Osg2Jag::asJagArray( const osg::VectorGLushort* arrayIn )
     for( idx=0; idx<size; idx++ )
         out[ idx ] = (*arrayIn)[ idx ];
 
-    jagBase::BufferPtr bp( new jagBase::Buffer( size * sizeof( GLushort ), (void*)&out[0] ) );
+    jag::base::BufferPtr bp( new jag::base::Buffer( size * sizeof( GLushort ), (void*)&out[0] ) );
     info._buffer = bp;
     return( info );
 }
@@ -553,7 +553,7 @@ Osg2Jag::ArrayInfo Osg2Jag::asJagArray( const osg::VectorGLuint* arrayIn )
     for( idx=0; idx<size; idx++ )
         out[ idx ] = (*arrayIn)[ idx ];
 
-    jagBase::BufferPtr bp( new jagBase::Buffer( size * sizeof( GLuint ), (void*)&out[0] ) );
+    jag::base::BufferPtr bp( new jag::base::Buffer( size * sizeof( GLuint ), (void*)&out[0] ) );
     info._buffer = bp;
     return( info );
 }

@@ -24,10 +24,10 @@
 #include <jagDraw/DrawNode.h>
 #include <jagDraw/BufferObject.h>
 #include <jagDraw/VertexAttrib.h>
-#include <jagBase/gmtlSupport.h>
+#include <jag/base/gmtlSupport.h>
 #include <jagDraw/Error.h>
-#include <jagBase/Profile.h>
-#include <jagBase/LogMacros.h>
+#include <jag/base/Profile.h>
+#include <jag/base/LogMacros.h>
 #include <boost/foreach.hpp>
 #include <jagDraw/DrawCommand.h>
 #include <jagDraw/Drawable.h>

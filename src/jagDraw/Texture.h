@@ -32,8 +32,8 @@
 #include <jagDraw/Sampler.h>
 #include <jagDraw/BufferObject.h>
 #include <jagDraw/CommandMap.h>
-#include <jagBase/LogBase.h>
-#include <jagBase/ptr.h>
+#include <jag/base/LogBase.h>
+#include <jag/base/ptr.h>
 
 
 namespace jagDraw {
@@ -43,7 +43,7 @@ namespace jagDraw {
 /*@{*/
 
 class Texture;
-typedef jagBase::ptr< jagDraw::Texture >::shared_ptr TexturePtr;
+typedef jag::base::ptr< jagDraw::Texture >::shared_ptr TexturePtr;
 
 
 /** \class Texture Texture.h <jagDraw/Texture.h>
@@ -54,7 +54,7 @@ typedef jagBase::ptr< jagDraw::Texture >::shared_ptr TexturePtr;
 */
 class JAGDRAW_EXPORT Texture : public Command,
         public FramebufferAttachable, public ObjectID,
-        protected jagBase::LogBase
+        protected jag::base::LogBase
 {
 public:
     /**
@@ -189,7 +189,7 @@ typedef std::vector< TexturePtr > TextureVec;
 
 
 class TextureSet;
-typedef jagBase::ptr< jagDraw::TextureSet >::shared_ptr TextureSetPtr;
+typedef jag::base::ptr< jagDraw::TextureSet >::shared_ptr TextureSetPtr;
 
 /** \class TextureSet Texture.h <jagDraw/Texture.h>
 \brief TBD

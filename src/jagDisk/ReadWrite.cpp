@@ -22,7 +22,7 @@
 #include <jagDisk/ReadWrite.h>
 #include <jagDisk/PluginManager.h>
 #include <jagDisk/Options.h>
-#include <jagBase/LogMacros.h>
+#include <jag/base/LogMacros.h>
 #include <Poco/File.h>
 
 #include <boost/any.hpp>

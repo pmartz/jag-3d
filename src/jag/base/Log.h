@@ -19,11 +19,11 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#ifndef __JAGBASE_LOG_H__
-#define __JAGBASE_LOG_H__ 1
+#ifndef __JAG_BASE_LOG_H__
+#define __JAG_BASE_LOG_H__ 1
 
 
-#include <jagBase/Export.h>
+#include <jag/base/Export.h>
 #include <Poco/Message.h>
 #include <string>
 
@@ -33,15 +33,15 @@ namespace Poco {
 }
 
 
-namespace jagBase
-{
+namespace jag {
+namespace base {
 
 
 /** \addtogroup jagBaseLogging Message Logging Utilities */
 /*@{*/
 
 
-/** \class Log Log.h <jagBase/Log.h>
+/** \class Log Log.h <jag/base/Log.h>
 \brief Interface for setting message logging parameters.
 \details Log is a singleton.
 This class provides a single interface for managing message logging.
@@ -142,9 +142,10 @@ protected:
 /*@}*/
 
 
-// jagBase
+// namespace jag::base::
+}
 }
 
 
-// __JAGBASE_LOG_H__
+// __JAG_BASE_LOG_H__
 #endif

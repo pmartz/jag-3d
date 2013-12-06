@@ -19,21 +19,22 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#ifndef __JAGBASE_NOTIFIER_H__
-#define __JAGBASE_NOTIFIER_H__ 1
+#ifndef __JAG_BASE_NOTIFIER_H__
+#define __JAG_BASE_NOTIFIER_H__ 1
 
 
-#include <jagBase/ptr.h>
-#include <jagBase/MultiCallback.h>
-#include <jagBase/LogMacros.h>
+#include <jag/base/ptr.h>
+#include <jag/base/MultiCallback.h>
+#include <jag/base/LogMacros.h>
 
 #include <boost/foreach.hpp>
 
 
-namespace jagBase {
+namespace jag {
+namespace base {
 
 
-/** \class Notifier Notifier.h <jagBase/Notifier.h>
+/** \class Notifier Notifier.h <jag/base/Notifier.h>
 \brief Common notification system base class.
 \details Currently, this is used by Drawable to notify jagSG::Node
 when the Drawable bound is dirtied. This seems like a very heavy
@@ -57,7 +58,7 @@ public:
     }
 
 
-    /** \struct NotifierInfo Notifier.h <jagBase/Notifier.h>
+    /** \struct NotifierInfo Notifier.h <jag/base/Notifier.h>
     \brief Base class containing information passed to Notifier::Callback objects. */
     struct NotifierInfo
     {
@@ -71,7 +72,7 @@ public:
         // Derived classes add additional field / member functions as needed.
     };
 
-    /** \struct Callback Notifier.h <jagBase/Notifier.h>
+    /** \struct Callback Notifier.h <jag/base/Notifier.h>
     \brief Notifies client code  */
     struct NotifierCallback
     {
@@ -84,11 +85,11 @@ public:
 
         /** \brief TBD
         \details TBD */
-        virtual void operator()( jagBase::Notifier* /* notifier */, const jagBase::Notifier::NotifierInfo& /* info */ )
+        virtual void operator()( jag::base::Notifier* /* notifier */, const jag::base::Notifier::NotifierInfo& /* info */ )
         {
         }
     };
-    typedef jagBase::ptr< NotifierCallback >::shared_ptr NotifierCallbackPtr;
+    typedef jag::base::ptr< NotifierCallback >::shared_ptr NotifierCallbackPtr;
 
     /** \brief Notify all attached callbacks.
     \details Invoke the operator function call on all attached callbacks
@@ -103,7 +104,7 @@ public:
 
     /** \brief TBD
     \details TBD */
-    typedef jagBase::MultiCallback< NotifierCallbackPtr > NotifierCallbacks;
+    typedef jag::base::MultiCallback< NotifierCallbackPtr > NotifierCallbacks;
 
     /** \brief TBD
     \details TBD */
@@ -133,9 +134,10 @@ protected:
 };
 
 
-// jagBase
+// namespace jag::base::
+}
 }
 
 
-// __JAGBASE_NOTIFIER_H__
+// __JAG_BASE_NOTIFIER_H__
 #endif

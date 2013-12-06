@@ -25,8 +25,8 @@
 #include <jagDraw/Export.h>
 #include <jagDraw/CommandNodePtr.h>
 #include <jagDraw/CommandMap.h>
-#include <jagBase/LogBase.h>
-#include <jagBase/UserDataOwner.h>
+#include <jag/base/LogBase.h>
+#include <jag/base/UserDataOwner.h>
 
 #include <map>
 
@@ -47,7 +47,7 @@ when a new CommandMap is encountered by the CollectionVisitor, or when
 a given CommandMap is marked as dirty for a given command graph node.
 
 \logname jag.draw.cg.node */
-class JAGDRAW_EXPORT CommandNode : protected jagBase::LogBase, public jagBase::UserDataOwner
+class JAGDRAW_EXPORT CommandNode : protected jag::base::LogBase, public jag::base::UserDataOwner
 {
 public:
     CommandNode( const std::string& logName );

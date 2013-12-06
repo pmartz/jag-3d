@@ -24,13 +24,13 @@
 #include <jagDraw/Common.h>
 #include <jagDraw/PerContextData.h>
 #include <jagSG/Common.h>
-#include <jagBase/Profile.h>
+#include <jag/base/Profile.h>
 #include <jagUtil/QuadNode.h>
 #include <jagUtil/DrawGraphCountVisitor.h>
 #include <jagUtil/Shapes.h>
-#include <jagBase/Version.h>
-#include <jagBase/Log.h>
-#include <jagBase/LogMacros.h>
+#include <jag/base/Version.h>
+#include <jag/base/Log.h>
+#include <jag/base/LogMacros.h>
 
 #include <jagUtil/BufferAggregationVisitor.h>
 
@@ -312,7 +312,7 @@ bool RTTExample::init()
     glEnable( GL_DEPTH_TEST );
 
     // Auto-log the version string.
-    jagBase::getVersionString();
+    jag::base::getVersionString();
 
     // Auto-log the OpenGL version string.
     jagDraw::getOpenGLVersionString();

@@ -19,35 +19,35 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#ifndef __JAGBASE_LOG_BASE_H__
-#define __JAGBASE_LOG_BASE_H__ 1
+#ifndef __JAG_BASE_LOG_BASE_H__
+#define __JAG_BASE_LOG_BASE_H__ 1
 
 
-#include <jagBase/Config.h>
-#include <jagBase/ptr.h>
+#include <jag/base/Config.h>
+#include <jag/base/ptr.h>
 #include <Poco/Logger.h>
 #include <Poco/LogStream.h>
 #include <Poco/NullChannel.h>
 
 
-namespace jagBase
-{
+namespace jag {
+namespace base {
 
 
-typedef jagBase::ptr< Poco::LogStream >::shared_ptr PocoLogStreamPtr;
+typedef jag::base::ptr< Poco::LogStream >::shared_ptr PocoLogStreamPtr;
 
 
 /** \addtogroup jagBaseLogging Message Logging Utilities */
 /*@{*/
 
 
-/** \class LogBase LogBase.h <jagBase/LogBase.h>
+/** \class LogBase LogBase.h <jag/base/LogBase.h>
 \brief Enables message logging in Jag3D classes.
 \details Keeps a reference to a Poco::Logger and a smart pointer to a Poco LogStream.
 Derived classes pass the Logger name as a parameter to the LogBase constructor. All
 classes using the same Logger name share a reference to that Logger.
 
-Classes that derive from LogBase can use the macros in jagBase/LogMacros.h. See
+Classes that derive from LogBase can use the macros in jag/base/LogMacros.h. See
 \ref jagBaseLogging "Message Logging Utilities" for more information.
 */
 class LogBase
@@ -75,9 +75,10 @@ public:
 /*@}*/
 
 
-// jagBase
+// namespace jag::base::
+}
 }
 
 
-// __JAGBASE_LOG_BASE_H__
+// __JAG_BASE_LOG_BASE_H__
 #endif

@@ -29,8 +29,8 @@
 #include <jagDraw/FramebufferAttachable.h>
 #include <jagDraw/PerContextData.h>
 #include <jagDraw/ObjectID.h>
-#include <jagBase/LogBase.h>
-#include <jagBase/ptr.h>
+#include <jag/base/LogBase.h>
+#include <jag/base/ptr.h>
 
 #include <map>
 
@@ -44,7 +44,7 @@ namespace jagDraw {
 class Renderbuffer;
 
 class Framebuffer;
-typedef jagBase::ptr< jagDraw::Framebuffer >::shared_ptr FramebufferPtr;
+typedef jag::base::ptr< jagDraw::Framebuffer >::shared_ptr FramebufferPtr;
 
 
 /** \class Framebuffer Framebuffer.h <jagDraw/Framebuffer.h>
@@ -82,7 +82,7 @@ See member functions for additional specification requirements.
 
 */
 class JAGDRAW_EXPORT Framebuffer : public Command,
-        public ObjectID, protected jagBase::LogBase
+        public ObjectID, protected jag::base::LogBase
 {
 public:
     Framebuffer( GLenum target=GL_FRAMEBUFFER, const std::string& logName=std::string( "" ) );
@@ -242,7 +242,7 @@ typedef std::vector< FramebufferPtr > FramebufferVec;
 \gl{section 4.4.2}.
 */
 class JAGDRAW_EXPORT Renderbuffer : public ObjectID,
-        public FramebufferAttachable, protected jagBase::LogBase
+        public FramebufferAttachable, protected jag::base::LogBase
 {
 public:
     Renderbuffer( const std::string& logName );
@@ -281,7 +281,7 @@ protected:
     jagDraw::PerContextBool _dirty;
 };
 
-typedef jagBase::ptr< jagDraw::Renderbuffer >::shared_ptr RenderbufferPtr;
+typedef jag::base::ptr< jagDraw::Renderbuffer >::shared_ptr RenderbufferPtr;
 typedef std::vector< RenderbufferPtr > RenderbufferVec;
 
 

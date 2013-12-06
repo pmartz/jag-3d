@@ -19,14 +19,14 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#include <jagBase/Transform.h>
+#include <jag/base/Transform.h>
 #include <gmtl/gmtl.h>
 
 #include <iostream>
 
 
-using jagBase::TransformF;
-using jagBase::TransformD;
+using jag::base::TransformF;
+using jag::base::TransformD;
 using gmtl::Matrix44f;
 using gmtl::Matrix44d;
 

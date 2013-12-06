@@ -30,8 +30,8 @@
 #include <jagDraw/Program.h>
 #include <jagSG/SelectContainerCallback.h>
 #include <jagDraw/PerContextData.h>
-#include <jagBase/ptr.h>
-#include <jagBase/LogBase.h>
+#include <jag/base/ptr.h>
+#include <jag/base/LogBase.h>
 
 
 // Forwaed
@@ -59,7 +59,7 @@ color buffer.
 
 \logname jag.util.abuf
 */
-class JAGUTIL_EXPORT ABuffer : public jagBase::LogBase
+class JAGUTIL_EXPORT ABuffer : public jag::base::LogBase
 {
 public:
     ABuffer( const std::string& logName=std::string( "" ) );
@@ -224,7 +224,7 @@ protected:
     PerContextABufferCntxt _abufferCntxt;
 };
 
-typedef jagBase::ptr< ABuffer >::shared_ptr ABufferPtr;
+typedef jag::base::ptr< ABuffer >::shared_ptr ABufferPtr;
 
 
 

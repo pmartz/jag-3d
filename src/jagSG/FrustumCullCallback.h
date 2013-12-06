@@ -25,8 +25,8 @@
 #include <jagSG/Export.h>
 #include <jagSG/Node.h>
 #include <jagSG/Visitor.h>
-#include <jagBase/LogBase.h>
-#include <jagBase/ptr.h>
+#include <jag/base/LogBase.h>
+#include <jag/base/ptr.h>
 
 
 
@@ -40,7 +40,7 @@ namespace jagSG {
 \brief TBD
 \details TBD
 */
-class JAGSG_EXPORT FrustumCullCallback : protected jagBase::LogBase,
+class JAGSG_EXPORT FrustumCullCallback : protected jag::base::LogBase,
         public jagSG::Node::Callback
 {
 public:
@@ -55,7 +55,7 @@ public:
 protected:
 };
 
-typedef jagBase::ptr< FrustumCullCallback >::shared_ptr FrustumCullCallbackPtr;
+typedef jag::base::ptr< FrustumCullCallback >::shared_ptr FrustumCullCallbackPtr;
 
 
 

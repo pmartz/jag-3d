@@ -21,9 +21,9 @@
 
 #include <jagSG/ExecuteVisitor.h>
 #include <jagDraw/DrawInfo.h>
-#include <jagBase/gmtlSupport.h>
+#include <jag/base/gmtlSupport.h>
 #include <jagDraw/Error.h>
-#include <jagBase/LogMacros.h>
+#include <jag/base/LogMacros.h>
 
 
 namespace jagSG {
@@ -103,14 +103,14 @@ void ExecuteVisitor::updateTransformUniforms()
 {
     jagDraw::UniformSetPtr usp( new jagDraw::UniformSet() );
 
-    if( _transform.getDirty() & jagBase::TransformD::MODEL_VIEW_PROJ )
+    if( _transform.getDirty() & jag::base::TransformD::MODEL_VIEW_PROJ )
     {
         gmtl::Matrix44f mvpMat;
         gmtl::convert( mvpMat, _transform.getModelViewProj() );
         jagDraw::UniformPtr modelViewProj( new jagDraw::Uniform( "jagModelViewProjMatrix", mvpMat ) );
         usp->insert( modelViewProj );
     }
-    if( _transform.getDirty() & jagBase::TransformD::MODEL_VIEW_INV_TRANS )
+    if( _transform.getDirty() & jag::base::TransformD::MODEL_VIEW_INV_TRANS )
     {
         gmtl::Matrix33f mvitMat;
         gmtl::convert( mvitMat, _transform.getModelViewInvTrans() );

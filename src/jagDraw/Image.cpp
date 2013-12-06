@@ -27,7 +27,7 @@ namespace jagDraw {
 
 
 Image::Image( const std::string& logName )
-  : jagBase::LogBase( logName.empty() ? "jag.draw.image" : logName ),
+  : jag::base::LogBase( logName.empty() ? "jag.draw.image" : logName ),
     _level( 0 ),
     _internalFormat( GL_NONE ),
     _width( 0 ),
@@ -44,7 +44,7 @@ Image::Image( const std::string& logName )
 {
 }
 Image::Image( const Image& rhs )
-  : jagBase::LogBase( rhs ),
+  : jag::base::LogBase( rhs ),
     _level( rhs._level ),
     _internalFormat( rhs._internalFormat ),
     _width( rhs._width ),

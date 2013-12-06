@@ -24,12 +24,12 @@
 
 #include <jagDraw/Export.h>
 #include <jagDraw/PlatformOpenGL.h>
-#include <jagBase/LogBase.h>
+#include <jag/base/LogBase.h>
 #include <jagDraw/VertexArrayCommand.h>
 #include <jagDraw/ObjectID.h>
 #include <jagDraw/PerContextData.h>
-#include <jagBase/ptr.h>
-#include <jagBase/Buffer.h>
+#include <jag/base/ptr.h>
+#include <jag/base/Buffer.h>
 
 #include <vector>
 
@@ -47,7 +47,7 @@ struct DrawInfo;
 \brief A context-safe wrapper for OpenGL buffer objects.
 \details \gl{section 2.9}.
 */
-class JAGDRAW_EXPORT BufferObject : protected jagBase::LogBase,
+class JAGDRAW_EXPORT BufferObject : protected jag::base::LogBase,
             public ObjectID, public VertexArrayCommand
 {
 public:
@@ -63,7 +63,7 @@ public:
     \param b BufferPtr
     \glparam{usage,section 2.9.2}
     */
-    BufferObject( const GLenum target, const jagBase::BufferPtr b, const GLenum usage=GL_STATIC_DRAW );
+    BufferObject( const GLenum target, const jag::base::BufferPtr b, const GLenum usage=GL_STATIC_DRAW );
     BufferObject( const BufferObject& rhs );
 
     virtual ~BufferObject();
@@ -77,8 +77,8 @@ public:
 
     virtual bool isSameKind( const VertexArrayCommand& rhs ) const;
 
-    void setBuffer( jagBase::BufferPtr b );
-    const jagBase::BufferPtr& getBuffer() const;
+    void setBuffer( jag::base::BufferPtr b );
+    const jag::base::BufferPtr& getBuffer() const;
     size_t getBufferSize();
 
     void setTarget( const GLenum target );
@@ -129,13 +129,13 @@ protected:
     /** Default value: _usage = GL_STATIC_DRAW */
     GLenum _usage;
 
-    jagBase::BufferPtr _buffer;
+    jag::base::BufferPtr _buffer;
 
     PerContextBool _dirty;
     size_t _dirtyOffset, _dirtySize;
 };
 
-typedef jagBase::ptr< jagDraw::BufferObject >::shared_ptr BufferObjectPtr;
+typedef jag::base::ptr< jagDraw::BufferObject >::shared_ptr BufferObjectPtr;
 typedef std::vector< BufferObjectPtr > BufferObjectVec;
 
 
@@ -143,7 +143,7 @@ class JAGDRAW_EXPORT IndexedBufferObject : public BufferObject
 {
 public:
     IndexedBufferObject( const GLenum target );
-    IndexedBufferObject( const GLenum target, const jagBase::BufferPtr b, const GLenum usage=GL_STATIC_DRAW );
+    IndexedBufferObject( const GLenum target, const jag::base::BufferPtr b, const GLenum usage=GL_STATIC_DRAW );
     IndexedBufferObject( const BufferObject& rhs );
 
     IndexedBufferObject( const IndexedBufferObject& rhs );
@@ -169,12 +169,12 @@ public:
     ArrayBuffer():
         BufferObject( GL_ARRAY_BUFFER )
     {}
-    ArrayBuffer( const jagBase::BufferPtr b, const GLenum usage=GL_STATIC_DRAW ):
+    ArrayBuffer( const jag::base::BufferPtr b, const GLenum usage=GL_STATIC_DRAW ):
         BufferObject( GL_ARRAY_BUFFER, b, usage )
     {}
 };
 
-typedef jagBase::ptr< jagDraw::ArrayBuffer >::shared_ptr ArrayBufferPtr;
+typedef jag::base::ptr< jagDraw::ArrayBuffer >::shared_ptr ArrayBufferPtr;
 typedef std::vector< ArrayBufferPtr > ArrayBufferVec;
 
 
@@ -187,12 +187,12 @@ public:
     CopyReadBuffer():
         BufferObject( GL_COPY_READ_BUFFER )
     {}
-    CopyReadBuffer( const jagBase::BufferPtr b, const GLenum usage=GL_STATIC_DRAW ):
+    CopyReadBuffer( const jag::base::BufferPtr b, const GLenum usage=GL_STATIC_DRAW ):
         BufferObject( GL_COPY_READ_BUFFER, b, usage )
     {}
 };
 
-typedef jagBase::ptr< jagDraw::CopyReadBuffer >::shared_ptr CopyReadBufferPtr;
+typedef jag::base::ptr< jagDraw::CopyReadBuffer >::shared_ptr CopyReadBufferPtr;
 typedef std::vector< CopyReadBufferPtr > CopyReadBufferVec;
 
 
@@ -205,12 +205,12 @@ public:
     CopyWriteBuffer():
         BufferObject( GL_COPY_WRITE_BUFFER )
     {}
-    CopyWriteBuffer( const jagBase::BufferPtr b, const GLenum usage=GL_STATIC_DRAW ):
+    CopyWriteBuffer( const jag::base::BufferPtr b, const GLenum usage=GL_STATIC_DRAW ):
         BufferObject( GL_COPY_WRITE_BUFFER, b, usage )
     {}
 };
 
-typedef jagBase::ptr< jagDraw::CopyWriteBuffer >::shared_ptr CopyWriteBufferPtr;
+typedef jag::base::ptr< jagDraw::CopyWriteBuffer >::shared_ptr CopyWriteBufferPtr;
 typedef std::vector< CopyWriteBufferPtr > CopyWriteBufferVec;
 
 
@@ -224,13 +224,13 @@ public:
     DrawIndirectBuffer() :
         BufferObject( GL_DRAW_INDIRECT_BUFFER )
     {}
-    DrawIndirectBuffer( const jagBase::BufferPtr b, const GLenum usage=GL_STATIC_DRAW ):
+    DrawIndirectBuffer( const jag::base::BufferPtr b, const GLenum usage=GL_STATIC_DRAW ):
         BufferObject( GL_DRAW_INDIRECT_BUFFER, b, usage )
     {}
 #endif
 };
 
-typedef jagBase::ptr< jagDraw::DrawIndirectBuffer >::shared_ptr DrawIndirectBufferPtr;
+typedef jag::base::ptr< jagDraw::DrawIndirectBuffer >::shared_ptr DrawIndirectBufferPtr;
 typedef std::vector< DrawIndirectBufferPtr > DrawIndirectBufferVec;
 
     
@@ -243,12 +243,12 @@ public:
     ElementArrayBuffer():
         BufferObject( GL_ELEMENT_ARRAY_BUFFER )
     {}
-    ElementArrayBuffer( const jagBase::BufferPtr b, const GLenum usage=GL_STATIC_DRAW ):
+    ElementArrayBuffer( const jag::base::BufferPtr b, const GLenum usage=GL_STATIC_DRAW ):
         BufferObject( GL_ELEMENT_ARRAY_BUFFER, b, usage )
     {}
 };
 
-typedef jagBase::ptr< jagDraw::ElementArrayBuffer >::shared_ptr ElementArrayBufferPtr;
+typedef jag::base::ptr< jagDraw::ElementArrayBuffer >::shared_ptr ElementArrayBufferPtr;
 typedef std::vector< ElementArrayBufferPtr > ElementArrayBufferVec;
 
 
@@ -261,12 +261,12 @@ public:
     PixelPackBuffer():
         BufferObject( GL_PIXEL_PACK_BUFFER )
     {}
-    PixelPackBuffer( const jagBase::BufferPtr b, const GLenum usage=GL_STATIC_DRAW ):
+    PixelPackBuffer( const jag::base::BufferPtr b, const GLenum usage=GL_STATIC_DRAW ):
         BufferObject( GL_PIXEL_PACK_BUFFER, b, usage )
     {}
 };
 
-typedef jagBase::ptr< jagDraw::PixelPackBuffer >::shared_ptr PixelPackBufferPtr;
+typedef jag::base::ptr< jagDraw::PixelPackBuffer >::shared_ptr PixelPackBufferPtr;
 typedef std::vector< PixelPackBufferPtr > PixelPackBufferVec;
 
 
@@ -279,12 +279,12 @@ public:
     PixelUnpackBuffer():
         BufferObject( GL_PIXEL_UNPACK_BUFFER )
     {}
-    PixelUnpackBuffer( const jagBase::BufferPtr b, const GLenum usage=GL_STATIC_DRAW ):
+    PixelUnpackBuffer( const jag::base::BufferPtr b, const GLenum usage=GL_STATIC_DRAW ):
         BufferObject( GL_PIXEL_UNPACK_BUFFER, b, usage )
     {}
 };
 
-typedef jagBase::ptr< jagDraw::PixelUnpackBuffer >::shared_ptr PixelUnpackBufferPtr;
+typedef jag::base::ptr< jagDraw::PixelUnpackBuffer >::shared_ptr PixelUnpackBufferPtr;
 typedef std::vector< PixelUnpackBufferPtr > PixelUnpackBufferVec;
 
 
@@ -297,12 +297,12 @@ public:
     TextureBuffer():
         BufferObject( GL_TEXTURE_BUFFER )
     {}
-    TextureBuffer( const jagBase::BufferPtr b, const GLenum usage=GL_STATIC_DRAW ):
+    TextureBuffer( const jag::base::BufferPtr b, const GLenum usage=GL_STATIC_DRAW ):
         BufferObject( GL_TEXTURE_BUFFER, b, usage )
     {}
 };
 
-typedef jagBase::ptr< jagDraw::TextureBuffer >::shared_ptr TextureBufferPtr;
+typedef jag::base::ptr< jagDraw::TextureBuffer >::shared_ptr TextureBufferPtr;
 typedef std::vector< TextureBufferPtr > TextureBufferVec;
 
 
@@ -315,12 +315,12 @@ public:
     TransformFeedbackBuffer():
         IndexedBufferObject( GL_TRANSFORM_FEEDBACK_BUFFER )
     {}
-    TransformFeedbackBuffer( const jagBase::BufferPtr b, const GLenum usage=GL_STATIC_DRAW ):
+    TransformFeedbackBuffer( const jag::base::BufferPtr b, const GLenum usage=GL_STATIC_DRAW ):
         IndexedBufferObject( GL_TRANSFORM_FEEDBACK_BUFFER, b, usage )
     {}
 };
 
-typedef jagBase::ptr< jagDraw::TransformFeedbackBuffer >::shared_ptr TransformFeedbackBufferPtr;
+typedef jag::base::ptr< jagDraw::TransformFeedbackBuffer >::shared_ptr TransformFeedbackBufferPtr;
 typedef std::vector< TransformFeedbackBufferPtr > TransformFeedbackBufferVec;
 
 
@@ -333,12 +333,12 @@ public:
     UniformBuffer():
         IndexedBufferObject( GL_UNIFORM_BUFFER )
     {}
-    UniformBuffer( const jagBase::BufferPtr b, const GLenum usage=GL_STATIC_DRAW ):
+    UniformBuffer( const jag::base::BufferPtr b, const GLenum usage=GL_STATIC_DRAW ):
         IndexedBufferObject( GL_UNIFORM_BUFFER, b, usage )
     {}
 };
 
-typedef jagBase::ptr< jagDraw::UniformBuffer >::shared_ptr UniformBufferPtr;
+typedef jag::base::ptr< jagDraw::UniformBuffer >::shared_ptr UniformBufferPtr;
 typedef std::vector< UniformBufferPtr > UniformBufferVec;
 
 

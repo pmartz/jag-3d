@@ -25,8 +25,8 @@
 #include <jagSG/Export.h>
 #include <jagSG/Node.h>
 #include <jagSG/Visitor.h>
-#include <jagBase/LogBase.h>
-#include <jagBase/ptr.h>
+#include <jag/base/LogBase.h>
+#include <jag/base/ptr.h>
 
 
 
@@ -40,7 +40,7 @@ namespace jagSG {
 \brief Culls based on the NodeMask stored in a Node.
 \details TBD
 */
-class JAGSG_EXPORT NodeMaskCullCallback : protected jagBase::LogBase,
+class JAGSG_EXPORT NodeMaskCullCallback : protected jag::base::LogBase,
         public jagSG::Node::Callback
 {
 public:
@@ -68,7 +68,7 @@ protected:
     OverrideMode _override;
 };
 
-typedef jagBase::ptr< NodeMaskCullCallback >::shared_ptr NodeMaskCullCallbackPtr;
+typedef jag::base::ptr< NodeMaskCullCallback >::shared_ptr NodeMaskCullCallbackPtr;
 
 
 

@@ -27,7 +27,7 @@
 #include <jagSG/Node.h>
 #include <jagDraw/DrawGraph.h>
 
-#include <jagBase/LogMacros.h>
+#include <jag/base/LogMacros.h>
 #include <Poco/ClassLibrary.h>
 #include <Poco/Path.h>
 #include <Poco/String.h>

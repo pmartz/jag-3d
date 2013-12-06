@@ -20,7 +20,7 @@
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
 #include "TextDumpSG.h"
-#include <jagBase/LogMacros.h>
+#include <jag/base/LogMacros.h>
 #include <Poco/Message.h>
 
 #include <fstream>

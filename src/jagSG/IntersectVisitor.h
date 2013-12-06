@@ -24,14 +24,14 @@
 
 #include <jagSG/Export.h>
 #include <jagSG/Visitor.h>
-#include <jagBase/Transform.h>
+#include <jag/base/Transform.h>
 #include <jagDraw/DrawNode.h>
 #include <jagDraw/DrawNodeContainer.h>
 #include <jagDraw/DrawGraph.h>
 #include <jagDraw/TransformCallback.h>
 #include <jagDraw/Drawable.h>
 #include <jagDraw/Uniform.h>
-#include <jagBase/ptr.h>
+#include <jag/base/ptr.h>
 #include <gmtl/Ray.h>
 #include <gmtl/Xforms.h>
 
@@ -107,14 +107,14 @@ protected:
     unsigned int _currentID;
     
 
-    jagBase::TransformD _transform;
+    jag::base::TransformD _transform;
     std::vector<hitRecord> hits;
     std::deque< gmtl::Ray<double> > _rayDeque;
     gmtl::Ray<double> currentRay;
     
 };
 
-typedef jagBase::ptr< jagSG::IntersectVisitor >::shared_ptr IntersectVisitorPtr;
+typedef jag::base::ptr< jagSG::IntersectVisitor >::shared_ptr IntersectVisitorPtr;
 
 
 // jagSG

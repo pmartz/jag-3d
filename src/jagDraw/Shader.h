@@ -25,10 +25,10 @@
 
 #include <jagDraw/Export.h>
 #include <jagDraw/PlatformOpenGL.h>
-#include <jagBase/LogBase.h>
+#include <jag/base/LogBase.h>
 #include <jagDraw/ObjectID.h>
-#include <jagBase/types.h>
-#include <jagBase/ptr.h>
+#include <jag/base/types.h>
+#include <jag/base/ptr.h>
 #include <string>
 #include <vector>
 
@@ -43,7 +43,7 @@ namespace jagDraw {
 \brief TBD.
 \logname jag.draw.shader
 */
-class JAGDRAW_EXPORT Shader : public ObjectID, protected jagBase::LogBase
+class JAGDRAW_EXPORT Shader : public ObjectID, protected jag::base::LogBase
 {
 public:
     Shader( GLenum type, const std::string& logName=std::string( "" ) );
@@ -53,7 +53,7 @@ public:
     void addSourceString( const std::string& source );
     void insertSourceString( const std::string& source, const unsigned int index=0 );
     unsigned int getNumSourceStrings() const;
-    jagBase::StringVec& getSourceVec();
+    jag::base::StringVec& getSourceVec();
 
     /** \brief Get the OpenGL shader object ID for the specified \c contextID.
     \details If an ID hasn't already been created for \c contextID, getId() calls
@@ -75,10 +75,10 @@ protected:
     static std::string getTypeAsString( GLenum type );
 
     GLenum _type;
-    jagBase::StringVec _sourceVec;
+    jag::base::StringVec _sourceVec;
 };
 
-typedef jagBase::ptr< jagDraw::Shader >::shared_ptr ShaderPtr;
+typedef jag::base::ptr< jagDraw::Shader >::shared_ptr ShaderPtr;
 typedef std::vector< ShaderPtr > ShaderVec;
 
 

@@ -26,10 +26,10 @@
 #include <jagSG/Common.h>
 #include <jagUtil/Shapes.h>
 #include <jagDisk/ReadWrite.h>
-#include <jagBase/Profile.h>
-#include <jagBase/Version.h>
-#include <jagBase/Log.h>
-#include <jagBase/LogMacros.h>
+#include <jag/base/Profile.h>
+#include <jag/base/Version.h>
+#include <jag/base/Log.h>
+#include <jag/base/LogMacros.h>
 #include <jagMx/MxCore.h>
 
 #include <boost/chrono/chrono.hpp>
@@ -247,7 +247,7 @@ bool Transparency::init()
     glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 
     // Auto-log the version string.
-    jagBase::getVersionString();
+    jag::base::getVersionString();
 
     // Auto-log the OpenGL version string.
     jagDraw::getOpenGLVersionString();

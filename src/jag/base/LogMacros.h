@@ -19,11 +19,11 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#ifndef __JAGBASE_LOG_MACROS_H__
-#define __JAGBASE_LOG_MACROS_H__ 1
+#ifndef __JAG_BASE_LOG_MACROS_H__
+#define __JAG_BASE_LOG_MACROS_H__ 1
 
 
-#include <jagBase/Config.h>
+#include <jag/base/Config.h>
 #include <Poco/Logger.h>
 #include <Poco/LogStream.h>
 
@@ -40,9 +40,9 @@ as follows:
 <ul>
   <li>jag
   <ul>
-    <li>base (the jagBase module)
+    <li>base (the jag/base module)
     <ul>
-      <li>\link jagBase::Log log \endlink
+      <li>\link jag::base::Log log \endlink
       <li>\ref jagBaseVersion "version"
     </ul>
     <li>draw (the jagDraw module)
@@ -77,20 +77,20 @@ Priority level match those used by Poco and are defined as follows:
 \li 7 - Debug
 \li 8 - Trace
 
-Set a Poco::Logger's priority and destination (console or log file) using the jagBase::Log class.
+Set a Poco::Logger's priority and destination (console or log file) using the jag::base::Log class.
 \code
     // Set the global priority to 3 (error and above) and destination to Console.
     // There is an implicit 3rd parameter of "jag".
-    jagBase::Log::instance()->setPriority( 3, jagBase::Log::Console );
+    jag::base::Log::instance()->setPriority( 3, jag::base::Log::Console );
 
     // Set the jagDraw module to priority 3 (error and above)
-    jagBase::Log::instance()->setPriority( 4, "jag.draw" );
+    jag::base::Log::instance()->setPriority( 4, "jag.draw" );
 
     // Send any OpenGL errors to the log file.
-    jagBase::Log::instance()->setPriority( 3, jagBase::Log::LogFile, "jag.draw.glerror" );
+    jag::base::Log::instance()->setPriority( 3, jag::base::Log::LogFile, "jag.draw.glerror" );
 
     // Turn on debugging for jagDraw context handling.
-    jagBase::Log::instance()->setPriority( 8, "jag.draw.ctx" );
+    jag::base::Log::instance()->setPriority( 8, "jag.draw.ctx" );
 \endcode
 
 Poco Logger priority and destination inherit down the heirarchy. Your application should
@@ -98,7 +98,7 @@ set specific priority and destinations (as in the code above) at init time, befo
 Jag3D class constructors obtain references to subordinate Loggers.
 
 By default, the root Logger ("jag") is configured with priority 0 (silent) and
-destination jagBase::Log::Console.
+destination jag::base::Log::Console.
 
 Jag3D support environment variables to change log defaults. To set the root Logger to
 priority trace, export set JAG3D_LOG_PRIORITY to priority "notice":
@@ -113,15 +113,15 @@ Note that environment variable values are case insensitive.
 
 The default log file name is "jag3d.log" and Jag3D writes it to the current directory.
 You can change the default log file name with either of the following methods:
-\li Call jagBase::Log::setLogFileName( const std::string& ).
+\li Call jag::base::Log::setLogFileName( const std::string& ).
 \li Set the environment variable JAG3D_LOG_FILE_NAME to the path and file name prior
-to invoking jagBase::Log::instance().
+to invoking jag::base::Log::instance().
 
-Jag3D internal code uses the macros defined in jagBase/logMatrix.h to display log messages at
+Jag3D internal code uses the macros defined in jag/base/logMatrix.h to display log messages at
 verious levels. When using these macros, please observe the following rules of thumb:
 \li Use the JAG3D_LOG_<prio> macros to avoid expensive message construction for messages that will not be logged due to their priority.
-\li Use the JAG3D_<prio> macros from member functions of classes that derive from jagBase::LogBase.
-\li Use the JAG3D_<prio>_STATIC macros from static functions, or from member functions of classes that don't derive from jagBase::LogBase.
+\li Use the JAG3D_<prio> macros from member functions of classes that derive from jag::base::LogBase.
+\li Use the JAG3D_<prio>_STATIC macros from static functions, or from member functions of classes that don't derive from jag::base::LogBase.
 
 Note that, even with priority set to 0, there is some non-zero overhead in handling
 message logging. To eliminate all Jag3D message logging, set the CMake variable
@@ -130,7 +130,7 @@ is off, Jag3D's message logging facilities become no-ops and have zero computati
 Jag3d-dependent downstream projects can determine whether logging is enabled using
 the Config.h header:
 \code
-#include <jagBase/Config.h>
+#include <jag/base/Config.h>
 \endcode
 This file defines, or undefines, the JAG3D_ENABLE_LOGGING CPP variable as appropriate
 based on how CMake was configured when Jag3d was built.
@@ -142,7 +142,7 @@ based on how CMake was configured when Jag3d was built.
 /** \def __JAG3D_LOG
 \brief Shared internal logging macro.
 \details Internal macro for efficient message logging for classes derived
-from jagBase::LogBase. (Assumes member or local variables \c _logger and \c _logStream.)
+from jag::base::LogBase. (Assumes member or local variables \c _logger and \c _logStream.)
 
 This function is a no-op if JAG3D_ENABLE_LOGGING is not defined. The definition of
 JAG3D_ENABLE_LOGGING is controlled using CMake.
@@ -152,7 +152,7 @@ JAG3D_ENABLE_LOGGING is controlled using CMake.
 /** \def __JAG3D_LOG_STATIC
 \brief Shared internal logging macro.
 \details Internal macro for message logging within static functions or classes
-not derived from jagBase::LogBase.
+not derived from jag::base::LogBase.
 
 This function is a no-op if JAG3D_ENABLE_LOGGING is not defined. The definition of
 JAG3D_ENABLE_LOGGING is controlled using CMake.
@@ -249,7 +249,7 @@ becomes this:
 
 /** \def JAG3D_FATAL
 \brief Efficient message logging macros.
-\details Efficient message logging for classes derived from jagBase::LogBase.
+\details Efficient message logging for classes derived from jag::base::LogBase.
 (Assumes member or local variables \c _logger and \c _logStream.)
 */
 /** \def JAG3D_CRITICAL
@@ -277,7 +277,7 @@ becomes this:
 
 /** \def JAG3D_FATAL_STATIC
 \brief Message logging macros.
-\details Message logging for static functions or classes not derived from jagBase::LogBase.
+\details Message logging for static functions or classes not derived from jag::base::LogBase.
 These macros obtain a Logger from Poco's global map and construct a Poco::LogStream
 on the fly. */
 /** \def JAG3D_CRITICAL_STATIC
@@ -307,5 +307,5 @@ on the fly. */
 /*@}*/
 
 
-// __JAGBASE_LOG_MACROS_H__
+// __JAG_BASE_LOG_MACROS_H__
 #endif

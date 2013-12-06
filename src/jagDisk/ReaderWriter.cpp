@@ -26,11 +26,11 @@ namespace jagDisk {
 
 
 ReaderWriter::ReaderWriter( const std::string& logNameSuffix, const std::string& logName )
-  : jagBase::LogBase( logName.empty() ? std::string( "jag.disk.rw." ) + logNameSuffix : logName )
+  : jag::base::LogBase( logName.empty() ? std::string( "jag.disk.rw." ) + logNameSuffix : logName )
 {
 }
 ReaderWriter::ReaderWriter( const ReaderWriter& rhs )
-  : jagBase::LogBase( rhs )
+  : jag::base::LogBase( rhs )
 {
 }
 ReaderWriter::~ReaderWriter()

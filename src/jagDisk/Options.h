@@ -27,7 +27,7 @@
 #include <Poco/Path.h>
 
 #include <boost/any.hpp>
-#include <jagBase/ptr.h>
+#include <jag/base/ptr.h>
 #include <string>
 #include <vector>
 #include <map>
@@ -127,8 +127,8 @@ protected:
     AnyMap _anyMap;
 };
 
-typedef jagBase::ptr< jagDisk::Options >::shared_ptr OptionsPtr;
-typedef jagBase::ptr< const jagDisk::Options >::shared_ptr ConstOptionsPtr;
+typedef jag::base::ptr< jagDisk::Options >::shared_ptr OptionsPtr;
+typedef jag::base::ptr< const jagDisk::Options >::shared_ptr ConstOptionsPtr;
 typedef std::vector< OptionsPtr > OptionsVec;
 
 

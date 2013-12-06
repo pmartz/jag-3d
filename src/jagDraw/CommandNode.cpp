@@ -21,8 +21,8 @@
 
 #include <jagDraw/CommandNode.h>
 #include <jagDraw/CommandMap.h>
-#include <jagBase/Profile.h>
-#include <jagBase/LogMacros.h>
+#include <jag/base/Profile.h>
+#include <jag/base/LogMacros.h>
 
 #include <boost/foreach.hpp>
 
@@ -31,20 +31,20 @@ namespace jagDraw {
 
 
 CommandNode::CommandNode( const std::string& logName )
-    : jagBase::LogBase( logName ),
-    jagBase::UserDataOwner(),
+    : jag::base::LogBase( logName ),
+    jag::base::UserDataOwner(),
     _parent( NULL )
 {
 }
 CommandNode::CommandNode( CommandNode* parent, const std::string& logName )
-  : jagBase::LogBase( logName.empty() ? "jag.draw.cg.node" : logName ),
-  jagBase::UserDataOwner(),
+  : jag::base::LogBase( logName.empty() ? "jag.draw.cg.node" : logName ),
+  jag::base::UserDataOwner(),
   _parent( parent )
 {
 }
 CommandNode::CommandNode( const CommandNode& rhs )
-  : jagBase::LogBase( rhs ),
-    jagBase::UserDataOwner( rhs ),
+  : jag::base::LogBase( rhs ),
+    jag::base::UserDataOwner( rhs ),
     _parent( rhs._parent ),
     _children( rhs._children )
 {

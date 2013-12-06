@@ -27,14 +27,15 @@
 // DO NOT EDIT
 
 
-#ifndef __JAGBASE_VERSION_H__
-#define __JAGBASE_VERSION_H__ 1
+#ifndef __JAG_BASE_VERSION_H__
+#define __JAG_BASE_VERSION_H__ 1
 
-#include <jagBase/Export.h>
+#include <jag/base/Export.h>
 #include <string>
 
 
-namespace jagBase {
+namespace jag {
+namespace base {
 
 
 /** \addtogroup jagVersion Version Utilities */
@@ -85,9 +86,10 @@ std::string JAGBASE_EXPORT getVersionString();
 /*@}*/
 
 
-// namespace jagBase
+// namespace jag::base::
+}
 }
 
 
-// __JAGBASE_VERSION_H__
+// __JAG_BASE_VERSION_H__
 #endif

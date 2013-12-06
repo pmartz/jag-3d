@@ -19,7 +19,7 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#include <jagBase/Transform.h>
+#include <jag/base/Transform.h>
 #include <jagSG/Node.h>
 #include <jagSG/CollectionVisitor.h>
 #include <jagSG/NodeMaskCullCallback.h>
@@ -34,7 +34,7 @@
 #include <iostream>
 
 
-using jagBase::TransformD;
+using jag::base::TransformD;
 
 using jagSG::Node;
 using jagSG::NodePtr;
