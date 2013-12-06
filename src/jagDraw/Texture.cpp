@@ -31,7 +31,7 @@ namespace jagDraw {
 
 
 Texture::Texture( const std::string& logName )
-  : DrawablePrep( Texture_t ),
+  : Command( Texture_t ),
     FramebufferAttachable(),
     jagBase::LogBase( logName.empty() ? "jag.draw.tex" : logName ),
     _target( GL_NONE ),
@@ -40,7 +40,7 @@ Texture::Texture( const std::string& logName )
     determineBindQuery();
 }
 Texture::Texture( const GLenum target, ImagePtr image, const std::string& logName )
-  : DrawablePrep( Texture_t ),
+  : Command( Texture_t ),
     FramebufferAttachable(),
     jagBase::LogBase( logName.empty() ? "jag.draw.tex" : logName ),
     _target( target ),
@@ -52,7 +52,7 @@ Texture::Texture( const GLenum target, ImagePtr image, const std::string& logNam
     _image[ 0 ] = image;
 }
 Texture::Texture( const GLenum target, ImagePtr image, SamplerPtr sampler, const std::string& logName )
-  : DrawablePrep( Texture_t ),
+  : Command( Texture_t ),
     FramebufferAttachable(),
     jagBase::LogBase( logName.empty() ? "jag.draw.tex" : logName ),
     _target( target ),
@@ -65,7 +65,7 @@ Texture::Texture( const GLenum target, ImagePtr image, SamplerPtr sampler, const
     _image[ 0 ] = image;
 }
 Texture::Texture( const GLenum target, GLenum bufferFormat, TextureBufferPtr& textureBuffer, const std::string& logName )
-  : DrawablePrep( Texture_t ),
+  : Command( Texture_t ),
     FramebufferAttachable(),
     jagBase::LogBase( logName.empty() ? "jag.draw.tex" : logName ),
     _target( target ),
@@ -78,7 +78,7 @@ Texture::Texture( const GLenum target, GLenum bufferFormat, TextureBufferPtr& te
         JAG3D_WARNING( "Texture buffer constructor: Invalid target parameter." );
 }
 Texture::Texture( const Texture& rhs )
-  : DrawablePrep( rhs ),
+  : Command( rhs ),
     FramebufferAttachable( rhs ),
     ObjectID( rhs ),
     jagBase::LogBase( rhs ),
@@ -252,7 +252,7 @@ void Texture::attachToFBO( const jagDraw::jagDrawContextID contextID, const GLen
         // Instead, we save and restore it.
         //
         // TBD There might be a more general way to do this, such as having
-        // CommandMap::operator<< detect that a DrawablePrep is dirty
+        // CommandMap::operator<< detect that a Command is dirty
         // and needs to be in the delta even if it otherwise would noe.
         GLint saveID;
         if( _bindQuery != GL_NONE )

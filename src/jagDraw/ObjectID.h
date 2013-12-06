@@ -40,7 +40,7 @@ namespace jagDraw {
 /** \class ObjectIDOwner ObjectID.h <jagDraw/ObjectID.h>
 \brief Base for classes that own classes derived from ObjectID ("has a" pattern).
 \details Examples of classes that own classes derived (either directly or indirectly)
-from ObjectID include Drawable, DrawablePrep, and DrawCommand. */
+from ObjectID include Drawable, Command, and DrawCommand. */
 class ObjectIDOwner
 {
 public:

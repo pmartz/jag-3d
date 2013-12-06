@@ -24,7 +24,7 @@
 
 #include <jagDraw/Export.h>
 #include <jagDraw/PlatformOpenGL.h>
-#include <jagDraw/DrawablePrep.h>
+#include <jagDraw/Command.h>
 #include <jagDraw/ObjectID.h>
 #include <jagDraw/VertexArrayCommand.h>
 #include <jagDraw/PerContextData.h>
@@ -48,7 +48,7 @@ typedef jagBase::ptr< jagDraw::VertexArrayObject >::shared_ptr VertexArrayObject
 \brief A context-safe wrapper for OpenGL vertex array objects.
 \details \gl{section 2.10}.
 */
-class JAGDRAW_EXPORT VertexArrayObject : public DrawablePrep,
+class JAGDRAW_EXPORT VertexArrayObject : public Command,
             public ObjectID
 {
 public:

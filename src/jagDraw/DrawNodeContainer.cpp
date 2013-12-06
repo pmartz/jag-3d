@@ -19,8 +19,8 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#include <jagDraw/NodeContainer.h>
-#include <jagDraw/Node.h>
+#include <jagDraw/DrawNodeContainer.h>
+#include <jagDraw/DrawNode.h>
 #include <jagDraw/Error.h>
 #include <jagBase/Profile.h>
 #include <jagBase/LogMacros.h>
@@ -31,13 +31,13 @@
 namespace jagDraw {
 
 
-NodeContainer::NodeContainer( const std::string& logName )
+DrawNodeContainer::DrawNodeContainer( const std::string& logName )
   : jagBase::LogBase( logName.empty() ? "jag.draw.ncon" : logName ),
     ObjectIDOwner(),
     _resetEnable( true )
 {
 }
-NodeContainer::NodeContainer( const NodeContainer& rhs )
+DrawNodeContainer::DrawNodeContainer( const DrawNodeContainer& rhs )
   : DrawNodeVec( rhs ),
     jagBase::LogBase( "jag.draw.ncon" ),
     ObjectIDOwner( rhs ),
@@ -46,11 +46,11 @@ NodeContainer::NodeContainer( const NodeContainer& rhs )
 {
     // Note: Do not copy _nodeCache, cache of free draw Nodes.
 }
-NodeContainer::~NodeContainer()
+DrawNodeContainer::~DrawNodeContainer()
 {
 }
 
-void NodeContainer::reset()
+void DrawNodeContainer::reset()
 {
     if( _resetEnable )
     {
@@ -62,16 +62,16 @@ void NodeContainer::reset()
         clear();
     }
 }
-void NodeContainer::setResetEnable( const bool enable )
+void DrawNodeContainer::setResetEnable( const bool enable )
 {
     _resetEnable = enable;
 }
-bool NodeContainer::getResetEnable() const
+bool DrawNodeContainer::getResetEnable() const
 {
     return( _resetEnable );
 }
 
-NodeContainer& NodeContainer::operator=( const NodeContainer& rhs )
+DrawNodeContainer& DrawNodeContainer::operator=( const DrawNodeContainer& rhs )
 {
     DrawNodeVec::operator=( rhs );
     ObjectIDOwner::operator=( rhs );
@@ -83,7 +83,7 @@ NodeContainer& NodeContainer::operator=( const NodeContainer& rhs )
     return( *this );
 }
 
-jagDraw::DrawNodePtr& NodeContainer::grow()
+jagDraw::DrawNodePtr& DrawNodeContainer::grow()
 {
     if( _nodeCache.size() > 1 )
     {
@@ -91,21 +91,21 @@ jagDraw::DrawNodePtr& NodeContainer::grow()
         _nodeCache.pop_back();
     }
     else
-        push_back( jagDraw::DrawNodePtr( new jagDraw::Node() ) );
+        push_back( jagDraw::DrawNodePtr( new jagDraw::DrawNode() ) );
     return( back() );
 }
 
 
-NodeContainer::CallbackVec& NodeContainer::getCallbacks()
+DrawNodeContainer::CallbackVec& DrawNodeContainer::getCallbacks()
 {
     return( _callbacks );
 }
 
-void NodeContainer::execute( DrawInfo& drawInfo )
+void DrawNodeContainer::execute( DrawInfo& drawInfo )
 {
     JAG3D_TRACE( "execute()" );
 
-    JAG3D_PROFILE( "NodeContainer execute()" );
+    JAG3D_PROFILE( "DrawNodeContainer execute()" );
 
     BOOST_FOREACH( CallbackPtr cb, _callbacks )
     {
@@ -115,9 +115,9 @@ void NodeContainer::execute( DrawInfo& drawInfo )
 
     internalExecute( drawInfo );
 
-    JAG3D_ERROR_CHECK( "NodeContainer::execute()" );
+    JAG3D_ERROR_CHECK( "DrawNodeContainer::execute()" );
 }
-void NodeContainer::internalExecute( DrawInfo& drawInfo )
+void DrawNodeContainer::internalExecute( DrawInfo& drawInfo )
 {
     BOOST_FOREACH( DrawNodePtr& node, *this )
     {
@@ -125,14 +125,14 @@ void NodeContainer::internalExecute( DrawInfo& drawInfo )
     }
 }
 
-void NodeContainer::setMaxContexts( const unsigned int numContexts )
+void DrawNodeContainer::setMaxContexts( const unsigned int numContexts )
 {
     BOOST_FOREACH( DrawNodePtr& node, *this )
     {
         node->setMaxContexts( numContexts );
     }
 }
-void NodeContainer::deleteID( const jagDraw::jagDrawContextID contextID )
+void DrawNodeContainer::deleteID( const jagDraw::jagDrawContextID contextID )
 {
     BOOST_FOREACH( DrawNodePtr& node, *this )
     {

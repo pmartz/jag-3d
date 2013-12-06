@@ -24,7 +24,7 @@
 
 
 #include <jagDraw/Export.h>
-#include <jagDraw/DrawablePrep.h>
+#include <jagDraw/Command.h>
 #include <jagDraw/PlatformOpenGL.h>
 #include <jagDraw/ObjectID.h>
 #include <jagBase/LogBase.h>
@@ -57,7 +57,7 @@ Sampler class provides backwards compatible behavior for OpenGL v3.2 in order to
 Mac OSX. When OSX moves to a more recent version of OpenGL, much of the Sampler
 implementation could be cleaned up at that time.
 */
-class JAGDRAW_EXPORT Sampler : public DrawablePrep,
+class JAGDRAW_EXPORT Sampler : public Command,
         public ObjectID, protected jagBase::LogBase
 {
 public:
@@ -174,7 +174,7 @@ public:
     }
 
     /** \brief TBD
-    \details Override method from DrawablePrep. */
+    \details Override method from Command. */
     virtual void execute( DrawInfo& drawInfo )
     {
         BOOST_FOREACH( const MAP_TYPE::value_type& dataPair, *this )

@@ -25,7 +25,7 @@
 
 #include <jagDraw/Export.h>
 #include <jagDraw/PlatformOpenGL.h>
-#include <jagDraw/DrawablePrep.h>
+#include <jagDraw/Command.h>
 #include <jagDraw/FramebufferAttachable.h>
 #include <jagDraw/PerContextData.h>
 #include <jagDraw/ObjectID.h>
@@ -81,7 +81,7 @@ See member functions for additional specification requirements.
 \specEnd
 
 */
-class JAGDRAW_EXPORT Framebuffer : public DrawablePrep,
+class JAGDRAW_EXPORT Framebuffer : public Command,
         public ObjectID, protected jagBase::LogBase
 {
 public:
@@ -94,7 +94,7 @@ public:
     virtual DrawablePrepPtr clone() const { return( FramebufferPtr( new Framebuffer( *this ) ) ); }
 
     /** \brief Bind the framebuffer ID.
-    \details This function is an override from DrawablePrep.
+    \details This function is an override from Command.
 
     This function obtains the per-context ID from getID(), which could issue OpenGL
     commands if necessary. After obtaining the ID, this function binds the Framebuffer
@@ -252,7 +252,7 @@ public:
     virtual ~Renderbuffer();
 
     /** \brief TBD
-    \details Override from DrawablePrep. */
+    \details Override from Command. */
     virtual void execute( DrawInfo& drawInfo );
 
     /** \brief Check if the Renderbuffer is dirty for the given \c contextID.

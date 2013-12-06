@@ -194,9 +194,9 @@ int main( int argc, char** argv )
     jagDraw::DrawGraphPtr drawGraph( collect.getDrawGraph() );
 
     {
-        jagDraw::DrawablePrep::CommandTypeVec plist;
-        plist.push_back( jagDraw::DrawablePrep::UniformBlockSet_t );
-        BOOST_FOREACH( jagDraw::NodeContainer& nc, *drawGraph )
+        jagDraw::Command::CommandTypeVec plist;
+        plist.push_back( jagDraw::Command::UniformBlockSet_t );
+        BOOST_FOREACH( jagDraw::DrawNodeContainer& nc, *drawGraph )
         {
             std::sort( nc.begin(), nc.end(), jagDraw::DrawNodeCommandSorter( plist ) );
         }

@@ -27,7 +27,7 @@
 #include <jagDraw/Program.h>
 #include <jagDraw/Uniform.h>
 #include <jagDraw/BufferObject.h>
-#include <jagDraw/DrawablePrep.h>
+#include <jagDraw/Command.h>
 #include <jagBase/LogBase.h>
 #include <jagDraw/ObjectID.h>
 #include <jagDraw/Shader.h>
@@ -70,7 +70,7 @@ map the buffer and modify the values.
 
 \specEnd
 */
-class JAGDRAW_EXPORT UniformBlock : public DrawablePrep,
+class JAGDRAW_EXPORT UniformBlock : public Command,
             public ObjectIDOwner, public SHARED_FROM_THIS(UniformBlock),
             protected jagBase::LogBase
 {
@@ -106,7 +106,7 @@ public:
     Does not add this uniform block to drawInfo._uniformBlockMap. */
     void execute( DrawInfo& drawInfo, const Program::BlockInfo& blockInfo ) const;
     /** \brief TBD
-    \details Override methods from DrawablePrep.
+    \details Override methods from Command.
     Adds this uniform to drawInfo._uniformBlockMap. */
     virtual void execute( DrawInfo& drawInfo );
 
@@ -143,7 +143,7 @@ protected:
 public:
     UniformBlockSet()
         : ObjectIDOwner(),
-        SET_TYPE( DrawablePrep::UniformBlockSet_t )
+        SET_TYPE( Command::UniformBlockSet_t )
     {}
     UniformBlockSet( const UniformBlockSet& rhs )
         : ObjectIDOwner( rhs ),

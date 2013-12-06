@@ -25,8 +25,8 @@
 #include <jagSG/Export.h>
 #include <jagSG/Visitor.h>
 #include <jagBase/Transform.h>
-#include <jagDraw/Node.h>
-#include <jagDraw/NodeContainer.h>
+#include <jagDraw/DrawNode.h>
+#include <jagDraw/DrawNodeContainer.h>
 #include <jagDraw/DrawGraph.h>
 #include <jagDraw/TransformCallback.h>
 #include <jagDraw/Uniform.h>
@@ -236,7 +236,7 @@ protected:
     jagDraw::DrawGraphPtr _drawGraphTemplate;
     jagDraw::DrawGraphPtr _drawGraph;
     unsigned int _currentID;
-    jagDraw::NodeContainer* _currentNodes;
+    jagDraw::DrawNodeContainer* _currentNodes;
 
     jagBase::TransformD _transform;
 

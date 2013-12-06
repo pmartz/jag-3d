@@ -34,12 +34,12 @@ namespace jagDraw {
 
 
 VertexArrayObject::VertexArrayObject()
-  : DrawablePrep( VertexArrayObject_t ),
+  : Command( VertexArrayObject_t ),
     ObjectID()
 {
 }
 VertexArrayObject::VertexArrayObject( const VertexArrayObject& rhs )
-  : DrawablePrep( rhs ),
+  : Command( rhs ),
     ObjectID( rhs ),
     _dirty( rhs._dirty ),
     _commands( rhs._commands ),
@@ -55,7 +55,7 @@ VertexArrayObject::~VertexArrayObject()
 VertexArrayObject& VertexArrayObject::operator=( const VertexArrayObject& rhs )
 {
     // TBD doesn't exist
-    //DrawablePrep::operator=( rhs );
+    //Command::operator=( rhs );
     // TBD doesn't exist, and probably not what we want anyway.
     //ObjectID::operator=( rhs );
     _dirty._data.clear();
