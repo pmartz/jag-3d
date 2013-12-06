@@ -23,7 +23,7 @@
 #define __JAGDRAW_COMMAND_MAP_H__ 1
 
 #include <jagDraw/ObjectID.h>
-#include <jagDraw/DrawablePrep.h>
+#include <jagDraw/Command.h>
 #include <jagBase/LogMacros.h>
 #include <jagDraw/Error.h>
 
@@ -63,13 +63,13 @@ public:
 
     void insert( const DrawablePrepPtr drawablePrep, bool override=false, bool protect=false )
     {
-        if( drawablePrep->getCommandType() >= DrawablePrep::MaxCommandType )
+        if( drawablePrep->getCommandType() >= Command::MaxCommandType )
         {
             JAG3D_CRITICAL_STATIC( "jag.draw.commandmap", "Unsupported command type." );
             exit( 1 );
         }
 
-        const DrawablePrep::CommandType type( drawablePrep->getCommandType() );
+        const Command::CommandType type( drawablePrep->getCommandType() );
         _bits.set( type );
 
         _data[ type ] = drawablePrep;
@@ -85,18 +85,18 @@ public:
             _protectBits.reset( type );
     }
 
-    DrawablePrepPtr& operator[]( const DrawablePrep::CommandType type )
+    DrawablePrepPtr& operator[]( const Command::CommandType type )
     {
         return( _data[ type ] );
     }
 
-    typedef std::map< DrawablePrep::CommandType, DrawablePrepPtr > CommandMapType;
+    typedef std::map< Command::CommandType, DrawablePrepPtr > CommandMapType;
 
-    DrawablePrepPtr operator[]( const DrawablePrep::CommandType type ) const
+    DrawablePrepPtr operator[]( const Command::CommandType type ) const
     {
         CommandMapType::const_iterator it( _data.find( type ) );
         if( it == _data.end() )
-            return( DrawablePrepPtr( (DrawablePrep*)NULL ) );
+            return( DrawablePrepPtr( (Command*)NULL ) );
         else
         {
             return( it->second );
@@ -165,7 +165,7 @@ public:
     with parent commands for new entries on the CommandMap stack. */
     CommandMap operator+( const CommandMap& rhs ) const
     {
-        std::set< DrawablePrep::CommandType > local;
+        std::set< Command::CommandType > local;
         BOOST_FOREACH( CommandMapType::value_type dataPair, _data )
         {
             local.insert( dataPair.first );
@@ -176,7 +176,7 @@ public:
         }
 
         CommandMap result;
-        BOOST_FOREACH( const DrawablePrep::CommandType& type, local )
+        BOOST_FOREACH( const Command::CommandType& type, local )
         {
             switch( ( rhs._bits[ type ] << 1 ) | (int)( _bits[ type ] ) )
             {
@@ -222,7 +222,7 @@ public:
     a future date for performance reasons. */
     CommandMap operator<<( CommandMap& rhs )
     {
-        std::set< DrawablePrep::CommandType > local;
+        std::set< Command::CommandType > local;
         BOOST_FOREACH( CommandMapType::value_type dataPair, _data )
         {
             local.insert( dataPair.first );
@@ -234,7 +234,7 @@ public:
         }
 
         CommandMap result;
-        BOOST_FOREACH( const DrawablePrep::CommandType& type, local )
+        BOOST_FOREACH( const Command::CommandType& type, local )
         {
             switch( ( rhs._bits[ type ] << 1 ) | (int)( _bits[ type ] ) )
             {
@@ -267,7 +267,7 @@ public:
     }
     void executeDelta( CommandMap& rhs, DrawInfo& drawInfo )
     {
-        std::set< DrawablePrep::CommandType > local;
+        std::set< Command::CommandType > local;
         BOOST_FOREACH( CommandMapType::value_type dataPair, _data )
         {
             local.insert( dataPair.first );
@@ -278,7 +278,7 @@ public:
             local.insert( dataPair.first );
         }
 
-        BOOST_FOREACH( const DrawablePrep::CommandType& type, local )
+        BOOST_FOREACH( const Command::CommandType& type, local )
         {
             switch( ( rhs._bits[ type ] << 1 ) | (int)( _bits[ type ] ) )
             {
@@ -313,11 +313,11 @@ public:
         }
     }
 
-    bool contains( DrawablePrep::CommandType type ) const
+    bool contains( Command::CommandType type ) const
     {
         return( _bits.test( type ) );
     }
-    void clear( DrawablePrep::CommandType type )
+    void clear( Command::CommandType type )
     {
         if( contains( type ) )
         {
@@ -330,11 +330,11 @@ public:
         return( _data.empty() );
     }
 
-    DrawablePrepPtr getData( DrawablePrep::CommandType type ) const
+    DrawablePrepPtr getData( Command::CommandType type ) const
     { 
         CommandMapType::const_iterator p( _data.find( type ) );
         if( p == _data.end() )
-            return( DrawablePrepPtr( (DrawablePrep*)NULL ) );
+            return( DrawablePrepPtr( (Command*)NULL ) );
         return( p->second );
     }
 
@@ -364,9 +364,9 @@ public:
 
 
     CommandMapType _data;
-    std::bitset< DrawablePrep::MaxCommandType > _bits;
-    std::bitset< DrawablePrep::MaxCommandType > _overrideBits;
-    std::bitset< DrawablePrep::MaxCommandType > _protectBits;
+    std::bitset< Command::MaxCommandType > _bits;
+    std::bitset< Command::MaxCommandType > _overrideBits;
+    std::bitset< Command::MaxCommandType > _protectBits;
 };
 
 typedef jagBase::ptr< jagDraw::CommandMap >::shared_ptr CommandMapPtr;
@@ -381,7 +381,7 @@ class CommandMapSorter
 public:
     CommandMapSorter()
     {}
-    CommandMapSorter( const DrawablePrep::CommandTypeVec& priorityVec ):
+    CommandMapSorter( const Command::CommandTypeVec& priorityVec ):
         _priorityVec( priorityVec )
     {}
     CommandMapSorter( const CommandMapSorter& rhs )
@@ -392,7 +392,7 @@ public:
 
     bool operator()( const CommandMap& lhs, const CommandMap& rhs ) const
     {
-        BOOST_FOREACH( const DrawablePrep::CommandType& type, _priorityVec )
+        BOOST_FOREACH( const Command::CommandType& type, _priorityVec )
         {
             switch( (int)( lhs._bits[ type ] ) | ( rhs._bits[ type ] << 1 ) )
             {
@@ -418,7 +418,7 @@ public:
     }
 
 protected:
-    DrawablePrep::CommandTypeVec _priorityVec;
+    Command::CommandTypeVec _priorityVec;
 };
 
 

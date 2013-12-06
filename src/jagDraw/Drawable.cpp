@@ -80,7 +80,7 @@ void Drawable::computeBound( BoundPtr& bound, const jagDraw::CommandMap& command
 {
     JAG3D_PROFILE( "Drawable::computeBound" );
 
-    const jagDraw::DrawablePrepPtr& drawablePrep( commands[ jagDraw::DrawablePrep::VertexArrayObject_t ] );
+    const jagDraw::DrawablePrepPtr& drawablePrep( commands[ jagDraw::Command::VertexArrayObject_t ] );
     const jagDraw::VertexArrayObject* vao( ( boost::static_pointer_cast< jagDraw::VertexArrayObject >( drawablePrep ) ).get() );
     if( vao == NULL )
     {

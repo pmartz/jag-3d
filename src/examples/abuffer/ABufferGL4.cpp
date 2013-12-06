@@ -372,7 +372,7 @@ void drawJagModel( const GLuint prog )
     drawGraph->execute( drawInfo );
 
     // Dirty the state that JAG set.
-    drawInfo._current.clear( jagDraw::DrawablePrep::VertexArrayObject_t );
+    drawInfo._current.clear( jagDraw::Command::VertexArrayObject_t );
     glBindVertexArray( 0 );
 
     checkGLError( "drawJagModel" );

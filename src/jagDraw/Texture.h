@@ -25,7 +25,7 @@
 
 #include <jagDraw/Export.h>
 #include <jagDraw/PlatformOpenGL.h>
-#include <jagDraw/DrawablePrep.h>
+#include <jagDraw/Command.h>
 #include <jagDraw/FramebufferAttachable.h>
 #include <jagDraw/ObjectID.h>
 #include <jagDraw/Image.h>
@@ -52,7 +52,7 @@ typedef jagBase::ptr< jagDraw::Texture >::shared_ptr TexturePtr;
 
 \logname jag.draw.tex
 */
-class JAGDRAW_EXPORT Texture : public DrawablePrep,
+class JAGDRAW_EXPORT Texture : public Command,
         public FramebufferAttachable, public ObjectID,
         protected jagBase::LogBase
 {
@@ -116,7 +116,7 @@ public:
 
     /** \brief TBD
     \details Set the active texture.
-    Override from DrawablePrep.
+    Override from Command.
 
     TBD GL 4.0 spec 3.8.1 says "A texture object may be bound
     to more than one texture unit simultaneously." Need to make
@@ -124,7 +124,7 @@ public:
     virtual void activate( DrawInfo& drawInfo, const unsigned int unit );
 
     /** \brief TBD
-    Override from DrawablePrep. */
+    Override from Command. */
     virtual void execute( DrawInfo& drawInfo );
 
     /** \brief TBD
@@ -221,7 +221,7 @@ public:
     }
 
     /** \brief TBD
-    \details Override method from DrawablePrep. */
+    \details Override method from Command. */
     virtual void execute( DrawInfo& drawInfo )
     {
         BOOST_FOREACH( const MAP_TYPE::value_type& dataPair, *this )

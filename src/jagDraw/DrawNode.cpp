@@ -20,7 +20,7 @@
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
 #include <jagDraw/DrawNode.h>
-#include <jagDraw/DrawablePrep.h>
+#include <jagDraw/Command.h>
 #include <jagDraw/DrawInfo.h>
 #include <jagDraw/Drawable.h>
 #include <jagDraw/DrawCommand.h>
@@ -172,7 +172,7 @@ void DrawNode::deleteID( const jagDraw::jagDrawContextID contextID )
 void DrawNode::setBoundUniforms( DrawInfo& drawInfo )
 {
     CommandMap& current( drawInfo._current );
-    if( !( current.contains( DrawablePrep::Program_t ) ) )
+    if( !( current.contains( Command::Program_t ) ) )
     {
         JAG3D_ERROR( "setBoundUniforms(): Current CommandMap does not contain Program_t." );
         return;
@@ -188,7 +188,7 @@ void DrawNode::setBoundUniforms( DrawInfo& drawInfo )
     static Program::HashValue bbMinHash( Program::createHash( "jag3d_bbMin" ) );
     static Program::HashValue bbMaxHash( Program::createHash( "jag3d_bbMax" ) );
 
-    jagDraw::ProgramPtr prog( boost::dynamic_pointer_cast< Program >( current[ DrawablePrep::Program_t ] ) );
+    jagDraw::ProgramPtr prog( boost::dynamic_pointer_cast< Program >( current[ Command::Program_t ] ) );
     GLint loc( prog->getUniformLocation( bbMinHash ) );
     if( loc != -1 )
         glUniform3fv( loc, 1, bbMinFloats );

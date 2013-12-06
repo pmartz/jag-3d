@@ -58,13 +58,13 @@ void Program::printInfoLog( const GLuint id )
 }
 
 Program::Program( const std::string& logName )
-  : DrawablePrep( Program_t ),
+  : Command( Program_t ),
     ObjectID(),
     jagBase::LogBase( logName.empty() ? "jag.draw.program" : logName )
 {
 }
 Program::Program( const Program& rhs )
-  : DrawablePrep( rhs ),
+  : Command( rhs ),
     ObjectID( rhs ),
     SHARED_FROM_THIS( Program )( rhs ),
     jagBase::LogBase( rhs ),

@@ -41,7 +41,7 @@ public:
     virtual void operator()( jagDraw::DrawablePrepPtr f )
     {
         std::cout << "  " << std::setw(18) <<
-            jagDraw::DrawablePrep::getCommandTypeString( f->getCommandType() ) << ":  " << f->getUserDataName() << std::endl;
+            jagDraw::Command::getCommandTypeString( f->getCommandType() ) << ":  " << f->getUserDataName() << std::endl;
     }
 };
 class CountCommands : public jagDraw::CommandMap::Callback
@@ -55,13 +55,13 @@ public:
     {
         switch( f->getCommandType() )
         {
-        case jagDraw::DrawablePrep::Program_t: ++_prog; break;
-        case jagDraw::DrawablePrep::VertexArrayObject_t: ++_vao; break;
-        case jagDraw::DrawablePrep::TextureSet_t: ++_tex; break;
-        case jagDraw::DrawablePrep::SamplerSet_t: ++_samp; break;
-        case jagDraw::DrawablePrep::UniformSet_t: ++_us; break;
-        case jagDraw::DrawablePrep::UniformBlockSet_t: ++_ubs; break;
-        case jagDraw::DrawablePrep::Framebuffer_t: ++_fb; break;
+        case jagDraw::Command::Program_t: ++_prog; break;
+        case jagDraw::Command::VertexArrayObject_t: ++_vao; break;
+        case jagDraw::Command::TextureSet_t: ++_tex; break;
+        case jagDraw::Command::SamplerSet_t: ++_samp; break;
+        case jagDraw::Command::UniformSet_t: ++_us; break;
+        case jagDraw::Command::UniformBlockSet_t: ++_ubs; break;
+        case jagDraw::Command::Framebuffer_t: ++_fb; break;
         }
     }
     void dump()
@@ -159,9 +159,9 @@ bool test()
     }
 
     {
-        jagDraw::DrawablePrep::CommandTypeVec plist;
-        plist.push_back( jagDraw::DrawablePrep::Program_t );
-        plist.push_back( jagDraw::DrawablePrep::TextureSet_t );
+        jagDraw::Command::CommandTypeVec plist;
+        plist.push_back( jagDraw::Command::Program_t );
+        plist.push_back( jagDraw::Command::TextureSet_t );
 
         std::sort( nodes.begin(), nodes.end(), jagDraw::DrawNodeCommandSorter( plist ));
 
