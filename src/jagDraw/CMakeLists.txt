@@ -12,6 +12,8 @@ set( _jagDrawHeaderFiles
     BufferObject.h
     Command.h
     CommandMap.h
+    CommandNode.h
+    CommandNodePtr.h
     Common.h
     ContextSupport.h
     Drawable.h
@@ -47,6 +49,7 @@ set( _jagDrawHeaderFiles
 
 set( _jagDrawSourceFiles
     BufferObject.cpp
+    CommandNode.cpp
     ContextSupport.cpp
     Drawable.cpp
     DrawGraph.cpp

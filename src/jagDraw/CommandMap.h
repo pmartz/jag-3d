@@ -24,6 +24,7 @@
 
 #include <jagDraw/ObjectID.h>
 #include <jagDraw/Command.h>
+#include <jagDraw/CommandNodePtr.h>
 #include <jagBase/LogMacros.h>
 #include <jagDraw/Error.h>
 
