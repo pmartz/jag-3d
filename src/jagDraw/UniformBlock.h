@@ -28,11 +28,11 @@
 #include <jagDraw/Uniform.h>
 #include <jagDraw/BufferObject.h>
 #include <jagDraw/Command.h>
-#include <jagBase/LogBase.h>
+#include <jag/base/LogBase.h>
 #include <jagDraw/ObjectID.h>
 #include <jagDraw/Shader.h>
 #include <jagDraw/CommandMap.h>
-#include <jagBase/ptr.h>
+#include <jag/base/ptr.h>
 
 #include <map>
 #include <vector>
@@ -47,7 +47,7 @@ namespace jagDraw {
 struct DrawInfo;
 
 class UniformBlock;
-typedef jagBase::ptr< jagDraw::UniformBlock >::shared_ptr UniformBlockPtr;
+typedef jag::base::ptr< jagDraw::UniformBlock >::shared_ptr UniformBlockPtr;
 
 /** \class UniformBlock UniformBlock.h <jagDraw/UniformBlock.h>
 \brief Support for GLSL interface blocks / named uniform blocks.
@@ -72,7 +72,7 @@ map the buffer and modify the values.
 */
 class JAGDRAW_EXPORT UniformBlock : public Command,
             public ObjectIDOwner, public SHARED_FROM_THIS(UniformBlock),
-            protected jagBase::LogBase
+            protected jag::base::LogBase
 {
 public:
     UniformBlock( const std::string& name, const std::string& logName=std::string( "" ) );
@@ -121,18 +121,18 @@ protected:
     UniformVec _uniforms;
 
     UniformBufferPtr _bufferObject;
-    jagBase::BufferPtr _buffer;
+    jag::base::BufferPtr _buffer;
 
     mutable bool _dirty;
 };
 
-typedef jagBase::ptr< const jagDraw::UniformBlock >::shared_ptr ConstUniformBlockPtr;
+typedef jag::base::ptr< const jagDraw::UniformBlock >::shared_ptr ConstUniformBlockPtr;
 typedef std::vector< UniformBlockPtr > UniformBlockVec;
 
 
 
 class UniformBlockSet;
-typedef jagBase::ptr< jagDraw::UniformBlockSet >::shared_ptr UniformBlockSetPtr;
+typedef jag::base::ptr< jagDraw::UniformBlockSet >::shared_ptr UniformBlockSetPtr;
 
 class UniformBlockSet : public ObjectIDOwner,
         public DrawablePrepSet< Program::HashValue, UniformBlockPtr, UniformBlockSet, UniformBlockSetPtr >

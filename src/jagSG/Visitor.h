@@ -22,11 +22,11 @@
 #ifndef __JAGSG_VISITOR_H__
 #define __JAGSG_VISITOR_H__ 1
 
-#include <jagBase/types.h>
+#include <jag/base/types.h>
 #include <jagSG/Node.h>
 #include <jagDraw/CommandMap.h>
-#include <jagBase/LogBase.h>
-#include <jagBase/ptr.h>
+#include <jag/base/LogBase.h>
+#include <jag/base/ptr.h>
 
 #include <sstream>
 
@@ -96,18 +96,18 @@ derived class. As an example, a derived class might override visit() as follows:
     }
 \endcode
 */
-class VisitorBase : protected jagBase::LogBase
+class VisitorBase : protected jag::base::LogBase
 {
 public:
     VisitorBase( const std::string& logNameSuffix, const std::string& logName=std::string( "" ) )
-      : jagBase::LogBase( logName.empty() ? std::string( "jag.sg.visit." ) + logNameSuffix : logName )
+      : jag::base::LogBase( logName.empty() ? std::string( "jag.sg.visit." ) + logNameSuffix : logName )
     {
         _matrixStack.push_back( gmtl::MAT_IDENTITY44D );
         _commandStack.push_back( jagDraw::CommandMap() );
     }
 
     VisitorBase( jagSG::Node& node, const std::string& logNameSuffix, const std::string& logName=std::string( "" ) )
-      : jagBase::LogBase( logName.empty() ? std::string( "jag.sg.visit." ) + logNameSuffix : logName )
+      : jag::base::LogBase( logName.empty() ? std::string( "jag.sg.visit." ) + logNameSuffix : logName )
     {
         _matrixStack.push_back( gmtl::MAT_IDENTITY44D );
         _commandStack.push_back( jagDraw::CommandMap() );
@@ -116,7 +116,7 @@ public:
     }
 
     VisitorBase( const VisitorBase& rhs )
-      : jagBase::LogBase( rhs ),
+      : jag::base::LogBase( rhs ),
         _nodeStack( rhs._nodeStack ),
         _matrixStack( rhs._matrixStack ),
         _commandStack( rhs._commandStack )
@@ -191,7 +191,7 @@ public:
     {
         _matrixStack.resize( 1 );
     }
-    const jagBase::Matrix44dVec& getMatrices() const
+    const jag::base::Matrix44dVec& getMatrices() const
     {
         return( _matrixStack );
     }
@@ -266,11 +266,11 @@ public:
 
 protected:
     NodeVec _nodeStack;
-    jagBase::Matrix44dVec _matrixStack;
+    jag::base::Matrix44dVec _matrixStack;
     jagDraw::CommandMapSimpleVec _commandStack;
 };
 
-typedef jagBase::ptr< jagSG::VisitorBase >::shared_ptr VisitorBasePtr;
+typedef jag::base::ptr< jagSG::VisitorBase >::shared_ptr VisitorBasePtr;
 
 
 
@@ -324,7 +324,7 @@ public:
 protected:
 };
 
-typedef jagBase::ptr< jagSG::Visitor >::shared_ptr VisitorPtr;
+typedef jag::base::ptr< jagSG::Visitor >::shared_ptr VisitorPtr;
 
 
 /*@}*/

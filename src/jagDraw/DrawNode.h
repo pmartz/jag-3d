@@ -26,10 +26,10 @@
 #include <jagDraw/CommandMap.h>
 #include <jagDraw/ObjectID.h>
 #include <jagDraw/Drawable.h>
-#include <jagBase/MultiCallback.h>
-#include <jagBase/LogBase.h>
-#include <jagBase/ptr.h>
-#include <jagBase/UserDataOwner.h>
+#include <jag/base/MultiCallback.h>
+#include <jag/base/LogBase.h>
+#include <jag/base/ptr.h>
+#include <jag/base/UserDataOwner.h>
 #include <vector>
 
 
@@ -54,7 +54,7 @@ DrawInfo::_controlFlags. Bound rendering requires a special Program.
 See the example source jagModel.cpp.
 
 \logname jag.draw.node */
-class JAGDRAW_EXPORT DrawNode : protected jagBase::LogBase, public ObjectIDOwner, public jagBase::UserDataOwner
+class JAGDRAW_EXPORT DrawNode : protected jag::base::LogBase, public ObjectIDOwner, public jag::base::UserDataOwner
 {
 public:
     DrawNode( CommandMapPtr commands=CommandMapPtr( (CommandMap*)NULL ), const std::string& logName=std::string( "" ) );
@@ -153,7 +153,7 @@ public:
             return( false );
         }
     };
-    typedef jagBase::ptr< Callback >::shared_ptr CallbackPtr;
+    typedef jag::base::ptr< Callback >::shared_ptr CallbackPtr;
 
 
     /** \brief Transform
@@ -168,7 +168,7 @@ public:
 
     /** \brief TBD
     \details TBD */
-    typedef jagBase::MultiCallback< CallbackPtr > ExecuteCallbacks;
+    typedef jag::base::MultiCallback< CallbackPtr > ExecuteCallbacks;
     /** \brief TBD
     \details TBD */
     ExecuteCallbacks& getExecuteCallbacks();
@@ -213,7 +213,7 @@ protected:
     ExecuteCallbacks _executeCallbacks;
 };
 
-typedef jagBase::ptr< jagDraw::DrawNode >::shared_ptr DrawNodePtr;
+typedef jag::base::ptr< jagDraw::DrawNode >::shared_ptr DrawNodePtr;
 typedef std::vector< DrawNodePtr > DrawNodeVec;
 typedef std::vector< DrawNode > DrawNodeSimpleVec;
 

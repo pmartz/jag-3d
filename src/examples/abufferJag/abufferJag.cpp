@@ -26,12 +26,12 @@
 #include <jagUtil/ABuffer.h>
 #include <jagUtil/Blur.h>
 #include <jagDisk/ReadWrite.h>
-#include <jagBase/Profile.h>
+#include <jag/base/Profile.h>
 #include <jagUtil/DrawGraphCountVisitor.h>
 #include <jagUtil/Shapes.h>
-#include <jagBase/Version.h>
-#include <jagBase/Log.h>
-#include <jagBase/LogMacros.h>
+#include <jag/base/Version.h>
+#include <jag/base/Log.h>
+#include <jag/base/LogMacros.h>
 
 #include <jagUtil/BufferAggregationVisitor.h>
 
@@ -148,7 +148,7 @@ struct ForceFramebufferExecute : public jagDraw::DrawNodeContainer::Callback
 protected:
     jagDraw::FramebufferPtr _fbo;
 };
-typedef jagBase::ptr< ForceFramebufferExecute >::shared_ptr ForceFramebufferExecutePtr;
+typedef jag::base::ptr< ForceFramebufferExecute >::shared_ptr ForceFramebufferExecutePtr;
 
 
 static gmtl::Point4f glowColors[] = {
@@ -403,7 +403,7 @@ bool ABufferJag::init()
     glEnable( GL_DEPTH_TEST );
 
     // Auto-log the version string.
-    jagBase::getVersionString();
+    jag::base::getVersionString();
 
     // Auto-log the OpenGL version string.
     jagDraw::getOpenGLVersionString();

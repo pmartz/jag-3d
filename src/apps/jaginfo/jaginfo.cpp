@@ -24,8 +24,8 @@
 #include <jagUtil/DrawGraphCountVisitor.h>
 #include <jagUtil/BufferAggregationVisitor.h>
 #include <jagDisk/ReadWrite.h>
-#include <jagBase/Log.h>
-#include <jagBase/LogMacros.h>
+#include <jag/base/Log.h>
+#include <jag/base/LogMacros.h>
 
 #include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
@@ -130,7 +130,7 @@ void SceneGraphCountVisitor::visit( jagSG::Node& node )
 
 int main( int argc, char** argv )
 {
-    jagBase::Log::instance();
+    jag::base::Log::instance();
 
     bpo::options_description desc( "Options" );
     desc.add_options()

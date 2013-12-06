@@ -5,10 +5,10 @@ if( BUILD_SHARED_LIBS )
 endif()
 
 configure_file( "Version.h.in"
-    "${PROJECT_SOURCE_DIR}/src/jagBase/Version.h" @ONLY )
+    "${PROJECT_SOURCE_DIR}/src/jag/base/Version.h" @ONLY )
 
 configure_file( "Config.h.in"
-    "${PROJECT_SOURCE_DIR}/src/jagBase/Config.h" @ONLY )
+    "${PROJECT_SOURCE_DIR}/src/jag/base/Config.h" @ONLY )
 
 
 set( _jagBaseHeaderFiles
@@ -43,7 +43,7 @@ _addLibrary( ${_libName}
 
 install(
     DIRECTORY .
-    DESTINATION include/jagBase
+    DESTINATION include/jag/base
     USE_SOURCE_PERMISSIONS
     FILES_MATCHING 
     PATTERN "*.h"

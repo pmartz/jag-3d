@@ -29,19 +29,19 @@ namespace jagSG {
 
 
 SelectContainerCallback::SelectContainerCallback( const std::string& logName )
-  : jagBase::LogBase( logName.empty() ? "jag.sg.coll.select" : logName ),
+  : jag::base::LogBase( logName.empty() ? "jag.sg.coll.select" : logName ),
     jagSG::Node::Callback(),
     _index( 0 )
 {
 }
 SelectContainerCallback::SelectContainerCallback( const unsigned int index, const std::string& logName )
-  : jagBase::LogBase( logName.empty() ? "jag.sg.coll.select" : logName ),
+  : jag::base::LogBase( logName.empty() ? "jag.sg.coll.select" : logName ),
     jagSG::Node::Callback(),
     _index( index )
 {
 }
 SelectContainerCallback::SelectContainerCallback( const SelectContainerCallback& rhs )
-  : jagBase::LogBase( "jag.sg.coll.select" ),
+  : jag::base::LogBase( "jag.sg.coll.select" ),
     jagSG::Node::Callback( rhs ),
     _index( rhs._index )
 {

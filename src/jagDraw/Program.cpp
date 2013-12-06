@@ -22,7 +22,7 @@
 #include <jagDraw/Program.h>
 #include <jagDraw/PlatformOpenGL.h>
 #include <jagDraw/DrawInfo.h>
-#include <jagBase/LogMacros.h>
+#include <jag/base/LogMacros.h>
 #include <jagDraw/Error.h>
 #include <stdio.h>
 #include <iostream>
@@ -60,14 +60,14 @@ void Program::printInfoLog( const GLuint id )
 Program::Program( const std::string& logName )
   : Command( Program_t ),
     ObjectID(),
-    jagBase::LogBase( logName.empty() ? "jag.draw.program" : logName )
+    jag::base::LogBase( logName.empty() ? "jag.draw.program" : logName )
 {
 }
 Program::Program( const Program& rhs )
   : Command( rhs ),
     ObjectID( rhs ),
     SHARED_FROM_THIS( Program )( rhs ),
-    jagBase::LogBase( rhs ),
+    jag::base::LogBase( rhs ),
     _shaders( rhs._shaders ),
     _parameters( rhs._parameters ),
     _explicitVertexAttribLocations( rhs._explicitVertexAttribLocations ),

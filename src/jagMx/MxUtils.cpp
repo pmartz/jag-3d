@@ -20,7 +20,7 @@
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
 #include <jagMx/MxUtils.h>
-#include <jagBase/LogMacros.h>
+#include <jag/base/LogMacros.h>
 #include <gmtl/gmtl.h>
 
 #include <cmath>

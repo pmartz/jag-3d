@@ -24,14 +24,14 @@
 
 #include <jagSG/Export.h>
 #include <jagSG/Visitor.h>
-#include <jagBase/Transform.h>
+#include <jag/base/Transform.h>
 #include <jagDraw/DrawNode.h>
 #include <jagDraw/DrawNodeContainer.h>
 #include <jagDraw/DrawGraph.h>
 #include <jagDraw/TransformCallback.h>
 #include <jagDraw/Uniform.h>
-#include <jagBase/ptr.h>
-#include <jagBase/gmtlSupport.h>
+#include <jag/base/ptr.h>
+#include <jag/base/gmtlSupport.h>
 
 
 namespace jagSG {
@@ -187,7 +187,7 @@ public:
     unsigned int getCurrentNodeContainer() const;
 
 
-    /** \class CollectionInfo CollectionVisitor.h <jagBase/CollectionVisitor.h>
+    /** \class CollectionInfo CollectionVisitor.h <jag/base/CollectionVisitor.h>
     \brief Set of information passed to collection callbacks.
     \details I'm starting to like this less and less. Seems like CollectionInfo
     just has copies or references to info in the CollectionVisitor. Why not just
@@ -196,7 +196,7 @@ public:
     class JAGSG_EXPORT CollectionInfo : public Node::CallbackInfo
     {
     public:
-        CollectionInfo( jagBase::TransformD& transform );
+        CollectionInfo( jag::base::TransformD& transform );
         CollectionInfo( const CollectionInfo& rhs );
         virtual ~CollectionInfo();
 
@@ -216,7 +216,7 @@ public:
         bool isContained() const;
 
     protected:
-        jagBase::TransformD& _transform;
+        jag::base::TransformD& _transform;
 
         jagDraw::Bound* _bound;
 
@@ -230,7 +230,7 @@ public:
         PlaneVec _planes;
         IndexList* _indices;
     };
-    typedef jagBase::ptr< CollectionInfo >::shared_ptr CollectionInfoPtr;
+    typedef jag::base::ptr< CollectionInfo >::shared_ptr CollectionInfoPtr;
 
 protected:
     jagDraw::DrawGraphPtr _drawGraphTemplate;
@@ -238,7 +238,7 @@ protected:
     unsigned int _currentID;
     jagDraw::DrawNodeContainer* _currentNodes;
 
-    jagBase::TransformD _transform;
+    jag::base::TransformD _transform;
 
     CollectionInfoPtr _infoPtr;
 
@@ -251,7 +251,7 @@ protected:
     PlaneIndexStack _planeStack;
 };
 
-typedef jagBase::ptr< jagSG::CollectionVisitor >::shared_ptr CollectionVisitorPtr;
+typedef jag::base::ptr< jagSG::CollectionVisitor >::shared_ptr CollectionVisitorPtr;
 
 
 /*@}*/

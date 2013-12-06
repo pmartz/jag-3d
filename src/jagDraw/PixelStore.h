@@ -25,7 +25,7 @@
 
 #include <jagDraw/Export.h>
 #include <jagDraw/PlatformOpenGL.h>
-#include <jagBase/ptr.h>
+#include <jag/base/ptr.h>
 
 #include <vector>
 
@@ -73,7 +73,7 @@ struct JAGDRAW_EXPORT PixelStore
     GLint _skipImages;
 };
 
-typedef jagBase::ptr< jagDraw::PixelStore >::shared_ptr PixelStorePtr;
+typedef jag::base::ptr< jagDraw::PixelStore >::shared_ptr PixelStorePtr;
 typedef std::vector< PixelStorePtr > PixelStoreVec;
 
 

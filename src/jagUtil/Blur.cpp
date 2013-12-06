@@ -23,8 +23,8 @@
 
 #include <jagDraw/Common.h>
 #include <jagUtil/QuadNode.h>
-#include <jagBase/Log.h>
-#include <jagBase/LogMacros.h>
+#include <jag/base/Log.h>
+#include <jag/base/LogMacros.h>
 #include <jagDisk/ReadWrite.h>
 
 #include <gmtl/gmtl.h>
@@ -41,7 +41,7 @@ namespace jagUtil
 
 
 Blur::Blur( const std::string& logName )
-    : jagBase::LogBase( logName.empty() ? "jag.util.blur" : logName ),
+    : jag::base::LogBase( logName.empty() ? "jag.util.blur" : logName ),
       _numContexts( 0 ),
       _width( 0 ),
       _height( 0 )
@@ -49,7 +49,7 @@ Blur::Blur( const std::string& logName )
 }
 Blur::Blur( jagDraw::TexturePtr& inputBuffer, jagDraw::TexturePtr& outputBuffer,
         const std::string& logName )
-    : jagBase::LogBase( logName.empty() ? "jag.util.blur" : logName ),
+    : jag::base::LogBase( logName.empty() ? "jag.util.blur" : logName ),
       _inputBuffer( inputBuffer ),
       _outputBuffer( outputBuffer ),
       _numContexts( 0 ),
@@ -58,7 +58,7 @@ Blur::Blur( jagDraw::TexturePtr& inputBuffer, jagDraw::TexturePtr& outputBuffer,
 {
 }
 Blur::Blur( const Blur& rhs )
-    : jagBase::LogBase( rhs ),
+    : jag::base::LogBase( rhs ),
       _inputBuffer( rhs._inputBuffer ),
       _outputBuffer( rhs._outputBuffer ),
       _numContexts( rhs._numContexts ),

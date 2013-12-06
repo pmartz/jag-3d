@@ -28,8 +28,8 @@
 #include <jagDraw/VertexAttribContainer.h>
 #include <jagDraw/DrawInfo.h>
 #include <jagDraw/Error.h>
-#include <jagBase/LogMacros.h>
-#include <jagBase/Profile.h>
+#include <jag/base/LogMacros.h>
+#include <jag/base/Profile.h>
 
 #include <boost/foreach.hpp>
 
@@ -40,17 +40,17 @@ namespace jagDraw {
 
 
 Drawable::Drawable( const std::string& logName )
-  : jagBase::LogBase( logName.empty() ? "jag.draw.drawable" : logName ),
+  : jag::base::LogBase( logName.empty() ? "jag.draw.drawable" : logName ),
     ObjectIDOwner(),
     BoundOwner(),
-    jagBase::Notifier()
+    jag::base::Notifier()
 {
 }
 Drawable::Drawable( const Drawable& rhs )
-  : jagBase::LogBase( rhs ),
+  : jag::base::LogBase( rhs ),
     ObjectIDOwner( rhs ),
     BoundOwner( rhs ),
-    jagBase::Notifier( rhs ),
+    jag::base::Notifier( rhs ),
     _drawCommands( rhs._drawCommands )
 {
 }

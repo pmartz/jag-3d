@@ -24,7 +24,7 @@
 
 
 // This header defines use of GL3W.
-#include <jagBase/Config.h>
+#include <jag/base/Config.h>
 
 #if defined( JAG3D_USE_GL3W )
 #  include <jagDraw/gl3w.h>

@@ -19,14 +19,14 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#ifndef __JAGBASE_PROFILE_H__
-#define __JAGBASE_PROFILE_H__ 1
+#ifndef __JAG_BASE_PROFILE_H__
+#define __JAG_BASE_PROFILE_H__ 1
 
 
-#include <jagBase/Export.h>
-#include <jagBase/Config.h>
-#include <jagBase/LogBase.h>
-#include <jagBase/ptr.h>
+#include <jag/base/Export.h>
+#include <jag/base/Config.h>
+#include <jag/base/LogBase.h>
+#include <jag/base/ptr.h>
 #include <string>
 
 //#define USE_POSIX_TIME 1
@@ -41,8 +41,8 @@
 
 
 
-namespace jagBase
-{
+namespace jag {
+namespace base {
 
 
 /** \defgroup jagBaseProfile Performance Profiling Utilities
@@ -72,11 +72,11 @@ timing called functions and code sub-blocks.
 
 // Forward declarations
 struct ProfileNode;
-typedef jagBase::ptr< jagBase::ProfileNode >::shared_ptr ProfileNodePtr;
+typedef jag::base::ptr< jag::base::ProfileNode >::shared_ptr ProfileNodePtr;
 typedef std::vector< ProfileNodePtr > ProfileNodeVec;
 
 
-/** \class ProfileManager Profile.h <jagBase/Profile.h>
+/** \class ProfileManager Profile.h <jag/base/Profile.h>
 \brief TBD
 \details TBD
 */
@@ -110,7 +110,7 @@ protected:
 };
 
 
-/** \class ProfileManager Profile.h <jagBase/Profile.h>
+/** \class ProfileManager Profile.h <jag/base/Profile.h>
 \brief TBD
 \details TBD
 */
@@ -130,7 +130,7 @@ public:
 
 
 
-/** \struct ProfileNode Profile.h <jagBase/Profile.h>
+/** \struct ProfileNode Profile.h <jag/base/Profile.h>
 \brief TBD
 \details TBD
 */
@@ -164,7 +164,7 @@ struct JAGBASE_EXPORT ProfileNode : public SHARED_FROM_THIS(ProfileNode)
 
 
 
-/** \struct ProfileVisitor Profile.h <jagBase/Profile.h>
+/** \struct ProfileVisitor Profile.h <jag/base/Profile.h>
 \brief TBD
 \details TBD
 */
@@ -183,11 +183,11 @@ public:
 };
 
 
-/** \struct ProfileDump Profile.h <jagBase/Profile.h>
+/** \struct ProfileDump Profile.h <jag/base/Profile.h>
 \brief TBD
 \details TBD
 */
-class JAGBASE_EXPORT ProfileDump : public ProfileVisitor, protected jagBase::LogBase
+class JAGBASE_EXPORT ProfileDump : public ProfileVisitor, protected jag::base::LogBase
 {
 public:
     ProfileDump( const std::string& logName=std::string( "" ) );
@@ -201,7 +201,7 @@ protected:
 
 
 
-#define    JAG3D_PROFILE( name ) jagBase::ProfileSample __profile( name )
+#define    JAG3D_PROFILE( name ) jag::base::ProfileSample __profile( name )
 
 // JAG3D_ENABLE_PROFILING
 #else
@@ -216,9 +216,10 @@ protected:
 /*@}*/
 
 
-// jagBase
+// namespace jag::base::
+}
 }
 
 
-// __JAGBASE_PROFILE_H__
+// __JAG_BASE_PROFILE_H__
 #endif

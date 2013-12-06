@@ -23,8 +23,8 @@
 #define __JAGDRAW_VERTEX_ARRAY_COMMAND_H__ 1
 
 #include <jagDraw/Export.h>
-#include <jagBase/UserDataOwner.h>
-#include <jagBase/ptr.h>
+#include <jag/base/UserDataOwner.h>
+#include <jag/base/ptr.h>
 
 #include <vector>
 
@@ -42,7 +42,7 @@ struct DrawInfo;
 \brief
 \details
 */
-class /*JAGDRAW_EXPORT*/ VertexArrayCommand : public jagBase::UserDataOwner
+class /*JAGDRAW_EXPORT*/ VertexArrayCommand : public jag::base::UserDataOwner
 {
 public:
     /** \brief TBD
@@ -98,7 +98,7 @@ protected:
     Type _type;
 };
 
-typedef jagBase::ptr< jagDraw::VertexArrayCommand >::shared_ptr VertexArrayCommandPtr;
+typedef jag::base::ptr< jagDraw::VertexArrayCommand >::shared_ptr VertexArrayCommandPtr;
 typedef std::vector< VertexArrayCommandPtr > VertexArrayCommandVec;
 
 

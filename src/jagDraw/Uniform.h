@@ -27,9 +27,9 @@
 #include <jagDraw/PlatformOpenGL.h>
 #include <jagDraw/Command.h>
 #include <jagDraw/Program.h>
-#include <jagBase/LogBase.h>
+#include <jag/base/LogBase.h>
 #include <jagDraw/CommandMap.h>
-#include <jagBase/ptr.h>
+#include <jag/base/ptr.h>
 #include <gmtl/gmtl.h>
 
 #include <boost/any.hpp>
@@ -48,7 +48,7 @@ namespace jagDraw {
 struct DrawInfo;
 
 class Uniform;
-typedef jagBase::ptr< jagDraw::Uniform >::shared_ptr UniformPtr;
+typedef jag::base::ptr< jagDraw::Uniform >::shared_ptr UniformPtr;
 
 
 /** \class Uniform Uniform.h <jagDraw\Uniform.h>
@@ -98,13 +98,13 @@ simply always sets its value. This will change in the future when
 Uniform becomes "smarter", but we must keep this scenario in mind when
 we make that change.
 
-To be done: Constructors of classes deriving from jagBase::LogBase should
+To be done: Constructors of classes deriving from jag::base::LogBase should
 take an optional \c logName parameter to allow overriding the default
 logger name. This is currently not implemented for the Uniform class.
 
 \gl{section 2.11.4}.
 */
-class JAGDRAW_EXPORT Uniform : public Command, protected jagBase::LogBase,
+class JAGDRAW_EXPORT Uniform : public Command, protected jag::base::LogBase,
         public SHARED_FROM_THIS(Uniform)
 {
 public:
@@ -257,13 +257,13 @@ protected:
     bool _transpose;
 };
 
-typedef jagBase::ptr< const jagDraw::Uniform >::shared_ptr ConstUniformPtr;
+typedef jag::base::ptr< const jagDraw::Uniform >::shared_ptr ConstUniformPtr;
 typedef std::vector< UniformPtr > UniformVec;
 
 
 
 class UniformSet;
-typedef jagBase::ptr< jagDraw::UniformSet >::shared_ptr UniformSetPtr;
+typedef jag::base::ptr< jagDraw::UniformSet >::shared_ptr UniformSetPtr;
 
 
 /** \class UniformSet Uniform.h <jagDraw/Uniform.h>

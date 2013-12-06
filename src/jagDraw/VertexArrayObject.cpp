@@ -25,7 +25,7 @@
 #include <jagDraw/VertexAttrib.h>
 #include <jagDraw/DrawInfo.h>
 #include <jagDraw/Error.h>
-#include <jagBase/LogMacros.h>
+#include <jag/base/LogMacros.h>
 
 #include <boost/foreach.hpp>
 

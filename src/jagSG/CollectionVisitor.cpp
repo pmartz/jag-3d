@@ -22,10 +22,10 @@
 #include <jagSG/CollectionVisitor.h>
 #include <jagSG/Node.h>
 #include <jagDraw/DrawNode.h>
-#include <jagBase/gmtlSupport.h>
+#include <jag/base/gmtlSupport.h>
 #include <jagDraw/Error.h>
-#include <jagBase/Profile.h>
-#include <jagBase/LogMacros.h>
+#include <jag/base/Profile.h>
+#include <jag/base/LogMacros.h>
 
 #include <gmtl/gmtl.h>
 
@@ -354,7 +354,7 @@ unsigned int CollectionVisitor::getCurrentNodeContainer() const
 
 
 
-CollectionVisitor::CollectionInfo::CollectionInfo( jagBase::TransformD& transform )
+CollectionVisitor::CollectionInfo::CollectionInfo( jag::base::TransformD& transform )
     : Node::CallbackInfo(),
       _transform( transform ),
       _bound( NULL )
@@ -461,7 +461,7 @@ void CollectionVisitor::CollectionInfo::setContainmentPlanes( CollectionVisitor:
 }
 bool CollectionVisitor::CollectionInfo::isContained() const
 {
-    const jagBase::TransformD::FTYPE frustum( _transform.getFrustum() );
+    const jag::base::TransformD::FTYPE frustum( _transform.getFrustum() );
     if( _bound->getType() == jagDraw::Bound::Box_t )
         return( gmtl::contains( _planes, *_indices, _bound->asAABox() ) );
     else

@@ -23,7 +23,7 @@
 #define __JAGDRAW_TRIANGLE_CONTAINER_H__ 1
 
 
-#include <jagBase/Buffer.h>
+#include <jag/base/Buffer.h>
 #include <jagDraw/BufferObject.h>
 #include <jagDraw/VertexAttrib.h>
 #include <jagDraw/VertexAttribContainer.h>
@@ -127,7 +127,7 @@ public:
         return;
     }
     protected:
-    jagBase::BufferPtr _buffer;
+    jag::base::BufferPtr _buffer;
     VertexAttribPtr _vap;
     DrawCommandPtr _dcp;
     

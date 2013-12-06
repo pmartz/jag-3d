@@ -25,8 +25,8 @@
 #include <Poco/Path.h>
 #include <Poco/String.h>
 
-#include <jagBase/Buffer.h>
-#include <jagBase/LogMacros.h>
+#include <jag/base/Buffer.h>
+#include <jag/base/LogMacros.h>
 #include <jagDraw/Image.h>
 #include <jagDraw/PixelStore.h>
 

@@ -25,7 +25,7 @@
 
 #include <jagMx/Export.h>
 #include <jagMx/MxGamePad.h>
-#include <jagBase/ptr.h>
+#include <jag/base/ptr.h>
 
 #include <dinput.h>
 
@@ -93,7 +93,7 @@ protected:
     void processDPad( const DIJOYSTATE2& devState );
 };
 
-typedef jagBase::ptr< jagMx::MxGamePadDX >::shared_ptr MxGamePadDXPtr;
+typedef jag::base::ptr< jagMx::MxGamePadDX >::shared_ptr MxGamePadDXPtr;
 
 
 /*@}*/

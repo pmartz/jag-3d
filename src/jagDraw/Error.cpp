@@ -21,8 +21,8 @@
 
 #include <jagDraw/Error.h>
 #include <jagDraw/PlatformOpenGL.h>
-#include <jagBase/Log.h>
-#include <jagBase/LogMacros.h>
+#include <jag/base/Log.h>
+#include <jag/base/LogMacros.h>
 #include <string>
 
 

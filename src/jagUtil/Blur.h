@@ -29,8 +29,8 @@
 #include <jagDraw/Texture.h>
 #include <jagDraw/Program.h>
 #include <jagDraw/PerContextData.h>
-#include <jagBase/ptr.h>
-#include <jagBase/LogBase.h>
+#include <jag/base/ptr.h>
+#include <jag/base/LogBase.h>
 
 
 // Forwaed
@@ -55,7 +55,7 @@ with non-zero alpha.
 
 \logname jag.util.blur
 */
-class JAGUTIL_EXPORT Blur : public jagBase::LogBase
+class JAGUTIL_EXPORT Blur : public jag::base::LogBase
 {
 public:
     Blur( const std::string& logName=std::string( "" ) );
@@ -108,7 +108,7 @@ protected:
     jagDraw::TexturePtr _intermediateBuffer;
 };
 
-typedef jagBase::ptr< Blur >::shared_ptr BlurPtr;
+typedef jag::base::ptr< Blur >::shared_ptr BlurPtr;
 
 
 // jagUtil

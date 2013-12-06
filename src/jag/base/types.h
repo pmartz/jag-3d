@@ -19,22 +19,23 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#ifndef __JAGBASE_TYPES_H__
-#define __JAGBASE_TYPES_H__ 1
+#ifndef __JAG_BASE_TYPES_H__
+#define __JAG_BASE_TYPES_H__ 1
 
 
-#include <jagBase/ptr.h>
+#include <jag/base/ptr.h>
 #include <vector>
 #include <string>
 #include <gmtl/gmtl.h>
 
 
-namespace jagBase {
+namespace jag {
+namespace base {
 
 
 #define DEFINE_TYPE_ARRAYS(__type,__name) \
     typedef std::vector< __type > __name##Vec; \
-    typedef jagBase::ptr< __type >::shared_array_ptr __name##Array;
+    typedef jag::base::ptr< __type >::shared_array_ptr __name##Array;
 
 DEFINE_TYPE_ARRAYS(gmtl::Point2f,Point2f);
 DEFINE_TYPE_ARRAYS(gmtl::Point3f,Point3f);
@@ -52,9 +53,10 @@ DEFINE_TYPE_ARRAYS(std::string,String);
 #undef DEFINE_TYPE_ARRAYS
 
 
-// jagBase
+// namespace jag::base::
+}
 }
 
 
-// __JAGBASE_TYPES_H__
+// __JAG_BASE_TYPES_H__
 #endif

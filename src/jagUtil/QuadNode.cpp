@@ -24,8 +24,8 @@
 #include <jagDraw/Common.h>
 #include <jagDisk/ReadWrite.h>
 #include <jagUtil/Shapes.h>
-#include <jagBase/Log.h>
-#include <jagBase/LogMacros.h>
+#include <jag/base/Log.h>
+#include <jag/base/LogMacros.h>
 
 #include <gmtl/gmtl.h>
 

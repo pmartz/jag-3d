@@ -29,9 +29,9 @@ namespace jagDraw {
 TransformCallback::TransformCallback()
     : DrawNode::Callback(),
     _transform(),
-    _requiredUniforms( jagBase::TransformD::MODEL_VIEW_PROJ |
-            jagBase::TransformD::MODEL_VIEW |
-            jagBase::TransformD::MODEL_VIEW_INV_TRANS )
+    _requiredUniforms( jag::base::TransformD::MODEL_VIEW_PROJ |
+            jag::base::TransformD::MODEL_VIEW |
+            jag::base::TransformD::MODEL_VIEW_INV_TRANS )
 {
     setDefaultMatrixUniformNames();
 }
@@ -71,7 +71,7 @@ bool TransformCallback::operator()( jagDraw::DrawNode& node, jagDraw::DrawInfo& 
             flags ^= matrixBit;
 
             jagDraw::UniformPtr& uniform( drawInfo.getOrCreateUniform( _nameMap[ matrixBit ] ) );
-            if( matrixBit != jagBase::TransformD::MODEL_VIEW_INV_TRANS )
+            if( matrixBit != jag::base::TransformD::MODEL_VIEW_INV_TRANS )
             {
                 gmtl::convert( mat4, _transform.getMatrix4( matrixBit ) );
                 uniform->setType( GL_FLOAT_MAT4 );
@@ -116,20 +116,20 @@ std::string TransformCallback::getMatrixUniformName( const unsigned int matrix )
 }
 void TransformCallback::setDefaultMatrixUniformNames()
 {
-    _nameMap[ jagBase::TransformD::MODEL ] = "jagModelMatrix";
-    _nameMap[ jagBase::TransformD::VIEW ] = "jagViewMatrix";
-    _nameMap[ jagBase::TransformD::PROJ ] = "jagProjMatrix";
-    _nameMap[ jagBase::TransformD::VIEW_PROJ ] = "jagViewProjMatrix";
-    _nameMap[ jagBase::TransformD::MODEL_VIEW_PROJ ] = "jagModelViewProjMatrix";
-    _nameMap[ jagBase::TransformD::MODEL_VIEW ] = "jagModelViewMatrix";
-    _nameMap[ jagBase::TransformD::MODEL_VIEW_INV_TRANS ] = "jagModelViewInvTransMatrix";
-    _nameMap[ jagBase::TransformD::MODEL_VIEW_INV_TRANS_4 ] = "jagModelViewInvTrans4Matrix";
-    _nameMap[ jagBase::TransformD::PROJ_INV ] = "jagProjInvMatrix";
-    _nameMap[ jagBase::TransformD::VIEW_INV ] = "jagViewInvMatrix";
-    _nameMap[ jagBase::TransformD::MODEL_INV ] = "jagModelInvMatrix";
-    _nameMap[ jagBase::TransformD::VIEW_PROJ_INV ] = "jagViewProjInvMatrix";
-    _nameMap[ jagBase::TransformD::MODEL_VIEW_PROJ_INV ] = "jagModelViewProjInvMatrix";
-    _nameMap[ jagBase::TransformD::MODEL_VIEW_INV ] = "jagModelViewInvMatrix";
+    _nameMap[ jag::base::TransformD::MODEL ] = "jagModelMatrix";
+    _nameMap[ jag::base::TransformD::VIEW ] = "jagViewMatrix";
+    _nameMap[ jag::base::TransformD::PROJ ] = "jagProjMatrix";
+    _nameMap[ jag::base::TransformD::VIEW_PROJ ] = "jagViewProjMatrix";
+    _nameMap[ jag::base::TransformD::MODEL_VIEW_PROJ ] = "jagModelViewProjMatrix";
+    _nameMap[ jag::base::TransformD::MODEL_VIEW ] = "jagModelViewMatrix";
+    _nameMap[ jag::base::TransformD::MODEL_VIEW_INV_TRANS ] = "jagModelViewInvTransMatrix";
+    _nameMap[ jag::base::TransformD::MODEL_VIEW_INV_TRANS_4 ] = "jagModelViewInvTrans4Matrix";
+    _nameMap[ jag::base::TransformD::PROJ_INV ] = "jagProjInvMatrix";
+    _nameMap[ jag::base::TransformD::VIEW_INV ] = "jagViewInvMatrix";
+    _nameMap[ jag::base::TransformD::MODEL_INV ] = "jagModelInvMatrix";
+    _nameMap[ jag::base::TransformD::VIEW_PROJ_INV ] = "jagViewProjInvMatrix";
+    _nameMap[ jag::base::TransformD::MODEL_VIEW_PROJ_INV ] = "jagModelViewProjInvMatrix";
+    _nameMap[ jag::base::TransformD::MODEL_VIEW_INV ] = "jagModelViewInvMatrix";
 }
 
 

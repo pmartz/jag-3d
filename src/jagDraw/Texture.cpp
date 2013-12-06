@@ -22,7 +22,7 @@
 #include <jagDraw/Texture.h>
 #include <jagDraw/DrawInfo.h>
 #include <jagDraw/Error.h>
-#include <jagBase/LogMacros.h>
+#include <jag/base/LogMacros.h>
 
 #include <boost/foreach.hpp>
 
@@ -33,7 +33,7 @@ namespace jagDraw {
 Texture::Texture( const std::string& logName )
   : Command( Texture_t ),
     FramebufferAttachable(),
-    jagBase::LogBase( logName.empty() ? "jag.draw.tex" : logName ),
+    jag::base::LogBase( logName.empty() ? "jag.draw.tex" : logName ),
     _target( GL_NONE ),
     _bufferFormat( GL_NONE )
 {
@@ -42,7 +42,7 @@ Texture::Texture( const std::string& logName )
 Texture::Texture( const GLenum target, ImagePtr image, const std::string& logName )
   : Command( Texture_t ),
     FramebufferAttachable(),
-    jagBase::LogBase( logName.empty() ? "jag.draw.tex" : logName ),
+    jag::base::LogBase( logName.empty() ? "jag.draw.tex" : logName ),
     _target( target ),
     _bufferFormat( GL_NONE )
 {
@@ -54,7 +54,7 @@ Texture::Texture( const GLenum target, ImagePtr image, const std::string& logNam
 Texture::Texture( const GLenum target, ImagePtr image, SamplerPtr sampler, const std::string& logName )
   : Command( Texture_t ),
     FramebufferAttachable(),
-    jagBase::LogBase( logName.empty() ? "jag.draw.tex" : logName ),
+    jag::base::LogBase( logName.empty() ? "jag.draw.tex" : logName ),
     _target( target ),
     _sampler( sampler ),
     _bufferFormat( GL_NONE )
@@ -67,7 +67,7 @@ Texture::Texture( const GLenum target, ImagePtr image, SamplerPtr sampler, const
 Texture::Texture( const GLenum target, GLenum bufferFormat, TextureBufferPtr& textureBuffer, const std::string& logName )
   : Command( Texture_t ),
     FramebufferAttachable(),
-    jagBase::LogBase( logName.empty() ? "jag.draw.tex" : logName ),
+    jag::base::LogBase( logName.empty() ? "jag.draw.tex" : logName ),
     _target( target ),
     _bufferFormat( bufferFormat ),
     _textureBuffer( textureBuffer )
@@ -81,7 +81,7 @@ Texture::Texture( const Texture& rhs )
   : Command( rhs ),
     FramebufferAttachable( rhs ),
     ObjectID( rhs ),
-    jagBase::LogBase( rhs ),
+    jag::base::LogBase( rhs ),
     _target( rhs._target ),
     _image( rhs._image ),
     _sampler( rhs._sampler ),

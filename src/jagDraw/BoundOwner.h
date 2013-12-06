@@ -23,11 +23,11 @@
 #define __JAGDRAW_BOUND_OWNER_H__ 1
 
 
-#include <jagBase/ptr.h>
-#include <jagBase/Profile.h>
+#include <jag/base/ptr.h>
+#include <jag/base/Profile.h>
 #include <jagDraw/CommandMap.h>
 #include <jagDraw/Bound.h>
-#include <jagBase/Notifier.h>
+#include <jag/base/Notifier.h>
 
 
 namespace jagDraw {
@@ -283,7 +283,7 @@ public:
         */
         virtual void operator()( BoundPtr& _bound, const jagDraw::CommandMap& commands, BoundOwner* owner ) = 0;
     };
-    typedef jagBase::ptr< ComputeBoundCallback >::shared_ptr ComputeBoundCallbackPtr;
+    typedef jag::base::ptr< ComputeBoundCallback >::shared_ptr ComputeBoundCallbackPtr;
 
     /** \brief Set the compute bounds callback and mark bounds as dirty.
     \details By marking bounds dirty, all observers could be notified.
@@ -305,7 +305,7 @@ public:
     jagDraw::Drawable needs a callback mechanism to notify owning
     jagSG::Node objects that a bound has changed. TBD consider
     moving to the Poco notification system. */
-    struct BoundDirtyNotifyInfo : jagBase::Notifier::NotifierInfo
+    struct BoundDirtyNotifyInfo : jag::base::Notifier::NotifierInfo
     {
         BoundDirtyNotifyInfo()
         {}

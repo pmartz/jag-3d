@@ -27,7 +27,7 @@
 #include <jagDraw/PlatformOpenGL.h>
 #include <jagDraw/BufferObject.h>
 #include <jagDraw/ObjectID.h>
-#include <jagBase/types.h>
+#include <jag/base/types.h>
 
 
 namespace jagDraw {
@@ -55,7 +55,7 @@ DrawCommand supports all OpenGL rendering operations. This includes:
 \li Clearing operations (\glshort{4.2.3}).
 
 \specTableBegin
-\specLog{DrawCommand does not use jagBase::LogBase}
+\specLog{DrawCommand does not use jag::base::LogBase}
 \specThread{Context Safe}
 \specGL{See derived classes}
 \specDepend{See derived classes}
@@ -171,7 +171,7 @@ protected:
     GLsizei _primcount;
 };
 
-typedef jagBase::ptr< jagDraw::DrawCommand >::shared_ptr DrawCommandPtr;
+typedef jag::base::ptr< jagDraw::DrawCommand >::shared_ptr DrawCommandPtr;
 typedef std::vector< DrawCommandPtr > DrawCommandVec;
 
 
@@ -550,7 +550,7 @@ public:
     }
 };
 
-typedef jagBase::ptr< jagDraw::DrawArrays >::shared_ptr DrawArraysPtr;
+typedef jag::base::ptr< jagDraw::DrawArrays >::shared_ptr DrawArraysPtr;
 
 
 /** \class DrawArraysInstancedBaseInstance DrawCommand.h <jagDraw/DrawCommand.h>
@@ -603,7 +603,7 @@ public:
     }
 };
 
-typedef jagBase::ptr< jagDraw::DrawArraysInstancedBaseInstance >::shared_ptr DrawArraysInstancedBaseInstancePtr;
+typedef jag::base::ptr< jagDraw::DrawArraysInstancedBaseInstance >::shared_ptr DrawArraysInstancedBaseInstancePtr;
 
 
 /** \class DrawArraysInstanced DrawCommand.h <jagDraw/DrawCommand.h>
@@ -652,7 +652,7 @@ public:
     }
 };
 
-typedef jagBase::ptr< jagDraw::DrawArraysInstanced >::shared_ptr DrawArraysInstancedPtr;
+typedef jag::base::ptr< jagDraw::DrawArraysInstanced >::shared_ptr DrawArraysInstancedPtr;
 
 
 /** \class DrawArraysIndirect DrawCommand.h <jagDraw/DrawCommand.h>
@@ -752,7 +752,7 @@ protected:
     } DrawArraysIndirectCommand;
 };
 
-typedef jagBase::ptr< jagDraw::DrawArraysIndirect >::shared_ptr DrawArraysIndirectPtr;
+typedef jag::base::ptr< jagDraw::DrawArraysIndirect >::shared_ptr DrawArraysIndirectPtr;
 
 
 /** \class MultiDrawArrays DrawCommand.h <jagDraw/DrawCommand.h>
@@ -833,7 +833,7 @@ protected:
     jagDraw::GLintVec _firstVec;
 };
 
-typedef jagBase::ptr< jagDraw::MultiDrawArrays >::shared_ptr MultiDrawArraysPtr;
+typedef jag::base::ptr< jagDraw::MultiDrawArrays >::shared_ptr MultiDrawArraysPtr;
 
 
 /** \class DrawElements DrawCommand.h <jagDraw/DrawCommand.h>
@@ -911,7 +911,7 @@ public:
     }
 };
 
-typedef jagBase::ptr< jagDraw::DrawElements >::shared_ptr DrawElementsPtr;
+typedef jag::base::ptr< jagDraw::DrawElements >::shared_ptr DrawElementsPtr;
 
 
 /** \class DrawElementsInstancedBaseInstance DrawCommand.h <jagDraw/DrawCommand.h>
@@ -996,7 +996,7 @@ public:
     }
 };
 
-typedef jagBase::ptr< jagDraw::DrawElementsInstancedBaseInstance >::shared_ptr DrawElementsInstancedBaseInstancePtr;
+typedef jag::base::ptr< jagDraw::DrawElementsInstancedBaseInstance >::shared_ptr DrawElementsInstancedBaseInstancePtr;
 
 
 /** \class DrawElementsInstanced DrawCommand.h <jagDraw/DrawCommand.h>
@@ -1077,7 +1077,7 @@ public:
     }
 };
 
-typedef jagBase::ptr< jagDraw::DrawElementsInstanced >::shared_ptr DrawElementsInstancedPtr;
+typedef jag::base::ptr< jagDraw::DrawElementsInstanced >::shared_ptr DrawElementsInstancedPtr;
 
 
 /** \class MultiDrawElements DrawCommand.h <jagDraw/DrawCommand.h>
@@ -1145,7 +1145,7 @@ public:
     }
 };
 
-typedef jagBase::ptr< jagDraw::MultiDrawElements >::shared_ptr MultiDrawElementsPtr;
+typedef jag::base::ptr< jagDraw::MultiDrawElements >::shared_ptr MultiDrawElementsPtr;
 
 
 /** \class DrawRangeElements DrawCommand.h <jagDraw/DrawCommand.h>
@@ -1213,7 +1213,7 @@ public:
     }
 };
 
-typedef jagBase::ptr< jagDraw::DrawRangeElements >::shared_ptr DrawRangeElementsPtr;
+typedef jag::base::ptr< jagDraw::DrawRangeElements >::shared_ptr DrawRangeElementsPtr;
 
 
 /** \class DrawElementsBaseVertex DrawCommand.h <jagDraw/DrawCommand.h>
@@ -1281,7 +1281,7 @@ public:
     }
 };
 
-typedef jagBase::ptr< jagDraw::DrawElementsBaseVertex >::shared_ptr DrawElementsBaseVertexPtr;
+typedef jag::base::ptr< jagDraw::DrawElementsBaseVertex >::shared_ptr DrawElementsBaseVertexPtr;
 
 
 /** \class DrawRangeElementsBaseVertex DrawCommand.h <jagDraw/DrawCommand.h>
@@ -1351,7 +1351,7 @@ public:
     }
 };
 
-typedef jagBase::ptr< jagDraw::DrawRangeElementsBaseVertex >::shared_ptr DrawRangeElementsBaseVertexPtr;
+typedef jag::base::ptr< jagDraw::DrawRangeElementsBaseVertex >::shared_ptr DrawRangeElementsBaseVertexPtr;
 
 
 /** \class DrawElementsInstancedBaseVertex DrawCommand.h <jagDraw/DrawCommand.h>
@@ -1419,7 +1419,7 @@ public:
     }
 };
 
-typedef jagBase::ptr< jagDraw::DrawElementsInstancedBaseVertex >::shared_ptr DrawElementsInstancedBaseVertexPtr;
+typedef jag::base::ptr< jagDraw::DrawElementsInstancedBaseVertex >::shared_ptr DrawElementsInstancedBaseVertexPtr;
 
 
 /** \class DrawElementsInstancedBaseVertexBaseInstance DrawCommand.h <jagDraw/DrawCommand.h>
@@ -1491,7 +1491,7 @@ public:
     }
 };
 
-typedef jagBase::ptr< jagDraw::DrawElementsInstancedBaseVertexBaseInstance >::shared_ptr DrawElementsInstancedBaseVertexBaseInstancePtr;
+typedef jag::base::ptr< jagDraw::DrawElementsInstancedBaseVertexBaseInstance >::shared_ptr DrawElementsInstancedBaseVertexBaseInstancePtr;
 
 
 /** \class DrawElementsIndirect DrawCommand.h <jagDraw/DrawCommand.h>
@@ -1561,7 +1561,7 @@ public:
     }
 };
 
-typedef jagBase::ptr< jagDraw::DrawElementsIndirect >::shared_ptr DrawElementsIndirectPtr;
+typedef jag::base::ptr< jagDraw::DrawElementsIndirect >::shared_ptr DrawElementsIndirectPtr;
 
 
 /** \class MultiDrawElementsBaseVertex DrawCommand.h <jagDraw/DrawCommand.h>
@@ -1637,7 +1637,7 @@ protected:
     jagDraw::GLintVec _basevertices;
 };
 
-typedef jagBase::ptr< jagDraw::MultiDrawElementsBaseVertex >::shared_ptr MultiDrawElementsBaseVertexPtr;
+typedef jag::base::ptr< jagDraw::MultiDrawElementsBaseVertex >::shared_ptr MultiDrawElementsBaseVertexPtr;
 
 
 /** \class PrimitiveRestart DrawCommand.h <jagDraw/DrawCommand.h>
@@ -1708,7 +1708,7 @@ protected:
     GLuint _index;
 };
 
-typedef jagBase::ptr< PrimitiveRestart >::shared_ptr PrimitiveRestartPtr;
+typedef jag::base::ptr< PrimitiveRestart >::shared_ptr PrimitiveRestartPtr;
 
 
 // jagDraw

@@ -26,9 +26,9 @@
 #include <jagDraw/DrawNodeContainer.h>
 #include <jagDraw/ObjectID.h>
 #include <jagDraw/TransformCallback.h>
-#include <jagBase/LogBase.h>
-#include <jagBase/MultiCallback.h>
-#include <jagBase/ptr.h>
+#include <jag/base/LogBase.h>
+#include <jag/base/MultiCallback.h>
+#include <jag/base/ptr.h>
 
 #include <vector>
 
@@ -43,7 +43,7 @@ namespace jagDraw {
 \brief TBD
 \details std::vector of draw graph Node objects. */
 class JAGDRAW_EXPORT DrawGraph : public jagDraw::DrawNodeContainerSimpleVec,
-        protected jagBase::LogBase, public ObjectIDOwner
+        protected jag::base::LogBase, public ObjectIDOwner
 {
 public:
     DrawGraph( const std::string& logName=std::string( "" ) );
@@ -65,11 +65,11 @@ public:
             return( false );
         }
     };
-    typedef jagBase::ptr< Callback >::shared_ptr CallbackPtr;
+    typedef jag::base::ptr< Callback >::shared_ptr CallbackPtr;
 
     /** \brief TBD
     \details TBD */
-    typedef jagBase::MultiCallback< CallbackPtr > CallbackVec;
+    typedef jag::base::MultiCallback< CallbackPtr > CallbackVec;
     /** \brief TBD
     \details TBD */
     CallbackVec& getCallbacks();
@@ -111,7 +111,7 @@ protected:
     TransformCallbackPtr _transformCallback;
 };
 
-typedef jagBase::ptr< jagDraw::DrawGraph >::shared_ptr DrawGraphPtr;
+typedef jag::base::ptr< jagDraw::DrawGraph >::shared_ptr DrawGraphPtr;
 typedef std::vector< DrawGraphPtr > DrawGraphVec;
 
 

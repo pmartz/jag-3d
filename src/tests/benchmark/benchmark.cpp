@@ -23,10 +23,10 @@
 
 #include <jagDraw/Common.h>
 #include <jagDraw/types.h>
-#include <jagBase/Profile.h>
-#include <jagBase/Version.h>
-#include <jagBase/Log.h>
-#include <jagBase/LogMacros.h>
+#include <jag/base/Profile.h>
+#include <jag/base/Version.h>
+#include <jag/base/Log.h>
+#include <jag/base/LogMacros.h>
 #include <Poco/Foundation.h>
 #include <boost/program_options/options_description.hpp>
 #include <gmtl/gmtl.h>
@@ -66,7 +66,7 @@ protected:
 
 DemoInterface* DemoInterface::create( bpo::options_description& desc )
 {
-    jagBase::Log::instance()->setPriority( jagBase::Log::PrioDebug, jagBase::Log::Console );
+    jag::base::Log::instance()->setPriority( jag::base::Log::PrioDebug, jag::base::Log::Console );
 
     return( new BenchmarkTest );
 }
@@ -79,7 +79,7 @@ jagDraw::BufferObjectPtr createTriangleVertices( unsigned int n,
     const float xMax=.9f;
     const float yMin=-.9f;
     const float yMax=.9f;
-    jagBase::Point3fVec v3fa( n );
+    jag::base::Point3fVec v3fa( n );
 
     float yVal( yMin );
     float yInc( y );
@@ -105,7 +105,7 @@ jagDraw::BufferObjectPtr createTriangleVertices( unsigned int n,
             }
         }
     }
-    jagBase::BufferPtr vbp( new jagBase::Buffer( v3fa.size() * sizeof( gmtl::Point3f ), (void*)&v3fa[0] ) );
+    jag::base::BufferPtr vbp( new jag::base::Buffer( v3fa.size() * sizeof( gmtl::Point3f ), (void*)&v3fa[0] ) );
 
     return( jagDraw::BufferObjectPtr( new jagDraw::BufferObject( GL_ARRAY_BUFFER, vbp ) ) );
 }
@@ -156,7 +156,7 @@ void createSingleTriStrip( const unsigned int numVerts, jagDraw::DrawablePtr& dr
     unsigned int idx;
     for( idx=0; idx<numVerts; ++idx )
         elements.push_back( idx );
-    jagBase::BufferPtr elbp( new jagBase::Buffer( elements.size() * sizeof( GLint ), (void*)&elements[0] ) );
+    jag::base::BufferPtr elbp( new jag::base::Buffer( elements.size() * sizeof( GLint ), (void*)&elements[0] ) );
     jagDraw::BufferObjectPtr elbop( new jagDraw::BufferObject( GL_ELEMENT_ARRAY_BUFFER, elbp ) );
     jagDraw::DrawElementsPtr drawElements( new jagDraw::DrawElements( GL_TRIANGLE_STRIP, (const GLsizei) elements.size(), GL_UNSIGNED_INT, 0, elbop ) );
 
@@ -187,7 +187,7 @@ void createSeveralTriStrips( const unsigned int numVerts, const unsigned int tri
         startIdx += trisPerCommand;
     }
 
-    jagBase::BufferPtr elbp( new jagBase::Buffer( elements.size() * sizeof( GLint ), (void*)&elements[0] ) );
+    jag::base::BufferPtr elbp( new jag::base::Buffer( elements.size() * sizeof( GLint ), (void*)&elements[0] ) );
     jagDraw::BufferObjectPtr elbop( new jagDraw::BufferObject( GL_ELEMENT_ARRAY_BUFFER, elbp ) );
 
     vertsRemaining = numVerts;
@@ -227,7 +227,7 @@ void createSingleTriStripRestart( const unsigned int numVerts, const unsigned in
         idx -= 2;
         vertsRemaining -= trisPerCommand;
     }
-    jagBase::BufferPtr elbp( new jagBase::Buffer( elements.size() * sizeof( GLint ), (void*)&elements[0] ) );
+    jag::base::BufferPtr elbp( new jag::base::Buffer( elements.size() * sizeof( GLint ), (void*)&elements[0] ) );
     jagDraw::BufferObjectPtr elbop( new jagDraw::BufferObject( GL_ELEMENT_ARRAY_BUFFER, elbp ) );
 
     jagDraw::PrimitiveRestartPtr restart( new jagDraw::PrimitiveRestart( 0xffffffff ) );
@@ -274,7 +274,7 @@ void createMultiTriStrip( const unsigned int numVerts, const unsigned int trisPe
         vertsRemaining -= trisPerCommand;
         ++prim;
     }
-    jagBase::BufferPtr elbp( new jagBase::Buffer( elements.size() * sizeof( GLint ), (void*)&elements[0] ) );
+    jag::base::BufferPtr elbp( new jag::base::Buffer( elements.size() * sizeof( GLint ), (void*)&elements[0] ) );
     jagDraw::BufferObjectPtr elbop( new jagDraw::BufferObject( GL_ELEMENT_ARRAY_BUFFER, elbp ) );
 
     jagDraw::MultiDrawElementsPtr multiDrawElements(
@@ -298,7 +298,7 @@ void createSingleTriangles( const unsigned int numVerts, jagDraw::DrawablePtr& d
         elements.push_back( idx+1 );
         elements.push_back( idx+3 );
     }
-    jagBase::BufferPtr elbp( new jagBase::Buffer( elements.size() * sizeof( GLint ), (void*)&elements[0] ) );
+    jag::base::BufferPtr elbp( new jag::base::Buffer( elements.size() * sizeof( GLint ), (void*)&elements[0] ) );
     jagDraw::BufferObjectPtr elbop( new jagDraw::BufferObject( GL_ELEMENT_ARRAY_BUFFER, elbp ) );
     jagDraw::DrawElementsPtr drawElements( new jagDraw::DrawElements( GL_TRIANGLES, (const GLsizei) elements.size(), GL_UNSIGNED_INT, 0, elbop ) );
 
@@ -344,7 +344,7 @@ bool BenchmarkTest::init()
     glClearColor( 0.f, 0.f, 0.f, 0.f );
 
     // Auto-log the version string.
-    jagBase::getVersionString();
+    jag::base::getVersionString();
 
     // Auto-log the OpenGL version string.
     jagDraw::getOpenGLVersionString();

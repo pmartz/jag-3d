@@ -19,19 +19,19 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#ifndef __JAGBASE_MULTI_CALLACK_H__
-#define __JAGBASE_MULTI_CALLACK_H__ 1
+#ifndef __JAG_BASE_MULTI_CALLACK_H__
+#define __JAG_BASE_MULTI_CALLACK_H__ 1
 
 
-#include <jagBase/Export.h>
+#include <jag/base/Export.h>
 #include <vector>
 
 
-namespace jagBase
-{
+namespace jag {
+namespace base {
 
     
-/** \class MultiCallback MultiCallback.h <jagBase/MultiCallback.h>
+/** \class MultiCallback MultiCallback.h <jag/base/MultiCallback.h>
 \brief Template class for storing a vector of callbacks.
 \details TBD.
 */
@@ -72,9 +72,10 @@ public:
 };
 
 
-// jagBase
+// namespace jag::base::
+}
 }
 
 
-// __JAGBASE_MULTI_CALLACK_H__
+// __JAG_BASE_MULTI_CALLACK_H__
 #endif

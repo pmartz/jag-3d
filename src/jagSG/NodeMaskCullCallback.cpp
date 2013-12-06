@@ -29,13 +29,13 @@ namespace jagSG {
 
 
 NodeMaskCullCallback::NodeMaskCullCallback( const std::string& logName )
-  : jagBase::LogBase( logName.empty() ? "jag.sg.coll.nodemask" : logName ),
+  : jag::base::LogBase( logName.empty() ? "jag.sg.coll.nodemask" : logName ),
     jagSG::Node::Callback(),
     _override( OVERRIDE_OFF )
 {
 }
 NodeMaskCullCallback::NodeMaskCullCallback( const NodeMaskCullCallback& rhs )
-  : jagBase::LogBase( "jag.sg.coll.nodemask" ),
+  : jag::base::LogBase( "jag.sg.coll.nodemask" ),
     jagSG::Node::Callback( rhs ),
     _override( rhs._override )
 {

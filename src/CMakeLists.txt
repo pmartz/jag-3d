@@ -2,7 +2,8 @@ if( JAG3D_USE_GL3W )
     add_subdirectory( gl3w )
 endif()
 
-add_subdirectory( jagBase )
+add_subdirectory( jag )
+
 add_subdirectory( jagDisk )
 add_subdirectory( jagDraw )
 add_subdirectory( jagMx )

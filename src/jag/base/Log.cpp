@@ -19,9 +19,9 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#include <jagBase/Log.h>
-#include <jagBase/LogBase.h>
-#include <jagBase/LogMacros.h>
+#include <jag/base/Log.h>
+#include <jag/base/LogBase.h>
+#include <jag/base/LogMacros.h>
 
 #include <Poco/PatternFormatter.h>
 #include <Poco/FormattingChannel.h>
@@ -33,12 +33,13 @@
 #include <iostream>
 
 
-namespace jagBase {
+namespace jag {
+namespace base {
 
 
 
 // TBD Need singleton manager to cleanup/delete singletons.
-Log* Log::_s_instance( new jagBase::Log() );
+Log* Log::_s_instance( new jag::base::Log() );
 
 Log* Log::instance()
 {
@@ -213,5 +214,6 @@ int Log::parsePriority( const std::string& prio )
 
 
 
-// jagBase
+// jag/base
+}
 }

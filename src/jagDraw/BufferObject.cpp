@@ -23,14 +23,14 @@
 #include <jagDraw/BufferObject.h>
 #include <jagDraw/DrawInfo.h>
 #include <jagDraw/Error.h>
-#include <jagBase/LogMacros.h>
+#include <jag/base/LogMacros.h>
 
 
 namespace jagDraw {
 
 
 BufferObject::BufferObject( const GLenum target, const std::string& logName )
-  : jagBase::LogBase( logName.empty() ? "jag.draw.bufobj" : logName ),
+  : jag::base::LogBase( logName.empty() ? "jag.draw.bufobj" : logName ),
     ObjectID(),
     VertexArrayCommand( VertexArrayCommand::BufferObject_t ),
     _target( target ),
@@ -39,8 +39,8 @@ BufferObject::BufferObject( const GLenum target, const std::string& logName )
     _dirtySize( 0 )
 {
 }
-BufferObject::BufferObject( const GLenum target, const jagBase::BufferPtr b, const GLenum usage )
-  : jagBase::LogBase( "jag.draw.bufobj" ),
+BufferObject::BufferObject( const GLenum target, const jag::base::BufferPtr b, const GLenum usage )
+  : jag::base::LogBase( "jag.draw.bufobj" ),
     ObjectID(),
     VertexArrayCommand( VertexArrayCommand::BufferObject_t ),
     _target( target ),
@@ -51,7 +51,7 @@ BufferObject::BufferObject( const GLenum target, const jagBase::BufferPtr b, con
 {
 }
 BufferObject::BufferObject( const BufferObject& rhs )
-  : jagBase::LogBase( rhs ),
+  : jag::base::LogBase( rhs ),
     ObjectID( rhs ),
     VertexArrayCommand( rhs ),
     _target( rhs._target ),
@@ -87,12 +87,12 @@ bool BufferObject::isSameKind( const VertexArrayCommand& rhs ) const
         ( _usage == bo->_usage ) );
 }
 
-void BufferObject::setBuffer( jagBase::BufferPtr b ) 
+void BufferObject::setBuffer( jag::base::BufferPtr b ) 
 {
     _buffer = b;
     markAllDirty();
 }
-const jagBase::BufferPtr& BufferObject::getBuffer() const
+const jag::base::BufferPtr& BufferObject::getBuffer() const
 {
     return( _buffer );
 }
@@ -242,7 +242,7 @@ IndexedBufferObject::IndexedBufferObject( const GLenum target )
     _index( 0 )
 {
 }
-IndexedBufferObject::IndexedBufferObject( const GLenum target, const jagBase::BufferPtr b, const GLenum usage )
+IndexedBufferObject::IndexedBufferObject( const GLenum target, const jag::base::BufferPtr b, const GLenum usage )
   : BufferObject( target, b, usage ),
     _index( 0 )
 {

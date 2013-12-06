@@ -23,9 +23,9 @@
 #define __JAGDRAW_BOUND_H__ 1
 
 
-#include <jagBase/ptr.h>
-#include <jagBase/gmtlSupport.h>
-#include <jagBase/LogMacros.h>
+#include <jag/base/ptr.h>
+#include <jag/base/gmtlSupport.h>
+#include <jag/base/LogMacros.h>
 #include <gmtl/AABox.h>
 #include <gmtl/Sphere.h>
 #include <gmtl/Containment.h>
@@ -39,7 +39,7 @@ namespace jagDraw {
 
 // Forward
 class Bound;
-typedef jagBase::ptr< Bound >::shared_ptr BoundPtr;
+typedef jag::base::ptr< Bound >::shared_ptr BoundPtr;
 
 
 /** \addtogroup jagDrawBound Bounding Volume Management */

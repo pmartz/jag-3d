@@ -29,8 +29,8 @@
 #include <jagDraw/CommandMap.h>
 #include <jagDraw/Shader.h>
 #include <jagDraw/Program.h>
-#include <jagBase/ptr.h>
-#include <jagBase/LogBase.h>
+#include <jag/base/ptr.h>
+#include <jag/base/LogBase.h>
 
 
 
@@ -117,7 +117,7 @@ protected:
     unsigned int _numContexts;
 };
 
-typedef jagBase::ptr< QuadNode >::shared_ptr QuadNodePtr;
+typedef jag::base::ptr< QuadNode >::shared_ptr QuadNodePtr;
 
 
 // jagUtil

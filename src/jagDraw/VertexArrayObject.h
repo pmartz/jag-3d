@@ -28,7 +28,7 @@
 #include <jagDraw/ObjectID.h>
 #include <jagDraw/VertexArrayCommand.h>
 #include <jagDraw/PerContextData.h>
-#include <jagBase/ptr.h>
+#include <jag/base/ptr.h>
 
 #include <vector>
 
@@ -42,7 +42,7 @@ namespace jagDraw {
 struct DrawInfo;
 
 class VertexArrayObject;
-typedef jagBase::ptr< jagDraw::VertexArrayObject >::shared_ptr VertexArrayObjectPtr;
+typedef jag::base::ptr< jagDraw::VertexArrayObject >::shared_ptr VertexArrayObjectPtr;
 
 /** \class VertexArrayObject VertexArrayObject.h <jagDraw/VertexArrayObject.h>
 \brief A context-safe wrapper for OpenGL vertex array objects.

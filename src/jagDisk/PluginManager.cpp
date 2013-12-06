@@ -21,7 +21,7 @@
 
 #include <jagDisk/PluginManager.h>
 #include <jagDisk/ReaderWriter.h>
-#include <jagBase/LogMacros.h>
+#include <jag/base/LogMacros.h>
 
 #include <Poco/Glob.h>
 #include <Poco/File.h>

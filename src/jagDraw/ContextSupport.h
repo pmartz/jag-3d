@@ -25,7 +25,7 @@
 
 #include <jagDraw/Export.h>
 #include <jagDraw/PerContextData.h>
-#include <jagBase/LogBase.h>
+#include <jag/base/LogBase.h>
 #include <boost/thread/tss.hpp>
 #include <boost/thread/mutex.hpp>
 #include <map>
@@ -107,7 +107,7 @@ thereby know when a context is being made active/current for the first time.
 freeglutSupport.cpp that use multiple threads to open multiple windows and
 render concurrently.
 */
-class JAGDRAW_EXPORT ContextSupport : protected jagBase::LogBase
+class JAGDRAW_EXPORT ContextSupport : protected jag::base::LogBase
 {
 public:
     static ContextSupport* instance();

@@ -22,7 +22,7 @@
 #include <jagDraw/Uniform.h>
 #include <jagDraw/PlatformOpenGL.h>
 #include <jagDraw/DrawInfo.h>
-#include <jagBase/LogMacros.h>
+#include <jag/base/LogMacros.h>
 #include <jagDraw/Error.h>
 
 #include <string>
@@ -33,26 +33,26 @@ namespace jagDraw {
 
 Uniform::Uniform()
   : Command( Uniform_t ),
-    jagBase::LogBase( "jag.draw.uniform" ),
+    jag::base::LogBase( "jag.draw.uniform" ),
     _transpose( false )
 {
 }
 Uniform::Uniform( const std::string& name )
   : Command( Uniform_t ),
-    jagBase::LogBase( "jag.draw.uniform" )
+    jag::base::LogBase( "jag.draw.uniform" )
 {
     internalInit( name );
 }
 Uniform::Uniform( const std::string& name, const GLenum type )
   : Command( Uniform_t ),
-    jagBase::LogBase( "jag.draw.uniform" )
+    jag::base::LogBase( "jag.draw.uniform" )
 {
     internalInit( name );
     setType( type );
 }
 Uniform::Uniform( const std::string& name, const GLenum type, const GLint& v )
   : Command( Uniform_t ),
-    jagBase::LogBase( "jag.draw.uniform" )
+    jag::base::LogBase( "jag.draw.uniform" )
 {
     internalInit( name );
     setType( type );
@@ -61,7 +61,7 @@ Uniform::Uniform( const std::string& name, const GLenum type, const GLint& v )
 
 Uniform::Uniform( const Uniform& rhs )
   : Command( rhs ),
-    jagBase::LogBase( rhs ),
+    jag::base::LogBase( rhs ),
     SHARED_FROM_THIS( Uniform )( rhs ),
     _name( rhs._name ),
     _indexHash( rhs._indexHash ),
@@ -168,7 +168,7 @@ void Uniform::copyValue( void* address )
 #define TYPE_METHOD_BODIES(__type,__typeid) \
     Uniform::Uniform( const std::string& name, const __type& v ) \
       : Command( Uniform_t ), \
-        jagBase::LogBase( "jag.draw.uniform" ) \
+        jag::base::LogBase( "jag.draw.uniform" ) \
     { \
         internalInit( name ); \
         setType( __typeid ); \

@@ -28,11 +28,11 @@
 #include <jagDraw/CommandMap.h>
 #include <jagDraw/Bound.h>
 #include <jagDraw/BoundOwner.h>
-#include <jagBase/MultiCallback.h>
+#include <jag/base/MultiCallback.h>
 #include <jagDraw/ContextSupport.h>
-#include <jagBase/LogBase.h>
-#include <jagBase/UserDataOwner.h>
-#include <jagBase/ptr.h>
+#include <jag/base/LogBase.h>
+#include <jag/base/UserDataOwner.h>
+#include <jag/base/ptr.h>
 
 #include <gmtl/gmtl.h>
 
@@ -50,7 +50,7 @@ namespace jagSG {
 /*@{*/
 
 class Node;
-typedef jagBase::ptr< jagSG::Node >::shared_ptr NodePtr;
+typedef jag::base::ptr< jagSG::Node >::shared_ptr NodePtr;
 typedef std::vector< NodePtr > NodeVec;
 typedef std::vector< Node > NodeSimpleVec;
 typedef std::vector< Node* > NodeSimplePtrVec;
@@ -62,8 +62,8 @@ class VisitorBase;
 \brief Scene graph element. "element" component of the %Visitor design pattern.
 \details TBD
 */
-class JAGSG_EXPORT Node : protected jagBase::LogBase,
-        public jagBase::UserDataOwner, 
+class JAGSG_EXPORT Node : protected jag::base::LogBase,
+        public jag::base::UserDataOwner, 
         public jagDraw::ObjectIDOwner,
         public jagDraw::BoundOwner,
         public SHARED_FROM_THIS(Node)
@@ -102,7 +102,7 @@ public:
     protected:
         jagSG::Node* _node;
     };
-    typedef jagBase::ptr< CallbackInfo >::shared_ptr CallbackInfoPtr;
+    typedef jag::base::ptr< CallbackInfo >::shared_ptr CallbackInfoPtr;
 
     /** \struct Callback
     \brief TBD
@@ -116,7 +116,7 @@ public:
             return( false );
         }
     };
-    typedef jagBase::ptr< Callback >::shared_ptr CallbackPtr;
+    typedef jag::base::ptr< Callback >::shared_ptr CallbackPtr;
 
     /** \brief TBD
     \details TBD */
@@ -128,7 +128,7 @@ public:
 
     /** \brief TBD
     \details TBD */
-    typedef jagBase::MultiCallback< CallbackPtr > CollectionCallbacks;
+    typedef jag::base::MultiCallback< CallbackPtr > CollectionCallbacks;
     /** \brief TBD
     \details TBD */
     CollectionCallbacks& getCollectionCallbacks();
@@ -276,9 +276,9 @@ protected:
     CallbackPtr _traverseCallback;
     CollectionCallbacks _collectionCallbacks;
 
-    /** \struct Callback Notifier.h <jagBase/Notifier.h>
+    /** \struct Callback Notifier.h <jag/base/Notifier.h>
     \brief Notifies client code  */
-    struct BoundDirtyCallback : jagBase::Notifier::NotifierCallback
+    struct BoundDirtyCallback : jag::base::Notifier::NotifierCallback
     {
         BoundDirtyCallback( Node* owner )
             : _owner( owner )
@@ -291,11 +291,11 @@ protected:
 
         /** \brief TBD
         \details TBD */
-        virtual void operator()( jagBase::Notifier* notifier, const jagBase::Notifier::NotifierInfo& info );
+        virtual void operator()( jag::base::Notifier* notifier, const jag::base::Notifier::NotifierInfo& info );
 
         Node* _owner;
     };
-    typedef jagBase::ptr< BoundDirtyCallback >::shared_ptr BoundDirtyCallbackPtr;
+    typedef jag::base::ptr< BoundDirtyCallback >::shared_ptr BoundDirtyCallbackPtr;
 
     BoundDirtyCallbackPtr _boundDirtyCallback;
 };

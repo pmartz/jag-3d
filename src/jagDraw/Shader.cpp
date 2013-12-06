@@ -21,7 +21,7 @@
 
 #include <jagDraw/Shader.h>
 #include <jagDraw/PlatformOpenGL.h>
-#include <jagBase/LogMacros.h>
+#include <jag/base/LogMacros.h>
 #include <boost/foreach.hpp>
 #include <jagDraw/Error.h>
 #include <iostream>
@@ -32,13 +32,13 @@ namespace jagDraw {
 
 
 Shader::Shader( GLenum type, const std::string& logName )
-  : jagBase::LogBase( logName.empty() ? "jag.draw.shader" : logName ),
+  : jag::base::LogBase( logName.empty() ? "jag.draw.shader" : logName ),
     _type( type )
 {
 }
 Shader::Shader( const Shader& rhs )
   : ObjectID( rhs ),
-    jagBase::LogBase( rhs ),
+    jag::base::LogBase( rhs ),
     _type( rhs._type ),
     _sourceVec( rhs._sourceVec )
 {
@@ -65,7 +65,7 @@ unsigned int Shader::getNumSourceStrings() const
 {
     return( ( unsigned int )( _sourceVec.size() ) );
 }
-jagBase::StringVec& Shader::getSourceVec()
+jag::base::StringVec& Shader::getSourceVec()
 {
     return( _sourceVec );
 }
@@ -128,7 +128,7 @@ void Shader::internalInit( const unsigned int contextID )
 {
     std::vector< const char* > src;
     GLintVec length;
-    BOOST_FOREACH( jagBase::StringVec::value_type& srcStr, _sourceVec )
+    BOOST_FOREACH( jag::base::StringVec::value_type& srcStr, _sourceVec )
     {
         //1. Scan for any built-in variables
         //   a. If OpenGL 3.1 replace deprecated 'gl_' variables with equivalent 'ii_' variables
@@ -167,7 +167,7 @@ void Shader::internalInit( const unsigned int contextID )
 std::string Shader::getFullSource() const
 {
     std::string fullSource;
-    BOOST_FOREACH( const jagBase::StringVec::value_type& srcStr, _sourceVec )
+    BOOST_FOREACH( const jag::base::StringVec::value_type& srcStr, _sourceVec )
     {
         fullSource += srcStr;
     }

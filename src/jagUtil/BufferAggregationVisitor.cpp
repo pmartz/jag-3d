@@ -210,7 +210,7 @@ void BufferAggregationVisitor::offsetDrawElements( jagDraw::DrawElementsBase* de
     }
     }
 
-    jagBase::BufferPtr buf( new jagBase::Buffer( numElements * sizeof( GLuint ), newData ) );
+    jag::base::BufferPtr buf( new jag::base::Buffer( numElements * sizeof( GLuint ), newData ) );
     jagDraw::BufferObjectPtr newBuf( new jagDraw::BufferObject( GL_ELEMENT_ARRAY_BUFFER, buf ) );
     deBase->setElementBuffer( newBuf );
     deBase->setType( GL_UNSIGNED_INT );
@@ -228,8 +228,8 @@ void BufferAggregationVisitor::combineElementBuffer( jagDraw::DrawElementsBase* 
         return;
     }
 
-    jagBase::BufferPtr lhs( _elements->getBuffer() );
-    const jagBase::BufferPtr rhs( rightBuf->getBuffer() );
+    jag::base::BufferPtr lhs( _elements->getBuffer() );
+    const jag::base::BufferPtr rhs( rightBuf->getBuffer() );
     const size_t requiredSize( lhs->getSize() + rhs->getSize() );
     if( lhs->getMaxSize() < requiredSize )
         lhs->setMaxSize( std::max< size_t >( lhs->getMaxSize() * 2, requiredSize ) );

@@ -25,8 +25,8 @@
 
 #include <jagDisk/Export.h>
 #include <jagDisk/ReaderWriter.h>
-#include <jagBase/LogBase.h>
-#include <jagBase/types.h>
+#include <jag/base/LogBase.h>
+#include <jag/base/types.h>
 
 #include <Poco/Path.h>
 #include <string>
@@ -105,7 +105,7 @@ when the plugin is loaded.
 To create an instance of a plugin class object, applications call createOperation().
 Currently, there is no way to query the list of classes contained in a plugin, but this
 capability can be added as future work. */
-class JAGDISK_EXPORT PluginManager : protected jagBase::LogBase
+class JAGDISK_EXPORT PluginManager : protected jag::base::LogBase
 {
 public:
     typedef enum {

@@ -22,7 +22,7 @@
 #include <jagDraw/Framebuffer.h>
 #include <jagDraw/DrawInfo.h>
 #include <jagDraw/Error.h>
-#include <jagBase/LogMacros.h>
+#include <jag/base/LogMacros.h>
 
 #include <boost/foreach.hpp>
 
@@ -32,7 +32,7 @@ namespace jagDraw {
 
 Framebuffer::Framebuffer( GLenum target, const std::string& logName )
   : Command( Framebuffer_t ),
-    jagBase::LogBase( logName.empty() ? "jag.draw.fbo" : logName ),
+    jag::base::LogBase( logName.empty() ? "jag.draw.fbo" : logName ),
     _target( target ),
     _viewport( false ),
     _clear( false ),
@@ -53,7 +53,7 @@ Framebuffer::Framebuffer( GLenum target, const std::string& logName )
 Framebuffer::Framebuffer( const Framebuffer& rhs )
   : Command( rhs ),
     ObjectID( rhs ),
-    jagBase::LogBase( rhs ),
+    jag::base::LogBase( rhs ),
     _target( rhs._target ),
     _viewport( rhs._viewport ),
     _clear( rhs._clear ),
@@ -301,7 +301,7 @@ void Framebuffer::cleanDirtyAttachments( const unsigned int contextID )
 
 Renderbuffer::Renderbuffer( const std::string& logName )
     : FramebufferAttachable(),
-    jagBase::LogBase( logName ),
+    jag::base::LogBase( logName ),
     _samples( 0 ),
     _internalFormat( GL_NONE ),
     _width( 0 ),
@@ -310,7 +310,7 @@ Renderbuffer::Renderbuffer( const std::string& logName )
 }
 Renderbuffer::Renderbuffer( const GLenum internalFormat, const GLsizei width, const GLsizei height, const GLsizei samples, const std::string& logName )
   : FramebufferAttachable(),
-    jagBase::LogBase( logName.empty() ? "jag.draw.fbo.rb" : logName ),
+    jag::base::LogBase( logName.empty() ? "jag.draw.fbo.rb" : logName ),
     _samples( samples ),
     _internalFormat( internalFormat),
     _width( width ),
@@ -320,7 +320,7 @@ Renderbuffer::Renderbuffer( const GLenum internalFormat, const GLsizei width, co
 Renderbuffer::Renderbuffer( const Renderbuffer& rhs )
   : ObjectID( rhs ),
     FramebufferAttachable( rhs ),
-    jagBase::LogBase( rhs ),
+    jag::base::LogBase( rhs ),
     _samples( rhs._samples ),
     _internalFormat( rhs._internalFormat),
     _width( rhs._width ),

@@ -23,9 +23,9 @@
 
 #include <jagDraw/Common.h>
 
-#include <jagBase/Version.h>
-#include <jagBase/Log.h>
-#include <jagBase/LogMacros.h>
+#include <jag/base/Version.h>
+#include <jag/base/Log.h>
+#include <jag/base/LogMacros.h>
 
 #include <boost/program_options/options_description.hpp>
 #include <boost/foreach.hpp>
@@ -68,9 +68,9 @@ protected:
 
 DemoInterface* DemoInterface::create( bpo::options_description& desc )
 {
-    jagBase::Log::instance()->setPriority( jagBase::Log::PrioNotice, jagBase::Log::Console );
-    jagBase::Log::instance()->setPriority( jagBase::Log::PrioTrace, "jag.draw.tex" );
-    jagBase::Log::instance()->setPriority( jagBase::Log::PrioDebug, "jag.draw.fbo" );
+    jag::base::Log::instance()->setPriority( jag::base::Log::PrioNotice, jag::base::Log::Console );
+    jag::base::Log::instance()->setPriority( jag::base::Log::PrioTrace, "jag.draw.tex" );
+    jag::base::Log::instance()->setPriority( jag::base::Log::PrioDebug, "jag.draw.fbo" );
 
     return( new RttDemo );
 }
@@ -122,7 +122,7 @@ jagDraw::DrawablePtr RttDemo::makeSceneDrawable(
         0., -1., z,
         0., 1., z,
         1., 0., z };
-    jagBase::BufferPtr ibp( new jagBase::Buffer( sizeof( vertices ), (void*)vertices ) );
+    jag::base::BufferPtr ibp( new jag::base::Buffer( sizeof( vertices ), (void*)vertices ) );
     jagDraw::BufferObjectPtr ibop( new jagDraw::BufferObject( GL_ARRAY_BUFFER, ibp ) );
 
     jagDraw::VertexAttribPtr iVerts( new jagDraw::VertexAttrib(
@@ -251,7 +251,7 @@ bool RttDemo::startup( const unsigned int numContexts )
             0., 1.,
             1., 1., z,
             1., 1. };
-        jagBase::BufferPtr ibp( new jagBase::Buffer( sizeof( vertices ), (void*)vertices ) );
+        jag::base::BufferPtr ibp( new jag::base::Buffer( sizeof( vertices ), (void*)vertices ) );
         jagDraw::BufferObjectPtr ibop( new jagDraw::BufferObject( GL_ARRAY_BUFFER, ibp ) );
 
         const GLsizei stride = sizeof( GLfloat ) * 5;
@@ -312,7 +312,7 @@ bool RttDemo::init()
     glDisable( GL_DEPTH_TEST );
 
     // Auto-log the version string.
-    jagBase::getVersionString();
+    jag::base::getVersionString();
 
     // Auto-log the OpenGL version string.
     jagDraw::getOpenGLVersionString();

@@ -21,7 +21,7 @@
 
 #include <jagDraw/Common.h>
 
-#include <jagBase/Version.h>
+#include <jag/base/Version.h>
 
 #include <string>
 #include <vector>

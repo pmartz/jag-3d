@@ -27,7 +27,7 @@
 #include <jagDraw/DrawInfo.h>
 #include <jagDraw/VertexArrayCommand.h>
 #include <jagDraw/Program.h>
-#include <jagBase/ptr.h>
+#include <jag/base/ptr.h>
 
 #include <vector>
 
@@ -173,7 +173,7 @@ protected:
     GLsizeiptr _offset;
 };
 
-typedef jagBase::ptr< jagDraw::VertexAttrib >::shared_ptr VertexAttribPtr;
+typedef jag::base::ptr< jagDraw::VertexAttrib >::shared_ptr VertexAttribPtr;
 typedef std::vector< VertexAttribPtr > VertexAttribVec;
 
 
@@ -208,7 +208,7 @@ public:
     }
 };
 
-typedef jagBase::ptr< jagDraw::VertexAttribI >::shared_ptr VertexAttribIPtr;
+typedef jag::base::ptr< jagDraw::VertexAttribI >::shared_ptr VertexAttribIPtr;
 typedef std::vector< VertexAttribIPtr > VertexAttribIVec;
 
 

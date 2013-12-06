@@ -25,11 +25,11 @@
 #include <jagDraw/PerContextData.h>
 #include <jagSG/Common.h>
 #include <jagDisk/ReadWrite.h>
-#include <jagBase/Profile.h>
+#include <jag/base/Profile.h>
 #include <jagUtil/DrawGraphCountVisitor.h>
-#include <jagBase/Version.h>
-#include <jagBase/Log.h>
-#include <jagBase/LogMacros.h>
+#include <jag/base/Version.h>
+#include <jag/base/Log.h>
+#include <jag/base/LogMacros.h>
 
 #include <jagUtil/BufferAggregationVisitor.h>
 
@@ -246,7 +246,7 @@ bool JagModel::init()
     glEnable( GL_DEPTH_TEST );
 
     // Auto-log the version string.
-    jagBase::getVersionString();
+    jag::base::getVersionString();
 
     // Auto-log the OpenGL version string.
     jagDraw::getOpenGLVersionString();

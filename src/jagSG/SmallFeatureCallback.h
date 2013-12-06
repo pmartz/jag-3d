@@ -25,8 +25,8 @@
 #include <jagSG/Export.h>
 #include <jagSG/Node.h>
 #include <jagSG/Visitor.h>
-#include <jagBase/LogBase.h>
-#include <jagBase/ptr.h>
+#include <jag/base/LogBase.h>
+#include <jag/base/ptr.h>
 
 
 
@@ -40,7 +40,7 @@ namespace jagSG {
 \brief TBD
 \details TBD
 */
-class JAGSG_EXPORT SmallFeatureCallback : protected jagBase::LogBase,
+class JAGSG_EXPORT SmallFeatureCallback : protected jag::base::LogBase,
         public jagSG::Node::Callback
 {
 public:
@@ -65,7 +65,7 @@ protected:
     double _threshold;
 };
 
-typedef jagBase::ptr< SmallFeatureCallback >::shared_ptr SmallFeatureCallbackPtr;
+typedef jag::base::ptr< SmallFeatureCallback >::shared_ptr SmallFeatureCallbackPtr;
 
 
 

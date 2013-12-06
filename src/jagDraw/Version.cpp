@@ -21,7 +21,7 @@
 
 #include <jagDraw/Version.h>
 #include <jagDraw/PlatformOpenGL.h>
-#include <jagBase/LogMacros.h>
+#include <jag/base/LogMacros.h>
 #include <string>
 #include <sstream>
 

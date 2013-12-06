@@ -25,8 +25,8 @@
 #include <jagSG/Export.h>
 #include <jagSG/Node.h>
 #include <jagSG/Visitor.h>
-#include <jagBase/LogBase.h>
-#include <jagBase/ptr.h>
+#include <jag/base/LogBase.h>
+#include <jag/base/ptr.h>
 
 
 
@@ -40,7 +40,7 @@ namespace jagSG {
 \brief Change the draw graph NodeContainer that the CollectionVisitor stores Drawables in.
 \details TBD
 */
-class JAGSG_EXPORT SelectContainerCallback : protected jagBase::LogBase,
+class JAGSG_EXPORT SelectContainerCallback : protected jag::base::LogBase,
         public jagSG::Node::Callback
 {
 public:
@@ -60,7 +60,7 @@ protected:
     unsigned int _index;
 };
 
-typedef jagBase::ptr< SelectContainerCallback >::shared_ptr SelectContainerCallbackPtr;
+typedef jag::base::ptr< SelectContainerCallback >::shared_ptr SelectContainerCallbackPtr;
 
 
 /*@}*/

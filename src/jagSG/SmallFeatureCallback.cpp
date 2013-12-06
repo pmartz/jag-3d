@@ -23,20 +23,20 @@
 #include <jagSG/Node.h>
 #include <jagSG/Visitor.h>
 #include <jagSG/CollectionVisitor.h>
-#include <jagBase/Profile.h>
+#include <jag/base/Profile.h>
 
 
 namespace jagSG {
 
 
 SmallFeatureCallback::SmallFeatureCallback( const std::string& logName )
-  : jagBase::LogBase( logName.empty() ? "jag.sg.coll.small" : logName ),
+  : jag::base::LogBase( logName.empty() ? "jag.sg.coll.small" : logName ),
     jagSG::Node::Callback(),
     _threshold( 3. )
 {
 }
 SmallFeatureCallback::SmallFeatureCallback( const SmallFeatureCallback& rhs )
-  : jagBase::LogBase( "jag.sg.coll.small" ),
+  : jag::base::LogBase( "jag.sg.coll.small" ),
     jagSG::Node::Callback( rhs ),
     _threshold( rhs._threshold )
 {

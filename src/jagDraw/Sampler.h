@@ -27,8 +27,8 @@
 #include <jagDraw/Command.h>
 #include <jagDraw/PlatformOpenGL.h>
 #include <jagDraw/ObjectID.h>
-#include <jagBase/LogBase.h>
-#include <jagBase/ptr.h>
+#include <jag/base/LogBase.h>
+#include <jag/base/ptr.h>
 
 #include <boost/foreach.hpp>
 #include <vector>
@@ -43,7 +43,7 @@ namespace jagDraw {
 // forward
 struct SamplerState;
 
-typedef jagBase::ptr< jagDraw::SamplerState >::shared_ptr SamplerStatePtr;
+typedef jag::base::ptr< jagDraw::SamplerState >::shared_ptr SamplerStatePtr;
 
 
 /** \class Sampler Sampler.h <jagDraw/Sampler.h>
@@ -58,7 +58,7 @@ Mac OSX. When OSX moves to a more recent version of OpenGL, much of the Sampler
 implementation could be cleaned up at that time.
 */
 class JAGDRAW_EXPORT Sampler : public Command,
-        public ObjectID, protected jagBase::LogBase
+        public ObjectID, protected jag::base::LogBase
 {
 public:
     Sampler( const std::string& logName=std::string( "" ) );
@@ -106,7 +106,7 @@ protected:
     SamplerStatePtr _samplerState;
 };
 
-typedef jagBase::ptr< jagDraw::Sampler >::shared_ptr SamplerPtr;
+typedef jag::base::ptr< jagDraw::Sampler >::shared_ptr SamplerPtr;
 
 
 
@@ -142,7 +142,7 @@ struct JAGDRAW_EXPORT SamplerState
 
 
 class SamplerSet;
-typedef jagBase::ptr< jagDraw::SamplerSet >::shared_ptr SamplerSetPtr;
+typedef jag::base::ptr< jagDraw::SamplerSet >::shared_ptr SamplerSetPtr;
 
 /** \class SamplerSet Sampler.h <jagDraw/Sampler.h>
 \brief TBD

@@ -25,11 +25,11 @@
 #include <jagSG/Common.h>
 #include <jagSG/ExecuteVisitor.h>
 #include <jagDraw/PerContextData.h>
-#include <jagBase/Transform.h>
+#include <jag/base/Transform.h>
 #include <jagDisk/ReadWrite.h>
-#include <jagBase/Version.h>
-#include <jagBase/Log.h>
-#include <jagBase/LogMacros.h>
+#include <jag/base/Version.h>
+#include <jag/base/Log.h>
+#include <jag/base/LogMacros.h>
 #include <boost/program_options/options_description.hpp>
 #include <gmtl/gmtl.h>
 
@@ -73,8 +73,8 @@ protected:
 
 DemoInterface* DemoInterface::create( bpo::options_description& desc )
 {
-    jagBase::Log::instance()->setPriority( jagBase::Log::PrioInfo, jagBase::Log::Console );
-    jagBase::Log::instance()->setPriority( jagBase::Log::PrioWarning, "jag.draw.ctx" );
+    jag::base::Log::instance()->setPriority( jag::base::Log::PrioInfo, jag::base::Log::Console );
+    jag::base::Log::instance()->setPriority( jag::base::Log::PrioWarning, "jag.draw.ctx" );
 
     return( new NodesDemo );
 }
@@ -86,7 +86,7 @@ jagSG::NodePtr NodesDemo::makeScene( const gmtl::Point3f& offset, const gmtl::Ma
     jagSG::NodePtr node( jagSG::NodePtr( new jagSG::Node() ) );
 
     // Interleaved vertices and normals.
-    jagBase::Point3fVec data;
+    jag::base::Point3fVec data;
     data.push_back( gmtl::Point3f( -1.f, -1.f, 0.f ) + offset );
     data.push_back( gmtl::Point3f( 0.f, 0.f, 1.f ) );
     data.push_back( gmtl::Point3f( 1.f, -1.f, 0.f ) + offset );
@@ -95,7 +95,7 @@ jagSG::NodePtr NodesDemo::makeScene( const gmtl::Point3f& offset, const gmtl::Ma
     data.push_back( gmtl::Point3f( 0.f, 0.f, 1.f ) );
     data.push_back( gmtl::Point3f( 1.f, 1.f, 0.f ) + offset );
     data.push_back( gmtl::Point3f( 0.f, 0.f, 1.f ) );
-    jagBase::BufferPtr ibp( new jagBase::Buffer( data.size() * sizeof( gmtl::Point3f ), (void*)&(data[0]) ) );
+    jag::base::BufferPtr ibp( new jag::base::Buffer( data.size() * sizeof( gmtl::Point3f ), (void*)&(data[0]) ) );
     jagDraw::BufferObjectPtr ibop( new jagDraw::BufferObject( GL_ARRAY_BUFFER, ibp ) );
 
     const GLsizei stride( sizeof( float ) * 6 );
@@ -206,7 +206,7 @@ bool NodesDemo::init()
     glEnable( GL_DEPTH_TEST );
 
     // Auto-log the version string.
-    jagBase::getVersionString();
+    jag::base::getVersionString();
 
     // Auto-log the OpenGL version string.
     jagDraw::getOpenGLVersionString();

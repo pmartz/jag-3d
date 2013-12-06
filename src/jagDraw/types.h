@@ -44,7 +44,7 @@ arrays for base OpenGL types. Examples:
 #define DEFINE_TYPE_ARRAYS(__type) \
     DEFINE_PER_CTX(__type,__type) \
     typedef std::vector< __type > __type##Vec; \
-    typedef jagBase::ptr< __type >::shared_array_ptr __type##Array;
+    typedef jag::base::ptr< __type >::shared_array_ptr __type##Array;
 
 DEFINE_TYPE_ARRAYS(GLenum);
 DEFINE_TYPE_ARRAYS(GLboolean);
@@ -64,9 +64,9 @@ DEFINE_TYPE_ARRAYS(GLclampd);
 
 typedef PerContextData< GLvoid* > PerContextGLvoidPtr;
 typedef std::vector< GLvoid* > GLvoidPtrVec;
-typedef jagBase::ptr< GLvoid* >::shared_array_ptr GLvoidPtrArray;
+typedef jag::base::ptr< GLvoid* >::shared_array_ptr GLvoidPtrArray;
 
-// Just define PerContext* -- Other types defined in jagBase/types.h.
+// Just define PerContext* -- Other types defined in jag/base/types.h.
 DEFINE_PER_CTX(unsigned char,UChar);
 DEFINE_PER_CTX(unsigned int,UInt);
 DEFINE_PER_CTX(float,Float);

@@ -21,7 +21,7 @@
 
 #include <demoSupport/DemoInterface.h>
 #include <jagDraw/ContextSupport.h>
-#include <jagBase/Profile.h>
+#include <jag/base/Profile.h>
 #include <jagMx/MxCore.h>
 #include <jagMx/MxUtils.h>
 #include <jagMx/MxGamePad.h>
@@ -83,8 +83,8 @@ void display()
     }
 
 #ifdef JAG3D_ENABLE_PROFILING
-    jagBase::ProfileManager::instance()->dumpAll();
-    jagBase::ProfileManager::instance()->reset();
+    jag::base::ProfileManager::instance()->dumpAll();
+    jag::base::ProfileManager::instance()->reset();
 #endif
 
     if( di->getContinuousRedraw() )

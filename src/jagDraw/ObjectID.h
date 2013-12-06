@@ -26,7 +26,7 @@
 #include <jagDraw/ContextSupport.h>
 #include <jagDraw/PerContextData.h>
 #include <jagDraw/types.h>
-#include <jagBase/ptr.h>
+#include <jag/base/ptr.h>
 
 #include <vector>
 
@@ -62,7 +62,7 @@ public:
 
 /*@}*/
 
-typedef jagBase::ptr< jagDraw::ObjectIDOwner >::shared_ptr ObjectIDOwnerPtr;
+typedef jag::base::ptr< jagDraw::ObjectIDOwner >::shared_ptr ObjectIDOwnerPtr;
 typedef std::vector< ObjectIDOwnerPtr > ObjectIDOwnerVec;
 
 
@@ -122,7 +122,7 @@ protected:
 
 /*@}*/
 
-typedef jagBase::ptr< jagDraw::ObjectID >::shared_ptr ObjectIDPtr;
+typedef jag::base::ptr< jagDraw::ObjectID >::shared_ptr ObjectIDPtr;
 typedef std::vector< ObjectIDPtr > ObjectIDVec;
 
 

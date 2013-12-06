@@ -22,7 +22,7 @@
 
 #include <jagSG/Node.h>
 #include <jagDraw/DrawNode.h>
-#include <jagBase/UserDataOwner.h>
+#include <jag/base/UserDataOwner.h>
 
 #include <Poco/Foundation.h>
 #include <boost/foreach.hpp>
@@ -41,7 +41,7 @@ bool test()
     {
         std::cout << "Testing: User Data setting and retrieval using helper methods. . ." << std::endl;
         {
-            jagBase::UserDataOwner udo;
+            jag::base::UserDataOwner udo;
             udo.setUserDataPair("prop1", 1);
             udo.setUserDataPair("prop2", 2);
             if(udo.getUserDataValue("prop2") != 2) {
@@ -52,7 +52,7 @@ bool test()
 
         std::cout << "Testing: User Data setting and retrieval using pass by reference get method. . ." << std::endl;
         {
-            jagBase::UserDataOwner udo;
+            jag::base::UserDataOwner udo;
             udo.getUserData()["prop1"] = "string test";
             udo.getUserData()["prop2"] = 42;
 

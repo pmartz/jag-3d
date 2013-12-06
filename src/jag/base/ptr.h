@@ -19,22 +19,37 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#ifndef __JAGBASE_EXPORT__
-#define __JAGBASE_EXPORT__ 1
+#ifndef __JAG_BASE_PTR_H__
+#define __JAG_BASE_PTR_H__ 1
 
 
-#if defined( _MSC_VER ) || defined( __CYGWIN__ ) || defined( __MINGW32__ ) || defined( __BCPLUSPLUS__ ) || defined( __MWERKS__ )
-    #if defined( JAG3D_STATIC )
-        #define JAGBASE_EXPORT
-    #elif defined( JAGBASE_LIBRARY )
-        #define JAGBASE_EXPORT __declspec( dllexport )
-    #else
-        #define JAGBASE_EXPORT __declspec( dllimport )
-    #endif
-#else
-    #define JAGBASE_EXPORT
-#endif
+#include <boost/smart_ptr/shared_ptr.hpp>
+#include <boost/smart_ptr/shared_array.hpp>
+#include <boost/smart_ptr/enable_shared_from_this.hpp>
 
 
-// __JAGBASE_EXPORT__
+namespace jag {
+namespace base {
+
+
+#define SHARED_FROM_THIS(_t) boost::enable_shared_from_this<_t>
+
+    
+/** \class ptr ptr.h <jag/base/ptr.h>
+\brief Defines the \c ptr template struct, supporting either Boost or TR1.
+*/
+template <typename T>
+struct ptr
+{
+    typedef boost::shared_ptr< T > shared_ptr;
+    typedef boost::shared_array< T > shared_array_ptr;
+};
+
+
+// namespace jag::base::
+}
+}
+
+
+// __JAG_BASE_PTR_H__
 #endif

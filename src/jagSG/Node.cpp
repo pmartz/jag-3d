@@ -25,12 +25,12 @@
 #include <jagDraw/Command.h>
 #include <jagDraw/CommandMap.h>
 #include <jagDraw/Error.h>
-#include <jagBase/LogMacros.h>
-#include <jagBase/Profile.h>
-#include <jagBase/ptr.h>
+#include <jag/base/LogMacros.h>
+#include <jag/base/Profile.h>
+#include <jag/base/ptr.h>
 
 #include <gmtl/gmtl.h>
-#include <jagBase/gmtlSupport.h>
+#include <jag/base/gmtlSupport.h>
 
 #include <boost/foreach.hpp>
 
@@ -39,8 +39,8 @@ namespace jagSG {
 
 
 Node::Node( const std::string& logName )
-  : jagBase::LogBase( logName.empty() ? "jag.sg.node" : logName ),
-    jagBase::UserDataOwner(),
+  : jag::base::LogBase( logName.empty() ? "jag.sg.node" : logName ),
+    jag::base::UserDataOwner(),
     ObjectIDOwner(),
     SHARED_FROM_THIS( Node )(),
     jagDraw::BoundOwner(),
@@ -49,8 +49,8 @@ Node::Node( const std::string& logName )
     _boundDirtyCallback = BoundDirtyCallbackPtr( new BoundDirtyCallback( this ) );
 }
 Node::Node( const Node& rhs )
-  : jagBase::LogBase( "jag.sg.node" ),
-    jagBase::UserDataOwner( rhs ),
+  : jag::base::LogBase( "jag.sg.node" ),
+    jag::base::UserDataOwner( rhs ),
     ObjectIDOwner( rhs ),
     SHARED_FROM_THIS( Node )( rhs ),
     jagDraw::BoundOwner( rhs ),
@@ -391,7 +391,7 @@ void Node::deleteID( const jagDraw::jagDrawContextID contextID )
 
 
 
-void Node::BoundDirtyCallback::operator()( jagBase::Notifier* notifier, const jagBase::Notifier::NotifierInfo& info )
+void Node::BoundDirtyCallback::operator()( jag::base::Notifier* notifier, const jag::base::Notifier::NotifierInfo& info )
 {
     JAG3D_CRITICAL_STATIC( "jag.node.bounddirty", "I was notified." );
 

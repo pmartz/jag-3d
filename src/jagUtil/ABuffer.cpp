@@ -25,12 +25,12 @@
 #include <jagDraw/PerContextData.h>
 #include <jagSG/Common.h>
 #include <jagDisk/ReadWrite.h>
-#include <jagBase/Profile.h>
+#include <jag/base/Profile.h>
 #include <jagUtil/DrawGraphCountVisitor.h>
 #include <jagUtil/Shapes.h>
-#include <jagBase/Version.h>
-#include <jagBase/Log.h>
-#include <jagBase/LogMacros.h>
+#include <jag/base/Version.h>
+#include <jag/base/Log.h>
+#include <jag/base/LogMacros.h>
 
 #include <gmtl/gmtl.h>
 
@@ -46,7 +46,7 @@ namespace jagUtil
 
 
 ABuffer::ABuffer( const std::string& logName )
-    : jagBase::LogBase( logName.empty() ? "jag.util.abuf" : logName ),
+    : jag::base::LogBase( logName.empty() ? "jag.util.abuf" : logName ),
       _startContainer( 1 ),
       _secondaryEnable( false ),
       _width( 0 ),
@@ -61,7 +61,7 @@ ABuffer::ABuffer( const std::string& logName )
 ABuffer::ABuffer( jagDraw::TexturePtr& depthBuffer, jagDraw::TexturePtr& colorBuffer0,
                  jagDraw::TexturePtr& colorBuffer1,
                  const std::string& logName )
-    : jagBase::LogBase( logName.empty() ? "jag.util.abuf" : logName ),
+    : jag::base::LogBase( logName.empty() ? "jag.util.abuf" : logName ),
       _colorBuffer0( colorBuffer0 ),
       _colorBuffer1( colorBuffer1 ),
       _depthBuffer( depthBuffer ),
@@ -77,7 +77,7 @@ ABuffer::ABuffer( jagDraw::TexturePtr& depthBuffer, jagDraw::TexturePtr& colorBu
 {
 }
 ABuffer::ABuffer( const ABuffer& rhs )
-    : jagBase::LogBase( rhs ),
+    : jag::base::LogBase( rhs ),
       _colorBuffer0( rhs._colorBuffer0 ),
       _colorBuffer1( rhs._colorBuffer1 ),
       _depthBuffer( rhs._depthBuffer ),
@@ -191,7 +191,7 @@ jagDraw::DrawGraphPtr& ABuffer::createDrawGraphTemplate( const unsigned int star
             PerContextABufferCntxt& _abufferCntxt;
             jagDraw::FramebufferPtr _fbo;
         };
-        typedef jagBase::ptr< ABufferClearCallback >::shared_ptr ABufferClearCallbackPtr;
+        typedef jag::base::ptr< ABufferClearCallback >::shared_ptr ABufferClearCallbackPtr;
         ABufferClearCallbackPtr abccb( ABufferClearCallbackPtr( new ABufferClearCallback( _abufferCntxt ) ) );
         abccb->_clearProgram = _clearProgram;
         abccb->_fbo = _defaultFBO;
@@ -247,7 +247,7 @@ jagDraw::DrawGraphPtr& ABuffer::createDrawGraphTemplate( const unsigned int star
             jagDraw::ProgramPtr _renderProgram;
             PerContextABufferCntxt& _abufferCntxt;
         };
-        typedef jagBase::ptr< ABufferRenderCallback >::shared_ptr ABufferRenderCallbackPtr;
+        typedef jag::base::ptr< ABufferRenderCallback >::shared_ptr ABufferRenderCallbackPtr;
         ABufferRenderCallbackPtr abrcb( ABufferRenderCallbackPtr( new ABufferRenderCallback( _abufferCntxt ) ) );
         abrcb->_renderProgram = _renderProgram;
         nc.getCallbacks().push_back( abrcb );
@@ -286,7 +286,7 @@ jagDraw::DrawGraphPtr& ABuffer::createDrawGraphTemplate( const unsigned int star
             jagDraw::ProgramPtr _resolveProgram;
             PerContextABufferCntxt& _abufferCntxt;
         };
-        typedef jagBase::ptr< ABufferResolveCallback >::shared_ptr ABufferResolveCallbackPtr;
+        typedef jag::base::ptr< ABufferResolveCallback >::shared_ptr ABufferResolveCallbackPtr;
         ABufferResolveCallbackPtr abrcb( ABufferResolveCallbackPtr( new ABufferResolveCallback( _abufferCntxt ) ) );
         abrcb->_resolveProgram = _resolveProgram;
         nc.getCallbacks().push_back( abrcb );
@@ -626,11 +626,11 @@ std::string ABuffer::shaderResolveParameters() const
 unsigned int ABuffer::getRequiredMatrixUniforms()
 {
     return(
-        jagBase::TransformD::PROJ |
-        jagBase::TransformD::MODEL_VIEW_PROJ |
-        jagBase::TransformD::MODEL_VIEW |
-        jagBase::TransformD::MODEL_VIEW_INV_TRANS |
-        jagBase::TransformD::MODEL_VIEW_INV_TRANS_4
+        jag::base::TransformD::PROJ |
+        jag::base::TransformD::MODEL_VIEW_PROJ |
+        jag::base::TransformD::MODEL_VIEW |
+        jag::base::TransformD::MODEL_VIEW_INV_TRANS |
+        jag::base::TransformD::MODEL_VIEW_INV_TRANS_4
         );
 }
 

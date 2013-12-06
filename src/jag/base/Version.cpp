@@ -19,8 +19,8 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#include <jagBase/Version.h>
-#include <jagBase/LogMacros.h>
+#include <jag/base/Version.h>
+#include <jag/base/LogMacros.h>
 #include <string>
 #include <sstream>
 #include <iomanip>
@@ -32,7 +32,8 @@
 #include <gmtl/Version.h>
 
 
-namespace jagBase {
+namespace jag {
+namespace base {
 
 
 unsigned int getVersionNumber()
@@ -96,5 +97,6 @@ std::string getVersionString()
 }
 
 
-// namespace jagBase
+// namespace jag::base::
+}
 }

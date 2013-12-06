@@ -22,8 +22,8 @@
 #include <jagDraw/DrawNodeContainer.h>
 #include <jagDraw/DrawNode.h>
 #include <jagDraw/Error.h>
-#include <jagBase/Profile.h>
-#include <jagBase/LogMacros.h>
+#include <jag/base/Profile.h>
+#include <jag/base/LogMacros.h>
 
 #include <boost/foreach.hpp>
 
@@ -32,14 +32,14 @@ namespace jagDraw {
 
 
 DrawNodeContainer::DrawNodeContainer( const std::string& logName )
-  : jagBase::LogBase( logName.empty() ? "jag.draw.ncon" : logName ),
+  : jag::base::LogBase( logName.empty() ? "jag.draw.ncon" : logName ),
     ObjectIDOwner(),
     _resetEnable( true )
 {
 }
 DrawNodeContainer::DrawNodeContainer( const DrawNodeContainer& rhs )
   : DrawNodeVec( rhs ),
-    jagBase::LogBase( "jag.draw.ncon" ),
+    jag::base::LogBase( "jag.draw.ncon" ),
     ObjectIDOwner( rhs ),
     _callbacks( rhs._callbacks ),
     _resetEnable( rhs._resetEnable )
@@ -76,7 +76,7 @@ DrawNodeContainer& DrawNodeContainer::operator=( const DrawNodeContainer& rhs )
     DrawNodeVec::operator=( rhs );
     ObjectIDOwner::operator=( rhs );
     // LogBase does not support (and doesn't need) assignment operator.
-    //jagBase::LogBase::operator=( rhs );
+    //jag::base::LogBase::operator=( rhs );
     // Note: Do not copy _nodeCache, cache of free draw Nodes.
     _callbacks = rhs._callbacks;
     _resetEnable = rhs._resetEnable;

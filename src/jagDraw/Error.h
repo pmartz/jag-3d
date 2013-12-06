@@ -23,7 +23,7 @@
 #define __JAGDRAW_ERROR_H__ 1
 
 
-#include <jagBase/Config.h>
+#include <jag/base/Config.h>
 #include <jagDraw/Export.h>
 #include <jagDraw/PlatformOpenGL.h>
 #include <string>

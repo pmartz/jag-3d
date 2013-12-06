@@ -21,7 +21,7 @@
 
 #include <jagDraw/ContextSupportGl3w.h>
 #include <jagDraw/PlatformOpenGL.h>
-#include <jagBase/LogMacros.h>
+#include <jag/base/LogMacros.h>
 #include <jagDraw/Error.h>
 
 

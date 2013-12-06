@@ -23,8 +23,8 @@
 #include <jagDraw/DrawNodeContainer.h>
 #include <jagDraw/DrawInfo.h>
 #include <jagDraw/Error.h>
-#include <jagBase/Profile.h>
-#include <jagBase/LogMacros.h>
+#include <jag/base/Profile.h>
+#include <jag/base/LogMacros.h>
 
 #include <boost/foreach.hpp>
 
@@ -33,13 +33,13 @@ namespace jagDraw {
 
 
 DrawGraph::DrawGraph( const std::string& logName )
-  : jagBase::LogBase( logName.empty() ? "jag.draw.graph" : logName ),
+  : jag::base::LogBase( logName.empty() ? "jag.draw.graph" : logName ),
     ObjectIDOwner()
 {
 }
 DrawGraph::DrawGraph( const DrawGraph& rhs )
   : DrawNodeContainerSimpleVec( rhs ),
-    jagBase::LogBase( "jag.draw.graph" ),
+    jag::base::LogBase( "jag.draw.graph" ),
     ObjectIDOwner( rhs ),
     _callbacks( rhs._callbacks ),
     _transformCallback( rhs._transformCallback )
@@ -54,7 +54,7 @@ DrawGraph& DrawGraph::operator=( const DrawGraph& rhs )
     DrawNodeContainerSimpleVec::operator=( rhs );
     ObjectIDOwner::operator=( rhs );
     // LogBase does not support (and doesn't need) assignment operator.
-    //jagBase::LogBase::operator=( rhs );
+    //jag::base::LogBase::operator=( rhs );
     _callbacks = rhs._callbacks;
     _transformCallback = rhs._transformCallback;
 

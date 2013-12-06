@@ -23,7 +23,7 @@
 #include <jagDraw/PlatformOpenGL.h>
 #include <jagDraw/DrawInfo.h>
 #include <jagDraw/Error.h>
-#include <jagBase/LogMacros.h>
+#include <jag/base/LogMacros.h>
 #include <jagDraw/Version.h>
 
 #include <sstream>
@@ -36,14 +36,14 @@ namespace jagDraw {
 Sampler::Sampler( const std::string& logName )
   : Command( Command::Sampler_t ),
     ObjectID(),
-    jagBase::LogBase( logName.empty() ? "jag.draw.sampler" : logName ),
+    jag::base::LogBase( logName.empty() ? "jag.draw.sampler" : logName ),
     _samplerState( SamplerStatePtr( new SamplerState() ) )
 {
 }
 Sampler::Sampler( const Sampler& rhs )
   : Command( rhs ),
     ObjectID( rhs ),
-    jagBase::LogBase( rhs ),
+    jag::base::LogBase( rhs ),
     _samplerState( rhs._samplerState )
 {
 }

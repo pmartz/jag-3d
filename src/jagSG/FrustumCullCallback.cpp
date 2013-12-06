@@ -23,19 +23,19 @@
 #include <jagSG/Node.h>
 #include <jagSG/Visitor.h>
 #include <jagSG/CollectionVisitor.h>
-#include <jagBase/Profile.h>
+#include <jag/base/Profile.h>
 
 
 namespace jagSG {
 
 
 FrustumCullCallback::FrustumCullCallback( const std::string& logName )
-  : jagBase::LogBase( logName.empty() ? "jag.sg.coll.frustum" : logName ),
+  : jag::base::LogBase( logName.empty() ? "jag.sg.coll.frustum" : logName ),
     jagSG::Node::Callback()
 {
 }
 FrustumCullCallback::FrustumCullCallback( const FrustumCullCallback& rhs )
-  : jagBase::LogBase( "jag.sg.coll.frustum" ),
+  : jag::base::LogBase( "jag.sg.coll.frustum" ),
     jagSG::Node::Callback( rhs )
 {
 }

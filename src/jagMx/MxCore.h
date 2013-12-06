@@ -23,7 +23,7 @@
 #define __JAGMX_MX_CORE_H__ 1
 
 #include <jagMx/Export.h>
-#include <jagBase/ptr.h>
+#include <jag/base/ptr.h>
 #include <gmtl/gmtl.h>
 
 
@@ -396,7 +396,7 @@ protected:
     double _orthoBottom, _orthoTop;
 };
 
-typedef jagBase::ptr< jagMx::MxCore >::shared_ptr MxCorePtr;
+typedef jag::base::ptr< jagMx::MxCore >::shared_ptr MxCorePtr;
 
 
 // jagMx

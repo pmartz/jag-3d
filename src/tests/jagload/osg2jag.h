@@ -26,7 +26,7 @@
 #include <jagDraw/Drawable.h>
 #include <jagDraw/DrawNode.h>
 #include <jagDraw/DrawNodeContainer.h>
-#include <jagBase/Buffer.h>
+#include <jag/base/Buffer.h>
 
 #include <osg/PrimitiveSet>
 
@@ -51,7 +51,7 @@ public:
 
 
     struct ArrayInfo {
-        jagBase::BufferPtr _buffer;
+        jag::base::BufferPtr _buffer;
         GLenum _type;
         unsigned int _numElements;
         unsigned int _componentsPerElement;

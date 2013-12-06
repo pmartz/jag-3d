@@ -22,7 +22,7 @@
 #include <jagDraw/UniformBlock.h>
 #include <jagDraw/PlatformOpenGL.h>
 #include <jagDraw/DrawInfo.h>
-#include <jagBase/LogMacros.h>
+#include <jag/base/LogMacros.h>
 #include <jagDraw/Error.h>
 #include <stdio.h>
 #include <iostream>
@@ -40,7 +40,7 @@ UniformBlock::UniformBlock( const std::string& name, const std::string& logName 
   : Command( UniformBlock_t ),
     ObjectIDOwner(),
     SHARED_FROM_THIS( UniformBlock )(),
-    jagBase::LogBase( logName.empty() ? "jag.draw.ublock" : logName ),
+    jag::base::LogBase( logName.empty() ? "jag.draw.ublock" : logName ),
     _name( name ),
     _dirty( true )
 {
@@ -51,7 +51,7 @@ UniformBlock::UniformBlock( const UniformBlock& rhs )
   : Command( rhs ),
     ObjectIDOwner( rhs ),
     SHARED_FROM_THIS( UniformBlock )( rhs ),
-    jagBase::LogBase( rhs ),
+    jag::base::LogBase( rhs ),
     _name( rhs._name ),
     _nameHash( rhs._nameHash ),
     _uniforms( rhs._uniforms ),
@@ -149,7 +149,7 @@ void UniformBlock::setMaxContexts( const unsigned int numContexts )
     JAG3D_TRACE( "setMaxContexts: " + _name );
 
     if( _buffer == NULL )
-        _buffer = jagBase::BufferPtr( new jagBase::Buffer() );
+        _buffer = jag::base::BufferPtr( new jag::base::Buffer() );
     if( _bufferObject == NULL )
         _bufferObject = UniformBufferPtr( new UniformBuffer( _buffer ) );
 
