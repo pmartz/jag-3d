@@ -41,7 +41,7 @@ namespace jagUtil
 
 
 QuadNode::QuadNode( const std::string& logName )
-    : jagDraw::Node( logName.empty() ? "jag.util.quadnode" : logName ),
+    : jagDraw::DrawNode( logName.empty() ? "jag.util.quadnode" : logName ),
       _width( 0 ),
       _height( 0 ),
       _numContexts( 0 )
@@ -49,7 +49,7 @@ QuadNode::QuadNode( const std::string& logName )
 }
 QuadNode::QuadNode( jagDraw::TexturePtr inputBuffer, jagDraw::TexturePtr outputBuffer,
         const std::string& logName )
-    : jagDraw::Node( logName.empty() ? "jag.util.quadnode" : logName ),
+    : jagDraw::DrawNode( logName.empty() ? "jag.util.quadnode" : logName ),
       _outputBuffer( outputBuffer ),
       _width( 0 ),
       _height( 0 ),
@@ -59,7 +59,7 @@ QuadNode::QuadNode( jagDraw::TexturePtr inputBuffer, jagDraw::TexturePtr outputB
 }
 QuadNode::QuadNode( jagDraw::TextureVec& inputBuffers, jagDraw::TexturePtr outputBuffer,
         const std::string& logName )
-    : jagDraw::Node( logName.empty() ? "jag.util.quadnode" : logName ),
+    : jagDraw::DrawNode( logName.empty() ? "jag.util.quadnode" : logName ),
       _inputBuffers( inputBuffers ),
       _outputBuffer( outputBuffer ),
       _width( 0 ),
@@ -68,7 +68,7 @@ QuadNode::QuadNode( jagDraw::TextureVec& inputBuffers, jagDraw::TexturePtr outpu
 {
 }
 QuadNode::QuadNode( const QuadNode& rhs )
-    : jagDraw::Node( rhs ),
+    : jagDraw::DrawNode( rhs ),
       _inputBuffers( rhs._inputBuffers ),
       _outputBuffer( rhs._outputBuffer ),
       _width( rhs._width ),
@@ -142,7 +142,7 @@ void QuadNode::setMaxContexts( const unsigned int numContexts )
     if( _fbo == NULL )
         internalInit();
 
-    jagDraw::Node::setMaxContexts( numContexts );
+    jagDraw::DrawNode::setMaxContexts( numContexts );
 }
 
 void QuadNode::reshape( const int w, const int h )

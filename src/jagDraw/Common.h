@@ -38,8 +38,8 @@
 #include <jagDraw/Error.h>
 #include <jagDraw/Framebuffer.h>
 #include <jagDraw/Image.h>
-#include <jagDraw/Node.h>
-#include <jagDraw/NodeContainer.h>
+#include <jagDraw/DrawNode.h>
+#include <jagDraw/DrawNodeContainer.h>
 #include <jagDraw/Program.h>
 #include <jagDraw/Sampler.h>
 #include <jagDraw/Shader.h>

@@ -23,7 +23,7 @@
 #include <jagSG/Node.h>
 #include <jagSG/CollectionVisitor.h>
 #include <jagSG/NodeMaskCullCallback.h>
-#include <jagDraw/Node.h>
+#include <jagDraw/DrawNode.h>
 #include <jagDraw/Uniform.h>
 #include <jagDraw/Program.h>
 #include <jagUtil/Shapes.h>
@@ -52,7 +52,7 @@ using jagDraw::UniformSet;
 using jagDraw::UniformSetPtr;
 using jagDraw::Drawable;
 using jagDraw::DrawablePtr;
-using jagDraw::NodeContainer;
+using jagDraw::DrawNodeContainer;
 using jagDraw::Program;
 
 
@@ -120,10 +120,10 @@ bool test()
                 std::cerr << "Draw graph size " << size << " != 1." << std::endl;
                 return( false );
             }
-            const NodeContainer& nodes( (*drawGraph)[ 0 ] );
+            const DrawNodeContainer& nodes( (*drawGraph)[ 0 ] );
             if( nodes.size() != 1 )
             {
-                std::cerr << "Failed: NodeContainer incorrect size: " << nodes.size() << std::endl;
+                std::cerr << "Failed: DrawNodeContainer incorrect size: " << nodes.size() << std::endl;
                 return( false );
             }
             const jagDraw::DrawNodePtr& node( nodes[ 0 ] );
@@ -150,10 +150,10 @@ bool test()
 
             root->accept( cv );
             const jagDraw::DrawGraphPtr drawGraph( cv.getDrawGraph() );
-            const NodeContainer& nodes( (*drawGraph)[ 0 ] );
+            const DrawNodeContainer& nodes( (*drawGraph)[ 0 ] );
             if( nodes.size() != 1 )
             {
-                std::cerr << "Failed: NodeContainer incorrect size: " << nodes.size() << std::endl;
+                std::cerr << "Failed: DrawNodeContainer incorrect size: " << nodes.size() << std::endl;
                 return( false );
             }
             const jagDraw::DrawNodePtr& node( nodes[ 0 ] );
@@ -185,10 +185,10 @@ bool test()
 
             root->accept( cv );
             const jagDraw::DrawGraphPtr drawGraph( cv.getDrawGraph() );
-            const NodeContainer& nodes( (*drawGraph)[ 0 ] );
+            const DrawNodeContainer& nodes( (*drawGraph)[ 0 ] );
             if( nodes.size() != 9 )
             {
-                std::cerr << "Failed: NodeContainer incorrect size: " << nodes.size() << std::endl;
+                std::cerr << "Failed: DrawNodeContainer incorrect size: " << nodes.size() << std::endl;
                 return( false );
             }
             const jagDraw::DrawNodePtr& node( nodes[ 0 ] );

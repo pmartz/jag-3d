@@ -109,7 +109,7 @@ bool test()
         commands->insert( ( ( idx & 0x1 ) == 0 ) ? prog0 : prog1 );
         commands->insert( ( ( idx & 0x4 ) == 0 ) ? ts0 : ts1 );
 
-        nodes.push_back( jagDraw::DrawNodePtr( new jagDraw::Node( commands ) ) );
+        nodes.push_back( jagDraw::DrawNodePtr( new jagDraw::DrawNode( commands ) ) );
 
 #ifdef VERBOST_OUTPUT
         std::cout << "-----" << std::endl;

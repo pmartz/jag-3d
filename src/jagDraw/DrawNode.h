@@ -19,8 +19,8 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#ifndef __JAGDRAW_NODE_H__
-#define __JAGDRAW_NODE_H__ 1
+#ifndef __JAGDRAW_DRAW_NODE_H__
+#define __JAGDRAW_DRAW_NODE_H__ 1
 
 #include <jagDraw/Export.h>
 #include <jagDraw/CommandMap.h>
@@ -39,28 +39,28 @@ namespace jagDraw {
 /** \addtogroup jagDrawDrawGraph Draw Graph Data Structure */
 /*@{*/
 
-/** \class Node Node.h <jagDraw/Node.h>
+/** \class DrawNode DrawNode.h <jagDraw/DrawNode.h>
 \brief The draw graph node element.
-\details The draw graph is a list of NodeContainers, and a NodeCOntainer
-is a list of Nodes.
+\details The draw graph is a list of DrawNodeContainers, and a NodeContainer
+is a list of DrawNodes.
 
-Node associates a CommandMap with a collection of Drawables.
-The CommandMap must not be NULL. Node also contains a list of Callbacks
+DrawNode associates a CommandMap with a collection of Drawables.
+The CommandMap must not be NULL. DrawNode also contains a list of Callbacks
 that are executed prior to the CommandMap and Drawables.
 
-Node optionally supports rendering a wireframe box around the bound
+DrawNode optionally supports rendering a wireframe box around the bound
 extents of all attached Drawables. This is controlled by
 DrawInfo::_controlFlags. Bound rendering requires a special Program.
 See the example source jagModel.cpp.
 
 \logname jag.draw.node */
-class JAGDRAW_EXPORT Node : protected jagBase::LogBase, public ObjectIDOwner, public jagBase::UserDataOwner
+class JAGDRAW_EXPORT DrawNode : protected jagBase::LogBase, public ObjectIDOwner, public jagBase::UserDataOwner
 {
 public:
-    Node( CommandMapPtr commands=CommandMapPtr( (CommandMap*)NULL ), const std::string& logName=std::string( "" ) );
-    Node( const std::string& logName );
-    Node( const Node& rhs );
-    ~Node();
+    DrawNode( CommandMapPtr commands=CommandMapPtr( (CommandMap*)NULL ), const std::string& logName=std::string( "" ) );
+    DrawNode( const std::string& logName );
+    DrawNode( const DrawNode& rhs );
+    ~DrawNode();
 
 
     /** \brief Remove drawables and execute callbacks */
@@ -131,7 +131,7 @@ public:
 
     /** \brief Assignment operator.
     \details Required by std::sort(). */
-    Node& operator=( const Node& rhs )
+    DrawNode& operator=( const DrawNode& rhs )
     {
         _matrix = rhs._matrix;
         _commands = rhs._commands;
@@ -148,7 +148,7 @@ public:
     struct Callback {
         /** \brief TBD
         \details TBD */
-        virtual bool operator()( jagDraw::Node& /* node */, jagDraw::DrawInfo& /* drawInfo */ )
+        virtual bool operator()( jagDraw::DrawNode& /* node */, jagDraw::DrawInfo& /* drawInfo */ )
         {
             return( false );
         }
@@ -177,7 +177,7 @@ public:
 
 
     /** \brief Execute the attaches Callbacks, CommandMap and Drawables.
-    \details Executes the contents of the jagDraw::Node.
+    \details Executes the contents of the jagDraw::DrawNode.
 
     If any attached callback returns false, execute() immediately returns
     without executing any subsequent callbacks, the CommandMap, or any of
@@ -213,9 +213,9 @@ protected:
     ExecuteCallbacks _executeCallbacks;
 };
 
-typedef jagBase::ptr< jagDraw::Node >::shared_ptr DrawNodePtr;
+typedef jagBase::ptr< jagDraw::DrawNode >::shared_ptr DrawNodePtr;
 typedef std::vector< DrawNodePtr > DrawNodeVec;
-typedef std::vector< Node > DrawNodeSimpleVec;
+typedef std::vector< DrawNode > DrawNodeSimpleVec;
 
 
 class DrawNodeCommandSorter
@@ -307,5 +307,5 @@ protected:
 }
 
 
-// __JAGDRAW_NODE_H__
+// __JAGDRAW_DRAW_NODE_H__
 #endif

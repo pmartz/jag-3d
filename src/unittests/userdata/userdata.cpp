@@ -21,7 +21,7 @@
 
 
 #include <jagSG/Node.h>
-#include <jagDraw/Node.h>
+#include <jagDraw/DrawNode.h>
 #include <jagBase/UserDataOwner.h>
 
 #include <Poco/Foundation.h>
@@ -68,9 +68,9 @@ bool test()
 
         }
 
-        std::cout << "Testing: User Data setting and retrieval using helper methods with jagDraw::Node. . ." << std::endl;
+        std::cout << "Testing: User Data setting and retrieval using helper methods with jagDraw::DrawNode. . ." << std::endl;
         {
-            jagDraw::Node udo;
+            jagDraw::DrawNode udo;
             udo.setUserDataPair("prop1", 1);
             udo.setUserDataPair("prop2", 2);
             if(udo.getUserDataValue("prop2") != 2) {
@@ -79,9 +79,9 @@ bool test()
             }
         }
 
-        std::cout << "Testing: User Data setting and retrieval using pass by reference get method with jagDraw::Node. . ." << std::endl;
+        std::cout << "Testing: User Data setting and retrieval using pass by reference get method with jagDraw::DrawNode. . ." << std::endl;
         {
-            jagDraw::Node udo;
+            jagDraw::DrawNode udo;
             udo.getUserData()["prop1"] = "string test";
             udo.getUserData()["prop2"] = 42;
 

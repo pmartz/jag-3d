@@ -32,7 +32,7 @@
 #include <osg/Material>
 
 #include <jagDisk/Options.h>
-#include <jagDraw/Node.h>
+#include <jagDraw/DrawNode.h>
 #include <jagDraw/CommandMap.h>
 #include <jagDraw/Drawable.h>
 #include <jagDraw/BufferObject.h>

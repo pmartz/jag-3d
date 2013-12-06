@@ -19,11 +19,11 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#ifndef __JAGDRAW_NODE_CONTAINER_H__
-#define __JAGDRAW_NODE_CONTAINER_H__ 1
+#ifndef __JAGDRAW_DRAW_NODE_CONTAINER_H__
+#define __JAGDRAW_DRAW_NODE_CONTAINER_H__ 1
 
 #include <jagDraw/Export.h>
-#include <jagDraw/Node.h>
+#include <jagDraw/DrawNode.h>
 #include <jagDraw/ObjectID.h>
 #include <jagBase/LogBase.h>
 #include <jagBase/MultiCallback.h>
@@ -38,31 +38,31 @@ namespace jagDraw {
 /** \addtogroup jagDrawDrawGraph Draw Graph Data Structure */
 /*@{*/
 
-/** \class NodeContainer NodeContainer.h <jagDraw/NodeContainer.h>
+/** \class DrawNodeContainer DrawNodeContainer.h <jagDraw/DrawNodeContainer.h>
 \brief TBD
-\details std::vector of draw graph Node objects. */
-class JAGDRAW_EXPORT NodeContainer : public jagDraw::DrawNodeVec,
+\details std::vector of draw graph DrawNode objects. */
+class JAGDRAW_EXPORT DrawNodeContainer : public jagDraw::DrawNodeVec,
         protected jagBase::LogBase, public ObjectIDOwner
 {
 public:
-    NodeContainer( const std::string& logName=std::string( "" ) );
-    NodeContainer( const NodeContainer& rhs );
-    ~NodeContainer();
+    DrawNodeContainer( const std::string& logName=std::string( "" ) );
+    DrawNodeContainer( const DrawNodeContainer& rhs );
+    ~DrawNodeContainer();
 
-    /** \brief Reset the NodeContainer.
+    /** \brief Reset the DrawNodeContainer.
     \details If reset is enabled, clear the vector of draw Nodes.
     Otherwise, do nothing. */
     void reset();
-    /** \brief Enable or disable NodeContainer reset.
+    /** \brief Enable or disable DrawNodeContainer reset.
     \details By default, reset is enabled. */
     void setResetEnable( const bool enable );
     /** \brief Get the current reset state. */
     bool getResetEnable() const;
 
-    NodeContainer& operator=( const NodeContainer& rhs );
+    DrawNodeContainer& operator=( const DrawNodeContainer& rhs );
 
 
-    /** \brief Grow the NodeContainer size by one.
+    /** \brief Grow the DrawNodeContainer size by one.
     \details Get a Node, either from the _nodeCache, or by allocating
     one. Then push it onto the back of this NodeCntainer. Returns a
     reference to the newly added Node. */
@@ -75,7 +75,7 @@ public:
     struct Callback {
         /** \brief TBD
         \details TBD */
-        virtual bool operator()( NodeContainer& /* nodeContainer */,
+        virtual bool operator()( DrawNodeContainer& /* nodeContainer */,
             DrawInfo& /* drawInfo */ )
         {
             return( false );
@@ -119,9 +119,9 @@ protected:
     bool _resetEnable;
 };
 
-typedef jagBase::ptr< jagDraw::NodeContainer >::shared_ptr NodeContainerPtr;
-typedef std::vector< NodeContainerPtr > NodeContainerVec;
-typedef std::vector< NodeContainer > NodeContainerSimpleVec;
+typedef jagBase::ptr< jagDraw::DrawNodeContainer >::shared_ptr DrawNodeContainerPtr;
+typedef std::vector< DrawNodeContainerPtr > DrawNodeContainerVec;
+typedef std::vector< DrawNodeContainer > DrawNodeContainerSimpleVec;
 
 
 /*@}*/
@@ -131,5 +131,5 @@ typedef std::vector< NodeContainer > NodeContainerSimpleVec;
 }
 
 
-// __JAGDRAW_NODE_CONTAINER_H__
+// __JAGDRAW_DRAW_NODE_CONTAINER_H__
 #endif

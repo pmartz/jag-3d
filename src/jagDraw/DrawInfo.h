@@ -56,7 +56,7 @@ struct JAGDRAW_EXPORT DrawInfo
     /** Jag context identifier. */
     jagDrawContextID _id;
 
-    /** The current CommandMap. As each jagDraw::Node is executed during
+    /** The current CommandMap. As each jagDraw::DrawNode is executed during
     the draw traversal, \c _current is updated to reflect the CommandMap in
     effect. \c _current is used to access the current jagDraw::Program to
     bind new Uniform and UniformBlock objects, amoung other things. */
@@ -74,7 +74,7 @@ struct JAGDRAW_EXPORT DrawInfo
     object. */
     GLuint _elementBufferID;
 
-    /** \brief Track the most recent jagDraw::Node matrix. */
+    /** \brief Track the most recent jagDraw::DrawNode matrix. */
     gmtl::Matrix44d _transform;
 
 
@@ -83,7 +83,7 @@ struct JAGDRAW_EXPORT DrawInfo
     } ControlFlags;
     /** \brief Specify draw traversal control flags.
     \details Bitwise-OR enums from ControlFlags to alter behavior of the
-    draw traversal. Currently, the jagDraw::Node::execute() method respects
+    draw traversal. Currently, the jagDraw::DrawNode::execute() method respects
     one enum, DRAW_BOUND. */
     unsigned int _controlFlags;
 

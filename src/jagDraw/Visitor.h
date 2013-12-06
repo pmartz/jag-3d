@@ -23,8 +23,8 @@
 #define __JAGDRAW_VISITOR_H__ 1
 
 #include <jagDraw/DrawGraph.h>
-#include <jagDraw/NodeContainer.h>
-#include <jagDraw/Node.h>
+#include <jagDraw/DrawNodeContainer.h>
+#include <jagDraw/DrawNode.h>
 #include <jagDraw/CommandMap.h>
 #include <jagBase/LogBase.h>
 #include <jagBase/ptr.h>
@@ -80,7 +80,7 @@ public:
         {
             if( !( visit( nc ) ) )
                 break;
-            BOOST_FOREACH( jagDraw::NodeContainer::value_type& node, nc )
+            BOOST_FOREACH( jagDraw::DrawNodeContainer::value_type& node, nc )
             {
                 if( !( visit( *node, nc ) ) )
                     break;
@@ -89,12 +89,12 @@ public:
     }
 
 
-    virtual bool visit( jagDraw::NodeContainer& /*nc*/ )
+    virtual bool visit( jagDraw::DrawNodeContainer& /*nc*/ )
     {
         return( true );
     }
 
-    virtual bool visit( jagDraw::Node& /*node*/, jagDraw::NodeContainer& /*nc*/ )
+    virtual bool visit( jagDraw::DrawNode& /*node*/, jagDraw::DrawNodeContainer& /*nc*/ )
     {
         return( true );
     }

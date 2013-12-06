@@ -58,7 +58,7 @@ protected:
             jagDraw::ProgramPtr& prog, jagDraw::VertexArrayObjectPtr& vaop );
 
 
-    jagDraw::NodeContainer _windowNodes, _rttNodes, _quadNodes;
+    jagDraw::DrawNodeContainer _windowNodes, _rttNodes, _quadNodes;
     jagDraw::FramebufferPtr _textureFBO, _defaultFBO;
 
     const GLsizei _texWidth, _texHeight;
@@ -162,7 +162,7 @@ bool RttDemo::startup( const unsigned int numContexts )
     commands->insert( prog );
     commands->insert( vaop );
     commands->insert( _defaultFBO );
-    jagDraw::DrawNodePtr drawNode( new jagDraw::Node( commands ) );
+    jagDraw::DrawNodePtr drawNode( new jagDraw::DrawNode( commands ) );
     drawNode->addDrawable( linesDrawable );
     _windowNodes.push_back( drawNode );
 
@@ -196,7 +196,7 @@ bool RttDemo::startup( const unsigned int numContexts )
     // Render the lines first.
     jagDraw::CommandMapPtr rttCommands( jagDraw::CommandMapPtr( new jagDraw::CommandMap( *commands ) ) );
     rttCommands->insert( _textureFBO );
-    jagDraw::DrawNodePtr rttDrawNode( new jagDraw::Node( rttCommands ) );
+    jagDraw::DrawNodePtr rttDrawNode( new jagDraw::DrawNode( rttCommands ) );
     rttDrawNode->addDrawable( linesDrawable );
     _rttNodes.push_back( rttDrawNode );
 
@@ -290,7 +290,7 @@ bool RttDemo::startup( const unsigned int numContexts )
         quadCommands->insert( _defaultFBO );
         quadCommands->insert( textureSet );
         quadCommands->insert( uniformSet );
-        jagDraw::DrawNodePtr quadDrawNode( new jagDraw::Node( quadCommands ) );
+        jagDraw::DrawNodePtr quadDrawNode( new jagDraw::DrawNode( quadCommands ) );
         quadDrawNode->addDrawable( drawable );
         _quadNodes.push_back( quadDrawNode );
     }

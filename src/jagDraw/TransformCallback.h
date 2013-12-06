@@ -23,7 +23,7 @@
 #define __JAGDRAW_TRANSFORM_CALLBACK_H__ 1
 
 #include <jagDraw/Export.h>
-#include <jagDraw/Node.h>
+#include <jagDraw/DrawNode.h>
 #include <jagBase/Transform.h>
 #include <jagBase/ptr.h>
 
@@ -99,11 +99,11 @@ for use by shader code.
 What goes on under the hood?
 
 \li The CollectionVisitor accumulates the jagSG::Node transform matrix as it descends
-the scene graph. The accumulated transform matrix is stored in the jagDraw::Node. In
+the scene graph. The accumulated transform matrix is stored in the jagDraw::DrawNode. In
 FFP terminology, this is the model part of the modelview matrix.
 
 \li The CollectionVisitor has an instance of a TransformCallback, and adds it to
-the jagDraw::Node Callback list to be executed at draw time. This same TransformCallback
+the jagDraw::DrawNode Callback list to be executed at draw time. This same TransformCallback
 is also attached to the DrawGraph that the CollectionVisitor creates. There is only one 
 TransformCallback per DrawGraph.
 
@@ -112,18 +112,18 @@ near and far values, it sets this projection matrix (and view matrix) on the
 draw graph. The draw graph actually stores them inside its TransformCallback.
 
 \li During the draw traversal, the TransformCallback is invoked for each
-jagDraw::Node. This callback takes the stored projection and view matrices, as
-well as the jagDraw::Node's transform (the model matrix), concatenates them
+jagDraw::DrawNode. This callback takes the stored projection and view matrices, as
+well as the jagDraw::DrawNode's transform (the model matrix), concatenates them
 as-needed, creates new Uniform objects for them, and executes the uniforms to send
 their values to shader code.
 
 There is some work still remaining to be done:
 
-\li The CollectionVisitor needs to be smarter about which jagDraw::Node objects
+\li The CollectionVisitor needs to be smarter about which jagDraw::DrawNode objects
 actually get a reference to a TransformCallback. Ideally, the first Node that
 will be rendered during draw needs one, and subsequent Node objects need one only
 if their Transform (model matrix) changes. Currently, however, the COllectionVisitor
-is stupid, and sets the TransformCallback on all jagDraw::Node objects.
+is stupid, and sets the TransformCallback on all jagDraw::DrawNode objects.
 
 \li The TransformCallback needs to be smarter about which uniforms to create.
 Ideally, this should be based on which uniforms the shader code actually uses. We
@@ -140,14 +140,14 @@ be made more efficient. We could allocate the Uniform on the stack, for example.
 /** \class TransformCallback TransformCallback.h <TransformCallback/Node.h>
 \brief A draw node execute callback that specifies transform uniforms.
 \details TBD */
-class JAGDRAW_EXPORT TransformCallback : public jagDraw::Node::Callback
+class JAGDRAW_EXPORT TransformCallback : public jagDraw::DrawNode::Callback
 {
 public:
     TransformCallback();
     TransformCallback( const TransformCallback& rhs );
     virtual ~TransformCallback();
 
-    virtual bool operator()( jagDraw::Node& node, jagDraw::DrawInfo& drawInfo );
+    virtual bool operator()( jagDraw::DrawNode& node, jagDraw::DrawInfo& drawInfo );
 
     jagBase::TransformD& getTransform() { return( _transform ); }
     const jagBase::TransformD& getTransform() const { return( _transform ); }
