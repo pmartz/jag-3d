@@ -19,8 +19,8 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#ifndef __JAGDISK_EXPORT__
-#define __JAGDISK_EXPORT__ 1
+#ifndef __JAG_DISK_EXPORT__
+#define __JAG_DISK_EXPORT__ 1
 
 
 #if defined( _MSC_VER ) || defined( __CYGWIN__ ) || defined( __MINGW32__ ) || defined( __BCPLUSPLUS__ ) || defined( __MWERKS__ )
@@ -36,5 +36,5 @@
 #endif
 
 
-// __JAGDISK_EXPORT__
+// __JAG_DISK_EXPORT__
 #endif

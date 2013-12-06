@@ -24,7 +24,7 @@
 #include <jagDraw/Common.h>
 #include <jagDraw/PerContextData.h>
 #include <jagSG/Common.h>
-#include <jagDisk/ReadWrite.h>
+#include <jag/disk/ReadWrite.h>
 #include <jag/base/Profile.h>
 #include <jagUtil/DrawGraphCountVisitor.h>
 #include <jag/base/Version.h>

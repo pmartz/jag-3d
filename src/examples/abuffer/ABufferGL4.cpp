@@ -45,8 +45,8 @@ Key controls:
 
 #include <jagSG/Common.h>
 #include <jagDraw/Common.h>
-#include <jagDisk/ReadWrite.h>
-#include <jagDisk/Options.h>
+#include <jag/disk/ReadWrite.h>
+#include <jag/disk/Options.h>
 
 #include <GL/freeglut.h>
 
@@ -642,12 +642,12 @@ int main(int argc, char** argv) {
         fileName = vm[ "file" ].as< std::string >();
 
         // Tell plugin what names to use for vertex and normal attribs.
-        jagDisk::Options options;
+        jag::disk::Options options;
         options.addOptions()
             ( "vertexAttribName", std::string( "vertexPos" ) )
             ( "normalAttribName", std::string( "vertexNormal" ) )
             ;
-        boost::any anyTemp( jagDisk::read( fileName, &options ) );
+        boost::any anyTemp( jag::disk::read( fileName, &options ) );
         try {
             jagRoot = boost::any_cast< jagSG::NodePtr >( anyTemp );
         }

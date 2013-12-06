@@ -29,7 +29,7 @@
 #include <jagSG/Node.h>
 #include <jagSG/CollectionVisitor.h>
 #include <jagMx/MxCore.h>
-#include <jagDisk/ReadWrite.h>
+#include <jag/disk/ReadWrite.h>
 #include <jag/base/LogMacros.h>
 
 #include <gmtl/gmtl.h>
@@ -164,7 +164,7 @@ protected:
 
 #define __READ_UTIL( _RESULT, _TYPE, _NAME, _OPT ) \
     { \
-        boost::any anyTemp( jagDisk::read( _NAME, _OPT ) ); \
+        boost::any anyTemp( jag::disk::read( _NAME, _OPT ) ); \
         try { \
             _RESULT = boost::any_cast< _TYPE >( anyTemp ); \
         } \
@@ -178,19 +178,19 @@ protected:
         } \
     }
 
-    jagSG::NodePtr readSceneGraphNodeUtil( const std::string& fileName, const jagDisk::Options* options=NULL )
+    jagSG::NodePtr readSceneGraphNodeUtil( const std::string& fileName, const jag::disk::Options* options=NULL )
     {
         jagSG::NodePtr result;
         __READ_UTIL( result, jagSG::NodePtr, fileName, options );
         return( result );
     }
-    jagDraw::ImagePtr readImageUtil( const std::string& fileName, const jagDisk::Options* options=NULL )
+    jagDraw::ImagePtr readImageUtil( const std::string& fileName, const jag::disk::Options* options=NULL )
     {
         jagDraw::ImagePtr result;
         __READ_UTIL( result, jagDraw::ImagePtr, fileName, options );
         return( result );
     }
-    jagDraw::ShaderPtr readShaderUtil( const std::string& fileName, const jagDisk::Options* options=NULL )
+    jagDraw::ShaderPtr readShaderUtil( const std::string& fileName, const jag::disk::Options* options=NULL )
     {
         jagDraw::ShaderPtr result;
         __READ_UTIL( result, jagDraw::ShaderPtr, fileName, options );

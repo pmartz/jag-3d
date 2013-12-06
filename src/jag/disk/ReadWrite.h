@@ -19,24 +19,45 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#include <jagDisk/ReaderWriter.h>
+#ifndef __JAG_DISK_READ_WRITE_H__
+#define __JAG_DISK_READ_WRITE_H__ 1
 
 
-namespace jagDisk {
+#include <jag/disk/Export.h>
+
+#include <boost/any.hpp>
+#include <string>
 
 
-ReaderWriter::ReaderWriter( const std::string& logNameSuffix, const std::string& logName )
-  : jag::base::LogBase( logName.empty() ? std::string( "jag.disk.rw." ) + logNameSuffix : logName )
-{
+namespace jag {
+namespace disk {
+
+
+// forward
+class Options;
+
+
+/** \addtogroup PluginSupport Plugin Support
+*/
+/**@{*/
+
+/** \brief
+\details
+*/
+JAGDISK_EXPORT boost::any read( const std::string& fileName, const Options* options=NULL );
+
+/** \brief
+\details
+*/
+JAGDISK_EXPORT bool write( const std::string& fileName, const void* data, const Options* options=NULL );
+
+/**@}*/
+
+
+// namespace jag::disk::
 }
-ReaderWriter::ReaderWriter( const ReaderWriter& rhs )
-  : jag::base::LogBase( rhs )
-{
-}
-ReaderWriter::~ReaderWriter()
-{
 }
 
 
-// jagDisk
-}
+// __JAG_DISK_READ_WRITE_H__
+#endif

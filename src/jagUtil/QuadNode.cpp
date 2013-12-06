@@ -22,7 +22,7 @@
 #include <jagUtil/QuadNode.h>
 
 #include <jagDraw/Common.h>
-#include <jagDisk/ReadWrite.h>
+#include <jag/disk/ReadWrite.h>
 #include <jagUtil/Shapes.h>
 #include <jag/base/Log.h>
 #include <jag/base/LogMacros.h>
@@ -84,7 +84,7 @@ QuadNode::~QuadNode()
 // Convenience utility for reading shader source.
 #define __READ_UTIL( _RESULT, _TYPE, _NAME ) \
     { \
-        boost::any anyTemp( jagDisk::read( _NAME ) ); \
+        boost::any anyTemp( jag::disk::read( _NAME ) ); \
         try { \
             _RESULT = boost::any_cast< _TYPE >( anyTemp ); \
         } \

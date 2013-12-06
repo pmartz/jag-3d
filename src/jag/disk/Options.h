@@ -19,11 +19,11 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#ifndef __JAGDISK_OPTIONS_H__
-#define __JAGDISK_OPTIONS_H__ 1
+#ifndef __JAG_DISK_OPTIONS_H__
+#define __JAG_DISK_OPTIONS_H__ 1
 
 
-#include <jagDisk/Export.h>
+#include <jag/disk/Export.h>
 #include <Poco/Path.h>
 
 #include <boost/any.hpp>
@@ -33,7 +33,8 @@
 #include <map>
 
 
-namespace jagDisk {
+namespace jag {
+namespace disk {
 
 
 /** \addtogroup PluginSupport Plugin Support
@@ -41,7 +42,7 @@ namespace jagDisk {
 /**@{*/
 
 
-/** \class Options Options.H <jagDisk/Options.H>
+/** \class Options Options.H <jag/disk/Options.H>
 \brief
 \details
 */
@@ -84,7 +85,7 @@ public:
 
     typedef std::map< std::string, boost::any > AnyMap;
 
-    /** \class OptionsEasyInit Options.H <jagDisk/Options.H>
+    /** \class OptionsEasyInit Options.H <jag/disk/Options.H>
     */
     class OptionsEasyInit
     {
@@ -127,17 +128,18 @@ protected:
     AnyMap _anyMap;
 };
 
-typedef jag::base::ptr< jagDisk::Options >::shared_ptr OptionsPtr;
-typedef jag::base::ptr< const jagDisk::Options >::shared_ptr ConstOptionsPtr;
+typedef jag::base::ptr< jag::disk::Options >::shared_ptr OptionsPtr;
+typedef jag::base::ptr< const jag::disk::Options >::shared_ptr ConstOptionsPtr;
 typedef std::vector< OptionsPtr > OptionsVec;
 
 
 /**@}*/
 
 
-// jagDisk
+// namespace jag::disk::
+}
 }
 
 
-// __JAGDISK_OPTIONS_H__
+// __JAG_DISK_OPTIONS_H__
 #endif

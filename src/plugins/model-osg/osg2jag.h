@@ -23,7 +23,7 @@
 #define __OSG_2_JAG_H__ 1
 
 
-#include <jagDisk/Options.h>
+#include <jag/disk/Options.h>
 #include <jag/base/Buffer.h>
 #include <jagSG/Node.h>
 #include <jagDraw/UniformBlock.h>
@@ -48,7 +48,7 @@ namespace osg {
 class Osg2Jag : public osg::NodeVisitor
 {
 public:
-    Osg2Jag( const jagDisk::Options* options );
+    Osg2Jag( const jag::disk::Options* options );
     ~Osg2Jag();
 
     virtual void apply( osg::Node& osgNode );

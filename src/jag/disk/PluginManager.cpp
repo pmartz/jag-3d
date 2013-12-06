@@ -19,8 +19,8 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#include <jagDisk/PluginManager.h>
-#include <jagDisk/ReaderWriter.h>
+#include <jag/disk/PluginManager.h>
+#include <jag/disk/ReaderWriter.h>
 #include <jag/base/LogMacros.h>
 
 #include <Poco/Glob.h>
@@ -40,7 +40,8 @@
 using Poco::Util::IniFileConfiguration;
 
 
-namespace jagDisk {
+namespace jag {
+namespace disk {
 
 
 ReaderWriterInfo::ReaderWriterInfo( ReaderWriterPtr instance, const std::string& className,
@@ -329,5 +330,6 @@ bool operator<( const PluginManager::PluginInfo& lhs, const PluginManager::Plugi
 }
 
 
-// jagDisk
+// namespace jag::disk::
+}
 }

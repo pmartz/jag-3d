@@ -31,7 +31,7 @@
 #include <osg/StateSet>
 #include <osg/Material>
 
-#include <jagDisk/Options.h>
+#include <jag/disk/Options.h>
 #include <jagDraw/DrawNode.h>
 #include <jagDraw/CommandMap.h>
 #include <jagDraw/Drawable.h>
@@ -55,7 +55,7 @@ using namespace jagDraw;
     gmtl::Point4f( (float)(_v[0]), (float)(_v[1]), (float)(_v[2]), (float)(_v[3]) )
 
 
-Osg2Jag::Osg2Jag( const jagDisk::Options* options )
+Osg2Jag::Osg2Jag( const jag::disk::Options* options )
   : osg::NodeVisitor( osg::NodeVisitor::TRAVERSE_ALL_CHILDREN ),
     _jagScene( jagSG::NodePtr( (jagSG::Node*)NULL ) ),
     _current( jagSG::NodePtr( (jagSG::Node*)NULL ) ),

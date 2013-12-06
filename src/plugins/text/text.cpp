@@ -19,8 +19,8 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#include <jagDisk/PluginManager.h>
-#include <jagDisk/ReaderWriter.h>
+#include <jag/disk/PluginManager.h>
+#include <jag/disk/ReaderWriter.h>
 
 #include "TextDumpSG.h"
 #include "TextDumpDG.h"
@@ -36,7 +36,8 @@
 #include <string>
 
 
-using namespace jagDisk;
+using namespace jag;
+using namespace disk;
 
 
 /** \addtogroup PluginSupport Plugin Support

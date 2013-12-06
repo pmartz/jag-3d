@@ -19,12 +19,12 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#ifndef __JAGDISK_READER_WRITER_H__
-#define __JAGDISK_READER_WRITER_H__ 1
+#ifndef __JAG_DISK_READER_WRITER_H__
+#define __JAG_DISK_READER_WRITER_H__ 1
 
 
-#include <jagDisk/Export.h>
-#include <jagDisk/Options.h>
+#include <jag/disk/Export.h>
+#include <jag/disk/Options.h>
 #include <jag/base/LogBase.h>
 #include <Poco/Path.h>
 
@@ -35,7 +35,8 @@
 #include <iostream>
 
 
-namespace jagDisk {
+namespace jag {
+namespace disk {
 
 
 /** \addtogroup PluginSupport Plugin Support
@@ -43,7 +44,7 @@ namespace jagDisk {
 /**@{*/
 
 
-/** \class ReadStatus ReaderWriter.H <jagDisk/ReaderWriter.H>
+/** \class ReadStatus ReaderWriter.H <jag/disk/ReaderWriter.H>
 \brief Container for the result of a plugin read() operation.
 \details Contains a boolean result and a boost::any. If the
 result is true, boost::any holds a valid read result (usually
@@ -84,7 +85,7 @@ protected:
 
 
 
-/** \class ReaderWriter ReaderWriter.H <jagDisk/ReaderWriter.H>
+/** \class ReaderWriter ReaderWriter.H <jag/disk/ReaderWriter.H>
 \brief
 \details
 */
@@ -124,16 +125,17 @@ public:
     }
 };
 
-typedef jag::base::ptr< jagDisk::ReaderWriter >::shared_ptr ReaderWriterPtr;
+typedef jag::base::ptr< jag::disk::ReaderWriter >::shared_ptr ReaderWriterPtr;
 typedef std::vector< ReaderWriterPtr > ReaderWriterVec;
 
 
 /**@}*/
 
 
-// jagDisk
+// namespace jag::disk::
+}
 }
 
 
-// __JAGDISK_READER_WRITER_H__
+// __JAG_DISK_READER_WRITER_H__
 #endif
