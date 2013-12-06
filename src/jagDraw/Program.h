@@ -24,7 +24,7 @@
 
 
 #include <jagDraw/Export.h>
-#include <jagDraw/DrawablePrep.h>
+#include <jagDraw/Command.h>
 #include <jagBase/LogBase.h>
 #include <jagDraw/ObjectID.h>
 #include <jagDraw/Shader.h>
@@ -52,7 +52,7 @@ typedef jagBase::ptr< Program >::shared_ptr ProgramPtr;
 \details \gl{section 2.11.2}.
 \logname jag.draw.program
 */
-class JAGDRAW_EXPORT Program : public DrawablePrep,
+class JAGDRAW_EXPORT Program : public Command,
             public ObjectID, public SHARED_FROM_THIS(Program),
             protected jagBase::LogBase
 {

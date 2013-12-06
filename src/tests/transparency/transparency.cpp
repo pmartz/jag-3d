@@ -266,8 +266,8 @@ bool Transparency::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& pr
     JAG3D_PROFILE( "frame" );
 
 #ifdef ENABLE_SORT
-    jagDraw::DrawablePrep::CommandTypeVec plist;
-    plist.push_back( jagDraw::DrawablePrep::UniformSet_t );
+    jagDraw::Command::CommandTypeVec plist;
+    plist.push_back( jagDraw::Command::UniformSet_t );
 #endif
 
     boost::chrono::high_resolution_clock::time_point current( boost::chrono::high_resolution_clock::now() );

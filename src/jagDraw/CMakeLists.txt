@@ -10,11 +10,11 @@ set( _jagDrawHeaderFiles
     Bound.h
     BoundOwner.h
     BufferObject.h
+    Command.h
     CommandMap.h
     Common.h
     ContextSupport.h
     Drawable.h
-    DrawablePrep.h
     DrawCommand.h
     DrawGraph.h
     DrawInfo.h

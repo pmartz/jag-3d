@@ -95,9 +95,9 @@ public:
         // (because it uses glBindAttribLocation). This would avoid the table lookup.
 
         GLint index;
-        if( drawInfo._current.contains( DrawablePrep::Program_t ) )
+        if( drawInfo._current.contains( Command::Program_t ) )
         {
-            ProgramPtr prog( boost::dynamic_pointer_cast< Program >( drawInfo._current[ DrawablePrep::Program_t ] ) );
+            ProgramPtr prog( boost::dynamic_pointer_cast< Program >( drawInfo._current[ Command::Program_t ] ) );
             index = prog->getVertexAttribLocation( _indexHash );
         }
         else
@@ -197,7 +197,7 @@ public:
     {
         // TBD need an "explicit" mode where the location is set by the app
         // (because it uses glBindAttribLocation). This would avoid the table lookup.
-        ProgramPtr prog( boost::dynamic_pointer_cast< Program >( drawInfo._current[ DrawablePrep::Program_t ] ) );
+        ProgramPtr prog( boost::dynamic_pointer_cast< Program >( drawInfo._current[ Command::Program_t ] ) );
         GLint index( prog->getVertexAttribLocation( _indexHash ) );
 
         // Note that we do NOT check for index == -1. Inactive vertex attribs

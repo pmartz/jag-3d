@@ -22,7 +22,7 @@
 #include <jagSG/Node.h>
 #include <jagSG/Visitor.h>
 #include <jagDraw/DrawInfo.h>
-#include <jagDraw/DrawablePrep.h>
+#include <jagDraw/Command.h>
 #include <jagDraw/CommandMap.h>
 #include <jagDraw/Error.h>
 #include <jagBase/LogMacros.h>

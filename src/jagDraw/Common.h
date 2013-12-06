@@ -31,7 +31,7 @@
 #include <jagDraw/CommandMap.h>
 #include <jagDraw/ContextSupport.h>
 #include <jagDraw/Drawable.h>
-#include <jagDraw/DrawablePrep.h>
+#include <jagDraw/Command.h>
 #include <jagDraw/DrawCommand.h>
 #include <jagDraw/DrawGraph.h>
 #include <jagDraw/DrawInfo.h>

@@ -19,8 +19,8 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#ifndef __JAGDRAW_DRAWABLE_PREP_H__
-#define __JAGDRAW_DRAWABLE_PREP_H__ 1
+#ifndef __JAGDRAW_COMMAND_H__
+#define __JAGDRAW_COMMAND_H__ 1
 
 #include <jagBase/UserDataOwner.h>
 #include <jagBase/ptr.h>
@@ -40,15 +40,15 @@ namespace jagDraw {
 
 struct DrawInfo;
 
-class DrawablePrep;
-typedef jagBase::ptr< jagDraw::DrawablePrep >::shared_ptr DrawablePrepPtr;
+class Command;
+typedef jagBase::ptr< jagDraw::Command >::shared_ptr DrawablePrepPtr;
 
 
-/** \class DrawablePrep DrawablePrep.h <jagDraw/DrawablePrep.h>
+/** \class Command Command.h <jagDraw/Command.h>
 \brief
 \details
 */
-class DrawablePrep : public jagBase::UserDataOwner
+class Command : public jagBase::UserDataOwner
 {
 public:
     typedef enum {
@@ -72,15 +72,15 @@ public:
     typedef std::vector< CommandType > CommandTypeVec;
 
 
-    DrawablePrep( const CommandType type, const bool generateUniqueID=true )
+    Command( const CommandType type, const bool generateUniqueID=true )
       : _type( type ),
         _uniqueID( generateUniqueID ? UniqueID::instance()->generate( type ) : 0 )
     {}
-    DrawablePrep( const DrawablePrep& rhs, const bool generateUniqueID=true )
+    Command( const Command& rhs, const bool generateUniqueID=true )
       : _type( rhs._type ),
         _uniqueID( generateUniqueID ? UniqueID::instance()->generate( rhs._type ) : 0 )
     {}
-    ~DrawablePrep() {}
+    ~Command() {}
 
 
     /** \brief TBD
@@ -114,8 +114,8 @@ public:
     \details TBD */
     virtual DrawablePrepPtr clone() const = 0;
 
-    /** \brief Activate the DrawablePrep prior to calling execute().
-    \details DrawablePrep objects usually do not require activation, so this is a no-op.
+    /** \brief Activate the Command prior to calling execute().
+    \details Command objects usually do not require activation, so this is a no-op.
     However, Texture uses activate() to set the active texture. */
     virtual void activate( DrawInfo&, const unsigned int unit ) {}
 
@@ -132,20 +132,20 @@ public:
 
     /** \brief TBD
     \details TBD */
-    virtual bool operator== ( const DrawablePrep& rhs ) const
+    virtual bool operator== ( const Command& rhs ) const
     {
         return( _uniqueID == rhs._uniqueID );
     }
-    bool operator!= ( const DrawablePrep& rhs ) const
+    bool operator!= ( const Command& rhs ) const
     {
         return( !( operator==( rhs ) ) );
     }
 
-    virtual bool operator< ( const DrawablePrep& rhs ) const
+    virtual bool operator< ( const Command& rhs ) const
     {
         return( _uniqueID < rhs._uniqueID );
     }
-    virtual bool operator> ( const DrawablePrep& rhs ) const
+    virtual bool operator> ( const Command& rhs ) const
     {
         return( _uniqueID > rhs._uniqueID );
     }
@@ -194,29 +194,29 @@ typedef std::vector< DrawablePrepPtr > DrawablePrepVec;
 
 
 
-/** \class DrawablePrepSet DrawablePrep.h <jagDraw/DrawablePrep.h>
+/** \class DrawablePrepSet Command.h <jagDraw/Command.h>
 \brief TBD
 \details TBD
 */
 template< typename KEY, class ELEMENT, class CLASS, class CLASS_PTR >
-class DrawablePrepSet : public DrawablePrep, public std::map< KEY, ELEMENT >
+class DrawablePrepSet : public Command, public std::map< KEY, ELEMENT >
 {
 protected:
     typedef std::map< KEY, ELEMENT > MAP_TYPE;
 
 public:
     DrawablePrepSet( const CommandType type )
-        : DrawablePrep( type, false )
+        : Command( type, false )
     {}
     DrawablePrepSet( const DrawablePrepSet& rhs )
-        : DrawablePrep( rhs, false ),
+        : Command( rhs, false ),
         MAP_TYPE( rhs )
     {}
     ~DrawablePrepSet()
     {}
 
     /** \brief TBD
-    \details Override method from DrawablePrep. */
+    \details Override method from Command. */
     virtual void execute( DrawInfo& drawInfo )
     {
         BOOST_FOREACH( const MAP_TYPE::value_type& dataPair, *this )
@@ -237,7 +237,7 @@ public:
 
     /** \brief TBD
     \details TBD */
-    virtual bool operator== ( const DrawablePrep& rhs ) const
+    virtual bool operator== ( const Command& rhs ) const
     {
         const MAP_TYPE* rSet( dynamic_cast< const MAP_TYPE* >( &rhs ) );
 
@@ -259,7 +259,7 @@ public:
         return( true );
     }
 
-    virtual bool operator< ( const DrawablePrep& rhs ) const
+    virtual bool operator< ( const Command& rhs ) const
     {
         const MAP_TYPE* rSet( dynamic_cast< const MAP_TYPE* >( &rhs ) );
 
@@ -284,7 +284,7 @@ public:
 
         return( false );
     }
-    virtual bool operator> ( const DrawablePrep& rhs ) const
+    virtual bool operator> ( const Command& rhs ) const
     {
         const MAP_TYPE* rSet( dynamic_cast< const MAP_TYPE* >( &rhs ) );
 
@@ -319,5 +319,5 @@ public:
 }
 
 
-// __JAGDRAW_DRAWABLE_PREP_H__
+// __JAGDRAW_COMMAND_H__
 #endif

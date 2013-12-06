@@ -37,7 +37,7 @@ namespace jagDraw {
 
 
 UniformBlock::UniformBlock( const std::string& name, const std::string& logName )
-  : DrawablePrep( UniformBlock_t ),
+  : Command( UniformBlock_t ),
     ObjectIDOwner(),
     SHARED_FROM_THIS( UniformBlock )(),
     jagBase::LogBase( logName.empty() ? "jag.draw.ublock" : logName ),
@@ -48,7 +48,7 @@ UniformBlock::UniformBlock( const std::string& name, const std::string& logName 
     JAG3D_TRACE( "Constructor: " + _name );
 }
 UniformBlock::UniformBlock( const UniformBlock& rhs )
-  : DrawablePrep( rhs ),
+  : Command( rhs ),
     ObjectIDOwner( rhs ),
     SHARED_FROM_THIS( UniformBlock )( rhs ),
     jagBase::LogBase( rhs ),

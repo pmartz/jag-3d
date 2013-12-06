@@ -32,26 +32,26 @@ namespace jagDraw {
 
 
 Uniform::Uniform()
-  : DrawablePrep( Uniform_t ),
+  : Command( Uniform_t ),
     jagBase::LogBase( "jag.draw.uniform" ),
     _transpose( false )
 {
 }
 Uniform::Uniform( const std::string& name )
-  : DrawablePrep( Uniform_t ),
+  : Command( Uniform_t ),
     jagBase::LogBase( "jag.draw.uniform" )
 {
     internalInit( name );
 }
 Uniform::Uniform( const std::string& name, const GLenum type )
-  : DrawablePrep( Uniform_t ),
+  : Command( Uniform_t ),
     jagBase::LogBase( "jag.draw.uniform" )
 {
     internalInit( name );
     setType( type );
 }
 Uniform::Uniform( const std::string& name, const GLenum type, const GLint& v )
-  : DrawablePrep( Uniform_t ),
+  : Command( Uniform_t ),
     jagBase::LogBase( "jag.draw.uniform" )
 {
     internalInit( name );
@@ -60,7 +60,7 @@ Uniform::Uniform( const std::string& name, const GLenum type, const GLint& v )
 }
 
 Uniform::Uniform( const Uniform& rhs )
-  : DrawablePrep( rhs ),
+  : Command( rhs ),
     jagBase::LogBase( rhs ),
     SHARED_FROM_THIS( Uniform )( rhs ),
     _name( rhs._name ),
@@ -167,7 +167,7 @@ void Uniform::copyValue( void* address )
 
 #define TYPE_METHOD_BODIES(__type,__typeid) \
     Uniform::Uniform( const std::string& name, const __type& v ) \
-      : DrawablePrep( Uniform_t ), \
+      : Command( Uniform_t ), \
         jagBase::LogBase( "jag.draw.uniform" ) \
     { \
         internalInit( name ); \
