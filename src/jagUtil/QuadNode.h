@@ -23,7 +23,7 @@
 #define __JAGUTIL_QUAD_NODE_H__ 1
 
 #include <jagUtil/Export.h>
-#include <jagDraw/Node.h>
+#include <jagDraw/DrawNode.h>
 #include <jagDraw/Texture.h>
 #include <jagDraw/Framebuffer.h>
 #include <jagDraw/CommandMap.h>
@@ -39,12 +39,12 @@ namespace jagUtil
 
 
 /** \class QuadNode QuadNode.h <jagUtil/QuadNode.h>
-\brief A jagDraw::Node for drawing a textured quad.
+\brief A jagDraw::DrawNode for drawing a textured quad.
 \details TBD
 
 \logname jag.util.quadnode
 */
-class JAGUTIL_EXPORT QuadNode : public jagDraw::Node
+class JAGUTIL_EXPORT QuadNode : public jagDraw::DrawNode
 {
 public:
     QuadNode( const std::string& logName=std::string( "" ) );

@@ -129,13 +129,13 @@ bool ABufferJag::parseOptions( bpo::variables_map& vm )
 nothing beind collected). If the geometry would normally execute a
 Framebuffer using RTT, client code would typically want the glClear()
 call to create an empty texture. This callback ensures that always happens. */
-struct ForceFramebufferExecute : public jagDraw::NodeContainer::Callback
+struct ForceFramebufferExecute : public jagDraw::DrawNodeContainer::Callback
 {
     ForceFramebufferExecute( jagDraw::FramebufferPtr& fbo )
         : _fbo( fbo )
     {}
 
-    virtual bool operator()( jagDraw::NodeContainer& nc, jagDraw::DrawInfo& di )
+    virtual bool operator()( jagDraw::DrawNodeContainer& nc, jagDraw::DrawInfo& di )
     {
         const jagDraw::jagDrawContextID contextID( di._id );
 
@@ -424,8 +424,8 @@ bool ABufferJag::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj
     JAG3D_PROFILE( "frame" );
 
 #ifdef ENABLE_SORT
-    jagDraw::DrawablePrep::CommandTypeVec plist;
-    plist.push_back( jagDraw::DrawablePrep::UniformBlockSet_t );
+    jagDraw::Command::CommandTypeVec plist;
+    plist.push_back( jagDraw::Command::UniformBlockSet_t );
 #endif
 
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
@@ -458,7 +458,7 @@ bool ABufferJag::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj
         {
             JAG3D_PROFILE( "Collection sort" );
             jagDraw::DrawGraphPtr drawGraph( collect.getDrawGraph() );
-            BOOST_FOREACH( jagDraw::NodeContainer& nc, *drawGraph )
+            BOOST_FOREACH( jagDraw::DrawNodeContainer& nc, *drawGraph )
             {
                 std::sort( nc.begin(), nc.end(), jagDraw::DrawNodeCommandSorter( plist ) );
             }

@@ -21,7 +21,7 @@
 
 #include <jagSG/IntersectVisitor.h>
 #include <jagSG/Node.h>
-#include <jagDraw/Node.h>
+#include <jagDraw/DrawNode.h>
 #include <jagDraw/BufferObject.h>
 #include <jagDraw/VertexAttrib.h>
 #include <jagBase/gmtlSupport.h>
@@ -165,7 +165,7 @@ void IntersectVisitor::intersect(jagSG::Node& node) {
         node.traverse(*this);
         if(node.getNumDrawables() > 0) {
         
-         const jagDraw::DrawablePrepPtr& drawablePrep( _commandStack.back()[ jagDraw::DrawablePrep::VertexArrayObject_t ] );
+         const jagDraw::DrawablePrepPtr& drawablePrep( _commandStack.back()[ jagDraw::Command::VertexArrayObject_t ] );
          const jagDraw::VertexArrayObjectPtr vaop( boost::static_pointer_cast< jagDraw::VertexArrayObject >( drawablePrep ) );
         
 

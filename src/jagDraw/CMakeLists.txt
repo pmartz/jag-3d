@@ -10,20 +10,20 @@ set( _jagDrawHeaderFiles
     Bound.h
     BoundOwner.h
     BufferObject.h
+    Command.h
     CommandMap.h
     Common.h
     ContextSupport.h
     Drawable.h
-    DrawablePrep.h
     DrawCommand.h
     DrawGraph.h
     DrawInfo.h
+    DrawNode.h
+    DrawNodeContainer.h
     Error.h
     Framebuffer.h
     FramebufferAttachable.h
     Image.h
-    Node.h
-    NodeContainer.h
     ObjectID.h
     PerContextData.h
     PixelStore.h
@@ -51,11 +51,11 @@ set( _jagDrawSourceFiles
     Drawable.cpp
     DrawGraph.cpp
     DrawInfo.cpp
+    DrawNode.cpp
+    DrawNodeContainer.cpp
     Error.cpp
     Framebuffer.cpp
     Image.cpp
-    Node.cpp
-    NodeContainer.cpp
     PixelStore.cpp
     Program.cpp
     Sampler.cpp

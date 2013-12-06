@@ -23,7 +23,7 @@
 #define __JAGDRAW_DRAW_GRAPH_H__ 1
 
 #include <jagDraw/Export.h>
-#include <jagDraw/NodeContainer.h>
+#include <jagDraw/DrawNodeContainer.h>
 #include <jagDraw/ObjectID.h>
 #include <jagDraw/TransformCallback.h>
 #include <jagBase/LogBase.h>
@@ -42,7 +42,7 @@ namespace jagDraw {
 /** \class DrawGraph DrawGraph.h <jagDraw/DrawGraph.h>
 \brief TBD
 \details std::vector of draw graph Node objects. */
-class JAGDRAW_EXPORT DrawGraph : public jagDraw::NodeContainerSimpleVec,
+class JAGDRAW_EXPORT DrawGraph : public jagDraw::DrawNodeContainerSimpleVec,
         protected jagBase::LogBase, public ObjectIDOwner
 {
 public:

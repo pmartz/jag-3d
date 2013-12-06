@@ -136,9 +136,9 @@ jagDraw::DrawGraphPtr RTTExample::createDrawGraph()
         // Never reset this container.
         (*drawGraphTemplate)[ 1 ].setResetEnable( false );
 
-        struct DepthControlCallback : public jagDraw::NodeContainer::Callback
+        struct DepthControlCallback : public jagDraw::DrawNodeContainer::Callback
         {
-            virtual bool operator()( jagDraw::NodeContainer& nc, jagDraw::DrawInfo& di )
+            virtual bool operator()( jagDraw::DrawNodeContainer& nc, jagDraw::DrawInfo& di )
             {
                 // Disable depth test for QuadNode rendering.
                 glDisable( GL_DEPTH_TEST );
@@ -152,7 +152,7 @@ jagDraw::DrawGraphPtr RTTExample::createDrawGraph()
         };
 
         (*drawGraphTemplate)[ 1 ].getCallbacks().push_back(
-            jagDraw::NodeContainer::CallbackPtr(
+            jagDraw::DrawNodeContainer::CallbackPtr(
                 new DepthControlCallback() ) );
     }
 
@@ -331,8 +331,8 @@ bool RTTExample::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj
     JAG3D_PROFILE( "frame" );
 
 #ifdef ENABLE_SORT
-    jagDraw::DrawablePrep::CommandTypeVec plist;
-    plist.push_back( jagDraw::DrawablePrep::UniformBlockSet_t );
+    jagDraw::Command::CommandTypeVec plist;
+    plist.push_back( jagDraw::Command::UniformBlockSet_t );
 #endif
 
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
@@ -365,7 +365,7 @@ bool RTTExample::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj
         {
             JAG3D_PROFILE( "Collection sort" );
             jagDraw::DrawGraphPtr drawGraph( collect.getDrawGraph() );
-            BOOST_FOREACH( jagDraw::NodeContainer& nc, *drawGraph )
+            BOOST_FOREACH( jagDraw::DrawNodeContainer& nc, *drawGraph )
             {
                 std::sort( nc.begin(), nc.end(), jagDraw::DrawNodeCommandSorter( plist ) );
             }

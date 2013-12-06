@@ -31,7 +31,7 @@ namespace jagDraw {
 
 
 Framebuffer::Framebuffer( GLenum target, const std::string& logName )
-  : DrawablePrep( Framebuffer_t ),
+  : Command( Framebuffer_t ),
     jagBase::LogBase( logName.empty() ? "jag.draw.fbo" : logName ),
     _target( target ),
     _viewport( false ),
@@ -51,7 +51,7 @@ Framebuffer::Framebuffer( GLenum target, const std::string& logName )
 
 }
 Framebuffer::Framebuffer( const Framebuffer& rhs )
-  : DrawablePrep( rhs ),
+  : Command( rhs ),
     ObjectID( rhs ),
     jagBase::LogBase( rhs ),
     _target( rhs._target ),

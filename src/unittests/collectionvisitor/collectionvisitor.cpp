@@ -23,7 +23,7 @@
 #include <jagSG/Node.h>
 #include <jagSG/CollectionVisitor.h>
 #include <jagDraw/Bound.h>
-#include <jagDraw/Node.h>
+#include <jagDraw/DrawNode.h>
 #include <jagDraw/Uniform.h>
 #include <jagDraw/Program.h>
 
@@ -49,7 +49,7 @@ using jagDraw::UniformSet;
 using jagDraw::UniformSetPtr;
 using jagDraw::Drawable;
 using jagDraw::DrawablePtr;
-using jagDraw::NodeContainer;
+using jagDraw::DrawNodeContainer;
 using jagDraw::Program;
 
 
@@ -137,7 +137,7 @@ bool test()
         std::cerr << "Draw graph size " << size << " != 1." << std::endl;
         return( false );
     }
-    const NodeContainer& nodes( (*drawGraph)[ 0 ] );
+    const DrawNodeContainer& nodes( (*drawGraph)[ 0 ] );
     const jagDraw::DrawNodePtr& node( nodes[ 0 ] );
     if( node->getCommandMap() != commands )
     {

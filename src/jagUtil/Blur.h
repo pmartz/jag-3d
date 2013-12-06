@@ -70,7 +70,7 @@ public:
     \details In typical usage, application code should copy this
     NodeContainer into the DrawGraph template passed to
     jagSG::CollectionVisitor. */
-    jagDraw::NodeContainer& getNodeContainer();
+    jagDraw::DrawNodeContainer& getNodeContainer();
 
     /** \brief Set custom fragment shaders by name.
     \details Use this method to override the default vlur effect fragment shaders.
@@ -103,7 +103,7 @@ protected:
     unsigned int _numContexts;
     int _width, _height;
 
-    jagDraw::NodeContainer _container;
+    jagDraw::DrawNodeContainer _container;
     jagUtil::QuadNodePtr _hQuad, _vQuad;
     jagDraw::TexturePtr _intermediateBuffer;
 };

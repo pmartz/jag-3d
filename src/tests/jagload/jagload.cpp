@@ -65,7 +65,7 @@ protected:
     gmtl::Matrix44d computeProjection( double aspect );
     gmtl::Matrix44d computeView();
 
-    jagDraw::NodeContainer _drawNodes;
+    jagDraw::DrawNodeContainer _drawNodes;
 
     typedef jagDraw::PerContextData< gmtl::Matrix44d > PerContextMatrix44d;
     PerContextMatrix44d _proj;

@@ -84,11 +84,11 @@ DrawCommands. Optionally\, client code can also attach a
 Drawable::ComputeBoundCallback.
 
 Once the Drawable objects are instantiated and configured\, jagDraw-based
-client code adds the Drawable objects to jagDraw::Node objects.
+client code adds the Drawable objects to jagDraw::DrawNode objects.
 
 jagSG-based client code adds the Drawable objects to jagSG::Node objects.
 The jagSG::CollectionVisitor queries the bounding volume and stores references
-to the Drawables in jagDraw::Node objects. }
+to the Drawables in jagDraw::DrawNode objects. }
 \specViolations{None}
 \specTableEnd
 

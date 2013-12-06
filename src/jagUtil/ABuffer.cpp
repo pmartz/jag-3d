@@ -152,15 +152,15 @@ jagDraw::DrawGraphPtr& ABuffer::createDrawGraphTemplate( const unsigned int star
 
     // Element 1: Full screen tri pair to clear the ABuffer.
     {
-        jagDraw::NodeContainer& nc( (*_drawGraphTemplate)[ _startContainer ] );
+        jagDraw::DrawNodeContainer& nc( (*_drawGraphTemplate)[ _startContainer ] );
 
-        struct ABufferClearCallback : public jagDraw::NodeContainer::Callback
+        struct ABufferClearCallback : public jagDraw::DrawNodeContainer::Callback
         {
             ABufferClearCallback( PerContextABufferCntxt& abc )
                 : _abufferCntxt( abc )
             {}
 
-            virtual bool operator()( jagDraw::NodeContainer& nc, jagDraw::DrawInfo& di )
+            virtual bool operator()( jagDraw::DrawNodeContainer& nc, jagDraw::DrawInfo& di )
             {
                 const jagDraw::jagDrawContextID contextID( di._id );
                 ABufferContext& abc( _abufferCntxt[ contextID ] );
@@ -202,7 +202,7 @@ jagDraw::DrawGraphPtr& ABuffer::createDrawGraphTemplate( const unsigned int star
         commands->insert( fstpVAO );
         commands->insert( _clearProgram );
 
-        jagDraw::DrawNodePtr node( jagDraw::DrawNodePtr( new jagDraw::Node() ) );
+        jagDraw::DrawNodePtr node( jagDraw::DrawNodePtr( new jagDraw::DrawNode() ) );
         node->setCommandMap( commands );
         node->addDrawable( fstp );
 
@@ -212,15 +212,15 @@ jagDraw::DrawGraphPtr& ABuffer::createDrawGraphTemplate( const unsigned int star
 
     // Element 2: ABuffer. Contents set by CollectionVisitor.
     {
-        jagDraw::NodeContainer& nc( (*_drawGraphTemplate)[ _startContainer + 1 ] );
+        jagDraw::DrawNodeContainer& nc( (*_drawGraphTemplate)[ _startContainer + 1 ] );
 
-        struct ABufferRenderCallback : public jagDraw::NodeContainer::Callback
+        struct ABufferRenderCallback : public jagDraw::DrawNodeContainer::Callback
         {
             ABufferRenderCallback( PerContextABufferCntxt& abc )
                 : _abufferCntxt( abc )
             {}
 
-            virtual bool operator()( jagDraw::NodeContainer& nc, jagDraw::DrawInfo& di )
+            virtual bool operator()( jagDraw::DrawNodeContainer& nc, jagDraw::DrawInfo& di )
             {
                 const jagDraw::jagDrawContextID contextID( di._id );
                 ABufferContext& abc( _abufferCntxt[ contextID ] );
@@ -255,15 +255,15 @@ jagDraw::DrawGraphPtr& ABuffer::createDrawGraphTemplate( const unsigned int star
 
     // Element 3: Full sceen tri pair to resolve ABuffer & combine with opaque.
     {
-        jagDraw::NodeContainer& nc( (*_drawGraphTemplate)[ _startContainer + 2 ] );
+        jagDraw::DrawNodeContainer& nc( (*_drawGraphTemplate)[ _startContainer + 2 ] );
 
-        struct ABufferResolveCallback : public jagDraw::NodeContainer::Callback
+        struct ABufferResolveCallback : public jagDraw::DrawNodeContainer::Callback
         {
             ABufferResolveCallback( PerContextABufferCntxt& abc )
                 : _abufferCntxt( abc )
             {}
 
-            virtual bool operator()( jagDraw::NodeContainer& nc, jagDraw::DrawInfo& di )
+            virtual bool operator()( jagDraw::DrawNodeContainer& nc, jagDraw::DrawInfo& di )
             {
                 const jagDraw::jagDrawContextID contextID( di._id );
 
@@ -311,7 +311,7 @@ jagDraw::DrawGraphPtr& ABuffer::createDrawGraphTemplate( const unsigned int star
             usp->insert( sampler );
         }
 
-        jagDraw::DrawNodePtr node( jagDraw::DrawNodePtr( new jagDraw::Node() ) );
+        jagDraw::DrawNodePtr node( jagDraw::DrawNodePtr( new jagDraw::DrawNode() ) );
         node->setCommandMap( commands );
         node->addDrawable( fstp );
 
@@ -451,9 +451,9 @@ void ABuffer::renderFrame( jagSG::CollectionVisitor& collect, jagDraw::DrawInfo&
 
     // Render the ABuffer, possibly multiple times if necessary
     // to ensure proper page pool size.
-    jagDraw::NodeContainer& clear( (*drawGraph)[ _startContainer ] );
-    jagDraw::NodeContainer& render( (*drawGraph)[ _startContainer + 1 ] );
-    jagDraw::NodeContainer& resolve( (*drawGraph)[ _startContainer + 2 ] );
+    jagDraw::DrawNodeContainer& clear( (*drawGraph)[ _startContainer ] );
+    jagDraw::DrawNodeContainer& render( (*drawGraph)[ _startContainer + 1 ] );
+    jagDraw::DrawNodeContainer& resolve( (*drawGraph)[ _startContainer + 2 ] );
     bool frameOK( false );
     while( !frameOK )
     {

@@ -62,7 +62,7 @@ protected:
     bool init2D();
     bool initTextureObject();
 
-    jagDraw::NodeContainer _nodes;
+    jagDraw::DrawNodeContainer _nodes;
 
     std::string _imageName;
     bool _texObj;
@@ -184,7 +184,7 @@ bool TextureDemo::init2D()
         vaop->addVertexArrayCommand( iColor );
         commands->insert( vaop );
 
-        jagDraw::DrawNodePtr drawNode( new jagDraw::Node( commands ) );
+        jagDraw::DrawNodePtr drawNode( new jagDraw::DrawNode( commands ) );
         drawNode->addDrawable( drawable );
         _nodes.push_back( drawNode );
     }
@@ -208,7 +208,7 @@ bool TextureDemo::initTextureObject()
     const gmtl::Vec3f vVec( 0.f, .8f, 0.f );
     for( unsigned int idx=0; idx<4; ++idx )
     {
-        jagDraw::DrawNodePtr node( new jagDraw::Node() );
+        jagDraw::DrawNodePtr node( new jagDraw::DrawNode() );
 
         jagDraw::DrawablePtr quad( jagUtil::makePlane(
             data, corners[ idx ], uVec, vVec ) );

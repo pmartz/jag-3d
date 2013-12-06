@@ -19,8 +19,8 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#include <jagDraw/Node.h>
-#include <jagDraw/DrawablePrep.h>
+#include <jagDraw/DrawNode.h>
+#include <jagDraw/Command.h>
 #include <jagDraw/DrawInfo.h>
 #include <jagDraw/Drawable.h>
 #include <jagDraw/DrawCommand.h>
@@ -36,7 +36,7 @@
 namespace jagDraw {
 
 
-Node::Node( CommandMapPtr commands, const std::string& logName )
+DrawNode::DrawNode( CommandMapPtr commands, const std::string& logName )
   : jagBase::LogBase( logName.empty() ? "jag.draw.node" : logName ),
     ObjectIDOwner(),
     _matrix( gmtl::MAT_IDENTITY44D ),
@@ -44,7 +44,7 @@ Node::Node( CommandMapPtr commands, const std::string& logName )
     _distance( 0. )
 {
 }
-Node::Node( const std::string& logName )
+DrawNode::DrawNode( const std::string& logName )
     : jagBase::LogBase( logName ),
     ObjectIDOwner(),
     jagBase::UserDataOwner(),
@@ -53,7 +53,7 @@ Node::Node( const std::string& logName )
     _distance( 0. )
 {
 }
-Node::Node( const Node& rhs )
+DrawNode::DrawNode( const DrawNode& rhs )
   : jagBase::LogBase( rhs ),
     ObjectIDOwner( rhs ),
     jagBase::UserDataOwner( rhs ),
@@ -64,36 +64,36 @@ Node::Node( const Node& rhs )
     _executeCallbacks( rhs._executeCallbacks )
 {
 }
-Node::~Node()
+DrawNode::~DrawNode()
 {
 }
 
 
-void Node::setTransform( const gmtl::Matrix44d& matrix )
+void DrawNode::setTransform( const gmtl::Matrix44d& matrix )
 {
     _matrix = matrix;
 }
-gmtl::Matrix44d& Node::getTransform()
+gmtl::Matrix44d& DrawNode::getTransform()
 {
     return( _matrix );
 }
-const gmtl::Matrix44d& Node::getTransform() const
+const gmtl::Matrix44d& DrawNode::getTransform() const
 {
     return( _matrix );
 }
 
 
-Node::ExecuteCallbacks& Node::getExecuteCallbacks()
+DrawNode::ExecuteCallbacks& DrawNode::getExecuteCallbacks()
 {
     return( _executeCallbacks );
 }
-const Node::ExecuteCallbacks& Node::getExecuteCallbacks() const
+const DrawNode::ExecuteCallbacks& DrawNode::getExecuteCallbacks() const
 {
     return( _executeCallbacks );
 }
 
 
-void Node::execute( DrawInfo& drawInfo )
+void DrawNode::execute( DrawInfo& drawInfo )
 {
     JAG3D_TRACE( "execute()" );
 
@@ -102,7 +102,7 @@ void Node::execute( DrawInfo& drawInfo )
     {
     JAG3D_PROFILE( "callbacks" );
     const ExecuteCallbacks& callbacks( getExecuteCallbacks() );
-    BOOST_FOREACH( const jagDraw::Node::CallbackPtr& cb, callbacks )
+    BOOST_FOREACH( const jagDraw::DrawNode::CallbackPtr& cb, callbacks )
     {
         if( !( (*cb)( *this, drawInfo ) ) )
         {
@@ -140,14 +140,14 @@ void Node::execute( DrawInfo& drawInfo )
         }
     }
 
-    JAG3D_ERROR_CHECK( "Node::execute()" );
+    JAG3D_ERROR_CHECK( "DrawNode::execute()" );
 }
 
-void Node::setMaxContexts( const unsigned int numContexts )
+void DrawNode::setMaxContexts( const unsigned int numContexts )
 {
     if( _commands == NULL )
     {
-        JAG3D_ERROR( "setMaxContexts(): jagDraw::Node must have non-NULL _commands." );
+        JAG3D_ERROR( "setMaxContexts(): jagDraw::DrawNode must have non-NULL _commands." );
     }
     else
     {
@@ -159,7 +159,7 @@ void Node::setMaxContexts( const unsigned int numContexts )
         drawable->setMaxContexts( numContexts );
     }
 }
-void Node::deleteID( const jagDraw::jagDrawContextID contextID )
+void DrawNode::deleteID( const jagDraw::jagDrawContextID contextID )
 {
     _commands->deleteID( contextID );
 
@@ -169,10 +169,10 @@ void Node::deleteID( const jagDraw::jagDrawContextID contextID )
     }
 }
 
-void Node::setBoundUniforms( DrawInfo& drawInfo )
+void DrawNode::setBoundUniforms( DrawInfo& drawInfo )
 {
     CommandMap& current( drawInfo._current );
-    if( !( current.contains( DrawablePrep::Program_t ) ) )
+    if( !( current.contains( Command::Program_t ) ) )
     {
         JAG3D_ERROR( "setBoundUniforms(): Current CommandMap does not contain Program_t." );
         return;
@@ -188,7 +188,7 @@ void Node::setBoundUniforms( DrawInfo& drawInfo )
     static Program::HashValue bbMinHash( Program::createHash( "jag3d_bbMin" ) );
     static Program::HashValue bbMaxHash( Program::createHash( "jag3d_bbMax" ) );
 
-    jagDraw::ProgramPtr prog( boost::dynamic_pointer_cast< Program >( current[ DrawablePrep::Program_t ] ) );
+    jagDraw::ProgramPtr prog( boost::dynamic_pointer_cast< Program >( current[ Command::Program_t ] ) );
     GLint loc( prog->getUniformLocation( bbMinHash ) );
     if( loc != -1 )
         glUniform3fv( loc, 1, bbMinFloats );

@@ -25,7 +25,7 @@
 
 #include <jagDraw/Export.h>
 #include <jagDraw/PlatformOpenGL.h>
-#include <jagDraw/DrawablePrep.h>
+#include <jagDraw/Command.h>
 #include <jagDraw/Program.h>
 #include <jagBase/LogBase.h>
 #include <jagDraw/CommandMap.h>
@@ -104,7 +104,7 @@ logger name. This is currently not implemented for the Uniform class.
 
 \gl{section 2.11.4}.
 */
-class JAGDRAW_EXPORT Uniform : public DrawablePrep, protected jagBase::LogBase,
+class JAGDRAW_EXPORT Uniform : public Command, protected jagBase::LogBase,
         public SHARED_FROM_THIS(Uniform)
 {
 public:
@@ -276,7 +276,7 @@ protected:
 
 public:
     UniformSet()
-        : SET_TYPE( DrawablePrep::UniformSet_t )
+        : SET_TYPE( Command::UniformSet_t )
     {}
     UniformSet( const UniformSet& rhs )
         : SET_TYPE( rhs )
