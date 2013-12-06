@@ -27,7 +27,7 @@ namespace jagDraw {
 
 
 TransformCallback::TransformCallback()
-    : Node::Callback(),
+    : DrawNode::Callback(),
     _transform(),
     _requiredUniforms( jagBase::TransformD::MODEL_VIEW_PROJ |
             jagBase::TransformD::MODEL_VIEW |
@@ -36,7 +36,7 @@ TransformCallback::TransformCallback()
     setDefaultMatrixUniformNames();
 }
 TransformCallback::TransformCallback( const TransformCallback& rhs )
-    : Node::Callback( rhs ),
+    : DrawNode::Callback( rhs ),
     _transform( rhs._transform ),
     _requiredUniforms( rhs._requiredUniforms ),
     _nameMap( rhs._nameMap )
@@ -47,7 +47,7 @@ TransformCallback::~TransformCallback()
 }
 
 
-bool TransformCallback::operator()( jagDraw::Node& node, jagDraw::DrawInfo& drawInfo )
+bool TransformCallback::operator()( jagDraw::DrawNode& node, jagDraw::DrawInfo& drawInfo )
 {
     if( !drawInfo._startFrame &&
         ( drawInfo._transform == node.getTransform() ) )

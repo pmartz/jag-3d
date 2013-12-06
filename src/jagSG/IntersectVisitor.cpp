@@ -21,7 +21,7 @@
 
 #include <jagSG/IntersectVisitor.h>
 #include <jagSG/Node.h>
-#include <jagDraw/Node.h>
+#include <jagDraw/DrawNode.h>
 #include <jagDraw/BufferObject.h>
 #include <jagDraw/VertexAttrib.h>
 #include <jagBase/gmtlSupport.h>

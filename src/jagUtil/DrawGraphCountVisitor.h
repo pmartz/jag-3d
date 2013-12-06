@@ -24,8 +24,8 @@
 
 #include <jagUtil/Export.h>
 #include <jagDraw/Visitor.h>
-#include <jagDraw/NodeContainer.h>
-#include <jagDraw/Node.h>
+#include <jagDraw/DrawNodeContainer.h>
+#include <jagDraw/DrawNode.h>
 #include <jagDraw/CommandMap.h>
 
 #include <iostream>
@@ -44,8 +44,8 @@ public:
     void reset();
     void dump( std::ostream& ostr );
 
-    virtual bool visit( jagDraw::NodeContainer& nc );
-    virtual bool visit( jagDraw::Node& node, jagDraw::NodeContainer& nc );
+    virtual bool visit( jagDraw::DrawNodeContainer& nc );
+    virtual bool visit( jagDraw::DrawNode& node, jagDraw::DrawNodeContainer& nc );
 
 protected:
     unsigned int _containers;
@@ -82,12 +82,12 @@ inline void DrawGraphCountVisitor::dump( std::ostream& ostr )
     ostr << "  CM deltas:\t" << _nonEmptyCommandMapDeltas << std::endl;
 }
 
-inline bool DrawGraphCountVisitor::visit( jagDraw::NodeContainer& nc )
+inline bool DrawGraphCountVisitor::visit( jagDraw::DrawNodeContainer& nc )
 {
     ++_containers;
     return( true );
 }
-inline bool DrawGraphCountVisitor::visit( jagDraw::Node& node, jagDraw::NodeContainer& nc )
+inline bool DrawGraphCountVisitor::visit( jagDraw::DrawNode& node, jagDraw::DrawNodeContainer& nc )
 {
     ++_nodes;
     _drawables += node.getNumDrawables();

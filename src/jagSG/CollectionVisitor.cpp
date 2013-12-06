@@ -21,7 +21,7 @@
 
 #include <jagSG/CollectionVisitor.h>
 #include <jagSG/Node.h>
-#include <jagDraw/Node.h>
+#include <jagDraw/DrawNode.h>
 #include <jagBase/gmtlSupport.h>
 #include <jagDraw/Error.h>
 #include <jagBase/Profile.h>
@@ -198,14 +198,14 @@ void CollectionVisitor::collectAndTraverse( jagSG::Node& node )
         }
         }
 
-        // Get a new jagDraw::Node.
-        // Note: We can't re-use an existing jagDraw::Node, as that
+        // Get a new jagDraw::DrawNode.
+        // Note: We can't re-use an existing jagDraw::DrawNode, as that
         // potentially breaks DrawGraph sorting by depth.
         if( _currentNodes == NULL )
             setCurrentNodeContainer( 0 );
         jagDraw::DrawNodePtr& drawNode( _currentNodes->grow() );
 
-        // Init the jagDraw::Node.
+        // Init the jagDraw::DrawNode.
         {
             {
             JAG3D_PROFILE( "collect node setup" );

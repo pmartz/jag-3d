@@ -20,7 +20,7 @@
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
 #include <jagDraw/DrawGraph.h>
-#include <jagDraw/NodeContainer.h>
+#include <jagDraw/DrawNodeContainer.h>
 #include <jagDraw/DrawInfo.h>
 #include <jagDraw/Error.h>
 #include <jagBase/Profile.h>
@@ -38,7 +38,7 @@ DrawGraph::DrawGraph( const std::string& logName )
 {
 }
 DrawGraph::DrawGraph( const DrawGraph& rhs )
-  : NodeContainerSimpleVec( rhs ),
+  : DrawNodeContainerSimpleVec( rhs ),
     jagBase::LogBase( "jag.draw.graph" ),
     ObjectIDOwner( rhs ),
     _callbacks( rhs._callbacks ),
@@ -51,7 +51,7 @@ DrawGraph::~DrawGraph()
 
 DrawGraph& DrawGraph::operator=( const DrawGraph& rhs )
 {
-    NodeContainerSimpleVec::operator=( rhs );
+    DrawNodeContainerSimpleVec::operator=( rhs );
     ObjectIDOwner::operator=( rhs );
     // LogBase does not support (and doesn't need) assignment operator.
     //jagBase::LogBase::operator=( rhs );
@@ -103,7 +103,7 @@ void DrawGraph::execute( DrawInfo& drawInfo )
 }
 void DrawGraph::internalExecute( DrawInfo& drawInfo )
 {
-    BOOST_FOREACH( NodeContainer& node, *this )
+    BOOST_FOREACH( DrawNodeContainer& node, *this )
     {
         node.execute( drawInfo );
     }
@@ -111,14 +111,14 @@ void DrawGraph::internalExecute( DrawInfo& drawInfo )
 
 void DrawGraph::setMaxContexts( const unsigned int numContexts )
 {
-    BOOST_FOREACH( NodeContainer& node, *this )
+    BOOST_FOREACH( DrawNodeContainer& node, *this )
     {
         node.setMaxContexts( numContexts );
     }
 }
 void DrawGraph::deleteID( const jagDraw::jagDrawContextID contextID )
 {
-    BOOST_FOREACH( NodeContainer& node, *this )
+    BOOST_FOREACH( DrawNodeContainer& node, *this )
     {
         node.deleteID( contextID );
     }

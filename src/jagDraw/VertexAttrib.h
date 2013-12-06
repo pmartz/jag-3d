@@ -86,7 +86,7 @@ public:
         // look up the vertex attrib hash index without bothering to check for
         // ( drawInfo._current[ Program_t ] != NULL ) first.
 
-        // TBD We must support the following use case. Imagine a jagDraw::Node that sets a
+        // TBD We must support the following use case. Imagine a jagDraw::DrawNode that sets a
         // program and a VAO (and does some drawing), following by another Node that
         // changes only the program (and does some drawing). In this case, the old VAO
         // would be in effect. Would this render correctly?

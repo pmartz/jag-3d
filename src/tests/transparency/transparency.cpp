@@ -140,9 +140,9 @@ jagSG::NodePtr createPlanesSubgraph( jagDraw::BoundPtr bound )
     return( planeRoot );
 }
 
-struct BlendCallback : public jagDraw::NodeContainer::Callback
+struct BlendCallback : public jagDraw::DrawNodeContainer::Callback
 {
-    virtual bool operator()( jagDraw::NodeContainer& nodeContainer,
+    virtual bool operator()( jagDraw::DrawNodeContainer& nodeContainer,
         jagDraw::DrawInfo& drawInfo )
     {
         glEnable( GL_BLEND );
@@ -170,7 +170,7 @@ bool Transparency::startup( const unsigned int numContexts )
     jagDraw::DrawGraphPtr drawGraphTemplate( new jagDraw::DrawGraph() );
     drawGraphTemplate->resize( 2 );
     (*drawGraphTemplate)[ 1 ].getCallbacks().push_back(
-        jagDraw::NodeContainer::CallbackPtr( new BlendCallback() ) );
+        jagDraw::DrawNodeContainer::CallbackPtr( new BlendCallback() ) );
     getCollectionVisitor().setDrawGraphTemplate( drawGraphTemplate );
 
 
@@ -312,12 +312,12 @@ bool Transparency::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& pr
             JAG3D_PROFILE( "Collection sort" );
             {
                 // Sort by commands.
-                jagDraw::NodeContainer& nc( (*drawGraph)[ 0 ] );
+                jagDraw::DrawNodeContainer& nc( (*drawGraph)[ 0 ] );
                 std::sort( nc.begin(), nc.end(), jagDraw::DrawNodeCommandSorter( plist ) );
             }
             {
                 // Sort by descending eye coord z distance.
-                jagDraw::NodeContainer& nc( (*drawGraph)[ 1 ] );
+                jagDraw::DrawNodeContainer& nc( (*drawGraph)[ 1 ] );
                 jagDraw::DrawNodeDistanceSorter distanceSorter;
                 std::sort( nc.begin(), nc.end(), distanceSorter );
             }
