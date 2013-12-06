@@ -208,7 +208,8 @@ In order to use the optional OSG dependency, you'll need to create
 a stub gl3.h header like this:
 \code
 #ifdef GL3_PROTOTYPES
-#  define GLCOREARB_PROTOTYPES 1
+#  define GLCOREARB_PROTOTYPES 1 // for old glcorearb.h
+#  define GL_GLEXT_PROTOTYPES 1  // for new glcorearb.h
 #endif
 
 #include <GL/glcorearb.h>
