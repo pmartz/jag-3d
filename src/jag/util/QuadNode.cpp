@@ -19,11 +19,11 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#include <jagUtil/QuadNode.h>
+#include <jag/util/QuadNode.h>
 
 #include <jag/draw/Common.h>
 #include <jag/disk/ReadWrite.h>
-#include <jagUtil/Shapes.h>
+#include <jag/util/Shapes.h>
 #include <jag/base/Log.h>
 #include <jag/base/LogMacros.h>
 
@@ -36,8 +36,8 @@
 #include <iomanip>
 
 
-namespace jagUtil
-{
+namespace jag {
+namespace util {
 
 
 QuadNode::QuadNode( const std::string& logName )
@@ -177,10 +177,10 @@ void QuadNode::internalInit( jag::draw::ProgramPtr& program )
     _commands->insert( texSet );
 
     // Create quad (tri pair) geometry.
-    jagUtil::VNTCVec data;
-    jag::draw::DrawablePtr fstp( jagUtil::makePlane( data, gmtl::Point3f( -1., -1., 0. ),
+    jag::util::VNTCVec data;
+    jag::draw::DrawablePtr fstp( jag::util::makePlane( data, gmtl::Point3f( -1., -1., 0. ),
         gmtl::Vec3f( 2., 0., 0. ), gmtl::Vec3f( 0., 2., 0. ) ) );
-    _commands->insert( jagUtil::createVertexArrayObject( data ) );
+    _commands->insert( jag::util::createVertexArrayObject( data ) );
 
     _fbo.reset( new jag::draw::Framebuffer( GL_DRAW_FRAMEBUFFER ) );
     _fbo->setViewport( 0, 0, _width, _height );
@@ -224,5 +224,6 @@ std::string QuadNode::getTextureCountString() const
 }
 
 
-// jagUtil
+// namespace jag::util::
+}
 }

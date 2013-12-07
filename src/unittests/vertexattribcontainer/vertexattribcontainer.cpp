@@ -23,7 +23,7 @@
 #include <jag/draw/DrawCommand.h>
 #include <jag/draw/VertexAttribContainer.h>
 #include <jag/draw/VertexArrayObject.h>
-#include <jagUtil/Shapes.h>
+#include <jag/util/Shapes.h>
 
 #include <boost/shared_ptr.hpp>
 #include <boost/foreach.hpp>
@@ -46,14 +46,14 @@ using jag::draw::DrawArrays;
 using jag::draw::DrawElements;
 
 
-DrawablePtr createQuad( jagUtil::VNTCVec& data, const gmtl::Point3f& center, const float extent )
+DrawablePtr createQuad( jag::util::VNTCVec& data, const gmtl::Point3f& center, const float extent )
 {
     // Create the quad and its data
     const gmtl::Point3f corner( center -
         gmtl::Point3f( extent/2.f, extent/2.f, 0.f ) );
     const gmtl::Vec3f uVec( extent, 0.f, 0.f );
     const gmtl::Vec3f vVec( 0.f, extent, 0.f );
-    jag::draw::DrawablePtr quad( jagUtil::makePlane(
+    jag::draw::DrawablePtr quad( jag::util::makePlane(
         data, corner, uVec, vVec ) );
 
     return( quad );
@@ -92,9 +92,9 @@ bool test()
 {
     std::cout << "Testing: Iterate over simple quad..." << std::endl;
     {
-        jagUtil::VNTCVec data;
+        jag::util::VNTCVec data;
         DrawablePtr quad( createQuad( data, gmtl::Point3f( 0., 0., 0. ), 10.f ) );
-        VertexArrayObjectPtr vaop( jagUtil::createVertexArrayObject( data ) );
+        VertexArrayObjectPtr vaop( jag::util::createVertexArrayObject( data ) );
 
         BufferObjectPtr bop;
         VertexAttribPtr verts;

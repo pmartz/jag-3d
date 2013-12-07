@@ -22,7 +22,7 @@
 #include <jag/draw/Bound.h>
 #include <jag/sg/Node.h>
 #include <jag/draw/DrawCommand.h>
-#include <jagUtil/Shapes.h>
+#include <jag/util/Shapes.h>
 
 #include <boost/foreach.hpp>
 #include <gmtl/gmtl.h>
@@ -44,14 +44,14 @@ using jag::draw::DrawablePtr;
 using jag::draw::DrawArrays;
 
 
-DrawablePtr createQuad( jagUtil::VNTCVec& data, const gmtl::Point3f& center, const float extent )
+DrawablePtr createQuad( jag::util::VNTCVec& data, const gmtl::Point3f& center, const float extent )
 {
     // Create the quad and its data
     const gmtl::Point3f corner( center -
         gmtl::Point3f( extent/2.f, extent/2.f, 0.f ) );
     const gmtl::Vec3f uVec( extent, 0.f, 0.f );
     const gmtl::Vec3f vVec( 0.f, extent, 0.f );
-    jag::draw::DrawablePtr quad( jagUtil::makePlane(
+    jag::draw::DrawablePtr quad( jag::util::makePlane(
         data, corner, uVec, vVec ) );
 
     return( quad );
@@ -101,11 +101,11 @@ bool test()
             // Ensure that querying the volume clears all bound dirty flags.
 
             NodePtr nodeA( NodePtr( new Node() ) );
-            jagUtil::VNTCVec data;
+            jag::util::VNTCVec data;
             DrawablePtr quad( createQuad( data, gmtl::Point3f( 0., 0., 0. ), 10.f ) );
             nodeA->addDrawable( quad );
             root->addChild( nodeA );
-            commands->insert( jagUtil::createVertexArrayObject( data ) );
+            commands->insert( jag::util::createVertexArrayObject( data ) );
 
             BoundPtr bound( root->getBound() );
             double returnRadius( bound->getRadius() );
@@ -137,11 +137,11 @@ bool test()
             }
 
             NodePtr nodeA( NodePtr( new Node() ) );
-            jagUtil::VNTCVec data;
+            jag::util::VNTCVec data;
             DrawablePtr drawable( createQuad( data, gmtl::Point3f( 0., 0., 0. ), 10.f ) );
             nodeA->addDrawable( drawable );
             root->addChild( nodeA );
-            commands->insert( jagUtil::createVertexArrayObject( data ) );
+            commands->insert( jag::util::createVertexArrayObject( data ) );
 
             BoundPtr bound( root->getBound() );
             double returnRadius( bound->getRadius() );
@@ -172,11 +172,11 @@ bool test()
             // correctly marks the Node bound as dirty.
 
             NodePtr nodeA( NodePtr( new Node() ) );
-            jagUtil::VNTCVec data;
+            jag::util::VNTCVec data;
             DrawablePtr drawable( createQuad( data, gmtl::Point3f( 0., 0., 0. ), 10.f ) );
             nodeA->addDrawable( drawable );
             root->addChild( nodeA );
-            commands->insert( jagUtil::createVertexArrayObject( data ) );
+            commands->insert( jag::util::createVertexArrayObject( data ) );
 
             BoundPtr bound( root->getBound() );
             double returnRadius( bound->getRadius() );

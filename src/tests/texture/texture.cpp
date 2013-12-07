@@ -27,7 +27,7 @@
 #include <jag/base/Log.h>
 #include <jag/base/LogMacros.h>
 #include <jag/disk/ReadWrite.h>
-#include <jagUtil/Shapes.h>
+#include <jag/util/Shapes.h>
 
 #include <boost/program_options/options_description.hpp>
 #include <boost/program_options/variables_map.hpp>
@@ -198,7 +198,7 @@ bool TextureDemo::initTextureObject()
     return( false );
 #endif
 
-    jagUtil::VNTCVec data;
+    jag::util::VNTCVec data;
     const gmtl::Point3f corners[] = {
         gmtl::Point3f( -.9f, -.9f, 0.f ),
         gmtl::Point3f( .1f, -.9f, 0.f ),
@@ -210,7 +210,7 @@ bool TextureDemo::initTextureObject()
     {
         jag::draw::DrawNodePtr node( new jag::draw::DrawNode() );
 
-        jag::draw::DrawablePtr quad( jagUtil::makePlane(
+        jag::draw::DrawablePtr quad( jag::util::makePlane(
             data, corners[ idx ], uVec, vVec ) );
         node->addDrawable( quad );
 
@@ -226,7 +226,7 @@ bool TextureDemo::initTextureObject()
     }
 
     jag::draw::CommandMapPtr& commands( _nodes[ 0 ]->getCommandMap() );
-    commands->insert( jagUtil::createVertexArrayObject( data ) );
+    commands->insert( jag::util::createVertexArrayObject( data ) );
 
     jag::draw::ShaderPtr vs( DemoInterface::readShaderUtil( "texobj.vert" ) );
     jag::draw::ShaderPtr fs( DemoInterface::readShaderUtil( "texobj.frag" ) );

@@ -25,14 +25,14 @@
 #include <jag/draw/PerContextData.h>
 #include <jag/sg/Common.h>
 #include <jag/base/Profile.h>
-#include <jagUtil/QuadNode.h>
-#include <jagUtil/DrawGraphCountVisitor.h>
-#include <jagUtil/Shapes.h>
+#include <jag/util/QuadNode.h>
+#include <jag/util/DrawGraphCountVisitor.h>
+#include <jag/util/Shapes.h>
 #include <jag/base/Version.h>
 #include <jag/base/Log.h>
 #include <jag/base/LogMacros.h>
 
-#include <jagUtil/BufferAggregationVisitor.h>
+#include <jag/util/BufferAggregationVisitor.h>
 
 #include <boost/program_options/options_description.hpp>
 #include <boost/program_options/variables_map.hpp>
@@ -90,7 +90,7 @@ protected:
 
     jag::draw::DrawGraphPtr createDrawGraph();
 
-    jagUtil::QuadNodePtr _quadNode;
+    jag::util::QuadNodePtr _quadNode;
     jag::draw::FramebufferPtr _rttFBO;
     jag::draw::TexturePtr _colorBuffer;
     int _width, _height;
@@ -128,7 +128,7 @@ jag::draw::DrawGraphPtr RTTExample::createDrawGraph()
     // Element 1: Full sceen tri pair to display texture.
     {
         // Use QuadNode utility to create a full screen quad in the draw graph.
-        _quadNode.reset( new jagUtil::QuadNode( _colorBuffer ) );
+        _quadNode.reset( new jag::util::QuadNode( _colorBuffer ) );
 
         // Add this single draw Node to this container.
         (*drawGraphTemplate)[ 1 ].push_back( _quadNode );
@@ -194,7 +194,7 @@ bool RTTExample::startup( const unsigned int numContexts )
     model->accept( sfdv );
 
     // Optimize VAO binding.
-    jagUtil::BufferAggregationVisitor bav( _root );
+    jag::util::BufferAggregationVisitor bav( _root );
 
 
     // Create CommandMap for scene rendering.
@@ -390,7 +390,7 @@ bool RTTExample::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj
 #ifdef JAG3D_ENABLE_PROFILING
     {
         // If profiling, dump out draw graph info.
-        jagUtil::DrawGraphCountVisitor dgcv;
+        jag::util::DrawGraphCountVisitor dgcv;
         dgcv.traverse( *( collect.getDrawGraph() ) );
         dgcv.dump( std::cout ); 
     }
@@ -431,7 +431,7 @@ void RTTExample::reshape( const int w, const int h )
 
 
 /** \defgroup exampleJagRTT The rtt Example
-This example demonstrates rendering to texture and the jagUtil::QuadNode utility.
+This example demonstrates rendering to texture and the jag::util::QuadNode utility.
 
 Command line options:
 \li --help,-h Help text

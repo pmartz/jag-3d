@@ -19,8 +19,8 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#include <jagUtil/BufferAggregationVisitor.h>
-#include <jagUtil/ResetBoundsVisitor.h>
+#include <jag/util/BufferAggregationVisitor.h>
+#include <jag/util/ResetBoundsVisitor.h>
 #include <jag/draw/Drawable.h>
 #include <jag/draw/DrawCommand.h>
 #include <jag/sg/Node.h>
@@ -30,8 +30,8 @@
 #include <sstream>
 
 
-namespace jagUtil
-{
+namespace jag {
+namespace util {
 
 
 BufferAggregationVisitor::BufferAggregationVisitor( jag::sg::NodePtr node, const std::string& logName )
@@ -48,7 +48,7 @@ BufferAggregationVisitor::BufferAggregationVisitor( jag::sg::NodePtr node, const
 
     {
         // Reset (clear) the map of VAOs to bounds in every Node and Drawable.
-        jagUtil::ResetBoundsVisitor rbv( node );
+        jag::util::ResetBoundsVisitor rbv( node );
     }
 
     if( _vaop->getVertexArrayCommandList().empty() )
@@ -282,5 +282,6 @@ void BufferAggregationVisitor::handleDrawable( jag::draw::DrawablePtr draw, cons
 }
 
 
-// jagUtil
+// namespace jag::util::
+}
 }

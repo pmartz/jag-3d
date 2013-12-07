@@ -19,17 +19,17 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#ifndef __JAGUTIL_SHAPES_H__
-#define __JAGUTIL_SHAPES_H__ 1
+#ifndef __JAG_UTIL_SHAPES_H__
+#define __JAG_UTIL_SHAPES_H__ 1
 
-#include <jagUtil/Export.h>
+#include <jag/util/Export.h>
 #include <jag/draw/Drawable.h>
 #include <jag/draw/VertexArrayObject.h>
 #include <gmtl/gmtl.h>
 
 
-namespace jagUtil
-{
+namespace jag {
+namespace util {
 
 
 /** \addtogroup jagUtilShapes Rudimentary Shape Support
@@ -56,9 +56,10 @@ JAGUTIL_EXPORT jag::draw::DrawablePtr makePlane( VNTCVec& data,
 /*@}*/
 
 
-// jagUtil
+// namespace jag::util::
+}
 }
 
 
-// __JAGUTIL_SHAPES_H__
+// __JAG_UTIL_SHAPES_H__
 #endif

@@ -19,7 +19,7 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#include <jagUtil/ResetBoundsVisitor.h>
+#include <jag/util/ResetBoundsVisitor.h>
 #include <jag/draw/Drawable.h>
 #include <jag/sg/Node.h>
 
@@ -27,8 +27,8 @@
 
 
 
-namespace jagUtil
-{
+namespace jag {
+namespace util {
 
 
 ResetBoundsVisitor::ResetBoundsVisitor( jag::sg::NodePtr node, const std::string& logName )
@@ -58,5 +58,6 @@ void ResetBoundsVisitor::visit( jag::sg::Node& node )
 }
 
 
-// jagUtil
+// namespace jag::util::
+}
 }

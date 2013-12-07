@@ -19,15 +19,15 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#include <jagUtil/ABuffer.h>
+#include <jag/util/ABuffer.h>
 
 #include <jag/draw/Common.h>
 #include <jag/draw/PerContextData.h>
 #include <jag/sg/Common.h>
 #include <jag/disk/ReadWrite.h>
 #include <jag/base/Profile.h>
-#include <jagUtil/DrawGraphCountVisitor.h>
-#include <jagUtil/Shapes.h>
+#include <jag/util/DrawGraphCountVisitor.h>
+#include <jag/util/Shapes.h>
 #include <jag/base/Version.h>
 #include <jag/base/Log.h>
 #include <jag/base/LogMacros.h>
@@ -41,8 +41,8 @@
 #include <iomanip>
 
 
-namespace jagUtil
-{
+namespace jag {
+namespace util {
 
 
 ABuffer::ABuffer( const std::string& logName )
@@ -143,10 +143,10 @@ jag::draw::DrawGraphPtr& ABuffer::createDrawGraphTemplate( const unsigned int st
     jag::draw::VertexArrayObjectPtr fstpVAO;
     jag::draw::DrawablePtr fstp;
     {
-        jagUtil::VNTCVec data;
-        fstp = jagUtil::makePlane( data, gmtl::Point3f( -1., -1., 0. ),
+        jag::util::VNTCVec data;
+        fstp = jag::util::makePlane( data, gmtl::Point3f( -1., -1., 0. ),
             gmtl::Vec3f( 2., 0., 0. ), gmtl::Vec3f( 0., 2., 0. ) );
-        fstpVAO = jagUtil::createVertexArrayObject( data );
+        fstpVAO = jag::util::createVertexArrayObject( data );
     }
 
 
@@ -849,5 +849,6 @@ bool ABufferContext::managePool()
 }
 
 
-// jagUtil
+// namespace jag::util::
+}
 }

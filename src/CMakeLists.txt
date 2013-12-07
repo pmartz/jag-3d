@@ -2,9 +2,8 @@ if( JAG3D_USE_GL3W )
     add_subdirectory( gl3w )
 endif()
 
-add_subdirectory( jag )
 
-add_subdirectory( jagUtil )
+add_subdirectory( jag )
 
 
 if( JAG3D_BUILD_PLUGINS )

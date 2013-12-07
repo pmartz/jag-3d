@@ -26,7 +26,7 @@
 #include <jag/draw/DrawNode.h>
 #include <jag/draw/Uniform.h>
 #include <jag/draw/Program.h>
-#include <jagUtil/Shapes.h>
+#include <jag/util/Shapes.h>
 
 #include <boost/foreach.hpp>
 #include <gmtl/gmtl.h>
@@ -61,14 +61,14 @@ jag::sg::NodePtr createQuad( const gmtl::Point3f& center, const float extent )
     jag::sg::NodePtr quadRoot = jag::sg::NodePtr( new jag::sg::Node() );
 
     // Create container to store the quad vertex / normal / texcoord data.
-    jagUtil::VNTCVec data;
+    jag::util::VNTCVec data;
 
     // Create the quad and its data
     const gmtl::Point3f corner( center -
         gmtl::Point3f( extent/2.f, extent/2.f, 0.f ) );
     const gmtl::Vec3f uVec( extent, 0.f, 0.f );
     const gmtl::Vec3f vVec( 0.f, extent, 0.f );
-    jag::draw::DrawablePtr quad( jagUtil::makePlane(
+    jag::draw::DrawablePtr quad( jag::util::makePlane(
         data, corner, uVec, vVec ) );
     quadRoot->addDrawable( quad );
 
@@ -80,7 +80,7 @@ jag::sg::NodePtr createQuad( const gmtl::Point3f& center, const float extent )
         commands = jag::draw::CommandMapPtr( new jag::draw::CommandMap() );
         quadRoot->setCommandMap( commands );
     }
-    commands->insert( jagUtil::createVertexArrayObject( data ) );
+    commands->insert( jag::util::createVertexArrayObject( data ) );
 
     return( quadRoot );
 }

@@ -24,7 +24,7 @@
 #include <jag/draw/Common.h>
 #include <jag/draw/PerContextData.h>
 #include <jag/sg/Common.h>
-#include <jagUtil/Shapes.h>
+#include <jag/util/Shapes.h>
 #include <jag/disk/ReadWrite.h>
 #include <jag/base/Profile.h>
 #include <jag/base/Version.h>
@@ -106,21 +106,21 @@ jag::sg::NodePtr createPlanesSubgraph( jag::draw::BoundPtr bound )
     planeRoot->getCollectionCallbacks().push_back( sccp );
 
     // Create container to store the plane vertex / normal / texcoord data.
-    jagUtil::VNTCVec data;
+    jag::util::VNTCVec data;
 
     // Create the first plane and its data
     float radius( (float)( bound->getRadius() ) );
     gmtl::Point3f corner( radius, -radius, radius );
     gmtl::Vec3f uVec( 0.f, 0.f, -2.f*radius );
     gmtl::Vec3f vVec( 0.f, 2.f*radius, 0.f );
-    jag::draw::DrawablePtr plane0( jagUtil::makePlane(
+    jag::draw::DrawablePtr plane0( jag::util::makePlane(
         data, corner, uVec, vVec ) );
     planeRoot->addDrawable( plane0 );
 
     // Create second plane and its data.
     corner = gmtl::Point3f( -radius, -radius, -radius );
     uVec = gmtl::Vec3f( 0.f, 0.f, 2.f*radius );
-    jag::draw::DrawablePtr plane1( jagUtil::makePlane(
+    jag::draw::DrawablePtr plane1( jag::util::makePlane(
         data, corner, uVec, vVec, 4, 4 ) );
     // Must add as separate child node for proper depth sorting.
     jag::sg::NodePtr planeChild( jag::sg::NodePtr( new jag::sg::Node() ) );
@@ -135,7 +135,7 @@ jag::sg::NodePtr createPlanesSubgraph( jag::draw::BoundPtr bound )
         commands = jag::draw::CommandMapPtr( new jag::draw::CommandMap() );
         planeRoot->setCommandMap( commands );
     }
-    commands->insert( jagUtil::createVertexArrayObject( data ) );
+    commands->insert( jag::util::createVertexArrayObject( data ) );
 
     return( planeRoot );
 }

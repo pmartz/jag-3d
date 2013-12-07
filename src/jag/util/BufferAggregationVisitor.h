@@ -19,10 +19,10 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#ifndef __JAGUTIL_BUFFER_AGGREGATION_VISITOR_H__
-#define __JAGUTIL_BUFFER_AGGREGATION_VISITOR_H__ 1
+#ifndef __JAG_UTIL_BUFFER_AGGREGATION_VISITOR_H__
+#define __JAG_UTIL_BUFFER_AGGREGATION_VISITOR_H__ 1
 
-#include <jagUtil/Export.h>
+#include <jag/util/Export.h>
 #include <jag/sg/Visitor.h>
 #include <jag/sg/Node.h>
 #include <jag/draw/VertexArrayObject.h>
@@ -31,11 +31,11 @@
 #include <map>
 
 
-namespace jagUtil
-{
+namespace jag {
+namespace util {
 
 
-/** \class BufferAggregationVisitor BufferAggregationVisitor.h <jagUtil/BufferAggregationVisitor.h>
+/** \class BufferAggregationVisitor BufferAggregationVisitor.h <jag/util/BufferAggregationVisitor.h>
 \brief Combines vertex array and element array buffers.
 \details
 
@@ -84,9 +84,10 @@ protected:
 };
 
 
-// jagUtil
+// namespace jag::util::
+}
 }
 
 
-// __JAGUTIL_BUFFER_AGGREGATION_VISITOR_H__
+// __JAG_UTIL_BUFFER_AGGREGATION_VISITOR_H__
 #endif
