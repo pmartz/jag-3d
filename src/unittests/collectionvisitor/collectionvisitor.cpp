@@ -22,10 +22,10 @@
 #include <jag/base/Transform.h>
 #include <jagSG/Node.h>
 #include <jagSG/CollectionVisitor.h>
-#include <jagDraw/Bound.h>
-#include <jagDraw/DrawNode.h>
-#include <jagDraw/Uniform.h>
-#include <jagDraw/Program.h>
+#include <jag/draw/Bound.h>
+#include <jag/draw/DrawNode.h>
+#include <jag/draw/Uniform.h>
+#include <jag/draw/Program.h>
 
 #include <boost/foreach.hpp>
 #include <gmtl/gmtl.h>
@@ -39,18 +39,18 @@ using jagSG::Node;
 using jagSG::NodePtr;
 using jagSG::CollectionVisitor;
 
-using jagDraw::Bound;
-using jagDraw::BoundPtr;
-using jagDraw::CommandMap;
-using jagDraw::CommandMapPtr;
-using jagDraw::Uniform;
-using jagDraw::UniformPtr;
-using jagDraw::UniformSet;
-using jagDraw::UniformSetPtr;
-using jagDraw::Drawable;
-using jagDraw::DrawablePtr;
-using jagDraw::DrawNodeContainer;
-using jagDraw::Program;
+using jag::draw::Bound;
+using jag::draw::BoundPtr;
+using jag::draw::CommandMap;
+using jag::draw::CommandMapPtr;
+using jag::draw::Uniform;
+using jag::draw::UniformPtr;
+using jag::draw::UniformSet;
+using jag::draw::UniformSetPtr;
+using jag::draw::Drawable;
+using jag::draw::DrawablePtr;
+using jag::draw::DrawNodeContainer;
+using jag::draw::Program;
 
 
 bool test()
@@ -73,7 +73,7 @@ bool test()
 
         CollectionVisitor::CollectionInfo ci( transform );
         gmtl::Sphered s( gmtl::Point3d( 0., 30., 0. ), 10. );
-        jagDraw::BoundPtr bound( new jagDraw::BoundSphere( s ) );
+        jag::draw::BoundPtr bound( new jag::draw::BoundSphere( s ) );
         ci.setBound( bound.get() );
 
         const double ecd( ci.getECBoundDistance() );
@@ -101,7 +101,7 @@ bool test()
 
     NodePtr root( new Node() );
     CollectionVisitor cv;
-    jagDraw::DrawGraphPtr drawGraphTemplate( new jagDraw::DrawGraph() );
+    jag::draw::DrawGraphPtr drawGraphTemplate( new jag::draw::DrawGraph() );
     cv.setDrawGraphTemplate( drawGraphTemplate );
 
     root->accept( cv );
@@ -130,7 +130,7 @@ bool test()
     root->setCommandMap( commands );
     root->addDrawable( draw );
     root->accept( cv );
-    const jagDraw::DrawGraphPtr drawGraph( cv.getDrawGraph() );
+    const jag::draw::DrawGraphPtr drawGraph( cv.getDrawGraph() );
     size_t size( drawGraph->size() );
     if( size != 1 )
     {
@@ -138,7 +138,7 @@ bool test()
         return( false );
     }
     const DrawNodeContainer& nodes( (*drawGraph)[ 0 ] );
-    const jagDraw::DrawNodePtr& node( nodes[ 0 ] );
+    const jag::draw::DrawNodePtr& node( nodes[ 0 ] );
     if( node->getCommandMap() != commands )
     {
         // TBD need to test for CommandMap equivalence.
@@ -161,7 +161,7 @@ bool test()
     std::cout << "Near/Far computation..." << std::endl;
 
     gmtl::AABoxd box( gmtl::Point3d( -1., -1., -1. ), gmtl::Point3d( 1., 1., 1. ) );
-    draw->setInitialBound( jagDraw::BoundPtr( new jagDraw::BoundAABox( box ) ) );
+    draw->setInitialBound( jag::draw::BoundPtr( new jag::draw::BoundAABox( box ) ) );
     root = NodePtr( new Node() );
     root->addDrawable( draw );
 

@@ -19,7 +19,7 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#include <jagDraw/Common.h>
+#include <jag/draw/Common.h>
 
 #include <jag/base/Version.h>
 
@@ -30,38 +30,38 @@
 
 
 
-using jagDraw::CommandMap;
+using jag::draw::CommandMap;
 
 
 //#define VERBOST_OUTPUT
 
-class PrintCommands : public jagDraw::CommandMap::Callback
+class PrintCommands : public jag::draw::CommandMap::Callback
 {
 public:
-    virtual void operator()( jagDraw::DrawablePrepPtr f )
+    virtual void operator()( jag::draw::DrawablePrepPtr f )
     {
         std::cout << "  " << std::setw(18) <<
-            jagDraw::Command::getCommandTypeString( f->getCommandType() ) << ":  " << f->getUserDataName() << std::endl;
+            jag::draw::Command::getCommandTypeString( f->getCommandType() ) << ":  " << f->getUserDataName() << std::endl;
     }
 };
-class CountCommands : public jagDraw::CommandMap::Callback
+class CountCommands : public jag::draw::CommandMap::Callback
 {
 public:
     CountCommands()
     {
         _prog = _vao = _tex = _samp = _us = _ubs = _fb = 0;
     }
-    virtual void operator()( jagDraw::DrawablePrepPtr f )
+    virtual void operator()( jag::draw::DrawablePrepPtr f )
     {
         switch( f->getCommandType() )
         {
-        case jagDraw::Command::Program_t: ++_prog; break;
-        case jagDraw::Command::VertexArrayObject_t: ++_vao; break;
-        case jagDraw::Command::TextureSet_t: ++_tex; break;
-        case jagDraw::Command::SamplerSet_t: ++_samp; break;
-        case jagDraw::Command::UniformSet_t: ++_us; break;
-        case jagDraw::Command::UniformBlockSet_t: ++_ubs; break;
-        case jagDraw::Command::Framebuffer_t: ++_fb; break;
+        case jag::draw::Command::Program_t: ++_prog; break;
+        case jag::draw::Command::VertexArrayObject_t: ++_vao; break;
+        case jag::draw::Command::TextureSet_t: ++_tex; break;
+        case jag::draw::Command::SamplerSet_t: ++_samp; break;
+        case jag::draw::Command::UniformSet_t: ++_us; break;
+        case jag::draw::Command::UniformBlockSet_t: ++_ubs; break;
+        case jag::draw::Command::Framebuffer_t: ++_fb; break;
         }
     }
     void dump()
@@ -92,24 +92,24 @@ public:
 
 bool test()
 {
-    jagDraw::ProgramPtr prog0( jagDraw::ProgramPtr( new jagDraw::Program() )); prog0->setUserDataName( "Program0" );
-    jagDraw::ProgramPtr prog1( jagDraw::ProgramPtr( new jagDraw::Program() )); prog1->setUserDataName( "Program1" );
+    jag::draw::ProgramPtr prog0( jag::draw::ProgramPtr( new jag::draw::Program() )); prog0->setUserDataName( "Program0" );
+    jag::draw::ProgramPtr prog1( jag::draw::ProgramPtr( new jag::draw::Program() )); prog1->setUserDataName( "Program1" );
 
-    jagDraw::TexturePtr tex0( jagDraw::TexturePtr( new jagDraw::Texture() )); tex0->setUserDataName( "Texture0" );
-    jagDraw::TextureSetPtr ts0( jagDraw::TextureSetPtr( new jagDraw::TextureSet() ) );
+    jag::draw::TexturePtr tex0( jag::draw::TexturePtr( new jag::draw::Texture() )); tex0->setUserDataName( "Texture0" );
+    jag::draw::TextureSetPtr ts0( jag::draw::TextureSetPtr( new jag::draw::TextureSet() ) );
     (*ts0)[ GL_TEXTURE0 ] = tex0;
-    jagDraw::TexturePtr tex1( jagDraw::TexturePtr( new jagDraw::Texture() )); tex1->setUserDataName( "Texture1" );
-    jagDraw::TextureSetPtr ts1( jagDraw::TextureSetPtr( new jagDraw::TextureSet() ) );
+    jag::draw::TexturePtr tex1( jag::draw::TexturePtr( new jag::draw::Texture() )); tex1->setUserDataName( "Texture1" );
+    jag::draw::TextureSetPtr ts1( jag::draw::TextureSetPtr( new jag::draw::TextureSet() ) );
     (*ts1)[ GL_TEXTURE0 ] = tex1;
 
-    jagDraw::DrawNodeVec nodes;
+    jag::draw::DrawNodeVec nodes;
     for( unsigned int idx=0; idx<8; ++idx )
     {
-        jagDraw::CommandMapPtr commands( jagDraw::CommandMapPtr( new CommandMap() ) );
+        jag::draw::CommandMapPtr commands( jag::draw::CommandMapPtr( new CommandMap() ) );
         commands->insert( ( ( idx & 0x1 ) == 0 ) ? prog0 : prog1 );
         commands->insert( ( ( idx & 0x4 ) == 0 ) ? ts0 : ts1 );
 
-        nodes.push_back( jagDraw::DrawNodePtr( new jagDraw::DrawNode( commands ) ) );
+        nodes.push_back( jag::draw::DrawNodePtr( new jag::draw::DrawNode( commands ) ) );
 
 #ifdef VERBOST_OUTPUT
         std::cout << "-----" << std::endl;
@@ -126,9 +126,9 @@ bool test()
 
         CountCommands cc;
         CommandMap current;
-        for( jagDraw::DrawNodeVec::const_iterator p = nodes.begin(); p != nodes.end(); ++p )
+        for( jag::draw::DrawNodeVec::const_iterator p = nodes.begin(); p != nodes.end(); ++p )
         {
-            const jagDraw::DrawNodePtr& np( *p );
+            const jag::draw::DrawNodePtr& np( *p );
             CommandMap delta = current << *( np->getCommandMap() );
 #ifdef VERBOST_OUTPUT
             std::cout << "-----" << std::endl;
@@ -159,11 +159,11 @@ bool test()
     }
 
     {
-        jagDraw::Command::CommandTypeVec plist;
-        plist.push_back( jagDraw::Command::Program_t );
-        plist.push_back( jagDraw::Command::TextureSet_t );
+        jag::draw::Command::CommandTypeVec plist;
+        plist.push_back( jag::draw::Command::Program_t );
+        plist.push_back( jag::draw::Command::TextureSet_t );
 
-        std::sort( nodes.begin(), nodes.end(), jagDraw::DrawNodeCommandSorter( plist ));
+        std::sort( nodes.begin(), nodes.end(), jag::draw::DrawNodeCommandSorter( plist ));
 
 
 #ifdef VERBOST_OUTPUT
@@ -174,9 +174,9 @@ bool test()
 
         CountCommands cc;
         CommandMap current;
-        for( jagDraw::DrawNodeVec::const_iterator p = nodes.begin(); p != nodes.end(); p++ )
+        for( jag::draw::DrawNodeVec::const_iterator p = nodes.begin(); p != nodes.end(); p++ )
         {
-            const jagDraw::DrawNodePtr& np( *p );
+            const jag::draw::DrawNodePtr& np( *p );
             CommandMap delta = current << *( np->getCommandMap() );
 #ifdef VERBOST_OUTPUT
             std::cout << "-----" << std::endl;

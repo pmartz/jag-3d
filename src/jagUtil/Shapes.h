@@ -23,8 +23,8 @@
 #define __JAGUTIL_SHAPES_H__ 1
 
 #include <jagUtil/Export.h>
-#include <jagDraw/Drawable.h>
-#include <jagDraw/VertexArrayObject.h>
+#include <jag/draw/Drawable.h>
+#include <jag/draw/VertexArrayObject.h>
 #include <gmtl/gmtl.h>
 
 
@@ -43,14 +43,14 @@ typedef struct {
 
 typedef std::vector< VertexNormalTexCoordStruct > VNTCVec;
 
-JAGUTIL_EXPORT jagDraw::VertexArrayObjectPtr createVertexArrayObject( const VNTCVec& data );
+JAGUTIL_EXPORT jag::draw::VertexArrayObjectPtr createVertexArrayObject( const VNTCVec& data );
 
 
 
-JAGUTIL_EXPORT jagDraw::DrawablePtr makePlane( VNTCVec& data,
+JAGUTIL_EXPORT jag::draw::DrawablePtr makePlane( VNTCVec& data,
     const gmtl::Point3f& corner, const gmtl::Vec3f& u, const gmtl::Vec3f& v,
     const int subU=1, const int subV=1,
-    jagDraw::DrawablePtr drawable=jagDraw::DrawablePtr( ( jagDraw::Drawable* )NULL ) );
+    jag::draw::DrawablePtr drawable=jag::draw::DrawablePtr( ( jag::draw::Drawable* )NULL ) );
 
 
 /*@}*/

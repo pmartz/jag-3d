@@ -21,8 +21,8 @@
 
 #include <demoSupport/DemoInterface.h>
 
-#include <jagDraw/Common.h>
-#include <jagDraw/Texture.h>
+#include <jag/draw/Common.h>
+#include <jag/draw/Texture.h>
 #include <jag/base/Version.h>
 #include <jag/base/Log.h>
 #include <jag/base/LogMacros.h>
@@ -62,7 +62,7 @@ protected:
     bool init2D();
     bool initTextureObject();
 
-    jagDraw::DrawNodeContainer _nodes;
+    jag::draw::DrawNodeContainer _nodes;
 
     std::string _imageName;
     bool _texObj;
@@ -105,7 +105,7 @@ bool TextureDemo::init2D()
         "    gl_Position = vec4( vertex, 1. ); \n"
         "    tcOut = texcoord; \n"
         "}";
-    jagDraw::ShaderPtr vs( new jagDraw::Shader( GL_VERTEX_SHADER ) );
+    jag::draw::ShaderPtr vs( new jag::draw::Shader( GL_VERTEX_SHADER ) );
     vs->addSourceString( std::string( vShaderSource ) );
 
     const char* fShaderSource =
@@ -122,45 +122,45 @@ bool TextureDemo::init2D()
         "    colorOut = texture2D( texture, tcOut ); \n"
         //"    colorOut = vec4( tcOut, 0., 1. ); \n"
         "}";
-    jagDraw::ShaderPtr fs( new jagDraw::Shader( GL_FRAGMENT_SHADER ) );
+    jag::draw::ShaderPtr fs( new jag::draw::Shader( GL_FRAGMENT_SHADER ) );
     fs->addSourceString( std::string( fShaderSource ) );
 
-    jagDraw::ProgramPtr prog( jagDraw::ProgramPtr( new jagDraw::Program ) );
+    jag::draw::ProgramPtr prog( jag::draw::ProgramPtr( new jag::draw::Program ) );
     prog->attachShader( vs );
     prog->attachShader( fs );
 
-    jagDraw::CommandMapPtr commands( new jagDraw::CommandMap() );
+    jag::draw::CommandMapPtr commands( new jag::draw::CommandMap() );
     commands->insert( prog );
 
 
-    jagDraw::UniformPtr textureUniform( new jagDraw::Uniform( "texture", GL_SAMPLER_2D, (GLint)0 ) );
-    jagDraw::UniformSetPtr uniformSet( new jagDraw::UniformSet() );
+    jag::draw::UniformPtr textureUniform( new jag::draw::Uniform( "texture", GL_SAMPLER_2D, (GLint)0 ) );
+    jag::draw::UniformSetPtr uniformSet( new jag::draw::UniformSet() );
     (*uniformSet)[ textureUniform->getNameHash() ] = textureUniform;
     commands->insert( uniformSet );
 
 
     // Load image using jagDisk plugin interface.
-    jagDraw::ImagePtr image( DemoInterface::readImageUtil( _imageName ) );
+    jag::draw::ImagePtr image( DemoInterface::readImageUtil( _imageName ) );
     if( image == NULL )
         return( false );
 
 
-    jagDraw::TexturePtr tex( new jagDraw::Texture( GL_TEXTURE_2D, image,
-        jagDraw::SamplerPtr( new jagDraw::Sampler() ) ) );
+    jag::draw::TexturePtr tex( new jag::draw::Texture( GL_TEXTURE_2D, image,
+        jag::draw::SamplerPtr( new jag::draw::Sampler() ) ) );
     tex->getSampler()->getSamplerState()->_minFilter = GL_LINEAR;
-    jagDraw::TextureSetPtr texSet( new jagDraw::TextureSet() );
+    jag::draw::TextureSetPtr texSet( new jag::draw::TextureSet() );
     (*texSet)[ GL_TEXTURE0 ] = tex;
     commands->insert( texSet );
 
 
-    jagDraw::DrawablePtr drawable( new jagDraw::Drawable() );
+    jag::draw::DrawablePtr drawable( new jag::draw::Drawable() );
 
     const GLsizei stride = sizeof( GLfloat ) * 5;
-    jagDraw::VertexAttribPtr iVerts( new jagDraw::VertexAttrib(
+    jag::draw::VertexAttribPtr iVerts( new jag::draw::VertexAttrib(
         "vertex", 3, GL_FLOAT, GL_FALSE, stride, 0 ) );
-    jagDraw::VertexAttribPtr iColor( new jagDraw::VertexAttrib(
+    jag::draw::VertexAttribPtr iColor( new jag::draw::VertexAttrib(
         "texcoord", 2, GL_FLOAT, GL_FALSE, stride, sizeof( GLfloat ) * 3 ) );
-    jagDraw::DrawArraysPtr drawArrays( new jagDraw::DrawArrays( GL_TRIANGLE_STRIP, 0, 4 ) );
+    jag::draw::DrawArraysPtr drawArrays( new jag::draw::DrawArrays( GL_TRIANGLE_STRIP, 0, 4 ) );
     drawable->addDrawCommand( drawArrays );
 
     {
@@ -176,15 +176,15 @@ bool TextureDemo::init2D()
         i3fa.push_back( .9f ); i3fa.push_back( .9f ); i3fa.push_back( z );
             i3fa.push_back( 1.f ); i3fa.push_back( 1.f );
         jag::base::BufferPtr ibp( new jag::base::Buffer( i3fa.size() * sizeof( float ), (void*)&i3fa[0] ) );
-        jagDraw::BufferObjectPtr ibop( new jagDraw::BufferObject( GL_ARRAY_BUFFER, ibp ) );
+        jag::draw::BufferObjectPtr ibop( new jag::draw::BufferObject( GL_ARRAY_BUFFER, ibp ) );
 
-        jagDraw::VertexArrayObjectPtr vaop( new jagDraw::VertexArrayObject );
-        vaop->addVertexArrayCommand( ibop, jagDraw::VertexArrayObject::Vertex );
-        vaop->addVertexArrayCommand( iVerts, jagDraw::VertexArrayObject::Vertex );
+        jag::draw::VertexArrayObjectPtr vaop( new jag::draw::VertexArrayObject );
+        vaop->addVertexArrayCommand( ibop, jag::draw::VertexArrayObject::Vertex );
+        vaop->addVertexArrayCommand( iVerts, jag::draw::VertexArrayObject::Vertex );
         vaop->addVertexArrayCommand( iColor );
         commands->insert( vaop );
 
-        jagDraw::DrawNodePtr drawNode( new jagDraw::DrawNode( commands ) );
+        jag::draw::DrawNodePtr drawNode( new jag::draw::DrawNode( commands ) );
         drawNode->addDrawable( drawable );
         _nodes.push_back( drawNode );
     }
@@ -208,31 +208,31 @@ bool TextureDemo::initTextureObject()
     const gmtl::Vec3f vVec( 0.f, .8f, 0.f );
     for( unsigned int idx=0; idx<4; ++idx )
     {
-        jagDraw::DrawNodePtr node( new jagDraw::DrawNode() );
+        jag::draw::DrawNodePtr node( new jag::draw::DrawNode() );
 
-        jagDraw::DrawablePtr quad( jagUtil::makePlane(
+        jag::draw::DrawablePtr quad( jagUtil::makePlane(
             data, corners[ idx ], uVec, vVec ) );
         node->addDrawable( quad );
 
-        jagDraw::CommandMapPtr commands( new jagDraw::CommandMap() );
+        jag::draw::CommandMapPtr commands( new jag::draw::CommandMap() );
         node->setCommandMap( commands );
 
-        jagDraw::UniformSetPtr usp( new jagDraw::UniformSet() );
+        jag::draw::UniformSetPtr usp( new jag::draw::UniformSet() );
         commands->insert( usp );
-        usp->insert( jagDraw::UniformPtr( new jagDraw::Uniform( "texture", GL_SAMPLER_2D, 0 ) ) );
-        usp->insert( jagDraw::UniformPtr( new jagDraw::Uniform( "index", (int)idx ) ) );
+        usp->insert( jag::draw::UniformPtr( new jag::draw::Uniform( "texture", GL_SAMPLER_2D, 0 ) ) );
+        usp->insert( jag::draw::UniformPtr( new jag::draw::Uniform( "index", (int)idx ) ) );
 
         _nodes.push_back( node );
     }
 
-    jagDraw::CommandMapPtr& commands( _nodes[ 0 ]->getCommandMap() );
+    jag::draw::CommandMapPtr& commands( _nodes[ 0 ]->getCommandMap() );
     commands->insert( jagUtil::createVertexArrayObject( data ) );
 
-    jagDraw::ShaderPtr vs( DemoInterface::readShaderUtil( "texobj.vert" ) );
-    jagDraw::ShaderPtr fs( DemoInterface::readShaderUtil( "texobj.frag" ) );
+    jag::draw::ShaderPtr vs( DemoInterface::readShaderUtil( "texobj.vert" ) );
+    jag::draw::ShaderPtr fs( DemoInterface::readShaderUtil( "texobj.frag" ) );
 
-    jagDraw::ProgramPtr prog;
-    prog = jagDraw::ProgramPtr( new jagDraw::Program );
+    jag::draw::ProgramPtr prog;
+    prog = jag::draw::ProgramPtr( new jag::draw::Program );
     prog->attachShader( vs );
     prog->attachShader( fs );
     commands->insert( prog );
@@ -244,11 +244,11 @@ bool TextureDemo::initTextureObject()
         .5f, .5f, .5f, 1.f
     };
     jag::base::BufferPtr bufferData( new jag::base::Buffer( sizeof( texData ), texData ) );
-    jagDraw::TextureBufferPtr textureBuffer( new jagDraw::TextureBuffer( bufferData ) );
+    jag::draw::TextureBufferPtr textureBuffer( new jag::draw::TextureBuffer( bufferData ) );
 
-    jagDraw::TextureSetPtr ts( new jagDraw::TextureSet() );
+    jag::draw::TextureSetPtr ts( new jag::draw::TextureSet() );
     commands->insert( ts );
-    jagDraw::TexturePtr texture( new jagDraw::Texture( GL_TEXTURE_BUFFER, GL_RGBA32F, textureBuffer ) );
+    jag::draw::TexturePtr texture( new jag::draw::Texture( GL_TEXTURE_BUFFER, GL_RGBA32F, textureBuffer ) );
     (*ts)[ GL_TEXTURE0 ] = texture;
 
     return( true );
@@ -281,7 +281,7 @@ bool TextureDemo::init()
     jag::base::getVersionString();
 
     // Auto-log the OpenGL version string.
-    jagDraw::getOpenGLVersionString();
+    jag::draw::getOpenGLVersionString();
 
     JAG3D_ERROR_CHECK( "TextureDemo init()" );
     return( true );
@@ -295,8 +295,8 @@ bool TextureDemo::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& pro
 
     glClear( GL_COLOR_BUFFER_BIT );
 
-    const jagDraw::jagDrawContextID contextID( jagDraw::ContextSupport::instance()->getActiveContext() );
-    jagDraw::DrawInfo& drawInfo( getDrawInfo( contextID ) );
+    const jag::draw::jagDrawContextID contextID( jag::draw::ContextSupport::instance()->getActiveContext() );
+    jag::draw::DrawInfo& drawInfo( getDrawInfo( contextID ) );
 
     // Render all Drawables.
     _nodes.execute( drawInfo );

@@ -21,8 +21,8 @@
 
 #include <demoSupport/DemoInterface.h>
 
-#include <jagDraw/Common.h>
-#include <jagDraw/PerContextData.h>
+#include <jag/draw/Common.h>
+#include <jag/draw/PerContextData.h>
 #include <jagSG/Common.h>
 #include <jag/disk/ReadWrite.h>
 #include <jag/base/Profile.h>
@@ -85,7 +85,7 @@ protected:
     jagSG::NodePtr _root;
 
     bool _drawBound;
-    jagDraw::ProgramPtr _boundProgram;
+    jag::draw::ProgramPtr _boundProgram;
 
     double _moveRate;
 };
@@ -124,7 +124,7 @@ bool JagModel::startup( const unsigned int numContexts )
 
 
     // Prepare the draw graph.
-    jagDraw::DrawGraphPtr drawGraphTemplate( new jagDraw::DrawGraph() );
+    jag::draw::DrawGraphPtr drawGraphTemplate( new jag::draw::DrawGraph() );
     drawGraphTemplate->resize( 1 );
     getCollectionVisitor().setDrawGraphTemplate( drawGraphTemplate );
 
@@ -147,56 +147,56 @@ bool JagModel::startup( const unsigned int numContexts )
     jagUtil::BufferAggregationVisitor bav( _root );
 
 
-    jagDraw::ShaderPtr vs( DemoInterface::readShaderUtil( "jagmodel.vert" ) );
-    jagDraw::ShaderPtr fs( DemoInterface::readShaderUtil( "jagmodel.frag" ) );
+    jag::draw::ShaderPtr vs( DemoInterface::readShaderUtil( "jagmodel.vert" ) );
+    jag::draw::ShaderPtr fs( DemoInterface::readShaderUtil( "jagmodel.frag" ) );
 
-    jagDraw::ProgramPtr prog;
-    prog = jagDraw::ProgramPtr( new jagDraw::Program );
+    jag::draw::ProgramPtr prog;
+    prog = jag::draw::ProgramPtr( new jag::draw::Program );
     prog->attachShader( vs );
     prog->attachShader( fs );
 
-    jagDraw::CommandMapPtr commands( _root->getOrCreateCommandMap() );
+    jag::draw::CommandMapPtr commands( _root->getOrCreateCommandMap() );
     commands->insert( prog );
 
     // Set up lighting uniforms
-    jagDraw::UniformBlockPtr lights( jagDraw::UniformBlockPtr(
-        new jagDraw::UniformBlock( "LightingLight" ) ) );
+    jag::draw::UniformBlockPtr lights( jag::draw::UniformBlockPtr(
+        new jag::draw::UniformBlock( "LightingLight" ) ) );
     gmtl::Vec3f dir( 0.f, 0.f, 1.f );
     gmtl::normalize( dir );
     gmtl::Point4f lightVec( dir[0], dir[1], dir[2], 0. );
-    lights->addUniform( jagDraw::UniformPtr(
-        new jagDraw::Uniform( "position", lightVec ) ) );
-    lights->addUniform( jagDraw::UniformPtr(
-        new jagDraw::Uniform( "ambient", gmtl::Point4f( 0.f, 0.f, 0.f, 1.f ) ) ) );
-    lights->addUniform( jagDraw::UniformPtr(
-        new jagDraw::Uniform( "diffuse", gmtl::Point4f( 1.f, 1.f, 1.f, 1.f ) ) ) );
-    lights->addUniform( jagDraw::UniformPtr(
-        new jagDraw::Uniform( "specular", gmtl::Point4f( 1.f, 1.f, 1.f, 1.f ) ) ) );
+    lights->addUniform( jag::draw::UniformPtr(
+        new jag::draw::Uniform( "position", lightVec ) ) );
+    lights->addUniform( jag::draw::UniformPtr(
+        new jag::draw::Uniform( "ambient", gmtl::Point4f( 0.f, 0.f, 0.f, 1.f ) ) ) );
+    lights->addUniform( jag::draw::UniformPtr(
+        new jag::draw::Uniform( "diffuse", gmtl::Point4f( 1.f, 1.f, 1.f, 1.f ) ) ) );
+    lights->addUniform( jag::draw::UniformPtr(
+        new jag::draw::Uniform( "specular", gmtl::Point4f( 1.f, 1.f, 1.f, 1.f ) ) ) );
 
-    jagDraw::UniformBlockPtr backMaterials( jagDraw::UniformBlockPtr(
-        new jagDraw::UniformBlock( "LightingMaterialBack" ) ) );
-    backMaterials->addUniform( jagDraw::UniformPtr(
-        new jagDraw::Uniform( "ambient", gmtl::Point4f( .1f, .1f, .1f, 1.f ) ) ) );
-    backMaterials->addUniform( jagDraw::UniformPtr(
-        new jagDraw::Uniform( "diffuse", gmtl::Point4f( .7f, .7f, .7f, 1.f ) ) ) );
-    backMaterials->addUniform( jagDraw::UniformPtr(
-        new jagDraw::Uniform( "specular", gmtl::Point4f( .5f, .5f, .5f, 1.f ) ) ) );
-    backMaterials->addUniform( jagDraw::UniformPtr(
-        new jagDraw::Uniform( "shininess", 16.f ) ) );
+    jag::draw::UniformBlockPtr backMaterials( jag::draw::UniformBlockPtr(
+        new jag::draw::UniformBlock( "LightingMaterialBack" ) ) );
+    backMaterials->addUniform( jag::draw::UniformPtr(
+        new jag::draw::Uniform( "ambient", gmtl::Point4f( .1f, .1f, .1f, 1.f ) ) ) );
+    backMaterials->addUniform( jag::draw::UniformPtr(
+        new jag::draw::Uniform( "diffuse", gmtl::Point4f( .7f, .7f, .7f, 1.f ) ) ) );
+    backMaterials->addUniform( jag::draw::UniformPtr(
+        new jag::draw::Uniform( "specular", gmtl::Point4f( .5f, .5f, .5f, 1.f ) ) ) );
+    backMaterials->addUniform( jag::draw::UniformPtr(
+        new jag::draw::Uniform( "shininess", 16.f ) ) );
 
-    jagDraw::UniformBlockPtr frontMaterials( jagDraw::UniformBlockPtr(
-        new jagDraw::UniformBlock( "LightingMaterialFront" ) ) );
-    frontMaterials->addUniform( jagDraw::UniformPtr(
-        new jagDraw::Uniform( "ambient", gmtl::Point4f( .1f, .1f, .1f, 1.f ) ) ) );
-    frontMaterials->addUniform( jagDraw::UniformPtr(
-        new jagDraw::Uniform( "diffuse", gmtl::Point4f( .7f, .7f, .7f, 1.f ) ) ) );
-    frontMaterials->addUniform( jagDraw::UniformPtr(
-        new jagDraw::Uniform( "specular", gmtl::Point4f( .5f, .5f, .5f, 1.f ) ) ) );
-    frontMaterials->addUniform( jagDraw::UniformPtr(
-        new jagDraw::Uniform( "shininess", 16.f ) ) );
+    jag::draw::UniformBlockPtr frontMaterials( jag::draw::UniformBlockPtr(
+        new jag::draw::UniformBlock( "LightingMaterialFront" ) ) );
+    frontMaterials->addUniform( jag::draw::UniformPtr(
+        new jag::draw::Uniform( "ambient", gmtl::Point4f( .1f, .1f, .1f, 1.f ) ) ) );
+    frontMaterials->addUniform( jag::draw::UniformPtr(
+        new jag::draw::Uniform( "diffuse", gmtl::Point4f( .7f, .7f, .7f, 1.f ) ) ) );
+    frontMaterials->addUniform( jag::draw::UniformPtr(
+        new jag::draw::Uniform( "specular", gmtl::Point4f( .5f, .5f, .5f, 1.f ) ) ) );
+    frontMaterials->addUniform( jag::draw::UniformPtr(
+        new jag::draw::Uniform( "shininess", 16.f ) ) );
 
-    jagDraw::UniformBlockSetPtr ubsp( jagDraw::UniformBlockSetPtr(
-        new jagDraw::UniformBlockSet() ) );
+    jag::draw::UniformBlockSetPtr ubsp( jag::draw::UniformBlockSetPtr(
+        new jag::draw::UniformBlockSet() ) );
     ubsp->insert( lights );
     ubsp->insert( backMaterials );
     ubsp->insert( frontMaterials );
@@ -204,11 +204,11 @@ bool JagModel::startup( const unsigned int numContexts )
 
 
     {
-        jagDraw::ShaderPtr vs( DemoInterface::readShaderUtil( "bound.vert" ) );
-        jagDraw::ShaderPtr gs( DemoInterface::readShaderUtil( "bound.geom" ) );
-        jagDraw::ShaderPtr fs( DemoInterface::readShaderUtil( "bound.frag" ) );
+        jag::draw::ShaderPtr vs( DemoInterface::readShaderUtil( "bound.vert" ) );
+        jag::draw::ShaderPtr gs( DemoInterface::readShaderUtil( "bound.geom" ) );
+        jag::draw::ShaderPtr fs( DemoInterface::readShaderUtil( "bound.frag" ) );
 
-        _boundProgram.reset( new jagDraw::Program() );
+        _boundProgram.reset( new jag::draw::Program() );
         _boundProgram->attachShader( vs );
         _boundProgram->attachShader( gs );
         _boundProgram->attachShader( fs );
@@ -219,7 +219,7 @@ bool JagModel::startup( const unsigned int numContexts )
 
     // We have potentially different views per window, so we keep an MxCore
     // per context. Initialize the MxCore objects and create default views.
-    const jagDraw::BoundPtr bound( _root->getBound() );
+    const jag::draw::BoundPtr bound( _root->getBound() );
     const gmtl::Point3d pos( bound->getCenter() + gmtl::Vec3d( 0., -1., 0. ) );
     for( unsigned int idx( 0 ); idx<numContexts; ++idx )
     {
@@ -249,7 +249,7 @@ bool JagModel::init()
     jag::base::getVersionString();
 
     // Auto-log the OpenGL version string.
-    jagDraw::getOpenGLVersionString();
+    jag::draw::getOpenGLVersionString();
 
     return( true );
 }
@@ -265,14 +265,14 @@ bool JagModel::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj )
     JAG3D_PROFILE( "frame" );
 
 #ifdef ENABLE_SORT
-    jagDraw::Command::CommandTypeVec plist;
-    plist.push_back( jagDraw::Command::UniformBlockSet_t );
+    jag::draw::Command::CommandTypeVec plist;
+    plist.push_back( jag::draw::Command::UniformBlockSet_t );
 #endif
 
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
-    const jagDraw::jagDrawContextID contextID( jagDraw::ContextSupport::instance()->getActiveContext() );
-    jagDraw::DrawInfo& drawInfo( getDrawInfo( contextID ) );
+    const jag::draw::jagDrawContextID contextID( jag::draw::ContextSupport::instance()->getActiveContext() );
+    jag::draw::DrawInfo& drawInfo( getDrawInfo( contextID ) );
 
     jagMx::MxCorePtr mxCore( _mxCore._data[ contextID ] );
 
@@ -295,10 +295,10 @@ bool JagModel::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj )
 #ifdef ENABLE_SORT
         {
             JAG3D_PROFILE( "Collection sort" );
-            jagDraw::DrawGraphPtr drawGraph( collect.getDrawGraph() );
-            BOOST_FOREACH( jagDraw::DrawNodeContainer& nc, *drawGraph )
+            jag::draw::DrawGraphPtr drawGraph( collect.getDrawGraph() );
+            BOOST_FOREACH( jag::draw::DrawNodeContainer& nc, *drawGraph )
             {
-                std::sort( nc.begin(), nc.end(), jagDraw::DrawNodeCommandSorter( plist ) );
+                std::sort( nc.begin(), nc.end(), jag::draw::DrawNodeCommandSorter( plist ) );
             }
         }
 #endif
@@ -308,7 +308,7 @@ bool JagModel::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj )
         JAG3D_PROFILE( "Render" );
 
         // Execute the draw graph.
-        jagDraw::DrawGraphPtr drawGraph( collect.getDrawGraph() );
+        jag::draw::DrawGraphPtr drawGraph( collect.getDrawGraph() );
 
         // Set view and projection to use for drawing. Create projection using
         // the computed near and far planes.
@@ -331,13 +331,13 @@ bool JagModel::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj )
     {
         // Execute the draw graph a second time, but this time
         // render only the draw graph Node bounds.
-        jagDraw::DrawGraphPtr drawGraph( collect.getDrawGraph() );
+        jag::draw::DrawGraphPtr drawGraph( collect.getDrawGraph() );
 
         _boundProgram->execute( drawInfo );
         drawInfo._current.insert( _boundProgram );
-        drawInfo._controlFlags |= jagDraw::DrawInfo::DRAW_BOUND;
+        drawInfo._controlFlags |= jag::draw::DrawInfo::DRAW_BOUND;
         drawGraph->execute( drawInfo );
-        drawInfo._controlFlags &= ~jagDraw::DrawInfo::DRAW_BOUND;
+        drawInfo._controlFlags &= ~jag::draw::DrawInfo::DRAW_BOUND;
     }
 
     glFlush();
@@ -352,7 +352,7 @@ void JagModel::reshape( const int w, const int h )
     if( !getStartupCalled() )
         return;
 
-    const jagDraw::jagDrawContextID contextID( jagDraw::ContextSupport::instance()->getActiveContext() );
+    const jag::draw::jagDrawContextID contextID( jag::draw::ContextSupport::instance()->getActiveContext() );
     _mxCore._data[ contextID ]->setAspect( ( double ) w / ( double ) h );
 }
 

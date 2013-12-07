@@ -25,7 +25,7 @@
 #include <jagUtil/Export.h>
 #include <jagSG/Visitor.h>
 #include <jagSG/Node.h>
-#include <jagDraw/VertexArrayObject.h>
+#include <jag/draw/VertexArrayObject.h>
 
 #include <set>
 #include <map>
@@ -66,20 +66,20 @@ public:
     }
 
 protected:
-    void offsetDrawElements( jagDraw::DrawElementsBase* deBase, const size_t offset );
-    void combineElementBuffer( jagDraw::DrawElementsBase* deBase );
-    void handleDrawable( jagDraw::DrawablePtr draw, const jagDraw::VertexArrayObject* vaop );
+    void offsetDrawElements( jag::draw::DrawElementsBase* deBase, const size_t offset );
+    void combineElementBuffer( jag::draw::DrawElementsBase* deBase );
+    void handleDrawable( jag::draw::DrawablePtr draw, const jag::draw::VertexArrayObject* vaop );
 
-    jagDraw::VertexArrayObjectPtr _vaop;
-    jagDraw::BufferObjectPtr _elements;
+    jag::draw::VertexArrayObjectPtr _vaop;
+    jag::draw::BufferObjectPtr _elements;
     bool _combineElementBuffers;
 
     typedef std::set< jagSG::Node* > NodeSet;
     NodeSet _nodeSet;
-    typedef std::set< jagDraw::BufferObject* > BufferObjectSet;
+    typedef std::set< jag::draw::BufferObject* > BufferObjectSet;
     BufferObjectSet _elementBuffers;
 
-    typedef std::map< jagDraw::VertexArrayObject*, size_t > OffsetMap;
+    typedef std::map< jag::draw::VertexArrayObject*, size_t > OffsetMap;
     OffsetMap _offsetMap;
 };
 

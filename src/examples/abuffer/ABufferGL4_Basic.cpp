@@ -23,7 +23,7 @@
 **/
 
 
-#include <jagDraw/PlatformOpenGL.h>
+#include <jag/draw/PlatformOpenGL.h>
 
 #include "ABufferGL4_Basic.h"
 #include "ShadersManagment.h"

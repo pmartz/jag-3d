@@ -19,17 +19,17 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#include <jagDraw/Uniform.h>
-#include <jagDraw/Program.h>
+#include <jag/draw/Uniform.h>
+#include <jag/draw/Program.h>
 
 #include <iostream>
 
 
-using jagDraw::Uniform;
-using jagDraw::UniformPtr;
-using jagDraw::UniformSet;
-using jagDraw::UniformSetPtr;
-using jagDraw::Program;
+using jag::draw::Uniform;
+using jag::draw::UniformPtr;
+using jag::draw::UniformSet;
+using jag::draw::UniformSetPtr;
+using jag::draw::Program;
 
 
 bool test()

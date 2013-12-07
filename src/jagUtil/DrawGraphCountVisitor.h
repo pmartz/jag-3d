@@ -23,10 +23,10 @@
 #define __JAGUTIL_DRAW_GRAPH_COUNT_VISITOR_H__ 1
 
 #include <jagUtil/Export.h>
-#include <jagDraw/Visitor.h>
-#include <jagDraw/DrawNodeContainer.h>
-#include <jagDraw/DrawNode.h>
-#include <jagDraw/CommandMap.h>
+#include <jag/draw/Visitor.h>
+#include <jag/draw/DrawNodeContainer.h>
+#include <jag/draw/DrawNode.h>
+#include <jag/draw/CommandMap.h>
 
 #include <iostream>
 
@@ -35,7 +35,7 @@ namespace jagUtil
 {
 
 
-class DrawGraphCountVisitor : public jagDraw::Visitor
+class DrawGraphCountVisitor : public jag::draw::Visitor
 {
 public:
     DrawGraphCountVisitor();
@@ -44,8 +44,8 @@ public:
     void reset();
     void dump( std::ostream& ostr );
 
-    virtual bool visit( jagDraw::DrawNodeContainer& nc );
-    virtual bool visit( jagDraw::DrawNode& node, jagDraw::DrawNodeContainer& nc );
+    virtual bool visit( jag::draw::DrawNodeContainer& nc );
+    virtual bool visit( jag::draw::DrawNode& node, jag::draw::DrawNodeContainer& nc );
 
 protected:
     unsigned int _containers;
@@ -53,11 +53,11 @@ protected:
     unsigned int _drawables;
 
     unsigned int _nonEmptyCommandMapDeltas;
-    jagDraw::CommandMap _commands;
+    jag::draw::CommandMap _commands;
 };
 
 inline DrawGraphCountVisitor::DrawGraphCountVisitor()
-    : jagDraw::Visitor( "count" )
+    : jag::draw::Visitor( "count" )
 {
     reset();
 }
@@ -82,19 +82,19 @@ inline void DrawGraphCountVisitor::dump( std::ostream& ostr )
     ostr << "  CM deltas:\t" << _nonEmptyCommandMapDeltas << std::endl;
 }
 
-inline bool DrawGraphCountVisitor::visit( jagDraw::DrawNodeContainer& nc )
+inline bool DrawGraphCountVisitor::visit( jag::draw::DrawNodeContainer& nc )
 {
     ++_containers;
     return( true );
 }
-inline bool DrawGraphCountVisitor::visit( jagDraw::DrawNode& node, jagDraw::DrawNodeContainer& nc )
+inline bool DrawGraphCountVisitor::visit( jag::draw::DrawNode& node, jag::draw::DrawNodeContainer& nc )
 {
     ++_nodes;
     _drawables += node.getNumDrawables();
 
     if( node.getCommandMap() != NULL )
     {
-        jagDraw::CommandMap delta( _commands << *( node.getCommandMap() ) );
+        jag::draw::CommandMap delta( _commands << *( node.getCommandMap() ) );
         if( !( delta.empty() ) )
             ++_nonEmptyCommandMapDeltas;
     }

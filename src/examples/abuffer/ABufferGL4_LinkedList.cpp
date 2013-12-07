@@ -10,7 +10,7 @@
  * The link buffer stores, for each page, the index of the chained previous page.
 **/
 
-#include <jagDraw/PlatformOpenGL.h>
+#include <jag/draw/PlatformOpenGL.h>
 
 #include "ABufferGL4_LinkedList.h"
 #include "ShadersManagment.h"

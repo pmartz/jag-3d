@@ -23,13 +23,13 @@
 #define __JAGSG_NODE_H__ 1
 
 #include <jagSG/Export.h>
-#include <jagDraw/ObjectID.h>
-#include <jagDraw/Drawable.h>
-#include <jagDraw/CommandMap.h>
-#include <jagDraw/Bound.h>
-#include <jagDraw/BoundOwner.h>
+#include <jag/draw/ObjectID.h>
+#include <jag/draw/Drawable.h>
+#include <jag/draw/CommandMap.h>
+#include <jag/draw/Bound.h>
+#include <jag/draw/BoundOwner.h>
 #include <jag/base/MultiCallback.h>
-#include <jagDraw/ContextSupport.h>
+#include <jag/draw/ContextSupport.h>
 #include <jag/base/LogBase.h>
 #include <jag/base/UserDataOwner.h>
 #include <jag/base/ptr.h>
@@ -39,8 +39,10 @@
 #include <vector>
 
 
-namespace jagDraw {
-    struct DrawInfo;
+namespace jag {
+    namespace draw {
+        struct DrawInfo;
+    }
 }
 
 namespace jagSG {
@@ -64,8 +66,8 @@ class VisitorBase;
 */
 class JAGSG_EXPORT Node : protected jag::base::LogBase,
         public jag::base::UserDataOwner, 
-        public jagDraw::ObjectIDOwner,
-        public jagDraw::BoundOwner,
+        public jag::draw::ObjectIDOwner,
+        public jag::draw::BoundOwner,
         public SHARED_FROM_THIS(Node)
 {
 public:
@@ -139,7 +141,7 @@ public:
     See the ExecuteVisitor.
 
     Requires a current context. */
-    virtual void execute( jagDraw::DrawInfo& drawInfo );
+    virtual void execute( jag::draw::DrawInfo& drawInfo );
 
     /**@}*/
 
@@ -163,20 +165,20 @@ public:
 
     /** \brief Get bound from root node.
     \details Assumes no default state. */
-    const jagDraw::BoundPtr& getBound()
+    const jag::draw::BoundPtr& getBound()
     {
-        jagDraw::CommandMap commands;
+        jag::draw::CommandMap commands;
         return( BoundOwner::getBound( commands ) );
     }
 
     /** \brief Return a new uninitialized bound.
     \details Override the base class BoundOwner::computeBound().
     Returns a new BoundSphere. */
-    jagDraw::BoundPtr newBound();
+    jag::draw::BoundPtr newBound();
 
     /** \brief Compute the Node's bounding volume.
     \details Override the base class BoundOwner::computeBound(). */
-    virtual void computeBound( jagDraw::BoundPtr& bound, const jagDraw::CommandMap& commands );
+    virtual void computeBound( jag::draw::BoundPtr& bound, const jag::draw::CommandMap& commands );
 
     /** \brief Mark all bounds dirty and notify parents.
     \details Override the base class BoundOwner::setAllBoundsDirty()
@@ -188,20 +190,20 @@ public:
 
     /** \brief CommandMap
     \details TBD */
-    void setCommandMap( jagDraw::CommandMapPtr& commands );
+    void setCommandMap( jag::draw::CommandMapPtr& commands );
     /** \brief TBD
     \details TBD */
-    jagDraw::CommandMapPtr& getCommandMap();
+    jag::draw::CommandMapPtr& getCommandMap();
     /** \overload */
-    const jagDraw::CommandMapPtr& getCommandMap() const;
+    const jag::draw::CommandMapPtr& getCommandMap() const;
     /** \brief TBD
     \details TBD */
-    jagDraw::CommandMapPtr& getOrCreateCommandMap();
+    jag::draw::CommandMapPtr& getOrCreateCommandMap();
 
 
     /** \brief Drawables
     \details TBD */
-    virtual void addDrawable( jagDraw::DrawablePtr& drawable );
+    virtual void addDrawable( jag::draw::DrawablePtr& drawable );
     /** \brief TBD
     \details TBD */
     unsigned int getNumDrawables() const;
@@ -209,14 +211,14 @@ public:
     \details Returns the total number of Drawables remaining
     after the deletion. Returns -1 if the specified Drawable 
     can't be found. */
-    virtual int removeDrawable( jagDraw::DrawablePtr& drawable );
+    virtual int removeDrawable( jag::draw::DrawablePtr& drawable );
     /** \overload */
     virtual int removeDrawable( const unsigned int index );
     /** \brief TBD
     \details TBD */
-    jagDraw::DrawablePtr& getDrawable( const unsigned int idx );
+    jag::draw::DrawablePtr& getDrawable( const unsigned int idx );
     /** \overload */
-    const jagDraw::DrawablePtr& getDrawable( const unsigned int idx ) const;
+    const jag::draw::DrawablePtr& getDrawable( const unsigned int idx ) const;
 
 
     /** \brief Children
@@ -264,12 +266,12 @@ public:
     /** \brief Delete the ID for the given \c contextID.
     \details Inherited from ObjectIDOwner.
     OpenGL object ID cleanup is not yet implemented. TBD. */
-    virtual void deleteID( const jagDraw::jagDrawContextID contextID );
+    virtual void deleteID( const jag::draw::jagDrawContextID contextID );
 
 protected:
     gmtl::Matrix44d _matrix;
-    jagDraw::CommandMapPtr _commands;
-    jagDraw::DrawableVec _drawables;
+    jag::draw::CommandMapPtr _commands;
+    jag::draw::DrawableVec _drawables;
     NodeVec _children;
     NodeSimplePtrVec _parents;
 

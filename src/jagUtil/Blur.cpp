@@ -21,7 +21,7 @@
 
 #include <jagUtil/Blur.h>
 
-#include <jagDraw/Common.h>
+#include <jag/draw/Common.h>
 #include <jagUtil/QuadNode.h>
 #include <jag/base/Log.h>
 #include <jag/base/LogMacros.h>
@@ -47,7 +47,7 @@ Blur::Blur( const std::string& logName )
       _height( 0 )
 {
 }
-Blur::Blur( jagDraw::TexturePtr& inputBuffer, jagDraw::TexturePtr& outputBuffer,
+Blur::Blur( jag::draw::TexturePtr& inputBuffer, jag::draw::TexturePtr& outputBuffer,
         const std::string& logName )
     : jag::base::LogBase( logName.empty() ? "jag.util.blur" : logName ),
       _inputBuffer( inputBuffer ),
@@ -101,18 +101,18 @@ void Blur::setMaxContexts( const unsigned int numContexts )
 
 void Blur::setShaders( const std::string& fragStage0, const std::string& fragStage1 )
 {
-    jagDraw::ShaderPtr stage0, stage1;
-    __READ_UTIL( stage0, jagDraw::ShaderPtr, fragStage0 );
-    __READ_UTIL( stage1, jagDraw::ShaderPtr, fragStage1 );
+    jag::draw::ShaderPtr stage0, stage1;
+    __READ_UTIL( stage0, jag::draw::ShaderPtr, fragStage0 );
+    __READ_UTIL( stage1, jag::draw::ShaderPtr, fragStage1 );
 
     internalInit( stage0, stage1 );
 }
-void Blur::setShaders( jagDraw::ShaderPtr& fragStage0, jagDraw::ShaderPtr& fragStage1 )
+void Blur::setShaders( jag::draw::ShaderPtr& fragStage0, jag::draw::ShaderPtr& fragStage1 )
 {
     internalInit( fragStage0, fragStage1 );
 }
 
-jagDraw::DrawNodeContainer& Blur::getNodeContainer()
+jag::draw::DrawNodeContainer& Blur::getNodeContainer()
 {
     setMaxContexts( _numContexts );
 
@@ -134,13 +134,13 @@ void Blur::reshape( const int w, const int h )
     _intermediateBuffer->markAllDirty();
 }
 
-void Blur::internalInit( jagDraw::ShaderPtr& fragStage0, jagDraw::ShaderPtr& fragStage1 )
+void Blur::internalInit( jag::draw::ShaderPtr& fragStage0, jag::draw::ShaderPtr& fragStage1 )
 {
     // Create the intermediate color buffer.
-    jagDraw::ImagePtr image( new jagDraw::Image() );
+    jag::draw::ImagePtr image( new jag::draw::Image() );
     image->set( 0, GL_RGBA, _width, _height, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL );
-    _intermediateBuffer.reset( new jagDraw::Texture( GL_TEXTURE_2D, image,
-        jagDraw::SamplerPtr( new jagDraw::Sampler() ) ) );
+    _intermediateBuffer.reset( new jag::draw::Texture( GL_TEXTURE_2D, image,
+        jag::draw::SamplerPtr( new jag::draw::Sampler() ) ) );
     _intermediateBuffer->setUserDataName( "Blur intermediateBuffer" );
     _intermediateBuffer->getSampler()->getSamplerState()->_minFilter = GL_NEAREST;
     _intermediateBuffer->getSampler()->getSamplerState()->_magFilter = GL_NEAREST;

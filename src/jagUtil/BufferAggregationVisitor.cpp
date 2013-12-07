@@ -21,8 +21,8 @@
 
 #include <jagUtil/BufferAggregationVisitor.h>
 #include <jagUtil/ResetBoundsVisitor.h>
-#include <jagDraw/Drawable.h>
-#include <jagDraw/DrawCommand.h>
+#include <jag/draw/Drawable.h>
+#include <jag/draw/DrawCommand.h>
 #include <jagSG/Node.h>
 
 #include <boost/foreach.hpp>
@@ -39,7 +39,7 @@ BufferAggregationVisitor::BufferAggregationVisitor( jagSG::NodePtr node, const s
                           ( logName.empty() ? "" : logName ) ),
     _combineElementBuffers( true )
 {
-    _vaop = jagDraw::VertexArrayObjectPtr( new jagDraw::VertexArrayObject() );
+    _vaop = jag::draw::VertexArrayObjectPtr( new jag::draw::VertexArrayObject() );
 
     // Ensure bounds are clean.
     node->getBound();
@@ -58,10 +58,10 @@ BufferAggregationVisitor::BufferAggregationVisitor( jagSG::NodePtr node, const s
     }
 
     // Store the aggregated VAO in the root node's CommandMap.
-    jagDraw::CommandMapPtr commands( node->getCommandMap() );
+    jag::draw::CommandMapPtr commands( node->getCommandMap() );
     if( commands == NULL )
     {
-        commands.reset( new jagDraw::CommandMap() );
+        commands.reset( new jag::draw::CommandMap() );
         node->setCommandMap( commands );
     }
     commands->insert( _vaop );
@@ -90,7 +90,7 @@ BufferAggregationVisitor::~BufferAggregationVisitor()
 
 void BufferAggregationVisitor::reset()
 {
-    _vaop.reset( ( jagDraw::VertexArrayObject* )NULL );
+    _vaop.reset( ( jag::draw::VertexArrayObject* )NULL );
     _nodeSet.clear();
     _elementBuffers.clear();
     _offsetMap.clear();
@@ -112,14 +112,14 @@ void BufferAggregationVisitor::visit( jagSG::Node& node )
     }
     _nodeSet.insert( &node );
 
-    jagDraw::CommandMapPtr& localCommands( node.getCommandMap() );
+    jag::draw::CommandMapPtr& localCommands( node.getCommandMap() );
     CommandMapStackHelper cmsh( *this, localCommands );
 
 
     // Get the VAO in effect at this Node.
-    jagDraw::CommandMap& commands( _commandStack.back() );
-    jagDraw::DrawablePrepPtr& drawablePrep( commands[ jagDraw::Command::VertexArrayObject_t ] );
-    jagDraw::VertexArrayObjectPtr vaop( boost::static_pointer_cast< jagDraw::VertexArrayObject >( drawablePrep ) );
+    jag::draw::CommandMap& commands( _commandStack.back() );
+    jag::draw::DrawablePrepPtr& drawablePrep( commands[ jag::draw::Command::VertexArrayObject_t ] );
+    jag::draw::VertexArrayObjectPtr vaop( boost::static_pointer_cast< jag::draw::VertexArrayObject >( drawablePrep ) );
 
     if( ( vaop != NULL ) && _vaop->isSameKind( *vaop ) )
     {
@@ -129,13 +129,13 @@ void BufferAggregationVisitor::visit( jagSG::Node& node )
         // from now on.
         if( localCommands != NULL )
         {
-            jagDraw::DrawablePrepPtr& dp( (*localCommands)[ jagDraw::Command::VertexArrayObject_t ] );
-            jagDraw::VertexArrayObjectPtr localVAO( boost::static_pointer_cast< jagDraw::VertexArrayObject >( dp ) );
+            jag::draw::DrawablePrepPtr& dp( (*localCommands)[ jag::draw::Command::VertexArrayObject_t ] );
+            jag::draw::VertexArrayObjectPtr localVAO( boost::static_pointer_cast< jag::draw::VertexArrayObject >( dp ) );
             if( localVAO == vaop )
             {
-                localCommands->clear( jagDraw::Command::VertexArrayObject_t );
+                localCommands->clear( jag::draw::Command::VertexArrayObject_t );
                 if( localCommands->empty() )
-                    node.setCommandMap( jagDraw::CommandMapPtr( NULL ) );
+                    node.setCommandMap( jag::draw::CommandMapPtr( NULL ) );
             }
         }
 
@@ -169,9 +169,9 @@ void BufferAggregationVisitor::visit( jagSG::Node& node )
 }
 
 
-void BufferAggregationVisitor::offsetDrawElements( jagDraw::DrawElementsBase* deBase, const size_t offset )
+void BufferAggregationVisitor::offsetDrawElements( jag::draw::DrawElementsBase* deBase, const size_t offset )
 {
-    jagDraw::BufferObjectPtr oldBuf( deBase->getElementBuffer() );
+    jag::draw::BufferObjectPtr oldBuf( deBase->getElementBuffer() );
     const size_t oldByteSize( oldBuf->getBuffer()->getSize() );
     size_t numElements( 0 );
     switch( deBase->getType() )
@@ -211,16 +211,16 @@ void BufferAggregationVisitor::offsetDrawElements( jagDraw::DrawElementsBase* de
     }
 
     jag::base::BufferPtr buf( new jag::base::Buffer( numElements * sizeof( GLuint ), newData ) );
-    jagDraw::BufferObjectPtr newBuf( new jagDraw::BufferObject( GL_ELEMENT_ARRAY_BUFFER, buf ) );
+    jag::draw::BufferObjectPtr newBuf( new jag::draw::BufferObject( GL_ELEMENT_ARRAY_BUFFER, buf ) );
     deBase->setElementBuffer( newBuf );
     deBase->setType( GL_UNSIGNED_INT );
 
     free( newData );
 }
 
-void BufferAggregationVisitor::combineElementBuffer( jagDraw::DrawElementsBase* deBase )
+void BufferAggregationVisitor::combineElementBuffer( jag::draw::DrawElementsBase* deBase )
 {
-    jagDraw::BufferObjectPtr rightBuf( deBase->getElementBuffer() );
+    jag::draw::BufferObjectPtr rightBuf( deBase->getElementBuffer() );
     if( _elements == NULL )
     {
         // First buffer. Take it as the master, and return.
@@ -240,17 +240,17 @@ void BufferAggregationVisitor::combineElementBuffer( jagDraw::DrawElementsBase* 
     deBase->setIndices( ( const GLvoid* ) lhsIndices );
 }
 
-void BufferAggregationVisitor::handleDrawable( jagDraw::DrawablePtr draw, const jagDraw::VertexArrayObject* vaop )
+void BufferAggregationVisitor::handleDrawable( jag::draw::DrawablePtr draw, const jag::draw::VertexArrayObject* vaop )
 {
-    const size_t offset( _offsetMap[ const_cast<jagDraw::VertexArrayObject*>(vaop) ] );
+    const size_t offset( _offsetMap[ const_cast<jag::draw::VertexArrayObject*>(vaop) ] );
 
-    BOOST_FOREACH( jagDraw::DrawCommandPtr& dcp, draw->getDrawCommandVec() )
+    BOOST_FOREACH( jag::draw::DrawCommandPtr& dcp, draw->getDrawCommandVec() )
     {
-        jagDraw::DrawElementsBase* deBase( dynamic_cast< jagDraw::DrawElementsBase* >( dcp.get() ) );
-        jagDraw::DrawArraysBase* daBase( dynamic_cast< jagDraw::DrawArraysBase* >( dcp.get() ) );
+        jag::draw::DrawElementsBase* deBase( dynamic_cast< jag::draw::DrawElementsBase* >( dcp.get() ) );
+        jag::draw::DrawArraysBase* daBase( dynamic_cast< jag::draw::DrawArraysBase* >( dcp.get() ) );
         if( deBase != NULL )
         {
-            jagDraw::BufferObjectPtr oldBuf( deBase->getElementBuffer() );
+            jag::draw::BufferObjectPtr oldBuf( deBase->getElementBuffer() );
             if( _elementBuffers.find( oldBuf.get() ) != _elementBuffers.end() )
             {
                 // Already processed this (shared) buffer object.
@@ -268,10 +268,10 @@ void BufferAggregationVisitor::handleDrawable( jagDraw::DrawablePtr draw, const 
         }
         else
         {
-            jagDraw::MultiDrawArrays* mda( dynamic_cast< jagDraw::MultiDrawArrays* >( dcp.get() ) );
+            jag::draw::MultiDrawArrays* mda( dynamic_cast< jag::draw::MultiDrawArrays* >( dcp.get() ) );
             if( mda != NULL )
             {
-                jagDraw::GLintVec& first( mda->getFirst() );
+                jag::draw::GLintVec& first( mda->getFirst() );
                 for( GLsizei idx = 0; idx < mda->getPrimcount(); ++idx )
                     first[ idx ] += (GLint)( offset );
             }

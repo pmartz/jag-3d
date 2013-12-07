@@ -21,8 +21,8 @@
 
 #include <demoSupport/DemoInterface.h>
 
-#include <jagDraw/Common.h>
-#include <jagDraw/PerContextData.h>
+#include <jag/draw/Common.h>
+#include <jag/draw/PerContextData.h>
 #include <jagSG/Common.h>
 #include <jagUtil/Shapes.h>
 #include <jag/disk/ReadWrite.h>
@@ -96,7 +96,7 @@ bool Transparency::parseOptions( bpo::variables_map& vm )
 }
 
 
-jagSG::NodePtr createPlanesSubgraph( jagDraw::BoundPtr bound )
+jagSG::NodePtr createPlanesSubgraph( jag::draw::BoundPtr bound )
 {
     jagSG::NodePtr planeRoot = jagSG::NodePtr( new jagSG::Node() );
 
@@ -113,14 +113,14 @@ jagSG::NodePtr createPlanesSubgraph( jagDraw::BoundPtr bound )
     gmtl::Point3f corner( radius, -radius, radius );
     gmtl::Vec3f uVec( 0.f, 0.f, -2.f*radius );
     gmtl::Vec3f vVec( 0.f, 2.f*radius, 0.f );
-    jagDraw::DrawablePtr plane0( jagUtil::makePlane(
+    jag::draw::DrawablePtr plane0( jagUtil::makePlane(
         data, corner, uVec, vVec ) );
     planeRoot->addDrawable( plane0 );
 
     // Create second plane and its data.
     corner = gmtl::Point3f( -radius, -radius, -radius );
     uVec = gmtl::Vec3f( 0.f, 0.f, 2.f*radius );
-    jagDraw::DrawablePtr plane1( jagUtil::makePlane(
+    jag::draw::DrawablePtr plane1( jagUtil::makePlane(
         data, corner, uVec, vVec, 4, 4 ) );
     // Must add as separate child node for proper depth sorting.
     jagSG::NodePtr planeChild( jagSG::NodePtr( new jagSG::Node() ) );
@@ -129,10 +129,10 @@ jagSG::NodePtr createPlanesSubgraph( jagDraw::BoundPtr bound )
 
     // Put the data in an array buffer object, and add it to
     // a VertexArrayObject.
-    jagDraw::CommandMapPtr commands( planeRoot->getCommandMap() );
+    jag::draw::CommandMapPtr commands( planeRoot->getCommandMap() );
     if( commands == NULL )
     {
-        commands = jagDraw::CommandMapPtr( new jagDraw::CommandMap() );
+        commands = jag::draw::CommandMapPtr( new jag::draw::CommandMap() );
         planeRoot->setCommandMap( commands );
     }
     commands->insert( jagUtil::createVertexArrayObject( data ) );
@@ -140,10 +140,10 @@ jagSG::NodePtr createPlanesSubgraph( jagDraw::BoundPtr bound )
     return( planeRoot );
 }
 
-struct BlendCallback : public jagDraw::DrawNodeContainer::Callback
+struct BlendCallback : public jag::draw::DrawNodeContainer::Callback
 {
-    virtual bool operator()( jagDraw::DrawNodeContainer& nodeContainer,
-        jagDraw::DrawInfo& drawInfo )
+    virtual bool operator()( jag::draw::DrawNodeContainer& nodeContainer,
+        jag::draw::DrawInfo& drawInfo )
     {
         glEnable( GL_BLEND );
         nodeContainer.internalExecute( drawInfo );
@@ -167,10 +167,10 @@ bool Transparency::startup( const unsigned int numContexts )
 
 
     // Prepare the draw graph.
-    jagDraw::DrawGraphPtr drawGraphTemplate( new jagDraw::DrawGraph() );
+    jag::draw::DrawGraphPtr drawGraphTemplate( new jag::draw::DrawGraph() );
     drawGraphTemplate->resize( 2 );
     (*drawGraphTemplate)[ 1 ].getCallbacks().push_back(
-        jagDraw::DrawNodeContainer::CallbackPtr( new BlendCallback() ) );
+        jag::draw::DrawNodeContainer::CallbackPtr( new BlendCallback() ) );
     getCollectionVisitor().setDrawGraphTemplate( drawGraphTemplate );
 
 
@@ -183,40 +183,40 @@ bool Transparency::startup( const unsigned int numContexts )
     _root->addChild( createPlanesSubgraph( model->getBound() ) );
 
 
-    jagDraw::ShaderPtr vs( DemoInterface::readShaderUtil( "transparency.vert" ) );
-    jagDraw::ShaderPtr fs( DemoInterface::readShaderUtil( "transparency.frag" ) );
+    jag::draw::ShaderPtr vs( DemoInterface::readShaderUtil( "transparency.vert" ) );
+    jag::draw::ShaderPtr fs( DemoInterface::readShaderUtil( "transparency.frag" ) );
 
-    jagDraw::ProgramPtr prog;
-    prog = jagDraw::ProgramPtr( new jagDraw::Program );
+    jag::draw::ProgramPtr prog;
+    prog = jag::draw::ProgramPtr( new jag::draw::Program );
     prog->attachShader( vs );
     prog->attachShader( fs );
 
-    jagDraw::CommandMapPtr commands( _root->getCommandMap() );
+    jag::draw::CommandMapPtr commands( _root->getCommandMap() );
     if( commands == NULL )
     {
-        commands = jagDraw::CommandMapPtr( new jagDraw::CommandMap() );
+        commands = jag::draw::CommandMapPtr( new jag::draw::CommandMap() );
         _root->setCommandMap( commands );
     }
     commands->insert( prog );
 
     // Test uniform blocks
-    jagDraw::UniformBlockPtr ubp( jagDraw::UniformBlockPtr(
-        new jagDraw::UniformBlock( "blockTest" ) ) );
-    ubp->addUniform( jagDraw::UniformPtr(
-        new jagDraw::Uniform( "ambientScene", .2f ) ) );
-    ubp->addUniform( jagDraw::UniformPtr(
-        new jagDraw::Uniform( "diffuseMat", gmtl::Point3f( 0.f, .7f, 0.9f ) ) ) );
-    jagDraw::UniformBlockSetPtr ubsp( jagDraw::UniformBlockSetPtr(
-        new jagDraw::UniformBlockSet() ) );
+    jag::draw::UniformBlockPtr ubp( jag::draw::UniformBlockPtr(
+        new jag::draw::UniformBlock( "blockTest" ) ) );
+    ubp->addUniform( jag::draw::UniformPtr(
+        new jag::draw::Uniform( "ambientScene", .2f ) ) );
+    ubp->addUniform( jag::draw::UniformPtr(
+        new jag::draw::Uniform( "diffuseMat", gmtl::Point3f( 0.f, .7f, 0.9f ) ) ) );
+    jag::draw::UniformBlockSetPtr ubsp( jag::draw::UniformBlockSetPtr(
+        new jag::draw::UniformBlockSet() ) );
     ubsp->insert( ubp );
     commands->insert( ubsp );
 
     gmtl::Vec3f lightVec( .5f, .7f, 1.f );
     gmtl::normalize( lightVec );
-    jagDraw::UniformSetPtr usp( jagDraw::UniformSetPtr(
-        new jagDraw::UniformSet() ) );
-    usp->insert( jagDraw::UniformPtr(
-        new jagDraw::Uniform( "ecLightDir", lightVec ) ) );
+    jag::draw::UniformSetPtr usp( jag::draw::UniformSetPtr(
+        new jag::draw::UniformSet() ) );
+    usp->insert( jag::draw::UniformPtr(
+        new jag::draw::Uniform( "ecLightDir", lightVec ) ) );
     commands->insert( usp );
 
 
@@ -250,7 +250,7 @@ bool Transparency::init()
     jag::base::getVersionString();
 
     // Auto-log the OpenGL version string.
-    jagDraw::getOpenGLVersionString();
+    jag::draw::getOpenGLVersionString();
 
     return( true );
 }
@@ -266,8 +266,8 @@ bool Transparency::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& pr
     JAG3D_PROFILE( "frame" );
 
 #ifdef ENABLE_SORT
-    jagDraw::Command::CommandTypeVec plist;
-    plist.push_back( jagDraw::Command::UniformSet_t );
+    jag::draw::Command::CommandTypeVec plist;
+    plist.push_back( jag::draw::Command::UniformSet_t );
 #endif
 
     boost::chrono::high_resolution_clock::time_point current( boost::chrono::high_resolution_clock::now() );
@@ -278,15 +278,15 @@ bool Transparency::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& pr
 
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
-    const jagDraw::jagDrawContextID contextID( jagDraw::ContextSupport::instance()->getActiveContext() );
-    jagDraw::DrawInfo& drawInfo( getDrawInfo( contextID ) );
+    const jag::draw::jagDrawContextID contextID( jag::draw::ContextSupport::instance()->getActiveContext() );
+    jag::draw::DrawInfo& drawInfo( getDrawInfo( contextID ) );
 
     jagMx::MxCorePtr mxCore( _mxCore._data[ contextID ] );
 
     jagSG::CollectionVisitor& collect( getCollectionVisitor() );
     collect.reset();
 
-    jagDraw::DrawGraphPtr drawGraph;
+    jag::draw::DrawGraphPtr drawGraph;
     {
         JAG3D_PROFILE( "Collection" );
 
@@ -312,13 +312,13 @@ bool Transparency::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& pr
             JAG3D_PROFILE( "Collection sort" );
             {
                 // Sort by commands.
-                jagDraw::DrawNodeContainer& nc( (*drawGraph)[ 0 ] );
-                std::sort( nc.begin(), nc.end(), jagDraw::DrawNodeCommandSorter( plist ) );
+                jag::draw::DrawNodeContainer& nc( (*drawGraph)[ 0 ] );
+                std::sort( nc.begin(), nc.end(), jag::draw::DrawNodeCommandSorter( plist ) );
             }
             {
                 // Sort by descending eye coord z distance.
-                jagDraw::DrawNodeContainer& nc( (*drawGraph)[ 1 ] );
-                jagDraw::DrawNodeDistanceSorter distanceSorter;
+                jag::draw::DrawNodeContainer& nc( (*drawGraph)[ 1 ] );
+                jag::draw::DrawNodeDistanceSorter distanceSorter;
                 std::sort( nc.begin(), nc.end(), distanceSorter );
             }
         }
@@ -344,7 +344,7 @@ void Transparency::reshape( const int w, const int h )
     if( !getStartupCalled() )
         return;
 
-    const jagDraw::jagDrawContextID contextID( jagDraw::ContextSupport::instance()->getActiveContext() );
+    const jag::draw::jagDrawContextID contextID( jag::draw::ContextSupport::instance()->getActiveContext() );
     _mxCore._data[ contextID ]->setAspect( ( double ) w / ( double ) h );
 }
 

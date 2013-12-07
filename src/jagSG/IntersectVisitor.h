@@ -25,12 +25,12 @@
 #include <jagSG/Export.h>
 #include <jagSG/Visitor.h>
 #include <jag/base/Transform.h>
-#include <jagDraw/DrawNode.h>
-#include <jagDraw/DrawNodeContainer.h>
-#include <jagDraw/DrawGraph.h>
-#include <jagDraw/TransformCallback.h>
-#include <jagDraw/Drawable.h>
-#include <jagDraw/Uniform.h>
+#include <jag/draw/DrawNode.h>
+#include <jag/draw/DrawNodeContainer.h>
+#include <jag/draw/DrawGraph.h>
+#include <jag/draw/TransformCallback.h>
+#include <jag/draw/Drawable.h>
+#include <jag/draw/Uniform.h>
 #include <jag/base/ptr.h>
 #include <gmtl/Ray.h>
 #include <gmtl/Xforms.h>
@@ -43,11 +43,11 @@ namespace jagSG {
 
     struct hitRecord {
         jagSG::NodeVec nodeVec;
-        jagDraw::DrawablePtr drawablePtr;
+        jag::draw::DrawablePtr drawablePtr;
         gmtl::Point3f hitPosition;
-        jagDraw::VertexArrayObjectPtr vaop;
+        jag::draw::VertexArrayObjectPtr vaop;
         int tri;
-        jagDraw::DrawCommandPtr dcp;
+        jag::draw::DrawCommandPtr dcp;
         float u, v;
 
         //how do we decide type for the world coordinate point

@@ -21,18 +21,18 @@
 
 #include <jagSG/IntersectVisitor.h>
 #include <jagSG/Node.h>
-#include <jagDraw/DrawNode.h>
-#include <jagDraw/BufferObject.h>
-#include <jagDraw/VertexAttrib.h>
+#include <jag/draw/DrawNode.h>
+#include <jag/draw/BufferObject.h>
+#include <jag/draw/VertexAttrib.h>
 #include <jag/base/gmtlSupport.h>
-#include <jagDraw/Error.h>
+#include <jag/draw/Error.h>
 #include <jag/base/Profile.h>
 #include <jag/base/LogMacros.h>
 #include <boost/foreach.hpp>
-#include <jagDraw/DrawCommand.h>
-#include <jagDraw/Drawable.h>
+#include <jag/draw/DrawCommand.h>
+#include <jag/draw/Drawable.h>
 #include <gmtl/gmtl.h>
-#include <jagDraw/TriangleSurfer.h>
+#include <jag/draw/TriangleSurfer.h>
 #include <gmtl/Xforms.h>
 #include <cfloat>
 #include <gmtl/Ray.h>
@@ -165,18 +165,18 @@ void IntersectVisitor::intersect(jagSG::Node& node) {
         node.traverse(*this);
         if(node.getNumDrawables() > 0) {
         
-         const jagDraw::DrawablePrepPtr& drawablePrep( _commandStack.back()[ jagDraw::Command::VertexArrayObject_t ] );
-         const jagDraw::VertexArrayObjectPtr vaop( boost::static_pointer_cast< jagDraw::VertexArrayObject >( drawablePrep ) );
+         const jag::draw::DrawablePrepPtr& drawablePrep( _commandStack.back()[ jag::draw::Command::VertexArrayObject_t ] );
+         const jag::draw::VertexArrayObjectPtr vaop( boost::static_pointer_cast< jag::draw::VertexArrayObject >( drawablePrep ) );
         
 
-          jagDraw::BufferObjectPtr bop( boost::dynamic_pointer_cast< jagDraw::BufferObject >(
-        vaop->getVertexArrayCommand( jagDraw::VertexArrayCommand::BufferObject_t, jagDraw::VertexArrayObject::Vertex ) ) );
+          jag::draw::BufferObjectPtr bop( boost::dynamic_pointer_cast< jag::draw::BufferObject >(
+        vaop->getVertexArrayCommand( jag::draw::VertexArrayCommand::BufferObject_t, jag::draw::VertexArrayObject::Vertex ) ) );
            
-    jagDraw::VertexAttribPtr verts( boost::dynamic_pointer_cast< jagDraw::VertexAttrib >(
-        vaop->getVertexArrayCommand( jagDraw::VertexArrayCommand::VertexAttrib_t, jagDraw::VertexArrayObject::Vertex ) ) );
+    jag::draw::VertexAttribPtr verts( boost::dynamic_pointer_cast< jag::draw::VertexAttrib >(
+        vaop->getVertexArrayCommand( jag::draw::VertexArrayCommand::VertexAttrib_t, jag::draw::VertexArrayObject::Vertex ) ) );
         //3. intersect the triangles with the ray and record the hits
 	bool boundIntersect;
-	if(node.getBound()->getType()==jagDraw::Bound::Box_t)  {
+	if(node.getBound()->getType()==jag::draw::Bound::Box_t)  {
 		double a, b;
 		boundIntersect = gmtl::intersectAABoxRay<double>(node.getBound()->asAABox(), _rayDeque.back(), a, b);
 	}
@@ -195,10 +195,10 @@ void IntersectVisitor::intersect(jagSG::Node& node) {
 		//	numNamed++;
 		//}
         for(auto i = 0; i < node.getNumDrawables(); i++) {
-            jagDraw::DrawCommandVec drawCommands = node.getDrawable(i)->getDrawCommandVec();
-            BOOST_FOREACH( jagDraw::DrawCommandPtr dcp, drawCommands )
+            jag::draw::DrawCommandVec drawCommands = node.getDrawable(i)->getDrawCommandVec();
+            BOOST_FOREACH( jag::draw::DrawCommandPtr dcp, drawCommands )
             {
-                jagDraw::TriangleSurfer<gmtl::Point3f> ts(bop,verts,dcp);
+                jag::draw::TriangleSurfer<gmtl::Point3f> ts(bop,verts,dcp);
                 Point3f  *a, *b, *c;
                 double u, v, t;
                

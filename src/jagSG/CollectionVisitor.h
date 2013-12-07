@@ -25,11 +25,11 @@
 #include <jagSG/Export.h>
 #include <jagSG/Visitor.h>
 #include <jag/base/Transform.h>
-#include <jagDraw/DrawNode.h>
-#include <jagDraw/DrawNodeContainer.h>
-#include <jagDraw/DrawGraph.h>
-#include <jagDraw/TransformCallback.h>
-#include <jagDraw/Uniform.h>
+#include <jag/draw/DrawNode.h>
+#include <jag/draw/DrawNodeContainer.h>
+#include <jag/draw/DrawGraph.h>
+#include <jag/draw/TransformCallback.h>
+#include <jag/draw/Uniform.h>
 #include <jag/base/ptr.h>
 #include <jag/base/gmtlSupport.h>
 
@@ -79,21 +79,21 @@ public:
 
     /** \brief TBD
     \details TBD */
-    jagDraw::DrawGraphPtr getDrawGraph() const;
+    jag::draw::DrawGraphPtr getDrawGraph() const;
 
     /** \brief TBD
     \details TBD */
-    void setDrawGraphTemplate( jagDraw::DrawGraphPtr drawGraphTemplate );
+    void setDrawGraphTemplate( jag::draw::DrawGraphPtr drawGraphTemplate );
     /** \brief TBD
     \details TBD */
-    const jagDraw::DrawGraphPtr getDrawGraphTemplate() const;
+    const jag::draw::DrawGraphPtr getDrawGraphTemplate() const;
 
     /** \brief Get the TransformCallback that controls draw-time matrix uniforms.
     \details CollectionVisitor inserts this into the DrawGraph to change
     transform matrix uniforms possibly per DrawNode. Application code access this
     object to specify which matrix uniforms are desired, and specify custom
     matrix uniform names. */
-    jagDraw::TransformCallback* getTransformCallback()
+    jag::draw::TransformCallback* getTransformCallback()
     {
         return( _drawTransformCallback.get() );
     }
@@ -202,7 +202,7 @@ public:
 
         /** \brief TBD
         \details Set by CollectionVisitor. */
-        void setBound( jagDraw::Bound* Bound );
+        void setBound( jag::draw::Bound* Bound );
 
         double getECBoundDistance() const;
         double getECBoundRadius() const;
@@ -218,7 +218,7 @@ public:
     protected:
         jag::base::TransformD& _transform;
 
-        jagDraw::Bound* _bound;
+        jag::draw::Bound* _bound;
 
         mutable double _ecDistance;
         mutable bool _ecDistanceDirty;
@@ -233,16 +233,16 @@ public:
     typedef jag::base::ptr< CollectionInfo >::shared_ptr CollectionInfoPtr;
 
 protected:
-    jagDraw::DrawGraphPtr _drawGraphTemplate;
-    jagDraw::DrawGraphPtr _drawGraph;
+    jag::draw::DrawGraphPtr _drawGraphTemplate;
+    jag::draw::DrawGraphPtr _drawGraph;
     unsigned int _currentID;
-    jagDraw::DrawNodeContainer* _currentNodes;
+    jag::draw::DrawNodeContainer* _currentNodes;
 
     jag::base::TransformD _transform;
 
     CollectionInfoPtr _infoPtr;
 
-    jagDraw::TransformCallbackPtr _drawTransformCallback;
+    jag::draw::TransformCallbackPtr _drawTransformCallback;
 
     NearFarOps _nearFarOps;
     double _minECZ, _maxECZ;

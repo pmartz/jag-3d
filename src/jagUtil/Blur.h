@@ -23,12 +23,12 @@
 #define __JAGUTIL_BLUR_H__ 1
 
 #include <jagUtil/Export.h>
-#include <jagDraw/DrawGraph.h>
-#include <jagDraw/CommandMap.h>
+#include <jag/draw/DrawGraph.h>
+#include <jag/draw/CommandMap.h>
 #include <jagUtil/QuadNode.h>
-#include <jagDraw/Texture.h>
-#include <jagDraw/Program.h>
-#include <jagDraw/PerContextData.h>
+#include <jag/draw/Texture.h>
+#include <jag/draw/Program.h>
+#include <jag/draw/PerContextData.h>
 #include <jag/base/ptr.h>
 #include <jag/base/LogBase.h>
 
@@ -59,7 +59,7 @@ class JAGUTIL_EXPORT Blur : public jag::base::LogBase
 {
 public:
     Blur( const std::string& logName=std::string( "" ) );
-    Blur( jagDraw::TexturePtr& inputBuffer, jagDraw::TexturePtr& outputBuffer,
+    Blur( jag::draw::TexturePtr& inputBuffer, jag::draw::TexturePtr& outputBuffer,
         const std::string& logName=std::string( "" ) );
     Blur( const Blur& rhs );
     ~Blur();
@@ -70,7 +70,7 @@ public:
     \details In typical usage, application code should copy this
     NodeContainer into the DrawGraph template passed to
     jagSG::CollectionVisitor. */
-    jagDraw::DrawNodeContainer& getNodeContainer();
+    jag::draw::DrawNodeContainer& getNodeContainer();
 
     /** \brief Set custom fragment shaders by name.
     \details Use this method to override the default vlur effect fragment shaders.
@@ -89,23 +89,23 @@ public:
     */
     void setShaders( const std::string& fragStage0, const std::string& fragStage1 );
     /** \overload */
-    void setShaders( jagDraw::ShaderPtr& fragStage0, jagDraw::ShaderPtr& fragStage1 );
+    void setShaders( jag::draw::ShaderPtr& fragStage0, jag::draw::ShaderPtr& fragStage1 );
 
     /** \brief Call this function for a window resize event. */
     void reshape( const int w, const int h );
 
 protected:
-    void internalInit( jagDraw::ShaderPtr& fragStage0=jagDraw::ShaderPtr((jagDraw::Shader*)NULL),
-        jagDraw::ShaderPtr& fragStage1=jagDraw::ShaderPtr((jagDraw::Shader*)NULL) );
+    void internalInit( jag::draw::ShaderPtr& fragStage0=jag::draw::ShaderPtr((jag::draw::Shader*)NULL),
+        jag::draw::ShaderPtr& fragStage1=jag::draw::ShaderPtr((jag::draw::Shader*)NULL) );
 
-    jagDraw::TexturePtr _inputBuffer, _outputBuffer;
+    jag::draw::TexturePtr _inputBuffer, _outputBuffer;
 
     unsigned int _numContexts;
     int _width, _height;
 
-    jagDraw::DrawNodeContainer _container;
+    jag::draw::DrawNodeContainer _container;
     jagUtil::QuadNodePtr _hQuad, _vQuad;
-    jagDraw::TexturePtr _intermediateBuffer;
+    jag::draw::TexturePtr _intermediateBuffer;
 };
 
 typedef jag::base::ptr< Blur >::shared_ptr BlurPtr;

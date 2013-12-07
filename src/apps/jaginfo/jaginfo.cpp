@@ -19,7 +19,7 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#include <jagDraw/Common.h>
+#include <jag/draw/Common.h>
 #include <jagSG/Common.h>
 #include <jagUtil/DrawGraphCountVisitor.h>
 #include <jagUtil/BufferAggregationVisitor.h>
@@ -60,8 +60,8 @@ public:
 
 protected:
     std::set< jagSG::NodePtr > _nodeSet;
-    std::set< jagDraw::CommandMapPtr > _commandSet;
-    std::set< jagDraw::DrawablePtr > _drawableSet;
+    std::set< jag::draw::CommandMapPtr > _commandSet;
+    std::set< jag::draw::DrawablePtr > _drawableSet;
 };
 
 SceneGraphCountVisitor::SceneGraphCountVisitor()
@@ -101,7 +101,7 @@ void SceneGraphCountVisitor::visit( jagSG::Node& node )
         _nodeSet.insert( np );
     }
 
-    jagDraw::CommandMapPtr cp( node.getCommandMap() );
+    jag::draw::CommandMapPtr cp( node.getCommandMap() );
     if( cp != NULL )
     {
         ++_commands;
@@ -115,7 +115,7 @@ void SceneGraphCountVisitor::visit( jagSG::Node& node )
     for( unsigned int idx=0; idx < node.getNumDrawables(); ++idx )
     {
         ++_drawables;
-        const jagDraw::DrawablePtr dp( node.getDrawable( idx ) );
+        const jag::draw::DrawablePtr dp( node.getDrawable( idx ) );
         if( _drawableSet.find( dp ) == _drawableSet.end() )
         {
             ++_uDrawables;
@@ -191,14 +191,14 @@ int main( int argc, char** argv )
     collect.setViewProj( gmtl::MAT_IDENTITY44D, proj );
     root->accept( collect );
 
-    jagDraw::DrawGraphPtr drawGraph( collect.getDrawGraph() );
+    jag::draw::DrawGraphPtr drawGraph( collect.getDrawGraph() );
 
     {
-        jagDraw::Command::CommandTypeVec plist;
-        plist.push_back( jagDraw::Command::UniformBlockSet_t );
-        BOOST_FOREACH( jagDraw::DrawNodeContainer& nc, *drawGraph )
+        jag::draw::Command::CommandTypeVec plist;
+        plist.push_back( jag::draw::Command::UniformBlockSet_t );
+        BOOST_FOREACH( jag::draw::DrawNodeContainer& nc, *drawGraph )
         {
-            std::sort( nc.begin(), nc.end(), jagDraw::DrawNodeCommandSorter( plist ) );
+            std::sort( nc.begin(), nc.end(), jag::draw::DrawNodeCommandSorter( plist ) );
         }
     }
 

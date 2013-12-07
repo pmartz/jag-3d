@@ -21,8 +21,8 @@
 
 #include <jagUtil/ABuffer.h>
 
-#include <jagDraw/Common.h>
-#include <jagDraw/PerContextData.h>
+#include <jag/draw/Common.h>
+#include <jag/draw/PerContextData.h>
 #include <jagSG/Common.h>
 #include <jag/disk/ReadWrite.h>
 #include <jag/base/Profile.h>
@@ -58,8 +58,8 @@ ABuffer::ABuffer( const std::string& logName )
       _numContexts( 0 )
 {
 }
-ABuffer::ABuffer( jagDraw::TexturePtr& depthBuffer, jagDraw::TexturePtr& colorBuffer0,
-                 jagDraw::TexturePtr& colorBuffer1,
+ABuffer::ABuffer( jag::draw::TexturePtr& depthBuffer, jag::draw::TexturePtr& colorBuffer0,
+                 jag::draw::TexturePtr& colorBuffer1,
                  const std::string& logName )
     : jag::base::LogBase( logName.empty() ? "jag.util.abuf" : logName ),
       _colorBuffer0( colorBuffer0 ),
@@ -119,13 +119,13 @@ void ABuffer::setMaxContexts( const unsigned int numContexts )
 }
 
 
-jagDraw::DrawGraphPtr& ABuffer::createDrawGraphTemplate( const unsigned int startContainer )
+jag::draw::DrawGraphPtr& ABuffer::createDrawGraphTemplate( const unsigned int startContainer )
 {
     if( _callback == NULL )
         internalInit();
 
     if( _drawGraphTemplate == NULL )
-        _drawGraphTemplate.reset( new jagDraw::DrawGraph() );
+        _drawGraphTemplate.reset( new jag::draw::DrawGraph() );
 
     // ABuffer needs 3 NodeContainers:
     //   sc:   Clear the ABuffer
@@ -140,8 +140,8 @@ jagDraw::DrawGraphPtr& ABuffer::createDrawGraphTemplate( const unsigned int star
 
 
     // First, create the full screen tri pair used by the first and last NodeContainers.
-    jagDraw::VertexArrayObjectPtr fstpVAO;
-    jagDraw::DrawablePtr fstp;
+    jag::draw::VertexArrayObjectPtr fstpVAO;
+    jag::draw::DrawablePtr fstp;
     {
         jagUtil::VNTCVec data;
         fstp = jagUtil::makePlane( data, gmtl::Point3f( -1., -1., 0. ),
@@ -152,17 +152,17 @@ jagDraw::DrawGraphPtr& ABuffer::createDrawGraphTemplate( const unsigned int star
 
     // Element 1: Full screen tri pair to clear the ABuffer.
     {
-        jagDraw::DrawNodeContainer& nc( (*_drawGraphTemplate)[ _startContainer ] );
+        jag::draw::DrawNodeContainer& nc( (*_drawGraphTemplate)[ _startContainer ] );
 
-        struct ABufferClearCallback : public jagDraw::DrawNodeContainer::Callback
+        struct ABufferClearCallback : public jag::draw::DrawNodeContainer::Callback
         {
             ABufferClearCallback( PerContextABufferCntxt& abc )
                 : _abufferCntxt( abc )
             {}
 
-            virtual bool operator()( jagDraw::DrawNodeContainer& nc, jagDraw::DrawInfo& di )
+            virtual bool operator()( jag::draw::DrawNodeContainer& nc, jag::draw::DrawInfo& di )
             {
-                const jagDraw::jagDrawContextID contextID( di._id );
+                const jag::draw::jagDrawContextID contextID( di._id );
                 ABufferContext& abc( _abufferCntxt[ contextID ] );
 
                 if( abc._needsInit )
@@ -187,9 +187,9 @@ jagDraw::DrawGraphPtr& ABuffer::createDrawGraphTemplate( const unsigned int star
                 return( false );
             }
 
-            jagDraw::ProgramPtr _clearProgram;
+            jag::draw::ProgramPtr _clearProgram;
             PerContextABufferCntxt& _abufferCntxt;
-            jagDraw::FramebufferPtr _fbo;
+            jag::draw::FramebufferPtr _fbo;
         };
         typedef jag::base::ptr< ABufferClearCallback >::shared_ptr ABufferClearCallbackPtr;
         ABufferClearCallbackPtr abccb( ABufferClearCallbackPtr( new ABufferClearCallback( _abufferCntxt ) ) );
@@ -198,11 +198,11 @@ jagDraw::DrawGraphPtr& ABuffer::createDrawGraphTemplate( const unsigned int star
         nc.getCallbacks().push_back( abccb );
 
 
-        jagDraw::CommandMapPtr commands( jagDraw::CommandMapPtr( new jagDraw::CommandMap() ) );
+        jag::draw::CommandMapPtr commands( jag::draw::CommandMapPtr( new jag::draw::CommandMap() ) );
         commands->insert( fstpVAO );
         commands->insert( _clearProgram );
 
-        jagDraw::DrawNodePtr node( jagDraw::DrawNodePtr( new jagDraw::DrawNode() ) );
+        jag::draw::DrawNodePtr node( jag::draw::DrawNodePtr( new jag::draw::DrawNode() ) );
         node->setCommandMap( commands );
         node->addDrawable( fstp );
 
@@ -212,17 +212,17 @@ jagDraw::DrawGraphPtr& ABuffer::createDrawGraphTemplate( const unsigned int star
 
     // Element 2: ABuffer. Contents set by CollectionVisitor.
     {
-        jagDraw::DrawNodeContainer& nc( (*_drawGraphTemplate)[ _startContainer + 1 ] );
+        jag::draw::DrawNodeContainer& nc( (*_drawGraphTemplate)[ _startContainer + 1 ] );
 
-        struct ABufferRenderCallback : public jagDraw::DrawNodeContainer::Callback
+        struct ABufferRenderCallback : public jag::draw::DrawNodeContainer::Callback
         {
             ABufferRenderCallback( PerContextABufferCntxt& abc )
                 : _abufferCntxt( abc )
             {}
 
-            virtual bool operator()( jagDraw::DrawNodeContainer& nc, jagDraw::DrawInfo& di )
+            virtual bool operator()( jag::draw::DrawNodeContainer& nc, jag::draw::DrawInfo& di )
             {
-                const jagDraw::jagDrawContextID contextID( di._id );
+                const jag::draw::jagDrawContextID contextID( di._id );
                 ABufferContext& abc( _abufferCntxt[ contextID ] );
 
                 _renderProgram->execute( di );
@@ -244,7 +244,7 @@ jagDraw::DrawGraphPtr& ABuffer::createDrawGraphTemplate( const unsigned int star
                 return( false );
             }
 
-            jagDraw::ProgramPtr _renderProgram;
+            jag::draw::ProgramPtr _renderProgram;
             PerContextABufferCntxt& _abufferCntxt;
         };
         typedef jag::base::ptr< ABufferRenderCallback >::shared_ptr ABufferRenderCallbackPtr;
@@ -255,17 +255,17 @@ jagDraw::DrawGraphPtr& ABuffer::createDrawGraphTemplate( const unsigned int star
 
     // Element 3: Full sceen tri pair to resolve ABuffer & combine with opaque.
     {
-        jagDraw::DrawNodeContainer& nc( (*_drawGraphTemplate)[ _startContainer + 2 ] );
+        jag::draw::DrawNodeContainer& nc( (*_drawGraphTemplate)[ _startContainer + 2 ] );
 
-        struct ABufferResolveCallback : public jagDraw::DrawNodeContainer::Callback
+        struct ABufferResolveCallback : public jag::draw::DrawNodeContainer::Callback
         {
             ABufferResolveCallback( PerContextABufferCntxt& abc )
                 : _abufferCntxt( abc )
             {}
 
-            virtual bool operator()( jagDraw::DrawNodeContainer& nc, jagDraw::DrawInfo& di )
+            virtual bool operator()( jag::draw::DrawNodeContainer& nc, jag::draw::DrawInfo& di )
             {
-                const jagDraw::jagDrawContextID contextID( di._id );
+                const jag::draw::jagDrawContextID contextID( di._id );
 
                 ABufferContext& abc( _abufferCntxt[ contextID ] );
 
@@ -283,7 +283,7 @@ jagDraw::DrawGraphPtr& ABuffer::createDrawGraphTemplate( const unsigned int star
                 return( false );
             }
 
-            jagDraw::ProgramPtr _resolveProgram;
+            jag::draw::ProgramPtr _resolveProgram;
             PerContextABufferCntxt& _abufferCntxt;
         };
         typedef jag::base::ptr< ABufferResolveCallback >::shared_ptr ABufferResolveCallbackPtr;
@@ -292,26 +292,26 @@ jagDraw::DrawGraphPtr& ABuffer::createDrawGraphTemplate( const unsigned int star
         nc.getCallbacks().push_back( abrcb );
 
 
-        jagDraw::CommandMapPtr commands( jagDraw::CommandMapPtr( new jagDraw::CommandMap() ) );
+        jag::draw::CommandMapPtr commands( jag::draw::CommandMapPtr( new jag::draw::CommandMap() ) );
         commands->insert( fstpVAO );
         commands->insert( _resolveProgram );
 
-        jagDraw::TextureSetPtr texSet( jagDraw::TextureSetPtr( new jagDraw::TextureSet() ) );
+        jag::draw::TextureSetPtr texSet( jag::draw::TextureSetPtr( new jag::draw::TextureSet() ) );
         commands->insert( texSet );
-        jagDraw::UniformSetPtr usp( jagDraw::UniformSetPtr( new jagDraw::UniformSet() ) );
+        jag::draw::UniformSetPtr usp( jag::draw::UniformSetPtr( new jag::draw::UniformSet() ) );
         commands->insert( usp );
 
         (*texSet)[ GL_TEXTURE14 ] = _colorBuffer0;
-        jagDraw::UniformPtr sampler( jagDraw::UniformPtr( new jagDraw::Uniform( "opaqueBuffer", GL_SAMPLER_2D, 14 ) ) );
+        jag::draw::UniformPtr sampler( jag::draw::UniformPtr( new jag::draw::Uniform( "opaqueBuffer", GL_SAMPLER_2D, 14 ) ) );
         usp->insert( sampler );
         if( _colorBuffer1 != NULL )
         {
             (*texSet)[ GL_TEXTURE15 ] = _colorBuffer1;
-            jagDraw::UniformPtr sampler( jagDraw::UniformPtr( new jagDraw::Uniform( "secondaryBuffer", GL_SAMPLER_2D, 15 ) ) );
+            jag::draw::UniformPtr sampler( jag::draw::UniformPtr( new jag::draw::Uniform( "secondaryBuffer", GL_SAMPLER_2D, 15 ) ) );
             usp->insert( sampler );
         }
 
-        jagDraw::DrawNodePtr node( jagDraw::DrawNodePtr( new jagDraw::DrawNode() ) );
+        jag::draw::DrawNodePtr node( jag::draw::DrawNodePtr( new jag::draw::DrawNode() ) );
         node->setCommandMap( commands );
         node->addDrawable( fstp );
 
@@ -357,7 +357,7 @@ void ABuffer::setTransparencyEnable( jagSG::Node& node, const bool enable )
       set opaque nodecontainer
     */
 
-    jagDraw::CommandMapPtr commands( node.getCommandMap() );
+    jag::draw::CommandMapPtr commands( node.getCommandMap() );
     if( enable )
     {
         if( commands == _commands )
@@ -371,7 +371,7 @@ void ABuffer::setTransparencyEnable( jagSG::Node& node, const bool enable )
         else
         {
             node.setUserDataPair( "ABufferOriginalCommandMap", commands );
-            node.setCommandMap( jagDraw::CommandMapPtr( new jagDraw::CommandMap(
+            node.setCommandMap( jag::draw::CommandMapPtr( new jag::draw::CommandMap(
                 *commands + *_commands ) ) );
         }
         // Specify NodeContainer selection callback.
@@ -385,14 +385,14 @@ void ABuffer::setTransparencyEnable( jagSG::Node& node, const bool enable )
             return;
         if( node.hasUserData( "ABufferOriginalCommandMap" ) )
         {
-            jagDraw::CommandMapPtr savedCommands( node.getUserDataValue(
-                "ABufferOriginalCommandMap" ).extract< jagDraw::CommandMapPtr >() );
+            jag::draw::CommandMapPtr savedCommands( node.getUserDataValue(
+                "ABufferOriginalCommandMap" ).extract< jag::draw::CommandMapPtr >() );
             node.setCommandMap( savedCommands );
         }
         else if( commands == NULL )
             node.setCommandMap( _opaqueCommands );
         else
-            node.setCommandMap( jagDraw::CommandMapPtr( new jagDraw::CommandMap(
+            node.setCommandMap( jag::draw::CommandMapPtr( new jag::draw::CommandMap(
                 *commands + *_opaqueCommands ) ) );
         // Specify the opaque NodeContainer selection callback.
         node.getCollectionCallbacks().remove( _callback );
@@ -404,7 +404,7 @@ void ABuffer::toggleTransparencyEnable( jagSG::Node& node )
     const bool currentlyEnabled( node.getCollectionCallbacks().contains( _callback ) );
     setTransparencyEnable( node, !currentlyEnabled );
 }
-void ABuffer::setOpaqueControls( const jagDraw::CommandMapPtr& opaqueCommands, const unsigned int opaqueContainer )
+void ABuffer::setOpaqueControls( const jag::draw::CommandMapPtr& opaqueCommands, const unsigned int opaqueContainer )
 {
     if( _callback == NULL )
         internalInit();
@@ -417,7 +417,7 @@ unsigned int ABuffer::getStartContainer() const
 {
     return( _startContainer );
 }
-void ABuffer::getABufferControls( jagDraw::CommandMapPtr& commands, jagSG::SelectContainerCallbackPtr& callback )
+void ABuffer::getABufferControls( jag::draw::CommandMapPtr& commands, jagSG::SelectContainerCallbackPtr& callback )
 {
     if( _callback == NULL )
         internalInit();
@@ -435,13 +435,13 @@ unsigned int ABuffer::getTransparentNodeContainer() const
     return( getStartContainer() + 1 );
 }
 
-void ABuffer::renderFrame( jagSG::CollectionVisitor& collect, jagDraw::DrawInfo& drawInfo )
+void ABuffer::renderFrame( jagSG::CollectionVisitor& collect, jag::draw::DrawInfo& drawInfo )
 {
     const unsigned int contextID( drawInfo._id );
-    jagDraw::DrawGraphPtr drawGraph( collect.getDrawGraph() );
+    jag::draw::DrawGraphPtr drawGraph( collect.getDrawGraph() );
     ABufferContext& abc( _abufferCntxt._data[ contextID ] );
 
-    // From jagDraw::DrawGraph::execute():
+    // From jag::draw::DrawGraph::execute():
     drawInfo.startFrame();
 
     // Draw everything that comes before the ABuffer.
@@ -451,9 +451,9 @@ void ABuffer::renderFrame( jagSG::CollectionVisitor& collect, jagDraw::DrawInfo&
 
     // Render the ABuffer, possibly multiple times if necessary
     // to ensure proper page pool size.
-    jagDraw::DrawNodeContainer& clear( (*drawGraph)[ _startContainer ] );
-    jagDraw::DrawNodeContainer& render( (*drawGraph)[ _startContainer + 1 ] );
-    jagDraw::DrawNodeContainer& resolve( (*drawGraph)[ _startContainer + 2 ] );
+    jag::draw::DrawNodeContainer& clear( (*drawGraph)[ _startContainer ] );
+    jag::draw::DrawNodeContainer& render( (*drawGraph)[ _startContainer + 1 ] );
+    jag::draw::DrawNodeContainer& resolve( (*drawGraph)[ _startContainer + 2 ] );
     bool frameOK( false );
     while( !frameOK )
     {
@@ -495,7 +495,7 @@ void ABuffer::internalInit()
     { \
         boost::any anyTemp( jag::disk::read( std::string(_NAME) ) ); \
         try { \
-            _RESULT = boost::any_cast< jagDraw::ShaderPtr >( anyTemp ); \
+            _RESULT = boost::any_cast< jag::draw::ShaderPtr >( anyTemp ); \
         } \
         catch( boost::bad_any_cast bac ) \
         { \
@@ -510,11 +510,11 @@ void ABuffer::internalInit()
     }
 
     {
-        jagDraw::ShaderPtr vs; __READ_UTIL( vs, "abufferClear.vert", "jag.util.abuf" );
-        jagDraw::ShaderPtr fs; __READ_UTIL( fs, "abufferClear.frag", "jag.util.abuf" );
+        jag::draw::ShaderPtr vs; __READ_UTIL( vs, "abufferClear.vert", "jag.util.abuf" );
+        jag::draw::ShaderPtr fs; __READ_UTIL( fs, "abufferClear.frag", "jag.util.abuf" );
 
         if( _clearProgram == NULL )
-            _clearProgram.reset( new jagDraw::Program() );
+            _clearProgram.reset( new jag::draw::Program() );
         else
             _clearProgram->detachAllShaders();
         _clearProgram->attachShader( vs );
@@ -523,11 +523,11 @@ void ABuffer::internalInit()
     }
     // Create program for rendering into the abuffer.
     {
-        jagDraw::ShaderPtr vs; __READ_UTIL( vs, "abufferRender.vert", "jag.util.abuf" );
-        jagDraw::ShaderPtr fs; __READ_UTIL( fs, "abufferRender.frag", "jag.util.abuf" );
+        jag::draw::ShaderPtr vs; __READ_UTIL( vs, "abufferRender.vert", "jag.util.abuf" );
+        jag::draw::ShaderPtr fs; __READ_UTIL( fs, "abufferRender.frag", "jag.util.abuf" );
 
         if( _renderProgram == NULL )
-            _renderProgram.reset( new jagDraw::Program() );
+            _renderProgram.reset( new jag::draw::Program() );
         else
             _renderProgram->detachAllShaders();
         _renderProgram->attachShader( vs );
@@ -539,13 +539,13 @@ void ABuffer::internalInit()
         _renderProgram->addUniformAlias( "modelViewMatIT", "jagModelViewInvTrans4Matrix" );
     }
     {
-        jagDraw::ShaderPtr vs; __READ_UTIL( vs, "abufferResolve.vert", "jag.util.abuf" );
-        jagDraw::ShaderPtr fs; __READ_UTIL( fs, "abufferResolve.frag", "jag.util.abuf" );
+        jag::draw::ShaderPtr vs; __READ_UTIL( vs, "abufferResolve.vert", "jag.util.abuf" );
+        jag::draw::ShaderPtr fs; __READ_UTIL( fs, "abufferResolve.frag", "jag.util.abuf" );
 
         fs->insertSourceString( shaderResolveParameters() );
 
         if( _resolveProgram == NULL )
-            _resolveProgram.reset( new jagDraw::Program() );
+            _resolveProgram.reset( new jag::draw::Program() );
         else
             _resolveProgram->detachAllShaders();
         _resolveProgram->attachShader( vs );
@@ -557,7 +557,7 @@ void ABuffer::internalInit()
     // Create default FBO. First NodeContainer renders to _opaqueFBO,
     // but other NodeContainers render directly to the window.
     if( _defaultFBO == NULL )
-        _defaultFBO.reset( new jagDraw::Framebuffer( GL_DRAW_FRAMEBUFFER ) );
+        _defaultFBO.reset( new jag::draw::Framebuffer( GL_DRAW_FRAMEBUFFER ) );
     _defaultFBO->setViewport( 0, 0, _width, _height );
     _defaultFBO->setClear( 0 ); // No need to clear anything.
 
@@ -565,15 +565,15 @@ void ABuffer::internalInit()
     // This is the CommandMap that the app must attach to any transparent geometry.
     {
         if( _commands == NULL )
-            _commands.reset( new jagDraw::CommandMap() );
+            _commands.reset( new jag::draw::CommandMap() );
         _commands->insert( _renderProgram );
         _commands->insert( _defaultFBO );
 
-        jagDraw::TextureSetPtr texSet( jagDraw::TextureSetPtr( new jagDraw::TextureSet() ) );
+        jag::draw::TextureSetPtr texSet( jag::draw::TextureSetPtr( new jag::draw::TextureSet() ) );
         (*texSet)[ GL_TEXTURE13 ] = _depthBuffer;
         _commands->insert( texSet );
-        jagDraw::UniformPtr sampler( jagDraw::UniformPtr( new jagDraw::Uniform( "depthBuffer", GL_SAMPLER_2D, 13 ) ) );
-        jagDraw::UniformSetPtr usp( jagDraw::UniformSetPtr( new jagDraw::UniformSet() ) );
+        jag::draw::UniformPtr sampler( jag::draw::UniformPtr( new jag::draw::Uniform( "depthBuffer", GL_SAMPLER_2D, 13 ) ) );
+        jag::draw::UniformSetPtr usp( jag::draw::UniformSetPtr( new jag::draw::UniformSet() ) );
         usp->insert( sampler );
         _commands->insert( usp );
     }

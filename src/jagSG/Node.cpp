@@ -21,10 +21,10 @@
 
 #include <jagSG/Node.h>
 #include <jagSG/Visitor.h>
-#include <jagDraw/DrawInfo.h>
-#include <jagDraw/Command.h>
-#include <jagDraw/CommandMap.h>
-#include <jagDraw/Error.h>
+#include <jag/draw/DrawInfo.h>
+#include <jag/draw/Command.h>
+#include <jag/draw/CommandMap.h>
+#include <jag/draw/Error.h>
 #include <jag/base/LogMacros.h>
 #include <jag/base/Profile.h>
 #include <jag/base/ptr.h>
@@ -43,7 +43,7 @@ Node::Node( const std::string& logName )
     jag::base::UserDataOwner(),
     ObjectIDOwner(),
     SHARED_FROM_THIS( Node )(),
-    jagDraw::BoundOwner(),
+    jag::draw::BoundOwner(),
     _matrix( gmtl::MAT_IDENTITY44D )
 {
     _boundDirtyCallback = BoundDirtyCallbackPtr( new BoundDirtyCallback( this ) );
@@ -53,7 +53,7 @@ Node::Node( const Node& rhs )
     jag::base::UserDataOwner( rhs ),
     ObjectIDOwner( rhs ),
     SHARED_FROM_THIS( Node )( rhs ),
-    jagDraw::BoundOwner( rhs ),
+    jag::draw::BoundOwner( rhs ),
     _matrix( rhs._matrix ),
     _commands( rhs._commands ),
     _drawables( rhs._drawables ),
@@ -97,11 +97,11 @@ Node::CollectionCallbacks& Node::getCollectionCallbacks()
     return( _collectionCallbacks );
 }
 
-void Node::execute( jagDraw::DrawInfo& drawInfo )
+void Node::execute( jag::draw::DrawInfo& drawInfo )
 {
     JAG3D_TRACE( "execute()" );
 
-    BOOST_FOREACH( jagDraw::DrawablePtr& drawable, _drawables )
+    BOOST_FOREACH( jag::draw::DrawablePtr& drawable, _drawables )
     {
         drawable->execute( drawInfo );
     }
@@ -124,12 +124,12 @@ const gmtl::Matrix44d& Node::getTransform() const
 }
 
 
-jagDraw::BoundPtr Node::newBound()
+jag::draw::BoundPtr Node::newBound()
 {
-    return( jagDraw::BoundPtr( new jagDraw::BoundSphere() ) );
+    return( jag::draw::BoundPtr( new jag::draw::BoundSphere() ) );
 }
 
-void Node::computeBound( jagDraw::BoundPtr& bound, const jagDraw::CommandMap& commands )
+void Node::computeBound( jag::draw::BoundPtr& bound, const jag::draw::CommandMap& commands )
 {
     JAG3D_PROFILE( "SGNode::computeBound" );
 
@@ -137,30 +137,30 @@ void Node::computeBound( jagDraw::BoundPtr& bound, const jagDraw::CommandMap& co
         return;
 
     bound->setEmpty();
-    jagDraw::CommandMap newCommands( 
+    jag::draw::CommandMap newCommands( 
         ( _commands == NULL ) ? commands : commands + *_commands );
 
     gmtl::Point3d averageCenter( 0., 0., 0. );
-    BOOST_FOREACH( jagDraw::DrawablePtr& drawable, _drawables )
+    BOOST_FOREACH( jag::draw::DrawablePtr& drawable, _drawables )
     {
         averageCenter += drawable->getBound( newCommands )->getCenter();
     }
     BOOST_FOREACH( jagSG::NodePtr& node, _children )
     {
-        jagDraw::BoundOwner* boundOwner( node.get() );
+        jag::draw::BoundOwner* boundOwner( node.get() );
         averageCenter += boundOwner->getBound( newCommands )->getCenter();
     }
     averageCenter /= ( getNumDrawables() + getNumChildren() );
 
     bound->setCenter( averageCenter );
     bound->setEmpty( false );
-    BOOST_FOREACH( jagDraw::DrawablePtr& drawable, _drawables )
+    BOOST_FOREACH( jag::draw::DrawablePtr& drawable, _drawables )
     {
         bound->expand( *( drawable->getBound( newCommands ) ) );
     }
     BOOST_FOREACH( jagSG::NodePtr& node, _children )
     {
-        jagDraw::BoundOwner* boundOwner( node.get() );
+        jag::draw::BoundOwner* boundOwner( node.get() );
         bound->expand( *( boundOwner->getBound( newCommands ) ) );
     }
 
@@ -184,35 +184,35 @@ void Node::setBoundDirty( const bool dirty )
 
 
 
-void Node::setCommandMap( jagDraw::CommandMapPtr& commands )
+void Node::setCommandMap( jag::draw::CommandMapPtr& commands )
 {
     _commands = commands;
 }
-jagDraw::CommandMapPtr& Node::getCommandMap()
+jag::draw::CommandMapPtr& Node::getCommandMap()
 {
     return( _commands );
 }
-const jagDraw::CommandMapPtr& Node::getCommandMap() const
+const jag::draw::CommandMapPtr& Node::getCommandMap() const
 {
     return( _commands );
 }
-jagDraw::CommandMapPtr& Node::getOrCreateCommandMap()
+jag::draw::CommandMapPtr& Node::getOrCreateCommandMap()
 {
     if( _commands == NULL )
-        _commands = jagDraw::CommandMapPtr( new jagDraw::CommandMap() );
+        _commands = jag::draw::CommandMapPtr( new jag::draw::CommandMap() );
     return( _commands );
 }
 
 
-void Node::addDrawable( jagDraw::DrawablePtr& drawable )
+void Node::addDrawable( jag::draw::DrawablePtr& drawable )
 {
     _drawables.push_back( drawable );
     drawable->getNotifierCallbacks().push_back( _boundDirtyCallback );
     setBoundDirty();
 }
-int Node::removeDrawable( jagDraw::DrawablePtr& drawable )
+int Node::removeDrawable( jag::draw::DrawablePtr& drawable )
 {
-    jagDraw::DrawableVec::iterator it;
+    jag::draw::DrawableVec::iterator it;
     for( it=_drawables.begin(); it != _drawables.end(); ++it )
     {
         if( *it == drawable )
@@ -227,7 +227,7 @@ int Node::removeDrawable( jagDraw::DrawablePtr& drawable )
 }
 int Node::removeDrawable( const unsigned int index )
 {
-    jagDraw::DrawablePtr drawable( getDrawable( index ) );
+    jag::draw::DrawablePtr drawable( getDrawable( index ) );
     if( drawable != NULL )
     {
         return( removeDrawable( drawable ) );
@@ -238,7 +238,7 @@ unsigned int Node::getNumDrawables() const
 {
     return( (unsigned int) _drawables.size() );
 }
-jagDraw::DrawablePtr& Node::getDrawable( const unsigned int idx )
+jag::draw::DrawablePtr& Node::getDrawable( const unsigned int idx )
 {
     if( idx >= getNumDrawables() )
     {
@@ -246,7 +246,7 @@ jagDraw::DrawablePtr& Node::getDrawable( const unsigned int idx )
     }
     return( _drawables[ idx ] );
 }
-const jagDraw::DrawablePtr& Node::getDrawable( const unsigned int idx ) const
+const jag::draw::DrawablePtr& Node::getDrawable( const unsigned int idx ) const
 {
     if( idx >= getNumDrawables() )
     {
@@ -363,7 +363,7 @@ void Node::setMaxContexts( const unsigned int numContexts )
     if( _commands != NULL )
         _commands->setMaxContexts( numContexts );
 
-    BOOST_FOREACH( jagDraw::DrawablePtr& drawable, _drawables )
+    BOOST_FOREACH( jag::draw::DrawablePtr& drawable, _drawables )
     {
         drawable->setMaxContexts( numContexts );
     }
@@ -373,12 +373,12 @@ void Node::setMaxContexts( const unsigned int numContexts )
         node->setMaxContexts( numContexts );
     }
 }
-void Node::deleteID( const jagDraw::jagDrawContextID contextID )
+void Node::deleteID( const jag::draw::jagDrawContextID contextID )
 {
     if( _commands != NULL )
         _commands->deleteID( contextID );
 
-    BOOST_FOREACH( jagDraw::DrawablePtr& drawable, _drawables )
+    BOOST_FOREACH( jag::draw::DrawablePtr& drawable, _drawables )
     {
         drawable->deleteID( contextID );
     }
@@ -395,8 +395,8 @@ void Node::BoundDirtyCallback::operator()( jag::base::Notifier* notifier, const 
 {
     JAG3D_CRITICAL_STATIC( "jag.node.bounddirty", "I was notified." );
 
-    const jagDraw::Drawable::BoundDirtyNotifyInfo* bdni( dynamic_cast<
-        const jagDraw::Drawable::BoundDirtyNotifyInfo* >( &info ) );
+    const jag::draw::Drawable::BoundDirtyNotifyInfo* bdni( dynamic_cast<
+        const jag::draw::Drawable::BoundDirtyNotifyInfo* >( &info ) );
     if( bdni != NULL )
     {
         _owner->setBoundDirty();

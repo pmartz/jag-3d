@@ -21,7 +21,7 @@
 
 #include <demoSupport/DemoInterface.h>
 
-#include <jagDraw/Common.h>
+#include <jag/draw/Common.h>
 #include <jagSG/Common.h>
 #include <jagUtil/ABuffer.h>
 #include <jagUtil/Blur.h>
@@ -97,10 +97,10 @@ protected:
     jagUtil::ABufferPtr _aBuffer;
 
     jagSG::NodePtr _abufNode, _abufOpaqueChild;
-    jagDraw::FramebufferPtr _opaqueFBO;
-    jagDraw::TexturePtr _opaqueBuffer, _secondaryBuffer, _glowBuffer, _depthBuffer;
+    jag::draw::FramebufferPtr _opaqueFBO;
+    jag::draw::TexturePtr _opaqueBuffer, _secondaryBuffer, _glowBuffer, _depthBuffer;
     jagUtil::BlurPtr _blur;
-    jagDraw::UniformPtr _glowColor;
+    jag::draw::UniformPtr _glowColor;
     jagSG::NodeMaskCullCallbackPtr _opaqueToggleCB;
 
     int _width, _height;
@@ -129,15 +129,15 @@ bool ABufferJag::parseOptions( bpo::variables_map& vm )
 nothing beind collected). If the geometry would normally execute a
 Framebuffer using RTT, client code would typically want the glClear()
 call to create an empty texture. This callback ensures that always happens. */
-struct ForceFramebufferExecute : public jagDraw::DrawNodeContainer::Callback
+struct ForceFramebufferExecute : public jag::draw::DrawNodeContainer::Callback
 {
-    ForceFramebufferExecute( jagDraw::FramebufferPtr& fbo )
+    ForceFramebufferExecute( jag::draw::FramebufferPtr& fbo )
         : _fbo( fbo )
     {}
 
-    virtual bool operator()( jagDraw::DrawNodeContainer& nc, jagDraw::DrawInfo& di )
+    virtual bool operator()( jag::draw::DrawNodeContainer& nc, jag::draw::DrawInfo& di )
     {
-        const jagDraw::jagDrawContextID contextID( di._id );
+        const jag::draw::jagDrawContextID contextID( di._id );
 
         _fbo->execute( di );
         di._current.insert( _fbo );
@@ -146,7 +146,7 @@ struct ForceFramebufferExecute : public jagDraw::DrawNodeContainer::Callback
     }
 
 protected:
-    jagDraw::FramebufferPtr _fbo;
+    jag::draw::FramebufferPtr _fbo;
 };
 typedef jag::base::ptr< ForceFramebufferExecute >::shared_ptr ForceFramebufferExecutePtr;
 
@@ -175,26 +175,26 @@ bool ABufferJag::startup( const unsigned int numContexts )
     // color buffer. After our opaque NodeContainer #0 renders into it, 
     // the ABuffer class's third NodeContainer uses it during the
     // abuffer resolve.
-    jagDraw::ImagePtr image( new jagDraw::Image() );
+    jag::draw::ImagePtr image( new jag::draw::Image() );
     image->set( 0, GL_RGBA, _width, _height, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL );
-    _opaqueBuffer.reset( new jagDraw::Texture( GL_TEXTURE_2D, image,
-        jagDraw::SamplerPtr( new jagDraw::Sampler() ) ) );
+    _opaqueBuffer.reset( new jag::draw::Texture( GL_TEXTURE_2D, image,
+        jag::draw::SamplerPtr( new jag::draw::Sampler() ) ) );
     _opaqueBuffer->setUserDataName( "opaqueBuffer" );
     _opaqueBuffer->getSampler()->getSamplerState()->_minFilter = GL_NEAREST;
     _opaqueBuffer->getSampler()->getSamplerState()->_magFilter = GL_NEAREST;
     _opaqueBuffer->setMaxContexts( numContexts );
 
     // Create second color buffer for glow effect.
-    _secondaryBuffer.reset( new jagDraw::Texture( GL_TEXTURE_2D, image,
-        jagDraw::SamplerPtr( new jagDraw::Sampler() ) ) );
+    _secondaryBuffer.reset( new jag::draw::Texture( GL_TEXTURE_2D, image,
+        jag::draw::SamplerPtr( new jag::draw::Sampler() ) ) );
     _secondaryBuffer->setUserDataName( "secondaryBuffer" );
     _secondaryBuffer->getSampler()->getSamplerState()->_minFilter = GL_NEAREST;
     _secondaryBuffer->getSampler()->getSamplerState()->_magFilter = GL_NEAREST;
     _secondaryBuffer->setMaxContexts( numContexts );
 
     // Create glow effect output buffer
-    _glowBuffer.reset( new jagDraw::Texture( GL_TEXTURE_2D, image,
-        jagDraw::SamplerPtr( new jagDraw::Sampler() ) ) );
+    _glowBuffer.reset( new jag::draw::Texture( GL_TEXTURE_2D, image,
+        jag::draw::SamplerPtr( new jag::draw::Sampler() ) ) );
     _glowBuffer->setUserDataName( "glowBuffer" );
     _glowBuffer->getSampler()->getSamplerState()->_minFilter = GL_NEAREST;
     _glowBuffer->getSampler()->getSamplerState()->_magFilter = GL_NEAREST;
@@ -203,8 +203,8 @@ bool ABufferJag::startup( const unsigned int numContexts )
     // Depth texture used as depth buffer for opaque pass.
     // Also used during abuffer render to discard occluded fragments.
     image->set( 0, GL_DEPTH_COMPONENT, _width, _height, 1, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, NULL );
-    _depthBuffer.reset( new jagDraw::Texture( GL_TEXTURE_2D, image,
-        jagDraw::SamplerPtr( new jagDraw::Sampler() ) ) );
+    _depthBuffer.reset( new jag::draw::Texture( GL_TEXTURE_2D, image,
+        jag::draw::SamplerPtr( new jag::draw::Sampler() ) ) );
     _depthBuffer->setUserDataName( "depthBuffer" );
     _depthBuffer->getSampler()->getSamplerState()->_minFilter = GL_NEAREST;
     _depthBuffer->getSampler()->getSamplerState()->_magFilter = GL_NEAREST;
@@ -213,7 +213,7 @@ bool ABufferJag::startup( const unsigned int numContexts )
     // Create a framebuffer object. The color texture will store opaque
     // rendering. The depth texture is shared with ABuffer to avoid
     // rendering behind opaque geometry.
-    _opaqueFBO.reset( new jagDraw::Framebuffer( GL_DRAW_FRAMEBUFFER ) );
+    _opaqueFBO.reset( new jag::draw::Framebuffer( GL_DRAW_FRAMEBUFFER ) );
     _opaqueFBO->setViewport( 0, 0, _width, _height );
     _opaqueFBO->setClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
     _opaqueFBO->setClearColor( .15f, .1f, .5f, 0.f ); // Must clear alpha to 0 for glow.
@@ -230,7 +230,7 @@ bool ABufferJag::startup( const unsigned int numContexts )
     // Obtain the draw graph from the ABuffer object.
     // Default behavior is that the ABuffer owns NodeContainers 1-3, and we put
     // all opaque geometry in NodeContainer 0.
-    jagDraw::DrawGraphPtr drawGraph( _aBuffer->createDrawGraphTemplate( 2 ) );
+    jag::draw::DrawGraphPtr drawGraph( _aBuffer->createDrawGraphTemplate( 2 ) );
 
     // Force Framebuffer::execute() on first NodeContainer so that we
     // get a glClear() on the FBO even when it container no jagDraw Nodes.
@@ -245,7 +245,7 @@ bool ABufferJag::startup( const unsigned int numContexts )
     getCollectionVisitor().setDrawGraphTemplate( drawGraph );
 
     // Allow ABuffer object to specify which matrices it needs.
-    jagDraw::TransformCallback* xformCB( getCollectionVisitor().getTransformCallback() );
+    jag::draw::TransformCallback* xformCB( getCollectionVisitor().getTransformCallback() );
     xformCB->setRequiredMatrixUniforms(
         xformCB->getRequiredMatrixUniforms() |
         _aBuffer->getRequiredMatrixUniforms() );
@@ -263,8 +263,8 @@ bool ABufferJag::startup( const unsigned int numContexts )
     _root->addChild( opaqueNode );
     {
         // Add glow uniform to opaquwNode.
-        _glowColor.reset( new jagDraw::Uniform( "glowColor", glowColors[ glowIndex ] ) );
-        jagDraw::UniformSetPtr usp( jagDraw::UniformSetPtr( new jagDraw::UniformSet() ) );
+        _glowColor.reset( new jag::draw::Uniform( "glowColor", glowColors[ glowIndex ] ) );
+        jag::draw::UniformSetPtr usp( jag::draw::UniformSetPtr( new jag::draw::UniformSet() ) );
         usp->insert( _glowColor );
         opaqueNode->getOrCreateCommandMap()->insert( usp );
 
@@ -308,21 +308,21 @@ bool ABufferJag::startup( const unsigned int numContexts )
     // needed to toggle transparency on and off.
 
     // Create opaque CommandMap.
-    jagDraw::ShaderPtr vs( DemoInterface::readShaderUtil( "jagmodel.vert" ) );
-    jagDraw::ShaderPtr fs( DemoInterface::readShaderUtil( "abufferJagGlow.frag" ) );
+    jag::draw::ShaderPtr vs( DemoInterface::readShaderUtil( "jagmodel.vert" ) );
+    jag::draw::ShaderPtr fs( DemoInterface::readShaderUtil( "abufferJagGlow.frag" ) );
 
-    jagDraw::ProgramPtr prog;
-    prog = jagDraw::ProgramPtr( new jagDraw::Program );
+    jag::draw::ProgramPtr prog;
+    prog = jag::draw::ProgramPtr( new jag::draw::Program );
     prog->attachShader( vs );
     prog->attachShader( fs );
 
-    jagDraw::CommandMapPtr commands( _root->getOrCreateCommandMap() );
+    jag::draw::CommandMapPtr commands( _root->getOrCreateCommandMap() );
     commands->insert( prog );
 
     {
         // Root node needs a default value for glowColor uniform.
-        jagDraw::UniformPtr glowUniform( jagDraw::UniformPtr( new jagDraw::Uniform( "glowColor", gmtl::Point4f(0.f,0.f,0.f,0.f) ) ) );
-        jagDraw::UniformSetPtr usp( jagDraw::UniformSetPtr( new jagDraw::UniformSet() ) );
+        jag::draw::UniformPtr glowUniform( jag::draw::UniformPtr( new jag::draw::Uniform( "glowColor", gmtl::Point4f(0.f,0.f,0.f,0.f) ) ) );
+        jag::draw::UniformSetPtr usp( jag::draw::UniformSetPtr( new jag::draw::UniformSet() ) );
         usp->insert( glowUniform );
         commands->insert( usp );
     }
@@ -331,44 +331,44 @@ bool ABufferJag::startup( const unsigned int numContexts )
     commands->insert( _opaqueFBO );
 
     // Set up lighting uniforms
-    jagDraw::UniformBlockPtr lights( jagDraw::UniformBlockPtr(
-        new jagDraw::UniformBlock( "LightingLight" ) ) );
+    jag::draw::UniformBlockPtr lights( jag::draw::UniformBlockPtr(
+        new jag::draw::UniformBlock( "LightingLight" ) ) );
     gmtl::Vec3f dir( 0.f, 0.f, 1.f );
     gmtl::normalize( dir );
     gmtl::Point4f lightVec( dir[0], dir[1], dir[2], 0. );
-    lights->addUniform( jagDraw::UniformPtr(
-        new jagDraw::Uniform( "position", lightVec ) ) );
-    lights->addUniform( jagDraw::UniformPtr(
-        new jagDraw::Uniform( "ambient", gmtl::Point4f( 0.f, 0.f, 0.f, 1.f ) ) ) );
-    lights->addUniform( jagDraw::UniformPtr(
-        new jagDraw::Uniform( "diffuse", gmtl::Point4f( 1.f, 1.f, 1.f, 1.f ) ) ) );
-    lights->addUniform( jagDraw::UniformPtr(
-        new jagDraw::Uniform( "specular", gmtl::Point4f( 1.f, 1.f, 1.f, 1.f ) ) ) );
+    lights->addUniform( jag::draw::UniformPtr(
+        new jag::draw::Uniform( "position", lightVec ) ) );
+    lights->addUniform( jag::draw::UniformPtr(
+        new jag::draw::Uniform( "ambient", gmtl::Point4f( 0.f, 0.f, 0.f, 1.f ) ) ) );
+    lights->addUniform( jag::draw::UniformPtr(
+        new jag::draw::Uniform( "diffuse", gmtl::Point4f( 1.f, 1.f, 1.f, 1.f ) ) ) );
+    lights->addUniform( jag::draw::UniformPtr(
+        new jag::draw::Uniform( "specular", gmtl::Point4f( 1.f, 1.f, 1.f, 1.f ) ) ) );
 
-    jagDraw::UniformBlockPtr backMaterials( jagDraw::UniformBlockPtr(
-        new jagDraw::UniformBlock( "LightingMaterialBack" ) ) );
-    backMaterials->addUniform( jagDraw::UniformPtr(
-        new jagDraw::Uniform( "ambient", gmtl::Point4f( .1f, .1f, .1f, 1.f ) ) ) );
-    backMaterials->addUniform( jagDraw::UniformPtr(
-        new jagDraw::Uniform( "diffuse", gmtl::Point4f( .7f, .7f, .7f, 1.f ) ) ) );
-    backMaterials->addUniform( jagDraw::UniformPtr(
-        new jagDraw::Uniform( "specular", gmtl::Point4f( .5f, .5f, .5f, 1.f ) ) ) );
-    backMaterials->addUniform( jagDraw::UniformPtr(
-        new jagDraw::Uniform( "shininess", 16.f ) ) );
+    jag::draw::UniformBlockPtr backMaterials( jag::draw::UniformBlockPtr(
+        new jag::draw::UniformBlock( "LightingMaterialBack" ) ) );
+    backMaterials->addUniform( jag::draw::UniformPtr(
+        new jag::draw::Uniform( "ambient", gmtl::Point4f( .1f, .1f, .1f, 1.f ) ) ) );
+    backMaterials->addUniform( jag::draw::UniformPtr(
+        new jag::draw::Uniform( "diffuse", gmtl::Point4f( .7f, .7f, .7f, 1.f ) ) ) );
+    backMaterials->addUniform( jag::draw::UniformPtr(
+        new jag::draw::Uniform( "specular", gmtl::Point4f( .5f, .5f, .5f, 1.f ) ) ) );
+    backMaterials->addUniform( jag::draw::UniformPtr(
+        new jag::draw::Uniform( "shininess", 16.f ) ) );
 
-    jagDraw::UniformBlockPtr frontMaterials( jagDraw::UniformBlockPtr(
-        new jagDraw::UniformBlock( "LightingMaterialFront" ) ) );
-    frontMaterials->addUniform( jagDraw::UniformPtr(
-        new jagDraw::Uniform( "ambient", gmtl::Point4f( .1f, .1f, .1f, 1.f ) ) ) );
-    frontMaterials->addUniform( jagDraw::UniformPtr(
-        new jagDraw::Uniform( "diffuse", gmtl::Point4f( .7f, .7f, .7f, 1.f ) ) ) );
-    frontMaterials->addUniform( jagDraw::UniformPtr(
-        new jagDraw::Uniform( "specular", gmtl::Point4f( .5f, .5f, .5f, 1.f ) ) ) );
-    frontMaterials->addUniform( jagDraw::UniformPtr(
-        new jagDraw::Uniform( "shininess", 16.f ) ) );
+    jag::draw::UniformBlockPtr frontMaterials( jag::draw::UniformBlockPtr(
+        new jag::draw::UniformBlock( "LightingMaterialFront" ) ) );
+    frontMaterials->addUniform( jag::draw::UniformPtr(
+        new jag::draw::Uniform( "ambient", gmtl::Point4f( .1f, .1f, .1f, 1.f ) ) ) );
+    frontMaterials->addUniform( jag::draw::UniformPtr(
+        new jag::draw::Uniform( "diffuse", gmtl::Point4f( .7f, .7f, .7f, 1.f ) ) ) );
+    frontMaterials->addUniform( jag::draw::UniformPtr(
+        new jag::draw::Uniform( "specular", gmtl::Point4f( .5f, .5f, .5f, 1.f ) ) ) );
+    frontMaterials->addUniform( jag::draw::UniformPtr(
+        new jag::draw::Uniform( "shininess", 16.f ) ) );
 
-    jagDraw::UniformBlockSetPtr ubsp( jagDraw::UniformBlockSetPtr(
-        new jagDraw::UniformBlockSet() ) );
+    jag::draw::UniformBlockSetPtr ubsp( jag::draw::UniformBlockSetPtr(
+        new jag::draw::UniformBlockSet() ) );
     ubsp->insert( lights );
     ubsp->insert( backMaterials );
     ubsp->insert( frontMaterials );
@@ -377,7 +377,7 @@ bool ABufferJag::startup( const unsigned int numContexts )
 	_aBuffer->setTransparencyEnable( *_abufOpaqueChild, false );
     // We have potentially different views per window, so we keep an MxCore
     // per context. Initialize the MxCore objects and create default views.
-    const jagDraw::BoundPtr bound( _root->getBound() );
+    const jag::draw::BoundPtr bound( _root->getBound() );
     const gmtl::Point3d pos( bound->getCenter() + gmtl::Vec3d( 0., -1., 0. ) );
     for( unsigned int idx( 0 ); idx<numContexts; ++idx )
     {
@@ -406,7 +406,7 @@ bool ABufferJag::init()
     jag::base::getVersionString();
 
     // Auto-log the OpenGL version string.
-    jagDraw::getOpenGLVersionString();
+    jag::draw::getOpenGLVersionString();
 
     return( true );
 }
@@ -424,14 +424,14 @@ bool ABufferJag::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj
     JAG3D_PROFILE( "frame" );
 
 #ifdef ENABLE_SORT
-    jagDraw::Command::CommandTypeVec plist;
-    plist.push_back( jagDraw::Command::UniformBlockSet_t );
+    jag::draw::Command::CommandTypeVec plist;
+    plist.push_back( jag::draw::Command::UniformBlockSet_t );
 #endif
 
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
-    const jagDraw::jagDrawContextID contextID( jagDraw::ContextSupport::instance()->getActiveContext() );
-    jagDraw::DrawInfo& drawInfo( getDrawInfo( contextID ) );
+    const jag::draw::jagDrawContextID contextID( jag::draw::ContextSupport::instance()->getActiveContext() );
+    jag::draw::DrawInfo& drawInfo( getDrawInfo( contextID ) );
 
     jagMx::MxCorePtr mxCore( _mxCore._data[ contextID ] );
 
@@ -457,10 +457,10 @@ bool ABufferJag::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj
 #ifdef ENABLE_SORT
         {
             JAG3D_PROFILE( "Collection sort" );
-            jagDraw::DrawGraphPtr drawGraph( collect.getDrawGraph() );
-            BOOST_FOREACH( jagDraw::DrawNodeContainer& nc, *drawGraph )
+            jag::draw::DrawGraphPtr drawGraph( collect.getDrawGraph() );
+            BOOST_FOREACH( jag::draw::DrawNodeContainer& nc, *drawGraph )
             {
-                std::sort( nc.begin(), nc.end(), jagDraw::DrawNodeCommandSorter( plist ) );
+                std::sort( nc.begin(), nc.end(), jag::draw::DrawNodeCommandSorter( plist ) );
             }
         }
 #endif
@@ -470,7 +470,7 @@ bool ABufferJag::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj
         JAG3D_PROFILE( "Render" );
 
         // Execute the draw graph.
-        jagDraw::DrawGraphPtr drawGraph( collect.getDrawGraph() );
+        jag::draw::DrawGraphPtr drawGraph( collect.getDrawGraph() );
 
         // Set view and projection to use for drawing. Create projection using
         // the computed near and far planes.
@@ -507,13 +507,13 @@ void ABufferJag::reshape( const int w, const int h )
     _height = h;
 
 
-    jagDraw::ImagePtr image( new jagDraw::Image() );
+    jag::draw::ImagePtr image( new jag::draw::Image() );
     image->set( 0, GL_RGBA, w, h, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL );
     _opaqueBuffer->setImage( image );
     _secondaryBuffer->setImage( image );
     _glowBuffer->setImage( image );
 
-    image.reset( new jagDraw::Image() );
+    image.reset( new jag::draw::Image() );
     image->set( 0, GL_DEPTH_COMPONENT, w, h, 1, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, NULL );
     _depthBuffer->setImage( image );
 
@@ -523,7 +523,7 @@ void ABufferJag::reshape( const int w, const int h )
     _aBuffer->reshape( w, h );
 
     // Set aspect for all matrix control objects.
-    const jagDraw::jagDrawContextID contextID( jagDraw::ContextSupport::instance()->getActiveContext() );
+    const jag::draw::jagDrawContextID contextID( jag::draw::ContextSupport::instance()->getActiveContext() );
     _mxCore._data[ contextID ]->setAspect( ( double ) w / ( double ) h );
 }
 

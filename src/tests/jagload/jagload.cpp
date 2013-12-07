@@ -21,8 +21,8 @@
 
 #include <demoSupport/DemoInterface.h>
 
-#include <jagDraw/Common.h>
-#include <jagDraw/PerContextData.h>
+#include <jag/draw/Common.h>
+#include <jag/draw/PerContextData.h>
 #include <jag/base/Transform.h>
 #include <jag/base/Version.h>
 #include <jag/base/Log.h>
@@ -65,14 +65,14 @@ protected:
     gmtl::Matrix44d computeProjection( double aspect );
     gmtl::Matrix44d computeView();
 
-    jagDraw::DrawNodeContainer _drawNodes;
+    jag::draw::DrawNodeContainer _drawNodes;
 
-    typedef jagDraw::PerContextData< gmtl::Matrix44d > PerContextMatrix44d;
+    typedef jag::draw::PerContextData< gmtl::Matrix44d > PerContextMatrix44d;
     PerContextMatrix44d _proj;
     osg::BoundingSphere _bs;
 
-    jagDraw::PerContextData< jagDraw::UniformPtr > _viewProjUniform;
-    jagDraw::PerContextData< jagDraw::UniformPtr > _normalUniform;
+    jag::draw::PerContextData< jag::draw::UniformPtr > _viewProjUniform;
+    jag::draw::PerContextData< jag::draw::UniformPtr > _normalUniform;
 };
 
 
@@ -117,40 +117,40 @@ bool JagLoadDemo::startup( const unsigned int numContexts )
         return( false );
     }
 
-    jagDraw::DrawNodePtr& firstDrawNode( _drawNodes[ 0 ] );
+    jag::draw::DrawNodePtr& firstDrawNode( _drawNodes[ 0 ] );
 
-    jagDraw::ShaderPtr vs( DemoInterface::readShaderUtil( "jagload.vert" ) );
-    jagDraw::ShaderPtr fs( DemoInterface::readShaderUtil( "jagload.frag" ) );
+    jag::draw::ShaderPtr vs( DemoInterface::readShaderUtil( "jagload.vert" ) );
+    jag::draw::ShaderPtr fs( DemoInterface::readShaderUtil( "jagload.frag" ) );
 
-    jagDraw::ProgramPtr prog;
-    prog = jagDraw::ProgramPtr( new jagDraw::Program );
+    jag::draw::ProgramPtr prog;
+    prog = jag::draw::ProgramPtr( new jag::draw::Program );
     prog->attachShader( vs );
     prog->attachShader( fs );
 
-    jagDraw::CommandMapPtr commands( firstDrawNode->getCommandMap() );
+    jag::draw::CommandMapPtr commands( firstDrawNode->getCommandMap() );
     if( commands == NULL )
     {
-        commands = jagDraw::CommandMapPtr( new jagDraw::CommandMap() );
+        commands = jag::draw::CommandMapPtr( new jag::draw::CommandMap() );
         firstDrawNode->setCommandMap( commands );
     }
     commands->insert( prog );
 
     // Test uniform blocks
-    jagDraw::UniformBlockPtr ubp( jagDraw::UniformBlockPtr(
-        new jagDraw::UniformBlock( "blockTest" ) ) );
-    ubp->addUniform( jagDraw::UniformPtr(
-        new jagDraw::Uniform( "ambientScene", .2f ) ) );
-    ubp->addUniform( jagDraw::UniformPtr(
-        new jagDraw::Uniform( "diffuseMat", gmtl::Point3f( 0.f, .7f, 0.9f ) ) ) );
-    jagDraw::UniformBlockSetPtr ubsp( new jagDraw::UniformBlockSet() );
+    jag::draw::UniformBlockPtr ubp( jag::draw::UniformBlockPtr(
+        new jag::draw::UniformBlock( "blockTest" ) ) );
+    ubp->addUniform( jag::draw::UniformPtr(
+        new jag::draw::Uniform( "ambientScene", .2f ) ) );
+    ubp->addUniform( jag::draw::UniformPtr(
+        new jag::draw::Uniform( "diffuseMat", gmtl::Point3f( 0.f, .7f, 0.9f ) ) ) );
+    jag::draw::UniformBlockSetPtr ubsp( new jag::draw::UniformBlockSet() );
     ubsp->insert( ubp );
     commands->insert( ubsp );
 
     gmtl::Vec3f lightVec( 0.5, .7, 1. );
     gmtl::normalize( lightVec );
-    jagDraw::UniformSetPtr usp( new jagDraw::UniformSet() );
-    usp->insert( jagDraw::UniformPtr(
-        new jagDraw::Uniform( "ecLightDir", lightVec ) ) );
+    jag::draw::UniformSetPtr usp( new jag::draw::UniformSet() );
+    usp->insert( jag::draw::UniformPtr(
+        new jag::draw::Uniform( "ecLightDir", lightVec ) ) );
     commands->insert( usp );
 
 
@@ -165,10 +165,10 @@ bool JagLoadDemo::startup( const unsigned int numContexts )
     _drawNodes.setMaxContexts( numContexts );
     for( unsigned int idx=0; idx<numContexts; ++idx )
     {
-        _viewProjUniform._data.push_back( jagDraw::UniformPtr(
-            new jagDraw::Uniform( "viewProjectionMatrix", gmtl::MAT_IDENTITY44F ) ) );
-        _normalUniform._data.push_back( jagDraw::UniformPtr(
-            new jagDraw::Uniform( "normalMatrix", gmtl::MAT_IDENTITY33F ) ) );
+        _viewProjUniform._data.push_back( jag::draw::UniformPtr(
+            new jag::draw::Uniform( "viewProjectionMatrix", gmtl::MAT_IDENTITY44F ) ) );
+        _normalUniform._data.push_back( jag::draw::UniformPtr(
+            new jag::draw::Uniform( "normalMatrix", gmtl::MAT_IDENTITY33F ) ) );
     }
 
 
@@ -185,7 +185,7 @@ bool JagLoadDemo::init()
     jag::base::getVersionString();
 
     // Auto-log the OpenGL version string.
-    jagDraw::getOpenGLVersionString();
+    jag::draw::getOpenGLVersionString();
 
     return( true );
 }
@@ -197,8 +197,8 @@ bool JagLoadDemo::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& pro
 
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
-    const jagDraw::jagDrawContextID contextID( jagDraw::ContextSupport::instance()->getActiveContext() );
-    jagDraw::DrawInfo& drawInfo( getDrawInfo( contextID ) );
+    const jag::draw::jagDrawContextID contextID( jag::draw::ContextSupport::instance()->getActiveContext() );
+    jag::draw::DrawInfo& drawInfo( getDrawInfo( contextID ) );
 
     // Systems such as VRJ will pass view and projection matrices.
     jag::base::TransformD transformInfo;
@@ -236,7 +236,7 @@ void JagLoadDemo::reshape( const int w, const int h )
     if( !getStartupCalled() )
         return;
 
-    const jagDraw::jagDrawContextID contextID( jagDraw::ContextSupport::instance()->getActiveContext() );
+    const jag::draw::jagDrawContextID contextID( jag::draw::ContextSupport::instance()->getActiveContext() );
     _proj._data[ contextID ] = computeProjection( (double)w/(double)h );
 }
 

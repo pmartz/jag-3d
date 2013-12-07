@@ -25,7 +25,7 @@
 #include <jagSG/Export.h>
 #include <jagSG/Visitor.h>
 #include <jag/base/Transform.h>
-#include <jagDraw/Uniform.h>
+#include <jag/draw/Uniform.h>
 #include <jag/base/ptr.h>
 
 
@@ -39,8 +39,8 @@ namespace jagSG {
 class JAGSG_EXPORT ExecuteVisitor : public Visitor
 {
 public:
-    ExecuteVisitor( jagDraw::DrawInfo& drawInfo );
-    ExecuteVisitor( jagDraw::DrawInfo& drawInfo, jagSG::Node& node );
+    ExecuteVisitor( jag::draw::DrawInfo& drawInfo );
+    ExecuteVisitor( jag::draw::DrawInfo& drawInfo, jagSG::Node& node );
     ExecuteVisitor( const ExecuteVisitor& rhs );
     virtual ~ExecuteVisitor();
 
@@ -60,7 +60,7 @@ public:
 protected:
     void updateTransformUniforms();
 
-    jagDraw::DrawInfo& _drawInfo;
+    jag::draw::DrawInfo& _drawInfo;
     jag::base::TransformD _transform;
 };
 

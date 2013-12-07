@@ -20,7 +20,7 @@
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
 #include <jagUtil/ResetBoundsVisitor.h>
-#include <jagDraw/Drawable.h>
+#include <jag/draw/Drawable.h>
 #include <jagSG/Node.h>
 
 #include <boost/foreach.hpp>

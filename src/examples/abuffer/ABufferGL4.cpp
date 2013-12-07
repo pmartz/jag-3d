@@ -44,7 +44,7 @@ Key controls:
 */
 
 #include <jagSG/Common.h>
-#include <jagDraw/Common.h>
+#include <jag/draw/Common.h>
 #include <jag/disk/ReadWrite.h>
 #include <jag/disk/Options.h>
 
@@ -315,9 +315,9 @@ void drawQuad(GLuint prog) {
 
 
 bool drawJag( false );
-jagDraw::DrawGraphPtr drawGraphTemplate;
+jag::draw::DrawGraphPtr drawGraphTemplate;
 jagSG::CollectionVisitor collect;
-jagDraw::DrawInfo drawInfo;
+jag::draw::DrawInfo drawInfo;
 float aspectRatio( 1.f );
 
 void convertMatrix( gmtl::Matrix44d& result, const NemoGraphics::Mat4f& in )
@@ -334,12 +334,12 @@ void jagInit()
     viewPos.z *= ((float)radius * 1.75f);
     viewMoveRate = (float)radius;
 
-    drawGraphTemplate.reset( new jagDraw::DrawGraph() );
+    drawGraphTemplate.reset( new jag::draw::DrawGraph() );
     collect.setDrawGraphTemplate( drawGraphTemplate );
     drawGraphTemplate->resize( 1 );
 
     // Specify the names of FFP transform emulation matrix uniforms.
-    jagDraw::TransformCallback* xformCB( collect.getTransformCallback() );
+    jag::draw::TransformCallback* xformCB( collect.getTransformCallback() );
     xformCB->setMatrixUniformName( jag::base::TransformD::PROJ, "projectionMat" );
     xformCB->setMatrixUniformName( jag::base::TransformD::MODEL_VIEW, "modelViewMat" );
     xformCB->setMatrixUniformName( jag::base::TransformD::MODEL_VIEW_INV_TRANS_4, "modelViewMatIT" );
@@ -361,7 +361,7 @@ void drawJagModel( const GLuint prog )
 
     jagRoot->accept( collect );
 
-    jagDraw::DrawGraphPtr drawGraph( collect.getDrawGraph() );
+    jag::draw::DrawGraphPtr drawGraph( collect.getDrawGraph() );
 
     double minZ, maxZ;
     collect.getNearFar( minZ, maxZ );
@@ -372,7 +372,7 @@ void drawJagModel( const GLuint prog )
     drawGraph->execute( drawInfo );
 
     // Dirty the state that JAG set.
-    drawInfo._current.clear( jagDraw::Command::VertexArrayObject_t );
+    drawInfo._current.clear( jag::draw::Command::VertexArrayObject_t );
     glBindVertexArray( 0 );
 
     checkGLError( "drawJagModel" );
@@ -683,9 +683,9 @@ int main(int argc, char** argv) {
     glutCreateWindow ("OpenGL 4.0 ABuffer Sample V2.0 : Linked Lists by Cyril Crassin 2010");
 //    checkGLError ("glutCreateWindow");
     
-    jagDraw::ContextSupport* cs( jagDraw::ContextSupport::instance() );
-    const jagDraw::platformContextID pCtxId = static_cast< GLuint >( glutGetWindow() );
-    jagDraw::jagDrawContextID contextID = cs->registerContext( pCtxId );
+    jag::draw::ContextSupport* cs( jag::draw::ContextSupport::instance() );
+    const jag::draw::platformContextID pCtxId = static_cast< GLuint >( glutGetWindow() );
+    jag::draw::jagDrawContextID contextID = cs->registerContext( pCtxId );
 
     cs->setActiveContext( contextID );
     cs->initContext();
