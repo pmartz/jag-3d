@@ -195,7 +195,10 @@ development system.
 
 For OpenGL 3/4 on Windows,
 Jag3D uses the gl3w toolkit, so this means you'll need to download glcorearb.h from the
-<a href=http://www.opengl.org/registry/>OpenGL Extension Registry</a>. Unfortunately, gl3w
+<a href=http://www.opengl.org/registry/>OpenGL Extension Registry</a>. Or, for your
+convenience, one is supplied in src/gl3w/GL/glcorearb.h.
+
+Unfortunately, gl3w
 has adopted the current paradagm:
 \code
 #include <GL/glcorearb.h>
@@ -283,6 +286,11 @@ the gl3w.c and gl3w.h jagDraw module source files. If you are building with both
 JAG3D_USE_GL3W and JAG3D_USE_GL3W_AUTOGENERATE selected in CMake, and you have Python installed on your system,
 then the gl3w.c and gl3w.h files will aitomatically be regenerated during build
 if either glcorearb.h or jagDraw/glExtensions.h have been modified.
+
+If you don't have Python, unselect JAG3D_USE_GL3W_AUTOGENERATE. Cmake will copy Default
+gl3w.c and gl3w.h files. However, for compatibility, you must use the supplied
+src/gl3w/GL/glcorearb.h file, rather than downloading the current one from the
+OpenGL Extension Registry.
 
 To add gl3w support for a new extension, simply copy that extension definition
 from the OpenGL registry's glext.h, into jagDraw/glExtensions.h, then rebuild.
