@@ -19,10 +19,10 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#include <jagUtil/Blur.h>
+#include <jag/util/Blur.h>
 
 #include <jag/draw/Common.h>
-#include <jagUtil/QuadNode.h>
+#include <jag/util/QuadNode.h>
 #include <jag/base/Log.h>
 #include <jag/base/LogMacros.h>
 #include <jag/disk/ReadWrite.h>
@@ -36,8 +36,8 @@
 #include <iomanip>
 
 
-namespace jagUtil
-{
+namespace jag {
+namespace util {
 
 
 Blur::Blur( const std::string& logName )
@@ -168,5 +168,6 @@ void Blur::internalInit( jag::draw::ShaderPtr& fragStage0, jag::draw::ShaderPtr&
 }
 
 
-// jagUtil
+// namespace jag::util::
+}
 }

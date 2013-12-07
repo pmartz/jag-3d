@@ -19,10 +19,10 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#ifndef __JAGUTIL_QUAD_NODE_H__
-#define __JAGUTIL_QUAD_NODE_H__ 1
+#ifndef __JAG_UTIL_QUAD_NODE_H__
+#define __JAG_UTIL_QUAD_NODE_H__ 1
 
-#include <jagUtil/Export.h>
+#include <jag/util/Export.h>
 #include <jag/draw/DrawNode.h>
 #include <jag/draw/Texture.h>
 #include <jag/draw/Framebuffer.h>
@@ -34,11 +34,11 @@
 
 
 
-namespace jagUtil
-{
+namespace jag {
+namespace util {
 
 
-/** \class QuadNode QuadNode.h <jagUtil/QuadNode.h>
+/** \class QuadNode QuadNode.h <jag/util/QuadNode.h>
 \brief A jag::draw::DrawNode for drawing a textured quad.
 \details TBD
 
@@ -120,9 +120,10 @@ protected:
 typedef jag::base::ptr< QuadNode >::shared_ptr QuadNodePtr;
 
 
-// jagUtil
+// namespace jag::util::
+}
 }
 
 
-// __JAGUTIL_QUAD_NODE_H__
+// __JAG_UTIL_QUAD_NODE_H__
 #endif

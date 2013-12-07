@@ -21,8 +21,8 @@
 
 #include <jag/draw/Common.h>
 #include <jag/sg/Common.h>
-#include <jagUtil/DrawGraphCountVisitor.h>
-#include <jagUtil/BufferAggregationVisitor.h>
+#include <jag/util/DrawGraphCountVisitor.h>
+#include <jag/util/BufferAggregationVisitor.h>
 #include <jag/disk/ReadWrite.h>
 #include <jag/base/Log.h>
 #include <jag/base/LogMacros.h>
@@ -175,7 +175,7 @@ int main( int argc, char** argv )
 
 
     {
-        jagUtil::BufferAggregationVisitor bav( root );
+        jag::util::BufferAggregationVisitor bav( root );
     }
 
     {
@@ -203,7 +203,7 @@ int main( int argc, char** argv )
     }
 
     {
-        jagUtil::DrawGraphCountVisitor dgcv;
+        jag::util::DrawGraphCountVisitor dgcv;
         dgcv.traverse( *drawGraph );
         dgcv.dump( std::cout );
     }

@@ -19,38 +19,22 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#ifndef __JAGUTIL_RESET_BOUNDS_VISITOR_H__
-#define __JAGUTIL_RESET_BOUNDS_VISITOR_H__ 1
-
-#include <jagUtil/Export.h>
-#include <jag/sg/Visitor.h>
-#include <jag/sg/Node.h>
+#ifndef __JAG_UTIL_EXPORT__
+#define __JAG_UTIL_EXPORT__ 1
 
 
-namespace jagUtil
-{
+#if defined( _MSC_VER ) || defined( __CYGWIN__ ) || defined( __MINGW32__ ) || defined( __BCPLUSPLUS__ ) || defined( __MWERKS__ )
+    #if defined( JAG3D_STATIC )
+        #define JAGUTIL_EXPORT
+    #elif defined( JAGUTIL_LIBRARY )
+        #define JAGUTIL_EXPORT __declspec( dllexport )
+    #else
+        #define JAGUTIL_EXPORT __declspec( dllimport )
+    #endif
+#else
+    #define JAGUTIL_EXPORT
+#endif
 
 
-/** \class BufferAggregationVisitor BufferAggregationVisitor.h <jagUtil/BufferAggregationVisitor.h>
-\brief Combines vertex array and element array buffers.
-\details
-*/
-class JAGUTIL_EXPORT ResetBoundsVisitor : public jag::sg::VisitorBase
-{
-public:
-    ResetBoundsVisitor( jag::sg::NodePtr node, const std::string& logName=std::string( "" ) );
-    ResetBoundsVisitor( const ResetBoundsVisitor& rhs );
-    ~ResetBoundsVisitor();
-
-    virtual void visit( jag::sg::Node& node );
-
-protected:
-};
-
-
-// jagUtil
-}
-
-
-// __JAGUTIL_RESET_BOUNDS_VISITOR_H__
+// __JAG_UTIL_EXPORT__
 #endif

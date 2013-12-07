@@ -19,10 +19,10 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#ifndef __JAGUTIL_A_BUFFER_H__
-#define __JAGUTIL_A_BUFFER_H__ 1
+#ifndef __JAG_UTIL_A_BUFFER_H__
+#define __JAG_UTIL_A_BUFFER_H__ 1
 
-#include <jagUtil/Export.h>
+#include <jag/util/Export.h>
 #include <jag/draw/DrawGraph.h>
 #include <jag/draw/CommandMap.h>
 #include <jag/draw/Framebuffer.h>
@@ -42,8 +42,8 @@ namespace jag {
 }
 
 
-namespace jagUtil
-{
+namespace jag {
+namespace util {
 
 
 // Forwaed
@@ -51,7 +51,7 @@ struct ABufferContext;
 typedef jag::draw::PerContextData< ABufferContext > PerContextABufferCntxt;
 
 
-/** \class ABuffer ABuffer.h <jagUtil/ABuffer.h>
+/** \class ABuffer ABuffer.h <jag/util/ABuffer.h>
 \brief Support for a-buffer order independent transparency.
 \details This is a port of the OpenGL a-buffer sample code available from
 http://blog.icare3d.org/2010/07/opengl-40-abuffer-v20-linked-lists-of.html.
@@ -262,9 +262,10 @@ struct ABufferContext
 };
 
 
-// jagUtil
+// namespace jag::util::
+}
 }
 
 
-// __JAGUTIL_A_BUFFER_H__
+// __JAG_UTIL_A_BUFFER_H__
 #endif

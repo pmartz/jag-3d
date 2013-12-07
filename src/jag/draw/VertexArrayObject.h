@@ -128,18 +128,18 @@ public:
     /** \name VertexArrayObject Aggregation
     \details Aggregating multiple VertexArrayObjects together can
     increase performance by reducing bind calls. See
-    jagUtil::BufferAggregationVisitor.
+    jag::util::BufferAggregationVisitor.
     */
     /*@{*/
 
     /** \brief Determines if two VAOs are identical in format.
-    \details Used by jagUtil::BufferAggregationVisitor. If two VAOs
+    \details Used by jag::util::BufferAggregationVisitor. If two VAOs
     are identical in format, they can be aggregated, thus reducing
     draw traversal VAO bind calls. */
     bool isSameKind( const VertexArrayObject& rhs ) const;
 
     /** \brief Appends VAO \c rhs onto the end of this VAO instance.
-    \details Used by jagUtil::BufferAggregationVisitor.
+    \details Used by jag::util::BufferAggregationVisitor.
     \return The previous size of the contained buffer object(s). */
     size_t combine( const VertexArrayObject& rhs );
 

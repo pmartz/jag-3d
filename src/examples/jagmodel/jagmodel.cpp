@@ -26,12 +26,12 @@
 #include <jag/sg/Common.h>
 #include <jag/disk/ReadWrite.h>
 #include <jag/base/Profile.h>
-#include <jagUtil/DrawGraphCountVisitor.h>
+#include <jag/util/DrawGraphCountVisitor.h>
 #include <jag/base/Version.h>
 #include <jag/base/Log.h>
 #include <jag/base/LogMacros.h>
 
-#include <jagUtil/BufferAggregationVisitor.h>
+#include <jag/util/BufferAggregationVisitor.h>
 
 #include <boost/program_options/options_description.hpp>
 #include <boost/program_options/variables_map.hpp>
@@ -144,7 +144,7 @@ bool JagModel::startup( const unsigned int numContexts )
     jag::sg::SmallFeatureDistributionVisitor sfdv;
     _root->accept( sfdv );
 
-    jagUtil::BufferAggregationVisitor bav( _root );
+    jag::util::BufferAggregationVisitor bav( _root );
 
 
     jag::draw::ShaderPtr vs( DemoInterface::readShaderUtil( "jagmodel.vert" ) );
@@ -321,7 +321,7 @@ bool JagModel::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj )
 #ifdef JAG3D_ENABLE_PROFILING
     {
         // If profiling, dump out draw graph info.
-        jagUtil::DrawGraphCountVisitor dgcv;
+        jag::util::DrawGraphCountVisitor dgcv;
         dgcv.traverse( *( collect.getDrawGraph() ) );
         dgcv.dump( std::cout );
     }

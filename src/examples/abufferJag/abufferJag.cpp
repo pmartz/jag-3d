@@ -23,17 +23,17 @@
 
 #include <jag/draw/Common.h>
 #include <jag/sg/Common.h>
-#include <jagUtil/ABuffer.h>
-#include <jagUtil/Blur.h>
+#include <jag/util/ABuffer.h>
+#include <jag/util/Blur.h>
 #include <jag/disk/ReadWrite.h>
 #include <jag/base/Profile.h>
-#include <jagUtil/DrawGraphCountVisitor.h>
-#include <jagUtil/Shapes.h>
+#include <jag/util/DrawGraphCountVisitor.h>
+#include <jag/util/Shapes.h>
 #include <jag/base/Version.h>
 #include <jag/base/Log.h>
 #include <jag/base/LogMacros.h>
 
-#include <jagUtil/BufferAggregationVisitor.h>
+#include <jag/util/BufferAggregationVisitor.h>
 
 #include <boost/program_options/options_description.hpp>
 #include <boost/program_options/variables_map.hpp>
@@ -94,12 +94,12 @@ protected:
 
     double _moveRate;
 
-    jagUtil::ABufferPtr _aBuffer;
+    jag::util::ABufferPtr _aBuffer;
 
     jag::sg::NodePtr _abufNode, _abufOpaqueChild;
     jag::draw::FramebufferPtr _opaqueFBO;
     jag::draw::TexturePtr _opaqueBuffer, _secondaryBuffer, _glowBuffer, _depthBuffer;
-    jagUtil::BlurPtr _blur;
+    jag::util::BlurPtr _blur;
     jag::draw::UniformPtr _glowColor;
     jag::sg::NodeMaskCullCallbackPtr _opaqueToggleCB;
 
@@ -223,7 +223,7 @@ bool ABufferJag::startup( const unsigned int numContexts )
 
 
     // Create the ABuffer management object.
-    _aBuffer.reset( new jagUtil::ABuffer( _depthBuffer, _opaqueBuffer, _glowBuffer ) );
+    _aBuffer.reset( new jag::util::ABuffer( _depthBuffer, _opaqueBuffer, _glowBuffer ) );
     _aBuffer->setMaxContexts( numContexts );
     //_aBuffer->setSecondaryColorBufferEnable( false );
 
@@ -238,7 +238,7 @@ bool ABufferJag::startup( const unsigned int numContexts )
     (*drawGraph)[ 0 ].getCallbacks().push_back( fbocb );
 
     // Create blur effect for second NodeContainer
-    _blur.reset( new jagUtil::Blur( _secondaryBuffer, _glowBuffer ) );
+    _blur.reset( new jag::util::Blur( _secondaryBuffer, _glowBuffer ) );
     _blur->setMaxContexts( numContexts );
     (*drawGraph)[ 1 ] = _blur->getNodeContainer();
 
@@ -298,7 +298,7 @@ bool ABufferJag::startup( const unsigned int numContexts )
     _root->accept( sfdv );
 
     // Optimize VAO and element buffers.
-    jagUtil::BufferAggregationVisitor bav( _root );
+    jag::util::BufferAggregationVisitor bav( _root );
 
 
     // The scene graph will have two CommandMaps, one for opaque
@@ -485,7 +485,7 @@ bool ABufferJag::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj
 #ifdef JAG3D_ENABLE_PROFILING
     {
         // If profiling, dump out draw graph info.
-        jagUtil::DrawGraphCountVisitor dgcv;
+        jag::util::DrawGraphCountVisitor dgcv;
         dgcv.traverse( *( collect.getDrawGraph() ) );
         dgcv.dump( std::cout );
     }
@@ -558,10 +558,10 @@ bool ABufferJag::keyCommand( const int command )
         break;
 
     case (int)'a': // Cycle transparency resolve methods
-        _aBuffer->setResolveMethod( jagUtil::ABuffer::ResolveMethod( _aBuffer->getResolveMethod() + 1 ) );
-        if( _aBuffer->getResolveMethod() == jagUtil::ABuffer::UNSPECIFIED )
-            _aBuffer->setResolveMethod( jagUtil::ABuffer::RESOLVE_GELLY );
-        JAG3D_CRITICAL_STATIC( _logName, "Using " + jagUtil::ABuffer::resolveMethodToString( _aBuffer->getResolveMethod() ) );
+        _aBuffer->setResolveMethod( jag::util::ABuffer::ResolveMethod( _aBuffer->getResolveMethod() + 1 ) );
+        if( _aBuffer->getResolveMethod() == jag::util::ABuffer::UNSPECIFIED )
+            _aBuffer->setResolveMethod( jag::util::ABuffer::RESOLVE_GELLY );
+        JAG3D_CRITICAL_STATIC( _logName, "Using " + jag::util::ABuffer::resolveMethodToString( _aBuffer->getResolveMethod() ) );
         break;
 
     case (int)'t': // Decrease/increate fragment alpha.
@@ -584,7 +584,7 @@ bool ABufferJag::keyCommand( const int command )
 
 
 /** \defgroup exampleJagABufferJag The abufferJag Example
-This example demonstrates use of jagUtil::Blur and jagUtil::ABuffer.
+This example demonstrates use of jag::util::Blur and jag::util::ABuffer.
 
 Command line options:
 \li --help,-h Help text

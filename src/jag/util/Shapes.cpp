@@ -19,22 +19,22 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#include <jagUtil/Shapes.h>
+#include <jag/util/Shapes.h>
 #include <jag/draw/VertexAttrib.h>
 #include <jag/base/LogMacros.h>
 #include <gmtl/gmtl.h>
 
 
-namespace jagUtil
-{
+namespace jag {
+namespace util {
 
 
 jag::draw::VertexArrayObjectPtr createVertexArrayObject( const VNTCVec& data )
 {
-    jag::base::BufferPtr ibp( new jag::base::Buffer( data.size() * sizeof( jagUtil::VertexNormalTexCoordStruct ), (void*)&data[0] ) );
+    jag::base::BufferPtr ibp( new jag::base::Buffer( data.size() * sizeof( jag::util::VertexNormalTexCoordStruct ), (void*)&data[0] ) );
     jag::draw::BufferObjectPtr ibop( new jag::draw::BufferObject( GL_ARRAY_BUFFER, ibp ) );
 
-    const GLsizei stride( sizeof( jagUtil::VertexNormalTexCoordStruct ) );
+    const GLsizei stride( sizeof( jag::util::VertexNormalTexCoordStruct ) );
     jag::draw::VertexAttribPtr vertAttrib( new jag::draw::VertexAttrib(
         "vertex", 3, GL_FLOAT, GL_FALSE, stride, 0 ) );
     jag::draw::VertexAttribPtr normAttrib( new jag::draw::VertexAttrib(
@@ -138,5 +138,6 @@ jag::draw::DrawablePtr makePlane( VNTCVec& data,
 }
 
 
-// jagUtil
+// namespace jag::util::
+}
 }

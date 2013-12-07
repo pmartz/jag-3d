@@ -19,10 +19,10 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#ifndef __JAGUTIL_DRAW_GRAPH_COUNT_VISITOR_H__
-#define __JAGUTIL_DRAW_GRAPH_COUNT_VISITOR_H__ 1
+#ifndef __JAG_UTIL_DRAW_GRAPH_COUNT_VISITOR_H__
+#define __JAG_UTIL_DRAW_GRAPH_COUNT_VISITOR_H__ 1
 
-#include <jagUtil/Export.h>
+#include <jag/util/Export.h>
 #include <jag/draw/Visitor.h>
 #include <jag/draw/DrawNodeContainer.h>
 #include <jag/draw/DrawNode.h>
@@ -31,8 +31,8 @@
 #include <iostream>
 
 
-namespace jagUtil
-{
+namespace jag {
+namespace util {
 
 
 class DrawGraphCountVisitor : public jag::draw::Visitor
@@ -103,9 +103,10 @@ inline bool DrawGraphCountVisitor::visit( jag::draw::DrawNode& node, jag::draw::
 }
 
 
-// jagUtil
+// namespace jag::util::
+}
 }
 
 
-// __JAGUTIL_DRAW_GRAPH_COUNT_VISITOR_H__
+// __JAG_UTIL_DRAW_GRAPH_COUNT_VISITOR_H__
 #endif

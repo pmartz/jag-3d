@@ -19,13 +19,13 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#ifndef __JAGUTIL_BLUR_H__
-#define __JAGUTIL_BLUR_H__ 1
+#ifndef __JAG_UTIL_BLUR_H__
+#define __JAG_UTIL_BLUR_H__ 1
 
-#include <jagUtil/Export.h>
+#include <jag/util/Export.h>
 #include <jag/draw/DrawGraph.h>
 #include <jag/draw/CommandMap.h>
-#include <jagUtil/QuadNode.h>
+#include <jag/util/QuadNode.h>
 #include <jag/draw/Texture.h>
 #include <jag/draw/Program.h>
 #include <jag/draw/PerContextData.h>
@@ -41,11 +41,11 @@ namespace jag {
 }
 
 
-namespace jagUtil
-{
+namespace jag {
+namespace util {
 
 
-/** \class Blur Blur.h <jagUtil/Blur.h>
+/** \class Blur Blur.h <jag/util/Blur.h>
 \brief Support for a simple 2-part blur effect.
 \details
 
@@ -106,16 +106,17 @@ protected:
     int _width, _height;
 
     jag::draw::DrawNodeContainer _container;
-    jagUtil::QuadNodePtr _hQuad, _vQuad;
+    jag::util::QuadNodePtr _hQuad, _vQuad;
     jag::draw::TexturePtr _intermediateBuffer;
 };
 
 typedef jag::base::ptr< Blur >::shared_ptr BlurPtr;
 
 
-// jagUtil
+// namespace jag::util::
+}
 }
 
 
-// __JAGUTIL_BLUR_H__
+// __JAG_UTIL_BLUR_H__
 #endif
