@@ -66,7 +66,7 @@ class JAGUTIL_EXPORT ABuffer : public jag::base::LogBase
 public:
     ABuffer( const std::string& logName=std::string( "" ) );
     ABuffer( jag::draw::TexturePtr& depthBuffer, jag::draw::TexturePtr& colorBuffer0,
-        jag::draw::TexturePtr& colorBuffer1=jag::draw::TexturePtr((jag::draw::Texture*)NULL),
+        jag::draw::TexturePtr& colorBuffer1,
         const std::string& logName=std::string( "" ) );
     ABuffer( const ABuffer& rhs );
     ~ABuffer();
