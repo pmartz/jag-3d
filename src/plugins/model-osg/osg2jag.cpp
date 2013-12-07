@@ -374,8 +374,9 @@ void Osg2Jag::apply( osg::StateSet* stateSet )
         {
             // There are problems sharing command maps.
             //_current->setCommandMap( it->second );
-            _current->setCommandMap( jag::draw::CommandMapPtr(
-                new jag::draw::CommandMap( *(it->second) ) ) );
+            jag::draw::CommandMapPtr commandPtr =
+                jag::draw::CommandMapPtr( new jag::draw::CommandMap( *(it->second) ) );
+            _current->setCommandMap( commandPtr );
         }
         return;
     }

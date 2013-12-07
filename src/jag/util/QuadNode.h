@@ -50,11 +50,11 @@ public:
     QuadNode( const std::string& logName=std::string( "" ) );
     /** Constructor for one input texture. */
     QuadNode( jag::draw::TexturePtr inputBuffer,
-        jag::draw::TexturePtr outputBuffer=jag::draw::TexturePtr((jag::draw::Texture*)NULL),
+        jag::draw::TexturePtr outputBuffer=jag::draw::TexturePtr(),
         const std::string& logName=std::string( "" ) );
     /** Constructor for multiple input textures. */
     QuadNode( jag::draw::TextureVec& inputBuffers,
-        jag::draw::TexturePtr outputBuffer=jag::draw::TexturePtr((jag::draw::Texture*)NULL),
+        jag::draw::TexturePtr outputBuffer=jag::draw::TexturePtr(),
         const std::string& logName=std::string( "" ) );
     QuadNode( const QuadNode& rhs );
     ~QuadNode();
@@ -93,7 +93,7 @@ public:
     void setShaders( const std::string& fragName, const std::string& vertName="" );
     /** \overload */
     void setShaders( jag::draw::ShaderPtr& frag,
-        jag::draw::ShaderPtr& vert=jag::draw::ShaderPtr((jag::draw::Shader*)NULL) );
+        jag::draw::ShaderPtr& vert );
     /** \overload */
     void setProgram( jag::draw::ProgramPtr& program );
 
@@ -103,7 +103,7 @@ public:
     void reshape( const int w, const int h );
 
 protected:
-    void internalInit( jag::draw::ProgramPtr& program=jag::draw::ProgramPtr((jag::draw::Program*)NULL) );
+    void internalInit( jag::draw::ProgramPtr& program );
     std::string getTextureCountString() const;
 
     jag::draw::TextureVec _inputBuffers;

@@ -180,7 +180,8 @@ bool Transparency::startup( const unsigned int numContexts )
     jag::sg::NodePtr model( DemoInterface::readSceneGraphNodeUtil( _fileName ) );
     _root->addChild( model );
 
-    _root->addChild( createPlanesSubgraph( model->getBound() ) );
+    jag::sg::NodePtr planesSubgraph = createPlanesSubgraph( model->getBound() );
+    _root->addChild( planesSubgraph );
 
 
     jag::draw::ShaderPtr vs( DemoInterface::readShaderUtil( "transparency.vert" ) );
