@@ -19,8 +19,8 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#include <jagSG/Node.h>
-#include <jagSG/Visitor.h>
+#include <jag/sg/Node.h>
+#include <jag/sg/Visitor.h>
 #include <jag/draw/DrawInfo.h>
 #include <jag/draw/Command.h>
 #include <jag/draw/CommandMap.h>
@@ -35,7 +35,8 @@
 #include <boost/foreach.hpp>
 
 
-namespace jagSG {
+namespace jag {
+namespace sg {
 
 
 Node::Node( const std::string& logName )
@@ -69,12 +70,12 @@ Node::~Node()
 }
 
 
-void Node::accept( jagSG::VisitorBase& visitor )
+void Node::accept( jag::sg::VisitorBase& visitor )
 {
     JAG3D_TRACE( "accept()" );
     visitor.visit( *this );
 }
-void Node::traverse( jagSG::VisitorBase& visitor )
+void Node::traverse( jag::sg::VisitorBase& visitor )
 {
     JAG3D_TRACE( "traverse()" );
 
@@ -145,7 +146,7 @@ void Node::computeBound( jag::draw::BoundPtr& bound, const jag::draw::CommandMap
     {
         averageCenter += drawable->getBound( newCommands )->getCenter();
     }
-    BOOST_FOREACH( jagSG::NodePtr& node, _children )
+    BOOST_FOREACH( jag::sg::NodePtr& node, _children )
     {
         jag::draw::BoundOwner* boundOwner( node.get() );
         averageCenter += boundOwner->getBound( newCommands )->getCenter();
@@ -158,7 +159,7 @@ void Node::computeBound( jag::draw::BoundPtr& bound, const jag::draw::CommandMap
     {
         bound->expand( *( drawable->getBound( newCommands ) ) );
     }
-    BOOST_FOREACH( jagSG::NodePtr& node, _children )
+    BOOST_FOREACH( jag::sg::NodePtr& node, _children )
     {
         jag::draw::BoundOwner* boundOwner( node.get() );
         bound->expand( *( boundOwner->getBound( newCommands ) ) );
@@ -404,5 +405,6 @@ void Node::BoundDirtyCallback::operator()( jag::base::Notifier* notifier, const 
 }
 
 
-// jagSG
+// namespace jag::sg::
+}
 }

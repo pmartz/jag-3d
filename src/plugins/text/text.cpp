@@ -24,7 +24,7 @@
 
 #include "TextDumpSG.h"
 #include "TextDumpDG.h"
-#include <jagSG/Node.h>
+#include <jag/sg/Node.h>
 #include <jag/draw/DrawGraph.h>
 
 #include <jag/base/LogMacros.h>
@@ -79,11 +79,11 @@ public:
     }
     virtual bool write( std::ostream& oStr, const void* data, const Options* /*options*/ ) const
     {
-        const jagSG::Node* node( static_cast< const jagSG::Node* >( data ) );
+        const jag::sg::Node* node( static_cast< const jag::sg::Node* >( data ) );
         if( node != NULL )
         {
             TextDumpSG tdsg( oStr );
-            const_cast< jagSG::Node* >( node )->accept( tdsg );
+            const_cast< jag::sg::Node* >( node )->accept( tdsg );
             return( true );
         }
 

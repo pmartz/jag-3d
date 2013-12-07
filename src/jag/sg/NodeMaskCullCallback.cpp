@@ -19,24 +19,25 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#include <jagSG/NodeMaskCullCallback.h>
-#include <jagSG/Node.h>
-#include <jagSG/Visitor.h>
-#include <jagSG/CollectionVisitor.h>
+#include <jag/sg/NodeMaskCullCallback.h>
+#include <jag/sg/Node.h>
+#include <jag/sg/Visitor.h>
+#include <jag/sg/CollectionVisitor.h>
 
 
-namespace jagSG {
+namespace jag {
+namespace sg {
 
 
 NodeMaskCullCallback::NodeMaskCullCallback( const std::string& logName )
   : jag::base::LogBase( logName.empty() ? "jag.sg.coll.nodemask" : logName ),
-    jagSG::Node::Callback(),
+    jag::sg::Node::Callback(),
     _override( OVERRIDE_OFF )
 {
 }
 NodeMaskCullCallback::NodeMaskCullCallback( const NodeMaskCullCallback& rhs )
   : jag::base::LogBase( "jag.sg.coll.nodemask" ),
-    jagSG::Node::Callback( rhs ),
+    jag::sg::Node::Callback( rhs ),
     _override( rhs._override )
 {
 }
@@ -45,12 +46,12 @@ NodeMaskCullCallback::~NodeMaskCullCallback()
 }
 
 
-bool NodeMaskCullCallback::operator()( jagSG::VisitorBase* /* visitor */, jagSG::Node::CallbackInfo* info )
+bool NodeMaskCullCallback::operator()( jag::sg::VisitorBase* /* visitor */, jag::sg::Node::CallbackInfo* info )
 {
     if( _override == OVERRIDE_OFF )
     {
-        jagSG::CollectionVisitor::CollectionInfo* ci( static_cast<
-            jagSG::CollectionVisitor::CollectionInfo* >( info ) );
+        jag::sg::CollectionVisitor::CollectionInfo* ci( static_cast<
+            jag::sg::CollectionVisitor::CollectionInfo* >( info ) );
 
         return( ci->getNode()->getNodeMask() );
     }
@@ -72,12 +73,12 @@ NodeMaskCullCallback::OverrideMode NodeMaskCullCallback::getOverride() const
 
 
 NodeMaskCullDistributionVisitor::NodeMaskCullDistributionVisitor()
-    : jagSG::VisitorBase( "frustum" ),
+    : jag::sg::VisitorBase( "frustum" ),
       _cb( NodeMaskCullCallbackPtr( new NodeMaskCullCallback() ) )
 {
 }
 NodeMaskCullDistributionVisitor::NodeMaskCullDistributionVisitor( const NodeMaskCullDistributionVisitor& rhs )
-    : jagSG::VisitorBase( rhs ),
+    : jag::sg::VisitorBase( rhs ),
       _cb( rhs._cb )
 {
 }
@@ -85,7 +86,7 @@ NodeMaskCullDistributionVisitor::~NodeMaskCullDistributionVisitor()
 {
 }
 
-void NodeMaskCullDistributionVisitor::visit( jagSG::Node& node )
+void NodeMaskCullDistributionVisitor::visit( jag::sg::Node& node )
 {
     node.getCollectionCallbacks().push_back( _cb );
 
@@ -93,5 +94,6 @@ void NodeMaskCullDistributionVisitor::visit( jagSG::Node& node )
 }
 
 
-// jagSG
+// namespace jag::sg::
+}
 }

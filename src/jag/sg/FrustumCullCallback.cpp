@@ -19,24 +19,25 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#include <jagSG/FrustumCullCallback.h>
-#include <jagSG/Node.h>
-#include <jagSG/Visitor.h>
-#include <jagSG/CollectionVisitor.h>
+#include <jag/sg/FrustumCullCallback.h>
+#include <jag/sg/Node.h>
+#include <jag/sg/Visitor.h>
+#include <jag/sg/CollectionVisitor.h>
 #include <jag/base/Profile.h>
 
 
-namespace jagSG {
+namespace jag {
+namespace sg {
 
 
 FrustumCullCallback::FrustumCullCallback( const std::string& logName )
   : jag::base::LogBase( logName.empty() ? "jag.sg.coll.frustum" : logName ),
-    jagSG::Node::Callback()
+    jag::sg::Node::Callback()
 {
 }
 FrustumCullCallback::FrustumCullCallback( const FrustumCullCallback& rhs )
   : jag::base::LogBase( "jag.sg.coll.frustum" ),
-    jagSG::Node::Callback( rhs )
+    jag::sg::Node::Callback( rhs )
 {
 }
 FrustumCullCallback::~FrustumCullCallback()
@@ -44,12 +45,12 @@ FrustumCullCallback::~FrustumCullCallback()
 }
 
 
-bool FrustumCullCallback::operator()( jagSG::VisitorBase* /* visitor */, jagSG::Node::CallbackInfo* info )
+bool FrustumCullCallback::operator()( jag::sg::VisitorBase* /* visitor */, jag::sg::Node::CallbackInfo* info )
 {
     JAG3D_PROFILE( "frustum" );
 
-    jagSG::CollectionVisitor::CollectionInfo* ci( static_cast<
-        jagSG::CollectionVisitor::CollectionInfo* >( info ) );
+    jag::sg::CollectionVisitor::CollectionInfo* ci( static_cast<
+        jag::sg::CollectionVisitor::CollectionInfo* >( info ) );
 
     return( ci->isContained() );
 }
@@ -58,12 +59,12 @@ bool FrustumCullCallback::operator()( jagSG::VisitorBase* /* visitor */, jagSG::
 
 
 FrustumCullDistributionVisitor::FrustumCullDistributionVisitor()
-    : jagSG::VisitorBase( "frustum" ),
+    : jag::sg::VisitorBase( "frustum" ),
       _cb( FrustumCullCallbackPtr( new FrustumCullCallback() ) )
 {
 }
 FrustumCullDistributionVisitor::FrustumCullDistributionVisitor( const FrustumCullDistributionVisitor& rhs )
-    : jagSG::VisitorBase( rhs ),
+    : jag::sg::VisitorBase( rhs ),
       _cb( rhs._cb )
 {
 }
@@ -71,7 +72,7 @@ FrustumCullDistributionVisitor::~FrustumCullDistributionVisitor()
 {
 }
 
-void FrustumCullDistributionVisitor::visit( jagSG::Node& node )
+void FrustumCullDistributionVisitor::visit( jag::sg::Node& node )
 {
     node.getCollectionCallbacks().push_back( _cb );
 
@@ -79,5 +80,6 @@ void FrustumCullDistributionVisitor::visit( jagSG::Node& node )
 }
 
 
-// jagSG
+// namespace jag::sg::
+}
 }

@@ -23,7 +23,7 @@
 #include <jagUtil/ResetBoundsVisitor.h>
 #include <jag/draw/Drawable.h>
 #include <jag/draw/DrawCommand.h>
-#include <jagSG/Node.h>
+#include <jag/sg/Node.h>
 
 #include <boost/foreach.hpp>
 
@@ -34,8 +34,8 @@ namespace jagUtil
 {
 
 
-BufferAggregationVisitor::BufferAggregationVisitor( jagSG::NodePtr node, const std::string& logName )
-    : jagSG::VisitorBase( ( logName.empty() ? "bufagg" : logName ),
+BufferAggregationVisitor::BufferAggregationVisitor( jag::sg::NodePtr node, const std::string& logName )
+    : jag::sg::VisitorBase( ( logName.empty() ? "bufagg" : logName ),
                           ( logName.empty() ? "" : logName ) ),
     _combineElementBuffers( true )
 {
@@ -79,7 +79,7 @@ BufferAggregationVisitor::BufferAggregationVisitor( jagSG::NodePtr node, const s
 #endif
 }
 BufferAggregationVisitor::BufferAggregationVisitor( const BufferAggregationVisitor& rhs )
-    : jagSG::VisitorBase( rhs ),
+    : jag::sg::VisitorBase( rhs ),
     _combineElementBuffers( rhs._combineElementBuffers )
 {
     reset();
@@ -98,7 +98,7 @@ void BufferAggregationVisitor::reset()
 
 
 
-void BufferAggregationVisitor::visit( jagSG::Node& node )
+void BufferAggregationVisitor::visit( jag::sg::Node& node )
 {
     if( node.getBoundDirty() )
     {

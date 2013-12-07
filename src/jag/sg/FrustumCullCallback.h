@@ -19,29 +19,30 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#ifndef __JAGSG_FRUSTUM_CULL_CALLBACK_H__
-#define __JAGSG_FRUSTUM_CULL_CALLBACK_H__ 1
+#ifndef __JAG_SG_FRUSTUM_CULL_CALLBACK_H__
+#define __JAG_SG_FRUSTUM_CULL_CALLBACK_H__ 1
 
-#include <jagSG/Export.h>
-#include <jagSG/Node.h>
-#include <jagSG/Visitor.h>
+#include <jag/sg/Export.h>
+#include <jag/sg/Node.h>
+#include <jag/sg/Visitor.h>
 #include <jag/base/LogBase.h>
 #include <jag/base/ptr.h>
 
 
 
-namespace jagSG {
+namespace jag {
+namespace sg {
 
 
 /** \addtogroup jagSGCollection CollectionVisitor and Controls */
 /*@{*/
 
-/** \class FrustumCullCallback FrustumCullCallback.h <jagSG/FrustumCullCallback.h>
+/** \class FrustumCullCallback FrustumCullCallback.h <jag/sg/FrustumCullCallback.h>
 \brief TBD
 \details TBD
 */
 class JAGSG_EXPORT FrustumCullCallback : protected jag::base::LogBase,
-        public jagSG::Node::Callback
+        public jag::sg::Node::Callback
 {
 public:
     FrustumCullCallback( const std::string& logName=std::string( "" ) );
@@ -50,7 +51,7 @@ public:
 
     /** \brief TBD
     \details TBD */
-    virtual bool operator()( jagSG::VisitorBase* visitor, jagSG::Node::CallbackInfo* info );
+    virtual bool operator()( jag::sg::VisitorBase* visitor, jag::sg::Node::CallbackInfo* info );
 
 protected:
 };
@@ -59,18 +60,18 @@ typedef jag::base::ptr< FrustumCullCallback >::shared_ptr FrustumCullCallbackPtr
 
 
 
-/** \class FrustumCullDistributionVisitor FrustumCullCallback.h <jagSG/FrustumCullCallback.h>
+/** \class FrustumCullDistributionVisitor FrustumCullCallback.h <jag/sg/FrustumCullCallback.h>
 \brief TBD
 \details TBD
 */
-class JAGSG_EXPORT FrustumCullDistributionVisitor : public jagSG::VisitorBase
+class JAGSG_EXPORT FrustumCullDistributionVisitor : public jag::sg::VisitorBase
 {
 public:
     FrustumCullDistributionVisitor();
     FrustumCullDistributionVisitor( const FrustumCullDistributionVisitor& rhs );
     ~FrustumCullDistributionVisitor();
 
-    virtual void visit( jagSG::Node& node );
+    virtual void visit( jag::sg::Node& node );
 
 protected:
     FrustumCullCallbackPtr _cb;
@@ -80,9 +81,10 @@ protected:
 /*@}*/
 
 
-// jagSG
+// namespace jag::sg::
+}
 }
 
 
-// __JAGSG_FRUSTUM_CULL_CALLBACK_H__
+// __JAG_SG_FRUSTUM_CULL_CALLBACK_H__
 #endif

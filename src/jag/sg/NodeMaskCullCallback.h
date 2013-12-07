@@ -19,29 +19,30 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#ifndef __JAGSG_NODEMASK_CULL_CALLBACK_H__
-#define __JAGSG_NODEMASK_CULL_CALLBACK_H__ 1
+#ifndef __JAG_SG_NODEMASK_CULL_CALLBACK_H__
+#define __JAG_SG_NODEMASK_CULL_CALLBACK_H__ 1
 
-#include <jagSG/Export.h>
-#include <jagSG/Node.h>
-#include <jagSG/Visitor.h>
+#include <jag/sg/Export.h>
+#include <jag/sg/Node.h>
+#include <jag/sg/Visitor.h>
 #include <jag/base/LogBase.h>
 #include <jag/base/ptr.h>
 
 
 
-namespace jagSG {
+namespace jag {
+namespace sg {
 
 
 /** \addtogroup jagSGCollection CollectionVisitor and Controls */
 /*@{*/
 
-/** \class NodeMaskCullCallback NodeMaskCullCallback.h <jagSG/NodeMaskCullCallback.h>
+/** \class NodeMaskCullCallback NodeMaskCullCallback.h <jag/sg/NodeMaskCullCallback.h>
 \brief Culls based on the NodeMask stored in a Node.
 \details TBD
 */
 class JAGSG_EXPORT NodeMaskCullCallback : protected jag::base::LogBase,
-        public jagSG::Node::Callback
+        public jag::sg::Node::Callback
 {
 public:
     NodeMaskCullCallback( const std::string& logName=std::string( "" ) );
@@ -50,7 +51,7 @@ public:
 
     /** \brief returns false if culled and true if not culled
     \details TBD */
-    virtual bool operator()( jagSG::VisitorBase* visitor, jagSG::Node::CallbackInfo* info );
+    virtual bool operator()( jag::sg::VisitorBase* visitor, jag::sg::Node::CallbackInfo* info );
 
 
     typedef enum {
@@ -72,18 +73,18 @@ typedef jag::base::ptr< NodeMaskCullCallback >::shared_ptr NodeMaskCullCallbackP
 
 
 
-/** \class NodeMaskCullDistributionVisitor NodeMaskCullCallback.h <jagSG/NodeMaskCullCallback.h>
+/** \class NodeMaskCullDistributionVisitor NodeMaskCullCallback.h <jag/sg/NodeMaskCullCallback.h>
 \brief Distributes a NodeMaskCullCallback to the specified subgraph
 \details TBD
 */
-class JAGSG_EXPORT NodeMaskCullDistributionVisitor : public jagSG::VisitorBase
+class JAGSG_EXPORT NodeMaskCullDistributionVisitor : public jag::sg::VisitorBase
 {
 public:
     NodeMaskCullDistributionVisitor();
     NodeMaskCullDistributionVisitor( const NodeMaskCullDistributionVisitor& rhs );
     ~NodeMaskCullDistributionVisitor();
 
-    virtual void visit( jagSG::Node& node );
+    virtual void visit( jag::sg::Node& node );
 
 protected:
     NodeMaskCullCallbackPtr _cb;
@@ -93,9 +94,10 @@ protected:
 /*@}*/
 
 
-// jagSG
+// namespace jag::sg::
+}
 }
 
 
-// __JAGSG_NODEMASK_CULL_CALLBACK_H__
+// __JAG_SG_NODEMASK_CULL_CALLBACK_H__
 #endif

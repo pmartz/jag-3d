@@ -45,8 +45,8 @@ namespace draw {
 \brief %Visitor design pattern, "visitor" component: base class.
 \details See http://en.wikipedia.org/wiki/Visitor_pattern
 
-jag::draw::Visitor visits all nodes in a draw graph. See also: jagSG::Visitor
-and jagSG::VisitorBase, which visit nodes in a scene graph.
+jag::draw::Visitor visits all nodes in a draw graph. See also: jag::sg::Visitor
+and jag::sg::VisitorBase, which visit nodes in a scene graph.
 
 To begin traversal on a draw graph, call Visitor::traverse(), passing
 the jag::draw::DrawGraph as the parameter. This calls Visitor::visit()

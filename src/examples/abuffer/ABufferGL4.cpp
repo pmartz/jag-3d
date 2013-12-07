@@ -43,7 +43,7 @@ Key controls:
 \li See concole output
 */
 
-#include <jagSG/Common.h>
+#include <jag/sg/Common.h>
 #include <jag/draw/Common.h>
 #include <jag/disk/ReadWrite.h>
 #include <jag/disk/Options.h>
@@ -77,7 +77,7 @@ namespace bpo = boost::program_options;
 
 
 // If rendering a JAG model:
-jagSG::NodePtr jagRoot;
+jag::sg::NodePtr jagRoot;
 
 //Filename of the mesh to use
 const std::string modelDir( "" );
@@ -316,7 +316,7 @@ void drawQuad(GLuint prog) {
 
 bool drawJag( false );
 jag::draw::DrawGraphPtr drawGraphTemplate;
-jagSG::CollectionVisitor collect;
+jag::sg::CollectionVisitor collect;
 jag::draw::DrawInfo drawInfo;
 float aspectRatio( 1.f );
 
@@ -649,7 +649,7 @@ int main(int argc, char** argv) {
             ;
         boost::any anyTemp( jag::disk::read( fileName, &options ) );
         try {
-            jagRoot = boost::any_cast< jagSG::NodePtr >( anyTemp );
+            jagRoot = boost::any_cast< jag::sg::NodePtr >( anyTemp );
         }
         catch( boost::bad_any_cast bac )
         {

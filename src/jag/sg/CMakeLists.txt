@@ -39,7 +39,7 @@ _addLibrary( ${_libName}
 
 install(
     DIRECTORY .
-    DESTINATION include/jagSG
+    DESTINATION include/jag/sg
     USE_SOURCE_PERMISSIONS
     FILES_MATCHING 
     PATTERN "*.h"

@@ -19,11 +19,11 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#ifndef __JAGSG_VISITOR_H__
-#define __JAGSG_VISITOR_H__ 1
+#ifndef __JAG_SG_VISITOR_H__
+#define __JAG_SG_VISITOR_H__ 1
 
 #include <jag/base/types.h>
-#include <jagSG/Node.h>
+#include <jag/sg/Node.h>
 #include <jag/draw/CommandMap.h>
 #include <jag/base/LogBase.h>
 #include <jag/base/ptr.h>
@@ -31,13 +31,14 @@
 #include <sstream>
 
 
-namespace jagSG {
+namespace jag {
+namespace sg {
 
 
 /** \addtogroup jagSGSceneGraph The Scene Graph */
 /*@{*/
 
-/** \class VisitorBase Visitor.h <jagSG/Visitor.h>
+/** \class VisitorBase Visitor.h <jag/sg/Visitor.h>
 \brief %Visitor design pattern, "visitor" component: base class.
 \details See http://en.wikipedia.org/wiki/Visitor_pattern
 
@@ -80,11 +81,11 @@ if present, and calls Node::traverse() otherwise. Typically, application classes
 should derive from Visitor to take advantage of this, unless they explicitly need to
 visit all children.
 
-VisitorBase contains support for jagSG::Node, matrix, and jag::draw::CommandMap stacks.
+VisitorBase contains support for jag::sg::Node, matrix, and jag::draw::CommandMap stacks.
 Not all visitors will need these stacks, so using them is the responsibility of the
 derived class. As an example, a derived class might override visit() as follows:
 \code
-    virtual void visit( jagSG::Node& node )
+    virtual void visit( jag::sg::Node& node )
     {
         pushNode( node.shared_from_this() );
         MatrixStackHelper msh( *this, node.getTransform() );
@@ -106,7 +107,7 @@ public:
         _commandStack.push_back( jag::draw::CommandMap() );
     }
 
-    VisitorBase( jagSG::Node& node, const std::string& logNameSuffix, const std::string& logName=std::string( "" ) )
+    VisitorBase( jag::sg::Node& node, const std::string& logNameSuffix, const std::string& logName=std::string( "" ) )
       : jag::base::LogBase( logName.empty() ? std::string( "jag.sg.visit." ) + logNameSuffix : logName )
     {
         _matrixStack.push_back( gmtl::MAT_IDENTITY44D );
@@ -132,7 +133,7 @@ public:
     \details Derived classes should override this function to perform per-Node tasks
     and continue traversal if desired. Calling Node::traverse() will traverse all
     child Nodes. */
-    virtual void visit( jagSG::Node& node )
+    virtual void visit( jag::sg::Node& node )
     {
         // Push stacks, if desired or necessary.
         //pushNode( node.shared_from_this() );
@@ -156,7 +157,7 @@ public:
     }
 
 
-    void pushNode( jagSG::NodePtr& node )
+    void pushNode( jag::sg::NodePtr& node )
     {
         _nodeStack.push_back( node );
     }
@@ -168,7 +169,7 @@ public:
     {
         _nodeStack.clear();
     }
-    const jagSG::NodeVec& getNodes() const
+    const jag::sg::NodeVec& getNodes() const
     {
         return( _nodeStack );
     }
@@ -222,7 +223,7 @@ public:
     }
 
 
-    /** class MatrixStackHelper Visitor.h <jagSG/Visitor.h>
+    /** class MatrixStackHelper Visitor.h <jag/sg/Visitor.h>
     \brief Convenience function for pushing/popping the matrix stack. */
     class MatrixStackHelper
     {
@@ -243,7 +244,7 @@ public:
         bool _op;
     };
 
-    /** class CommandMapStackHelper Visitor.h <jagSG/Visitor.h>
+    /** class CommandMapStackHelper Visitor.h <jag/sg/Visitor.h>
     \brief Convenience function for pushing/popping the CommandMap stack. */
     class CommandMapStackHelper
     {
@@ -270,11 +271,11 @@ protected:
     jag::draw::CommandMapSimpleVec _commandStack;
 };
 
-typedef jag::base::ptr< jagSG::VisitorBase >::shared_ptr VisitorBasePtr;
+typedef jag::base::ptr< jag::sg::VisitorBase >::shared_ptr VisitorBasePtr;
 
 
 
-/** \class Visitor Visitor.h <jagSG/Visitor.h>
+/** \class Visitor Visitor.h <jag/sg/Visitor.h>
 \brief %Visitor design pattern, %Visitor component base class.
 \details Allows the Node's traversal callback to determine continued traversal.
 
@@ -292,7 +293,7 @@ public:
     {
     }
 
-    Visitor( jagSG::Node& node, const std::string& logNameSuffix, const std::string& logName=std::string( "" ) )
+    Visitor( jag::sg::Node& node, const std::string& logNameSuffix, const std::string& logName=std::string( "" ) )
       : VisitorBase( node, logNameSuffix, logName )
     {
     }
@@ -309,7 +310,7 @@ public:
 
     /** \brief TBD
     \details TBD */
-    virtual void visit( jagSG::Node& node )
+    virtual void visit( jag::sg::Node& node )
     {
         // push stacks, if desired
 
@@ -324,15 +325,16 @@ public:
 protected:
 };
 
-typedef jag::base::ptr< jagSG::Visitor >::shared_ptr VisitorPtr;
+typedef jag::base::ptr< jag::sg::Visitor >::shared_ptr VisitorPtr;
 
 
 /*@}*/
 
 
-// jagSG
+// namespace jag::sg::
+}
 }
 
 
-// __JAGSG_VISITOR_H__
+// __JAG_SG_VISITOR_H__
 #endif

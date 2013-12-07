@@ -19,29 +19,30 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#ifndef __JAGSG_SELECT_CONTAINER_CALLBACK_H__
-#define __JAGSG_SELECT_CONTAINER_CALLBACK_H__ 1
+#ifndef __JAG_SG_SELECT_CONTAINER_CALLBACK_H__
+#define __JAG_SG_SELECT_CONTAINER_CALLBACK_H__ 1
 
-#include <jagSG/Export.h>
-#include <jagSG/Node.h>
-#include <jagSG/Visitor.h>
+#include <jag/sg/Export.h>
+#include <jag/sg/Node.h>
+#include <jag/sg/Visitor.h>
 #include <jag/base/LogBase.h>
 #include <jag/base/ptr.h>
 
 
 
-namespace jagSG {
+namespace jag {
+namespace sg {
 
 
 /** \addtogroup jagSGCollection CollectionVisitor and Controls */
 /*@{*/
 
-/** \class SelectContainerCallback SelectContainerCallback.h <jagSG/SelectContainerCallback.h>
+/** \class SelectContainerCallback SelectContainerCallback.h <jag/sg/SelectContainerCallback.h>
 \brief Change the draw graph NodeContainer that the CollectionVisitor stores Drawables in.
 \details TBD
 */
 class JAGSG_EXPORT SelectContainerCallback : protected jag::base::LogBase,
-        public jagSG::Node::Callback
+        public jag::sg::Node::Callback
 {
 public:
     SelectContainerCallback( const std::string& logName=std::string( "" ) );
@@ -54,7 +55,7 @@ public:
 
     /** \brief TBD
     \details TBD */
-    virtual bool operator()( jagSG::VisitorBase* visitor, jagSG::Node::CallbackInfo* info );
+    virtual bool operator()( jag::sg::VisitorBase* visitor, jag::sg::Node::CallbackInfo* info );
 
 protected:
     unsigned int _index;
@@ -66,9 +67,10 @@ typedef jag::base::ptr< SelectContainerCallback >::shared_ptr SelectContainerCal
 /*@}*/
 
 
-// jagSG
+// namespace jag::sg::
+}
 }
 
 
-// __JAGSG_SELECT_CONTAINER_CALLBACK_H__
+// __JAG_SG_SELECT_CONTAINER_CALLBACK_H__
 #endif

@@ -23,7 +23,7 @@
 
 #include <jag/draw/Common.h>
 #include <jag/draw/PerContextData.h>
-#include <jagSG/Common.h>
+#include <jag/sg/Common.h>
 #include <jag/disk/ReadWrite.h>
 #include <jag/base/Profile.h>
 #include <jagUtil/DrawGraphCountVisitor.h>
@@ -82,7 +82,7 @@ public:
 protected:
     std::string _fileName;
 
-    jagSG::NodePtr _root;
+    jag::sg::NodePtr _root;
 
     bool _drawBound;
     jag::draw::ProgramPtr _boundProgram;
@@ -139,9 +139,9 @@ bool JagModel::startup( const unsigned int numContexts )
 
         
 
-    jagSG::FrustumCullDistributionVisitor fcdv;
+    jag::sg::FrustumCullDistributionVisitor fcdv;
     _root->accept( fcdv );
-    jagSG::SmallFeatureDistributionVisitor sfdv;
+    jag::sg::SmallFeatureDistributionVisitor sfdv;
     _root->accept( sfdv );
 
     jagUtil::BufferAggregationVisitor bav( _root );
@@ -276,7 +276,7 @@ bool JagModel::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj )
 
     jag::mx::MxCorePtr mxCore( _mxCore._data[ contextID ] );
 
-    jagSG::CollectionVisitor& collect( getCollectionVisitor() );
+    jag::sg::CollectionVisitor& collect( getCollectionVisitor() );
     collect.reset();
 
     gmtl::Matrix44d viewMatrix;

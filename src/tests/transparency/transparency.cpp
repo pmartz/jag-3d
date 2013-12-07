@@ -23,7 +23,7 @@
 
 #include <jag/draw/Common.h>
 #include <jag/draw/PerContextData.h>
-#include <jagSG/Common.h>
+#include <jag/sg/Common.h>
 #include <jagUtil/Shapes.h>
 #include <jag/disk/ReadWrite.h>
 #include <jag/base/Profile.h>
@@ -74,7 +74,7 @@ protected:
 
     std::string _fileName;
 
-    jagSG::NodePtr _root;
+    jag::sg::NodePtr _root;
 
     boost::chrono::high_resolution_clock::time_point _lastTime;
 };
@@ -96,13 +96,13 @@ bool Transparency::parseOptions( bpo::variables_map& vm )
 }
 
 
-jagSG::NodePtr createPlanesSubgraph( jag::draw::BoundPtr bound )
+jag::sg::NodePtr createPlanesSubgraph( jag::draw::BoundPtr bound )
 {
-    jagSG::NodePtr planeRoot = jagSG::NodePtr( new jagSG::Node() );
+    jag::sg::NodePtr planeRoot = jag::sg::NodePtr( new jag::sg::Node() );
 
     // Instruct collection visitor to copy data store references
     // into a specific NodeContainer.
-    jagSG::SelectContainerCallbackPtr sccp( new jagSG::SelectContainerCallback( 1 ) );
+    jag::sg::SelectContainerCallbackPtr sccp( new jag::sg::SelectContainerCallback( 1 ) );
     planeRoot->getCollectionCallbacks().push_back( sccp );
 
     // Create container to store the plane vertex / normal / texcoord data.
@@ -123,7 +123,7 @@ jagSG::NodePtr createPlanesSubgraph( jag::draw::BoundPtr bound )
     jag::draw::DrawablePtr plane1( jagUtil::makePlane(
         data, corner, uVec, vVec, 4, 4 ) );
     // Must add as separate child node for proper depth sorting.
-    jagSG::NodePtr planeChild( jagSG::NodePtr( new jagSG::Node() ) );
+    jag::sg::NodePtr planeChild( jag::sg::NodePtr( new jag::sg::Node() ) );
     planeChild->addDrawable( plane1 );
     planeRoot->addChild( planeChild );
 
@@ -175,9 +175,9 @@ bool Transparency::startup( const unsigned int numContexts )
 
 
     // Prepare the scene graph.
-    _root = jagSG::NodePtr( new jagSG::Node() );
+    _root = jag::sg::NodePtr( new jag::sg::Node() );
 
-    jagSG::NodePtr model( DemoInterface::readSceneGraphNodeUtil( _fileName ) );
+    jag::sg::NodePtr model( DemoInterface::readSceneGraphNodeUtil( _fileName ) );
     _root->addChild( model );
 
     _root->addChild( createPlanesSubgraph( model->getBound() ) );
@@ -283,7 +283,7 @@ bool Transparency::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& pr
 
     jag::mx::MxCorePtr mxCore( _mxCore._data[ contextID ] );
 
-    jagSG::CollectionVisitor& collect( getCollectionVisitor() );
+    jag::sg::CollectionVisitor& collect( getCollectionVisitor() );
     collect.reset();
 
     jag::draw::DrawGraphPtr drawGraph;

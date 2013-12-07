@@ -23,8 +23,8 @@
 #define __JAGUTIL_RESET_BOUNDS_VISITOR_H__ 1
 
 #include <jagUtil/Export.h>
-#include <jagSG/Visitor.h>
-#include <jagSG/Node.h>
+#include <jag/sg/Visitor.h>
+#include <jag/sg/Node.h>
 
 
 namespace jagUtil
@@ -35,14 +35,14 @@ namespace jagUtil
 \brief Combines vertex array and element array buffers.
 \details
 */
-class JAGUTIL_EXPORT ResetBoundsVisitor : public jagSG::VisitorBase
+class JAGUTIL_EXPORT ResetBoundsVisitor : public jag::sg::VisitorBase
 {
 public:
-    ResetBoundsVisitor( jagSG::NodePtr node, const std::string& logName=std::string( "" ) );
+    ResetBoundsVisitor( jag::sg::NodePtr node, const std::string& logName=std::string( "" ) );
     ResetBoundsVisitor( const ResetBoundsVisitor& rhs );
     ~ResetBoundsVisitor();
 
-    virtual void visit( jagSG::Node& node );
+    virtual void visit( jag::sg::Node& node );
 
 protected:
 };

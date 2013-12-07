@@ -22,7 +22,7 @@
 #include <demoSupport/DemoInterface.h>
 
 #include <jag/draw/Common.h>
-#include <jagSG/Common.h>
+#include <jag/sg/Common.h>
 #include <jagUtil/ABuffer.h>
 #include <jagUtil/Blur.h>
 #include <jag/disk/ReadWrite.h>
@@ -90,18 +90,18 @@ public:
 protected:
     std::string _fileName;
 
-    jagSG::NodePtr _root;
+    jag::sg::NodePtr _root;
 
     double _moveRate;
 
     jagUtil::ABufferPtr _aBuffer;
 
-    jagSG::NodePtr _abufNode, _abufOpaqueChild;
+    jag::sg::NodePtr _abufNode, _abufOpaqueChild;
     jag::draw::FramebufferPtr _opaqueFBO;
     jag::draw::TexturePtr _opaqueBuffer, _secondaryBuffer, _glowBuffer, _depthBuffer;
     jagUtil::BlurPtr _blur;
     jag::draw::UniformPtr _glowColor;
-    jagSG::NodeMaskCullCallbackPtr _opaqueToggleCB;
+    jag::sg::NodeMaskCullCallbackPtr _opaqueToggleCB;
 
     int _width, _height;
 };
@@ -252,13 +252,13 @@ bool ABufferJag::startup( const unsigned int numContexts )
 
 
     // Prepare the scene graph.
-    jagSG::NodePtr model( DemoInterface::readSceneGraphNodeUtil( _fileName ) );
+    jag::sg::NodePtr model( DemoInterface::readSceneGraphNodeUtil( _fileName ) );
     if( model == NULL )
         return( false );
 
     // Add model instance as opaque
-    _root.reset( new jagSG::Node );
-    jagSG::NodePtr opaqueNode( jagSG::NodePtr( new jagSG::Node() ) );
+    _root.reset( new jag::sg::Node );
+    jag::sg::NodePtr opaqueNode( jag::sg::NodePtr( new jag::sg::Node() ) );
     opaqueNode->addChild( model );
     _root->addChild( opaqueNode );
     {
@@ -269,19 +269,19 @@ bool ABufferJag::startup( const unsigned int numContexts )
         opaqueNode->getOrCreateCommandMap()->insert( usp );
 
         // Allow opaqueNode to be toggled/masked.
-        _opaqueToggleCB.reset( new jagSG::NodeMaskCullCallback() );
-        _opaqueToggleCB->setOverride( jagSG::NodeMaskCullCallback::OVERRIDE_TRUE );
+        _opaqueToggleCB.reset( new jag::sg::NodeMaskCullCallback() );
+        _opaqueToggleCB->setOverride( jag::sg::NodeMaskCullCallback::OVERRIDE_TRUE );
         opaqueNode->getCollectionCallbacks().push_back( _opaqueToggleCB );
     }
 
     // Add translated model instance for ABuffer transparency
-    _abufNode.reset( new jagSG::Node() );
+    _abufNode.reset( new jag::sg::Node() );
     gmtl::setTrans( _abufNode->getTransform(), gmtl::Vec3d( 0., model->getBound()->getRadius() * -1.5, 0. ) );
     _root->addChild( _abufNode );
     _abufNode->addChild( model );
     _aBuffer->setTransparencyEnable( *_abufNode );
 
-    _abufOpaqueChild.reset(new jagSG::Node() );
+    _abufOpaqueChild.reset(new jag::sg::Node() );
     gmtl::setTrans( _abufOpaqueChild->getTransform(), gmtl::Vec3d( model->getBound()->getRadius() * -1.5,0., 0. ) );
     _abufOpaqueChild->addChild(model);
     _abufNode->addChild(_abufOpaqueChild);
@@ -292,9 +292,9 @@ bool ABufferJag::startup( const unsigned int numContexts )
 
 
     // Prepare for culling.
-    jagSG::FrustumCullDistributionVisitor fcdv;
+    jag::sg::FrustumCullDistributionVisitor fcdv;
     _root->accept( fcdv );
-    jagSG::SmallFeatureDistributionVisitor sfdv;
+    jag::sg::SmallFeatureDistributionVisitor sfdv;
     _root->accept( sfdv );
 
     // Optimize VAO and element buffers.
@@ -435,7 +435,7 @@ bool ABufferJag::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj
 
     jag::mx::MxCorePtr mxCore( _mxCore._data[ contextID ] );
 
-    jagSG::CollectionVisitor& collect( getCollectionVisitor() );
+    jag::sg::CollectionVisitor& collect( getCollectionVisitor() );
     collect.reset();
 
     gmtl::Matrix44d viewMatrix;
@@ -543,10 +543,10 @@ bool ABufferJag::keyCommand( const int command )
         break;
 
     case (int)'o': // Toggle opaque
-        if( _opaqueToggleCB->getOverride() == jagSG::NodeMaskCullCallback::OVERRIDE_TRUE )
-            _opaqueToggleCB->setOverride( jagSG::NodeMaskCullCallback::OVERRIDE_FALSE );
+        if( _opaqueToggleCB->getOverride() == jag::sg::NodeMaskCullCallback::OVERRIDE_TRUE )
+            _opaqueToggleCB->setOverride( jag::sg::NodeMaskCullCallback::OVERRIDE_FALSE );
         else
-            _opaqueToggleCB->setOverride( jagSG::NodeMaskCullCallback::OVERRIDE_TRUE );
+            _opaqueToggleCB->setOverride( jag::sg::NodeMaskCullCallback::OVERRIDE_TRUE );
         break;
 
     case (int)'e': // Toggle transparency

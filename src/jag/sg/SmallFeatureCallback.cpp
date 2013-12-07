@@ -19,25 +19,26 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#include <jagSG/SmallFeatureCallback.h>
-#include <jagSG/Node.h>
-#include <jagSG/Visitor.h>
-#include <jagSG/CollectionVisitor.h>
+#include <jag/sg/SmallFeatureCallback.h>
+#include <jag/sg/Node.h>
+#include <jag/sg/Visitor.h>
+#include <jag/sg/CollectionVisitor.h>
 #include <jag/base/Profile.h>
 
 
-namespace jagSG {
+namespace jag {
+namespace sg {
 
 
 SmallFeatureCallback::SmallFeatureCallback( const std::string& logName )
   : jag::base::LogBase( logName.empty() ? "jag.sg.coll.small" : logName ),
-    jagSG::Node::Callback(),
+    jag::sg::Node::Callback(),
     _threshold( 3. )
 {
 }
 SmallFeatureCallback::SmallFeatureCallback( const SmallFeatureCallback& rhs )
   : jag::base::LogBase( "jag.sg.coll.small" ),
-    jagSG::Node::Callback( rhs ),
+    jag::sg::Node::Callback( rhs ),
     _threshold( rhs._threshold )
 {
 }
@@ -46,12 +47,12 @@ SmallFeatureCallback::~SmallFeatureCallback()
 }
 
 
-bool SmallFeatureCallback::operator()( jagSG::VisitorBase* /* visitor */, jagSG::Node::CallbackInfo* info )
+bool SmallFeatureCallback::operator()( jag::sg::VisitorBase* /* visitor */, jag::sg::Node::CallbackInfo* info )
 {
     JAG3D_PROFILE( "small feature" );
 
-    jagSG::CollectionVisitor::CollectionInfo* ci( static_cast<
-        jagSG::CollectionVisitor::CollectionInfo* >( info ) );
+    jag::sg::CollectionVisitor::CollectionInfo* ci( static_cast<
+        jag::sg::CollectionVisitor::CollectionInfo* >( info ) );
 
     // Continue collection if window coord bound radius is >= the threshold.
     return( ci->getWinCLength( ci->getECBoundRadius() ) >= _threshold );
@@ -71,12 +72,12 @@ double SmallFeatureCallback::getThreshold() const
 
 
 SmallFeatureDistributionVisitor::SmallFeatureDistributionVisitor()
-    : jagSG::VisitorBase( "small" ),
+    : jag::sg::VisitorBase( "small" ),
       _cb( SmallFeatureCallbackPtr( new SmallFeatureCallback() ) )
 {
 }
 SmallFeatureDistributionVisitor::SmallFeatureDistributionVisitor( const SmallFeatureDistributionVisitor& rhs )
-    : jagSG::VisitorBase( rhs ),
+    : jag::sg::VisitorBase( rhs ),
       _cb( rhs._cb )
 {
 }
@@ -84,7 +85,7 @@ SmallFeatureDistributionVisitor::~SmallFeatureDistributionVisitor()
 {
 }
 
-void SmallFeatureDistributionVisitor::visit( jagSG::Node& node )
+void SmallFeatureDistributionVisitor::visit( jag::sg::Node& node )
 {
     node.getCollectionCallbacks().push_back( _cb );
 
@@ -92,5 +93,6 @@ void SmallFeatureDistributionVisitor::visit( jagSG::Node& node )
 }
 
 
-// jagSG
+// namespace jag::sg::
+}
 }

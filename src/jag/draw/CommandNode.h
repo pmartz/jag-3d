@@ -42,7 +42,7 @@ namespace draw {
 \brief The command graph node element.
 \details The command graph is used to cache accumulations of CommandMaps.
 
-The jagSG::CollectionVisitor manages a command graph to avoid redundant
+The jag::sg::CollectionVisitor manages a command graph to avoid redundant
 accumulation of static CommandMap objects. Accumulations are only performed
 when a new CommandMap is encountered by the CollectionVisitor, or when
 a given CommandMap is marked as dirty for a given command graph node.

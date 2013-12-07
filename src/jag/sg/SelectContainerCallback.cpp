@@ -19,30 +19,31 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#include <jagSG/SelectContainerCallback.h>
-#include <jagSG/Node.h>
-#include <jagSG/Visitor.h>
-#include <jagSG/CollectionVisitor.h>
+#include <jag/sg/SelectContainerCallback.h>
+#include <jag/sg/Node.h>
+#include <jag/sg/Visitor.h>
+#include <jag/sg/CollectionVisitor.h>
 
 
-namespace jagSG {
+namespace jag {
+namespace sg {
 
 
 SelectContainerCallback::SelectContainerCallback( const std::string& logName )
   : jag::base::LogBase( logName.empty() ? "jag.sg.coll.select" : logName ),
-    jagSG::Node::Callback(),
+    jag::sg::Node::Callback(),
     _index( 0 )
 {
 }
 SelectContainerCallback::SelectContainerCallback( const unsigned int index, const std::string& logName )
   : jag::base::LogBase( logName.empty() ? "jag.sg.coll.select" : logName ),
-    jagSG::Node::Callback(),
+    jag::sg::Node::Callback(),
     _index( index )
 {
 }
 SelectContainerCallback::SelectContainerCallback( const SelectContainerCallback& rhs )
   : jag::base::LogBase( "jag.sg.coll.select" ),
-    jagSG::Node::Callback( rhs ),
+    jag::sg::Node::Callback( rhs ),
     _index( rhs._index )
 {
 }
@@ -60,10 +61,10 @@ unsigned int SelectContainerCallback::getContainer() const
     return( _index );
 }
 
-bool SelectContainerCallback::operator()( jagSG::VisitorBase* visitor, jagSG::Node::CallbackInfo* info )
+bool SelectContainerCallback::operator()( jag::sg::VisitorBase* visitor, jag::sg::Node::CallbackInfo* info )
 {
-    jagSG::CollectionVisitor* cv( static_cast<
-        jagSG::CollectionVisitor* >( visitor ) );
+    jag::sg::CollectionVisitor* cv( static_cast<
+        jag::sg::CollectionVisitor* >( visitor ) );
 
     const unsigned int savedIndex( cv->getCurrentNodeContainer() );
     cv->setCurrentNodeContainer( _index );
@@ -75,5 +76,6 @@ bool SelectContainerCallback::operator()( jagSG::VisitorBase* visitor, jagSG::No
 }
 
 
-// jagSG
+// namespace jag::sg::
+}
 }

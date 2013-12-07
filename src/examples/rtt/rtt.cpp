@@ -23,7 +23,7 @@
 
 #include <jag/draw/Common.h>
 #include <jag/draw/PerContextData.h>
-#include <jagSG/Common.h>
+#include <jag/sg/Common.h>
 #include <jag/base/Profile.h>
 #include <jagUtil/QuadNode.h>
 #include <jagUtil/DrawGraphCountVisitor.h>
@@ -84,7 +84,7 @@ public:
 protected:
     std::string _fileName;
 
-    jagSG::NodePtr _root;
+    jag::sg::NodePtr _root;
 
     double _moveRate;
 
@@ -175,11 +175,11 @@ bool RTTExample::startup( const unsigned int numContexts )
 
 
     // Prepare the scene graph.
-    jagSG::NodePtr model( DemoInterface::readSceneGraphNodeUtil( _fileName ) );
+    jag::sg::NodePtr model( DemoInterface::readSceneGraphNodeUtil( _fileName ) );
     if( model == NULL )
         return( false );
 
-    _root.reset( new jagSG::Node );
+    _root.reset( new jag::sg::Node );
     _root->addChild( model );
 
 
@@ -188,9 +188,9 @@ bool RTTExample::startup( const unsigned int numContexts )
 
         
     // Add callbacks to control collection.
-    jagSG::FrustumCullDistributionVisitor fcdv;
+    jag::sg::FrustumCullDistributionVisitor fcdv;
     model->accept( fcdv );
-    jagSG::SmallFeatureDistributionVisitor sfdv;
+    jag::sg::SmallFeatureDistributionVisitor sfdv;
     model->accept( sfdv );
 
     // Optimize VAO binding.
@@ -342,7 +342,7 @@ bool RTTExample::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj
 
     jag::mx::MxCorePtr mxCore( _mxCore._data[ contextID ] );
 
-    jagSG::CollectionVisitor& collect( getCollectionVisitor() );
+    jag::sg::CollectionVisitor& collect( getCollectionVisitor() );
     collect.reset();
 
     gmtl::Matrix44d viewMatrix;

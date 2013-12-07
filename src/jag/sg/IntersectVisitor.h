@@ -19,11 +19,11 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#ifndef __JAGSG_INTERSECT_VISITOR_H__
-#define __JAGSG_INTERSECT_VISITOR_H__ 1
+#ifndef __JAG_SG_INTERSECT_VISITOR_H__
+#define __JAG_SG_INTERSECT_VISITOR_H__ 1
 
-#include <jagSG/Export.h>
-#include <jagSG/Visitor.h>
+#include <jag/sg/Export.h>
+#include <jag/sg/Visitor.h>
 #include <jag/base/Transform.h>
 #include <jag/draw/DrawNode.h>
 #include <jag/draw/DrawNodeContainer.h>
@@ -38,11 +38,12 @@
 #include <deque>
 
 
-namespace jagSG {
+namespace jag {
+namespace sg {
 
 
     struct hitRecord {
-        jagSG::NodeVec nodeVec;
+        jag::sg::NodeVec nodeVec;
         jag::draw::DrawablePtr drawablePtr;
         gmtl::Point3f hitPosition;
         jag::draw::VertexArrayObjectPtr vaop;
@@ -55,7 +56,7 @@ namespace jagSG {
 
     };
 
-/** \class IntersectVisitor IntersectVisitor.h <jagSG/IntersectVisitor.h>
+/** \class IntersectVisitor IntersectVisitor.h <jag/sg/IntersectVisitor.h>
 \brief TBD
 \details TBD
 */
@@ -63,7 +64,7 @@ class JAGSG_EXPORT IntersectVisitor : public Visitor
 {
 public:
     IntersectVisitor();
-    IntersectVisitor( jagSG::NodePtr node, gmtl::Ray<double> ray );
+    IntersectVisitor( jag::sg::NodePtr node, gmtl::Ray<double> ray );
     IntersectVisitor( const IntersectVisitor& rhs );
     virtual ~IntersectVisitor();
 
@@ -77,7 +78,7 @@ public:
 
     /** \brief TBD
     \details TBD */
-    virtual void visit( jagSG::Node& node ) {
+    virtual void visit( jag::sg::Node& node ) {
         CommandMapStackHelper cmdh( *this, node.getCommandMap() );
         MatrixStackHelper msh( *this, node.getTransform() );
         intersect(node);
@@ -99,11 +100,11 @@ public:
 
 protected:
     
-    void checkMaskAndTraverse(jagSG::Node& node) {
+    void checkMaskAndTraverse(jag::sg::Node& node) {
     }
     void pushRay( gmtl::Ray<double> );
     void popRay();
-    void intersect(jagSG::Node& node);
+    void intersect(jag::sg::Node& node);
     unsigned int _currentID;
     
 
@@ -114,13 +115,13 @@ protected:
     
 };
 
-typedef jag::base::ptr< jagSG::IntersectVisitor >::shared_ptr IntersectVisitorPtr;
+typedef jag::base::ptr< jag::sg::IntersectVisitor >::shared_ptr IntersectVisitorPtr;
 
 
-// jagSG
+// namespace jag::sg::
+}
 }
 
 
-
-// __JAGSG_COLLECTION_VISITOR_H__
+// __JAG_SG_COLLECTION_VISITOR_H__
 #endif

@@ -23,8 +23,8 @@
 #define __JAGUTIL_BUFFER_AGGREGATION_VISITOR_H__ 1
 
 #include <jagUtil/Export.h>
-#include <jagSG/Visitor.h>
-#include <jagSG/Node.h>
+#include <jag/sg/Visitor.h>
+#include <jag/sg/Node.h>
 #include <jag/draw/VertexArrayObject.h>
 
 #include <set>
@@ -45,16 +45,16 @@ namespace jagUtil
 \specTableEnd
 \specEnd
 */
-class JAGUTIL_EXPORT BufferAggregationVisitor : public jagSG::VisitorBase
+class JAGUTIL_EXPORT BufferAggregationVisitor : public jag::sg::VisitorBase
 {
 public:
-    BufferAggregationVisitor( jagSG::NodePtr node, const std::string& logName=std::string( "" ) );
+    BufferAggregationVisitor( jag::sg::NodePtr node, const std::string& logName=std::string( "" ) );
     BufferAggregationVisitor( const BufferAggregationVisitor& rhs );
     ~BufferAggregationVisitor();
 
     void reset();
 
-    virtual void visit( jagSG::Node& node );
+    virtual void visit( jag::sg::Node& node );
 
     /** \brief Optionally combine element buffer objects.
     \details By default, both array buffers and element index buffers
@@ -74,7 +74,7 @@ protected:
     jag::draw::BufferObjectPtr _elements;
     bool _combineElementBuffers;
 
-    typedef std::set< jagSG::Node* > NodeSet;
+    typedef std::set< jag::sg::Node* > NodeSet;
     NodeSet _nodeSet;
     typedef std::set< jag::draw::BufferObject* > BufferObjectSet;
     BufferObjectSet _elementBuffers;
