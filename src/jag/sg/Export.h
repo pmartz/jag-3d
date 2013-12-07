@@ -19,19 +19,22 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#ifndef __JAGSG_COMMON_H__
-#define __JAGSG_COMMON_H__ 1
+#ifndef __JAG_SG_EXPORT__
+#define __JAG_SG_EXPORT__ 1
 
 
-#include <jagSG/CollectionVisitor.h>
-#include <jagSG/FrustumCullCallback.h>
-#include <jagSG/IntersectVisitor.h>
-#include <jagSG/Node.h>
-#include <jagSG/NodeMaskCullCallback.h>
-#include <jagSG/SelectContainerCallback.h>
-#include <jagSG/SmallFeatureCallback.h>
-#include <jagSG/Visitor.h>
+#if defined( _MSC_VER ) || defined( __CYGWIN__ ) || defined( __MINGW32__ ) || defined( __BCPLUSPLUS__ ) || defined( __MWERKS__ )
+    #if defined( JAG3D_STATIC )
+        #define JAGSG_EXPORT
+    #elif defined( JAGSG_LIBRARY )
+        #define JAGSG_EXPORT __declspec( dllexport )
+    #else
+        #define JAGSG_EXPORT __declspec( dllimport )
+    #endif
+#else
+    #define JAGSG_EXPORT
+#endif
 
 
-// __JAGSG_COMMON_H__
+// __JAG_SG_EXPORT__
 #endif

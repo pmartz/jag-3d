@@ -20,14 +20,14 @@
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
 #include <jag/base/Transform.h>
-#include <jagSG/Node.h>
-#include <jagSG/CollectionVisitor.h>
-#include <jagSG/NodeMaskCullCallback.h>
+#include <jag/sg/Node.h>
+#include <jag/sg/CollectionVisitor.h>
+#include <jag/sg/NodeMaskCullCallback.h>
 #include <jag/draw/DrawNode.h>
 #include <jag/draw/Uniform.h>
 #include <jag/draw/Program.h>
 #include <jagUtil/Shapes.h>
-#include <jagSG/IntersectVisitor.h>
+#include <jag/sg/IntersectVisitor.h>
 
 #include <boost/foreach.hpp>
 #include <gmtl/gmtl.h>
@@ -38,11 +38,11 @@
 
 using jag::base::TransformD;
 
-using jagSG::Node;
-using jagSG::NodePtr;
-using jagSG::CollectionVisitor;
-using jagSG::NodeMaskCullCallback;
-using jagSG::NodeMaskCullDistributionVisitor;
+using jag::sg::Node;
+using jag::sg::NodePtr;
+using jag::sg::CollectionVisitor;
+using jag::sg::NodeMaskCullCallback;
+using jag::sg::NodeMaskCullDistributionVisitor;
 
 using jag::draw::Bound;
 using jag::draw::BoundPtr;
@@ -58,9 +58,9 @@ using jag::draw::DrawNodeContainer;
 using jag::draw::Program;
 
 
-jagSG::NodePtr createQuad( const gmtl::Point3f& center, const float extent )
+jag::sg::NodePtr createQuad( const gmtl::Point3f& center, const float extent )
 {
-    jagSG::NodePtr quadRoot = jagSG::NodePtr( new jagSG::Node() );
+    jag::sg::NodePtr quadRoot = jag::sg::NodePtr( new jag::sg::Node() );
 
     // Create container to store the quad vertex / normal / texcoord data.
     jagUtil::VNTCVec data;
@@ -113,7 +113,7 @@ bool test()
             NodePtr root( new Node() );
             root->addChild( createQuad( gmtl::Point3f( 0., 0., 0. ), 10.f ) );
 
-            jagSG::IntersectVisitor iv(root, gmtl::Ray<double>(gmtl::Point3d(1,0,10), gmtl::Point3d(0,0,-1)));
+            jag::sg::IntersectVisitor iv(root, gmtl::Ray<double>(gmtl::Point3d(1,0,10), gmtl::Point3d(0,0,-1)));
 
 
             for(auto i = 0; i < iv.getHits().size(); i++)
@@ -130,7 +130,7 @@ bool test()
             xform->setTransform(gmtl::makeTrans<gmtl::Matrix44d>(gmtl::Vec3d(0,1.5,0)));
             xform->addChild( createQuad( gmtl::Point3f( 0., 0., 0. ), 10.f ) );
 
-            jagSG::IntersectVisitor iv(root, gmtl::Ray<double>(gmtl::Point3d(1,0,10), gmtl::Point3d(0,0,-1)));
+            jag::sg::IntersectVisitor iv(root, gmtl::Ray<double>(gmtl::Point3d(1,0,10), gmtl::Point3d(0,0,-1)));
 
 
             for(auto i = 0; i < iv.getHits().size(); i++)

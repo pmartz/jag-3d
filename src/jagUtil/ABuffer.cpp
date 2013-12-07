@@ -23,7 +23,7 @@
 
 #include <jag/draw/Common.h>
 #include <jag/draw/PerContextData.h>
-#include <jagSG/Common.h>
+#include <jag/sg/Common.h>
 #include <jag/disk/ReadWrite.h>
 #include <jag/base/Profile.h>
 #include <jagUtil/DrawGraphCountVisitor.h>
@@ -325,7 +325,7 @@ jag::draw::DrawGraphPtr& ABuffer::createDrawGraphTemplate( const unsigned int st
 }
 
 
-void ABuffer::setTransparencyEnable( jagSG::Node& node, const bool enable )
+void ABuffer::setTransparencyEnable( jag::sg::Node& node, const bool enable )
 {
     if( _callback == NULL )
         internalInit();
@@ -399,7 +399,7 @@ void ABuffer::setTransparencyEnable( jagSG::Node& node, const bool enable )
         node.getCollectionCallbacks().addUnique( _opaqueCallback );
     }
 }
-void ABuffer::toggleTransparencyEnable( jagSG::Node& node )
+void ABuffer::toggleTransparencyEnable( jag::sg::Node& node )
 {
     const bool currentlyEnabled( node.getCollectionCallbacks().contains( _callback ) );
     setTransparencyEnable( node, !currentlyEnabled );
@@ -417,14 +417,14 @@ unsigned int ABuffer::getStartContainer() const
 {
     return( _startContainer );
 }
-void ABuffer::getABufferControls( jag::draw::CommandMapPtr& commands, jagSG::SelectContainerCallbackPtr& callback )
+void ABuffer::getABufferControls( jag::draw::CommandMapPtr& commands, jag::sg::SelectContainerCallbackPtr& callback )
 {
     if( _callback == NULL )
         internalInit();
     commands = _commands;
     callback = _callback;
 }
-void ABuffer::getABufferControls( jagSG::SelectContainerCallbackPtr& callback )
+void ABuffer::getABufferControls( jag::sg::SelectContainerCallbackPtr& callback )
 {
     if( _callback == NULL )
         internalInit();
@@ -435,7 +435,7 @@ unsigned int ABuffer::getTransparentNodeContainer() const
     return( getStartContainer() + 1 );
 }
 
-void ABuffer::renderFrame( jagSG::CollectionVisitor& collect, jag::draw::DrawInfo& drawInfo )
+void ABuffer::renderFrame( jag::sg::CollectionVisitor& collect, jag::draw::DrawInfo& drawInfo )
 {
     const unsigned int contextID( drawInfo._id );
     jag::draw::DrawGraphPtr drawGraph( collect.getDrawGraph() );
@@ -581,12 +581,12 @@ void ABuffer::internalInit()
     // This is the NodeContainer selection callback that the app must attach to any transparent geometry.
     // ABuffer container is container the next container after _startContainer.
     if( _callback == NULL )
-        _callback.reset( new jagSG::SelectContainerCallback() );
+        _callback.reset( new jag::sg::SelectContainerCallback() );
     _callback->setContainer( _startContainer + 1 );
 
     // Opaque container, for restoring a node to opaque status.
     if( _opaqueCallback == NULL )
-        _opaqueCallback.reset( new jagSG::SelectContainerCallback() );
+        _opaqueCallback.reset( new jag::sg::SelectContainerCallback() );
     _opaqueCallback->setContainer( _opaqueContainer );
 }
 

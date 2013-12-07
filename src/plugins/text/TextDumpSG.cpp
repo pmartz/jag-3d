@@ -36,7 +36,7 @@ TextDumpSG::~TextDumpSG()
 {
 }
 
-void TextDumpSG::visit( jagSG::Node& node )
+void TextDumpSG::visit( jag::sg::Node& node )
 {
     std::string indentStr;
     for( int idx = 0; idx < _indent; ++idx )

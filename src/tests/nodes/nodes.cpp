@@ -22,8 +22,8 @@
 #include <demoSupport/DemoInterface.h>
 
 #include <jag/draw/Common.h>
-#include <jagSG/Common.h>
-#include <jagSG/ExecuteVisitor.h>
+#include <jag/sg/Common.h>
+#include <jag/sg/ExecuteVisitor.h>
 #include <jag/draw/PerContextData.h>
 #include <jag/base/Transform.h>
 #include <jag/disk/ReadWrite.h>
@@ -58,12 +58,12 @@ public:
     virtual void reshape( const int w, const int h );
 
 protected:
-    jagSG::NodePtr makeScene( const gmtl::Point3f& offset, const gmtl::Matrix44d& trans=gmtl::MAT_IDENTITY44D );
+    jag::sg::NodePtr makeScene( const gmtl::Point3f& offset, const gmtl::Matrix44d& trans=gmtl::MAT_IDENTITY44D );
 
     gmtl::Matrix44d computeProjection( double aspect );
     gmtl::Matrix44d computeView();
 
-    jagSG::NodePtr _scene;
+    jag::sg::NodePtr _scene;
 
     typedef jag::draw::PerContextData< gmtl::Matrix44d > PerContextMatrix44d;
     PerContextMatrix44d _proj;
@@ -79,11 +79,11 @@ DemoInterface* DemoInterface::create( bpo::options_description& desc )
     return( new NodesDemo );
 }
 
-jagSG::NodePtr NodesDemo::makeScene( const gmtl::Point3f& offset, const gmtl::Matrix44d& trans )
+jag::sg::NodePtr NodesDemo::makeScene( const gmtl::Point3f& offset, const gmtl::Matrix44d& trans )
 {
     jag::draw::CommandMapPtr commands( jag::draw::CommandMapPtr( new jag::draw::CommandMap() ) );
     jag::draw::DrawablePtr drawable( jag::draw::DrawablePtr( new jag::draw::Drawable() ) );
-    jagSG::NodePtr node( jagSG::NodePtr( new jagSG::Node() ) );
+    jag::sg::NodePtr node( jag::sg::NodePtr( new jag::sg::Node() ) );
 
     // Interleaved vertices and normals.
     jag::base::Point3fVec data;
@@ -224,7 +224,7 @@ bool NodesDemo::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj 
     const jag::draw::jagDrawContextID contextID( jag::draw::ContextSupport::instance()->getActiveContext() );
     jag::draw::DrawInfo& drawInfo( getDrawInfo( contextID ) );
 
-    jagSG::ExecuteVisitor execVisitor( drawInfo );
+    jag::sg::ExecuteVisitor execVisitor( drawInfo );
 
     // Systems such as VRJ will pass view and projection matrices.
     if( view.mState != gmtl::Matrix44f::IDENTITY || proj.mState != gmtl::Matrix44f::IDENTITY )

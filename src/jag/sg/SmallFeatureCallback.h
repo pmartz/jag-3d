@@ -19,29 +19,30 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#ifndef __JAGSG_SMALL_FEATURE_CALLBACK_H__
-#define __JAGSG_SMALL_FEATURE_CALLBACK_H__ 1
+#ifndef __JAG_SG_SMALL_FEATURE_CALLBACK_H__
+#define __JAG_SG_SMALL_FEATURE_CALLBACK_H__ 1
 
-#include <jagSG/Export.h>
-#include <jagSG/Node.h>
-#include <jagSG/Visitor.h>
+#include <jag/sg/Export.h>
+#include <jag/sg/Node.h>
+#include <jag/sg/Visitor.h>
 #include <jag/base/LogBase.h>
 #include <jag/base/ptr.h>
 
 
 
-namespace jagSG {
+namespace jag {
+namespace sg {
 
 
 /** \addtogroup jagSGCollection CollectionVisitor and Controls */
 /*@{*/
 
-/** \class SmallFeatureCallback SmallFeatureCallback.h <jagSG/SmallFeatureCallback.h>
+/** \class SmallFeatureCallback SmallFeatureCallback.h <jag/sg/SmallFeatureCallback.h>
 \brief TBD
 \details TBD
 */
 class JAGSG_EXPORT SmallFeatureCallback : protected jag::base::LogBase,
-        public jagSG::Node::Callback
+        public jag::sg::Node::Callback
 {
 public:
     SmallFeatureCallback( const std::string& logName=std::string( "" ) );
@@ -50,7 +51,7 @@ public:
 
     /** \brief TBD
     \details TBD */
-    virtual bool operator()( jagSG::VisitorBase* visitor, jagSG::Node::CallbackInfo* info );
+    virtual bool operator()( jag::sg::VisitorBase* visitor, jag::sg::Node::CallbackInfo* info );
 
     /** \brief Set the screen space radius threshold.
     \details Sets the threshold used by operator()() to determine whether
@@ -69,18 +70,18 @@ typedef jag::base::ptr< SmallFeatureCallback >::shared_ptr SmallFeatureCallbackP
 
 
 
-/** \class SmallFeatureDistributionVisitor SmallFeatureCallback.h <jagSG/SmallFeatureCallback.h>
+/** \class SmallFeatureDistributionVisitor SmallFeatureCallback.h <jag/sg/SmallFeatureCallback.h>
 \brief TBD
 \details TBD
 */
-class JAGSG_EXPORT SmallFeatureDistributionVisitor : public jagSG::VisitorBase
+class JAGSG_EXPORT SmallFeatureDistributionVisitor : public jag::sg::VisitorBase
 {
 public:
     SmallFeatureDistributionVisitor();
     SmallFeatureDistributionVisitor( const SmallFeatureDistributionVisitor& rhs );
     ~SmallFeatureDistributionVisitor();
 
-    virtual void visit( jagSG::Node& node );
+    virtual void visit( jag::sg::Node& node );
 
 protected:
     SmallFeatureCallbackPtr _cb;
@@ -90,9 +91,10 @@ protected:
 /*@}*/
 
 
-// jagSG
+// namespace jag::sg::
+}
 }
 
 
-// __JAGSG_SMALL_FEATURE_CALLBACK_H__
+// __JAG_SG_SMALL_FEATURE_CALLBACK_H__
 #endif

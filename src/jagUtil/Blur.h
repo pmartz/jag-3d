@@ -34,8 +34,10 @@
 
 
 // Forwaed
-namespace jagSG {
-    class CollectionVisitor;
+namespace jag {
+    namespace sg {
+        class CollectionVisitor;
+    }
 }
 
 
@@ -69,7 +71,7 @@ public:
     /** \brief Get the BLur NodeContainer.
     \details In typical usage, application code should copy this
     NodeContainer into the DrawGraph template passed to
-    jagSG::CollectionVisitor. */
+    jag::sg::CollectionVisitor. */
     jag::draw::DrawNodeContainer& getNodeContainer();
 
     /** \brief Set custom fragment shaders by name.

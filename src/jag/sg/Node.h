@@ -19,10 +19,10 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#ifndef __JAGSG_NODE_H__
-#define __JAGSG_NODE_H__ 1
+#ifndef __JAG_SG_NODE_H__
+#define __JAG_SG_NODE_H__ 1
 
-#include <jagSG/Export.h>
+#include <jag/sg/Export.h>
 #include <jag/draw/ObjectID.h>
 #include <jag/draw/Drawable.h>
 #include <jag/draw/CommandMap.h>
@@ -45,14 +45,15 @@ namespace jag {
     }
 }
 
-namespace jagSG {
+namespace jag {
+namespace sg {
 
 
 /** \addtogroup jagSGSceneGraph The Scene Graph */
 /*@{*/
 
 class Node;
-typedef jag::base::ptr< jagSG::Node >::shared_ptr NodePtr;
+typedef jag::base::ptr< jag::sg::Node >::shared_ptr NodePtr;
 typedef std::vector< NodePtr > NodeVec;
 typedef std::vector< Node > NodeSimpleVec;
 typedef std::vector< Node* > NodeSimplePtrVec;
@@ -60,7 +61,7 @@ typedef std::vector< Node* > NodeSimplePtrVec;
 class VisitorBase;
 
 
-/** \class Node Node.h <jagSG/Node.h>
+/** \class Node Node.h <jag/sg/Node.h>
 \brief Scene graph element. "element" component of the %Visitor design pattern.
 \details TBD
 */
@@ -81,28 +82,28 @@ public:
 
     /** \brief TBD
     \details TBD */
-    void accept( jagSG::VisitorBase& visitor );
+    void accept( jag::sg::VisitorBase& visitor );
     /** \brief Call accept() on all child Nodes.
     \details Normally this is only invoked if a traverse callback is not attached. */
-    virtual void traverse( jagSG::VisitorBase& visitor );
+    virtual void traverse( jag::sg::VisitorBase& visitor );
 
     /** \class CallbackInfo
     \brief TBD
     \details TBD */
     class CallbackInfo {
     public:
-        CallbackInfo( jagSG::Node* node=NULL )
+        CallbackInfo( jag::sg::Node* node=NULL )
           : _node( node )
         {
         }
         CallbackInfo( const CallbackInfo& /* rhs */ ) {}
         virtual ~CallbackInfo() {}
 
-        virtual void setNode( jagSG::Node* node ) { _node = node; }
-        jagSG::Node* getNode() const { return( _node ); }
+        virtual void setNode( jag::sg::Node* node ) { _node = node; }
+        jag::sg::Node* getNode() const { return( _node ); }
 
     protected:
-        jagSG::Node* _node;
+        jag::sg::Node* _node;
     };
     typedef jag::base::ptr< CallbackInfo >::shared_ptr CallbackInfoPtr;
 
@@ -112,7 +113,7 @@ public:
     struct Callback {
         /** \brief TBD
         \details TBD */
-        virtual bool operator()( jagSG::VisitorBase* /* visitor */,
+        virtual bool operator()( jag::sg::VisitorBase* /* visitor */,
             CallbackInfo* info = NULL )
         {
             return( false );
@@ -160,7 +161,7 @@ public:
 
     /** \name Support for Node bound volume computation and the BoundOwner base-class.
     \details Override member functions from the BoundOwner base class.
-    Also provide jagSG::Node-specific bound computation support. */
+    Also provide jag::sg::Node-specific bound computation support. */
     /**@{*/
 
     /** \brief Get bound from root node.
@@ -306,9 +307,10 @@ protected:
 /*@}*/
 
 
-// jagSG
+// namespace jag::sg::
+}
 }
 
 
-// __JAGSG_NODE_H__
+// __JAG_SG_NODE_H__
 #endif

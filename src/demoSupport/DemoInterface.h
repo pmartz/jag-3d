@@ -26,8 +26,8 @@
 #include <jag/draw/DrawInfo.h>
 #include <jag/draw/Shader.h>
 #include <jag/draw/Image.h>
-#include <jagSG/Node.h>
-#include <jagSG/CollectionVisitor.h>
+#include <jag/sg/Node.h>
+#include <jag/sg/CollectionVisitor.h>
 #include <jag/mx/MxCore.h>
 #include <jag/disk/ReadWrite.h>
 #include <jag/base/LogMacros.h>
@@ -92,7 +92,7 @@ public:
     {
         return( _drawInfo._data[ contextID ] );
     }
-    jagSG::CollectionVisitor& getCollectionVisitor()
+    jag::sg::CollectionVisitor& getCollectionVisitor()
     {
         return( _collectionVisitor );
     }
@@ -155,7 +155,7 @@ protected:
     bool _continuousRedraw;
 
     jag::draw::PerContextDrawInfo _drawInfo;
-    jagSG::CollectionVisitor _collectionVisitor;
+    jag::sg::CollectionVisitor _collectionVisitor;
 
     typedef jag::draw::PerContextData< jag::mx::MxCorePtr > PerContextMxCore;
     PerContextMxCore _mxCore;
@@ -178,10 +178,10 @@ protected:
         } \
     }
 
-    jagSG::NodePtr readSceneGraphNodeUtil( const std::string& fileName, const jag::disk::Options* options=NULL )
+    jag::sg::NodePtr readSceneGraphNodeUtil( const std::string& fileName, const jag::disk::Options* options=NULL )
     {
-        jagSG::NodePtr result;
-        __READ_UTIL( result, jagSG::NodePtr, fileName, options );
+        jag::sg::NodePtr result;
+        __READ_UTIL( result, jag::sg::NodePtr, fileName, options );
         return( result );
     }
     jag::draw::ImagePtr readImageUtil( const std::string& fileName, const jag::disk::Options* options=NULL )

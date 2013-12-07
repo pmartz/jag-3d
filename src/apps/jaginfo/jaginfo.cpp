@@ -20,7 +20,7 @@
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
 #include <jag/draw/Common.h>
-#include <jagSG/Common.h>
+#include <jag/sg/Common.h>
 #include <jagUtil/DrawGraphCountVisitor.h>
 #include <jagUtil/BufferAggregationVisitor.h>
 #include <jag/disk/ReadWrite.h>
@@ -43,7 +43,7 @@ std::string logstr( "jag.app.info" );
 
 
 
-class SceneGraphCountVisitor : public jagSG::VisitorBase
+class SceneGraphCountVisitor : public jag::sg::VisitorBase
 {
 public:
     SceneGraphCountVisitor();
@@ -52,20 +52,20 @@ public:
     void reset();
     void dump( std::ostream& ostr );
 
-    virtual void visit( jagSG::Node& node );
+    virtual void visit( jag::sg::Node& node );
 
     unsigned int _nodes, _uNodes;
     unsigned int _commands, _uCommands;
     unsigned int _drawables, _uDrawables;
 
 protected:
-    std::set< jagSG::NodePtr > _nodeSet;
+    std::set< jag::sg::NodePtr > _nodeSet;
     std::set< jag::draw::CommandMapPtr > _commandSet;
     std::set< jag::draw::DrawablePtr > _drawableSet;
 };
 
 SceneGraphCountVisitor::SceneGraphCountVisitor()
-    : jagSG::VisitorBase( "count" )
+    : jag::sg::VisitorBase( "count" )
 {
     reset();
 }
@@ -91,10 +91,10 @@ void SceneGraphCountVisitor::dump( std::ostream& ostr )
     ostr << "  Drawables:\t" << _drawables << "\t" << _uDrawables << std::endl;
 }
 
-void SceneGraphCountVisitor::visit( jagSG::Node& node )
+void SceneGraphCountVisitor::visit( jag::sg::Node& node )
 {
     ++_nodes;
-    jagSG::NodePtr np( node.shared_from_this() );
+    jag::sg::NodePtr np( node.shared_from_this() );
     if( _nodeSet.find( np ) == _nodeSet.end() )
     {
         ++_uNodes;
@@ -163,9 +163,9 @@ int main( int argc, char** argv )
 
 
     boost::any anyRoot( jag::disk::read( fileName ) );
-    jagSG::NodePtr root;
+    jag::sg::NodePtr root;
     try {
-        root = boost::any_cast< jagSG::NodePtr >( anyRoot );
+        root = boost::any_cast< jag::sg::NodePtr >( anyRoot );
     } catch( boost::bad_any_cast bac ) { bac.what(); }
     if( root == NULL )
     {
@@ -184,8 +184,8 @@ int main( int argc, char** argv )
         sgcv.dump( std::cout );
     }
 
-    jagSG::CollectionVisitor collect;
-    collect.setNearFarOps( jagSG::CollectionVisitor::None );
+    jag::sg::CollectionVisitor collect;
+    collect.setNearFarOps( jag::sg::CollectionVisitor::None );
     gmtl::Matrix44d proj;
     gmtl::setOrtho( proj, -DBL_MAX, DBL_MAX, DBL_MAX, -DBL_MAX, DBL_MAX, -DBL_MAX );
     collect.setViewProj( gmtl::MAT_IDENTITY44D, proj );

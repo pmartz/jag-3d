@@ -21,7 +21,7 @@
 
 #include <jagUtil/ResetBoundsVisitor.h>
 #include <jag/draw/Drawable.h>
-#include <jagSG/Node.h>
+#include <jag/sg/Node.h>
 
 #include <boost/foreach.hpp>
 
@@ -31,13 +31,13 @@ namespace jagUtil
 {
 
 
-ResetBoundsVisitor::ResetBoundsVisitor( jagSG::NodePtr node, const std::string& logName )
-    : jagSG::VisitorBase( "resetbnds", logName )
+ResetBoundsVisitor::ResetBoundsVisitor( jag::sg::NodePtr node, const std::string& logName )
+    : jag::sg::VisitorBase( "resetbnds", logName )
 {
     node->accept( *this );
 }
 ResetBoundsVisitor::ResetBoundsVisitor( const ResetBoundsVisitor& rhs )
-    : jagSG::VisitorBase( rhs )
+    : jag::sg::VisitorBase( rhs )
 {
 }
 ResetBoundsVisitor::~ResetBoundsVisitor()
@@ -45,7 +45,7 @@ ResetBoundsVisitor::~ResetBoundsVisitor()
 }
 
 
-void ResetBoundsVisitor::visit( jagSG::Node& node )
+void ResetBoundsVisitor::visit( jag::sg::Node& node )
 {
     node.setBoundDirtyFlag();
 

@@ -20,7 +20,7 @@
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
 
-#include <jagSG/Node.h>
+#include <jag/sg/Node.h>
 #include <jag/draw/DrawNode.h>
 #include <jag/base/UserDataOwner.h>
 
@@ -97,9 +97,9 @@ bool test()
 
         }
 
-        std::cout << "Testing: User Data setting and retrieval using helper methods with jagSG::Node. . ." << std::endl;
+        std::cout << "Testing: User Data setting and retrieval using helper methods with jag::sg::Node. . ." << std::endl;
         {
-            jagSG::Node udo;
+            jag::sg::Node udo;
             udo.setUserDataPair("prop1", 1);
             udo.setUserDataPair("prop2", 2);
             if(udo.getUserDataValue("prop2") != 2) {
@@ -108,9 +108,9 @@ bool test()
             }
         }
 
-        std::cout << "Testing: User Data setting and retrieval using pass by reference get method with jagSG::Node. . ." << std::endl;
+        std::cout << "Testing: User Data setting and retrieval using pass by reference get method with jag::sg::Node. . ." << std::endl;
         {
-            jagSG::Node udo;
+            jag::sg::Node udo;
             udo.getUserData()["prop1"] = "string test";
             udo.getUserData()["prop2"] = 42;
 
@@ -128,7 +128,7 @@ bool test()
 
 
 #if( POCO_OS != POCO_OS_MAC_OS_X )
-        std::cout << "Testing: User Data setting and retrieval using pass by reference get method with jagSG::Node and a custom class for data storage. . ." << std::endl;
+        std::cout << "Testing: User Data setting and retrieval using pass by reference get method with jag::sg::Node and a custom class for data storage. . ." << std::endl;
         {
             class TestClass {
             public:
@@ -141,7 +141,7 @@ bool test()
                 std::string _b;
             };
 
-            jagSG::Node udo;
+            jag::sg::Node udo;
             TestClass testVar;
             testVar.setA(4242);
             testVar.setB("string test123");
@@ -170,7 +170,7 @@ bool test()
         }
 
         
-        std::cout << "Testing: User Data setting and retrieval using pass by reference get method with jagSG::Node and a large custom class for data storage. . ." << std::endl;
+        std::cout << "Testing: User Data setting and retrieval using pass by reference get method with jag::sg::Node and a large custom class for data storage. . ." << std::endl;
         {
             class TestClass {
             public:
@@ -185,7 +185,7 @@ bool test()
                     az,ba,bb,bc,bd,be,bf,bg,bh,bi,bj,bk,bl,bm,bn,bo,bp,bq,br,bs,bt,bu,bv,bx,by,bz;
             };
 
-            jagSG::Node udo;
+            jag::sg::Node udo;
             TestClass testVar;
             testVar.setA(4242);
             testVar.setB("string test123");

@@ -25,7 +25,7 @@
 
 #include <jag/disk/Options.h>
 #include <jag/base/Buffer.h>
-#include <jagSG/Node.h>
+#include <jag/sg/Node.h>
 #include <jag/draw/UniformBlock.h>
 
 #include <osg/NodeVisitor>
@@ -56,7 +56,7 @@ public:
 
     virtual void apply( osg::Geode& osgNode );
 
-    jagSG::NodePtr getJagScene();
+    jag::sg::NodePtr getJagScene();
 
 
 protected:
@@ -70,11 +70,11 @@ protected:
     void addMaterial( osg::Material* m, jag::draw::UniformBlockPtr ub );
 
 
-    jagSG::NodePtr _jagScene;
-    jagSG::NodePtr _current;
-    jagSG::NodeVec _nodeStack; // Required to support multiparenting.
+    jag::sg::NodePtr _jagScene;
+    jag::sg::NodePtr _current;
+    jag::sg::NodeVec _nodeStack; // Required to support multiparenting.
 
-    typedef std::map< osg::Object*, jagSG::NodePtr > OSGObjectMap;
+    typedef std::map< osg::Object*, jag::sg::NodePtr > OSGObjectMap;
     OSGObjectMap _objInstances;
 
     typedef std::map< osg::StateSet*, jag::draw::CommandMapPtr > OSGStateSetMap;

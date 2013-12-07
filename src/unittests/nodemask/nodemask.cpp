@@ -20,9 +20,9 @@
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
 #include <jag/base/Transform.h>
-#include <jagSG/Node.h>
-#include <jagSG/CollectionVisitor.h>
-#include <jagSG/NodeMaskCullCallback.h>
+#include <jag/sg/Node.h>
+#include <jag/sg/CollectionVisitor.h>
+#include <jag/sg/NodeMaskCullCallback.h>
 #include <jag/draw/DrawNode.h>
 #include <jag/draw/Uniform.h>
 #include <jag/draw/Program.h>
@@ -36,11 +36,11 @@
 
 using jag::base::TransformD;
 
-using jagSG::Node;
-using jagSG::NodePtr;
-using jagSG::CollectionVisitor;
-using jagSG::NodeMaskCullCallback;
-using jagSG::NodeMaskCullDistributionVisitor;
+using jag::sg::Node;
+using jag::sg::NodePtr;
+using jag::sg::CollectionVisitor;
+using jag::sg::NodeMaskCullCallback;
+using jag::sg::NodeMaskCullDistributionVisitor;
 
 using jag::draw::Bound;
 using jag::draw::BoundPtr;
@@ -56,9 +56,9 @@ using jag::draw::DrawNodeContainer;
 using jag::draw::Program;
 
 
-jagSG::NodePtr createQuad( const gmtl::Point3f& center, const float extent )
+jag::sg::NodePtr createQuad( const gmtl::Point3f& center, const float extent )
 {
-    jagSG::NodePtr quadRoot = jagSG::NodePtr( new jagSG::Node() );
+    jag::sg::NodePtr quadRoot = jag::sg::NodePtr( new jag::sg::Node() );
 
     // Create container to store the quad vertex / normal / texcoord data.
     jagUtil::VNTCVec data;

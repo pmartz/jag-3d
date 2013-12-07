@@ -19,14 +19,15 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#include <jagSG/ExecuteVisitor.h>
+#include <jag/sg/ExecuteVisitor.h>
 #include <jag/draw/DrawInfo.h>
 #include <jag/base/gmtlSupport.h>
 #include <jag/draw/Error.h>
 #include <jag/base/LogMacros.h>
 
 
-namespace jagSG {
+namespace jag {
+namespace sg {
 
 
 ExecuteVisitor::ExecuteVisitor( jag::draw::DrawInfo& drawInfo )
@@ -35,7 +36,7 @@ ExecuteVisitor::ExecuteVisitor( jag::draw::DrawInfo& drawInfo )
 {
     reset();
 }
-ExecuteVisitor::ExecuteVisitor( jag::draw::DrawInfo& drawInfo, jagSG::Node& node )
+ExecuteVisitor::ExecuteVisitor( jag::draw::DrawInfo& drawInfo, jag::sg::Node& node )
   : Visitor( "exec" ),
     _drawInfo( drawInfo )
 {
@@ -69,7 +70,7 @@ void ExecuteVisitor::reset()
 }
 
 
-void ExecuteVisitor::visit( jagSG::Node& node )
+void ExecuteVisitor::visit( jag::sg::Node& node )
 {
     JAG3D_TRACE( "visit()" );
 
@@ -132,5 +133,6 @@ void ExecuteVisitor::updateTransformUniforms()
 }
 
 
-// jagSG
+// namespace jag::sg::
+}
 }

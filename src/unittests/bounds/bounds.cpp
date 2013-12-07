@@ -20,7 +20,7 @@
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
 #include <jag/draw/Bound.h>
-#include <jagSG/Node.h>
+#include <jag/sg/Node.h>
 #include <jag/draw/DrawCommand.h>
 #include <jagUtil/Shapes.h>
 
@@ -30,8 +30,8 @@
 #include <iostream>
 
 
-using jagSG::Node;
-using jagSG::NodePtr;
+using jag::sg::Node;
+using jag::sg::NodePtr;
 
 using jag::draw::Bound;
 using jag::draw::BoundAABox;
@@ -89,7 +89,7 @@ bool test()
     }
 
     {
-        NodePtr root( NodePtr( new jagSG::Node() ) );
+        NodePtr root( NodePtr( new jag::sg::Node() ) );
 
         CommandMapPtr commands( CommandMapPtr( new CommandMap() ) );
         root->setCommandMap( commands );
@@ -160,7 +160,7 @@ bool test()
     }
 
     {
-        NodePtr root( NodePtr( new jagSG::Node() ) );
+        NodePtr root( NodePtr( new jag::sg::Node() ) );
 
         CommandMapPtr commands( CommandMapPtr( new CommandMap() ) );
         root->setCommandMap( commands );

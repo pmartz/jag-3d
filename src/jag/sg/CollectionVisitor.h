@@ -19,11 +19,11 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#ifndef __JAGSG_COLLECTION_VISITOR_H__
-#define __JAGSG_COLLECTION_VISITOR_H__ 1
+#ifndef __JAG_SG_COLLECTION_VISITOR_H__
+#define __JAG_SG_COLLECTION_VISITOR_H__ 1
 
-#include <jagSG/Export.h>
-#include <jagSG/Visitor.h>
+#include <jag/sg/Export.h>
+#include <jag/sg/Visitor.h>
 #include <jag/base/Transform.h>
 #include <jag/draw/DrawNode.h>
 #include <jag/draw/DrawNodeContainer.h>
@@ -34,13 +34,14 @@
 #include <jag/base/gmtlSupport.h>
 
 
-namespace jagSG {
+namespace jag {
+namespace sg {
 
 
 /** \addtogroup jagSGCollection CollectionVisitor and Controls */
 /*@{*/
 
-/** \class CollectionVisitor CollectionVisitor.h <jagSG/CollectionVisitor.h>
+/** \class CollectionVisitor CollectionVisitor.h <jag/sg/CollectionVisitor.h>
 \brief TBD
 \details TBD
 
@@ -50,7 +51,7 @@ class JAGSG_EXPORT CollectionVisitor : public Visitor
 {
 public:
     CollectionVisitor();
-    CollectionVisitor( jagSG::Node& node );
+    CollectionVisitor( jag::sg::Node& node );
     CollectionVisitor( const CollectionVisitor& rhs );
     virtual ~CollectionVisitor();
 
@@ -69,12 +70,12 @@ public:
 
     /** \brief TBD
     \details TBD */
-    virtual void visit( jagSG::Node& node );
+    virtual void visit( jag::sg::Node& node );
 
 
     /** \brief TBD
     \details TBD */
-    void collectAndTraverse( jagSG::Node& node );
+    void collectAndTraverse( jag::sg::Node& node );
 
 
     /** \brief TBD
@@ -251,15 +252,16 @@ protected:
     PlaneIndexStack _planeStack;
 };
 
-typedef jag::base::ptr< jagSG::CollectionVisitor >::shared_ptr CollectionVisitorPtr;
+typedef jag::base::ptr< jag::sg::CollectionVisitor >::shared_ptr CollectionVisitorPtr;
 
 
 /*@}*/
 
 
-// jagSG
+// namespace jag::sg::
+}
 }
 
 
-// __JAGSG_COLLECTION_VISITOR_H__
+// __JAG_SG_COLLECTION_VISITOR_H__
 #endif

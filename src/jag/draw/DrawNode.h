@@ -117,7 +117,7 @@ public:
     }
 
     /** \brief Set the distance (absolute eye coordinate z value).
-    \details Set by jagSG::CollectionVisitor during collection.
+    \details Set by jag::sg::CollectionVisitor during collection.
     Can be used to sort Nodes by depth. */
     void setDistance( const double distance )
     {

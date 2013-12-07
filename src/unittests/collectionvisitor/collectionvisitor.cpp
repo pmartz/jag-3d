@@ -20,8 +20,8 @@
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
 #include <jag/base/Transform.h>
-#include <jagSG/Node.h>
-#include <jagSG/CollectionVisitor.h>
+#include <jag/sg/Node.h>
+#include <jag/sg/CollectionVisitor.h>
 #include <jag/draw/Bound.h>
 #include <jag/draw/DrawNode.h>
 #include <jag/draw/Uniform.h>
@@ -35,9 +35,9 @@
 
 using jag::base::TransformD;
 
-using jagSG::Node;
-using jagSG::NodePtr;
-using jagSG::CollectionVisitor;
+using jag::sg::Node;
+using jag::sg::NodePtr;
+using jag::sg::CollectionVisitor;
 
 using jag::draw::Bound;
 using jag::draw::BoundPtr;
@@ -118,7 +118,7 @@ bool test()
     cv.setDrawGraphTemplate( drawGraphTemplate );
 
     cv.reset();
-    cv.setNearFarOps( jagSG::CollectionVisitor::None ); // Don't do anything with near and far.
+    cv.setNearFarOps( jag::sg::CollectionVisitor::None ); // Don't do anything with near and far.
     CommandMapPtr commands( new CommandMap );
     UniformPtr u0 = UniformPtr( new Uniform( "a", (GLint)1 ) );
     UniformPtr u1 = UniformPtr( new Uniform( "b", (GLint)2 ) );
@@ -172,7 +172,7 @@ bool test()
     const gmtl::Point3d secondCenter( 0., 0., 0. );
 
     cv.reset();
-    cv.setNearFarOps( jagSG::CollectionVisitor::Default );
+    cv.setNearFarOps( jag::sg::CollectionVisitor::Default );
     gmtl::Matrix44d view, proj;
     gmtl::setLookAt( view, initialView, initialCenter, initialUp );
     gmtl::setPerspective( proj, 60., 1., 1., 100. );

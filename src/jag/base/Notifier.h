@@ -36,7 +36,7 @@ namespace base {
 
 /** \class Notifier Notifier.h <jag/base/Notifier.h>
 \brief Common notification system base class.
-\details Currently, this is used by Drawable to notify jagSG::Node
+\details Currently, this is used by Drawable to notify jag::sg::Node
 when the Drawable bound is dirtied. This seems like a very heavy
 weight solution. Need to consider leveraging Poco's notification
 mechanism as a possible replacement. */

@@ -19,8 +19,8 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#include <jagSG/CollectionVisitor.h>
-#include <jagSG/Node.h>
+#include <jag/sg/CollectionVisitor.h>
+#include <jag/sg/Node.h>
 #include <jag/draw/DrawNode.h>
 #include <jag/base/gmtlSupport.h>
 #include <jag/draw/Error.h>
@@ -32,7 +32,8 @@
 #include <cfloat>
 
 
-namespace jagSG {
+namespace jag {
+namespace sg {
 
 
 CollectionVisitor::CollectionVisitor()
@@ -43,7 +44,7 @@ CollectionVisitor::CollectionVisitor()
 {
     reset();
 }
-CollectionVisitor::CollectionVisitor( jagSG::Node& node )
+CollectionVisitor::CollectionVisitor( jag::sg::Node& node )
   : Visitor( "collect" ),
     _currentNodes( NULL ),
     _nearFarOps( Default ),
@@ -124,7 +125,7 @@ void CollectionVisitor::reset()
 }
 
 
-void CollectionVisitor::visit( jagSG::Node& node )
+void CollectionVisitor::visit( jag::sg::Node& node )
 {
     CommandMapStackHelper cmsh( *this, node.getCommandMap() );
     pushPlanes();
@@ -147,8 +148,8 @@ void CollectionVisitor::visit( jagSG::Node& node )
     bool collect( true );
     {
     JAG3D_PROFILE( "callbacks" );
-    jagSG::Node::CollectionCallbacks& callbacks( node.getCollectionCallbacks() );
-    BOOST_FOREACH( jagSG::Node::CallbackPtr cb, callbacks )
+    jag::sg::Node::CollectionCallbacks& callbacks( node.getCollectionCallbacks() );
+    BOOST_FOREACH( jag::sg::Node::CallbackPtr cb, callbacks )
     {
         if( !( (*cb)( this, info ) ) )
         {
@@ -164,7 +165,7 @@ void CollectionVisitor::visit( jagSG::Node& node )
     popPlanes();
 }
 
-void CollectionVisitor::collectAndTraverse( jagSG::Node& node )
+void CollectionVisitor::collectAndTraverse( jag::sg::Node& node )
 {
     MatrixStackHelper msh( *this, node.getTransform() );
 
@@ -469,6 +470,6 @@ bool CollectionVisitor::CollectionInfo::isContained() const
 }
 
 
-
-// jagSG
+// namespace jag::sg::
+}
 }

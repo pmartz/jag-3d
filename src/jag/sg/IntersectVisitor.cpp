@@ -19,8 +19,8 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#include <jagSG/IntersectVisitor.h>
-#include <jagSG/Node.h>
+#include <jag/sg/IntersectVisitor.h>
+#include <jag/sg/Node.h>
 #include <jag/draw/DrawNode.h>
 #include <jag/draw/BufferObject.h>
 #include <jag/draw/VertexAttrib.h>
@@ -109,14 +109,15 @@ using namespace gmtl;
       return t >= static_cast<DATA_TYPE>(0);
    }
 
-namespace jagSG {
+namespace jag {
+namespace sg {
     
 
     
     
 
 
-IntersectVisitor::IntersectVisitor( jagSG::NodePtr node, gmtl::Ray<double> ray )
+IntersectVisitor::IntersectVisitor( jag::sg::NodePtr node, gmtl::Ray<double> ray )
   : Visitor( "Intersect" )
     
 {
@@ -138,7 +139,7 @@ IntersectVisitor::~IntersectVisitor()
 }
 
 
-void IntersectVisitor::intersect(jagSG::Node& node) {
+void IntersectVisitor::intersect(jag::sg::Node& node) {
         
     
     if(_rayDeque.size() <1)  
@@ -254,4 +255,6 @@ void IntersectVisitor::reset()
 }
 
 
+// namespace jag::sg::
+}
 }

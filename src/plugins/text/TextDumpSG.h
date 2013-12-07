@@ -22,14 +22,14 @@
 #ifndef __TEXT_DUMP_S_G_H__
 #define __TEXT_DUMP_S_G_H__ 1
 
-#include <jagSG/Visitor.h>
+#include <jag/sg/Visitor.h>
 
 
 /** \class TextDumpSG TextDumpSG.h
 \brief Dump scene graph information to a text file.
 \details TBD
 */
-class TextDumpSG : public jagSG::Visitor
+class TextDumpSG : public jag::sg::Visitor
 {
 public:
     TextDumpSG( std::ostream& oStr );
@@ -37,7 +37,7 @@ public:
 
     /** \brief TBD
     \details TBD */
-    virtual void visit( jagSG::Node& node );
+    virtual void visit( jag::sg::Node& node );
 
 protected:
     std::ostream& _oStr;

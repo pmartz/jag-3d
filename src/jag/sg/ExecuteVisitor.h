@@ -19,20 +19,21 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#ifndef __JAGSG_EXECUTE_VISITOR_H__
-#define __JAGSG_EXECUTE_VISITOR_H__ 1
+#ifndef __JAG_SG_EXECUTE_VISITOR_H__
+#define __JAG_SG_EXECUTE_VISITOR_H__ 1
 
-#include <jagSG/Export.h>
-#include <jagSG/Visitor.h>
+#include <jag/sg/Export.h>
+#include <jag/sg/Visitor.h>
 #include <jag/base/Transform.h>
 #include <jag/draw/Uniform.h>
 #include <jag/base/ptr.h>
 
 
-namespace jagSG {
+namespace jag {
+namespace sg {
 
 
-/** \class ExecuteVisitor ExecuteVisitor.h <jagSG/ExecuteVisitor.h>
+/** \class ExecuteVisitor ExecuteVisitor.h <jag/sg/ExecuteVisitor.h>
 \brief TBD
 \details TBD
 */
@@ -40,7 +41,7 @@ class JAGSG_EXPORT ExecuteVisitor : public Visitor
 {
 public:
     ExecuteVisitor( jag::draw::DrawInfo& drawInfo );
-    ExecuteVisitor( jag::draw::DrawInfo& drawInfo, jagSG::Node& node );
+    ExecuteVisitor( jag::draw::DrawInfo& drawInfo, jag::sg::Node& node );
     ExecuteVisitor( const ExecuteVisitor& rhs );
     virtual ~ExecuteVisitor();
 
@@ -55,7 +56,7 @@ public:
 
     /** \brief TBD
     \details TBD */
-    virtual void visit( jagSG::Node& node );
+    virtual void visit( jag::sg::Node& node );
 
 protected:
     void updateTransformUniforms();
@@ -64,12 +65,13 @@ protected:
     jag::base::TransformD _transform;
 };
 
-typedef jag::base::ptr< jagSG::ExecuteVisitor >::shared_ptr ExecuteVisitorPtr;
+typedef jag::base::ptr< jag::sg::ExecuteVisitor >::shared_ptr ExecuteVisitorPtr;
 
 
-// jagSG
+// namespace jag::sg::
+}
 }
 
 
-// __JAGSG_EXECUTE_VISITOR_H__
+// __JAG_SG_EXECUTE_VISITOR_H__
 #endif

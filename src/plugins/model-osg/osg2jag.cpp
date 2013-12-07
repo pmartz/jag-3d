@@ -57,8 +57,8 @@ using namespace jag::draw;
 
 Osg2Jag::Osg2Jag( const jag::disk::Options* options )
   : osg::NodeVisitor( osg::NodeVisitor::TRAVERSE_ALL_CHILDREN ),
-    _jagScene( jagSG::NodePtr( (jagSG::Node*)NULL ) ),
-    _current( jagSG::NodePtr( (jagSG::Node*)NULL ) ),
+    _jagScene( jag::sg::NodePtr( (jag::sg::Node*)NULL ) ),
+    _current( jag::sg::NodePtr( (jag::sg::Node*)NULL ) ),
     _vertexAttribName( "vertex" ),
     _normalAttribName( "normal" ),
     _texCoordAttribName( "texcoord" )
@@ -109,8 +109,8 @@ void Osg2Jag::apply( osg::Geode& osgNode )
         return;
 
     // storeInParent indicates that apply(Geometry) should not
-    // create a new jagSG::Node, but rather store its jag::draw::CommandMap
-    // and jag::draw::Drawable in the jagSG::Node corresponding to this
+    // create a new jag::sg::Node, but rather store its jag::draw::CommandMap
+    // and jag::draw::Drawable in the jag::sg::Node corresponding to this
     // osg::Geode.
     bool storeInParent(
         ( osgNode.getNumDrawables() == 1 ) &&
@@ -132,7 +132,7 @@ bool Osg2Jag::preTraverse( osg::Object* osgObject, osg::StateSet* stateSet, cons
 {
     if( _jagScene == NULL )
     {
-        _jagScene = jagSG::NodePtr( new jagSG::Node() );
+        _jagScene = jag::sg::NodePtr( new jag::sg::Node() );
         _current = _jagScene;
     }
     else
@@ -146,7 +146,7 @@ bool Osg2Jag::preTraverse( osg::Object* osgObject, osg::StateSet* stateSet, cons
         }
         else
         {
-            jagSG::NodePtr np( new jagSG::Node() );
+            jag::sg::NodePtr np( new jag::sg::Node() );
             _current->addChild( np );
             _current = np;
             _objInstances[ osgObject ] = np;
@@ -166,7 +166,7 @@ void Osg2Jag::postTraverse()
 {
     _nodeStack.pop_back();
     _current = ( _nodeStack.empty() ?
-        jagSG::NodePtr( (jagSG::Node*)NULL ) : _nodeStack.back() );
+        jag::sg::NodePtr( (jag::sg::Node*)NULL ) : _nodeStack.back() );
 }
 
 
@@ -423,7 +423,7 @@ void Osg2Jag::apply( osg::StateSet* stateSet )
 }
 
 
-jagSG::NodePtr Osg2Jag::getJagScene()
+jag::sg::NodePtr Osg2Jag::getJagScene()
 {
     return( _jagScene );
 }

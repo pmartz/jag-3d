@@ -64,7 +64,7 @@ immediately returns.
 \section NearFar More on Near and Far
 
 Near and far values are computed during collection.
-jagSG::CollectionVisitor has a projection matrix, which it uses to define
+jag::sg::CollectionVisitor has a projection matrix, which it uses to define
 the cull frustum volume, but this projection matrix doesn't contain the
 auto-computed near and far values, because they haven't been computed
 until the collection traversal is complete.
@@ -76,7 +76,7 @@ must be computed and also set as uniforms. In the case of the
 modelview-projection matrix, this needs to be done every time the model matrix
 changes.
 
-To make all this work, the jagSG::CollectionVisitor, DrawGraph,
+To make all this work, the jag::sg::CollectionVisitor, DrawGraph,
 TransformCallback, and application code must all work together. In pseudocode:
 
 \code
@@ -99,7 +99,7 @@ for use by shader code.
 
 What goes on under the hood?
 
-\li The CollectionVisitor accumulates the jagSG::Node transform matrix as it descends
+\li The CollectionVisitor accumulates the jag::sg::Node transform matrix as it descends
 the scene graph. The accumulated transform matrix is stored in the jag::draw::DrawNode. In
 FFP terminology, this is the model part of the modelview matrix.
 

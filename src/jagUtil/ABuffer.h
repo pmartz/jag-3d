@@ -28,15 +28,17 @@
 #include <jag/draw/Framebuffer.h>
 #include <jag/draw/Texture.h>
 #include <jag/draw/Program.h>
-#include <jagSG/SelectContainerCallback.h>
+#include <jag/sg/SelectContainerCallback.h>
 #include <jag/draw/PerContextData.h>
 #include <jag/base/ptr.h>
 #include <jag/base/LogBase.h>
 
 
 // Forwaed
-namespace jagSG {
-    class CollectionVisitor;
+namespace jag {
+    namespace sg {
+        class CollectionVisitor;
+    }
 }
 
 
@@ -85,17 +87,17 @@ public:
     rendered by normal (opaque) means. */
     /**@{*/
 
-    /** \brief Convenience utility for toggling ABuffer transparancy at the jagSG::Node level.
+    /** \brief Convenience utility for toggling ABuffer transparancy at the jag::sg::Node level.
     \details If \c enable is true, this method saves the Node's existing CommandMap (of any)
     as user data, replaces the CommandMap with one required for ABuffer rendering, and adds a
-    jagSG::SelectContainerCallback to route collected Drawables into the ABuffer's render
+    jag::sg::SelectContainerCallback to route collected Drawables into the ABuffer's render
     NodeContainer. If \c enable is false, \c node is restored to its original state. */
-    void setTransparencyEnable( jagSG::Node& node, const bool enable=true );
-    /** \brief Convenience utility to toggle transparency at the jagSG::Node level.
+    void setTransparencyEnable( jag::sg::Node& node, const bool enable=true );
+    /** \brief Convenience utility to toggle transparency at the jag::sg::Node level.
     \details Determines current transparency state by checking for presense or absence
     of our NodeContainer selection callback, then calls setTransparencyEnable() to
     invert the current state. */
-    void toggleTransparencyEnable( jagSG::Node& node );
+    void toggleTransparencyEnable( jag::sg::Node& node );
     /** \brief Set a CommandMap to use for toggling to non-transparent.
     \details When setting a Node to be opaque (via setTransparencyEnagle(node,false)
     or by toggleTransparencyEnable(), if the Node's UserData does not contain a
@@ -112,9 +114,9 @@ public:
     \details Calling code should assign this CommandMap and Node::Callback to the
     jagSG root node of any subgraphs that are to be rendered using the a-buffer
     algorithm. */
-    void getABufferControls( jag::draw::CommandMapPtr& commands, jagSG::SelectContainerCallbackPtr& callback );
+    void getABufferControls( jag::draw::CommandMapPtr& commands, jag::sg::SelectContainerCallbackPtr& callback );
     /** \overload */
-    void getABufferControls( jagSG::SelectContainerCallbackPtr& callback );
+    void getABufferControls( jag::sg::SelectContainerCallbackPtr& callback );
     /** \brief Get the NodeContainer index for transparent geometry rendering.
     \details Equivalent to getStartContainer() + 1. */
     unsigned int getTransparentNodeContainer() const;
@@ -123,14 +125,14 @@ public:
 
 
     /** \brief Call this function to render a frame. */
-    void renderFrame( jagSG::CollectionVisitor& collect, jag::draw::DrawInfo& drawInfo );
+    void renderFrame( jag::sg::CollectionVisitor& collect, jag::draw::DrawInfo& drawInfo );
 
     /** \brief Call this function for a window resize event. */
     void reshape( const int w, const int h );
 
     /** \brief Bitflags indicating matrix uniforms required by ABuffer shader code.
     \details Application code should bitwise-OR these flags into the TransformCallback class.
-    Here's an example, for use with jagSG::CollectionVisitor:
+    Here's an example, for use with jag::sg::CollectionVisitor:
     \code
     jag::draw::TransformCallback* xformCB( CollectionVisitor::getTransformCallback() );
     xformCB->setRequiredMatrixUniforms( xformCB->getRequiredMatrixUniforms() |
@@ -211,7 +213,7 @@ protected:
     jag::draw::FramebufferPtr _defaultFBO;
     jag::draw::CommandMapPtr _commands, _opaqueCommands;
     unsigned int _opaqueContainer;
-    jagSG::SelectContainerCallbackPtr _callback, _opaqueCallback;
+    jag::sg::SelectContainerCallbackPtr _callback, _opaqueCallback;
     jag::draw::DrawGraphPtr _drawGraphTemplate;
 
     jag::draw::ProgramPtr _clearProgram, _renderProgram, _resolveProgram;

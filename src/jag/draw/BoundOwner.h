@@ -40,7 +40,7 @@ namespace draw {
 /** \class BoundOwner BoundOwner.h <jag/draw/BoundOwner.h>
 \brief Common base class for objects that own bounding volumes.
 \details Currently the two derived classes are jag::draw::Drawable and
-jagSG::Node.
+jag::sg::Node.
 
 \specBegin BoundOwner
 
@@ -119,7 +119,7 @@ public:
     /** \brief Create a new uninitialized bound.
     \details This function is called by getBound() if \c _initialBound is NULL.
     Typically, this function returns a BoundAABoxPtr for subclass jag::draw::Drawable,
-    and a BoundSphere for subclass jagSG::Node.
+    and a BoundSphere for subclass jag::sg::Node.
 
     \specFuncBegin
     \specTableBegin
@@ -188,7 +188,7 @@ public:
 
     The bound could be empty if the BoundOwner subclass doesn't
     have enough information to compute the bound. See the
-    BoundOwner subclasses (jag::draw::Drawable and jagSG::Node)
+    BoundOwner subclasses (jag::draw::Drawable and jag::sg::Node)
     for <em>uncomputable</em> bound reasons.
 
     \specTableBegin
@@ -230,8 +230,8 @@ public:
     /** \brief Mark a bound as dirty.
     \details Set the _dirty flag to \c dirty.
 
-    Typically, classes derived from BoundOwner (jag::draw::Drawable and jagSG::Node)
-    override this function to notify observer classes (parent jagSG::Node objects)
+    Typically, classes derived from BoundOwner (jag::draw::Drawable and jag::sg::Node)
+    override this function to notify observer classes (parent jag::sg::Node objects)
     that the bound has been dirtied. See setBoundDirtyFlag(), which simply sets
     the dirty flag without notifying observers.
 
@@ -304,7 +304,7 @@ public:
 
     /** TBD jagDraw does not depend on jagSG. Consequently,
     jag::draw::Drawable needs a callback mechanism to notify owning
-    jagSG::Node objects that a bound has changed. TBD consider
+    jag::sg::Node objects that a bound has changed. TBD consider
     moving to the Poco notification system. */
     struct BoundDirtyNotifyInfo : jag::base::Notifier::NotifierInfo
     {

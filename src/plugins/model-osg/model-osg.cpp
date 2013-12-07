@@ -21,7 +21,7 @@
 
 #include <jag/disk/PluginManager.h>
 #include <jag/disk/ReaderWriter.h>
-#include <jagSG/Node.h>
+#include <jag/sg/Node.h>
 #include <jag/base/LogMacros.h>
 
 #include <Poco/ClassLibrary.h>
@@ -82,7 +82,7 @@ public:
 
         Osg2Jag osg2Jag( options );
         osgNode->accept( osg2Jag );
-        jagSG::NodePtr result( osg2Jag.getJagScene() );
+        jag::sg::NodePtr result( osg2Jag.getJagScene() );
         return( ReadStatus( boost::any( result ) ) );
     }
     virtual ReadStatus read( std::istream& iStr, const Options* /*options*/ ) const
@@ -92,7 +92,7 @@ public:
 
     virtual bool write( const std::string& fileName, const void* data, const Options* /*options*/ ) const
     {
-        osg::ref_ptr< osg::Node > osgNode( convertToOsgNode( (jagSG::Node*)data ) );
+        osg::ref_ptr< osg::Node > osgNode( convertToOsgNode( (jag::sg::Node*)data ) );
         return( osgDB::writeNodeFile( *osgNode, fileName ) );
     }
     virtual bool write( std::ostream& oStr, const void* data, const Options* /*options*/ ) const
@@ -101,7 +101,7 @@ public:
     }
 
 protected:
-    osg::Node* convertToOsgNode( jagSG::Node* jagNode ) const
+    osg::Node* convertToOsgNode( jag::sg::Node* jagNode ) const
     {
         return( NULL );
     }
