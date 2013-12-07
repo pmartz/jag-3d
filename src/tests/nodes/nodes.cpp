@@ -125,11 +125,13 @@ jag::sg::NodePtr NodesDemo::makeScene( const gmtl::Point3f& offset, const gmtl::
 bool NodesDemo::startup( const unsigned int numContexts )
 {
     _scene = makeScene( gmtl::Point3f( 0.f, 1.f, .5f ) );
-    _scene->addChild( makeScene( gmtl::Point3f( -1.f, 0.f, 0.f ) ) );
+    jag::sg::NodePtr sceneNode = makeScene( gmtl::Point3f( -1.f, 0.f, 0.f ) );
+    _scene->addChild( sceneNode );
 
     gmtl::Matrix44d mat;
     mat = gmtl::make( gmtl::AxisAngled( 1., 1., 0., 0. ), gmtl::Type2Type< gmtl::Matrix44d >() );
-    _scene->addChild( makeScene( gmtl::Point3f( 1.1f, -.25f, 0.f ), mat ) );
+    sceneNode = makeScene( gmtl::Point3f( 1.1f, -.25f, 0.f ), mat );
+    _scene->addChild( sceneNode );
 
 
     jag::draw::CommandMapPtr commands( _scene->getCommandMap() );

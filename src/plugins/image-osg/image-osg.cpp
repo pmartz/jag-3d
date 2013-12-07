@@ -87,7 +87,8 @@ public:
         }
 
         ImagePtr image( convertFromOsgImage( osgImage.get() ) );
-        return( ReadStatus( boost::any( image ) ) );
+        boost::any tempAny( image );
+        return( ReadStatus( tempAny ) );
     }
     virtual ReadStatus read( std::istream& iStr, const Options* /*options*/ ) const
     {

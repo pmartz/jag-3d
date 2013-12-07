@@ -108,7 +108,8 @@ public:
         ShaderPtr shader( ShaderPtr( new Shader( _type ) ) );
         shader->addSourceString( shaderSource );
 
-        return( ReadStatus( boost::any( shader ) ) );
+        boost::any tempAny( shader );
+        return( ReadStatus( tempAny ) );
     }
 
 protected:
