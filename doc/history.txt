@@ -1,6 +1,8 @@
 ----------------------------------------------------------------------
 
-Pending release
+7 Dec 2013  v0.01.11
+  * GL3W compatibility solution. If you do not autogenerate gl3w.c/.h
+    source files, default ones will be automatically supplied.
   * Fix for issue 32: source code repo and namespace reorgaization.
 
 ----------------------------------------------------------------------

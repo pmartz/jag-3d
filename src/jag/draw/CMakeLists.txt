@@ -95,9 +95,9 @@ _addLibrary( ${_libName}
 )
 
 
-if( JAG3D_USE_GL3W AND JAG3D_USE_GL3W_AUTOGENERATE )
+if( JAG3D_USE_GL3W )
     # Generate gl3w.c and gl3w.h if out of data.
-    if( PYTHONINTERP_FOUND )
+    if( JAG3D_USE_GL3W_AUTOGENERATE AND PYTHONINTERP_FOUND )
         add_custom_command( 
             OUTPUT
                 ${PROJECT_SOURCE_DIR}/src/jag/draw/gl3w.c
