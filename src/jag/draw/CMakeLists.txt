@@ -108,7 +108,13 @@ if( JAG3D_USE_GL3W AND JAG3D_USE_GL3W_AUTOGENERATE )
             DEPENDS ${GL3_GLCOREARB_HEADER}/GL/glcorearb.h
             COMMENT "Executing Python-based GL3W source code generation:" )
     else()
-        message( STATUS "Unable to generate GL3W source because Python was not found." )
+        message( WARNING "Copying default GL3W source because Python was not found. Please use glcorearb.h from src/gl3w/GL/glcorearb.h to ensure compatibility." )
+        configure_file( ${PROJECT_SOURCE_DIR}/src/gl3w/gl3w.c
+            ${PROJECT_SOURCE_DIR}/src/jag/draw/gl3w.c
+            COPYONLY )
+        configure_file( ${PROJECT_SOURCE_DIR}/src/gl3w/gl3w.h
+            ${PROJECT_SOURCE_DIR}/src/jag/draw/gl3w.h
+            COPYONLY )
     endif()
 endif()
 
