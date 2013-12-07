@@ -1,35 +1,65 @@
-----------------------------------------------------------------------
+/**
 
-7 Dec 2013  v0.01.11
-  * GL3W compatibility solution. If you do not autogenerate gl3w.c/.h
-    source files, default ones will be automatically supplied.
-  * Fix for issue 32: source code repo and namespace reorgaization.
+\page JagRevisionHistory JAG Revision History
 
-----------------------------------------------------------------------
 
-6 Dec 2013  v0.01.10
-  * jagDraw::Node and NodeContainer name change to DrawNode and
-    DrawNodeContainer.
-  * NodeContainer caches jagDraw::Nodes.
-  * Optimization to OSG model loader to reduce scene graph size.
-  * Fix for incorrect clipping issue.
-  * Added program parameter support.
-  * Optional rendering of draw graph node bounds.
+\section vPending Pending Release
 
-----------------------------------------------------------------------
+- Added a command graph to cache CommandMap accumulations.
+- Revision history reformatted for Doxygen.
 
-19 Nov 2013  v0.01.02
-  * Adopt zlib license.
-  * Dynamic data in VAO is now supported. VAO re-specifies buffer
-    object data if all or part of the buffer object is dirty.
+<hr>
 
-----------------------------------------------------------------------
 
- 9 Nov 2013  v0.01.01
-  * Adopt MIT license.
+\section v00111 v0.01.11
 
-----------------------------------------------------------------------
+<small>Released 7 Dec 2013.</small>
 
- 4 Nov 2013  v0.01.00
-  * First significant release.
-  * License is LGPL.
+- GL3W compatibility solution. If you do not autogenerate gl3w.c/.h source files, default ones will be automatically supplied.
+- Fix for issue 32: source code repo and namespace reorgaization.
+- jagDraw::Node and NodeContainer name change to DrawNode and DrawNodeContainer.
+- jagDraw::DrawablePrep name change to Command.
+
+<hr>
+
+
+\section v00110 v0.01.10
+
+<small>Released 6 Dec 2013</small>
+
+- NodeContainer caches jagDraw::Nodes.
+- Optimization to OSG model loader to reduce scene graph size.
+- Fix for incorrect clipping issue.
+- Added program parameter support.
+- Optional rendering of draw graph node bounds.
+
+<hr>
+
+
+\section v00102 v0.01.02
+
+<small>Released 19 Nov 2013</small>
+
+- Adopt zlib license.
+- Dynamic data in VAO is now supported. VAO re-specifies buffer object data if all or part of the buffer object is dirty.
+
+<hr>
+
+
+\section v00101 v0.01.01
+
+<small>Released 9 Nov 2013</small>
+
+- Adopt MIT license.
+
+<hr>
+
+
+\section v00100 v0.01.00
+
+<small>dmall>Released 4 Nov 2013</small>
+
+- First significant release.
+- License is LGPL.
+
+*/

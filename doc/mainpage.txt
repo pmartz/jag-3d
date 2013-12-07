@@ -4,7 +4,8 @@
 
 \ref JagBuild "Building Jag3D"<br>
 \ref JagRun "Running Jag3D"<br>
-\ref JagCommits "Mercurial (Hg) Guidelines for Jag3D Commits"
+\ref JagCommits "Mercurial (Hg) Guidelines for Jag3D Commits"<br>
+\ref JagRevisionHistory "Revision History"
 
 <hr>
 
