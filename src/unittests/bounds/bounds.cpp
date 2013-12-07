@@ -19,9 +19,9 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#include <jagDraw/Bound.h>
+#include <jag/draw/Bound.h>
 #include <jagSG/Node.h>
-#include <jagDraw/DrawCommand.h>
+#include <jag/draw/DrawCommand.h>
 #include <jagUtil/Shapes.h>
 
 #include <boost/foreach.hpp>
@@ -33,15 +33,15 @@
 using jagSG::Node;
 using jagSG::NodePtr;
 
-using jagDraw::Bound;
-using jagDraw::BoundAABox;
-using jagDraw::BoundSphere;
-using jagDraw::BoundPtr;
-using jagDraw::CommandMap;
-using jagDraw::CommandMapPtr;
-using jagDraw::Drawable;
-using jagDraw::DrawablePtr;
-using jagDraw::DrawArrays;
+using jag::draw::Bound;
+using jag::draw::BoundAABox;
+using jag::draw::BoundSphere;
+using jag::draw::BoundPtr;
+using jag::draw::CommandMap;
+using jag::draw::CommandMapPtr;
+using jag::draw::Drawable;
+using jag::draw::DrawablePtr;
+using jag::draw::DrawArrays;
 
 
 DrawablePtr createQuad( jagUtil::VNTCVec& data, const gmtl::Point3f& center, const float extent )
@@ -51,7 +51,7 @@ DrawablePtr createQuad( jagUtil::VNTCVec& data, const gmtl::Point3f& center, con
         gmtl::Point3f( extent/2.f, extent/2.f, 0.f ) );
     const gmtl::Vec3f uVec( extent, 0.f, 0.f );
     const gmtl::Vec3f vVec( 0.f, extent, 0.f );
-    jagDraw::DrawablePtr quad( jagUtil::makePlane(
+    jag::draw::DrawablePtr quad( jagUtil::makePlane(
         data, corner, uVec, vVec ) );
 
     return( quad );
@@ -191,7 +191,7 @@ bool test()
                 return( false );
             }
 
-            jagDraw::DrawArraysPtr da( jagDraw::DrawArraysPtr( new jagDraw::DrawArrays( GL_POINTS, 0, 1 ) ) );
+            jag::draw::DrawArraysPtr da( jag::draw::DrawArraysPtr( new jag::draw::DrawArrays( GL_POINTS, 0, 1 ) ) );
             drawable->addDrawCommand( da );
             if( !( root->getBoundDirty() ) )
             {

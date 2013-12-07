@@ -24,7 +24,7 @@
 
 #include <jag/base/types.h>
 #include <jagSG/Node.h>
-#include <jagDraw/CommandMap.h>
+#include <jag/draw/CommandMap.h>
 #include <jag/base/LogBase.h>
 #include <jag/base/ptr.h>
 
@@ -80,7 +80,7 @@ if present, and calls Node::traverse() otherwise. Typically, application classes
 should derive from Visitor to take advantage of this, unless they explicitly need to
 visit all children.
 
-VisitorBase contains support for jagSG::Node, matrix, and jagDraw::CommandMap stacks.
+VisitorBase contains support for jagSG::Node, matrix, and jag::draw::CommandMap stacks.
 Not all visitors will need these stacks, so using them is the responsibility of the
 derived class. As an example, a derived class might override visit() as follows:
 \code
@@ -103,14 +103,14 @@ public:
       : jag::base::LogBase( logName.empty() ? std::string( "jag.sg.visit." ) + logNameSuffix : logName )
     {
         _matrixStack.push_back( gmtl::MAT_IDENTITY44D );
-        _commandStack.push_back( jagDraw::CommandMap() );
+        _commandStack.push_back( jag::draw::CommandMap() );
     }
 
     VisitorBase( jagSG::Node& node, const std::string& logNameSuffix, const std::string& logName=std::string( "" ) )
       : jag::base::LogBase( logName.empty() ? std::string( "jag.sg.visit." ) + logNameSuffix : logName )
     {
         _matrixStack.push_back( gmtl::MAT_IDENTITY44D );
-        _commandStack.push_back( jagDraw::CommandMap() );
+        _commandStack.push_back( jag::draw::CommandMap() );
 
         node.accept( *this );
     }
@@ -199,7 +199,7 @@ public:
     /** \brief Push a CommandMap onto the stack.
     \details If \c commands != NULL, push the CommandMap and return true.
     Otherwise, do nothing and return false. */
-    bool pushCommandMap( const jagDraw::CommandMapPtr& commands )
+    bool pushCommandMap( const jag::draw::CommandMapPtr& commands )
     {
         JAG3D_PROFILE( "CM stack processing" );
         if( ( commands == NULL ) || commands->empty() )
@@ -216,7 +216,7 @@ public:
     {
         _commandStack.resize( 1 );
     }
-    const jagDraw::CommandMapSimpleVec& getCommands() const
+    const jag::draw::CommandMapSimpleVec& getCommands() const
     {
         return( _commandStack );
     }
@@ -248,7 +248,7 @@ public:
     class CommandMapStackHelper
     {
     public:
-        CommandMapStackHelper( VisitorBase& visitorBase, const jagDraw::CommandMapPtr& commands )
+        CommandMapStackHelper( VisitorBase& visitorBase, const jag::draw::CommandMapPtr& commands )
             : _visitorBase( visitorBase ),
               _op( _visitorBase.pushCommandMap( commands ) )
         {}
@@ -267,7 +267,7 @@ public:
 protected:
     NodeVec _nodeStack;
     jag::base::Matrix44dVec _matrixStack;
-    jagDraw::CommandMapSimpleVec _commandStack;
+    jag::draw::CommandMapSimpleVec _commandStack;
 };
 
 typedef jag::base::ptr< jagSG::VisitorBase >::shared_ptr VisitorBasePtr;

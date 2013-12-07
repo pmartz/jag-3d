@@ -30,7 +30,7 @@ _addLibrary( ${_libName}
 
 install(
     DIRECTORY .
-    DESTINATION include/jagDisk
+    DESTINATION include/jag/disk
     USE_SOURCE_PERMISSIONS
     FILES_MATCHING 
     PATTERN "*.h"

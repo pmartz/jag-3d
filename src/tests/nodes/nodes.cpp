@@ -21,10 +21,10 @@
 
 #include <demoSupport/DemoInterface.h>
 
-#include <jagDraw/Common.h>
+#include <jag/draw/Common.h>
 #include <jagSG/Common.h>
 #include <jagSG/ExecuteVisitor.h>
-#include <jagDraw/PerContextData.h>
+#include <jag/draw/PerContextData.h>
 #include <jag/base/Transform.h>
 #include <jag/disk/ReadWrite.h>
 #include <jag/base/Version.h>
@@ -65,9 +65,9 @@ protected:
 
     jagSG::NodePtr _scene;
 
-    typedef jagDraw::PerContextData< gmtl::Matrix44d > PerContextMatrix44d;
+    typedef jag::draw::PerContextData< gmtl::Matrix44d > PerContextMatrix44d;
     PerContextMatrix44d _proj;
-    jagDraw::BoundPtr _bSphere;
+    jag::draw::BoundPtr _bSphere;
 };
 
 
@@ -81,8 +81,8 @@ DemoInterface* DemoInterface::create( bpo::options_description& desc )
 
 jagSG::NodePtr NodesDemo::makeScene( const gmtl::Point3f& offset, const gmtl::Matrix44d& trans )
 {
-    jagDraw::CommandMapPtr commands( jagDraw::CommandMapPtr( new jagDraw::CommandMap() ) );
-    jagDraw::DrawablePtr drawable( jagDraw::DrawablePtr( new jagDraw::Drawable() ) );
+    jag::draw::CommandMapPtr commands( jag::draw::CommandMapPtr( new jag::draw::CommandMap() ) );
+    jag::draw::DrawablePtr drawable( jag::draw::DrawablePtr( new jag::draw::Drawable() ) );
     jagSG::NodePtr node( jagSG::NodePtr( new jagSG::Node() ) );
 
     // Interleaved vertices and normals.
@@ -96,23 +96,23 @@ jagSG::NodePtr NodesDemo::makeScene( const gmtl::Point3f& offset, const gmtl::Ma
     data.push_back( gmtl::Point3f( 1.f, 1.f, 0.f ) + offset );
     data.push_back( gmtl::Point3f( 0.f, 0.f, 1.f ) );
     jag::base::BufferPtr ibp( new jag::base::Buffer( data.size() * sizeof( gmtl::Point3f ), (void*)&(data[0]) ) );
-    jagDraw::BufferObjectPtr ibop( new jagDraw::BufferObject( GL_ARRAY_BUFFER, ibp ) );
+    jag::draw::BufferObjectPtr ibop( new jag::draw::BufferObject( GL_ARRAY_BUFFER, ibp ) );
 
     const GLsizei stride( sizeof( float ) * 6 );
-    jagDraw::VertexAttribPtr verts( new jagDraw::VertexAttrib(
+    jag::draw::VertexAttribPtr verts( new jag::draw::VertexAttrib(
         "vertex", 3, GL_FLOAT, GL_FALSE, stride, 0 ) );
     const GLsizei startOffset( sizeof( float ) * 3 );
-    jagDraw::VertexAttribPtr norms( new jagDraw::VertexAttrib(
+    jag::draw::VertexAttribPtr norms( new jag::draw::VertexAttrib(
         "normal", 3, GL_FLOAT, GL_FALSE, stride, startOffset ) );
 
-    jagDraw::VertexArrayObjectPtr vaop = jagDraw::VertexArrayObjectPtr( new jagDraw::VertexArrayObject() );
-    vaop->addVertexArrayCommand( ibop, jagDraw::VertexArrayObject::Vertex );
-    vaop->addVertexArrayCommand( verts, jagDraw::VertexArrayObject::Vertex );
+    jag::draw::VertexArrayObjectPtr vaop = jag::draw::VertexArrayObjectPtr( new jag::draw::VertexArrayObject() );
+    vaop->addVertexArrayCommand( ibop, jag::draw::VertexArrayObject::Vertex );
+    vaop->addVertexArrayCommand( verts, jag::draw::VertexArrayObject::Vertex );
     vaop->addVertexArrayCommand( norms );
     commands->insert( vaop );
 
-    drawable->addDrawCommand( jagDraw::DrawCommandPtr(
-        new jagDraw::DrawArrays( GL_TRIANGLE_STRIP, 0, 4 ) ) );
+    drawable->addDrawCommand( jag::draw::DrawCommandPtr(
+        new jag::draw::DrawArrays( GL_TRIANGLE_STRIP, 0, 4 ) ) );
 
     node->setCommandMap( commands );
     node->addDrawable( drawable );
@@ -132,16 +132,16 @@ bool NodesDemo::startup( const unsigned int numContexts )
     _scene->addChild( makeScene( gmtl::Point3f( 1.1f, -.25f, 0.f ), mat ) );
 
 
-    jagDraw::CommandMapPtr commands( _scene->getCommandMap() );
+    jag::draw::CommandMapPtr commands( _scene->getCommandMap() );
     if( commands == NULL )
     {
-        commands = jagDraw::CommandMapPtr( new jagDraw::CommandMap() );
+        commands = jag::draw::CommandMapPtr( new jag::draw::CommandMap() );
         _scene->setCommandMap( commands );
     }
 
     // Test bounding sphere computation.
     {
-        _bSphere = ((jagDraw::BoundOwner*)(_scene.get()))->getBound( *commands );
+        _bSphere = ((jag::draw::BoundOwner*)(_scene.get()))->getBound( *commands );
         const gmtl::Sphered s( _bSphere->asSphere() );
 
         if( !( s.isInitialized() ) )
@@ -156,32 +156,32 @@ bool NodesDemo::startup( const unsigned int numContexts )
         }
     }
 
-    jagDraw::ShaderPtr vs( DemoInterface::readShaderUtil( "nodes.vert" ) );
-    jagDraw::ShaderPtr fs( DemoInterface::readShaderUtil( "nodes.frag" ) );
+    jag::draw::ShaderPtr vs( DemoInterface::readShaderUtil( "nodes.vert" ) );
+    jag::draw::ShaderPtr fs( DemoInterface::readShaderUtil( "nodes.frag" ) );
 
-    jagDraw::ProgramPtr prog;
-    prog = jagDraw::ProgramPtr( new jagDraw::Program );
+    jag::draw::ProgramPtr prog;
+    prog = jag::draw::ProgramPtr( new jag::draw::Program );
     prog->attachShader( vs );
     prog->attachShader( fs );
 
     commands->insert( prog );
 
     // Test uniform blocks
-    jagDraw::UniformBlockPtr ubp( jagDraw::UniformBlockPtr(
-        new jagDraw::UniformBlock( "blockTest" ) ) );
-    ubp->addUniform( jagDraw::UniformPtr(
-        new jagDraw::Uniform( "ambientScene", .2f ) ) );
-    ubp->addUniform( jagDraw::UniformPtr(
-        new jagDraw::Uniform( "diffuseMat", gmtl::Point3f( 0.f, .7f, 0.9f ) ) ) );
-    jagDraw::UniformBlockSetPtr ubsp( new jagDraw::UniformBlockSet() );
+    jag::draw::UniformBlockPtr ubp( jag::draw::UniformBlockPtr(
+        new jag::draw::UniformBlock( "blockTest" ) ) );
+    ubp->addUniform( jag::draw::UniformPtr(
+        new jag::draw::Uniform( "ambientScene", .2f ) ) );
+    ubp->addUniform( jag::draw::UniformPtr(
+        new jag::draw::Uniform( "diffuseMat", gmtl::Point3f( 0.f, .7f, 0.9f ) ) ) );
+    jag::draw::UniformBlockSetPtr ubsp( new jag::draw::UniformBlockSet() );
     ubsp->insert( ubp );
     commands->insert( ubsp );
 
     gmtl::Vec3f lightVec( 0.5f, .7f, 1.f );
     gmtl::normalize( lightVec );
-    jagDraw::UniformSetPtr usp( new jagDraw::UniformSet() );
-    usp->insert( jagDraw::UniformPtr(
-        new jagDraw::Uniform( "ecLightDir", lightVec ) ) );
+    jag::draw::UniformSetPtr usp( new jag::draw::UniformSet() );
+    usp->insert( jag::draw::UniformPtr(
+        new jag::draw::Uniform( "ecLightDir", lightVec ) ) );
     commands->insert( usp );
 
 
@@ -209,7 +209,7 @@ bool NodesDemo::init()
     jag::base::getVersionString();
 
     // Auto-log the OpenGL version string.
-    jagDraw::getOpenGLVersionString();
+    jag::draw::getOpenGLVersionString();
 
     return( true );
 }
@@ -221,8 +221,8 @@ bool NodesDemo::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj 
 
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
-    const jagDraw::jagDrawContextID contextID( jagDraw::ContextSupport::instance()->getActiveContext() );
-    jagDraw::DrawInfo& drawInfo( getDrawInfo( contextID ) );
+    const jag::draw::jagDrawContextID contextID( jag::draw::ContextSupport::instance()->getActiveContext() );
+    jag::draw::DrawInfo& drawInfo( getDrawInfo( contextID ) );
 
     jagSG::ExecuteVisitor execVisitor( drawInfo );
 
@@ -248,7 +248,7 @@ void NodesDemo::reshape( const int w, const int h )
     if( !getStartupCalled() )
         return;
 
-    const jagDraw::jagDrawContextID contextID( jagDraw::ContextSupport::instance()->getActiveContext() );
+    const jag::draw::jagDrawContextID contextID( jag::draw::ContextSupport::instance()->getActiveContext() );
     _proj._data[ contextID ] = computeProjection( (double)w/(double)h );
 }
 

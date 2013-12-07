@@ -26,7 +26,7 @@
 #include <jag/disk/Options.h>
 #include <jag/base/Buffer.h>
 #include <jagSG/Node.h>
-#include <jagDraw/UniformBlock.h>
+#include <jag/draw/UniformBlock.h>
 
 #include <osg/NodeVisitor>
 #include <osg/Matrix>
@@ -66,8 +66,8 @@ protected:
     bool preTraverse( osg::Object* osgObject, osg::StateSet* stateSet, const gmtl::Matrix44d& m=gmtl::MAT_IDENTITY44D );
     void postTraverse();
 
-    jagDraw::UniformBlockPtr findMaterial( osg::Material* m );
-    void addMaterial( osg::Material* m, jagDraw::UniformBlockPtr ub );
+    jag::draw::UniformBlockPtr findMaterial( osg::Material* m );
+    void addMaterial( osg::Material* m, jag::draw::UniformBlockPtr ub );
 
 
     jagSG::NodePtr _jagScene;
@@ -77,10 +77,10 @@ protected:
     typedef std::map< osg::Object*, jagSG::NodePtr > OSGObjectMap;
     OSGObjectMap _objInstances;
 
-    typedef std::map< osg::StateSet*, jagDraw::CommandMapPtr > OSGStateSetMap;
+    typedef std::map< osg::StateSet*, jag::draw::CommandMapPtr > OSGStateSetMap;
     OSGStateSetMap _ssInstances;
 
-    typedef std::map< osg::Material*, jagDraw::UniformBlockPtr > OSGMaterialMap;
+    typedef std::map< osg::Material*, jag::draw::UniformBlockPtr > OSGMaterialMap;
     OSGMaterialMap _matInstances;
 
 

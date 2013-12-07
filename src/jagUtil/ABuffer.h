@@ -23,13 +23,13 @@
 #define __JAGUTIL_A_BUFFER_H__ 1
 
 #include <jagUtil/Export.h>
-#include <jagDraw/DrawGraph.h>
-#include <jagDraw/CommandMap.h>
-#include <jagDraw/Framebuffer.h>
-#include <jagDraw/Texture.h>
-#include <jagDraw/Program.h>
+#include <jag/draw/DrawGraph.h>
+#include <jag/draw/CommandMap.h>
+#include <jag/draw/Framebuffer.h>
+#include <jag/draw/Texture.h>
+#include <jag/draw/Program.h>
 #include <jagSG/SelectContainerCallback.h>
-#include <jagDraw/PerContextData.h>
+#include <jag/draw/PerContextData.h>
 #include <jag/base/ptr.h>
 #include <jag/base/LogBase.h>
 
@@ -46,7 +46,7 @@ namespace jagUtil
 
 // Forwaed
 struct ABufferContext;
-typedef jagDraw::PerContextData< ABufferContext > PerContextABufferCntxt;
+typedef jag::draw::PerContextData< ABufferContext > PerContextABufferCntxt;
 
 
 /** \class ABuffer ABuffer.h <jagUtil/ABuffer.h>
@@ -63,8 +63,8 @@ class JAGUTIL_EXPORT ABuffer : public jag::base::LogBase
 {
 public:
     ABuffer( const std::string& logName=std::string( "" ) );
-    ABuffer( jagDraw::TexturePtr& depthBuffer, jagDraw::TexturePtr& colorBuffer0,
-        jagDraw::TexturePtr& colorBuffer1=jagDraw::TexturePtr((jagDraw::Texture*)NULL),
+    ABuffer( jag::draw::TexturePtr& depthBuffer, jag::draw::TexturePtr& colorBuffer0,
+        jag::draw::TexturePtr& colorBuffer1=jag::draw::TexturePtr((jag::draw::Texture*)NULL),
         const std::string& logName=std::string( "" ) );
     ABuffer( const ABuffer& rhs );
     ~ABuffer();
@@ -76,7 +76,7 @@ public:
     \param startContainer Index of the DrawGraph's NodeContainer for ABuffer rendering.
     NodeContainers numbers \c startContainer through \c startContainer + 2 are reserved
     for use by the ABuffer class. */
-    jagDraw::DrawGraphPtr& createDrawGraphTemplate( const unsigned int startContainer=1 );
+    jag::draw::DrawGraphPtr& createDrawGraphTemplate( const unsigned int startContainer=1 );
 
 
     /** \name Transparency Control Support
@@ -100,8 +100,8 @@ public:
     \details When setting a Node to be opaque (via setTransparencyEnagle(node,false)
     or by toggleTransparencyEnable(), if the Node's UserData does not contain a
     saved CommandMap, use the specified \c commands. \c commands should contain
-    at least a jagDraw::Program and a jagDraw::Framebuffer. */
-    void setOpaqueControls( const jagDraw::CommandMapPtr& commands, const unsigned int opaqueContainer=0 );
+    at least a jag::draw::Program and a jag::draw::Framebuffer. */
+    void setOpaqueControls( const jag::draw::CommandMapPtr& commands, const unsigned int opaqueContainer=0 );
     /** \brief Get the startiing NodeContainer index.
     \details Use the createDrawGraphTemplate() method to set the start container.
     Default is 1, leaving container 0 for the application.
@@ -112,7 +112,7 @@ public:
     \details Calling code should assign this CommandMap and Node::Callback to the
     jagSG root node of any subgraphs that are to be rendered using the a-buffer
     algorithm. */
-    void getABufferControls( jagDraw::CommandMapPtr& commands, jagSG::SelectContainerCallbackPtr& callback );
+    void getABufferControls( jag::draw::CommandMapPtr& commands, jagSG::SelectContainerCallbackPtr& callback );
     /** \overload */
     void getABufferControls( jagSG::SelectContainerCallbackPtr& callback );
     /** \brief Get the NodeContainer index for transparent geometry rendering.
@@ -123,7 +123,7 @@ public:
 
 
     /** \brief Call this function to render a frame. */
-    void renderFrame( jagSG::CollectionVisitor& collect, jagDraw::DrawInfo& drawInfo );
+    void renderFrame( jagSG::CollectionVisitor& collect, jag::draw::DrawInfo& drawInfo );
 
     /** \brief Call this function for a window resize event. */
     void reshape( const int w, const int h );
@@ -132,7 +132,7 @@ public:
     \details Application code should bitwise-OR these flags into the TransformCallback class.
     Here's an example, for use with jagSG::CollectionVisitor:
     \code
-    jagDraw::TransformCallback* xformCB( CollectionVisitor::getTransformCallback() );
+    jag::draw::TransformCallback* xformCB( CollectionVisitor::getTransformCallback() );
     xformCB->setRequiredMatrixUniforms( xformCB->getRequiredMatrixUniforms() |
         ABuffer::getRequiredMatrixUniforms() );
     \endcode */
@@ -201,20 +201,20 @@ protected:
     std::string shaderResolveParameters() const;
     std::string shaderSizeParameters() const;
 
-    jagDraw::TexturePtr _colorBuffer0, _colorBuffer1;
-    jagDraw::TexturePtr _depthBuffer;
+    jag::draw::TexturePtr _colorBuffer0, _colorBuffer1;
+    jag::draw::TexturePtr _depthBuffer;
     unsigned int _startContainer;
     bool _secondaryEnable;
 
     int _width, _height;
 
-    jagDraw::FramebufferPtr _defaultFBO;
-    jagDraw::CommandMapPtr _commands, _opaqueCommands;
+    jag::draw::FramebufferPtr _defaultFBO;
+    jag::draw::CommandMapPtr _commands, _opaqueCommands;
     unsigned int _opaqueContainer;
     jagSG::SelectContainerCallbackPtr _callback, _opaqueCallback;
-    jagDraw::DrawGraphPtr _drawGraphTemplate;
+    jag::draw::DrawGraphPtr _drawGraphTemplate;
 
-    jagDraw::ProgramPtr _clearProgram, _renderProgram, _resolveProgram;
+    jag::draw::ProgramPtr _clearProgram, _renderProgram, _resolveProgram;
     ResolveMethod _resolveMethod;
     float _fragmentAlpha;
     unsigned int _maxFragments;

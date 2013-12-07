@@ -23,9 +23,9 @@
 #define __JAG3D_DEMO_SUPPORT_DEMO_INTERFACE_H__ 1
 
 
-#include <jagDraw/DrawInfo.h>
-#include <jagDraw/Shader.h>
-#include <jagDraw/Image.h>
+#include <jag/draw/DrawInfo.h>
+#include <jag/draw/Shader.h>
+#include <jag/draw/Image.h>
 #include <jagSG/Node.h>
 #include <jagSG/CollectionVisitor.h>
 #include <jagMx/MxCore.h>
@@ -64,7 +64,7 @@ public:
 
         _drawInfo._data.resize( numContexts );
         unsigned int id( 0 );
-        BOOST_FOREACH( jagDraw::DrawInfo& drawInfo, _drawInfo._data )
+        BOOST_FOREACH( jag::draw::DrawInfo& drawInfo, _drawInfo._data )
         {
             drawInfo._id = id++;
         }
@@ -88,7 +88,7 @@ public:
     /** Simple interface for passing key press events. Return true to redraw. */
     virtual bool keyCommand( const int command ) { return( false ); }
 
-    jagDraw::DrawInfo& getDrawInfo( const jagDraw::jagDrawContextID contextID )
+    jag::draw::DrawInfo& getDrawInfo( const jag::draw::jagDrawContextID contextID )
     {
         return( _drawInfo._data[ contextID ] );
     }
@@ -97,7 +97,7 @@ public:
         return( _collectionVisitor );
     }
 
-    jagMx::MxCorePtr getMxCore( const jagDraw::jagDrawContextID contextID )
+    jagMx::MxCorePtr getMxCore( const jag::draw::jagDrawContextID contextID )
     {
         if( _mxCore._data.empty() )
             return( jagMx::MxCorePtr( (jagMx::MxCore*)NULL ) );
@@ -154,10 +154,10 @@ protected:
 
     bool _continuousRedraw;
 
-    jagDraw::PerContextDrawInfo _drawInfo;
+    jag::draw::PerContextDrawInfo _drawInfo;
     jagSG::CollectionVisitor _collectionVisitor;
 
-    typedef jagDraw::PerContextData< jagMx::MxCorePtr > PerContextMxCore;
+    typedef jag::draw::PerContextData< jagMx::MxCorePtr > PerContextMxCore;
     PerContextMxCore _mxCore;
 
 
@@ -184,16 +184,16 @@ protected:
         __READ_UTIL( result, jagSG::NodePtr, fileName, options );
         return( result );
     }
-    jagDraw::ImagePtr readImageUtil( const std::string& fileName, const jag::disk::Options* options=NULL )
+    jag::draw::ImagePtr readImageUtil( const std::string& fileName, const jag::disk::Options* options=NULL )
     {
-        jagDraw::ImagePtr result;
-        __READ_UTIL( result, jagDraw::ImagePtr, fileName, options );
+        jag::draw::ImagePtr result;
+        __READ_UTIL( result, jag::draw::ImagePtr, fileName, options );
         return( result );
     }
-    jagDraw::ShaderPtr readShaderUtil( const std::string& fileName, const jag::disk::Options* options=NULL )
+    jag::draw::ShaderPtr readShaderUtil( const std::string& fileName, const jag::disk::Options* options=NULL )
     {
-        jagDraw::ShaderPtr result;
-        __READ_UTIL( result, jagDraw::ShaderPtr, fileName, options );
+        jag::draw::ShaderPtr result;
+        __READ_UTIL( result, jag::draw::ShaderPtr, fileName, options );
         return( result );
     }
 };

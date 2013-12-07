@@ -20,7 +20,7 @@
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
 #include <jagUtil/Shapes.h>
-#include <jagDraw/VertexAttrib.h>
+#include <jag/draw/VertexAttrib.h>
 #include <jag/base/LogMacros.h>
 #include <gmtl/gmtl.h>
 
@@ -29,25 +29,25 @@ namespace jagUtil
 {
 
 
-jagDraw::VertexArrayObjectPtr createVertexArrayObject( const VNTCVec& data )
+jag::draw::VertexArrayObjectPtr createVertexArrayObject( const VNTCVec& data )
 {
     jag::base::BufferPtr ibp( new jag::base::Buffer( data.size() * sizeof( jagUtil::VertexNormalTexCoordStruct ), (void*)&data[0] ) );
-    jagDraw::BufferObjectPtr ibop( new jagDraw::BufferObject( GL_ARRAY_BUFFER, ibp ) );
+    jag::draw::BufferObjectPtr ibop( new jag::draw::BufferObject( GL_ARRAY_BUFFER, ibp ) );
 
     const GLsizei stride( sizeof( jagUtil::VertexNormalTexCoordStruct ) );
-    jagDraw::VertexAttribPtr vertAttrib( new jagDraw::VertexAttrib(
+    jag::draw::VertexAttribPtr vertAttrib( new jag::draw::VertexAttrib(
         "vertex", 3, GL_FLOAT, GL_FALSE, stride, 0 ) );
-    jagDraw::VertexAttribPtr normAttrib( new jagDraw::VertexAttrib(
+    jag::draw::VertexAttribPtr normAttrib( new jag::draw::VertexAttrib(
         "normal", 3, GL_FLOAT, GL_FALSE, stride, sizeof( GLfloat ) * 3 ) );
-    jagDraw::VertexAttribPtr tcAttrib( new jagDraw::VertexAttrib(
+    jag::draw::VertexAttribPtr tcAttrib( new jag::draw::VertexAttrib(
         "texcoord", 2, GL_FLOAT, GL_FALSE, stride, sizeof( GLfloat ) * 6 ) );
 
-    jagDraw::VertexArrayObjectPtr vaop( new jagDraw::VertexArrayObject );
+    jag::draw::VertexArrayObjectPtr vaop( new jag::draw::VertexArrayObject );
     // Bind the GL_ARRAY_BUFFER for interleaved vertices, normals, and texcoords
-    vaop->addVertexArrayCommand( ibop, jagDraw::VertexArrayObject::Vertex );
-    vaop->addVertexArrayCommand( vertAttrib, jagDraw::VertexArrayObject::Vertex );
-    vaop->addVertexArrayCommand( normAttrib, jagDraw::VertexArrayObject::Normal );
-    vaop->addVertexArrayCommand( tcAttrib, jagDraw::VertexArrayObject::TexCoord );
+    vaop->addVertexArrayCommand( ibop, jag::draw::VertexArrayObject::Vertex );
+    vaop->addVertexArrayCommand( vertAttrib, jag::draw::VertexArrayObject::Vertex );
+    vaop->addVertexArrayCommand( normAttrib, jag::draw::VertexArrayObject::Normal );
+    vaop->addVertexArrayCommand( tcAttrib, jag::draw::VertexArrayObject::TexCoord );
 
     return( vaop );
 } 
@@ -57,7 +57,7 @@ static void addPlaneData( VNTCVec& data,
     const gmtl::Point3f& corner,
     const gmtl::Vec3f& u, unsigned int uSteps,
     const gmtl::Vec3f& v, unsigned int vSteps,
-    const gmtl::Vec3f& normal, jagDraw::Drawable* geom )
+    const gmtl::Vec3f& normal, jag::draw::Drawable* geom )
 {
     std::vector< unsigned int > indices;
 
@@ -98,16 +98,16 @@ static void addPlaneData( VNTCVec& data,
         }
     }
 
-    jagDraw::DrawElementsPtr de( jagDraw::DrawElementsPtr( new jagDraw::DrawElements
+    jag::draw::DrawElementsPtr de( jag::draw::DrawElementsPtr( new jag::draw::DrawElements
         ( GL_TRIANGLES, count, GL_UNSIGNED_INT, 0,
-        jagDraw::BufferObjectPtr( new jagDraw::ElementArrayBuffer(
+        jag::draw::BufferObjectPtr( new jag::draw::ElementArrayBuffer(
             jag::base::BufferPtr( new jag::base::Buffer( indices.size()*sizeof(unsigned int), &( indices[ 0 ] ) )))))));
     geom->addDrawCommand( de );
 }
 
 static bool buildPlaneData( VNTCVec& data,
     const gmtl::Point3f& corner, const gmtl::Vec3f& u, const gmtl::Vec3f& v,
-    const int subU, const int subV, jagDraw::Drawable* drawable )
+    const int subU, const int subV, jag::draw::Drawable* drawable )
 {
     if( ( subU <= 0 ) || ( subV <= 0 ) )
     {
@@ -122,19 +122,19 @@ static bool buildPlaneData( VNTCVec& data,
     return( true );
 }
 
-jagDraw::DrawablePtr makePlane( VNTCVec& data,
+jag::draw::DrawablePtr makePlane( VNTCVec& data,
     const gmtl::Point3f& corner, const gmtl::Vec3f& u, const gmtl::Vec3f& v,
-    const int subU, const int subV, jagDraw::DrawablePtr drawable )
+    const int subU, const int subV, jag::draw::DrawablePtr drawable )
 {
-    jagDraw::DrawablePtr draw( drawable );
+    jag::draw::DrawablePtr draw( drawable );
     if( draw == NULL )
-        draw = jagDraw::DrawablePtr( new jagDraw::Drawable() );
+        draw = jag::draw::DrawablePtr( new jag::draw::Drawable() );
 
     if( buildPlaneData( data, corner, u, v, subU, subV, draw.get() ) )
         return( draw );
 
     JAG3D_ERROR_STATIC( "jag.util.plane", "makePlane: Error." );
-    return( jagDraw::DrawablePtr( ( jagDraw::Drawable* ) NULL ) );
+    return( jag::draw::DrawablePtr( ( jag::draw::Drawable* ) NULL ) );
 }
 
 

@@ -25,14 +25,14 @@
 #include <Poco/Path.h>
 #include <Poco/String.h>
 
-#include <jagDraw/Shader.h>
+#include <jag/draw/Shader.h>
 
 #include <fstream>
 #include <string>
 
 
-using namespace jagDraw;
 using namespace jag::disk;
+using namespace jag::draw;
 
 
 /** \addtogroup PluginSupport Plugin Support

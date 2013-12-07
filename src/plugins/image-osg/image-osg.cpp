@@ -27,8 +27,8 @@
 
 #include <jag/base/Buffer.h>
 #include <jag/base/LogMacros.h>
-#include <jagDraw/Image.h>
-#include <jagDraw/PixelStore.h>
+#include <jag/draw/Image.h>
+#include <jag/draw/PixelStore.h>
 
 #include <osgDB/ReadFile>
 #include <osgDB/WriteFile>
@@ -39,8 +39,8 @@
 #include <fstream>
 
 
-using namespace jagDraw;
 using namespace jag::disk;
+using namespace jag::draw;
 
 
 /** \addtogroup PluginSupport Plugin Support

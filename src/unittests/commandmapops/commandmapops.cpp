@@ -19,19 +19,19 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#include <jagDraw/CommandMap.h>
-#include <jagDraw/Program.h>
-#include <jagDraw/VertexArrayObject.h>
+#include <jag/draw/CommandMap.h>
+#include <jag/draw/Program.h>
+#include <jag/draw/VertexArrayObject.h>
 
 #include <iostream>
 
 
-using jagDraw::Command;
-using jagDraw::CommandMap;
-using jagDraw::Program;
-using jagDraw::ProgramPtr;
-using jagDraw::VertexArrayObject;
-using jagDraw::VertexArrayObjectPtr;
+using jag::draw::Command;
+using jag::draw::CommandMap;
+using jag::draw::Program;
+using jag::draw::ProgramPtr;
+using jag::draw::VertexArrayObject;
+using jag::draw::VertexArrayObjectPtr;
 
 
 bool test()

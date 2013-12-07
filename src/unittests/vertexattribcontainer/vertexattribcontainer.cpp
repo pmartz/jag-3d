@@ -19,10 +19,10 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#include <jagDraw/BufferObject.h>
-#include <jagDraw/DrawCommand.h>
-#include <jagDraw/VertexAttribContainer.h>
-#include <jagDraw/VertexArrayObject.h>
+#include <jag/draw/BufferObject.h>
+#include <jag/draw/DrawCommand.h>
+#include <jag/draw/VertexAttribContainer.h>
+#include <jag/draw/VertexArrayObject.h>
 #include <jagUtil/Shapes.h>
 
 #include <boost/shared_ptr.hpp>
@@ -30,20 +30,20 @@
 #include <iostream>
 
 
-using jagDraw::VertexArrayCommand;
-using jagDraw::BufferObject;
-using jagDraw::BufferObjectPtr;
-using jagDraw::VertexAttrib;
-using jagDraw::VertexAttribPtr;
-using jagDraw::VertexAttribContainer;
-using jagDraw::VertexArrayObject;
-using jagDraw::VertexArrayObjectPtr;
-using jagDraw::DrawCommand;
-using jagDraw::DrawCommandPtr;
-using jagDraw::Drawable;
-using jagDraw::DrawablePtr;
-using jagDraw::DrawArrays;
-using jagDraw::DrawElements;
+using jag::draw::VertexArrayCommand;
+using jag::draw::BufferObject;
+using jag::draw::BufferObjectPtr;
+using jag::draw::VertexAttrib;
+using jag::draw::VertexAttribPtr;
+using jag::draw::VertexAttribContainer;
+using jag::draw::VertexArrayObject;
+using jag::draw::VertexArrayObjectPtr;
+using jag::draw::DrawCommand;
+using jag::draw::DrawCommandPtr;
+using jag::draw::Drawable;
+using jag::draw::DrawablePtr;
+using jag::draw::DrawArrays;
+using jag::draw::DrawElements;
 
 
 DrawablePtr createQuad( jagUtil::VNTCVec& data, const gmtl::Point3f& center, const float extent )
@@ -53,7 +53,7 @@ DrawablePtr createQuad( jagUtil::VNTCVec& data, const gmtl::Point3f& center, con
         gmtl::Point3f( extent/2.f, extent/2.f, 0.f ) );
     const gmtl::Vec3f uVec( extent, 0.f, 0.f );
     const gmtl::Vec3f vVec( 0.f, extent, 0.f );
-    jagDraw::DrawablePtr quad( jagUtil::makePlane(
+    jag::draw::DrawablePtr quad( jagUtil::makePlane(
         data, corner, uVec, vVec ) );
 
     return( quad );

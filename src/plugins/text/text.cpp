@@ -25,7 +25,7 @@
 #include "TextDumpSG.h"
 #include "TextDumpDG.h"
 #include <jagSG/Node.h>
-#include <jagDraw/DrawGraph.h>
+#include <jag/draw/DrawGraph.h>
 
 #include <jag/base/LogMacros.h>
 #include <Poco/ClassLibrary.h>
@@ -36,8 +36,7 @@
 #include <string>
 
 
-using namespace jag;
-using namespace disk;
+using namespace jag::disk;
 
 
 /** \addtogroup PluginSupport Plugin Support
@@ -88,9 +87,9 @@ public:
             return( true );
         }
 
-        JAG3D_NOTICE( "Text dump for jagDraw::DrawGraph: not yet implemented." );
+        JAG3D_NOTICE( "Text dump for jag::draw::DrawGraph: not yet implemented." );
 #if 0
-        const jagDraw::DrawGraph* drawGraph( dynamic_cast< const jagDraw::DrawGraph* >( data ) );
+        const jag::draw::DrawGraph* drawGraph( dynamic_cast< const jag::draw::DrawGraph* >( data ) );
         if( drawGraph != NULL )
         {
             TextDumpDG tddg( oStr );

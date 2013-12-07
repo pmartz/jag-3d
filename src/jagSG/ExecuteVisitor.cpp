@@ -20,22 +20,22 @@
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
 #include <jagSG/ExecuteVisitor.h>
-#include <jagDraw/DrawInfo.h>
+#include <jag/draw/DrawInfo.h>
 #include <jag/base/gmtlSupport.h>
-#include <jagDraw/Error.h>
+#include <jag/draw/Error.h>
 #include <jag/base/LogMacros.h>
 
 
 namespace jagSG {
 
 
-ExecuteVisitor::ExecuteVisitor( jagDraw::DrawInfo& drawInfo )
+ExecuteVisitor::ExecuteVisitor( jag::draw::DrawInfo& drawInfo )
   : Visitor( "exec" ),
     _drawInfo( drawInfo )
 {
     reset();
 }
-ExecuteVisitor::ExecuteVisitor( jagDraw::DrawInfo& drawInfo, jagSG::Node& node )
+ExecuteVisitor::ExecuteVisitor( jag::draw::DrawInfo& drawInfo, jagSG::Node& node )
   : Visitor( "exec" ),
     _drawInfo( drawInfo )
 {
@@ -83,7 +83,7 @@ void ExecuteVisitor::visit( jagSG::Node& node )
     if( _transform.getDirty() != 0 )
         updateTransformUniforms();
 
-    jagDraw::CommandMap delta( _drawInfo._current << _commandStack.back() );
+    jag::draw::CommandMap delta( _drawInfo._current << _commandStack.back() );
     delta.execute( _drawInfo );
 
     // Execute the drawables
@@ -101,24 +101,24 @@ void ExecuteVisitor::visit( jagSG::Node& node )
 
 void ExecuteVisitor::updateTransformUniforms()
 {
-    jagDraw::UniformSetPtr usp( new jagDraw::UniformSet() );
+    jag::draw::UniformSetPtr usp( new jag::draw::UniformSet() );
 
     if( _transform.getDirty() & jag::base::TransformD::MODEL_VIEW_PROJ )
     {
         gmtl::Matrix44f mvpMat;
         gmtl::convert( mvpMat, _transform.getModelViewProj() );
-        jagDraw::UniformPtr modelViewProj( new jagDraw::Uniform( "jagModelViewProjMatrix", mvpMat ) );
+        jag::draw::UniformPtr modelViewProj( new jag::draw::Uniform( "jagModelViewProjMatrix", mvpMat ) );
         usp->insert( modelViewProj );
     }
     if( _transform.getDirty() & jag::base::TransformD::MODEL_VIEW_INV_TRANS )
     {
         gmtl::Matrix33f mvitMat;
         gmtl::convert( mvitMat, _transform.getModelViewInvTrans() );
-        jagDraw::UniformPtr modelViewInvTrans( new jagDraw::Uniform( "jagModelViewInvTransMatrix", mvitMat ) );
+        jag::draw::UniformPtr modelViewInvTrans( new jag::draw::Uniform( "jagModelViewInvTransMatrix", mvitMat ) );
         usp->insert( modelViewInvTrans );
     }
-    jagDraw::CommandMap& commands( _commandStack.back() );
-    jagDraw::DrawablePrepPtr& uniformSet( commands[ jagDraw::Command::UniformSet_t ] );
+    jag::draw::CommandMap& commands( _commandStack.back() );
+    jag::draw::DrawablePrepPtr& uniformSet( commands[ jag::draw::Command::UniformSet_t ] );
     if( uniformSet == NULL )
     {
         commands.insert( usp );

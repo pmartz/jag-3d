@@ -21,8 +21,8 @@
 
 #include <demoSupport/DemoInterface.h>
 
-#include <jagDraw/Common.h>
-#include <jagDraw/types.h>
+#include <jag/draw/Common.h>
+#include <jag/draw/types.h>
 #include <jag/base/Profile.h>
 #include <jag/base/Version.h>
 #include <jag/base/Log.h>
@@ -59,8 +59,8 @@ public:
     virtual bool frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj );
 
 protected:
-    jagDraw::DrawableVec _drawables;
-    jagDraw::CommandMap _commands;
+    jag::draw::DrawableVec _drawables;
+    jag::draw::CommandMap _commands;
 };
 
 
@@ -72,7 +72,7 @@ DemoInterface* DemoInterface::create( bpo::options_description& desc )
 }
 
 
-jagDraw::BufferObjectPtr createTriangleVertices( unsigned int n,
+jag::draw::BufferObjectPtr createTriangleVertices( unsigned int n,
     const float x = .05f, const float y = .05f, const float z = .5f )
 {
     const float xMin=-.9f;
@@ -107,10 +107,10 @@ jagDraw::BufferObjectPtr createTriangleVertices( unsigned int n,
     }
     jag::base::BufferPtr vbp( new jag::base::Buffer( v3fa.size() * sizeof( gmtl::Point3f ), (void*)&v3fa[0] ) );
 
-    return( jagDraw::BufferObjectPtr( new jagDraw::BufferObject( GL_ARRAY_BUFFER, vbp ) ) );
+    return( jag::draw::BufferObjectPtr( new jag::draw::BufferObject( GL_ARRAY_BUFFER, vbp ) ) );
 }
 
-jagDraw::ProgramPtr createProgram()
+jag::draw::ProgramPtr createProgram()
 {
     const char* vShaderSource =
 #if( POCO_OS == POCO_OS_MAC_OS_X )
@@ -123,7 +123,7 @@ jagDraw::ProgramPtr createProgram()
         "void main() { \n"
         "    gl_Position = vec4( vertex, 1. ); \n"
         "}";
-    jagDraw::ShaderPtr vs( new jagDraw::Shader( GL_VERTEX_SHADER ) );
+    jag::draw::ShaderPtr vs( new jag::draw::Shader( GL_VERTEX_SHADER ) );
     vs->addSourceString( std::string( vShaderSource ) );
 
     const char* fShaderSource =
@@ -137,38 +137,38 @@ jagDraw::ProgramPtr createProgram()
         "void main() { \n"
         "    colorOut = vec4( 1. ); \n"
         "}";
-    jagDraw::ShaderPtr fs( new jagDraw::Shader( GL_FRAGMENT_SHADER ) );
+    jag::draw::ShaderPtr fs( new jag::draw::Shader( GL_FRAGMENT_SHADER ) );
     fs->addSourceString( std::string( fShaderSource ) );
 
-    jagDraw::ProgramPtr prog;
-    prog = jagDraw::ProgramPtr( new jagDraw::Program );
+    jag::draw::ProgramPtr prog;
+    prog = jag::draw::ProgramPtr( new jag::draw::Program );
     prog->attachShader( vs );
     prog->attachShader( fs );
 
     return( prog );
 }
 
-void createSingleTriStrip( const unsigned int numVerts, jagDraw::DrawablePtr& drawable )
+void createSingleTriStrip( const unsigned int numVerts, jag::draw::DrawablePtr& drawable )
 {
-    drawable = jagDraw::DrawablePtr( new jagDraw::Drawable() );
+    drawable = jag::draw::DrawablePtr( new jag::draw::Drawable() );
 
-    jagDraw::GLuintVec elements;
+    jag::draw::GLuintVec elements;
     unsigned int idx;
     for( idx=0; idx<numVerts; ++idx )
         elements.push_back( idx );
     jag::base::BufferPtr elbp( new jag::base::Buffer( elements.size() * sizeof( GLint ), (void*)&elements[0] ) );
-    jagDraw::BufferObjectPtr elbop( new jagDraw::BufferObject( GL_ELEMENT_ARRAY_BUFFER, elbp ) );
-    jagDraw::DrawElementsPtr drawElements( new jagDraw::DrawElements( GL_TRIANGLE_STRIP, (const GLsizei) elements.size(), GL_UNSIGNED_INT, 0, elbop ) );
+    jag::draw::BufferObjectPtr elbop( new jag::draw::BufferObject( GL_ELEMENT_ARRAY_BUFFER, elbp ) );
+    jag::draw::DrawElementsPtr drawElements( new jag::draw::DrawElements( GL_TRIANGLE_STRIP, (const GLsizei) elements.size(), GL_UNSIGNED_INT, 0, elbop ) );
 
     drawable->addDrawCommand( drawElements );
 
     drawable->setMaxContexts( 1 );
 }
-void createSeveralTriStrips( const unsigned int numVerts, const unsigned int trisPerCommand, jagDraw::DrawablePtr& drawable )
+void createSeveralTriStrips( const unsigned int numVerts, const unsigned int trisPerCommand, jag::draw::DrawablePtr& drawable )
 {
-    drawable = jagDraw::DrawablePtr( new jagDraw::Drawable() );
+    drawable = jag::draw::DrawablePtr( new jag::draw::Drawable() );
 
-    jagDraw::GLuintVec elements;
+    jag::draw::GLuintVec elements;
     const unsigned int vertsPerCommand( trisPerCommand + 2 );
     const unsigned int totalTris( numVerts - 2 );
     const unsigned int intCommandCount( totalTris/trisPerCommand );
@@ -188,14 +188,14 @@ void createSeveralTriStrips( const unsigned int numVerts, const unsigned int tri
     }
 
     jag::base::BufferPtr elbp( new jag::base::Buffer( elements.size() * sizeof( GLint ), (void*)&elements[0] ) );
-    jagDraw::BufferObjectPtr elbop( new jagDraw::BufferObject( GL_ELEMENT_ARRAY_BUFFER, elbp ) );
+    jag::draw::BufferObjectPtr elbop( new jag::draw::BufferObject( GL_ELEMENT_ARRAY_BUFFER, elbp ) );
 
     vertsRemaining = numVerts;
     startIdx = 0;
     for( unsigned int numCommands = totalCommands; numCommands > 0; --numCommands )
     {
         unsigned int currentVertCount( std::min( vertsPerCommand, vertsRemaining ) );
-        jagDraw::DrawElementsPtr drawElements( new jagDraw::DrawElements( GL_TRIANGLE_STRIP,
+        jag::draw::DrawElementsPtr drawElements( new jag::draw::DrawElements( GL_TRIANGLE_STRIP,
             (const GLsizei)currentVertCount, GL_UNSIGNED_INT, (const GLvoid*)(startIdx*sizeof(GLint)), elbop ) );
         drawable->addDrawCommand( drawElements );
         vertsRemaining -= trisPerCommand;
@@ -205,13 +205,13 @@ void createSeveralTriStrips( const unsigned int numVerts, const unsigned int tri
 
     drawable->setMaxContexts( 1 );
 }
-void createSingleTriStripRestart( const unsigned int numVerts, const unsigned int trisPerCommand, jagDraw::DrawablePtr& drawable )
+void createSingleTriStripRestart( const unsigned int numVerts, const unsigned int trisPerCommand, jag::draw::DrawablePtr& drawable )
 {
-    drawable = jagDraw::DrawablePtr( new jagDraw::Drawable() );
+    drawable = jag::draw::DrawablePtr( new jag::draw::Drawable() );
 
     const unsigned int vertsPerCommand( trisPerCommand + 2 );
 
-    jagDraw::GLuintVec elements;
+    jag::draw::GLuintVec elements;
     unsigned int vertsRemaining( numVerts );
     unsigned int idx;
     for( idx=0; idx<numVerts;  )
@@ -228,22 +228,22 @@ void createSingleTriStripRestart( const unsigned int numVerts, const unsigned in
         vertsRemaining -= trisPerCommand;
     }
     jag::base::BufferPtr elbp( new jag::base::Buffer( elements.size() * sizeof( GLint ), (void*)&elements[0] ) );
-    jagDraw::BufferObjectPtr elbop( new jagDraw::BufferObject( GL_ELEMENT_ARRAY_BUFFER, elbp ) );
+    jag::draw::BufferObjectPtr elbop( new jag::draw::BufferObject( GL_ELEMENT_ARRAY_BUFFER, elbp ) );
 
-    jagDraw::PrimitiveRestartPtr restart( new jagDraw::PrimitiveRestart( 0xffffffff ) );
+    jag::draw::PrimitiveRestartPtr restart( new jag::draw::PrimitiveRestart( 0xffffffff ) );
     drawable->addDrawCommand( restart );
 
-    jagDraw::DrawElementsPtr drawElements( new jagDraw::DrawElements( GL_TRIANGLE_STRIP, (const GLsizei) elements.size(), GL_UNSIGNED_INT, 0, elbop ) );
+    jag::draw::DrawElementsPtr drawElements( new jag::draw::DrawElements( GL_TRIANGLE_STRIP, (const GLsizei) elements.size(), GL_UNSIGNED_INT, 0, elbop ) );
     drawable->addDrawCommand( drawElements );
 
-    restart.reset( new jagDraw::PrimitiveRestart( 0, false ) );
+    restart.reset( new jag::draw::PrimitiveRestart( 0, false ) );
     drawable->addDrawCommand( restart );
 
     drawable->setMaxContexts( 1 );
 }
-void createMultiTriStrip( const unsigned int numVerts, const unsigned int trisPerCommand, jagDraw::DrawablePtr& drawable )
+void createMultiTriStrip( const unsigned int numVerts, const unsigned int trisPerCommand, jag::draw::DrawablePtr& drawable )
 {
-    drawable = jagDraw::DrawablePtr( new jagDraw::Drawable() );
+    drawable = jag::draw::DrawablePtr( new jag::draw::Drawable() );
 
     const unsigned int vertsPerCommand( trisPerCommand + 2 );
     const unsigned int totalTris( numVerts - 2 );
@@ -251,9 +251,9 @@ void createMultiTriStrip( const unsigned int numVerts, const unsigned int trisPe
     const GLsizei primCount( ( (float)totalTris/(float)trisPerCommand == intCommandCount ) ?
         intCommandCount : intCommandCount+1 );
 
-    jagDraw::GLuintVec elements;
-    jagDraw::GLsizeiVec counts( primCount );
-    jagDraw::GLvoidPtrVec indices( primCount );
+    jag::draw::GLuintVec elements;
+    jag::draw::GLsizeiVec counts( primCount );
+    jag::draw::GLvoidPtrVec indices( primCount );
 
     unsigned int vertsRemaining( numVerts );
     unsigned int idx;
@@ -275,19 +275,19 @@ void createMultiTriStrip( const unsigned int numVerts, const unsigned int trisPe
         ++prim;
     }
     jag::base::BufferPtr elbp( new jag::base::Buffer( elements.size() * sizeof( GLint ), (void*)&elements[0] ) );
-    jagDraw::BufferObjectPtr elbop( new jagDraw::BufferObject( GL_ELEMENT_ARRAY_BUFFER, elbp ) );
+    jag::draw::BufferObjectPtr elbop( new jag::draw::BufferObject( GL_ELEMENT_ARRAY_BUFFER, elbp ) );
 
-    jagDraw::MultiDrawElementsPtr multiDrawElements(
-        new jagDraw::MultiDrawElements( GL_TRIANGLE_STRIP, counts, GL_UNSIGNED_INT, indices, primCount, elbop ) );
+    jag::draw::MultiDrawElementsPtr multiDrawElements(
+        new jag::draw::MultiDrawElements( GL_TRIANGLE_STRIP, counts, GL_UNSIGNED_INT, indices, primCount, elbop ) );
     drawable->addDrawCommand( multiDrawElements );
 
     drawable->setMaxContexts( 1 );
 }
-void createSingleTriangles( const unsigned int numVerts, jagDraw::DrawablePtr& drawable )
+void createSingleTriangles( const unsigned int numVerts, jag::draw::DrawablePtr& drawable )
 {
-    drawable = jagDraw::DrawablePtr( new jagDraw::Drawable() );
+    drawable = jag::draw::DrawablePtr( new jag::draw::Drawable() );
 
-    jagDraw::GLuintVec elements;
+    jag::draw::GLuintVec elements;
     unsigned int idx;
     for( idx=0; idx<(numVerts-2); idx+=2 )
     {
@@ -299,8 +299,8 @@ void createSingleTriangles( const unsigned int numVerts, jagDraw::DrawablePtr& d
         elements.push_back( idx+3 );
     }
     jag::base::BufferPtr elbp( new jag::base::Buffer( elements.size() * sizeof( GLint ), (void*)&elements[0] ) );
-    jagDraw::BufferObjectPtr elbop( new jagDraw::BufferObject( GL_ELEMENT_ARRAY_BUFFER, elbp ) );
-    jagDraw::DrawElementsPtr drawElements( new jagDraw::DrawElements( GL_TRIANGLES, (const GLsizei) elements.size(), GL_UNSIGNED_INT, 0, elbop ) );
+    jag::draw::BufferObjectPtr elbop( new jag::draw::BufferObject( GL_ELEMENT_ARRAY_BUFFER, elbp ) );
+    jag::draw::DrawElementsPtr drawElements( new jag::draw::DrawElements( GL_TRIANGLES, (const GLsizei) elements.size(), GL_UNSIGNED_INT, 0, elbop ) );
 
     drawable->addDrawCommand( drawElements );
 
@@ -317,12 +317,12 @@ bool BenchmarkTest::startup( const unsigned int numContexts )
     {
         _commands.insert( createProgram() );
 
-        jagDraw::BufferObjectPtr vbop( createTriangleVertices( numVerts ) );
-        jagDraw::VertexArrayObjectPtr vaop( new jagDraw::VertexArrayObject );
-        vaop->addVertexArrayCommand( vbop, jagDraw::VertexArrayObject::Vertex );
-        jagDraw::VertexAttribPtr verts( new jagDraw::VertexAttrib(
+        jag::draw::BufferObjectPtr vbop( createTriangleVertices( numVerts ) );
+        jag::draw::VertexArrayObjectPtr vaop( new jag::draw::VertexArrayObject );
+        vaop->addVertexArrayCommand( vbop, jag::draw::VertexArrayObject::Vertex );
+        jag::draw::VertexAttribPtr verts( new jag::draw::VertexAttrib(
             "vertex", 3, GL_FLOAT, GL_FALSE, 0, 0 ) );
-        vaop->addVertexArrayCommand( verts, jagDraw::VertexArrayObject::Vertex );
+        vaop->addVertexArrayCommand( verts, jag::draw::VertexArrayObject::Vertex );
         _commands.insert( vaop );
 
         _commands.setMaxContexts( 1 );
@@ -347,7 +347,7 @@ bool BenchmarkTest::init()
     jag::base::getVersionString();
 
     // Auto-log the OpenGL version string.
-    jagDraw::getOpenGLVersionString();
+    jag::draw::getOpenGLVersionString();
 
     JAG3D_ERROR_CHECK( "BenchmarkTest init()" );
     return( true );
@@ -360,8 +360,8 @@ bool BenchmarkTest::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& p
 
     glClear( GL_COLOR_BUFFER_BIT );
 
-    const jagDraw::jagDrawContextID contextID( jagDraw::ContextSupport::instance()->getActiveContext() );
-    jagDraw::DrawInfo& drawInfo( getDrawInfo( contextID ) );
+    const jag::draw::jagDrawContextID contextID( jag::draw::ContextSupport::instance()->getActiveContext() );
+    jag::draw::DrawInfo& drawInfo( getDrawInfo( contextID ) );
 
     _commands.execute( drawInfo );
     // Clear GL pipe before timing anything.

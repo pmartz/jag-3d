@@ -11,9 +11,9 @@
 #include <windows.h>
 #endif
 
-#include <jagDraw/PlatformOpenGL.h>
+#include <jag/draw/PlatformOpenGL.h>
 
-#include <jagDraw/Error.h>
+#include <jag/draw/Error.h>
 
 #include <string>
 
@@ -32,7 +32,7 @@ void resetShadersGlobalMacros();
 
 
 inline void checkGLError(const char *functionName) {
-    jagDraw::errorCheck( std::string( functionName ) );
+    jag::draw::errorCheck( std::string( functionName ) );
     /*
    GLenum error;
    while (( error = glGetError() ) != GL_NO_ERROR) {

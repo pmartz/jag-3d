@@ -23,12 +23,12 @@
 #define __JAGUTIL_QUAD_NODE_H__ 1
 
 #include <jagUtil/Export.h>
-#include <jagDraw/DrawNode.h>
-#include <jagDraw/Texture.h>
-#include <jagDraw/Framebuffer.h>
-#include <jagDraw/CommandMap.h>
-#include <jagDraw/Shader.h>
-#include <jagDraw/Program.h>
+#include <jag/draw/DrawNode.h>
+#include <jag/draw/Texture.h>
+#include <jag/draw/Framebuffer.h>
+#include <jag/draw/CommandMap.h>
+#include <jag/draw/Shader.h>
+#include <jag/draw/Program.h>
 #include <jag/base/ptr.h>
 #include <jag/base/LogBase.h>
 
@@ -39,22 +39,22 @@ namespace jagUtil
 
 
 /** \class QuadNode QuadNode.h <jagUtil/QuadNode.h>
-\brief A jagDraw::DrawNode for drawing a textured quad.
+\brief A jag::draw::DrawNode for drawing a textured quad.
 \details TBD
 
 \logname jag.util.quadnode
 */
-class JAGUTIL_EXPORT QuadNode : public jagDraw::DrawNode
+class JAGUTIL_EXPORT QuadNode : public jag::draw::DrawNode
 {
 public:
     QuadNode( const std::string& logName=std::string( "" ) );
     /** Constructor for one input texture. */
-    QuadNode( jagDraw::TexturePtr inputBuffer,
-        jagDraw::TexturePtr outputBuffer=jagDraw::TexturePtr((jagDraw::Texture*)NULL),
+    QuadNode( jag::draw::TexturePtr inputBuffer,
+        jag::draw::TexturePtr outputBuffer=jag::draw::TexturePtr((jag::draw::Texture*)NULL),
         const std::string& logName=std::string( "" ) );
     /** Constructor for multiple input textures. */
-    QuadNode( jagDraw::TextureVec& inputBuffers,
-        jagDraw::TexturePtr outputBuffer=jagDraw::TexturePtr((jagDraw::Texture*)NULL),
+    QuadNode( jag::draw::TextureVec& inputBuffers,
+        jag::draw::TexturePtr outputBuffer=jag::draw::TexturePtr((jag::draw::Texture*)NULL),
         const std::string& logName=std::string( "" ) );
     QuadNode( const QuadNode& rhs );
     ~QuadNode();
@@ -92,10 +92,10 @@ public:
     */
     void setShaders( const std::string& fragName, const std::string& vertName="" );
     /** \overload */
-    void setShaders( jagDraw::ShaderPtr& frag,
-        jagDraw::ShaderPtr& vert=jagDraw::ShaderPtr((jagDraw::Shader*)NULL) );
+    void setShaders( jag::draw::ShaderPtr& frag,
+        jag::draw::ShaderPtr& vert=jag::draw::ShaderPtr((jag::draw::Shader*)NULL) );
     /** \overload */
-    void setProgram( jagDraw::ProgramPtr& program );
+    void setProgram( jag::draw::ProgramPtr& program );
 
     virtual void setMaxContexts( const unsigned int numContexts );
 
@@ -103,16 +103,16 @@ public:
     void reshape( const int w, const int h );
 
 protected:
-    void internalInit( jagDraw::ProgramPtr& program=jagDraw::ProgramPtr((jagDraw::Program*)NULL) );
+    void internalInit( jag::draw::ProgramPtr& program=jag::draw::ProgramPtr((jag::draw::Program*)NULL) );
     std::string getTextureCountString() const;
 
-    jagDraw::TextureVec _inputBuffers;
-    jagDraw::TexturePtr _outputBuffer;
+    jag::draw::TextureVec _inputBuffers;
+    jag::draw::TexturePtr _outputBuffer;
 
     int _width, _height;
 
-    jagDraw::FramebufferPtr _fbo;
-    jagDraw::CommandMapPtr _commands;
+    jag::draw::FramebufferPtr _fbo;
+    jag::draw::CommandMapPtr _commands;
 
     unsigned int _numContexts;
 };

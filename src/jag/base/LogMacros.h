@@ -47,12 +47,12 @@ as follows:
     </ul>
     <li>draw (the jagDraw module)
     <ul>
-      <li>\link jagDraw::BufferObject bufobj \endlink
-      <li>\link jagDraw::ContextSupport ctx \endlink
-      <li>\link jagDraw::Drawable drawable \endlink
+      <li>\link jag::draw::BufferObject bufobj \endlink
+      <li>\link jag::draw::ContextSupport ctx \endlink
+      <li>\link jag::draw::Drawable drawable \endlink
       <li>\ref jagDrawError "glerror"
-      <li>\link jagDraw::Program program \endlink
-      <li>\link jagDraw::Shader shader \endlink
+      <li>\link jag::draw::Program program \endlink
+      <li>\link jag::draw::Shader shader \endlink
     </ul>
     <li>sg (the jagSG module)
     <li>util (the jagUtil module)
@@ -63,7 +63,7 @@ as follows:
   </ul>
 </ul>
 
-Heirachy levels are separated by a period, so the name for the jagDraw::Drawable Poco::Logger is
+Heirachy levels are separated by a period, so the name for the jag::draw::Drawable Poco::Logger is
 \c jag.draw.drawable.
 
 Priority level match those used by Poco and are defined as follows:

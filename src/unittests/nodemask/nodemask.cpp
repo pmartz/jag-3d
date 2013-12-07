@@ -23,9 +23,9 @@
 #include <jagSG/Node.h>
 #include <jagSG/CollectionVisitor.h>
 #include <jagSG/NodeMaskCullCallback.h>
-#include <jagDraw/DrawNode.h>
-#include <jagDraw/Uniform.h>
-#include <jagDraw/Program.h>
+#include <jag/draw/DrawNode.h>
+#include <jag/draw/Uniform.h>
+#include <jag/draw/Program.h>
 #include <jagUtil/Shapes.h>
 
 #include <boost/foreach.hpp>
@@ -42,18 +42,18 @@ using jagSG::CollectionVisitor;
 using jagSG::NodeMaskCullCallback;
 using jagSG::NodeMaskCullDistributionVisitor;
 
-using jagDraw::Bound;
-using jagDraw::BoundPtr;
-using jagDraw::CommandMap;
-using jagDraw::CommandMapPtr;
-using jagDraw::Uniform;
-using jagDraw::UniformPtr;
-using jagDraw::UniformSet;
-using jagDraw::UniformSetPtr;
-using jagDraw::Drawable;
-using jagDraw::DrawablePtr;
-using jagDraw::DrawNodeContainer;
-using jagDraw::Program;
+using jag::draw::Bound;
+using jag::draw::BoundPtr;
+using jag::draw::CommandMap;
+using jag::draw::CommandMapPtr;
+using jag::draw::Uniform;
+using jag::draw::UniformPtr;
+using jag::draw::UniformSet;
+using jag::draw::UniformSetPtr;
+using jag::draw::Drawable;
+using jag::draw::DrawablePtr;
+using jag::draw::DrawNodeContainer;
+using jag::draw::Program;
 
 
 jagSG::NodePtr createQuad( const gmtl::Point3f& center, const float extent )
@@ -68,16 +68,16 @@ jagSG::NodePtr createQuad( const gmtl::Point3f& center, const float extent )
         gmtl::Point3f( extent/2.f, extent/2.f, 0.f ) );
     const gmtl::Vec3f uVec( extent, 0.f, 0.f );
     const gmtl::Vec3f vVec( 0.f, extent, 0.f );
-    jagDraw::DrawablePtr quad( jagUtil::makePlane(
+    jag::draw::DrawablePtr quad( jagUtil::makePlane(
         data, corner, uVec, vVec ) );
     quadRoot->addDrawable( quad );
 
     // Put the data in an array buffer object, and add it to
     // a VertexArrayObject.
-    jagDraw::CommandMapPtr commands( quadRoot->getCommandMap() );
+    jag::draw::CommandMapPtr commands( quadRoot->getCommandMap() );
     if( commands == NULL )
     {
-        commands = jagDraw::CommandMapPtr( new jagDraw::CommandMap() );
+        commands = jag::draw::CommandMapPtr( new jag::draw::CommandMap() );
         quadRoot->setCommandMap( commands );
     }
     commands->insert( jagUtil::createVertexArrayObject( data ) );
@@ -100,7 +100,7 @@ bool test()
         cv.setViewProj( view, proj );
         cv.setViewport( 0, 0, 100, 100 );
 
-        jagDraw::DrawGraphPtr drawGraphTemplate( new jagDraw::DrawGraph() );
+        jag::draw::DrawGraphPtr drawGraphTemplate( new jag::draw::DrawGraph() );
         drawGraphTemplate->resize( 1 );
         cv.setDrawGraphTemplate( drawGraphTemplate );
 
@@ -113,7 +113,7 @@ bool test()
             root->accept( fcdv );
 
             root->accept( cv );
-            const jagDraw::DrawGraphPtr drawGraph( cv.getDrawGraph() );
+            const jag::draw::DrawGraphPtr drawGraph( cv.getDrawGraph() );
             size_t size( drawGraph->size() );
             if( size != 1 )
             {
@@ -126,7 +126,7 @@ bool test()
                 std::cerr << "Failed: DrawNodeContainer incorrect size: " << nodes.size() << std::endl;
                 return( false );
             }
-            const jagDraw::DrawNodePtr& node( nodes[ 0 ] );
+            const jag::draw::DrawNodePtr& node( nodes[ 0 ] );
             if( node->getNumDrawables() != 1 )
             {
                 std::cerr << "Node num drawables " << node->getNumDrawables() << " != 1." << std::endl;
@@ -149,14 +149,14 @@ bool test()
             root->accept( fcdv );
 
             root->accept( cv );
-            const jagDraw::DrawGraphPtr drawGraph( cv.getDrawGraph() );
+            const jag::draw::DrawGraphPtr drawGraph( cv.getDrawGraph() );
             const DrawNodeContainer& nodes( (*drawGraph)[ 0 ] );
             if( nodes.size() != 1 )
             {
                 std::cerr << "Failed: DrawNodeContainer incorrect size: " << nodes.size() << std::endl;
                 return( false );
             }
-            const jagDraw::DrawNodePtr& node( nodes[ 0 ] );
+            const jag::draw::DrawNodePtr& node( nodes[ 0 ] );
             if( node->getNumDrawables() != 1 )
             {
                 std::cerr << "Node num drawables " << node->getNumDrawables() << " != 1." << std::endl;
@@ -184,14 +184,14 @@ bool test()
             root->accept( fcdv );
 
             root->accept( cv );
-            const jagDraw::DrawGraphPtr drawGraph( cv.getDrawGraph() );
+            const jag::draw::DrawGraphPtr drawGraph( cv.getDrawGraph() );
             const DrawNodeContainer& nodes( (*drawGraph)[ 0 ] );
             if( nodes.size() != 9 )
             {
                 std::cerr << "Failed: DrawNodeContainer incorrect size: " << nodes.size() << std::endl;
                 return( false );
             }
-            const jagDraw::DrawNodePtr& node( nodes[ 0 ] );
+            const jag::draw::DrawNodePtr& node( nodes[ 0 ] );
             if( node->getNumDrawables() != 1 )
             {
                 std::cerr << "Node num drawables " << node->getNumDrawables() << " != 1." << std::endl;

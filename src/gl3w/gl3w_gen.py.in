@@ -17,7 +17,7 @@ with open('@GL3_GLCOREARB_HEADER@/GL/glcorearb.h', 'r') as f:
 # Parse function names from glExtensions.h
 print 'Parsing glExtensions.h header...'
 p = re.compile(r'GLAPI.*APIENTRY\s+(\w+)')
-with open('@PROJECT_SOURCE_DIR@/src/jagDraw/glExtensions.h', 'r') as f:
+with open('@PROJECT_SOURCE_DIR@/src/jag/draw/glExtensions.h', 'r') as f:
     for line in f:
         m = p.match(line)
         if m:
@@ -31,7 +31,7 @@ def proc_t(proc):
 
 # Generate gl3w.h
 print 'Generating gl3w.h...'
-with open('@PROJECT_SOURCE_DIR@/src/jagDraw/gl3w.h', 'wb') as f:
+with open('@PROJECT_SOURCE_DIR@/src/jag/draw/gl3w.h', 'wb') as f:
     f.write(r'''
     
 /* gl3w pulled from: https://github.com/pmartz/gl3w branch 'jag3d' */
@@ -40,7 +40,7 @@ with open('@PROJECT_SOURCE_DIR@/src/jagDraw/gl3w.h', 'wb') as f:
 #define __gl3w_h_
 
 #include <GL/glcorearb.h>
-#include <jagDraw/glExtensions.h>
+#include <jag/draw/glExtensions.h>
 
 #ifndef JAGDRAW_GL3W_EXPORT
     #if defined( _MSC_VER ) || defined( __CYGWIN__ ) || defined( __MINGW32__ ) || defined( __BCPLUSPLUS__ ) || defined( __MWERKS__ )
@@ -84,12 +84,12 @@ void *gl3wGetProcAddress(const char *proc);
 
 # Generate gl3w.c
 print 'Generating gl3w.c...'
-with open('@PROJECT_SOURCE_DIR@/src/jagDraw/gl3w.c', 'wb') as f:
+with open('@PROJECT_SOURCE_DIR@/src/jag/draw/gl3w.c', 'wb') as f:
     f.write(r'''#ifdef _WIN32
 #define JAGDRAW_GL3W_EXPORT __declspec( dllexport )
 #endif
 
-#include <jagDraw/gl3w.h>
+#include <jag/draw/gl3w.h>
 
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN 1

@@ -19,7 +19,7 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#include <jagDraw/PlatformOpenGL.h>
+#include <jag/draw/PlatformOpenGL.h>
 #include "osg2jag.h"
 
 #include <osg/Node>
@@ -32,14 +32,14 @@
 #include <osg/Material>
 
 #include <jag/disk/Options.h>
-#include <jagDraw/DrawNode.h>
-#include <jagDraw/CommandMap.h>
-#include <jagDraw/Drawable.h>
-#include <jagDraw/BufferObject.h>
-#include <jagDraw/UniformBlock.h>
-#include <jagDraw/VertexAttrib.h>
-#include <jagDraw/VertexArrayObject.h>
-#include <jagDraw/types.h>
+#include <jag/draw/DrawNode.h>
+#include <jag/draw/CommandMap.h>
+#include <jag/draw/Drawable.h>
+#include <jag/draw/BufferObject.h>
+#include <jag/draw/UniformBlock.h>
+#include <jag/draw/VertexAttrib.h>
+#include <jag/draw/VertexArrayObject.h>
+#include <jag/draw/types.h>
 #include <jag/base/LogMacros.h>
 #include <gmtl/gmtl.h>
 
@@ -48,7 +48,7 @@
 
 static const std::string loggerName( "jag.plugin.model.osg2jag" );
 
-using namespace jagDraw;
+using namespace jag::draw;
 
 
 #define VEC4_TO_GMTL_PT4F(_v) \
@@ -109,8 +109,8 @@ void Osg2Jag::apply( osg::Geode& osgNode )
         return;
 
     // storeInParent indicates that apply(Geometry) should not
-    // create a new jagSG::Node, but rather store its jagDraw::CommandMap
-    // and jagDraw::Drawable in the jagSG::Node corresponding to this
+    // create a new jagSG::Node, but rather store its jag::draw::CommandMap
+    // and jag::draw::Drawable in the jagSG::Node corresponding to this
     // osg::Geode.
     bool storeInParent(
         ( osgNode.getNumDrawables() == 1 ) &&
@@ -189,19 +189,19 @@ void Osg2Jag::apply( osg::Geometry* geom, const bool storeInParent )
         apply( geom->getStateSet() );
 
     DrawablePtr draw( DrawablePtr( new Drawable ) );
-    jagDraw::CommandMapPtr& commands( _current->getOrCreateCommandMap() );
+    jag::draw::CommandMapPtr& commands( _current->getOrCreateCommandMap() );
 
-    jagDraw::VertexArrayObjectPtr vaop( new jagDraw::VertexArrayObject );
+    jag::draw::VertexArrayObjectPtr vaop( new jag::draw::VertexArrayObject );
 
     const unsigned int numVertices( geom->getVertexArray()->getNumElements() );
     {
         ArrayInfo info( asJagArray( geom->getVertexArray() ) );
-        jagDraw::BufferObjectPtr bop( new jagDraw::BufferObject( GL_ARRAY_BUFFER, info._buffer ) );
-        vaop->addVertexArrayCommand( bop, jagDraw::VertexArrayObject::Vertex );
+        jag::draw::BufferObjectPtr bop( new jag::draw::BufferObject( GL_ARRAY_BUFFER, info._buffer ) );
+        vaop->addVertexArrayCommand( bop, jag::draw::VertexArrayObject::Vertex );
 
-        jagDraw::VertexAttribPtr attrib( new jagDraw::VertexAttrib(
+        jag::draw::VertexAttribPtr attrib( new jag::draw::VertexAttrib(
             _vertexAttribName, info._componentsPerElement, info._type, GL_FALSE, 0, 0 ) );
-        vaop->addVertexArrayCommand( attrib, jagDraw::VertexArrayObject::Vertex );
+        vaop->addVertexArrayCommand( attrib, jag::draw::VertexArrayObject::Vertex );
     }
     if( ( geom->getNormalArray() != NULL ) &&
         ( geom->getNormalBinding() != osg::Geometry::BIND_OFF ) )
@@ -212,12 +212,12 @@ void Osg2Jag::apply( osg::Geometry* geom, const bool storeInParent )
         }
 
         ArrayInfo info( asJagArray( geom->getNormalArray() ) );
-        jagDraw::BufferObjectPtr bop( new jagDraw::BufferObject( GL_ARRAY_BUFFER, info._buffer ) );
-        vaop->addVertexArrayCommand( bop, jagDraw::VertexArrayObject::Normal );
+        jag::draw::BufferObjectPtr bop( new jag::draw::BufferObject( GL_ARRAY_BUFFER, info._buffer ) );
+        vaop->addVertexArrayCommand( bop, jag::draw::VertexArrayObject::Normal );
 
-        jagDraw::VertexAttribPtr attrib( new jagDraw::VertexAttrib(
+        jag::draw::VertexAttribPtr attrib( new jag::draw::VertexAttrib(
             _normalAttribName, info._componentsPerElement, info._type, GL_FALSE, 0, 0 ) );
-        vaop->addVertexArrayCommand( attrib, jagDraw::VertexArrayObject::Normal );
+        vaop->addVertexArrayCommand( attrib, jag::draw::VertexArrayObject::Normal );
     }
 
 
@@ -227,13 +227,13 @@ void Osg2Jag::apply( osg::Geometry* geom, const bool storeInParent )
         if( geom->getTexCoordArray( idx ) != NULL )
         {
             ArrayInfo info( asJagArray( geom->getTexCoordArray( idx ) ) );
-            jagDraw::BufferObjectPtr bop( new jagDraw::BufferObject( GL_ARRAY_BUFFER, info._buffer ) );
-            vaop->addVertexArrayCommand( bop, jagDraw::VertexArrayObject::TexCoord );
+            jag::draw::BufferObjectPtr bop( new jag::draw::BufferObject( GL_ARRAY_BUFFER, info._buffer ) );
+            vaop->addVertexArrayCommand( bop, jag::draw::VertexArrayObject::TexCoord );
             std::ostringstream ostr;
             ostr << _texCoordAttribName << idx;
-            jagDraw::VertexAttribPtr attrib( new jagDraw::VertexAttrib(
+            jag::draw::VertexAttribPtr attrib( new jag::draw::VertexAttrib(
                 ostr.str(), info._componentsPerElement, info._type, GL_FALSE, 0, 0 ) );
-            vaop->addVertexArrayCommand( attrib, jagDraw::VertexArrayObject::TexCoord );
+            vaop->addVertexArrayCommand( attrib, jag::draw::VertexArrayObject::TexCoord );
         }
     }
 
@@ -250,7 +250,7 @@ void Osg2Jag::apply( osg::Geometry* geom, const bool storeInParent )
             JAG3D_TRACE_STATIC( loggerName, "DrawArrays" );
 
             const osg::DrawArrays* da( static_cast< const osg::DrawArrays* >( ps ) );
-            jagDraw::DrawArraysPtr drawcom( new jagDraw::DrawArrays(
+            jag::draw::DrawArraysPtr drawcom( new jag::draw::DrawArrays(
                 da->getMode(), da->getFirst(), da->getCount() ) );
             draw->addDrawCommand( drawcom );
             break;
@@ -262,8 +262,8 @@ void Osg2Jag::apply( osg::Geometry* geom, const bool storeInParent )
             const osg::DrawArrayLengths* dal( static_cast< const osg::DrawArrayLengths* >( ps ) );
             const unsigned int size( dal->size() );
 
-            jagDraw::GLintVec first( size );
-            jagDraw::GLsizeiVec count( size );
+            jag::draw::GLintVec first( size );
+            jag::draw::GLsizeiVec count( size );
             GLint* fp( &first[ 0 ] );
             GLsizei* cp( &count[ 0 ] );
 
@@ -277,7 +277,7 @@ void Osg2Jag::apply( osg::Geometry* geom, const bool storeInParent )
                 cp[ idx ] = (*dal)[ idx ];
             }
 
-            jagDraw::MultiDrawArraysPtr drawcom( new jagDraw::MultiDrawArrays(
+            jag::draw::MultiDrawArraysPtr drawcom( new jag::draw::MultiDrawArrays(
                 dal->getMode(), first, count, size ) );
             draw->addDrawCommand( drawcom );
             break;
@@ -288,9 +288,9 @@ void Osg2Jag::apply( osg::Geometry* geom, const bool storeInParent )
 
             const osg::DrawElementsUByte* deub( static_cast< const osg::DrawElementsUByte* >( ps ) );
             ArrayInfo info( asJagArray( deub ) );
-            jagDraw::BufferObjectPtr bop( new jagDraw::BufferObject( GL_ELEMENT_ARRAY_BUFFER, info._buffer ) );
+            jag::draw::BufferObjectPtr bop( new jag::draw::BufferObject( GL_ELEMENT_ARRAY_BUFFER, info._buffer ) );
 
-            jagDraw::DrawElementsPtr drawcom( new jagDraw::DrawElements(
+            jag::draw::DrawElementsPtr drawcom( new jag::draw::DrawElements(
                 deub->getMode(), info._numElements, GL_UNSIGNED_BYTE, NULL, bop ) );
             draw->addDrawCommand( drawcom );
             break;
@@ -301,9 +301,9 @@ void Osg2Jag::apply( osg::Geometry* geom, const bool storeInParent )
 
             const osg::DrawElementsUShort* deus( static_cast< const osg::DrawElementsUShort* >( ps ) );
             ArrayInfo info( asJagArray( deus ) );
-            jagDraw::BufferObjectPtr bop( new jagDraw::BufferObject( GL_ELEMENT_ARRAY_BUFFER, info._buffer ) );
+            jag::draw::BufferObjectPtr bop( new jag::draw::BufferObject( GL_ELEMENT_ARRAY_BUFFER, info._buffer ) );
 
-            jagDraw::DrawElementsPtr drawcom( new jagDraw::DrawElements(
+            jag::draw::DrawElementsPtr drawcom( new jag::draw::DrawElements(
                 deus->getMode(), info._numElements, GL_UNSIGNED_SHORT, NULL, bop ) );
             draw->addDrawCommand( drawcom );
             break;
@@ -314,9 +314,9 @@ void Osg2Jag::apply( osg::Geometry* geom, const bool storeInParent )
 
             const osg::DrawElementsUInt* deui( static_cast< const osg::DrawElementsUInt* >( ps ) );
             ArrayInfo info( asJagArray( deui ) );
-            jagDraw::BufferObjectPtr bop( new jagDraw::BufferObject( GL_ELEMENT_ARRAY_BUFFER, info._buffer ) );
+            jag::draw::BufferObjectPtr bop( new jag::draw::BufferObject( GL_ELEMENT_ARRAY_BUFFER, info._buffer ) );
 
-            jagDraw::DrawElementsPtr drawcom( new jagDraw::DrawElements(
+            jag::draw::DrawElementsPtr drawcom( new jag::draw::DrawElements(
                 deui->getMode(), info._numElements, GL_UNSIGNED_INT, NULL, bop ) );
             draw->addDrawCommand( drawcom );
             break;
@@ -336,7 +336,7 @@ void Osg2Jag::apply( osg::Geometry* geom, const bool storeInParent )
 }
 
 
-jagDraw::UniformBlockPtr Osg2Jag::findMaterial( osg::Material* m )
+jag::draw::UniformBlockPtr Osg2Jag::findMaterial( osg::Material* m )
 {
     // Find by address
     OSGMaterialMap::iterator it( _matInstances.find( m ) );
@@ -355,9 +355,9 @@ jagDraw::UniformBlockPtr Osg2Jag::findMaterial( osg::Material* m )
         }
     }
 
-    return( jagDraw::UniformBlockPtr( (jagDraw::UniformBlock*)NULL ) );
+    return( jag::draw::UniformBlockPtr( (jag::draw::UniformBlock*)NULL ) );
 }
-void Osg2Jag::addMaterial( osg::Material* m, jagDraw::UniformBlockPtr ub )
+void Osg2Jag::addMaterial( osg::Material* m, jag::draw::UniformBlockPtr ub )
 {
     _matInstances[ m ] = ub;
 }
@@ -374,18 +374,18 @@ void Osg2Jag::apply( osg::StateSet* stateSet )
         {
             // There are problems sharing command maps.
             //_current->setCommandMap( it->second );
-            _current->setCommandMap( jagDraw::CommandMapPtr(
-                new jagDraw::CommandMap( *(it->second) ) ) );
+            _current->setCommandMap( jag::draw::CommandMapPtr(
+                new jag::draw::CommandMap( *(it->second) ) ) );
         }
         return;
     }
 
-    jagDraw::CommandMapPtr commands( jagDraw::CommandMapPtr( new jagDraw::CommandMap ) );
+    jag::draw::CommandMapPtr commands( jag::draw::CommandMapPtr( new jag::draw::CommandMap ) );
     _ssInstances[ stateSet ] = commands;
 
 
-    jagDraw::UniformBlockSetPtr ubsp( jagDraw::UniformBlockSetPtr(
-        new jagDraw::UniformBlockSet() ) );
+    jag::draw::UniformBlockSetPtr ubsp( jag::draw::UniformBlockSetPtr(
+        new jag::draw::UniformBlockSet() ) );
 
     // Materials
     osg::StateAttribute* sa( stateSet->getAttribute( osg::StateAttribute::MATERIAL ) );
@@ -396,16 +396,16 @@ void Osg2Jag::apply( osg::StateSet* stateSet )
         UniformBlockPtr frontMaterials( findMaterial( m ) );
         if( frontMaterials == NULL )
         {
-            frontMaterials = jagDraw::UniformBlockPtr(
-                new jagDraw::UniformBlock( "LightingMaterialFront" ) );
-            frontMaterials->addUniform( jagDraw::UniformPtr(
-                new jagDraw::Uniform( "ambient", VEC4_TO_GMTL_PT4F(m->getAmbient(osg::Material::FRONT)) ) ) );
-            frontMaterials->addUniform( jagDraw::UniformPtr(
-                new jagDraw::Uniform( "diffuse", VEC4_TO_GMTL_PT4F(m->getDiffuse(osg::Material::FRONT)) ) ) );
-            frontMaterials->addUniform( jagDraw::UniformPtr(
-                new jagDraw::Uniform( "specular", VEC4_TO_GMTL_PT4F(m->getSpecular(osg::Material::FRONT)) ) ) );
-            frontMaterials->addUniform( jagDraw::UniformPtr(
-                new jagDraw::Uniform( "shininess", m->getShininess( osg::Material::FRONT ) ) ) );
+            frontMaterials = jag::draw::UniformBlockPtr(
+                new jag::draw::UniformBlock( "LightingMaterialFront" ) );
+            frontMaterials->addUniform( jag::draw::UniformPtr(
+                new jag::draw::Uniform( "ambient", VEC4_TO_GMTL_PT4F(m->getAmbient(osg::Material::FRONT)) ) ) );
+            frontMaterials->addUniform( jag::draw::UniformPtr(
+                new jag::draw::Uniform( "diffuse", VEC4_TO_GMTL_PT4F(m->getDiffuse(osg::Material::FRONT)) ) ) );
+            frontMaterials->addUniform( jag::draw::UniformPtr(
+                new jag::draw::Uniform( "specular", VEC4_TO_GMTL_PT4F(m->getSpecular(osg::Material::FRONT)) ) ) );
+            frontMaterials->addUniform( jag::draw::UniformPtr(
+                new jag::draw::Uniform( "shininess", m->getShininess( osg::Material::FRONT ) ) ) );
             addMaterial( m, frontMaterials );
         }
         ubsp->insert( frontMaterials );
@@ -507,7 +507,7 @@ Osg2Jag::ArrayInfo Osg2Jag::asJagArray( const osg::VectorGLubyte* arrayIn )
     info._numElements = size;
     info._componentsPerElement = 1;
 
-    jagDraw::GLubyteVec out;
+    jag::draw::GLubyteVec out;
     out.resize( size );
     unsigned int idx;
     for( idx=0; idx<size; idx++ )
@@ -527,7 +527,7 @@ Osg2Jag::ArrayInfo Osg2Jag::asJagArray( const osg::VectorGLushort* arrayIn )
     info._numElements = size;
     info._componentsPerElement = 1;
 
-    jagDraw::GLushortVec out;
+    jag::draw::GLushortVec out;
     out.resize( size );
     unsigned int idx;
     for( idx=0; idx<size; idx++ )
@@ -547,7 +547,7 @@ Osg2Jag::ArrayInfo Osg2Jag::asJagArray( const osg::VectorGLuint* arrayIn )
     info._numElements = size;
     info._componentsPerElement = 1;
 
-    jagDraw::GLuintVec out;
+    jag::draw::GLuintVec out;
     out.resize( size );
     unsigned int idx;
     for( idx=0; idx<size; idx++ )

@@ -21,9 +21,9 @@
 
 #include <jagSG/CollectionVisitor.h>
 #include <jagSG/Node.h>
-#include <jagDraw/DrawNode.h>
+#include <jag/draw/DrawNode.h>
 #include <jag/base/gmtlSupport.h>
-#include <jagDraw/Error.h>
+#include <jag/draw/Error.h>
 #include <jag/base/Profile.h>
 #include <jag/base/LogMacros.h>
 
@@ -93,21 +93,21 @@ void CollectionVisitor::reset()
     // these in reset(), which means once per frame.
     if( _drawTransformCallback == NULL )
     {
-        _drawTransformCallback = jagDraw::TransformCallbackPtr(
-            new jagDraw::TransformCallback() );
+        _drawTransformCallback = jag::draw::TransformCallbackPtr(
+            new jag::draw::TransformCallback() );
     }
     else
     {
         // Use copy constructor to preserve any pre-existing settings
         // (like custom matrix uniform names).
         _drawTransformCallback.reset(
-            new jagDraw::TransformCallback( *_drawTransformCallback ) );
+            new jag::draw::TransformCallback( *_drawTransformCallback ) );
     }
 
     _currentID = 0;
     if( _drawGraph != NULL )
     {
-        BOOST_FOREACH( jagDraw::DrawGraph::value_type& data, *_drawGraph )
+        BOOST_FOREACH( jag::draw::DrawGraph::value_type& data, *_drawGraph )
         {
             data.reset();
         }
@@ -138,7 +138,7 @@ void CollectionVisitor::visit( jagSG::Node& node )
 
 
     _infoPtr->setNode( &node );
-    jagDraw::BoundOwner* boundOwner( &node );
+    jag::draw::BoundOwner* boundOwner( &node );
     _infoPtr->setBound( boundOwner->getBound( _commandStack.back() ).get() );
     _infoPtr->setContainmentPlanes( getCurrentPlanes() );
     }
@@ -198,14 +198,14 @@ void CollectionVisitor::collectAndTraverse( jagSG::Node& node )
         }
         }
 
-        // Get a new jagDraw::DrawNode.
-        // Note: We can't re-use an existing jagDraw::DrawNode, as that
+        // Get a new jag::draw::DrawNode.
+        // Note: We can't re-use an existing jag::draw::DrawNode, as that
         // potentially breaks DrawGraph sorting by depth.
         if( _currentNodes == NULL )
             setCurrentNodeContainer( 0 );
-        jagDraw::DrawNodePtr& drawNode( _currentNodes->grow() );
+        jag::draw::DrawNodePtr& drawNode( _currentNodes->grow() );
 
-        // Init the jagDraw::DrawNode.
+        // Init the jag::draw::DrawNode.
         {
             {
             JAG3D_PROFILE( "collect node setup" );
@@ -220,7 +220,7 @@ void CollectionVisitor::collectAndTraverse( jagSG::Node& node )
             {
             JAG3D_PROFILE( "CM copy" );
             //JAG3D_WARNING( "TBD Must allocate new CommandMapPtr?" );
-            jagDraw::CommandMapPtr commands( new jagDraw::CommandMap(
+            jag::draw::CommandMapPtr commands( new jag::draw::CommandMap(
                     _commandStack.back() ) );
             drawNode->setCommandMap( commands );
             }
@@ -243,20 +243,20 @@ void CollectionVisitor::collectAndTraverse( jagSG::Node& node )
 }
 
 
-jagDraw::DrawGraphPtr CollectionVisitor::getDrawGraph() const
+jag::draw::DrawGraphPtr CollectionVisitor::getDrawGraph() const
 {
     return( _drawGraph );
 }
 
-void CollectionVisitor::setDrawGraphTemplate( jagDraw::DrawGraphPtr drawGraphTemplate )
+void CollectionVisitor::setDrawGraphTemplate( jag::draw::DrawGraphPtr drawGraphTemplate )
 {
     _drawGraphTemplate = drawGraphTemplate;
-    _drawGraph = jagDraw::DrawGraphPtr( new jagDraw::DrawGraph( *_drawGraphTemplate ) );
+    _drawGraph = jag::draw::DrawGraphPtr( new jag::draw::DrawGraph( *_drawGraphTemplate ) );
 
     if( _drawTransformCallback != NULL )
         _drawGraph->setTransformCallback( _drawTransformCallback );
 }
-const jagDraw::DrawGraphPtr CollectionVisitor::getDrawGraphTemplate() const
+const jag::draw::DrawGraphPtr CollectionVisitor::getDrawGraphTemplate() const
 {
     return( _drawGraphTemplate );
 }
@@ -338,7 +338,7 @@ void CollectionVisitor::setCurrentNodeContainer( const unsigned int currentID )
     {
         if( _drawGraph == NULL )
             // No draw graph template specified.
-            _drawGraph = jagDraw::DrawGraphPtr( new jagDraw::DrawGraph() );
+            _drawGraph = jag::draw::DrawGraphPtr( new jag::draw::DrawGraph() );
 
         // Either off the end of the draw graph,
         // or no draw graph template specified.
@@ -391,7 +391,7 @@ CollectionVisitor::CollectionInfo::~CollectionInfo()
 }
 
 
-void CollectionVisitor::CollectionInfo::setBound( jagDraw::Bound* bound )
+void CollectionVisitor::CollectionInfo::setBound( jag::draw::Bound* bound )
 {
     _ecDistanceDirty = true;
     _ecRadiusDirty = true;
@@ -462,7 +462,7 @@ void CollectionVisitor::CollectionInfo::setContainmentPlanes( CollectionVisitor:
 bool CollectionVisitor::CollectionInfo::isContained() const
 {
     const jag::base::TransformD::FTYPE frustum( _transform.getFrustum() );
-    if( _bound->getType() == jagDraw::Bound::Box_t )
+    if( _bound->getType() == jag::draw::Bound::Box_t )
         return( gmtl::contains( _planes, *_indices, _bound->asAABox() ) );
     else
         return( gmtl::contains( _planes, *_indices, _bound->asSphere() ) );

@@ -21,7 +21,7 @@
 
 #include <demoSupport/DemoInterface.h>
 
-#include <jagDraw/Common.h>
+#include <jag/draw/Common.h>
 
 #include <jag/base/Version.h>
 #include <jag/base/Log.h>
@@ -54,12 +54,12 @@ public:
     virtual bool frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj );
 
 protected:
-    jagDraw::DrawablePtr makeSceneDrawable(
-            jagDraw::ProgramPtr& prog, jagDraw::VertexArrayObjectPtr& vaop );
+    jag::draw::DrawablePtr makeSceneDrawable(
+            jag::draw::ProgramPtr& prog, jag::draw::VertexArrayObjectPtr& vaop );
 
 
-    jagDraw::DrawNodeContainer _windowNodes, _rttNodes, _quadNodes;
-    jagDraw::FramebufferPtr _textureFBO, _defaultFBO;
+    jag::draw::DrawNodeContainer _windowNodes, _rttNodes, _quadNodes;
+    jag::draw::FramebufferPtr _textureFBO, _defaultFBO;
 
     const GLsizei _texWidth, _texHeight;
     unsigned int _frames;
@@ -76,8 +76,8 @@ DemoInterface* DemoInterface::create( bpo::options_description& desc )
 }
 
 
-jagDraw::DrawablePtr RttDemo::makeSceneDrawable(
-        jagDraw::ProgramPtr& prog, jagDraw::VertexArrayObjectPtr& vaop )
+jag::draw::DrawablePtr RttDemo::makeSceneDrawable(
+        jag::draw::ProgramPtr& prog, jag::draw::VertexArrayObjectPtr& vaop )
 {
     const char* vertShader =
 #if( POCO_OS == POCO_OS_MAC_OS_X )
@@ -90,7 +90,7 @@ jagDraw::DrawablePtr RttDemo::makeSceneDrawable(
         "void main() { \n"
         "    gl_Position = vec4( vertex, 1. ); \n"
         "}";
-    jagDraw::ShaderPtr vs( new jagDraw::Shader( GL_VERTEX_SHADER ) );
+    jag::draw::ShaderPtr vs( new jag::draw::Shader( GL_VERTEX_SHADER ) );
     vs->addSourceString( std::string( vertShader ) );
 
 
@@ -108,10 +108,10 @@ jagDraw::DrawablePtr RttDemo::makeSceneDrawable(
         "    colorOut = vec4( 1., .0, .0, 1.0 ); \n"
         "    colorOut2 = vec4( .0, 1., 1., 1.0 ); \n"
         "}";
-    jagDraw::ShaderPtr fs( new jagDraw::Shader( GL_FRAGMENT_SHADER ) );
+    jag::draw::ShaderPtr fs( new jag::draw::Shader( GL_FRAGMENT_SHADER ) );
     fs->addSourceString( std::string( fragShader ) );
 
-    prog = jagDraw::ProgramPtr( new jagDraw::Program() );
+    prog = jag::draw::ProgramPtr( new jag::draw::Program() );
     prog->attachShader( vs );
     prog->attachShader( fs );
 
@@ -123,18 +123,18 @@ jagDraw::DrawablePtr RttDemo::makeSceneDrawable(
         0., 1., z,
         1., 0., z };
     jag::base::BufferPtr ibp( new jag::base::Buffer( sizeof( vertices ), (void*)vertices ) );
-    jagDraw::BufferObjectPtr ibop( new jagDraw::BufferObject( GL_ARRAY_BUFFER, ibp ) );
+    jag::draw::BufferObjectPtr ibop( new jag::draw::BufferObject( GL_ARRAY_BUFFER, ibp ) );
 
-    jagDraw::VertexAttribPtr iVerts( new jagDraw::VertexAttrib(
+    jag::draw::VertexAttribPtr iVerts( new jag::draw::VertexAttrib(
         "vertex", 3, GL_FLOAT, GL_FALSE, 0, 0 ) );
 
-    vaop = jagDraw::VertexArrayObjectPtr( new jagDraw::VertexArrayObject() );
-    vaop->addVertexArrayCommand( ibop, jagDraw::VertexArrayObject::Vertex );
-    vaop->addVertexArrayCommand( iVerts, jagDraw::VertexArrayObject::Vertex );
+    vaop = jag::draw::VertexArrayObjectPtr( new jag::draw::VertexArrayObject() );
+    vaop->addVertexArrayCommand( ibop, jag::draw::VertexArrayObject::Vertex );
+    vaop->addVertexArrayCommand( iVerts, jag::draw::VertexArrayObject::Vertex );
 
 
-    jagDraw::DrawablePtr drawable( new jagDraw::Drawable() );
-    jagDraw::DrawArraysPtr drawArrays( new jagDraw::DrawArrays( GL_LINES, 0, 4 ) );
+    jag::draw::DrawablePtr drawable( new jag::draw::Drawable() );
+    jag::draw::DrawArraysPtr drawArrays( new jag::draw::DrawArrays( GL_LINES, 0, 4 ) );
     drawable->addDrawCommand( drawArrays );
 
     return( drawable );
@@ -147,22 +147,22 @@ bool RttDemo::startup( const unsigned int numContexts )
 
     // Drawable for rendering lines, same Drawable whether we
     // render to window or to texture.
-    jagDraw::ProgramPtr prog( new jagDraw::Program() );
-    jagDraw::VertexArrayObjectPtr vaop( new jagDraw::VertexArrayObject() );
-    jagDraw::DrawablePtr linesDrawable( makeSceneDrawable( prog, vaop ) );
+    jag::draw::ProgramPtr prog( new jag::draw::Program() );
+    jag::draw::VertexArrayObjectPtr vaop( new jag::draw::VertexArrayObject() );
+    jag::draw::DrawablePtr linesDrawable( makeSceneDrawable( prog, vaop ) );
 
 
     // Create an FBO for the default framebuffer (the window)
-    _defaultFBO = jagDraw::FramebufferPtr( new jagDraw::Framebuffer( GL_DRAW_FRAMEBUFFER ) );
+    _defaultFBO = jag::draw::FramebufferPtr( new jag::draw::Framebuffer( GL_DRAW_FRAMEBUFFER ) );
     _defaultFBO->setUserDataName( "defaultFBO" );
     _defaultFBO->setClear( 0 );
     _defaultFBO->setViewport( 0, 0, 300, 300 );
 
-    jagDraw::CommandMapPtr commands( jagDraw::CommandMapPtr( new jagDraw::CommandMap() ) );
+    jag::draw::CommandMapPtr commands( jag::draw::CommandMapPtr( new jag::draw::CommandMap() ) );
     commands->insert( prog );
     commands->insert( vaop );
     commands->insert( _defaultFBO );
-    jagDraw::DrawNodePtr drawNode( new jagDraw::DrawNode( commands ) );
+    jag::draw::DrawNodePtr drawNode( new jag::draw::DrawNode( commands ) );
     drawNode->addDrawable( linesDrawable );
     _windowNodes.push_back( drawNode );
 
@@ -170,21 +170,21 @@ bool RttDemo::startup( const unsigned int numContexts )
     // Now set up to render the lines to a texture.
 
     // Create a texture to render into.
-    jagDraw::ImagePtr image( new jagDraw::Image() );
+    jag::draw::ImagePtr image( new jag::draw::Image() );
     image->set( 0, GL_RGBA, _texWidth, _texHeight, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL );
-    jagDraw::TexturePtr tex( new jagDraw::Texture( GL_TEXTURE_2D, image,
-        jagDraw::SamplerPtr( new jagDraw::Sampler() ) ) );
+    jag::draw::TexturePtr tex( new jag::draw::Texture( GL_TEXTURE_2D, image,
+        jag::draw::SamplerPtr( new jag::draw::Sampler() ) ) );
     tex->getSampler()->getSamplerState()->_minFilter = GL_LINEAR;
     tex->setUserDataName( "texture0" );
 
     //create the second texture to render into
-    jagDraw::TexturePtr tex2( new jagDraw::Texture( GL_TEXTURE_2D, image,
-        jagDraw::SamplerPtr( new jagDraw::Sampler() ) ) );
+    jag::draw::TexturePtr tex2( new jag::draw::Texture( GL_TEXTURE_2D, image,
+        jag::draw::SamplerPtr( new jag::draw::Sampler() ) ) );
     tex2->getSampler()->getSamplerState()->_minFilter = GL_LINEAR;
     tex2->setUserDataName( "texture1" );
 
     // Create an FBO and attach textureS.
-    _textureFBO = jagDraw::FramebufferPtr( new jagDraw::Framebuffer( GL_DRAW_FRAMEBUFFER ) );
+    _textureFBO = jag::draw::FramebufferPtr( new jag::draw::Framebuffer( GL_DRAW_FRAMEBUFFER ) );
     _textureFBO->setUserDataName( "textureFBO" );
     _textureFBO->setClearColor( 0., 0., 0., 1. );
     _textureFBO->setClear( GL_COLOR_BUFFER_BIT );
@@ -194,9 +194,9 @@ bool RttDemo::startup( const unsigned int numContexts )
     
 
     // Render the lines first.
-    jagDraw::CommandMapPtr rttCommands( jagDraw::CommandMapPtr( new jagDraw::CommandMap( *commands ) ) );
+    jag::draw::CommandMapPtr rttCommands( jag::draw::CommandMapPtr( new jag::draw::CommandMap( *commands ) ) );
     rttCommands->insert( _textureFBO );
-    jagDraw::DrawNodePtr rttDrawNode( new jagDraw::DrawNode( rttCommands ) );
+    jag::draw::DrawNodePtr rttDrawNode( new jag::draw::DrawNode( rttCommands ) );
     rttDrawNode->addDrawable( linesDrawable );
     _rttNodes.push_back( rttDrawNode );
 
@@ -216,7 +216,7 @@ bool RttDemo::startup( const unsigned int numContexts )
             "    gl_Position = vec4( vertex, 1. ); \n"
             "    tcOut = texcoord; \n"
             "}";
-        jagDraw::ShaderPtr vs( new jagDraw::Shader( GL_VERTEX_SHADER ) );
+        jag::draw::ShaderPtr vs( new jag::draw::Shader( GL_VERTEX_SHADER ) );
         vs->addSourceString( std::string( vertSource ) );
 
         const char* fragSource =
@@ -233,10 +233,10 @@ bool RttDemo::startup( const unsigned int numContexts )
             "    colorOut = texture2D( texture, tcOut ) + texture2D(texture2, tcOut);// + vec4( .5, 0., 0., 0. ); \n"
             //"    colorOut = vec4( tcOut, 0., 1. ); \n"
             "}";
-        jagDraw::ShaderPtr fs( new jagDraw::Shader( GL_FRAGMENT_SHADER ) );
+        jag::draw::ShaderPtr fs( new jag::draw::Shader( GL_FRAGMENT_SHADER ) );
         fs->addSourceString( std::string( fragSource ) );
 
-        jagDraw::ProgramPtr prog( new jagDraw::Program );
+        jag::draw::ProgramPtr prog( new jag::draw::Program );
         prog->attachShader( vs );
         prog->attachShader( fs );
 
@@ -252,45 +252,45 @@ bool RttDemo::startup( const unsigned int numContexts )
             1., 1., z,
             1., 1. };
         jag::base::BufferPtr ibp( new jag::base::Buffer( sizeof( vertices ), (void*)vertices ) );
-        jagDraw::BufferObjectPtr ibop( new jagDraw::BufferObject( GL_ARRAY_BUFFER, ibp ) );
+        jag::draw::BufferObjectPtr ibop( new jag::draw::BufferObject( GL_ARRAY_BUFFER, ibp ) );
 
         const GLsizei stride = sizeof( GLfloat ) * 5;
-        jagDraw::VertexAttribPtr iVerts( new jagDraw::VertexAttrib(
+        jag::draw::VertexAttribPtr iVerts( new jag::draw::VertexAttrib(
             "vertex", 3, GL_FLOAT, GL_FALSE, stride, 0 ) );
-        jagDraw::VertexAttribPtr iTexCoord( new jagDraw::VertexAttrib(
+        jag::draw::VertexAttribPtr iTexCoord( new jag::draw::VertexAttrib(
             "texcoord", 2, GL_FLOAT, GL_FALSE, stride, sizeof( GLfloat ) * 3 ) );
 
-        jagDraw::VertexArrayObjectPtr vaop( new jagDraw::VertexArrayObject );
-        vaop->addVertexArrayCommand( ibop, jagDraw::VertexArrayObject::Vertex );
-        vaop->addVertexArrayCommand( iVerts, jagDraw::VertexArrayObject::Vertex );
+        jag::draw::VertexArrayObjectPtr vaop( new jag::draw::VertexArrayObject );
+        vaop->addVertexArrayCommand( ibop, jag::draw::VertexArrayObject::Vertex );
+        vaop->addVertexArrayCommand( iVerts, jag::draw::VertexArrayObject::Vertex );
         vaop->addVertexArrayCommand( iTexCoord );
 
-        jagDraw::DrawablePtr drawable( new jagDraw::Drawable() );
-        jagDraw::DrawArraysPtr drawArrays( new jagDraw::DrawArrays( GL_TRIANGLE_STRIP, 0, 4 ) );
+        jag::draw::DrawablePtr drawable( new jag::draw::Drawable() );
+        jag::draw::DrawArraysPtr drawArrays( new jag::draw::DrawArrays( GL_TRIANGLE_STRIP, 0, 4 ) );
         drawable->addDrawCommand( drawArrays );
 
         // And a uniform for each sampler / texture unit.
-        jagDraw::UniformPtr textureUniform( new jagDraw::Uniform( "texture", GL_SAMPLER_2D, (GLint)0 ) );
-        jagDraw::UniformPtr textureUniform2( new jagDraw::Uniform( "texture2", GL_SAMPLER_2D, (GLint)1 ) );
+        jag::draw::UniformPtr textureUniform( new jag::draw::Uniform( "texture", GL_SAMPLER_2D, (GLint)0 ) );
+        jag::draw::UniformPtr textureUniform2( new jag::draw::Uniform( "texture2", GL_SAMPLER_2D, (GLint)1 ) );
 
 
-        jagDraw::UniformSetPtr uniformSet( jagDraw::UniformSetPtr( new jagDraw::UniformSet() ) );
+        jag::draw::UniformSetPtr uniformSet( jag::draw::UniformSetPtr( new jag::draw::UniformSet() ) );
         (*uniformSet)[ textureUniform->getNameHash() ] = textureUniform;
         (*uniformSet)[ textureUniform2->getNameHash() ] = textureUniform2;
 
-        jagDraw::TextureSetPtr textureSet( jagDraw::TextureSetPtr( new jagDraw::TextureSet() ) );
+        jag::draw::TextureSetPtr textureSet( jag::draw::TextureSetPtr( new jag::draw::TextureSet() ) );
 
         //add both textures to the texture set
         (*textureSet)[ GL_TEXTURE0 ] = tex2;
         (*textureSet)[ GL_TEXTURE1 ] = tex;
 
-        jagDraw::CommandMapPtr quadCommands( jagDraw::CommandMapPtr( new jagDraw::CommandMap() ) );
+        jag::draw::CommandMapPtr quadCommands( jag::draw::CommandMapPtr( new jag::draw::CommandMap() ) );
         quadCommands->insert( prog );
         quadCommands->insert( vaop );
         quadCommands->insert( _defaultFBO );
         quadCommands->insert( textureSet );
         quadCommands->insert( uniformSet );
-        jagDraw::DrawNodePtr quadDrawNode( new jagDraw::DrawNode( quadCommands ) );
+        jag::draw::DrawNodePtr quadDrawNode( new jag::draw::DrawNode( quadCommands ) );
         quadDrawNode->addDrawable( drawable );
         _quadNodes.push_back( quadDrawNode );
     }
@@ -315,7 +315,7 @@ bool RttDemo::init()
     jag::base::getVersionString();
 
     // Auto-log the OpenGL version string.
-    jagDraw::getOpenGLVersionString();
+    jag::draw::getOpenGLVersionString();
 
     JAG3D_ERROR_CHECK( "RttDemo init()" );
     return( true );
@@ -326,8 +326,8 @@ bool RttDemo::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj )
     if( !getStartupCalled() )
         return( true );
 
-    const jagDraw::jagDrawContextID contextID( jagDraw::ContextSupport::instance()->getActiveContext() );
-    jagDraw::DrawInfo& drawInfo( getDrawInfo( contextID ) );
+    const jag::draw::jagDrawContextID contextID( jag::draw::ContextSupport::instance()->getActiveContext() );
+    jag::draw::DrawInfo& drawInfo( getDrawInfo( contextID ) );
 
     // Render all Drawables.
     if( ( ( ++_frames / 100 ) & 0x1 ) == 0 )

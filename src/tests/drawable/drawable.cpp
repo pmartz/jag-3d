@@ -21,8 +21,8 @@
 
 #include <demoSupport/DemoInterface.h>
 
-#include <jagDraw/Common.h>
-#include <jagDraw/types.h>
+#include <jag/draw/Common.h>
+#include <jag/draw/types.h>
 #include <jag/base/Version.h>
 #include <jag/base/Log.h>
 #include <jag/base/LogMacros.h>
@@ -52,8 +52,8 @@ public:
     virtual bool frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj );
 
 protected:
-    jagDraw::DrawableVec _drawableVec;
-    jagDraw::CommandMapVec _commandVec;
+    jag::draw::DrawableVec _drawableVec;
+    jag::draw::CommandMapVec _commandVec;
 };
 
 
@@ -86,10 +86,10 @@ bool DrawableDemo::startup( const unsigned int numContexts )
         "    else \n"
         "        cOut = color; \n"
         "}";
-    jagDraw::ShaderPtr vs( new jagDraw::Shader( GL_VERTEX_SHADER ) );
+    jag::draw::ShaderPtr vs( new jag::draw::Shader( GL_VERTEX_SHADER ) );
     vs->addSourceString( std::string( vShaderSource ) );
 
-    jagDraw::ProgramPtr prog;
+    jag::draw::ProgramPtr prog;
     {
         const char* fShaderSource =
 #if( POCO_OS == POCO_OS_MAC_OS_X )
@@ -103,15 +103,15 @@ bool DrawableDemo::startup( const unsigned int numContexts )
             "void main() { \n"
             "    colorOut = vec4( cOut, 1. ); \n"
             "}";
-        jagDraw::ShaderPtr fs( new jagDraw::Shader( GL_FRAGMENT_SHADER ) );
+        jag::draw::ShaderPtr fs( new jag::draw::Shader( GL_FRAGMENT_SHADER ) );
         fs->addSourceString( std::string( fShaderSource ) );
 
-        prog = jagDraw::ProgramPtr( new jagDraw::Program );
+        prog = jag::draw::ProgramPtr( new jag::draw::Program );
         prog->attachShader( vs );
         prog->attachShader( fs );
     }
 
-    jagDraw::ProgramPtr prog2;
+    jag::draw::ProgramPtr prog2;
     {
         const char* fShaderSource =
 #if( POCO_OS == POCO_OS_MAC_OS_X )
@@ -126,29 +126,29 @@ bool DrawableDemo::startup( const unsigned int numContexts )
             "void main() { \n"
             "    colorOut = vec4( cOut * scale, 1. ); \n"
             "}";
-        jagDraw::ShaderPtr fs( new jagDraw::Shader( GL_FRAGMENT_SHADER ) );
+        jag::draw::ShaderPtr fs( new jag::draw::Shader( GL_FRAGMENT_SHADER ) );
         fs->addSourceString( std::string( fShaderSource ) );
 
-        prog2 = jagDraw::ProgramPtr( new jagDraw::Program );
+        prog2 = jag::draw::ProgramPtr( new jag::draw::Program );
         prog2->attachShader( vs );
         prog2->attachShader( fs );
     }
 
-    jagDraw::UniformPtr swizzleOff( new jagDraw::Uniform( "swizzle", false ) );
-    jagDraw::UniformSetPtr swizzleOffSet( new jagDraw::UniformSet() );
+    jag::draw::UniformPtr swizzleOff( new jag::draw::Uniform( "swizzle", false ) );
+    jag::draw::UniformSetPtr swizzleOffSet( new jag::draw::UniformSet() );
     swizzleOffSet->insert( swizzleOff );
 
-    jagDraw::UniformPtr swizzleOn( new jagDraw::Uniform( "swizzle", true ) );
-    jagDraw::UniformSetPtr swizzleOnSet( new jagDraw::UniformSet() );
+    jag::draw::UniformPtr swizzleOn( new jag::draw::Uniform( "swizzle", true ) );
+    jag::draw::UniformSetPtr swizzleOnSet( new jag::draw::UniformSet() );
     swizzleOnSet->insert( swizzleOn );
 
-    jagDraw::UniformPtr scale( new jagDraw::Uniform( "scale", 0.75f ) );
-    jagDraw::UniformSetPtr scaleSet( new jagDraw::UniformSet() );
+    jag::draw::UniformPtr scale( new jag::draw::Uniform( "scale", 0.75f ) );
+    jag::draw::UniformSetPtr scaleSet( new jag::draw::UniformSet() );
     scaleSet->insert( scale );
 
 
-    jagDraw::DrawablePtr drawable( new jagDraw::Drawable() );
-    jagDraw::CommandMapPtr commands( new jagDraw::CommandMap() );
+    jag::draw::DrawablePtr drawable( new jag::draw::Drawable() );
+    jag::draw::CommandMapPtr commands( new jag::draw::CommandMap() );
     const float z = .5f;
 
     // Define first drawable: tri strip on the left.
@@ -164,14 +164,14 @@ bool DrawableDemo::startup( const unsigned int numContexts )
         v3fa.push_back( gmtl::Point3f( -.9f, .9f, z ) );
         v3fa.push_back( gmtl::Point3f( -.6f, .9f, z ) );
         jag::base::BufferPtr vbp( new jag::base::Buffer( v3fa.size() * sizeof( gmtl::Point3f ), (void*)&v3fa[0] ) );
-        jagDraw::BufferObjectPtr vbop( new jagDraw::BufferObject( GL_ARRAY_BUFFER, vbp ) );
+        jag::draw::BufferObjectPtr vbop( new jag::draw::BufferObject( GL_ARRAY_BUFFER, vbp ) );
 
-        jagDraw::VertexArrayObjectPtr vaop( new jagDraw::VertexArrayObject );
-        vaop->addVertexArrayCommand( vbop, jagDraw::VertexArrayObject::Vertex );
+        jag::draw::VertexArrayObjectPtr vaop( new jag::draw::VertexArrayObject );
+        vaop->addVertexArrayCommand( vbop, jag::draw::VertexArrayObject::Vertex );
 
-        jagDraw::VertexAttribPtr verts( new jagDraw::VertexAttrib(
+        jag::draw::VertexAttribPtr verts( new jag::draw::VertexAttrib(
             "vertex", 3, GL_FLOAT, GL_FALSE, 0, 0 ) );
-        vaop->addVertexArrayCommand( verts, jagDraw::VertexArrayObject::Vertex );
+        vaop->addVertexArrayCommand( verts, jag::draw::VertexArrayObject::Vertex );
 
         jag::base::Point3fVec c3fa;
         c3fa.push_back( gmtl::Point3f( 1.f, 0.f, 0.f ) );
@@ -181,22 +181,22 @@ bool DrawableDemo::startup( const unsigned int numContexts )
         c3fa.push_back( gmtl::Point3f( 0.f, 1.f, 1.f ) );
         c3fa.push_back( gmtl::Point3f( 1.f, 0.f, 1.f ) );
         jag::base::BufferPtr cbp( new jag::base::Buffer( c3fa.size() * sizeof( gmtl::Point3f ), (void*)&c3fa[0] ) );
-        jagDraw::BufferObjectPtr cbop( new jagDraw::BufferObject( GL_ARRAY_BUFFER, cbp ) );
+        jag::draw::BufferObjectPtr cbop( new jag::draw::BufferObject( GL_ARRAY_BUFFER, cbp ) );
         vaop->addVertexArrayCommand( cbop );
 
-        jagDraw::VertexAttribPtr color( new jagDraw::VertexAttrib(
+        jag::draw::VertexAttribPtr color( new jag::draw::VertexAttrib(
             "color", 3, GL_FLOAT, GL_FALSE, 0, 0 ) );
         vaop->addVertexArrayCommand( color );
 
         commands->insert( vaop );
 
-        jagDraw::GLubyteVec elements;
+        jag::draw::GLubyteVec elements;
         unsigned int idx;
         for( idx=0; idx<6; idx++ )
             elements.push_back( idx );
         jag::base::BufferPtr elbp( new jag::base::Buffer( elements.size() * sizeof( GLubyte ), (void*)&elements[0] ) );
-        jagDraw::BufferObjectPtr elbop( new jagDraw::BufferObject( GL_ELEMENT_ARRAY_BUFFER, elbp ) );
-        jagDraw::DrawElementsPtr drawElements( new jagDraw::DrawElements( GL_TRIANGLE_STRIP, (const GLsizei) elements.size(), GL_UNSIGNED_BYTE, 0, elbop ) );
+        jag::draw::BufferObjectPtr elbop( new jag::draw::BufferObject( GL_ELEMENT_ARRAY_BUFFER, elbp ) );
+        jag::draw::DrawElementsPtr drawElements( new jag::draw::DrawElements( GL_TRIANGLE_STRIP, (const GLsizei) elements.size(), GL_UNSIGNED_BYTE, 0, elbop ) );
         drawable->addDrawCommand( drawElements );
 
         _commandVec.push_back( commands );
@@ -205,16 +205,16 @@ bool DrawableDemo::startup( const unsigned int numContexts )
 
     // Define elements shared by second and third drawables.
     const GLsizei stride = sizeof( GLfloat ) * 3 * 2;
-    jagDraw::VertexAttribPtr iVerts( new jagDraw::VertexAttrib(
+    jag::draw::VertexAttribPtr iVerts( new jag::draw::VertexAttrib(
         "vertex", 3, GL_FLOAT, GL_FALSE, stride, 0 ) );
-    jagDraw::VertexAttribPtr iColor( new jagDraw::VertexAttrib(
+    jag::draw::VertexAttribPtr iColor( new jag::draw::VertexAttrib(
         "color", 3, GL_FLOAT, GL_FALSE, stride, sizeof( GLfloat ) * 3 ) );
-    jagDraw::DrawArraysPtr drawArrays( new jagDraw::DrawArrays( GL_TRIANGLE_STRIP, 0, 6 ) );
+    jag::draw::DrawArraysPtr drawArrays( new jag::draw::DrawArrays( GL_TRIANGLE_STRIP, 0, 6 ) );
 
     // Define second drawable (middle)
     {
-        drawable = jagDraw::DrawablePtr( new jagDraw::Drawable() );
-        commands = jagDraw::CommandMapPtr( new jagDraw::CommandMap );
+        drawable = jag::draw::DrawablePtr( new jag::draw::Drawable() );
+        commands = jag::draw::CommandMapPtr( new jag::draw::CommandMap );
 
         commands->insert( swizzleOnSet );
 
@@ -232,11 +232,11 @@ bool DrawableDemo::startup( const unsigned int numContexts )
         i3fa.push_back( gmtl::Point3f( 0.f, .9f, z ) );
             i3fa.push_back( gmtl::Point3f( 1.f, 0.f, 1.f ) );
         jag::base::BufferPtr ibp( new jag::base::Buffer( i3fa.size() * sizeof( gmtl::Point3f ), (void*)&i3fa[0] ) );
-        jagDraw::BufferObjectPtr ibop( new jagDraw::BufferObject( GL_ARRAY_BUFFER, ibp ) );
+        jag::draw::BufferObjectPtr ibop( new jag::draw::BufferObject( GL_ARRAY_BUFFER, ibp ) );
 
-        jagDraw::VertexArrayObjectPtr vaop( new jagDraw::VertexArrayObject );
-        vaop->addVertexArrayCommand( ibop, jagDraw::VertexArrayObject::Vertex );
-        vaop->addVertexArrayCommand( iVerts, jagDraw::VertexArrayObject::Vertex );
+        jag::draw::VertexArrayObjectPtr vaop( new jag::draw::VertexArrayObject );
+        vaop->addVertexArrayCommand( ibop, jag::draw::VertexArrayObject::Vertex );
+        vaop->addVertexArrayCommand( iVerts, jag::draw::VertexArrayObject::Vertex );
         vaop->addVertexArrayCommand( iColor );
         commands->insert( vaop );
 
@@ -248,8 +248,8 @@ bool DrawableDemo::startup( const unsigned int numContexts )
 
     // Define third drawable (on the right)
     {
-        drawable = jagDraw::DrawablePtr( new jagDraw::Drawable() );
-        commands = jagDraw::CommandMapPtr( new jagDraw::CommandMap() );
+        drawable = jag::draw::DrawablePtr( new jag::draw::Drawable() );
+        commands = jag::draw::CommandMapPtr( new jag::draw::CommandMap() );
 
         commands->insert( prog2 );
         commands->insert( scaleSet );
@@ -268,14 +268,14 @@ bool DrawableDemo::startup( const unsigned int numContexts )
         i3fa.push_back( gmtl::Point3f( .6f, .9f, z ) );
             i3fa.push_back( gmtl::Point3f( 1.f, 0.f, 1.f ) );
         jag::base::BufferPtr ibp( new jag::base::Buffer( i3fa.size() * sizeof( gmtl::Point3f ), (void*)&i3fa[0] ) );
-        jagDraw::BufferObjectPtr ibop2( new jagDraw::BufferObject( GL_ARRAY_BUFFER, ibp ) );
+        jag::draw::BufferObjectPtr ibop2( new jag::draw::BufferObject( GL_ARRAY_BUFFER, ibp ) );
 
-        jagDraw::VertexArrayObjectPtr vaop( new jagDraw::VertexArrayObject );
+        jag::draw::VertexArrayObjectPtr vaop( new jag::draw::VertexArrayObject );
         // Bind the GL_ARRAY_BUFFER for interleaved vertices and colors
         // (different from _ibop dur to vertex positions).
-        vaop->addVertexArrayCommand( ibop2, jagDraw::VertexArrayObject::Vertex );
+        vaop->addVertexArrayCommand( ibop2, jag::draw::VertexArrayObject::Vertex );
         // Enable and specify the "vertex" vertex attrib.
-        vaop->addVertexArrayCommand( iVerts, jagDraw::VertexArrayObject::Vertex );
+        vaop->addVertexArrayCommand( iVerts, jag::draw::VertexArrayObject::Vertex );
         // Enable and specify the "color" vertex attrib.
         vaop->addVertexArrayCommand( iColor );
 
@@ -294,12 +294,12 @@ bool DrawableDemo::startup( const unsigned int numContexts )
         _commandVec[ idx ]->setMaxContexts( numContexts );
         _drawableVec[ idx ]->setMaxContexts( numContexts );
     }
-    BOOST_FOREACH( const jagDraw::DrawableVec::value_type& dp, _drawableVec )
+    BOOST_FOREACH( const jag::draw::DrawableVec::value_type& dp, _drawableVec )
     {
         dp->setMaxContexts( numContexts );
     }
 
-    jagDraw::BoundPtr bound( drawable->getBound( *commands ) );
+    jag::draw::BoundPtr bound( drawable->getBound( *commands ) );
     gmtl::AABoxd box( bound->asAABox() );
     std::ostringstream ostr;
     ostr << "Min: " << box.mMin << "  Max: " << box.mMax;
@@ -317,7 +317,7 @@ bool DrawableDemo::init()
     jag::base::getVersionString();
 
     // Auto-log the OpenGL version string.
-    jagDraw::getOpenGLVersionString();
+    jag::draw::getOpenGLVersionString();
 
     JAG3D_ERROR_CHECK( "DrawableDemo init()" );
     return( true );
@@ -330,8 +330,8 @@ bool DrawableDemo::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& pr
 
     glClear( GL_COLOR_BUFFER_BIT );
 
-    const jagDraw::jagDrawContextID contextID( jagDraw::ContextSupport::instance()->getActiveContext() );
-    jagDraw::DrawInfo& drawInfo( getDrawInfo( contextID ) );
+    const jag::draw::jagDrawContextID contextID( jag::draw::ContextSupport::instance()->getActiveContext() );
+    jag::draw::DrawInfo& drawInfo( getDrawInfo( contextID ) );
 
     // Render all Drawables.
     for( unsigned int idx=0; idx<_drawableVec.size(); ++idx )

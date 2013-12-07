@@ -21,7 +21,7 @@
 
 #include <jagUtil/QuadNode.h>
 
-#include <jagDraw/Common.h>
+#include <jag/draw/Common.h>
 #include <jag/disk/ReadWrite.h>
 #include <jagUtil/Shapes.h>
 #include <jag/base/Log.h>
@@ -41,15 +41,15 @@ namespace jagUtil
 
 
 QuadNode::QuadNode( const std::string& logName )
-    : jagDraw::DrawNode( logName.empty() ? "jag.util.quadnode" : logName ),
+    : jag::draw::DrawNode( logName.empty() ? "jag.util.quadnode" : logName ),
       _width( 0 ),
       _height( 0 ),
       _numContexts( 0 )
 {
 }
-QuadNode::QuadNode( jagDraw::TexturePtr inputBuffer, jagDraw::TexturePtr outputBuffer,
+QuadNode::QuadNode( jag::draw::TexturePtr inputBuffer, jag::draw::TexturePtr outputBuffer,
         const std::string& logName )
-    : jagDraw::DrawNode( logName.empty() ? "jag.util.quadnode" : logName ),
+    : jag::draw::DrawNode( logName.empty() ? "jag.util.quadnode" : logName ),
       _outputBuffer( outputBuffer ),
       _width( 0 ),
       _height( 0 ),
@@ -57,9 +57,9 @@ QuadNode::QuadNode( jagDraw::TexturePtr inputBuffer, jagDraw::TexturePtr outputB
 {
     _inputBuffers.push_back( inputBuffer );
 }
-QuadNode::QuadNode( jagDraw::TextureVec& inputBuffers, jagDraw::TexturePtr outputBuffer,
+QuadNode::QuadNode( jag::draw::TextureVec& inputBuffers, jag::draw::TexturePtr outputBuffer,
         const std::string& logName )
-    : jagDraw::DrawNode( logName.empty() ? "jag.util.quadnode" : logName ),
+    : jag::draw::DrawNode( logName.empty() ? "jag.util.quadnode" : logName ),
       _inputBuffers( inputBuffers ),
       _outputBuffer( outputBuffer ),
       _width( 0 ),
@@ -68,7 +68,7 @@ QuadNode::QuadNode( jagDraw::TextureVec& inputBuffers, jagDraw::TexturePtr outpu
 {
 }
 QuadNode::QuadNode( const QuadNode& rhs )
-    : jagDraw::DrawNode( rhs ),
+    : jag::draw::DrawNode( rhs ),
       _inputBuffers( rhs._inputBuffers ),
       _outputBuffer( rhs._outputBuffer ),
       _width( rhs._width ),
@@ -102,34 +102,34 @@ QuadNode::~QuadNode()
 void QuadNode::setShaders( const std::string& fragName, const std::string& vertName )
 {
     const std::string localVertName( vertName.empty() ? "quadNode.vert" : vertName );
-    jagDraw::ShaderPtr vs, fs;
-    __READ_UTIL( vs, jagDraw::ShaderPtr, localVertName );
-    __READ_UTIL( fs, jagDraw::ShaderPtr, fragName );
+    jag::draw::ShaderPtr vs, fs;
+    __READ_UTIL( vs, jag::draw::ShaderPtr, localVertName );
+    __READ_UTIL( fs, jag::draw::ShaderPtr, fragName );
 
     // Tell the fragment shader how many textures to combine.
     fs->insertSourceString( getTextureCountString() );
 
-    jagDraw::ProgramPtr prog( jagDraw::ProgramPtr( new jagDraw::Program() ) );
+    jag::draw::ProgramPtr prog( jag::draw::ProgramPtr( new jag::draw::Program() ) );
     prog->attachShader( vs );
     prog->attachShader( fs );
 
     internalInit( prog );
 }
-void QuadNode::setShaders( jagDraw::ShaderPtr& frag, jagDraw::ShaderPtr& vert )
+void QuadNode::setShaders( jag::draw::ShaderPtr& frag, jag::draw::ShaderPtr& vert )
 {
-    jagDraw::ShaderPtr localVert( vert );
+    jag::draw::ShaderPtr localVert( vert );
     if( vert == NULL )
     {
-        __READ_UTIL( localVert, jagDraw::ShaderPtr, "quadNode.vert" );
+        __READ_UTIL( localVert, jag::draw::ShaderPtr, "quadNode.vert" );
     }
 
-    jagDraw::ProgramPtr prog( jagDraw::ProgramPtr( new jagDraw::Program() ) );
+    jag::draw::ProgramPtr prog( jag::draw::ProgramPtr( new jag::draw::Program() ) );
     prog->attachShader( localVert );
     prog->attachShader( frag );
 
     internalInit( prog );
 }
-void QuadNode::setProgram( jagDraw::ProgramPtr& program )
+void QuadNode::setProgram( jag::draw::ProgramPtr& program )
 {
     internalInit( program );
 }
@@ -142,7 +142,7 @@ void QuadNode::setMaxContexts( const unsigned int numContexts )
     if( _fbo == NULL )
         internalInit();
 
-    jagDraw::DrawNode::setMaxContexts( numContexts );
+    jag::draw::DrawNode::setMaxContexts( numContexts );
 }
 
 void QuadNode::reshape( const int w, const int h )
@@ -156,19 +156,19 @@ void QuadNode::reshape( const int w, const int h )
     _fbo->setViewport( 0, 0, _width, _height );
 }
 
-void QuadNode::internalInit( jagDraw::ProgramPtr& program )
+void QuadNode::internalInit( jag::draw::ProgramPtr& program )
 {
-    _commands.reset( new jagDraw::CommandMap() );
+    _commands.reset( new jag::draw::CommandMap() );
 
     // Create texture set. Specify sampler uniforms.
-    jagDraw::TextureSetPtr texSet( jagDraw::TextureSetPtr( new jagDraw::TextureSet() ) );
-    jagDraw::UniformSetPtr usp( jagDraw::UniformSetPtr( new jagDraw::UniformSet() ) );
+    jag::draw::TextureSetPtr texSet( jag::draw::TextureSetPtr( new jag::draw::TextureSet() ) );
+    jag::draw::UniformSetPtr usp( jag::draw::UniformSetPtr( new jag::draw::UniformSet() ) );
     unsigned int idx( 0 );
-    BOOST_FOREACH( jagDraw::TexturePtr& item, _inputBuffers )
+    BOOST_FOREACH( jag::draw::TexturePtr& item, _inputBuffers )
     {
         std::ostringstream ostr;
         ostr << "texture" << idx;
-        jagDraw::UniformPtr uniform( jagDraw::UniformPtr( new jagDraw::Uniform( ostr.str(), GL_SAMPLER_2D, idx ) ) );
+        jag::draw::UniformPtr uniform( jag::draw::UniformPtr( new jag::draw::Uniform( ostr.str(), GL_SAMPLER_2D, idx ) ) );
         usp->insert( uniform );
 
         (*texSet)[ GL_TEXTURE0 + idx++ ] = item;
@@ -178,11 +178,11 @@ void QuadNode::internalInit( jagDraw::ProgramPtr& program )
 
     // Create quad (tri pair) geometry.
     jagUtil::VNTCVec data;
-    jagDraw::DrawablePtr fstp( jagUtil::makePlane( data, gmtl::Point3f( -1., -1., 0. ),
+    jag::draw::DrawablePtr fstp( jagUtil::makePlane( data, gmtl::Point3f( -1., -1., 0. ),
         gmtl::Vec3f( 2., 0., 0. ), gmtl::Vec3f( 0., 2., 0. ) ) );
     _commands->insert( jagUtil::createVertexArrayObject( data ) );
 
-    _fbo.reset( new jagDraw::Framebuffer( GL_DRAW_FRAMEBUFFER ) );
+    _fbo.reset( new jag::draw::Framebuffer( GL_DRAW_FRAMEBUFFER ) );
     _fbo->setViewport( 0, 0, _width, _height );
     _fbo->setClear( 0 );
     if( _outputBuffer != NULL )
@@ -197,14 +197,14 @@ void QuadNode::internalInit( jagDraw::ProgramPtr& program )
     else // Use default program.
     {
         // Load shaders and create program.
-        jagDraw::ShaderPtr vs, fs;
-        __READ_UTIL( vs, jagDraw::ShaderPtr, "quadNode.vert" );
-        __READ_UTIL( fs, jagDraw::ShaderPtr, "quadNode.frag" );
+        jag::draw::ShaderPtr vs, fs;
+        __READ_UTIL( vs, jag::draw::ShaderPtr, "quadNode.vert" );
+        __READ_UTIL( fs, jag::draw::ShaderPtr, "quadNode.frag" );
 
         // Tell the fragment shader how many textures to combine.
         fs->insertSourceString( getTextureCountString() );
 
-        jagDraw::ProgramPtr prog( jagDraw::ProgramPtr( new jagDraw::Program() ) );
+        jag::draw::ProgramPtr prog( jag::draw::ProgramPtr( new jag::draw::Program() ) );
         prog->attachShader( vs );
         prog->attachShader( fs );
         _commands->insert( prog );

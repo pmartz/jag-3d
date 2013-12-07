@@ -6,7 +6,7 @@
 #ifndef INFOWIDGET_H
 #define INFOWIDGET_H
 
-#include <jagDraw/PlatformOpenGL.h>
+#include <jag/draw/PlatformOpenGL.h>
 #include <GL/freeglut.h>
 
 #include <string>

@@ -20,7 +20,7 @@
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
 #include <demoSupport/DemoInterface.h>
-#include <jagDraw/ContextSupport.h>
+#include <jag/draw/ContextSupport.h>
 #include <jag/base/Profile.h>
 #include <jagMx/MxCore.h>
 #include <jagMx/MxUtils.h>
@@ -58,9 +58,9 @@ static jagMx::MxGamePadPtr gamePad( jagMx::MxGamePadPtr( (jagMx::MxGamePad*)NULL
 
 void init()
 {
-    jagDraw::ContextSupport* cs( jagDraw::ContextSupport::instance() );
-    const jagDraw::platformContextID pCtxId = static_cast< GLuint >( glutGetWindow() );
-    jagDraw::jagDrawContextID contextID = cs->registerContext( pCtxId );
+    jag::draw::ContextSupport* cs( jag::draw::ContextSupport::instance() );
+    const jag::draw::platformContextID pCtxId = static_cast< GLuint >( glutGetWindow() );
+    jag::draw::jagDrawContextID contextID = cs->registerContext( pCtxId );
 
     cs->setActiveContext( contextID );
     cs->initContext();
@@ -70,9 +70,9 @@ void init()
 
 void display()
 {
-    jagDraw::ContextSupport* cs( jagDraw::ContextSupport::instance() );
-    const jagDraw::platformContextID pCtxId = static_cast< GLuint >( glutGetWindow() );
-    jagDraw::jagDrawContextID contextID = cs->getJagContextID( pCtxId );
+    jag::draw::ContextSupport* cs( jag::draw::ContextSupport::instance() );
+    const jag::draw::platformContextID pCtxId = static_cast< GLuint >( glutGetWindow() );
+    jag::draw::jagDrawContextID contextID = cs->getJagContextID( pCtxId );
 
     cs->setActiveContext( contextID );
     di->frame();
@@ -326,7 +326,7 @@ int main( int argc, char* argv[] )
         _height[ nwin ] = winsize[ 1 ];
     }
 
-    if( !( di->startup( jagDraw::ContextSupport::instance()->getNumRegisteredContexts() ) ) )
+    if( !( di->startup( jag::draw::ContextSupport::instance()->getNumRegisteredContexts() ) ) )
         return( 1 );
 
     glutMainLoop();
