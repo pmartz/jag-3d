@@ -140,7 +140,8 @@ public:
     {
         return( _dirty );
     }
-    void setDirty( unsigned int dirty=ALL_DIRTY )
+    //TODO: Where is ALL_DIRTY defined void setDirty( unsigned int dirty=ALL_DIRTY )
+    void setDirty( unsigned int dirty )
     {
         _dirty |= dirty;
     }
