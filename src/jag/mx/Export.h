@@ -19,8 +19,8 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#ifndef __JAGMX_EXPORT_H__
-#define __JAGMX_EXPORT_H__ 1
+#ifndef __JAG_MX_EXPORT_H__
+#define __JAG_MX_EXPORT_H__ 1
 
 
 #if defined( _MSC_VER ) || defined( __CYGWIN__ ) || defined( __MINGW32__ ) || defined( __BCPLUSPLUS__ ) || defined( __MWERKS__ )
@@ -36,5 +36,5 @@
 #endif
 
 
-// __JAGMX_EXPORT_H__
+// __JAG_MX_EXPORT_H__
 #endif

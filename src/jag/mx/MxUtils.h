@@ -19,12 +19,12 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#ifndef __JAGMX_MX_UTILS_H__
-#define __JAGMX_MX_UTILS_H__ 1
+#ifndef __JAG_MX_MX_UTILS_H__
+#define __JAG_MX_MX_UTILS_H__ 1
 
 
-#include <jagMx/Export.h>
-#include <jagMx/MxCore.h>
+#include <jag/mx/Export.h>
+#include <jag/mx/MxCore.h>
 #include <jag/base/ptr.h>
 #include <gmtl/gmtl.h>
 
@@ -32,8 +32,8 @@
 #include <map>
 
 
-namespace jagMx
-{
+namespace jag {
+namespace mx {
 
 
 /** \defgroup jagMxUtil Utilities for MxCore-based Classes and Applications
@@ -127,7 +127,7 @@ must also be configured to return an appropriate projection matrix.
 */
 #if 0
 // TBD MxCoe Port
-osg::Vec4d JAGMX_EXPORT computePanPlane( osg::Node* scene, const jagMx::MxCore* mxCore,
+osg::Vec4d JAGMX_EXPORT computePanPlane( osg::Node* scene, const jag::mx::MxCore* mxCore,
     const double ndcX, const double ndcY );
 #endif
 
@@ -152,7 +152,7 @@ direction and view position.
 \return Literal xyz motion vector. In the typical use case (to pan the entire scene),
 pass the negated return value to MxCore::moveLiteral().
 */
-gmtl::Vec3d JAGMX_EXPORT pan( /* const osg::Node* scene, */ const jagMx::MxCore* mxCore,
+gmtl::Vec3d JAGMX_EXPORT pan( /* const osg::Node* scene, */ const jag::mx::MxCore* mxCore,
     const gmtl::Planed& panPlane, const double deltaNdcX, const double deltaNdcY );
 
 
@@ -167,7 +167,7 @@ TBD Future work: combine pickPoint and intersect into one function. */
 #if 0
 // TBD MxCoe Port
 bool JAGMX_EXPORT intersect( gmtl::Point3d& result, const gmtl::Point3d& farPoint,
-    osg::Node* scene, const jagMx::MxCore* mxCore );
+    osg::Node* scene, const jag::mx::MxCore* mxCore );
 #endif
 
 
@@ -179,7 +179,7 @@ displays a warning and returns (0,0,0).
 TBD Future work: combine pickPoint and intersect into one function. */
 #if 0
 // TBD MxCoe Port
-osg::Vec3d JAGMX_EXPORT pickPoint( osg::Node* scene, const jagMx::MxCore* mxCore,
+osg::Vec3d JAGMX_EXPORT pickPoint( osg::Node* scene, const jag::mx::MxCore* mxCore,
     const double ndcX, const double ndcY );
 #endif
 
@@ -206,7 +206,7 @@ void JAGMX_EXPORT computeTrackball( double& angle, gmtl::Vec3d& axis,
     const gmtl::Matrix44d& orientMat, const double sensitivity=1.3 );
 
 
-/** \class FunctionalMap MxUtils.h <jagMx/MxUtils.h>
+/** \class FunctionalMap MxUtils.h <jag/mx/MxUtils.h>
 \brief Maps an unsigned int to a particular function.
 
 This class is presently used for arbitrary mapping of MxGamePad buttons,
@@ -337,16 +337,17 @@ protected:
     std::vector< bool > _state;
 };
 
-typedef jag::base::ptr< jagMx::FunctionalMap >::shared_ptr FunctionalMapPtr;
+typedef jag::base::ptr< jag::mx::FunctionalMap >::shared_ptr FunctionalMapPtr;
 
 
 
 /*@}*/
 
 
-// jagMx
+// namespace jag::mx::
+}
 }
 
 
-// __JAGMX_MX_UTILS_H__
+// __JAG_MX_MX_UTILS_H__
 #endif

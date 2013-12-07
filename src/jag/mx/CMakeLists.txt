@@ -49,7 +49,7 @@ _addLibrary( ${_libName}
 
 install(
     DIRECTORY .
-    DESTINATION include/jagMx
+    DESTINATION include/jag/mx
     USE_SOURCE_PERMISSIONS
     FILES_MATCHING 
     PATTERN "*.h"

@@ -22,11 +22,11 @@
 #include <demoSupport/DemoInterface.h>
 #include <jag/draw/ContextSupport.h>
 #include <jag/base/Profile.h>
-#include <jagMx/MxCore.h>
-#include <jagMx/MxUtils.h>
-#include <jagMx/MxGamePad.h>
+#include <jag/mx/MxCore.h>
+#include <jag/mx/MxUtils.h>
+#include <jag/mx/MxGamePad.h>
 #ifdef DIRECTINPUT_ENABLED
-#  include <jagMx/MxGamePadDX.h>
+#  include <jag/mx/MxGamePadDX.h>
 #endif
 
 #include <demoSupport/platformFreeglut.h>
@@ -53,7 +53,7 @@ IntVec _width, _height;
 static bool _leftDrag( false ), _middleDrag( false ), _rightDrag( false );
 unsigned int _nWin;
 
-static jagMx::MxGamePadPtr gamePad( jagMx::MxGamePadPtr( (jagMx::MxGamePad*)NULL ) );
+static jag::mx::MxGamePadPtr gamePad( jag::mx::MxGamePadPtr( (jag::mx::MxGamePad*)NULL ) );
 
 
 void init()
@@ -122,7 +122,7 @@ void keyboard( unsigned char key, int x, int y )
 void timer( int value )
 {
     // Currently we can only use window 0.
-    jagMx::MxCorePtr mxCore( di->getMxCore( 0 ) );
+    jag::mx::MxCorePtr mxCore( di->getMxCore( 0 ) );
     if( mxCore == NULL )
         return;
 
@@ -130,7 +130,7 @@ void timer( int value )
 
     bool redraw( false );
 #ifdef DIRECTINPUT_ENABLED
-    jagMx::MxGamePadDX* gp( dynamic_cast< jagMx::MxGamePadDX* >( gamePad.get() ) );
+    jag::mx::MxGamePadDX* gp( dynamic_cast< jag::mx::MxGamePadDX* >( gamePad.get() ) );
     if( gp != NULL )
     {
         // TBD really should only need to do this once.
@@ -182,7 +182,7 @@ void motion( int x, int y )
         return;
 
     const int window( glutGetWindow() - 1 );
-    jagMx::MxCorePtr mxCore( di->getMxCore( window ) );
+    jag::mx::MxCorePtr mxCore( di->getMxCore( window ) );
     if( mxCore == NULL )
         return;
 
@@ -201,7 +201,7 @@ void motion( int x, int y )
             return;
 
         gmtl::Planed panPlane( -( mxCore->getDir() ), 0. );
-        gmtl::Vec3d panDelta( jagMx::pan( mxCore.get(), panPlane, deltaX, deltaY ) );
+        gmtl::Vec3d panDelta( jag::mx::pan( mxCore.get(), panPlane, deltaX, deltaY ) );
         mxCore->moveLiteral( -panDelta );
     }
     else if( _rightDrag )
@@ -220,7 +220,7 @@ void motion( int x, int y )
 
         double angle;
         gmtl::Vec3d axis;
-        jagMx::computeTrackball( angle, axis,
+        jag::mx::computeTrackball( angle, axis,
             gmtl::Vec2d( _lastNX, _lastNY ), gmtl::Vec2d( deltaX, deltaY ),
             mxCore->getOrientationMatrix() );
 
@@ -290,7 +290,7 @@ int main( int argc, char* argv[] )
 
 
 #ifdef DIRECTINPUT_ENABLED
-    gamePad = jagMx::MxGamePadDXPtr( new jagMx::MxGamePadDX() );
+    gamePad = jag::mx::MxGamePadDXPtr( new jag::mx::MxGamePadDX() );
 #endif
 
 

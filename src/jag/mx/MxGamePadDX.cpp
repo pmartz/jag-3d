@@ -20,7 +20,7 @@
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
 
-#include <jagMx/MxGamePadDX.h>
+#include <jag/mx/MxGamePadDX.h>
 #include <jag/base/LogMacros.h>
 
 #include <windows.h>
@@ -28,7 +28,8 @@
 #include <tchar.h>
 
 
-namespace jagMx {
+namespace jag {
+namespace mx {
 
 
 // DX GamePad axis min/max are customizable. Our code sets them
@@ -360,5 +361,6 @@ inline float normalizeAxisValue( LONG value )
 }
 
 
-// osgwMx
+// namespace jag::mx::
+}
 }
