@@ -76,7 +76,8 @@ void VertexArrayObject::execute( DrawInfo& drawInfo )
     bool dirty( false );
     BOOST_FOREACH( VertexArrayCommandPtr& vac, _commands )
     {
-        if( dirty = vac->isDirty( contextID ) )
+        dirty = vac->isDirty( contextID );
+        if( dirty )
             break;
     }
     if( dirty || _dirty[ contextID ] )

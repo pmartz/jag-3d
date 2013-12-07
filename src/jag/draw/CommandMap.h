@@ -98,7 +98,7 @@ public:
     {
         CommandMapType::const_iterator it( _data.find( type ) );
         if( it == _data.end() )
-            return( DrawablePrepPtr( (Command*)NULL ) );
+            return( DrawablePrepPtr() );
         else
         {
             return( it->second );
@@ -336,7 +336,7 @@ public:
     { 
         CommandMapType::const_iterator p( _data.find( type ) );
         if( p == _data.end() )
-            return( DrawablePrepPtr( (Command*)NULL ) );
+            return( DrawablePrepPtr() );
         return( p->second );
     }
 
