@@ -1,7 +1,17 @@
 ----------------------------------------------------------------------
 
 Pending release
-  * Program parameter support to enable use of geometry shaders.
+  * Fix for issue 32: source code repo and namespace reorgaization.
+
+----------------------------------------------------------------------
+
+6 Dec 2013  v0.01.10
+  * jagDraw::Node and NodeContainer name change to DrawNode and
+    DrawNodeContainer.
+  * NodeContainer caches jagDraw::Nodes.
+  * Optimization to OSG model loader to reduce scene graph size.
+  * Fix for incorrect clipping issue.
+  * Added program parameter support.
   * Optional rendering of draw graph node bounds.
 
 ----------------------------------------------------------------------
