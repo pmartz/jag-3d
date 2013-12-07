@@ -28,7 +28,7 @@
 #include <jag/draw/Image.h>
 #include <jagSG/Node.h>
 #include <jagSG/CollectionVisitor.h>
-#include <jagMx/MxCore.h>
+#include <jag/mx/MxCore.h>
 #include <jag/disk/ReadWrite.h>
 #include <jag/base/LogMacros.h>
 
@@ -97,10 +97,10 @@ public:
         return( _collectionVisitor );
     }
 
-    jagMx::MxCorePtr getMxCore( const jag::draw::jagDrawContextID contextID )
+    jag::mx::MxCorePtr getMxCore( const jag::draw::jagDrawContextID contextID )
     {
         if( _mxCore._data.empty() )
-            return( jagMx::MxCorePtr( (jagMx::MxCore*)NULL ) );
+            return( jag::mx::MxCorePtr( (jag::mx::MxCore*)NULL ) );
         else
             return( _mxCore._data[ contextID ] );
     }
@@ -157,7 +157,7 @@ protected:
     jag::draw::PerContextDrawInfo _drawInfo;
     jagSG::CollectionVisitor _collectionVisitor;
 
-    typedef jag::draw::PerContextData< jagMx::MxCorePtr > PerContextMxCore;
+    typedef jag::draw::PerContextData< jag::mx::MxCorePtr > PerContextMxCore;
     PerContextMxCore _mxCore;
 
 

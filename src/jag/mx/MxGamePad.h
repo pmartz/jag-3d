@@ -19,26 +19,27 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#ifndef __JAGMX_MX_GAME_PAD_H__
-#define __JAGMX_MX_GAME_PAD_H__ 1
+#ifndef __JAG_MX_MX_GAME_PAD_H__
+#define __JAG_MX_MX_GAME_PAD_H__ 1
 
 
-#include <jagMx/Export.h>
-#include <jagMx/MxCore.h>
-#include <jagMx/MxUtils.h>
+#include <jag/mx/Export.h>
+#include <jag/mx/MxCore.h>
+#include <jag/mx/MxUtils.h>
 #include <jag/base/ptr.h>
 #include <gmtl/gmtl.h>
 
 #include <cmath>
 
 
-namespace jagMx {
+namespace jag {
+namespace mx {
 
 
 /** \addtogroup jagMxGamepad Gamepad Device Support */
 /*@{*/
 
-/** \class MxGamePad MxGamePad.h <jagMx/MxGamePad.h>
+/** \class MxGamePad MxGamePad.h <jag/mx/MxGamePad.h>
 \brief A base class to support various GamePad SDKs.
 
 To support a new SDK, such as VR Juggler, derive a class from MxGamePad.
@@ -274,13 +275,13 @@ public:
     virtual void setButtons( const unsigned int buttons, const double deltaSeconds );
 
     /** Access the mapping of buttons to functionality. */
-    void setFunctionalMap( jagMx::FunctionalMapPtr map ) { _map = map; }
-    jagMx::FunctionalMapPtr getFunctionalMap() { return( _map ); }
-    const jagMx::FunctionalMapPtr getFunctionalMap() const { return( _map ); }
+    void setFunctionalMap( jag::mx::FunctionalMapPtr map ) { _map = map; }
+    jag::mx::FunctionalMapPtr getFunctionalMap() { return( _map ); }
+    const jag::mx::FunctionalMapPtr getFunctionalMap() const { return( _map ); }
 
     /** Set the MxCore. This allows sharing an MxCore between multiple device
     handlers, such as MxEventHandler and MxGamePad. */
-    void setMxCore( jagMx::MxCorePtr mxCore ) { _mxCore = mxCore; }
+    void setMxCore( jag::mx::MxCorePtr mxCore ) { _mxCore = mxCore; }
     /** Get the MxCore for access to the managed matrix. */
     MxCorePtr getMxCore() { return( _mxCore ); }
     const MxCorePtr getMxCore() const { return( _mxCore ); }
@@ -317,15 +318,16 @@ protected:
     FunctionalMap::FunctionType _rotateMode;
 };
 
-typedef jag::base::ptr< jagMx::MxGamePad >::shared_ptr MxGamePadPtr;
+typedef jag::base::ptr< jag::mx::MxGamePad >::shared_ptr MxGamePadPtr;
 
 
 /*@}*/
 
 
-// jagMx
+// namespace jag::mx::
+}
 }
 
 
-// __JAGMX_MX_GAME_PAD_H__
+// __JAG_MX_MX_GAME_PAD_H__
 #endif

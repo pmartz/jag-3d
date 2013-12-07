@@ -30,7 +30,7 @@
 #include <jag/base/Version.h>
 #include <jag/base/Log.h>
 #include <jag/base/LogMacros.h>
-#include <jagMx/MxCore.h>
+#include <jag/mx/MxCore.h>
 
 #include <boost/chrono/chrono.hpp>
 #include <boost/chrono/time_point.hpp>
@@ -70,7 +70,7 @@ public:
     virtual void reshape( const int w, const int h );
 
 protected:
-    gmtl::Matrix44d computeView( jagMx::MxCorePtr mxCore, const double angleRad );
+    gmtl::Matrix44d computeView( jag::mx::MxCorePtr mxCore, const double angleRad );
 
     std::string _fileName;
 
@@ -224,7 +224,7 @@ bool Transparency::startup( const unsigned int numContexts )
     // window sizes). Initialize them all to a reasonable default.
     for( unsigned int idx( 0 ); idx<numContexts; ++idx )
     {
-        jagMx::MxCorePtr mxCore( new jagMx::MxCore() );
+        jag::mx::MxCorePtr mxCore( new jag::mx::MxCore() );
         mxCore->setAspect( 1. );
         mxCore->setFovy( 30. );
         _mxCore._data.push_back( mxCore );
@@ -281,7 +281,7 @@ bool Transparency::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& pr
     const jag::draw::jagDrawContextID contextID( jag::draw::ContextSupport::instance()->getActiveContext() );
     jag::draw::DrawInfo& drawInfo( getDrawInfo( contextID ) );
 
-    jagMx::MxCorePtr mxCore( _mxCore._data[ contextID ] );
+    jag::mx::MxCorePtr mxCore( _mxCore._data[ contextID ] );
 
     jagSG::CollectionVisitor& collect( getCollectionVisitor() );
     collect.reset();
@@ -348,7 +348,7 @@ void Transparency::reshape( const int w, const int h )
     _mxCore._data[ contextID ]->setAspect( ( double ) w / ( double ) h );
 }
 
-gmtl::Matrix44d Transparency::computeView( jagMx::MxCorePtr mxCore, const double angleRad )
+gmtl::Matrix44d Transparency::computeView( jag::mx::MxCorePtr mxCore, const double angleRad )
 {
     mxCore->rotateOrbit( angleRad, gmtl::Vec3d( 0., 0., 1. ) );
     mxCore->lookAtAndFit( _root->getBound()->asSphere() );

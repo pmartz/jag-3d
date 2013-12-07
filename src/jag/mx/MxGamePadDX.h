@@ -19,12 +19,12 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#ifndef __JAGMX_MX_GAME_PAD_DX_H__
-#define __JAGMX_MX_GAME_PAD_DX_H__ 1
+#ifndef __JAG_MX_MX_GAME_PAD_DX_H__
+#define __JAG_MX_MX_GAME_PAD_DX_H__ 1
 
 
-#include <jagMx/Export.h>
-#include <jagMx/MxGamePad.h>
+#include <jag/mx/Export.h>
+#include <jag/mx/MxGamePad.h>
 #include <jag/base/ptr.h>
 
 #include <dinput.h>
@@ -32,13 +32,14 @@
 #include <list>
 
 
-namespace jagMx {
+namespace jag {
+namespace mx {
 
 
 /** \addtogroup jagMxGamepad Gamepad Device Support */
 /*@{*/
 
-/** \class MxGamePadDX MxGamePadDX.h <jagMx/MxGamePadDX.h>
+/** \class MxGamePadDX MxGamePadDX.h <jag/mx/MxGamePadDX.h>
 \brief A DirectInput implementation of the MxGamePad class.
 */
 class JAGMX_EXPORT MxGamePadDX : public MxGamePad
@@ -93,15 +94,16 @@ protected:
     void processDPad( const DIJOYSTATE2& devState );
 };
 
-typedef jag::base::ptr< jagMx::MxGamePadDX >::shared_ptr MxGamePadDXPtr;
+typedef jag::base::ptr< jag::mx::MxGamePadDX >::shared_ptr MxGamePadDXPtr;
 
 
 /*@}*/
 
 
-// jagMx
+// namespace jag::mx::
+}
 }
 
 
-// __JAGMX_MX_GAME_PAD_DX_H__
+// __JAG_MX_MX_GAME_PAD_DX_H__
 #endif

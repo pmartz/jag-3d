@@ -19,20 +19,20 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#ifndef __JAGMX_MX_CORE_H__
-#define __JAGMX_MX_CORE_H__ 1
+#ifndef __JAG_MX_MX_CORE_H__
+#define __JAG_MX_MX_CORE_H__ 1
 
-#include <jagMx/Export.h>
+#include <jag/mx/Export.h>
 #include <jag/base/ptr.h>
 #include <gmtl/gmtl.h>
 
 
 
-namespace jagMx
-{
+namespace jag {
+namespace mx {
 
 
-/** \class MxCore MxCore.h <jagMx/MxCore.h>
+/** \class MxCore MxCore.h <jag/mx/MxCore.h>
 \brief A GUI- and device-independent class for managing model, view, and projection matrices.
 \details TBD.
 
@@ -396,12 +396,13 @@ protected:
     double _orthoBottom, _orthoTop;
 };
 
-typedef jag::base::ptr< jagMx::MxCore >::shared_ptr MxCorePtr;
+typedef jag::base::ptr< jag::mx::MxCore >::shared_ptr MxCorePtr;
 
 
-// jagMx
+// namespace jag::mx::
+}
 }
 
 
-// __JAGMX_MX_CORE_H__
+// __JAG_MX_MX_CORE_H__
 #endif

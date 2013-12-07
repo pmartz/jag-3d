@@ -19,8 +19,8 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#include <jagMx/MxCore.h>
-#include <jagMx/MxUtils.h>
+#include <jag/mx/MxCore.h>
+#include <jag/mx/MxUtils.h>
 
 #include <jag/base/LogMacros.h>
 #include <gmtl/gmtl.h>
@@ -34,8 +34,8 @@ using gmtl::dot;
 using gmtl::normalize;
 
 
-namespace jagMx
-{
+namespace jag {
+namespace mx {
 
 
 MxCore::MxCore()
@@ -261,7 +261,7 @@ void MxCore::lookAtAndFit( const gmtl::Sphered& bs )
 
     // Set the eve position distance so that the sphere fits into the minimum FOV.
     double minFov = ( _aspect < 1. ) ? ( _aspect * _fovy ) : _fovy;
-    const double distance = jagMx::computeInitialDistanceFromFOV( bs, minFov );
+    const double distance = jag::mx::computeInitialDistanceFromFOV( bs, minFov );
     setPosition( bs.getCenter() - ( newDir * distance ) );
 }
 
@@ -337,7 +337,7 @@ void MxCore::lookAtAndFit( const gmtl::AABoxd& bb )
     // bound that we're passing to computeInitialDistanceFromFOVY().
     const double extraDistance = bb.radius() - bs.radius();
     const double distance = extraDistance +
-        jagMx::computeInitialDistanceFromFOV( bs, bestFov );
+        jag::mx::computeInitialDistanceFromFOV( bs, bestFov );
     setPosition( bs.getCenter() - ( newDir * distance ) );
 #endif
 }
@@ -669,5 +669,6 @@ void MxCore::orthonormalize()
 }
 
 
-// jagMx
+// namespace jag::mx::
+}
 }

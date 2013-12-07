@@ -281,7 +281,7 @@ bool RTTExample::startup( const unsigned int numContexts )
     const gmtl::Point3d pos( bound->getCenter() + gmtl::Vec3d( 0., -1., 0. ) );
     for( unsigned int idx( 0 ); idx<numContexts; ++idx )
     {
-        jagMx::MxCorePtr mxCore( new jagMx::MxCore() );
+        jag::mx::MxCorePtr mxCore( new jag::mx::MxCore() );
         mxCore->setAspect( 1. );
         mxCore->setFovy( 30. );
         mxCore->setPosition( pos );
@@ -340,7 +340,7 @@ bool RTTExample::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj
     const jag::draw::jagDrawContextID contextID( jag::draw::ContextSupport::instance()->getActiveContext() );
     jag::draw::DrawInfo& drawInfo( getDrawInfo( contextID ) );
 
-    jagMx::MxCorePtr mxCore( _mxCore._data[ contextID ] );
+    jag::mx::MxCorePtr mxCore( _mxCore._data[ contextID ] );
 
     jagSG::CollectionVisitor& collect( getCollectionVisitor() );
     collect.reset();

@@ -19,15 +19,15 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#include <jagMx/MxUtils.h>
+#include <jag/mx/MxUtils.h>
 #include <jag/base/LogMacros.h>
 #include <gmtl/gmtl.h>
 
 #include <cmath>
 
 
-namespace jagMx
-{
+namespace jag {
+namespace mx {
 
 
 double computeInitialFOVYFromDistance( const gmtl::Sphered& bs, const double distance )
@@ -68,13 +68,13 @@ gmtl::Vec2d computeOptimalNearFar( const gmtl::Point3d& position,
 
 #if 0
 // TBD MxCoe Port
-gmtl::Vec4d computePanPlane( osg::Node* scene, const jagMx::MxCore* mxCore,
+gmtl::Vec4d computePanPlane( osg::Node* scene, const jag::mx::MxCore* mxCore,
                  const double ndcX, const double ndcY )
 {
     const osg::BoundingSphere& bs = scene->getBound();
 
     osg::Matrixd proj = mxCore->computeProjection(
-        jagMx::computeOptimalNearFar( mxCore->getPosition(), bs, mxCore->getOrtho() ) );
+        jag::mx::computeOptimalNearFar( mxCore->getPosition(), bs, mxCore->getOrtho() ) );
 
     // Assume ortho, where ndc far plane == 1 and w always == 1.
     osg::Vec4d farPoint( ndcX, ndcY, 1., 1. );
@@ -115,7 +115,7 @@ gmtl::Vec4d computePanPlane( osg::Node* scene, const jagMx::MxCore* mxCore,
 
 #if 0
 // TBD MxCoe Port
-bool intersect( osg::Vec3d& result, const osg::Vec3d& farPoint, osg::Node* scene, const jagMx::MxCore* mxCore )
+bool intersect( osg::Vec3d& result, const osg::Vec3d& farPoint, osg::Node* scene, const jag::mx::MxCore* mxCore )
 {
     if( scene == NULL )
     {
@@ -144,7 +144,7 @@ bool intersect( osg::Vec3d& result, const osg::Vec3d& farPoint, osg::Node* scene
 #endif
 
 
-gmtl::Vec3d JAGMX_EXPORT pan( /* const osg::Node* scene, */ const jagMx::MxCore* mxCore,
+gmtl::Vec3d JAGMX_EXPORT pan( /* const osg::Node* scene, */ const jag::mx::MxCore* mxCore,
     const gmtl::Planed& panPlane, const double deltaNdcX, const double deltaNdcY )
 {
 #if 0
@@ -152,7 +152,7 @@ gmtl::Vec3d JAGMX_EXPORT pan( /* const osg::Node* scene, */ const jagMx::MxCore*
 
     // Get the view volume far plane value, and the distance from
     // the near to far plane.
-    osg::Vec2d nearFar( jagMx::computeOptimalNearFar( mxCore->getPosition(), bs, mxCore->getOrtho() ) );
+    osg::Vec2d nearFar( jag::mx::computeOptimalNearFar( mxCore->getPosition(), bs, mxCore->getOrtho() ) );
     double zNear( nearFar[ 0 ] ), zFar( nearFar[ 1 ] );
     const double distance = zFar - zNear;
 #else
@@ -204,11 +204,11 @@ gmtl::Vec3d JAGMX_EXPORT pan( /* const osg::Node* scene, */ const jagMx::MxCore*
 
 #if 0
 // TBD MxCoe Port
-osg::Vec3d pickPoint( osg::Node* scene, const jagMx::MxCore* mxCore,
+osg::Vec3d pickPoint( osg::Node* scene, const jag::mx::MxCore* mxCore,
     const double ndcX, const double ndcY )
 {
     const osg::BoundingSphere& bs = scene->getBound();
-    osg::Vec2d nearFar( jagMx::computeOptimalNearFar( mxCore->getPosition(), bs, mxCore->getOrtho() ) );
+    osg::Vec2d nearFar( jag::mx::computeOptimalNearFar( mxCore->getPosition(), bs, mxCore->getOrtho() ) );
 
     osg::Vec4d ccFarPoint( ndcX, ndcY, 1., 1. );
     if( !( mxCore->getOrtho() ) )
@@ -456,5 +456,6 @@ void FunctionalMap::reset()
 }
 
 
-// jagMx
+// namespace jag::mx::
+}
 }

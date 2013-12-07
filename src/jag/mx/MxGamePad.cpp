@@ -20,13 +20,14 @@
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
 
-#include <jagMx/MxGamePad.h>
+#include <jag/mx/MxGamePad.h>
 #include <jag/base/LogMacros.h>
 
 #include <gmtl/gmtl.h>
 
 
-namespace jagMx {
+namespace jag {
+namespace mx {
 
 
 MxGamePad::MxGamePad()
@@ -39,10 +40,10 @@ MxGamePad::MxGamePad()
     _moveMode( FunctionalMap::MoveModeLocal ),
     _rotateMode( FunctionalMap::RotateModeLocal )
 {
-    _mxCore = MxCorePtr( new jagMx::MxCore );
+    _mxCore = MxCorePtr( new jag::mx::MxCore );
 
     // Create a default functional map.
-    _map = FunctionalMapPtr( new jagMx::FunctionalMap );
+    _map = FunctionalMapPtr( new jag::mx::FunctionalMap );
     _map->configure( Button0, FunctionalMap::MoveModifyUpDown );
     _map->configure( Button1, FunctionalMap::LevelView );
     _map->configure( Button2, FunctionalMap::JumpToWorldOrigin );
@@ -59,8 +60,8 @@ MxGamePad::MxGamePad( const MxGamePad& rhs )
     _deadZone( rhs._deadZone ),
     _leftRate( rhs._leftRate ),
     _rightRate( rhs._rightRate ),
-    _mxCore( new jagMx::MxCore( *( rhs._mxCore ) ) ),
-    _map( new jagMx::FunctionalMap( *( rhs._map ) ) ),
+    _mxCore( new jag::mx::MxCore( *( rhs._mxCore ) ) ),
+    _map( new jag::mx::FunctionalMap( *( rhs._map ) ) ),
     _moveMode( rhs._moveMode ),
     _rotateMode( rhs._rotateMode )
 {
@@ -347,5 +348,6 @@ void MxGamePad::setButtons( const unsigned int buttons, const double deltaSecond
 }
 
 
-// jagMx
+// namespace jag::mx::
+}
 }
