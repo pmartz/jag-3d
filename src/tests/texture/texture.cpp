@@ -194,7 +194,7 @@ bool TextureDemo::init2D()
 bool TextureDemo::initTextureObject()
 {
 #if( POCO_OS == POCO_OS_MAC_OS_X )
-    JAG3D_FATAL( "Mac OSX OpenGL does not support texture buffer." );
+    JAG3D_FATAL_STATIC( "TextureDemo", "Mac OSX OpenGL does not support texture buffer." );
     return( false );
 #endif
 

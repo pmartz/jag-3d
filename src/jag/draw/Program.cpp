@@ -630,7 +630,8 @@ void Program::internalDetach( const unsigned int contextID )
     {
         // Get list of attached shader ID.
         GLuintVec idList; idList.resize( numShaders );
-        glGetAttachedShaders( id, (GLsizei) numShaders, &( (GLsizei) numShaders ), &(idList[0]) );
+        GLsizei tempNum = numShaders;
+        glGetAttachedShaders( id, GLsizei( numShaders ), &tempNum, &(idList[0]) );
 
         // Detach shaders for the specified context.
         if( _needsDetach[ contextID ] )

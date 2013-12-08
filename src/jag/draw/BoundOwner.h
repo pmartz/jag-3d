@@ -98,8 +98,7 @@ class BoundOwner
 public:
     /** Constructor */
     BoundOwner()
-        : _dirty( true ),
-        _computeBoundCallback( NULL )
+        : _dirty( true )
     {
     }
     /** Copy constructor */
@@ -212,7 +211,7 @@ public:
     void setInitialBound( const BoundPtr& initialBound )
     {
         _initialBound = initialBound;
-        _bound = NULL;
+        _bound = BoundPtr();
         setBoundDirty();
     }
     /** \brief Return the _initialBound.

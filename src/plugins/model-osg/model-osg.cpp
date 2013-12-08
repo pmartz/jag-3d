@@ -83,7 +83,8 @@ public:
         Osg2Jag osg2Jag( options );
         osgNode->accept( osg2Jag );
         jag::sg::NodePtr result( osg2Jag.getJagScene() );
-        return( ReadStatus( boost::any( result ) ) );
+        boost::any tempAny( result );
+        return( ReadStatus( tempAny ) );
     }
     virtual ReadStatus read( std::istream& iStr, const Options* /*options*/ ) const
     {

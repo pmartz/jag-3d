@@ -97,8 +97,8 @@ public:
     void reshape( const int w, const int h );
 
 protected:
-    void internalInit( jag::draw::ShaderPtr& fragStage0=jag::draw::ShaderPtr((jag::draw::Shader*)NULL),
-        jag::draw::ShaderPtr& fragStage1=jag::draw::ShaderPtr((jag::draw::Shader*)NULL) );
+    void internalInit( jag::draw::ShaderPtr& fragStage0,
+        jag::draw::ShaderPtr& fragStage1 );
 
     jag::draw::TexturePtr _inputBuffer, _outputBuffer;
 

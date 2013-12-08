@@ -32,8 +32,8 @@ namespace jag {
 namespace util {
 
 
-/** \addtogroup jagUtilShapes Rudimentary Shape Support
-/*@{*/
+///\addtogroup jagUtilShapes Rudimentary Shape Support
+///@{
 
 typedef struct {
     gmtl::Point3f _v;
@@ -53,7 +53,7 @@ JAGUTIL_EXPORT jag::draw::DrawablePtr makePlane( VNTCVec& data,
     jag::draw::DrawablePtr drawable=jag::draw::DrawablePtr( ( jag::draw::Drawable* )NULL ) );
 
 
-/*@}*/
+///@}
 
 
 // namespace jag::util::
