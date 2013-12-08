@@ -7,7 +7,6 @@ endif()
 
 set( _jagUtilHeaderFiles
     Export.h
-    ABuffer.h
     Blur.h
     BufferAggregationVisitor.h
     DrawGraphCountVisitor.h
@@ -17,13 +16,17 @@ set( _jagUtilHeaderFiles
 )
 
 set( _jagUtilSourceFiles
-    ABuffer.cpp
     Blur.cpp
     BufferAggregationVisitor.cpp
     QuadNode.cpp
     ResetBoundsVisitor.cpp
     Shapes.cpp
 )
+
+if(NOT APPLE)
+    list(APPEND _jagUtilSourceFiles ABuffer.cpp)
+    list(APPEND _jagUtilHeaderFiles ABuffer.h)
+endif(NOT APPLE)
 
 _addLibrary( ${_libName}
     ${_jagUtilHeaderFiles}
