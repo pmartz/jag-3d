@@ -135,7 +135,10 @@ void BufferAggregationVisitor::visit( jag::sg::Node& node )
             {
                 localCommands->clear( jag::draw::Command::VertexArrayObject_t );
                 if( localCommands->empty() )
-                    node.setCommandMap( jag::draw::CommandMapPtr( NULL ) );
+                {
+                    jag::draw::CommandMapPtr commandMap;
+                    node.setCommandMap( commandMap );
+                }
             }
         }
 

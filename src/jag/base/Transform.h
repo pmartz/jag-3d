@@ -140,7 +140,8 @@ public:
     {
         return( _dirty );
     }
-    void setDirty( unsigned int dirty=ALL_DIRTY )
+
+    void setDirty( unsigned int dirty = ALL_MATRICES )
     {
         _dirty |= dirty;
     }

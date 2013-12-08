@@ -58,7 +58,7 @@ public:
     UserDataOwner( const UserDataOwner& rhs )
       : _userData( rhs._userData ) 
     {}
-    ~UserDataOwner() {}
+    virtual ~UserDataOwner() {}
 
 
     typedef std::map<std::string, Poco::Dynamic::Var> UserDataMap;

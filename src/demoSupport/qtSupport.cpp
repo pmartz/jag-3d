@@ -20,8 +20,8 @@
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
 #include <demoSupport/DemoInterface.h>
-#include <jagDraw/ContextSupport.h>
-#include <jagBase/Profile.h>
+#include <jag/draw/ContextSupport.h>
+#include <jag/base/Profile.h>
 
 #include <demoSupport/qtGlWidget.h>
 #include <QApplication>
@@ -51,9 +51,9 @@ GLWidget::GLWidget( const QGLFormat& format, QWidget* parent )
 
 void GLWidget::initializeGL()
 {
-    jagDraw::ContextSupport* cs( jagDraw::ContextSupport::instance() );
-    const jagDraw::platformContextID pCtxId = reinterpret_cast< const jagDraw::platformContextID >( context() );
-    jagDraw::jagDrawContextID contextID = cs->registerContext( pCtxId );
+    jag::draw::ContextSupport* cs( jag::draw::ContextSupport::instance() );
+    const jag::draw::platformContextID pCtxId = reinterpret_cast< const jag::draw::platformContextID >( context() );
+    jag::draw::jagDrawContextID contextID = cs->registerContext( pCtxId );
 
     cs->setActiveContext( contextID );
     cs->initContext();
@@ -63,9 +63,9 @@ void GLWidget::initializeGL()
 
 void GLWidget::paintGL()
 {
-    jagDraw::ContextSupport* cs( jagDraw::ContextSupport::instance() );
-    const jagDraw::platformContextID pCtxId = reinterpret_cast< const jagDraw::platformContextID >( context() );
-    jagDraw::jagDrawContextID contextID = cs->getJagContextID( pCtxId );
+    jag::draw::ContextSupport* cs( jag::draw::ContextSupport::instance() );
+    const jag::draw::platformContextID pCtxId = reinterpret_cast< const jag::draw::platformContextID >( context() );
+    jag::draw::jagDrawContextID contextID = cs->getJagContextID( pCtxId );
 
     cs->setActiveContext( contextID );
     di->frame();

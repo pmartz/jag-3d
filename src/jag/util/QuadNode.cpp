@@ -140,7 +140,10 @@ void QuadNode::setMaxContexts( const unsigned int numContexts )
     _numContexts = numContexts;
 
     if( _fbo == NULL )
-        internalInit();
+    {
+        jag::draw::ProgramPtr programPtr;
+        internalInit(programPtr);
+    }
 
     jag::draw::DrawNode::setMaxContexts( numContexts );
 }
@@ -151,7 +154,10 @@ void QuadNode::reshape( const int w, const int h )
     _height = h;
 
     if( _fbo == NULL )
-        internalInit();
+    {
+        jag::draw::ProgramPtr programPtr;
+        internalInit(programPtr);
+    }
 
     _fbo->setViewport( 0, 0, _width, _height );
 }

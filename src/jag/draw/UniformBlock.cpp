@@ -124,7 +124,7 @@ void UniformBlock::execute( DrawInfo& drawInfo )
     // Add this uniform block to the pool of potentially active uniform blocks
     // for the current frame and draw thread.
     DrawInfo::UniformBlockMap::iterator ubp( drawInfo._uniformBlockMap.find( _nameHash ) );
-    UniformBlockPtr& sharedThis( shared_from_this() );
+    UniformBlockPtr sharedThis( shared_from_this() );
     if( ( ubp == drawInfo._uniformBlockMap.end() ) ||
         ( ubp->second != sharedThis ) )
         drawInfo._uniformBlockMap[ _nameHash ] = sharedThis;

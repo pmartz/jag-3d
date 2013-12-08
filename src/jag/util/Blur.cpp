@@ -75,7 +75,11 @@ void Blur::setMaxContexts( const unsigned int numContexts )
     _numContexts = numContexts;
 
     if( _vQuad == NULL )
-        internalInit();
+    {
+        jag::draw::ShaderPtr fragStage0;
+        jag::draw::ShaderPtr fragStage1;
+        internalInit( fragStage0, fragStage1 );
+    }
 
     _container.setMaxContexts( numContexts );
 }
@@ -125,7 +129,11 @@ void Blur::reshape( const int w, const int h )
     _height = h;
 
     if( _vQuad == NULL )
-        internalInit();
+    {
+        jag::draw::ShaderPtr fragStage0;
+        jag::draw::ShaderPtr fragStage1;
+        internalInit( fragStage0, fragStage1 );
+    }
 
     _hQuad->reshape( w, h );
     _vQuad->reshape( w, h );
@@ -148,14 +156,20 @@ void Blur::internalInit( jag::draw::ShaderPtr& fragStage0, jag::draw::ShaderPtr&
     // Create the horizontal blur.
     _hQuad.reset( new QuadNode( _inputBuffer, _intermediateBuffer ) );
     if( fragStage0 != NULL )
-        _hQuad->setShaders( fragStage0 );
+    {
+        jag::draw::ShaderPtr vert;
+        _hQuad->setShaders( fragStage0, vert );
+    }
     else
         _hQuad->setShaders( "blurHorizontal.frag" );
 
     // Create the vertical blur.
     _vQuad.reset( new QuadNode( _intermediateBuffer, _outputBuffer ) );
     if( fragStage1 != NULL )
-        _vQuad->setShaders( fragStage1 );
+    {
+        jag::draw::ShaderPtr vert;
+        _vQuad->setShaders( fragStage1, vert );
+    }
     else
         _vQuad->setShaders( "blurVertical.frag" );
 

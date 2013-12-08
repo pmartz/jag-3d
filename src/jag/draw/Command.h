@@ -81,7 +81,7 @@ public:
       : _type( rhs._type ),
         _uniqueID( generateUniqueID ? UniqueID::instance()->generate( rhs._type ) : 0 )
     {}
-    ~Command() {}
+    virtual ~Command() {}
 
 
     /** \brief TBD
@@ -220,7 +220,7 @@ public:
     \details Override method from Command. */
     virtual void execute( DrawInfo& drawInfo )
     {
-        BOOST_FOREACH( const MAP_TYPE::value_type& dataPair, *this )
+        BOOST_FOREACH( const typename MAP_TYPE::value_type& dataPair, *this )
         {
             dataPair.second->execute( drawInfo );
         }
@@ -232,7 +232,7 @@ public:
         // then insert the values held in this.
         CLASS* right( static_cast< CLASS* >( rhs.get() ) );
         CLASS_PTR result( new CLASS( *right ) );
-        static_cast< MAP_TYPE* >( (CLASS*)result.get() )->insert( begin(), end() );
+        static_cast< MAP_TYPE* >( (CLASS*)result.get() )->insert( this->begin(), this->end() );
         return( result );
     }
 
@@ -242,12 +242,12 @@ public:
     {
         const MAP_TYPE* rSet( dynamic_cast< const MAP_TYPE* >( &rhs ) );
 
-        if( size() != rSet->size() )
+        if( this->size() != rSet->size() )
             return( false );
 
-        MAP_TYPE::const_iterator leftIt( begin() );
-        MAP_TYPE::const_iterator rightIt( rSet->begin() );
-        while( leftIt != end() )
+        typename MAP_TYPE::const_iterator leftIt( this->begin() );
+        typename MAP_TYPE::const_iterator rightIt( rSet->begin() );
+        while( leftIt != this->end() )
         {
             if( leftIt->first != rightIt->first )
                 return( false );
@@ -264,14 +264,14 @@ public:
     {
         const MAP_TYPE* rSet( dynamic_cast< const MAP_TYPE* >( &rhs ) );
 
-        if( size() < rSet->size() )
+        if( this->size() < rSet->size() )
             return( true );
-        if( size() > rSet->size() )
+        if( this->size() > rSet->size() )
             return( false );
 
-        MAP_TYPE::const_iterator leftIt( begin() );
-        MAP_TYPE::const_iterator rightIt( rSet->begin() );
-        while( leftIt != end() )
+        typename MAP_TYPE::const_iterator leftIt( this->begin() );
+        typename MAP_TYPE::const_iterator rightIt( rSet->begin() );
+        while( leftIt != this->end() )
         {
             if( leftIt->first < rightIt->first )
                 return( true );
@@ -289,14 +289,14 @@ public:
     {
         const MAP_TYPE* rSet( dynamic_cast< const MAP_TYPE* >( &rhs ) );
 
-        if( size() > rSet->size() )
+        if( this->size() > rSet->size() )
             return( true );
-        if( size() < rSet->size() )
+        if( this->size() < rSet->size() )
             return( false );
 
-        MAP_TYPE::const_iterator leftIt( begin() );
-        MAP_TYPE::const_iterator rightIt( rSet->begin() );
-        while( leftIt != end() )
+        typename MAP_TYPE::const_iterator leftIt( this->begin() );
+        typename MAP_TYPE::const_iterator rightIt( rSet->begin() );
+        while( leftIt != this->end() )
         {
             if( leftIt->first > rightIt->first )
                 return( true );

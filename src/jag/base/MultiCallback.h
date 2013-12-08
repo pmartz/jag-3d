@@ -43,7 +43,7 @@ public:
 
     bool contains( const CB_TYPE& cb )
     {
-        for( DataVec::const_iterator it = begin(); it != end(); ++it )
+        for( typename DataVec::const_iterator it = this->begin(); it != this->end(); ++it )
         {
             if( *it == cb )
                 return( true );
@@ -60,7 +60,7 @@ public:
 
     void remove( const CB_TYPE& cb )
     {
-        for( DataVec::const_iterator it = begin(); it != end(); ++it )
+        for( typename DataVec::const_iterator it = this->begin(); it != this->end(); ++it )
         {
             if( *it == cb )
             {
