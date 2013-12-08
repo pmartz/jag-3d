@@ -6,6 +6,7 @@
 \section vPending Pending Release
 
 - Added a command graph to cache CommandMap accumulations.
+- Build fixes for xcode.
 - Revision history reformatted for Doxygen.
 
 <hr>
