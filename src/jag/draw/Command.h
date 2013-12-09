@@ -42,7 +42,7 @@ namespace draw {
 struct DrawInfo;
 
 class Command;
-typedef jag::base::ptr< jag::draw::Command >::shared_ptr DrawablePrepPtr;
+typedef jag::base::ptr< jag::draw::Command >::shared_ptr CommandPtr;
 
 
 /** \class Command Command.h <jag/draw/Command.h>
@@ -113,7 +113,7 @@ public:
 
     /** \brief TBD
     \details TBD */
-    virtual DrawablePrepPtr clone() const = 0;
+    virtual CommandPtr clone() const = 0;
 
     /** \brief Activate the Command prior to calling execute().
     \details Command objects usually do not require activation, so this is a no-op.
@@ -126,7 +126,7 @@ public:
 
     /** \brief TBD
     \details TBD */
-    virtual DrawablePrepPtr combine( DrawablePrepPtr rhs ) const
+    virtual CommandPtr combine( CommandPtr rhs ) const
     {
         return( rhs );
     }
@@ -191,29 +191,29 @@ protected:
     };
 };
 
-typedef std::vector< DrawablePrepPtr > DrawablePrepVec;
+typedef std::vector< CommandPtr > CommandVec;
 
 
 
-/** \class DrawablePrepSet Command.h <jag/draw/Command.h>
+/** \class CommandSet Command.h <jag/draw/Command.h>
 \brief TBD
 \details TBD
 */
 template< typename KEY, class ELEMENT, class CLASS, class CLASS_PTR >
-class DrawablePrepSet : public Command, public std::map< KEY, ELEMENT >
+class CommandSet : public Command, public std::map< KEY, ELEMENT >
 {
 protected:
     typedef std::map< KEY, ELEMENT > MAP_TYPE;
 
 public:
-    DrawablePrepSet( const CommandType type )
+    CommandSet( const CommandType type )
         : Command( type, false )
     {}
-    DrawablePrepSet( const DrawablePrepSet& rhs )
+    CommandSet( const CommandSet& rhs )
         : Command( rhs, false ),
         MAP_TYPE( rhs )
     {}
-    ~DrawablePrepSet()
+    ~CommandSet()
     {}
 
     /** \brief TBD
@@ -226,7 +226,7 @@ public:
         }
     }
 
-    virtual DrawablePrepPtr combine( DrawablePrepPtr rhs ) const
+    virtual CommandPtr combine( CommandPtr rhs ) const
     {
         // std::map::insert does NOT overwrite, so put rhs in result first,
         // then insert the values held in this.

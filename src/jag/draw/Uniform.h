@@ -221,7 +221,7 @@ public:
 
     /** \brief TBD
     \details TBD */
-    virtual DrawablePrepPtr clone() const { return( UniformPtr( new Uniform( *this ) ) ); }
+    virtual CommandPtr clone() const { return( UniformPtr( new Uniform( *this ) ) ); }
 
     /** \brief Execute the glUniform call.
     \details TBD */
@@ -270,10 +270,10 @@ typedef jag::base::ptr< jag::draw::UniformSet >::shared_ptr UniformSetPtr;
 /** \class UniformSet Uniform.h <jag/draw/Uniform.h>
 \brief TBD
 \details TBD */
-class UniformSet : public DrawablePrepSet< Program::HashValue, UniformPtr, UniformSet, UniformSetPtr >
+class UniformSet : public CommandSet< Program::HashValue, UniformPtr, UniformSet, UniformSetPtr >
 {
 protected:
-    typedef DrawablePrepSet< Program::HashValue, UniformPtr, UniformSet, UniformSetPtr > SET_TYPE;
+    typedef CommandSet< Program::HashValue, UniformPtr, UniformSet, UniformSetPtr > SET_TYPE;
 
 public:
     UniformSet()
@@ -287,7 +287,7 @@ public:
 
     /** \brief TBD
     \details TBD */
-    virtual DrawablePrepPtr clone() const
+    virtual CommandPtr clone() const
     {
         return( UniformSetPtr( new UniformSet( *this ) ) );
     }

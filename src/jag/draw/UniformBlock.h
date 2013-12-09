@@ -100,7 +100,7 @@ public:
 
     /** \brief TBD
     \details TBD */
-    virtual DrawablePrepPtr clone() const { return( UniformBlockPtr( new UniformBlock( *this ) ) ); }
+    virtual CommandPtr clone() const { return( UniformBlockPtr( new UniformBlock( *this ) ) ); }
 
     /** \brief TBD
     \details TBD
@@ -136,10 +136,10 @@ class UniformBlockSet;
 typedef jag::base::ptr< jag::draw::UniformBlockSet >::shared_ptr UniformBlockSetPtr;
 
 class UniformBlockSet : public ObjectIDOwner,
-        public DrawablePrepSet< Program::HashValue, UniformBlockPtr, UniformBlockSet, UniformBlockSetPtr >
+        public CommandSet< Program::HashValue, UniformBlockPtr, UniformBlockSet, UniformBlockSetPtr >
 {
 protected:
-    typedef DrawablePrepSet< Program::HashValue, UniformBlockPtr, UniformBlockSet, UniformBlockSetPtr > SET_TYPE;
+    typedef CommandSet< Program::HashValue, UniformBlockPtr, UniformBlockSet, UniformBlockSetPtr > SET_TYPE;
 
 public:
     UniformBlockSet()
@@ -156,7 +156,7 @@ public:
 
     /** \brief TBD
     \details TBD */
-    virtual DrawablePrepPtr clone() const
+    virtual CommandPtr clone() const
     {
         return( UniformBlockSetPtr( new UniformBlockSet( *this ) ) );
     }

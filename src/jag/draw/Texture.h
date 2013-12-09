@@ -113,7 +113,7 @@ public:
 
     /** \brief TBD
     \details TBD */
-    virtual DrawablePrepPtr clone() const { return( TexturePtr( new Texture( *this ) ) ); }
+    virtual CommandPtr clone() const { return( TexturePtr( new Texture( *this ) ) ); }
 
     /** \brief TBD
     \details Set the active texture.
@@ -196,10 +196,10 @@ typedef jag::base::ptr< jag::draw::TextureSet >::shared_ptr TextureSetPtr;
 \brief TBD
 \details TBD */
 class TextureSet : public ObjectIDOwner,
-        public DrawablePrepSet< unsigned int, TexturePtr, TextureSet, TextureSetPtr >
+        public CommandSet< unsigned int, TexturePtr, TextureSet, TextureSetPtr >
 {
 protected:
-    typedef DrawablePrepSet< unsigned int, TexturePtr, TextureSet, TextureSetPtr > SET_TYPE;
+    typedef CommandSet< unsigned int, TexturePtr, TextureSet, TextureSetPtr > SET_TYPE;
 
 public:
     TextureSet()
@@ -216,7 +216,7 @@ public:
 
     /** \brief TBD
     \details TBD */
-    virtual DrawablePrepPtr clone() const
+    virtual CommandPtr clone() const
     {
         return( TextureSetPtr( new TextureSet( *this ) ) );
     }

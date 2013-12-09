@@ -69,7 +69,7 @@ public:
 
     /** \brief TBD
     \details TBD */
-    virtual DrawablePrepPtr clone() const { return( DrawablePrepPtr( new Sampler( *this ) ) ); }
+    virtual CommandPtr clone() const { return( CommandPtr( new Sampler( *this ) ) ); }
 
     /** \brief TBD
     \details TBD */
@@ -149,10 +149,10 @@ typedef jag::base::ptr< jag::draw::SamplerSet >::shared_ptr SamplerSetPtr;
 \brief TBD
 \details TBD */
 class SamplerSet : public ObjectIDOwner,
-        public DrawablePrepSet< unsigned int, SamplerPtr, SamplerSet, SamplerSetPtr >
+        public CommandSet< unsigned int, SamplerPtr, SamplerSet, SamplerSetPtr >
 {
 protected:
-    typedef DrawablePrepSet< unsigned int, SamplerPtr, SamplerSet, SamplerSetPtr > SET_TYPE;
+    typedef CommandSet< unsigned int, SamplerPtr, SamplerSet, SamplerSetPtr > SET_TYPE;
 
 public:
     SamplerSet()
@@ -169,7 +169,7 @@ public:
 
     /** \brief TBD
     \details TBD */
-    virtual DrawablePrepPtr clone() const
+    virtual CommandPtr clone() const
     {
         return( SamplerSetPtr( new SamplerSet( *this ) ) );
     }

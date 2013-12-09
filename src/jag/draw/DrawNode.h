@@ -244,8 +244,8 @@ public:
             {
                 case 3: 
                 {
-                    const DrawablePrepPtr a( lhsCommands->_data.find( *typeIter )->second );
-                    const DrawablePrepPtr b( rhsCommands->_data.find( *typeIter )->second );
+                    const CommandPtr a( lhsCommands->_data.find( *typeIter )->second );
+                    const CommandPtr b( rhsCommands->_data.find( *typeIter )->second );
                     if( *a < *b )
                         return( true );
                     if( *a > *b )

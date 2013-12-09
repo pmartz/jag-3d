@@ -63,7 +63,7 @@ public:
     ~CommandMap()
     {}
 
-    void insert( const DrawablePrepPtr drawablePrep, bool override=false, bool protect=false )
+    void insert( const CommandPtr drawablePrep, bool override=false, bool protect=false )
     {
         if( drawablePrep->getCommandType() >= Command::MaxCommandType )
         {
@@ -89,18 +89,18 @@ public:
         dirtyParents();
     }
 
-    DrawablePrepPtr& operator[]( const Command::CommandType type )
+    CommandPtr& operator[]( const Command::CommandType type )
     {
         return( _data[ type ] );
     }
 
-    typedef std::map< Command::CommandType, DrawablePrepPtr > CommandMapType;
+    typedef std::map< Command::CommandType, CommandPtr > CommandMapType;
 
-    DrawablePrepPtr operator[]( const Command::CommandType type ) const
+    CommandPtr operator[]( const Command::CommandType type ) const
     {
         CommandMapType::const_iterator it( _data.find( type ) );
         if( it == _data.end() )
-            return( DrawablePrepPtr() );
+            return( CommandPtr() );
         else
         {
             return( it->second );
@@ -149,7 +149,7 @@ public:
 
     struct Callback
     {
-        virtual void operator()( DrawablePrepPtr ) = 0;
+        virtual void operator()( CommandPtr ) = 0;
     };
 
     void foreach( Callback& callback )
@@ -196,8 +196,8 @@ public:
                 break;
             case 3: // both have it
             {
-                const DrawablePrepPtr& left( ( *_data.find( type ) ).second );
-                const DrawablePrepPtr& right( ( *rhs._data.find( type ) ).second );
+                const CommandPtr& left( ( *_data.find( type ) ).second );
+                const CommandPtr& right( ( *rhs._data.find( type ) ).second );
                 if( ( left != right ) &&
                     ( *left != *right ) )
                     result[ type ] = left->combine( right );
@@ -244,8 +244,8 @@ public:
             {
             case 3: // both have it
             {
-                DrawablePrepPtr& left( _data[ type ] );
-                DrawablePrepPtr& right( rhs._data[ type ] );
+                CommandPtr& left( _data[ type ] );
+                CommandPtr& right( rhs._data[ type ] );
                 if( ( left != right ) &&
                     ( *left != *right ) )
                 {
@@ -257,7 +257,7 @@ public:
             }
             case 2: // rhs has it
             {
-                DrawablePrepPtr command( rhs._data[ type ] );
+                CommandPtr command( rhs._data[ type ] );
                 insert( command );
                 result.insert( command );
                 break;
@@ -292,15 +292,15 @@ public:
             case 2: // rhs has it
                 if( _overrideBits.test( type ) == false || rhs._protectBits.test( type ) == true  )
                 {
-                    DrawablePrepPtr command( rhs._data[ type ] );
+                    CommandPtr command( rhs._data[ type ] );
                     insert( command, rhs._overrideBits[ type ] );
                     command->execute( drawInfo );
                 }
                 break; 
 
             case 3: // both have it
-                DrawablePrepPtr& left( _data[ type ] );
-                DrawablePrepPtr& right( rhs._data[ type ] );
+                CommandPtr& left( _data[ type ] );
+                CommandPtr& right( rhs._data[ type ] );
                 if( ( left != right ) &&
                     ( *left != *right ) )
                 {
@@ -335,11 +335,11 @@ public:
         return( _data.empty() );
     }
 
-    DrawablePrepPtr getData( Command::CommandType type ) const
+    CommandPtr getData( Command::CommandType type ) const
     { 
         CommandMapType::const_iterator p( _data.find( type ) );
         if( p == _data.end() )
-            return( DrawablePrepPtr() );
+            return( CommandPtr() );
         return( p->second );
     }
 
@@ -425,8 +425,8 @@ public:
                     return( false );
                 case 3: // both have it
                 {
-                    const DrawablePrepPtr& a( lhs._data.find( type )->second );
-                    const DrawablePrepPtr& b( rhs._data.find( type )->second );
+                    const CommandPtr& a( lhs._data.find( type )->second );
+                    const CommandPtr& b( rhs._data.find( type )->second );
                     if( *a < *b )
                         return( true );
                     if( *a > *b )

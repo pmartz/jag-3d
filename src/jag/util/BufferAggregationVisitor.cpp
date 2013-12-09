@@ -118,7 +118,7 @@ void BufferAggregationVisitor::visit( jag::sg::Node& node )
 
     // Get the VAO in effect at this Node.
     jag::draw::CommandMap& commands( _commandStack.back() );
-    jag::draw::DrawablePrepPtr& drawablePrep( commands[ jag::draw::Command::VertexArrayObject_t ] );
+    jag::draw::CommandPtr& drawablePrep( commands[ jag::draw::Command::VertexArrayObject_t ] );
     jag::draw::VertexArrayObjectPtr vaop( boost::static_pointer_cast< jag::draw::VertexArrayObject >( drawablePrep ) );
 
     if( ( vaop != NULL ) && _vaop->isSameKind( *vaop ) )
@@ -129,7 +129,7 @@ void BufferAggregationVisitor::visit( jag::sg::Node& node )
         // from now on.
         if( localCommands != NULL )
         {
-            jag::draw::DrawablePrepPtr& dp( (*localCommands)[ jag::draw::Command::VertexArrayObject_t ] );
+            jag::draw::CommandPtr& dp( (*localCommands)[ jag::draw::Command::VertexArrayObject_t ] );
             jag::draw::VertexArrayObjectPtr localVAO( boost::static_pointer_cast< jag::draw::VertexArrayObject >( dp ) );
             if( localVAO == vaop )
             {

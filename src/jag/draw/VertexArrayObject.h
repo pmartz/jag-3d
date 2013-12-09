@@ -64,7 +64,7 @@ public:
 
     /** \brief TBD
     \details TBD */
-    virtual DrawablePrepPtr clone() const { return( VertexArrayObjectPtr( new VertexArrayObject( *this ) ) ); }
+    virtual CommandPtr clone() const { return( VertexArrayObjectPtr( new VertexArrayObject( *this ) ) ); }
 
     /** \brief TBD
     \details TBD */
