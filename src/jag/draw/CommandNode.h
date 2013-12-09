@@ -51,14 +51,18 @@ a given CommandMap is marked as dirty for a given command graph node.
 class JAGDRAW_EXPORT CommandNode : protected jag::base::LogBase, public jag::base::UserDataOwner
 {
 public:
-    CommandNode( const std::string& logName );
+    CommandNode( const std::string& logName=std::string( "" ) );
     CommandNode( CommandNode* parent, const std::string& logName=std::string( "" ) );
     CommandNode( const CommandNode& rhs );
-    ~CommandNode();
+    virtual ~CommandNode();
+
+    CommandNode* getParent();
 
     CommandNode* findOrCreateChild( CommandMapPtr commands );
 
     void accumulate( const CommandMapPtr commands );
+
+    CommandMapPtr getAccumulation();
 
 protected:
     CommandNode* _parent;
@@ -66,7 +70,7 @@ protected:
     typedef std::map< CommandMap*, CommandNodePtr > ChildMap;
     ChildMap _children;
 
-    CommandMap _accumulation;
+    CommandMapPtr _accumulation;
 };
 
 

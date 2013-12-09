@@ -28,6 +28,7 @@
 #include <jag/draw/DrawNode.h>
 #include <jag/draw/DrawNodeContainer.h>
 #include <jag/draw/DrawGraph.h>
+#include <jag/draw/CommandNodePtr.h>
 #include <jag/draw/TransformCallback.h>
 #include <jag/draw/Uniform.h>
 #include <jag/base/ptr.h>
@@ -233,11 +234,18 @@ public:
     };
     typedef jag::base::ptr< CollectionInfo >::shared_ptr CollectionInfoPtr;
 
+
+    void pushCommandGraph( jag::draw::CommandMapPtr& commands );
+    void popCommandGraph();
+
 protected:
     jag::draw::DrawGraphPtr _drawGraphTemplate;
     jag::draw::DrawGraphPtr _drawGraph;
     unsigned int _currentID;
     jag::draw::DrawNodeContainer* _currentNodes;
+
+    jag::draw::CommandNodePtr _commandGraphRoot;
+    jag::draw::CommandNode* _commandNode;
 
     jag::base::TransformD _transform;
 
