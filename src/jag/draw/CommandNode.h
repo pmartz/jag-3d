@@ -24,7 +24,7 @@
 
 #include <jag/draw/Export.h>
 #include <jag/draw/CommandNodePtr.h>
-#include <jag/draw/CommandMap.h>
+#include <jag/draw/CommandMapPtr.h>
 #include <jag/base/LogBase.h>
 #include <jag/base/UserDataOwner.h>
 
@@ -52,7 +52,7 @@ class JAGDRAW_EXPORT CommandNode : protected jag::base::LogBase, public jag::bas
 {
 public:
     CommandNode( const std::string& logName=std::string( "" ) );
-    CommandNode( CommandNode* parent, const std::string& logName=std::string( "" ) );
+    CommandNode( CommandNode* parent,  const CommandMapPtr& commands, const std::string& logName=std::string( "" ) );
     CommandNode( const CommandNode& rhs );
     virtual ~CommandNode();
 
@@ -60,8 +60,10 @@ public:
 
     CommandNode* findOrCreateChild( CommandMapPtr commands );
 
-    void accumulate( const CommandMapPtr commands );
+    void setDirty( const bool dirty=true );
+    bool getDirty() const;
 
+    void accumulate();
     CommandMapPtr getAccumulation();
 
 protected:
@@ -70,6 +72,8 @@ protected:
     typedef std::map< CommandMap*, CommandNodePtr > ChildMap;
     ChildMap _children;
 
+    bool _dirty;
+    CommandMapPtr _commands ;
     CommandMapPtr _accumulation;
 };
 
