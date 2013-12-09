@@ -362,10 +362,13 @@ unsigned int CollectionVisitor::getCurrentNodeContainer() const
 
 void CollectionVisitor::pushCommandGraph( jag::draw::CommandMapPtr& commands )
 {
+    JAG3D_PROFILE( "Command graph processing" );
     _commandNode = _commandNode->findOrCreateChild( commands );
 }
 void CollectionVisitor::popCommandGraph()
 {
+    JAG3D_PROFILE( "Command graph processing" );
+
     if( _commandNode->getParent() != NULL )
     {
         _commandNode = _commandNode->getParent();
