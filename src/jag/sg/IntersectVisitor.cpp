@@ -166,7 +166,7 @@ void IntersectVisitor::intersect(jag::sg::Node& node) {
         node.traverse(*this);
         if(node.getNumDrawables() > 0) {
         
-         const jag::draw::DrawablePrepPtr& drawablePrep( _commandStack.back()[ jag::draw::Command::VertexArrayObject_t ] );
+         const jag::draw::CommandPtr& drawablePrep( _commandStack.back()[ jag::draw::Command::VertexArrayObject_t ] );
          const jag::draw::VertexArrayObjectPtr vaop( boost::static_pointer_cast< jag::draw::VertexArrayObject >( drawablePrep ) );
         
 

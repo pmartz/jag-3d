@@ -38,7 +38,7 @@ using jag::draw::CommandMap;
 class PrintCommands : public jag::draw::CommandMap::Callback
 {
 public:
-    virtual void operator()( jag::draw::DrawablePrepPtr f )
+    virtual void operator()( jag::draw::CommandPtr f )
     {
         std::cout << "  " << std::setw(18) <<
             jag::draw::Command::getCommandTypeString( f->getCommandType() ) << ":  " << f->getUserDataName() << std::endl;
@@ -51,7 +51,7 @@ public:
     {
         _prog = _vao = _tex = _samp = _us = _ubs = _fb = 0;
     }
-    virtual void operator()( jag::draw::DrawablePrepPtr f )
+    virtual void operator()( jag::draw::CommandPtr f )
     {
         switch( f->getCommandType() )
         {
