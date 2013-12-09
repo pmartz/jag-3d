@@ -34,13 +34,16 @@ namespace draw {
 CommandNode::CommandNode( const std::string& logName )
     : jag::base::LogBase( logName.empty() ? "jag.draw.cg.node" : logName ),
     jag::base::UserDataOwner(),
-    _parent( NULL )
+    _parent( NULL ),
+    _dirty( true )
 {
 }
-CommandNode::CommandNode( CommandNode* parent, const std::string& logName )
+CommandNode::CommandNode( CommandNode* parent, const CommandMapPtr& commands, const std::string& logName )
   : jag::base::LogBase( logName.empty() ? "jag.draw.cg.node" : logName ),
   jag::base::UserDataOwner(),
-  _parent( parent )
+  _parent( parent ),
+  _dirty( true ),
+  _commands( commands )
 {
 }
 CommandNode::CommandNode( const CommandNode& rhs )
@@ -48,6 +51,8 @@ CommandNode::CommandNode( const CommandNode& rhs )
     jag::base::UserDataOwner( rhs ),
     _parent( rhs._parent ),
     _children( rhs._children ),
+    _dirty( true ),
+    _commands( rhs._commands ),
     _accumulation( rhs._accumulation )
 {
 }
@@ -70,31 +75,55 @@ CommandNode* CommandNode::findOrCreateChild( CommandMapPtr commands )
     }
     
     CommandNodePtr newChild;
-    newChild.reset( new CommandNode( this ) );
-    newChild->accumulate( commands );
+    newChild.reset( new CommandNode( this, commands ) );
+    commands->addParent( newChild );
     _children[ commands.get() ] = newChild;
+
     return( newChild.get() );
 }
 
-void CommandNode::accumulate( const CommandMapPtr commands )
+void CommandNode::setDirty( const bool dirty )
 {
-    if( ( _parent == NULL ) || ( _parent->_accumulation == NULL ) )
+    _dirty = dirty;
+
+    if( _dirty )
+    {
+        // Dirty all children.
+        BOOST_FOREACH( ChildMap::value_type dataPair, _children )
+            dataPair.second->setDirty( true );
+    }
+}
+bool CommandNode::getDirty() const
+{
+    return( _dirty );
+}
+
+void CommandNode::accumulate()
+{
+    if( _parent == NULL )
     {
         if( _accumulation == NULL )
-            _accumulation = commands;
-        else
-            *_accumulation = *commands;
+            _accumulation = _commands;
+        else if( _accumulation != _commands )
+            *_accumulation = *_commands;
     }
     else
     {
         if( _accumulation == NULL )
             _accumulation.reset( new jag::draw::CommandMap() );
-        *_accumulation = *(_parent->_accumulation) + *commands;
+        const CommandMapPtr& parentCommands( _parent->getAccumulation() );
+        if( parentCommands == NULL )
+            *_accumulation = *_commands;
+        else
+            *_accumulation = *( parentCommands ) + *_commands;
     }
+    _dirty = false;
 }
 
 CommandMapPtr CommandNode::getAccumulation()
 {
+    if( _dirty )
+        accumulate();
     return( _accumulation );
 }
 

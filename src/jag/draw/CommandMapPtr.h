@@ -19,26 +19,27 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
-#ifndef __JAG_DRAW_COMMAND_NODE_PTR_H__
-#define __JAG_DRAW_COMMAND_NODE_PTR_H__ 1
+#ifndef __JAG_DRAW_COMMAND_MAP_PTR_H__
+#define __JAG_DRAW_COMMAND_MAP_PTR_H__ 1
 
 #include <jag/base/ptr.h>
 #include <vector>
-#include <set>
+#include <map>
 
 
 namespace jag {
 namespace draw {
 
 
-/** \addtogroup jagDrawCommandGraph Command Graph Data Structure */
+/** \addtogroup jagDrawDataStore Geometry and OpenGL Command Data Storage */
 /*@{*/
 
-class CommandNode;
-typedef jag::base::ptr< jag::draw::CommandNode >::shared_ptr CommandNodePtr;
-typedef std::vector< CommandNodePtr > CommandNodeVec;
-typedef std::vector< jag::draw::CommandNode > CommandNodeSimpleVec;
-typedef std::set< CommandNodePtr > CommandNodeSet;
+
+class CommandMap;
+typedef jag::base::ptr< jag::draw::CommandMap >::shared_ptr CommandMapPtr;
+typedef std::vector< jag::draw::CommandMapPtr > CommandMapVec;
+typedef std::vector< jag::draw::CommandMap > CommandMapSimpleVec;
+
 
 /*@}*/
 
@@ -48,5 +49,5 @@ typedef std::set< CommandNodePtr > CommandNodeSet;
 }
 
 
-// __JAG_DRAW_COMMAND_NODE_PTR_H__
+// __JAG_DRAW_COMMAND_MAP_PTR_H__
 #endif

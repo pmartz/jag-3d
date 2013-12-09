@@ -24,7 +24,7 @@
 
 #include <jag/draw/ObjectID.h>
 #include <jag/draw/Command.h>
-#include <jag/draw/CommandNodePtr.h>
+#include <jag/draw/CommandNode.h>
 #include <jag/base/LogMacros.h>
 #include <jag/draw/Error.h>
 
@@ -85,6 +85,8 @@ public:
             _protectBits.set( type );
         else
             _protectBits.reset( type );
+
+        dirtyParents();
     }
 
     DrawablePrepPtr& operator[]( const Command::CommandType type )
@@ -326,6 +328,7 @@ public:
             _bits.flip( type );
             _data.erase( type );
         }
+        dirtyParents();
     }
     bool empty() const
     {
@@ -364,16 +367,32 @@ public:
         return( !( operator==( rhs ) ) );
     }
 
+    void addParent( const CommandNodePtr& parent )
+    {
+        _nodes.insert( parent );
+    }
+    void removeParent( const CommandNodePtr& parent )
+    {
+        CommandNodeSet::iterator it( _nodes.find( parent ) );
+        if( it != _nodes.end() )
+            _nodes.erase( it );
+    }
+    void dirtyParents()
+    {
+        BOOST_FOREACH( CommandNodeSet::value_type parentNode, _nodes )
+        {
+            parentNode->setDirty();
+        }
+    }
+
 
     CommandMapType _data;
     std::bitset< Command::MaxCommandType > _bits;
     std::bitset< Command::MaxCommandType > _overrideBits;
     std::bitset< Command::MaxCommandType > _protectBits;
-};
 
-typedef jag::base::ptr< jag::draw::CommandMap >::shared_ptr CommandMapPtr;
-typedef std::vector< jag::draw::CommandMapPtr > CommandMapVec;
-typedef std::vector< jag::draw::CommandMap > CommandMapSimpleVec;
+    CommandNodeSet _nodes;
+};
 
 
 

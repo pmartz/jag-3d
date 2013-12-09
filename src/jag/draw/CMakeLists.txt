@@ -12,6 +12,7 @@ set( _jagDrawHeaderFiles
     BufferObject.h
     Command.h
     CommandMap.h
+    CommandMapPtr.h
     CommandNode.h
     CommandNodePtr.h
     Common.h
