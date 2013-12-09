@@ -231,7 +231,7 @@ void CollectionVisitor::collectAndTraverse( jag::sg::Node& node )
             // Assign accumulated CommandMap from command graph.
             {
             JAG3D_PROFILE( "CM copy" );
-\            drawNode->setCommandMap( _commandNode->getAccumulation() );
+            drawNode->setCommandMap( _commandNode->getAccumulation() );
             }
             }
         }
