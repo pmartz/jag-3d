@@ -22,6 +22,7 @@
 #include <jag/sg/CollectionVisitor.h>
 #include <jag/sg/Node.h>
 #include <jag/draw/DrawNode.h>
+#include <jag/draw/CommandNode.h>
 #include <jag/base/gmtlSupport.h>
 #include <jag/draw/Error.h>
 #include <jag/base/Profile.h>
@@ -85,6 +86,10 @@ void CollectionVisitor::reset()
 {
     JAG3D_TRACE( "reset()" );
 
+    if( _commandGraphRoot == NULL )
+        _commandGraphRoot.reset( new jag::draw::CommandNode() );
+    _commandNode = _commandGraphRoot.get();
+
     resetCommandMap();
     resetMatrix();
 
@@ -127,7 +132,9 @@ void CollectionVisitor::reset()
 
 void CollectionVisitor::visit( jag::sg::Node& node )
 {
-    CommandMapStackHelper cmsh( *this, node.getCommandMap() );
+    if( node.getCommandMap() != NULL )
+        pushCommandGraph( node.getCommandMap() );
+
     pushPlanes();
 
     {
@@ -163,6 +170,9 @@ void CollectionVisitor::visit( jag::sg::Node& node )
         collectAndTraverse( node );
     }
     popPlanes();
+
+    if( node.getCommandMap() != NULL )
+        popCommandGraph();
 }
 
 void CollectionVisitor::collectAndTraverse( jag::sg::Node& node )
@@ -218,12 +228,10 @@ void CollectionVisitor::collectAndTraverse( jag::sg::Node& node )
             // Set the model matrix.
             drawNode->setTransform( _matrixStack.back() );
 
+            // Assign accumulated CommandMap from command graph.
             {
             JAG3D_PROFILE( "CM copy" );
-            //JAG3D_WARNING( "TBD Must allocate new CommandMapPtr?" );
-            jag::draw::CommandMapPtr commands( new jag::draw::CommandMap(
-                    _commandStack.back() ) );
-            drawNode->setCommandMap( commands );
+\            drawNode->setCommandMap( _commandNode->getAccumulation() );
             }
             }
         }
@@ -351,6 +359,23 @@ unsigned int CollectionVisitor::getCurrentNodeContainer() const
 {
     return( _currentID );
 }
+
+void CollectionVisitor::pushCommandGraph( jag::draw::CommandMapPtr& commands )
+{
+    _commandNode = _commandNode->findOrCreateChild( commands );
+}
+void CollectionVisitor::popCommandGraph()
+{
+    if( _commandNode->getParent() != NULL )
+    {
+        _commandNode = _commandNode->getParent();
+        return;
+    }
+
+    JAG3D_ERROR( "popCommandGraph: Popping with NULL CommandNode parent." );
+    _commandNode = NULL;
+}
+
 
 
 
