@@ -1,4 +1,8 @@
 
+if( NOT ( Freeglut_FOUND AND JAG3D_USE_FREEGLUT ) )
+    return()
+endif()
+
 macro( _abufferExecutable _category _exeName )
     set( _localExeName "${_exeName}-freeglut" )
 
