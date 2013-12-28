@@ -1,8 +1,4 @@
 
-if( NOT ( Freeglut_FOUND AND JAG3D_USE_FREEGLUT ) )
-    return()
-endif()
-
 macro( _abufferExecutable _category _exeName )
     set( _localExeName "${_exeName}-freeglut" )
 
@@ -50,16 +46,18 @@ macro( _abufferExecutable _category _exeName )
 endmacro()
 
 
-_abufferExecutable( Example abuffer
-    ABufferGL4.cpp
-    ABufferGL4_Basic.cpp
-    ABufferGL4_Basic.h
-    ABufferGL4_LinkedList.cpp
-    ABufferGL4_LinkedList.h
-    ABufferGL4Parameters.h
-    InfoWidget.h
-    Matrix.h
-    ShadersManagment.cpp
-    ShadersManagment.h
-    Vector.h
-)
+if( Freeglut_FOUND AND JAG3D_USE_FREEGLUT )
+    _abufferExecutable( Example abuffer
+        ABufferGL4.cpp
+        ABufferGL4_Basic.cpp
+        ABufferGL4_Basic.h
+        ABufferGL4_LinkedList.cpp
+        ABufferGL4_LinkedList.h
+        ABufferGL4Parameters.h
+        InfoWidget.h
+        Matrix.h
+        ShadersManagment.cpp
+        ShadersManagment.h
+        Vector.h
+    )
+endif()
