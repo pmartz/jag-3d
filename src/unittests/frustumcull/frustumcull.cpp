@@ -107,7 +107,8 @@ bool test()
         std::cout << "Testing: Single quad accept..." << std::endl;
         {
             NodePtr root( new Node() );
-            root->addChild( createQuad( gmtl::Point3f( 0., 0., 0. ), 10.f ) );
+            NodePtr quad( createQuad( gmtl::Point3f( 0., 0., 0. ), 10.f ) );
+            root->addChild( quad );
 
             FrustumCullDistributionVisitor fcdv;
             root->accept( fcdv );
@@ -138,9 +139,11 @@ bool test()
         std::cout << "Testing: two quads, one in and one out..." << std::endl;
         {
             NodePtr root( new Node() );
-            root->addChild( createQuad( gmtl::Point3f( 0., 0., 0. ), 10.f ) );
+            NodePtr quad( createQuad( gmtl::Point3f( 0., 0., 0. ), 10.f ) );
+            root->addChild( quad );
             // Second quad is way outside the frustum:
-            root->addChild( createQuad( gmtl::Point3f( 1000., 0., 0. ), 10.f ) );
+            quad = createQuad( gmtl::Point3f( 1000., 0., 0. ), 10.f );
+            root->addChild( quad );
 
             FrustumCullDistributionVisitor fcdv;
             root->accept( fcdv );
