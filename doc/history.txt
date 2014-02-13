@@ -5,6 +5,17 @@
 
 \section vPending Pending Release
 
+- None.
+
+<hr>
+
+
+\section v00112 v0.01.12
+
+<small>Released 13 Feb 2014.</small>
+
+- Fix for issue 32, specifically for VRJ demo support code.
+- Updated FindGL2.cmake for favor glcorearb.h.
 - Added a command graph to cache CommandMap accumulations.
 - Apple LLVM 5.0 (xcode 5.0) support
 - Revision history reformatted for Doxygen.
