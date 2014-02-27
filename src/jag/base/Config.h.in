@@ -31,6 +31,9 @@
 #define __JAGBASE_CONFIG_H__ 1
 
 
+// Controlled by CMake variable BUILD_SHARED_LIBS
+@JAG3D_STATIC_DEFINITION@
+
 // Controlled by CMake variable JAG3D_ENABLE_ERROR_CHECKS
 @JAG3D_ERROR_ENABLE_DEFINITION@
 

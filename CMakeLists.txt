@@ -177,8 +177,10 @@ else()
 endif()
 
 option( BUILD_SHARED_LIBS "Set to ON to build JAG3D for dynamic linking. Use OFF for static." ON )
-if( NOT BUILD_SHARED_LIBS )
-    add_definitions( -DJAG3D_STATIC )
+if( BUILD_SHARED_LIBS )
+    set( JAG3D_STATIC_DEFINITION "#undef JAG3D_STATIC" )
+else()
+    set( JAG3D_STATIC_DEFINITION "#define JAG3D_STATIC 1" )
 endif()
 
 
