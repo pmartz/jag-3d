@@ -22,6 +22,7 @@
 #ifndef __JAG_SG_EXPORT__
 #define __JAG_SG_EXPORT__ 1
 
+#include <jag/base/Config.h>
 
 #if defined( _MSC_VER ) || defined( __CYGWIN__ ) || defined( __MINGW32__ ) || defined( __BCPLUSPLUS__ ) || defined( __MWERKS__ )
     #if defined( JAG3D_STATIC )
