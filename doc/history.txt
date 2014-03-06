@@ -7,6 +7,8 @@
 
 - Fix doc/doxyfile.cmake to reflect source code reorg (issue 32).
 - Changes to enable static build.
+- Allow linking with Boost static libs.
+- Fix for static initialization conflict between log::base::Log and Poco::Logger.
 
 <hr>
 
