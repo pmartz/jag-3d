@@ -48,10 +48,26 @@ Log* Log::instance()
 
 
 Log::Log()
-  : _logFileName( "jag3d.log" ),
+  : _initState( Uninitialized ),
+    _logFileName( "jag3d.log" ),
     _console( NULL ),
     _file( NULL )
 {
+}
+Log::~Log()
+{
+}
+
+void Log::internalInit()
+{
+    if( _initState != Uninitialized )
+        return;
+
+    _initState = Initializing;
+
+    //
+    // Check for user specified log file name.
+    //
     std::string logFileName;
     try {
         logFileName = Poco::Environment::get( "JAG3D_LOG_FILE_NAME" );
@@ -59,6 +75,9 @@ Log::Log()
     if( !logFileName.empty() )
         _logFileName = logFileName;
 
+    //
+    // Check for user specified log message destination.
+    // 
     DestinationType dest( Console );
     std::string destination;
     try {
@@ -75,6 +94,9 @@ Log::Log()
             std::cerr << "JAG3D_LOG_DESTINATION=" << destination << ": Unsupported log destination." << std::endl;
     }
 
+    //
+    // Check for user specified global log priority.
+    //
     std::string globalPriority;
     try {
         globalPriority = Poco::Environment::get( "JAG3D_LOG_PRIORITY" );
@@ -93,6 +115,9 @@ Log::Log()
     // Special default priority for profiling.
     Log::instance()->setPriority( Log::PrioInfo, "jag.prof" );
 
+    //
+    // Check for user specified per-module log priority.
+    //
     std::string priorities;
     try {
         priorities = Poco::Environment::get( "JAG3D_LOG_PRIORITIES" );
@@ -120,13 +145,14 @@ Log::Log()
             prio = PrioSilent;
         setPriority( prio, logName );
     }
-}
-Log::~Log()
-{
+
+    _initState = Initialized;
 }
 
 void Log::setLogFileName( const std::string& logFileName )
 {
+    internalInit();
+
     if( _file != NULL )
     {
         JAG3D_WARNING_STATIC( "jag.base.log", "Can't change log file name. Log file is already open." );
@@ -137,11 +163,15 @@ void Log::setLogFileName( const std::string& logFileName )
 
 void Log::setPriority( int prio, const std::string& logName )
 {
+    internalInit();
+
     Poco::Logger& logger( Poco::Logger::get( logName ) );
     logger.setLevel( prio );
 }
 void Log::setPriority( int prio, const DestinationType dest, const std::string& logName )
 {
+    internalInit();
+
     Poco::Logger& logger( Poco::Logger::get( logName ) );
     logger.setLevel( prio );
     if( dest == Console )
