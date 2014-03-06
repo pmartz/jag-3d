@@ -241,8 +241,6 @@ following windowing toolkits:
 \li <a href=http://code.google.com/p/vrjuggler/source/checkout>VRJuggler</a> git main trunk.
 \li <a href=http://qt-project.org/downloads>Qt</a> v4.8.3.
 
-Poco and Boost must be built as shared libraries / DLLs in order for Jag3D to work correctly.
-
 Instructions for building OSG for GL3 compatibility can be found in the
 OSG source tree: examples/osgsimplegl3/osgsimplegl3.cpp. Read the comment block at
 the bottom of the source file.
@@ -256,6 +254,7 @@ The following CMake variables will probably need to be set in order to find the 
 \li BOOST_ROOT
 \li GMTL_INCLUDE_DIR
 \li Poco_ROOT
+\li POCO_STATIC Create as a BOOL and set to true, if you are using static Poco libraries.
 \li Freeglut_ROOT_PATH
 \li FREEGLUT_STATIC Create as a BOOL and set to true, if you are using static freeglut libraries.
 \li DIRECTINPUT_ROOT_DIR
