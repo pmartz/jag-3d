@@ -7,8 +7,12 @@
 
 - Fix doc/doxyfile.cmake to reflect source code reorg (issue 32).
 - Changes to enable static build.
-- Allow linking with Boost static libs.
-- Fix for static initialization conflict between log::base::Log and Poco::Logger.
+  - If JAG is built statically, JAG3D_STATIC is defined in jag/base/Config.h.
+  - Allow linking with Boost static libs.
+  - Fix for static initialization conflict between log::base::Log and Poco::Logger.
+  - Rename plugins to remove "-" character so that names can be used as C tokens.
+    - \b jagp-image-osg changed to \b jagp_osgImage.
+    - \b jagp-model-osg changed to \b jagp_osgModel.
 
 <hr>
 
