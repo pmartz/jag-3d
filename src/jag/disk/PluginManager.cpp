@@ -91,22 +91,22 @@ PluginManager* PluginManager::instance( const int initFlags )
 }
 
 PluginManager::PluginManager( const int initFlags )
-  : LogBase( "jag.disk.plugmgr" ),
+  : _logName( "jag.disk.plugmgr" ),
     _activelyLoadingPlugin( NULL )
 {
     if( initFlags != 0 )
     {
-        JAG3D_TRACE( "Constructor: Plugin search path includes: " );
+        JAG3D_TRACE_STATIC( _logName, "Constructor: Plugin search path includes: " );
     }
 
     if( ( initFlags & USE_CURRENT_DIRECTORY ) != 0 )
     {
-        JAG3D_TRACE( "\tCurrent directory" );
+        JAG3D_TRACE_STATIC( _logName, "\tCurrent directory" );
         addPath( Poco::Path::current(), false );
     }
     if( ( initFlags & USE_JAG3D_PLUGIN_PATH_ENV_VAR ) != 0 )
     {
-        JAG3D_TRACE( "\tJAG3D_PLUGIN_PATH env var" );
+        JAG3D_TRACE_STATIC( _logName, "\tJAG3D_PLUGIN_PATH env var" );
         std::string paths;
         try {
             paths = Poco::Environment::get( "JAG3D_PLUGIN_PATH" );
@@ -116,7 +116,7 @@ PluginManager::PluginManager( const int initFlags )
     }
     if( ( initFlags & USE_SYSTEM_PATH ) != 0 )
     {
-        JAG3D_TRACE( "\tPATH env var" );
+        JAG3D_TRACE_STATIC( _logName, "\tPATH env var" );
         std::string paths;
         try {
             paths = Poco::Environment::get( "PATH" );
@@ -126,7 +126,7 @@ PluginManager::PluginManager( const int initFlags )
     }
     if( ( initFlags & USE_LD_LIBRARY_PATH ) != 0 )
     {
-        JAG3D_TRACE( "\tLD_LIBRARY_PATH env var" );
+        JAG3D_TRACE_STATIC( _logName, "\tLD_LIBRARY_PATH env var" );
         std::string paths;
         try {
             paths = Poco::Environment::get( "LD_LIBRARY_PATH" );
@@ -200,12 +200,12 @@ bool PluginManager::loadPlugin( PluginInfo* pi )
     try {
         loader.loadLibrary( lib.toString() );
     } catch( Poco::LibraryLoadException lle ) {
-        JAG3D_ERROR( "Can't load \"" + lib.toString() + "\":" );
-        JAG3D_ERROR( "\tCaught Poco::LibraryLoadException." );
-        JAG3D_ERROR( "\tMessage: " + lle.message() );
+        JAG3D_ERROR_STATIC( _logName, "Can't load \"" + lib.toString() + "\":" );
+        JAG3D_ERROR_STATIC( _logName, "\tCaught Poco::LibraryLoadException." );
+        JAG3D_ERROR_STATIC( _logName, "\tMessage: " + lle.message() );
         return( false );
     } catch( ... ) {
-        JAG3D_ERROR( "Can't load \"" + lib.toString() + "\": unknown exception." );
+        JAG3D_ERROR_STATIC( _logName, "Can't load \"" + lib.toString() + "\": unknown exception." );
         return( false );
     }
 
@@ -260,7 +260,7 @@ void PluginManager::loadConfigFiles()
         Poco::Glob::glob( path, stringSet, Poco::Glob::GLOB_DOT_SPECIAL );
         BOOST_FOREACH( StringSet::value_type jagpiFileName, stringSet )
         {
-            JAG3D_DEBUG( "Found plugin info file: " + jagpiFileName );
+            JAG3D_DEBUG_STATIC( _logName, "Found plugin info file: " + jagpiFileName );
 
             std::string extensions;
             Poco::AutoPtr< IniFileConfiguration > conf( new IniFileConfiguration( jagpiFileName ) );
@@ -272,7 +272,7 @@ void PluginManager::loadConfigFiles()
             }
             catch( ... )
             {
-                JAG3D_WARNING( "\tNot one of our .jagpi files, or badly formed .jagpi file." );
+                JAG3D_WARNING_STATIC( _logName, "\tNot one of our .jagpi files, or badly formed .jagpi file." );
                 continue;
             }
 
@@ -313,9 +313,9 @@ void PluginManager::loadConfigFiles()
 
             _pluginInfo.push_back( pi );
 
-            JAG3D_DEBUG( "\tLocation: " + pi._path.toString() );
-            JAG3D_DEBUG( "\tPlugin name: " + pi._name );
-            JAG3D_DEBUG( "\tPlugin desc: " + pi._description );
+            JAG3D_DEBUG_STATIC( _logName, "\tLocation: " + pi._path.toString() );
+            JAG3D_DEBUG_STATIC( _logName, "\tPlugin name: " + pi._name );
+            JAG3D_DEBUG_STATIC( _logName, "\tPlugin desc: " + pi._description );
         }
     }
 }
