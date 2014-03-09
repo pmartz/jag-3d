@@ -19,6 +19,7 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
+#include <jag/base/Config.h>
 #include <jag/disk/PluginManager.h>
 #include <jag/disk/ReaderWriter.h>
 #include <Poco/ClassLibrary.h>
@@ -182,16 +183,21 @@ protected:
 
 // Register the ShaderRW class with the PluginManager.
 // This macro declares a static object initialized when the plugin is loaded.
-REGISTER_READERWRITER(
+JAG3D_REGISTER_READERWRITER(
+    osgImage,           // Plugin library name.
     new OSGImageRW(),   // Create an instance of ImageRW.
     OSGImageRW,         // Class name -- NOT a string.
-    "ReaderWriter",   // Base class name as a string.
+    "ReaderWriter",     // Base class name as a string.
     "Read and write images to disk using OSG dependency."  // Description text.
 );
 
+
+#ifndef JAG3D_STATIC
 
 // Poco ClassLibrary manifest registration. Add a POCO_EXPORT_CLASS
 // for each ReaderWriter class in the plugin.
 POCO_BEGIN_MANIFEST( ReaderWriter )
     POCO_EXPORT_CLASS( OSGImageRW )
 POCO_END_MANIFEST
+
+#endif

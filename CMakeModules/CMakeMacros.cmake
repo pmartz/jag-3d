@@ -29,6 +29,15 @@ if(APPLE)
     )
 endif(APPLE)
 
+set( _projectPlugins )
+if( NOT BUILD_SHARED_LIBS )
+    set( _projectPlugins jagp-shader jagp-text )
+    if( OSG_FOUND )
+        list( APPEND _projectPlugins jagp_osgImage )
+        list( APPEND _projectPlugins jagp_osgModel )
+    endif()
+endif()
+
 set( _projectLibraries
     jagMx
     jagUtil
@@ -113,6 +122,7 @@ macro( _addNonWindowedExecutable _category _exeName )
     )
 
     target_link_libraries( ${_exeName}
+        ${_projectPlugins}
         ${_projectLibraries}
         ${_optionalDependencyLibraries}
         ${_requiredDependencyLibraries}
@@ -160,6 +170,7 @@ macro( _addFreeglutExecutable _category _exeName )
     target_link_libraries( ${_localExeName}
         ${_libs}
         ${Freeglut_LIBRARIES}
+        ${_projectPlugins}
         ${_projectLibraries}
         ${_optionalDependencyLibraries}
         ${_requiredDependencyLibraries}
@@ -217,6 +228,7 @@ macro( _addQtExecutable _category _exeName )
         ${_libs}
         ${QT_QTOPENGL_LIBRARY}
         ${QT_LIBRARIES}
+        ${_projectPlugins}
         ${_projectLibraries}
         ${_optionalDependencyLibraries}
         ${_requiredDependencyLibraries}
@@ -266,6 +278,7 @@ macro( _addVrjExecutable _category _exeName )
         ${_libs}
         ${VRJUGGLER_LIBRARIES}
         ${CPPDOM_LIBRARIES}
+        ${_projectPlugins}
         ${_projectLibraries}
         ${_optionalDependencyLibraries}
         ${_requiredDependencyLibraries}
