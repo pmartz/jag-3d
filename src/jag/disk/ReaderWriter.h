@@ -25,7 +25,6 @@
 
 #include <jag/disk/Export.h>
 #include <jag/disk/Options.h>
-#include <jag/base/LogBase.h>
 #include <Poco/Path.h>
 
 #include <jag/base/ptr.h>
@@ -88,11 +87,16 @@ protected:
 /** \class ReaderWriter ReaderWriter.H <jag/disk/ReaderWriter.H>
 \brief
 \details
+
+Node: ReaderWriter can not derive from jag::base::LogBase due to the
+indeterminate order of static initializers issue. Plugin classes
+derived from ReaderWriter should use the *STATIC logging macros
+(e.g. JAG3D_ERROR_STATIC) from jag/base/LogMacros.h.
 */
-class JAGDISK_EXPORT ReaderWriter : protected jag::base::LogBase
+class JAGDISK_EXPORT ReaderWriter
 {
 public:
-    ReaderWriter( const std::string& logNameSuffix, const std::string& logName=std::string( "" ) );
+    ReaderWriter();
     ReaderWriter( const ReaderWriter& rhs );
     ~ReaderWriter();
 
