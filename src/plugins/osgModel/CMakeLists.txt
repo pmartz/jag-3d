@@ -3,10 +3,10 @@ if( NOT OSG_FOUND )
 endif()
 
 # Required for ModuleInstall.cmake
-set( _libName jagp_osgModel )
+set( _libName jagp-model-osg )
 
 _addPlugin( ${_libName}
-    osgModel.cpp
+    model-osg.cpp
     osg2jag.cpp
     osg2jag.h
     JAG_LIBRARIES
@@ -17,4 +17,4 @@ _addPlugin( ${_libName}
         ${OSG_LIBRARIES}
 )
 
-_addPluginInfo( jagp_osgModel.jagpi )
+_addPluginInfo( jagp-model-osg.jagpi )
