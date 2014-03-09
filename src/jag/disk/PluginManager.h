@@ -71,8 +71,13 @@ The macro declares a static instance of type ReaderWriterInfo. Static instances
 are initialized immediately following plugin (shared libraries) load, which
 causes each exported class to immediately register itself with the PluginManager.
 See PluginManager::addReaderWriter(), which is invoked by the ReaderWriterInfo
-constructor. */
-#define REGISTER_READERWRITER(_instance,_className,_baseClassName,_description) \
+constructor.
+
+For static linking, this macro defines a function jagp_<plugin>, such as jagp_shader
+or jagp_text. Client code can statically link with a plugin library using the
+JAG3D_REFERENCE_PLUGIN() macro, which calls this function. */
+#define JAG3D_REGISTER_READERWRITER(_plugin,_instance,_className,_baseClassName,_description) \
+extern "C" void jagp_##_plugin( void ) {} \
 static ReaderWriterInfo staticRWRegistration_##_className( \
     ReaderWriterPtr( _instance ), #_className, _baseClassName, _description )
 
