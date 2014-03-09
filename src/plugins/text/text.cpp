@@ -49,9 +49,11 @@ using namespace jag::disk;
 */
 class TextDump : public ReaderWriter
 {
+    std::string _logName;
+
 public:
     TextDump()
-      : ReaderWriter( "text" )
+      : _logName( "jag.disk.rw.text" )
     {}
     virtual ~TextDump()
     {}
@@ -88,7 +90,7 @@ public:
             return( true );
         }
 
-        JAG3D_NOTICE( "Text dump for jag::draw::DrawGraph: not yet implemented." );
+        JAG3D_NOTICE_STATIC( _logName, "Text dump for jag::draw::DrawGraph: not yet implemented." );
 #if 0
         const jag::draw::DrawGraph* drawGraph( dynamic_cast< const jag::draw::DrawGraph* >( data ) );
         if( drawGraph != NULL )

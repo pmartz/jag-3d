@@ -51,9 +51,11 @@ using namespace jag::disk;
 */
 class OSGModelRW : public ReaderWriter
 {
+    std::string _logName;
+
 public:
     OSGModelRW()
-      : ReaderWriter( "osg-model" )
+      : _logName( "jag.disk.rw.osgModel" )
     {}
     virtual ~OSGModelRW()
     {}
@@ -74,7 +76,7 @@ public:
 
     virtual ReadStatus read( const std::string& fileName, const Options* options ) const
     {
-        JAG3D_INFO(
+        JAG3D_INFO_STATIC( _logName,
             std::string( "Using OSG v" ) + std::string( osgGetVersion() ) );
 
         osg::ref_ptr< osg::Node > osgNode( osgDB::readNodeFile( fileName ) );

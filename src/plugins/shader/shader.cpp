@@ -45,9 +45,11 @@ using namespace jag::draw;
 */
 class ShaderRW : public ReaderWriter
 {
+    std::string _logName;
+
 public:
     ShaderRW()
-      : ReaderWriter( "shader" ),
+      : _logName( "jag.disk.rw.shader" ),
         _type( 0 )
     {}
     virtual ~ShaderRW()

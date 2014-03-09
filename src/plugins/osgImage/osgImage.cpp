@@ -53,9 +53,11 @@ using namespace jag::draw;
 */
 class OSGImageRW : public ReaderWriter
 {
+    std::string _logName;
+
 public:
     OSGImageRW()
-      : ReaderWriter( "osg-image" )
+      : _logName( "jag.disk.rw.osgImage" )
     {}
     virtual ~OSGImageRW()
     {}
@@ -77,13 +79,13 @@ public:
 
     virtual ReadStatus read( const std::string& fileName, const Options* /*options*/ ) const
     {
-        JAG3D_INFO(
+        JAG3D_INFO_STATIC( _logName,
             std::string( "Using OSG v" ) + std::string( osgGetVersion() ) );
 
         osg::ref_ptr< osg::Image > osgImage( osgDB::readImageFile( fileName ) );
         if( osgImage == NULL )
         {
-            JAG3D_ERROR( std::string( "Can't load file " ) + fileName );
+            JAG3D_ERROR_STATIC( _logName, std::string( "Can't load file " ) + fileName );
             return( ReadStatus() );
         }
 
@@ -98,7 +100,7 @@ public:
 
     virtual bool write( const std::string& fileName, const void* data, const Options* /*options*/ ) const
     {
-        JAG3D_INFO(
+        JAG3D_INFO_STATIC( _logName,
             std::string( "Using OSG v" ) + std::string( osgGetVersion() ) );
 
         osg::ref_ptr< osg::Image > osgImage( convertToOsgImage( (Image*)data ) );
