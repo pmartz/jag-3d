@@ -11,6 +11,8 @@
   - Allow linking with Boost static libs.
   - Fix for static initialization conflict between log::base::Log and Poco::Logger.
   - Add JAG3D_REFERENCE_PLUGIN() macros to reference plugins at link time.
+  - Plugin rename: \b image-osg to \b osgImage.
+  - Plugin rename: \b model-osg to \b osgModel.
 
 <hr>
 
