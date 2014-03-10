@@ -4,6 +4,12 @@
 
 
 \section vPending Pending Release
+<hr>
+
+
+\section v00112 v0.01.13
+
+<small>Released 10 Mar 2014.</small>
 
 - Fix doc/doxyfile.cmake to reflect source code reorg (issue 32).
 - Changes to enable static build.
