@@ -40,6 +40,7 @@ namespace disk {
 */
 /**@{*/
 
+
 /** \class ReaderWriterInfo PluginManager.h <jag/disk/PluginManager.h>
 \brief A collection of information for classes exported from a plugin.
 \details Plugins create an instance of ReaderWriterInfo for each class (ReaderWriterInfo-derived class)
