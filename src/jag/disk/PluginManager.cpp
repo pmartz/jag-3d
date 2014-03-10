@@ -91,20 +91,33 @@ PluginManager* PluginManager::instance( const int initFlags )
 }
 
 PluginManager::PluginManager( const int initFlags )
-  : _logName( "jag.disk.plugmgr" ),
-    _activelyLoadingPlugin( NULL )
+  : _initState( Uninitialized ),
+    _initFlags( initFlags ),
+    _activelyLoadingPlugin( NULL ),
+    _logName( "jag.disk.plugmgr" )
 {
-    if( initFlags != 0 )
+}
+PluginManager::~PluginManager()
+{
+}
+
+void PluginManager::internalInit()
+{
+    if( _initState != Uninitialized )
+        return;
+    _initState = Initializing;
+
+    if( _initFlags != 0 )
     {
         JAG3D_TRACE_STATIC( _logName, "Constructor: Plugin search path includes: " );
     }
 
-    if( ( initFlags & USE_CURRENT_DIRECTORY ) != 0 )
+    if( ( _initFlags & USE_CURRENT_DIRECTORY ) != 0 )
     {
         JAG3D_TRACE_STATIC( _logName, "\tCurrent directory" );
         addPath( Poco::Path::current(), false );
     }
-    if( ( initFlags & USE_JAG3D_PLUGIN_PATH_ENV_VAR ) != 0 )
+    if( ( _initFlags & USE_JAG3D_PLUGIN_PATH_ENV_VAR ) != 0 )
     {
         JAG3D_TRACE_STATIC( _logName, "\tJAG3D_PLUGIN_PATH env var" );
         std::string paths;
@@ -114,7 +127,7 @@ PluginManager::PluginManager( const int initFlags )
         if( !paths.empty() )
             addPaths( paths, false );
     }
-    if( ( initFlags & USE_SYSTEM_PATH ) != 0 )
+    if( ( _initFlags & USE_SYSTEM_PATH ) != 0 )
     {
         JAG3D_TRACE_STATIC( _logName, "\tPATH env var" );
         std::string paths;
@@ -124,7 +137,7 @@ PluginManager::PluginManager( const int initFlags )
         if( !paths.empty() )
             addPaths( paths, false );
     }
-    if( ( initFlags & USE_LD_LIBRARY_PATH ) != 0 )
+    if( ( _initFlags & USE_LD_LIBRARY_PATH ) != 0 )
     {
         JAG3D_TRACE_STATIC( _logName, "\tLD_LIBRARY_PATH env var" );
         std::string paths;
@@ -137,13 +150,14 @@ PluginManager::PluginManager( const int initFlags )
 
     if( !_paths.empty() )
         loadConfigFiles();
-}
-PluginManager::~PluginManager()
-{
+
+    _initState = Initialized;
 }
 
 void PluginManager::addPath( const std::string& path, const bool loadConfigs )
 {
+    internalInit();
+
     _paths.push_back( path );
     if( loadConfigs )
         loadConfigFiles();
@@ -152,6 +166,8 @@ void PluginManager::addPaths( const std::string& paths, const bool loadConfigs )
 {
     if( paths.empty() )
         return;
+
+    internalInit();
 
     const char sep( Poco::Path::pathSeparator() );
     std::string::size_type start( 0 ), end( paths.find( sep ) );
@@ -170,12 +186,16 @@ void PluginManager::addPaths( const std::string& paths, const bool loadConfigs )
 }
 void PluginManager::clearPaths()
 {
+    internalInit();
+
     _paths.clear();
 }
 
 
 bool PluginManager::loadPlugins( PluginInfoPtrVec& plugins )
 {
+    internalInit();
+
     BOOST_FOREACH( PluginInfo* pi, plugins )
     {
         if( pi->_loaded )
@@ -191,6 +211,8 @@ bool PluginManager::loadPlugins( PluginInfoPtrVec& plugins )
 
 bool PluginManager::loadPlugin( PluginInfo* pi )
 {
+    internalInit();
+
     _activelyLoadingPlugin = pi;
 
     const Poco::Path& lib( pi->_path );
@@ -215,6 +237,8 @@ bool PluginManager::loadPlugin( PluginInfo* pi )
 
 PluginManager::PluginInfoPtrVec PluginManager::getPluginsForExtension( const std::string& extension )
 {
+    internalInit();
+
     PluginInfoPtrVec plugins;
 
     BOOST_FOREACH( PluginInfo& pi, _pluginInfo )
@@ -232,18 +256,25 @@ PluginManager::PluginInfoPtrVec PluginManager::getPluginsForExtension( const std
 
 const ReaderWriterInfoVec& PluginManager::getLoadedReaderWriters() const
 {
+    PluginManager* nonConstThis( const_cast< PluginManager* >( this ) );
+    nonConstThis->internalInit();
+
     return( _rwInfo );
 }
 
 
 void PluginManager::addReaderWriter( const ReaderWriterInfo& rwInfo )
 {
+    internalInit();
+
     _rwInfo.push_back( rwInfo );
 }
 
 
 void PluginManager::loadConfigFiles()
 {
+    internalInit();
+
     typedef std::set< std::string > StringSet;
 
     _pluginInfo.clear();
@@ -318,6 +349,12 @@ void PluginManager::loadConfigFiles()
             JAG3D_DEBUG_STATIC( _logName, "\tPlugin desc: " + pi._description );
         }
     }
+}
+
+PluginManager::PluginInfo* PluginManager::getActivelyLoadingPlugin()
+{
+    internalInit();
+    return( _activelyLoadingPlugin );
 }
 
 

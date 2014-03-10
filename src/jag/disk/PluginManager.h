@@ -200,11 +200,21 @@ public:
     functions immediately prior to actually loading the plugin. When the load occurs, 
     plugin static initializers invoke addReaderWriter(), which calls getActivelyLoadingPlugin()
     and associates all newly registered plugin operations with the actively loading plugin. */
-    PluginInfo* getActivelyLoadingPlugin() { return( _activelyLoadingPlugin ); }
+    PluginInfo* getActivelyLoadingPlugin();
 
 
 protected:
     PluginManager( const int initFlags );
+    void internalInit();
+
+    enum {
+        Uninitialized = 0,
+        Initializing = 1,
+        Initialized = 2
+    };
+    int _initState;
+
+    int _initFlags;
 
     PluginInfo* _activelyLoadingPlugin;
 
