@@ -9,7 +9,10 @@
 - Changes to enable static build.
   - If JAG is built statically, JAG3D_STATIC is defined in jag/base/Config.h.
   - Allow linking with Boost static libs.
-  - Fix for static initialization conflict between log::base::Log and Poco::Logger.
+  - Fixes for indeterminate order of static initialization:
+    - Init on first use for jag::base::Log.
+    - Init on first use for jag::disk::PluginManager.
+    - Plugins can not derive from jag::base::LogBase.
   - Add JAG3D_REFERENCE_PLUGIN() macros to reference plugins at link time.
   - Plugin rename: \b image-osg to \b osgImage.
   - Plugin rename: \b model-osg to \b osgModel.
