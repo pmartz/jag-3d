@@ -355,21 +355,23 @@ endmacro()
 # they must be copied into the CMake output build tree per config type.
 #
 macro( _addPluginInfo _name )
-    if( WIN32 )
-        set( _pluginLoc bin )
-    else()
-        set( _pluginLoc lib )
+    if( BUILD_SHARED_LIBS )
+        if( WIN32 )
+            set( _pluginLoc bin )
+        else()
+            set( _pluginLoc lib )
+        endif()
+
+        # Copy .jagpi file to development lib (or bin) directories.
+        # NOTE this is done during CMake config.
+        foreach( _configDir ${CMAKE_CONFIGURATION_TYPES} )
+            configure_file( ${_name}
+                ${PROJECT_BINARY_DIR}/${_pluginLoc}/${_configDir}/${_name} COPYONLY )
+        endforeach()
+
+        # Install .jagpi file to destination directory.
+        install( FILES ${_name}
+            DESTINATION ${_pluginLoc}
+        )
     endif()
-
-    # Copy .jagpi file to development lib (or bin) directories.
-    # NOTE this is done during CMake config.
-    foreach( _configDir ${CMAKE_CONFIGURATION_TYPES} )
-        configure_file( ${_name}
-            ${PROJECT_BINARY_DIR}/${_pluginLoc}/${_configDir}/${_name} COPYONLY )
-    endforeach()
-
-    # Install .jagpi file to bin directory.
-    install( FILES ${_name}
-        DESTINATION ${_pluginLoc}
-    )
 endmacro()
