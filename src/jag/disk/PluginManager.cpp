@@ -51,11 +51,22 @@ ReaderWriterInfo::ReaderWriterInfo( ReaderWriterPtr instance, const std::string&
     _description( description ),
     _rwInstance( instance )
 {
+#ifdef JAG3D_STATIC
+
+    // Use special method for adding static ReaderWriters so that
+    // we don't invoke PluginManager::internalInit() and create issues
+    // with indeterminate order of static initialization.
+    PluginManager::instance()->addStaticReaderWriter( *this );
+
+#else
+
     PluginManager::PluginInfo* pi( PluginManager::instance()->getActivelyLoadingPlugin() );
     _pluginName = pi->_name;
     pi->_readerWriters.push_back( instance );
 
     PluginManager::instance()->addReaderWriter( *this );
+
+#endif
 }
 
 bool operator<( const ReaderWriterInfo& lhs, const ReaderWriterInfo& rhs )
@@ -146,6 +157,15 @@ void PluginManager::internalInit()
         } catch (...) {}
         if( !paths.empty() )
             addPaths( paths, false );
+    }
+
+    if( !( _rwInfo.empty() ) )
+    {
+        JAG3D_INFO_STATIC( _logName, "internalInit(): Already loaded (static):" );
+        BOOST_FOREACH( const ReaderWriterInfo& rw, _rwInfo )
+        {
+            JAG3D_INFO_STATIC( _logName, "\t" + rw._className + ", " + rw._description );
+        }
     }
 
     if( !_paths.empty() )
@@ -267,6 +287,10 @@ void PluginManager::addReaderWriter( const ReaderWriterInfo& rwInfo )
 {
     internalInit();
 
+    _rwInfo.push_back( rwInfo );
+}
+void PluginManager::addStaticReaderWriter( const ReaderWriterInfo& rwInfo )
+{
     _rwInfo.push_back( rwInfo );
 }
 

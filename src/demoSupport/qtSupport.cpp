@@ -103,6 +103,13 @@ void GLWidget::keyPressEvent( QKeyEvent* e )
 }
 
 
+// Support for linking statically
+JAG3D_REFERENCE_PLUGIN( osgImage );
+JAG3D_REFERENCE_PLUGIN( osgModel );
+JAG3D_REFERENCE_PLUGIN( shader );
+JAG3D_REFERENCE_PLUGIN( text );
+
+
 
 int main( int argc, char** argv )
 {
