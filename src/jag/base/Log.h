@@ -142,7 +142,6 @@ public:
 protected:
     Log();
     ~Log();
-    static Log* _s_instance;
 
     enum {
         Uninitialized = 0,

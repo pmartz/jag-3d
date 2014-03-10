@@ -38,11 +38,11 @@ namespace base {
 
 
 
-// TBD Need singleton manager to cleanup/delete singletons.
-Log* Log::_s_instance( new jag::base::Log() );
-
 Log* Log::instance()
 {
+    // TBD Need singleton manager to cleanup/delete singletons.
+    Log* _s_instance( new jag::base::Log() );
+
     return( _s_instance );
 }
 
@@ -62,7 +62,6 @@ void Log::internalInit()
 {
     if( _initState != Uninitialized )
         return;
-
     _initState = Initializing;
 
     //
