@@ -41,9 +41,9 @@ namespace base {
 Log* Log::instance()
 {
     // TBD Need singleton manager to cleanup/delete singletons.
-    static Log* _s_instance( new jag::base::Log() );
+    static Log* s_instance( new jag::base::Log() );
 
-    return( _s_instance );
+    return( s_instance );
 }
 
 
