@@ -99,7 +99,7 @@ endmacro()
 # Support installing non-app executables into the share/jag3d/bin directory.
 #
 macro( _exeInstall _category _exeName )
-    if( _category STREQUAL "App" )
+    if( ${_category} STREQUAL "App" )
         set( _installDir bin )
     else()
         set( _installDir share/${CMAKE_PROJECT_NAME}/bin )
