@@ -43,9 +43,9 @@ if( WIN32 AND MSVC )
     endif()
 endif()
 
-if(UNIX)
-    #SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=gnu++0x")
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+if( UNIX )
+    #set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=gnu++0x" )
+    set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11" )
 endif()
 
 #
@@ -92,27 +92,27 @@ endif(APPLE)
 if( JAG3D_USE_FREEGLUT )
     FreeglutMenuSetup()
 endif()
-# if( JAG3D_USE_VRJ )
-#     CppDOMMenuSetup()
-#     VrjMenuSetup()
-# endif()
-# GGTMenuSetup()
 POCOMenuSetup()
 
 if( JAG3D_USE_FREEGLUT )
     FreeglutFinder()
 endif()
-# if( JAG3D_USE_VRJ )
-#     CppDOMFinder()
-#     VrjFinder()
-# endif()
-# GGTFinder()
 POCOFinder()
 
 #
-# Eventually, this will be included only in the src/plugins/CMakeLists.txt.
-# For now, do it here, so that the jagload test can leverage it.
+# OSG - Used for model and image loading plugins
+#
+if( NOT JAG3D_USE_OSG )
+    set( JAG3D_USE_OSG "dynamic" CACHE STRING "Set to 'dynamic' or 'static' for OSG-based plugins, or set to 'none' to not build OSG-based plugins." )
+endif()
+set_property( CACHE JAG3D_USE_OSG PROPERTY STRINGS "dynamic" "static" "none" )
+
+# Must be at top level for static links.
 include( FindOSGHelper )
+
+if( OSG_FOUND AND ( JAG3D_USE_OSG STREQUAL "static" ) )
+    add_definitions( -DOSG_LIBRARY_STATIC )
+endif()
 
 # find the optional Directx SDK (for DirectInput game pad support).
 set( DIRECTINPUT_ROOT_DIR "" CACHE PATH "DirectInput installation directory" )
