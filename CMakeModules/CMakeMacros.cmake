@@ -3,9 +3,6 @@ if( WIN32 )
 endif()
 
 
-unset( _optionalDependencyIncludes )
-unset( _optionalDependencyLibraries )
-
 set( _requiredDependencyIncludes
     ${POCO_INCLUDE_DIR}
     ${Boost_INCLUDE_DIR}
@@ -22,21 +19,11 @@ set( _requiredDependencyLibraries
     ${Boost_LIBRARIES}
     ${OPENGL_gl_LIBRARY}
 )
-
 if(APPLE)
     list(APPEND _requiredDependencyLibraries
         ${COREFOUNDATION_LIBRARY}
     )
 endif(APPLE)
-
-set( _projectPlugins )
-if( NOT BUILD_SHARED_LIBS )
-    set( _projectPlugins jagp-shader jagp-text )
-    if( OSG_FOUND )
-        list( APPEND _projectPlugins jagp-osgImage )
-        list( APPEND _projectPlugins jagp-osgModel )
-    endif()
-endif()
 
 set( _projectLibraries
     jagMx
@@ -46,6 +33,23 @@ set( _projectLibraries
     jagDisk
     jagBase
 )
+
+unset( _exeStaticLibs )
+if( NOT BUILD_SHARED_LIBS )
+    set( _exeStaticLibs jagp-shader jagp-text )
+    if( OSG_FOUND )
+        list( APPEND _exeStaticLibs jagp-osgImage )
+        list( APPEND _exeStaticLibs jagp-osgModel )
+        if( JAG3D_USE_OSG STREQUAL "static" )
+            list( APPEND _exeStaticLibs ${OSG_LIBRARIES} )
+        endif()
+    endif()
+    if( DIRECTINPUT_FOUND )
+        list( APPEND _exeStaticLibs ${DIRECTINPUT_LIBRARIES} )
+    endif()
+endif()
+
+
 
 
 # Given an input token _tokenIn, return all the elements
@@ -117,14 +121,12 @@ macro( _addNonWindowedExecutable _category _exeName )
 
     include_directories(
         ${_projectIncludes}
-        ${_optionalDependencyIncludes}
         ${_requiredDependencyIncludes}
     )
 
     target_link_libraries( ${_exeName}
-        ${_projectPlugins}
+        ${_exeStaticLibs}
         ${_projectLibraries}
-        ${_optionalDependencyLibraries}
         ${_requiredDependencyLibraries}
     )
 
@@ -160,7 +162,6 @@ macro( _addFreeglutExecutable _category _exeName )
         ${_projectIncludes}
         ${Freeglut_INCLUDE_DIR}
         ${_includes}
-        ${_optionalDependencyIncludes}
         ${_requiredDependencyIncludes}
     )
     set_target_properties( ${_localExeName}
@@ -170,9 +171,8 @@ macro( _addFreeglutExecutable _category _exeName )
     target_link_libraries( ${_localExeName}
         ${_libs}
         ${Freeglut_LIBRARIES}
-        ${_projectPlugins}
+        ${_exeStaticLibs}
         ${_projectLibraries}
-        ${_optionalDependencyLibraries}
         ${_requiredDependencyLibraries}
     )
     
@@ -217,7 +217,6 @@ macro( _addQtExecutable _category _exeName )
         ${QT_QTGUI_INCLUDE_DIR}
         ${QT_QTCORE_INCLUDE_DIR}
         ${_includes}
-        ${_optionalDependencyIncludes}
         ${_requiredDependencyIncludes}
     )
     set_target_properties( ${_localExeName}
@@ -228,9 +227,8 @@ macro( _addQtExecutable _category _exeName )
         ${_libs}
         ${QT_QTOPENGL_LIBRARY}
         ${QT_LIBRARIES}
-        ${_projectPlugins}
+        ${_exeStaticLibs}
         ${_projectLibraries}
-        ${_optionalDependencyLibraries}
         ${_requiredDependencyLibraries}
     )
     
@@ -267,7 +265,6 @@ macro( _addVrjExecutable _category _exeName )
         ${VRJUGGLER_INCLUDE_DIRS}
         ${_includes}
         ${CPPDOM_INCLUDE_DIRS}
-        ${_optionalDependencyIncludes}
         ${_requiredDependencyIncludes}
     )
     set_target_properties( ${_localExeName}
@@ -278,9 +275,8 @@ macro( _addVrjExecutable _category _exeName )
         ${_libs}
         ${VRJUGGLER_LIBRARIES}
         ${CPPDOM_LIBRARIES}
-        ${_projectPlugins}
+        ${_exeStaticLibs}
         ${_projectLibraries}
-        ${_optionalDependencyLibraries}
         ${_requiredDependencyLibraries}
     )
     
@@ -314,22 +310,21 @@ macro( _addLibraryInternal _category _type _libName )
     include_directories(
         ${_projectIncludes}
         ${_includes}
-        ${_optionalDependencyIncludes}
         ${_requiredDependencyIncludes}
     )
 
     if( BUILD_SHARED_LIBS )
         add_library( ${_libName} ${_type} ${_sources} )
+
+        target_link_libraries( ${_libName}
+            ${_jagLibs}
+            ${_libs}
+            ${_requiredDependencyLibraries}
+        )
     else()
         add_library( ${_libName} STATIC ${_sources} )
     endif()
 
-    target_link_libraries( ${_libName}
-        ${_jagLibs}
-        ${_libs}
-        ${_optionalDependencyLibraries}
-        ${_requiredDependencyLibraries}
-    )
 
     set_target_properties( ${_libName} PROPERTIES PROJECT_LABEL "${_category} ${_libName}" )
 

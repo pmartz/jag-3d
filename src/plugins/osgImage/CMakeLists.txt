@@ -1,6 +1,3 @@
-if( NOT OSG_FOUND )
-    return()
-endif()
 
 # Required for ModuleInstall.cmake
 set( _libName jagp-osgImage )
