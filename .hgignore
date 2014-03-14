@@ -6,5 +6,6 @@ syntax: glob
 src/jag/base/Config.h
 src/gl3w/gl3w_gen.py
 src\plugins\osgImage\osgSupport.h
+src\plugins\osgModel\osgSupport.h
 src\jag\draw\gl3w.c
 src\jag\draw\gl3w.h
