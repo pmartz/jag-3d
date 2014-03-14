@@ -52,6 +52,41 @@ endif()
 
 
 
+# These macros are used by the OSG-based image and model plugins
+# to generate C++ code that is used in the osgSupport.h header file.
+macro( _createOSGExtensionReferenceCode _outRefs _pluginList )
+    set( _processed )
+    foreach( _plug ${${_pluginList}} )
+        if( ${_plug} STREQUAL "jpg" OR ${_plug} STREQUAL "jpeg" )
+            set( _item jpeg )
+        elseif( ${_plug} STREQUAL "rgb" OR ${_plug} STREQUAL "rgba" )
+            set( _item rgb )
+        elseif( ${_plug} STREQUAL "tif" OR ${_plug} STREQUAL "tiff" )
+            set( _item tiff )
+        elseif( ${_plug} STREQUAL "flt" )
+            set( _item OpenFlight )
+        elseif( ${_plug} STREQUAL "osgt" OR ${_plug} STREQUAL "osgb" )
+            set( _item )
+        else()
+            set( _item ${_plug} )
+        endif()
+        if( _item )
+            list( FIND _processed ${_item} _findResult )
+            if( _findResult LESS 0 )
+                list( APPEND _processed ${_item} )
+                set( ${_outRefs} "${${_outRefs}}USE_OSGPLUGIN(${_item})\n" )
+            endif()
+        endif()
+    endforeach()
+endmacro()
+macro( _createOSGExtensionSupportedCode _outCode _pluginList )
+    foreach( _plug ${${_pluginList}} )
+        set( ${_outCode} "${${_outCode}}    if( ext == std::string(\"${_plug}\") ) return( true );\n" )
+    endforeach()
+    set( ${_outCode} "${${_outCode}}    return( false );" )
+endmacro()
+
+
 # Given an input token _tokenIn, return all the elements
 # in ARGN preceding _tokenIn in _list0out, and all the elements
 # following _tokenIn in _list1out. If _tokenIn is not present in _listIn,

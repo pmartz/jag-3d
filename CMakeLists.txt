@@ -48,15 +48,10 @@ if( UNIX )
     set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11" )
 endif()
 
+
 #
 # Dependencies
-
-set( _boostComponents )
-list( APPEND _boostComponents thread )
-list( APPEND _boostComponents program_options )
-list( APPEND _boostComponents date_time )
-list( APPEND _boostComponents chrono )
-list( APPEND _boostComponents system )
+#
 
 #
 #   At least one windowing API is required for demos/tests/examples:
@@ -73,22 +68,28 @@ if( JAG3D_USE_VRJ )
     find_package( VRJuggler-OpenGL 3.0 )
 endif()
 
-#   Required dependencies:
+#
+# Required dependencies:
+#   OpenGL
 find_package( OpenGL REQUIRED )
+#   GL3 header file
 find_package( GL3 REQUIRED )
+#   Boost
+set( _boostComponents thread program_options date_time chrono system )
 find_package( Boost 1.44.0 REQUIRED ${_boostComponents} )
+#   Poco
 include( FindPOCOHelper )
-# include( FindGGTHelper )
-if( NOT GMTL_FOUND )
-    find_package( GMTL REQUIRED )
-endif()
-
 if(APPLE)
     find_library(COREFOUNDATION_LIBRARY CoreFoundation)
     mark_as_advanced(COREFOUNDATION_LIBRARY)
 endif(APPLE)
+#   GMTL / GGT
+if( NOT GMTL_FOUND )
+    find_package( GMTL REQUIRED )
+endif()
 
-
+#
+# smake-gui helper routines for drop-down menus.
 if( JAG3D_USE_FREEGLUT )
     FreeglutMenuSetup()
 endif()
@@ -100,25 +101,32 @@ endif()
 POCOFinder()
 
 #
-# OSG - Used for model and image loading plugins
-#
+# Optional OSG - Used for model and image loading plugins
 if( NOT JAG3D_USE_OSG )
+    # By default, use dynamic-linked OSG. Set to 'none' to disable all use of OSG.
     set( JAG3D_USE_OSG "dynamic" CACHE STRING "Set to 'dynamic' or 'static' for OSG-based plugins, or set to 'none' to not build OSG-based plugins." )
 endif()
+#   Pulldown menu for cmake-gui.
 set_property( CACHE JAG3D_USE_OSG PROPERTY STRINGS "dynamic" "static" "none" )
-
-# Must be at top level for static links.
+#   Must be at top level for static links.
 include( FindOSGHelper )
-
 if( OSG_FOUND AND ( JAG3D_USE_OSG STREQUAL "static" ) )
+    # Controls how OSG header files define exports.
     add_definitions( -DOSG_LIBRARY_STATIC )
 endif()
+#   Set defaults for OSG support in osgModel and osgImage loader.
+set( JAG3D_OSGIMAGE_PLUGIN_SUPPORT )
+set( JAG3D_OSGMODEL_PLUGIN_SUPPORT )
+if( OSG_FOUND )
+    set( JAG3D_OSGIMAGE_PLUGIN_SUPPORT bmp gif jpg jpeg png rgb rgba tif tiff )
+    set( JAG3D_OSGMODEL_PLUGIN_SUPPORT 3ds flt obj osg ive osgt osgb )
+endif()
 
-# find the optional Directx SDK (for DirectInput game pad support).
+#
+# Optional Directx SDK (for DirectInput game pad support).
 set( DIRECTINPUT_ROOT_DIR "" CACHE PATH "DirectInput installation directory" )
 option( DIRECTINPUT_ARCH_x64 "Select for 64-bit target architectures, unselect for 32-bit." ON )
 find_package( DirectInput )
-
 if( DIRECTINPUT_FOUND )
     add_definitions( -DDIRECTINPUT_ENABLED )
 endif()
@@ -126,13 +134,8 @@ endif()
 
 if( QT_FOUND )
     include( ${QT_USE_FILE} )
-else()
-    if( JAG3D_USE_QT AND QT_QMAKE_EXECUTABLE AND NOT QT4_QGLOBAL_H_FILE )
-        message( STATUS "Qt was not found because the qglobal.h file was not found." )
-    endif()
 endif()
 
-# Must use Boost as dynamic libs.
 if( BOOST_ALL_DYN_LINK )
     add_definitions( -DBOOST_ALL_DYN_LINK )
 endif()

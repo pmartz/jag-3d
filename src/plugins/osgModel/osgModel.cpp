@@ -36,6 +36,8 @@
 #include <osg/Node>
 #include <osg/Version>
 
+#include "osgSupport.h"
+
 #include <fstream>
 
 
@@ -63,21 +65,15 @@ public:
     virtual bool supportsExtension( const std::string& extension )
     {
         const std::string allLower( Poco::toLower( extension ) );
-        return( ( extension == "gif" ) ||
-            ( extension == "osg" ) ||
-            ( extension == "osgt" ) ||
-            ( extension == "ive" ) ||
-            ( extension == "osgb" ) ||
-            ( extension == "flt" ) ||
-            ( extension == "3ds" ) ||
-            ( extension == "obj" )
-            );
+        return( osgModelExtensionSupported( allLower ) );
     }
 
     virtual ReadStatus read( const std::string& fileName, const Options* options ) const
     {
         JAG3D_INFO_STATIC( _logName,
             std::string( "Using OSG v" ) + std::string( osgGetVersion() ) );
+        JAG3D_INFO_STATIC( _logName,
+            std::string( "\tosgModel configured with " ) + osgModelExtensionString() );
 
         osg::ref_ptr< osg::Node > osgNode( osgDB::readNodeFile( fileName ) );
         if( !( osgNode.valid() ) )
