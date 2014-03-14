@@ -36,6 +36,8 @@
 #include <osg/Image>
 #include <osg/Version>
 
+#include "osgSupport.h"
+
 #include <boost/any.hpp>
 #include <fstream>
 
@@ -65,22 +67,15 @@ public:
     virtual bool supportsExtension( const std::string& extension )
     {
         const std::string allLower( Poco::toLower( extension ) );
-        return( ( extension == "gif" ) ||
-            ( extension == "jpg" ) ||
-            ( extension == "jpeg" ) ||
-            ( extension == "tif" ) ||
-            ( extension == "tiff" ) ||
-            ( extension == "bmp" ) ||
-            ( extension == "png" ) ||
-            ( extension == "rgb" ) ||
-            ( extension == "rgba" )
-            );
+        return( osgImageExtensionSupported( allLower ) );
     }
 
     virtual ReadStatus read( const std::string& fileName, const Options* /*options*/ ) const
     {
         JAG3D_INFO_STATIC( _logName,
             std::string( "Using OSG v" ) + std::string( osgGetVersion() ) );
+        JAG3D_INFO_STATIC( _logName,
+            std::string( "\tosgImage configured with " ) + osgImageExtensionString() );
 
         osg::ref_ptr< osg::Image > osgImage( osgDB::readImageFile( fileName ) );
         if( osgImage == NULL )

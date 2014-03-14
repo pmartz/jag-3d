@@ -15,7 +15,7 @@ Extensions = osg;ive;osgt;osgb;flt;3ds;obj
 : Name string. Apps reference this when specifying plugins
 : to load. Not necessarily the same as the plugin file name.
 
-Name = model
+Name = osgModel
 
 
 
