@@ -1,63 +1,10 @@
-if( WIN32 )
-    set( CMAKE_DEBUG_POSTFIX d )
-endif()
-
-
-set( _requiredDependencyIncludes
-    ${POCO_INCLUDE_DIR}
-    ${Boost_INCLUDE_DIR}
-    ${GMTL_INCLUDE_DIR}
-    ${GL3_INCLUDE_DIR}
-    ${OPENGL_INCLUDE_DIR}
-)
-set( _projectIncludes
-    ${PROJECT_SOURCE_DIR}/src
-)
-
-set( _requiredDependencyLibraries
-    ${POCO_LIBRARIES}
-    ${Boost_LIBRARIES}
-    ${OPENGL_gl_LIBRARY}
-)
-if(APPLE)
-    list(APPEND _requiredDependencyLibraries
-        ${COREFOUNDATION_LIBRARY}
-    )
-endif(APPLE)
-
-set( _projectLibraries
-    jagMx
-    jagUtil
-    jagSG
-    jagDraw
-    jagDisk
-    jagBase
-)
-
-unset( _exeStaticLibs )
-if( NOT BUILD_SHARED_LIBS )
-    set( _exeStaticLibs jagp-shader jagp-text )
-    if( OSG_FOUND )
-        list( APPEND _exeStaticLibs jagp-osgImage )
-        list( APPEND _exeStaticLibs jagp-osgModel )
-        if( JAG3D_USE_OSG STREQUAL "static" )
-            list( APPEND _exeStaticLibs ${OSG_LIBRARIES} )
-        endif()
-    endif()
-    if( DIRECTINPUT_FOUND )
-        list( APPEND _exeStaticLibs ${DIRECTINPUT_LIBRARIES} )
-    endif()
-endif()
-
-
-
 
 # These macros are used by the OSG-based image and model plugins
 # to generate C++ code that is used in the osgSupport.h header file.
 #
 # _extensionsToOSGPlugins
 #   _extList - Input, list of extensions (jpeg;jpg;flt;rgba;rgb;<etc>)
-#   _outPlugins - Output, list of plugins (jpg;OpenFlight;rgb;<etc>)
+#   _outPlugins - Output, list of plugins (jpeg;OpenFlight;rgb;<etc>)
 macro( _extensionsToOSGPlugins _outPlugins _extList )
     set( _processed )
     foreach( _plug ${${_extList}} )
@@ -85,7 +32,7 @@ macro( _extensionsToOSGPlugins _outPlugins _extList )
 endmacro()
 #
 # _createOSGPluginReferendeCode
-#   _pluginList - Input, list of plugins (jpg;OpenFlight;rgb;<etc>)
+#   _pluginList - Input, list of plugins (jpeg;OpenFlight;rgb;<etc>)
 #   _outCode - Output, USE_OSGPLUGIN(<ext>) for each plugin
 macro( _createOSGPluginReferendeCode _outCode _pluginList )
     foreach( _plug ${${_pluginList}} )
@@ -97,8 +44,8 @@ macro( _createOSGPluginReferendeCode _outCode _pluginList )
 endmacro()
 #
 # _createOSGPluginLibraries
-#   _pluginList - Input, list of plugins (jpg;OpenFlight;rgb;<etc>)
-#   _outLibs - Output, list of libraries (osgdb_jpg;osgdb_OpenFlight;osgdb_rgb;<etc>)
+#   _pluginList - Input, list of plugins (jpeg;OpenFlight;rgb;<etc>)
+#   _outLibs - Output, list of libraries (osgdb_jpeg;osgdb_OpenFlight;osgdb_rgb;<etc>)
 macro( _createOSGPluginLibraries _outLibs _pluginList )
     foreach( _plug ${${_pluginList}} )
         list( APPEND ${_outLibs} osgdb_${_plug} )
@@ -106,7 +53,7 @@ macro( _createOSGPluginLibraries _outLibs _pluginList )
 endmacro()
 #
 # _createOSGExtensionSupportedCode
-#   _pluginList - Input, list of extensions (jpeg;flt;rgba;<etc>)
+#   _pluginList - Input, list of extensions (jpg;flt;rgba;<etc>)
 #   _outCode - Output, code to return true if 'ext' is in list, false otherwise.
 macro( _createOSGExtensionSupportedCode _outCode _extList )
     foreach( _plug ${${_extList}} )
@@ -139,6 +86,7 @@ macro( _splitList _tokenIn _list0out _list1out )
         endif()
     endforeach()
 endmacro()
+
 
 # Given two input token delimiters, _tokenStart and _tokenEnd, return
 # all the elements in ARGN between the delimiters in _subListOut.
@@ -437,3 +385,94 @@ macro( _addPluginInfo _name )
         )
     endif()
 endmacro()
+
+
+
+
+
+if( WIN32 )
+    set( CMAKE_DEBUG_POSTFIX d )
+endif()
+
+
+set( _requiredDependencyIncludes
+    ${POCO_INCLUDE_DIR}
+    ${Boost_INCLUDE_DIR}
+    ${GMTL_INCLUDE_DIR}
+    ${GL3_INCLUDE_DIR}
+    ${OPENGL_INCLUDE_DIR}
+)
+set( _projectIncludes
+    ${PROJECT_SOURCE_DIR}/src
+)
+
+set( _requiredDependencyLibraries
+    ${POCO_LIBRARIES}
+    ${Boost_LIBRARIES}
+    ${OPENGL_gl_LIBRARY}
+)
+if(APPLE)
+    list(APPEND _requiredDependencyLibraries
+        ${COREFOUNDATION_LIBRARY}
+    )
+endif(APPLE)
+
+set( _projectLibraries
+    jagMx
+    jagUtil
+    jagSG
+    jagDraw
+    jagDisk
+    jagBase
+)
+
+macro( _findOSGPlugins )
+    set( _pluginDir "osgPlugins-${OPENSCENEGRAPH_VERSION}" )
+    get_filename_component( _path ${OSG_LIBRARY} PATH )
+    set( OSG_PLUGIN_LIBRARIES )
+    set( _allOSGExtensions ${JAG3D_OSGMODEL_PLUGIN_SUPPORT} ${JAG3D_OSGIMAGE_PLUGIN_SUPPORT} )
+    _extensionsToOSGPlugins( _allPlugins _allOSGExtensions )
+    _createOSGPluginLibraries( _osgPluginLibs _allPlugins )
+    foreach( _lib ${_osgPluginLibs} )
+        find_library( OSG_${_lib}_LIBRARY
+            NAMES ${_lib}
+            PATHS ${_path}
+            PATH_SUFFIXES ${_pluginDir}
+        )
+        find_library( OSG_${_lib}_LIBRARY_DEBUG
+            NAMES ${_lib}d
+            PATHS ${_path}
+            PATH_SUFFIXES ${_pluginDir}
+        )
+
+        if( NOT OSG_${_lib}_LIBRARY )
+            message( WARNING "Could not find OSG plugin ${_lib}" )
+        else()
+            if( OSG_${_lib}_LIBRARY_DEBUG )
+                list( APPEND OSG_PLUGIN_LIBRARIES "optimized" ${OSG_${_lib}_LIBRARY} )
+                list( APPEND OSG_PLUGIN_LIBRARIES "debug" ${OSG_${_lib}_LIBRARY_DEBUG} )
+            else()
+                list( APPEND OSG_PLUGIN_LIBRARIES ${OSG_${_lib}_LIBRARY} )
+            endif()
+            mark_as_advanced( OSG_${_lib}_LIBRARY )
+            mark_as_advanced( OSG_${_lib}_LIBRARY_DEBUG )
+        endif()
+    endforeach()
+endmacro()
+
+unset( _exeStaticLibs )
+if( NOT BUILD_SHARED_LIBS )
+    set( _exeStaticLibs jagp-shader jagp-text )
+    if( OSG_FOUND )
+        list( APPEND _exeStaticLibs jagp-osgImage )
+        list( APPEND _exeStaticLibs jagp-osgModel )
+        if( JAG3D_USE_OSG STREQUAL "static" )
+            _findOSGPlugins()
+            list( APPEND _exeStaticLibs ${OSG_PLUGIN_LIBRARIES} )
+            list( APPEND _exeStaticLibs ${OSG_LIBRARIES} )
+        endif()
+    endif()
+    if( DIRECTINPUT_FOUND )
+        list( APPEND _exeStaticLibs ${DIRECTINPUT_LIBRARIES} )
+    endif()
+endif()
