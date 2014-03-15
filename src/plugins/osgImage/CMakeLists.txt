@@ -6,7 +6,8 @@ set( _libName jagp-osgImage )
 # Configure the osgSupport.h header file.
 set( _pluginName osgImage )
 set( _pluginOSGExtensions ${JAG3D_OSGIMAGE_PLUGIN_SUPPORT} )
-_createOSGExtensionReferenceCode( _pluginOSGExtensionRefs _pluginOSGExtensions )
+_extensionsToOSGPlugins( _pluginList _pluginOSGExtensions )
+_createOSGExtensionReferenceCode( _pluginOSGExtensionRefs _pluginList )
 _createOSGExtensionSupportedCode( _pluginOSGExtensionSupported _pluginOSGExtensions )
 configure_file( "${PROJECT_SOURCE_DIR}/src/plugins/osg/osgSupport.h.in"
     "${PROJECT_SOURCE_DIR}/src/plugins/osgImage/osgSupport.h" )

@@ -58,6 +58,8 @@ endif()
 option( JAG3D_USE_FREEGLUT "If set and freeglut is found, Jag3D builds windowed executables with freeglut." ON )
 if( JAG3D_USE_FREEGLUT )
     include( FindFreeglutHelper )
+    FreeglutMenuSetup()
+    FreeglutFinder()
 endif()
 option( JAG3D_USE_QT "If set and Qt is found, Jag3D builds windowed executables with Qt." ON )
 if( JAG3D_USE_QT )
@@ -79,6 +81,8 @@ set( _boostComponents thread program_options date_time chrono system )
 find_package( Boost 1.44.0 REQUIRED ${_boostComponents} )
 #   Poco
 include( FindPOCOHelper )
+POCOMenuSetup()
+POCOFinder()
 if(APPLE)
     find_library(COREFOUNDATION_LIBRARY CoreFoundation)
     mark_as_advanced(COREFOUNDATION_LIBRARY)
@@ -87,18 +91,6 @@ endif(APPLE)
 if( NOT GMTL_FOUND )
     find_package( GMTL REQUIRED )
 endif()
-
-#
-# smake-gui helper routines for drop-down menus.
-if( JAG3D_USE_FREEGLUT )
-    FreeglutMenuSetup()
-endif()
-POCOMenuSetup()
-
-if( JAG3D_USE_FREEGLUT )
-    FreeglutFinder()
-endif()
-POCOFinder()
 
 #
 # Optional OSG - Used for model and image loading plugins
