@@ -54,6 +54,10 @@ endif()
 
 # These macros are used by the OSG-based image and model plugins
 # to generate C++ code that is used in the osgSupport.h header file.
+#
+# _extensionsToOSGPlugins
+#   _extList - Input, list of extensions (jpeg;jpg;flt;rgba;rgb;<etc>)
+#   _outPlugins - Output, list of plugins (jpg;OpenFlight;rgb;<etc>)
 macro( _extensionsToOSGPlugins _outPlugins _extList )
     set( _processed )
     foreach( _plug ${${_extList}} )
@@ -79,7 +83,11 @@ macro( _extensionsToOSGPlugins _outPlugins _extList )
         endif()
     endforeach()
 endmacro()
-macro( _createOSGExtensionReferenceCode _outCode _pluginList )
+#
+# _createOSGPluginReferendeCode
+#   _pluginList - Input, list of plugins (jpg;OpenFlight;rgb;<etc>)
+#   _outCode - Output, USE_OSGPLUGIN(<ext>) for each plugin
+macro( _createOSGPluginReferendeCode _outCode _pluginList )
     foreach( _plug ${${_pluginList}} )
         if( ${_outCode} )
             set( ${_outCode} "${${_outCode}}\n" )
@@ -87,8 +95,21 @@ macro( _createOSGExtensionReferenceCode _outCode _pluginList )
         set( ${_outCode} "${${_outCode}}USE_OSGPLUGIN(${_plug})" )
     endforeach()
 endmacro()
-macro( _createOSGExtensionSupportedCode _outCode _pluginList )
+#
+# _createOSGPluginLibraries
+#   _pluginList - Input, list of plugins (jpg;OpenFlight;rgb;<etc>)
+#   _outLibs - Output, list of libraries (osgdb_jpg;osgdb_OpenFlight;osgdb_rgb;<etc>)
+macro( _createOSGPluginLibraries _outLibs _pluginList )
     foreach( _plug ${${_pluginList}} )
+        list( APPEND ${_outLibs} osgdb_${_plug} )
+    endforeach()
+endmacro()
+#
+# _createOSGExtensionSupportedCode
+#   _pluginList - Input, list of extensions (jpeg;flt;rgba;<etc>)
+#   _outCode - Output, code to return true if 'ext' is in list, false otherwise.
+macro( _createOSGExtensionSupportedCode _outCode _extList )
+    foreach( _plug ${${_extList}} )
         if( ${_outCode} )
             set( ${_outCode} "${${_outCode}}\n" )
         endif()
