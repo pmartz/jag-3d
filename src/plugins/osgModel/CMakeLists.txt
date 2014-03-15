@@ -7,7 +7,7 @@ set( _libName jagp-osgModel )
 set( _pluginName osgModel )
 set( _pluginOSGExtensions ${JAG3D_OSGMODEL_PLUGIN_SUPPORT} )
 _extensionsToOSGPlugins( _pluginList _pluginOSGExtensions )
-_createOSGExtensionReferenceCode( _pluginOSGExtensionRefs _pluginList )
+_createOSGPluginReferendeCode( _pluginOSGExtensionRefs _pluginList )
 _createOSGExtensionSupportedCode( _pluginOSGExtensionSupported _pluginOSGExtensions )
 configure_file( "${PROJECT_SOURCE_DIR}/src/plugins/osg/osgSupport.h.in"
     "${PROJECT_SOURCE_DIR}/src/plugins/osgModel/osgSupport.h" )
