@@ -7,6 +7,16 @@
 <hr>
 
 
+\section v00112 v0.01.14
+
+<small>Released 20 Mar 2014.</small>
+
+- Fixes for static linking.
+- Limited support for static JAG linked with static OSG.
+
+<hr>
+
+
 \section v00112 v0.01.13
 
 <small>Released 10 Mar 2014.</small>
