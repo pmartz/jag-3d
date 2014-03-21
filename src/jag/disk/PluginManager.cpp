@@ -44,9 +44,11 @@ namespace jag {
 namespace disk {
 
 
-ReaderWriterInfo::ReaderWriterInfo( ReaderWriterPtr instance, const std::string& className,
+ReaderWriterInfo::ReaderWriterInfo( ReaderWriterPtr instance, const std::string& pluginName,
+            const std::string& className,
             const std::string& baseClassName, const std::string& description )
-  : _className( className ),
+  : _pluginName( pluginName ),
+    _className( className ),
     _baseClassName( baseClassName ),
     _description( description ),
     _rwInstance( instance )
@@ -330,6 +332,22 @@ void PluginManager::loadConfigFiles()
                 JAG3D_WARNING_STATIC( _logName, "\tNot one of our .jagpi files, or badly formed .jagpi file." );
                 continue;
             }
+
+            // Don't load plugins that have already been loaded.
+            // This could happen 
+            bool skipPlugin( false );
+            BOOST_FOREACH( const ReaderWriterInfo& rwInfo, _rwInfo )
+            {
+                if( rwInfo._pluginName == pi._name )
+                {
+                    // Plugin is already loaded.
+                    JAG3D_INFO_STATIC( _logName, "\tPlugin " + pi._name + " already loaded." );
+                    skipPlugin = true;
+                    break;
+                }
+            }
+            if( skipPlugin )
+                continue;
 
             // Parse the extensions string into a vector of individual strings.
             while( !( extensions.empty() ) )

@@ -46,11 +46,12 @@ namespace disk {
 \details Plugins create an instance of ReaderWriterInfo for each class (ReaderWriterInfo-derived class)
 exported by the plugin. The constructor automatically registers all information with the PluginManager
 singleton, using PluginManager::addReaderWriter().
-\see REGISTER_READERWRITER
+\see JAG3D_REGISTER_READERWRITER
 */
 struct JAGDISK_EXPORT ReaderWriterInfo
 {
-    ReaderWriterInfo( ReaderWriterPtr instance, const std::string& className,
+    ReaderWriterInfo( ReaderWriterPtr instance, const std::string& pluginName,
+            const std::string& className,
             const std::string& baseClassName, const std::string& description );
 
     std::string _pluginName;
@@ -79,7 +80,7 @@ JAG3D_REFERENCE_PLUGIN macro, which calls this function. */
 #define JAG3D_REGISTER_READERWRITER(_plugin,_instance,_className,_baseClassName,_description) \
 extern "C" void jagp_##_plugin( void ) {} \
 static ReaderWriterInfo staticRWRegistration_##_className( \
-    ReaderWriterPtr( _instance ), #_className, _baseClassName, _description )
+    ReaderWriterPtr( _instance ), #_plugin, #_className, _baseClassName, _description )
 
 
 
