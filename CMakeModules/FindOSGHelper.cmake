@@ -1,6 +1,11 @@
-set( _osgComponents
+set( _osgComponents )
+if( ${JAG3D_USE_OSG} STREQUAL "static" )
+    set( _osgComponents osgTerrain osgFX osgVolume )
+endif()
+list( APPEND _osgComponents
     osgGA osgText osgViewer osgSim osgDB osgUtil osg OpenThreads
 )
+
 
 # Macro to force the stock FindOpenSceneGraph.cmake script to
 # search again for OSG.
