@@ -7,6 +7,15 @@
 <hr>
 
 
+\section v00115 v0.01.15
+
+<small>Released 22 Mar 2014.</small>
+
+- Support for .osg, .osgt, and .osgb file formats through static linked OSG.
+
+<hr>
+
+
 \section v00114 v0.01.14
 
 <small>Released 20 Mar 2014.</small>
