@@ -24,7 +24,7 @@ Jag3D consists of the following components:
 and retained mode rendering.
 \li \ref jagMx "jagMx": Matrix manipulation and input device utilities.
 \li \ref jagSG "jagSG": Scene graph support.
-\li \ref jagUtil "jagUtil": Optional utinities.
+\li \ref jagUtil "jagUtil": Optional utilities.
 \li \ref Plugins "Plugins": Support for a variety of data file formats.
 \li \ref Apps "Apps": JAG-based application software.
 \li \ref Examples "Examples": Examples of typical usage.
@@ -157,26 +157,24 @@ make tests
 
 \section ProjectRoadmap Upcoming Work and Project Notes
 
-The current release is v0.01.00, released 4 November, 2013.
+The current release is v0.01.15, released 22 March, 2014.
 
 For inclusion in v0.02.00 (date TBD):
 - Tuning to improve performance of collection and draw traversals.
   - Possible rewrite of the jagDraw::CommandMap class.
 - Source repo and namespace re-organization (this is <a href="https://code.google.com/p/jag-3d/issues/detail?id=32">issue 32</a>).
 - Features and bug fixes for GIS and CAD applications.
+- Open Asset Import model loading plugin.
 
 For inclusion in v0.03.00 (date TBD):
 - OpenGL resource management (this is <a href="https://code.google.com/p/jag-3d/issues/detail?id=3">issue 3</a>).
 - Features and bug fixes for GIS and CAD applications.
 
-Beyond v0.03.00:
-\li Open Asset Import model loading plugin.
-\li Vertex array objects and uniform blocks need to track changes. Uniform blocks,
-in particular, always copy their values into the block.
-\li See jagDraw::Uniform documentation for potential optimizations and use cases
-that Jag3D should support.
-\li Design for cache misses: avoid-cache-misses.pdf.
-\li Add software mipmap generation. Hardware support for this is unavailable in GL4cpfc.
+Beyond v0.04.00:
+- Vertex array objects and uniform blocks need to track changes. Uniform blocks, in particular, always copy their values into the block.
+- See jagDraw::Uniform documentation for potential optimizations and use cases that Jag3D should support.
+- Design for cache misses: avoid-cache-misses.pdf.
+- Add software mipmap generation. Hardware support for this is unavailable in GL4cpfc.
 
 
 \section JagBuild Building Jag3D
