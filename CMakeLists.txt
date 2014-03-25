@@ -115,7 +115,14 @@ if( OSG_FOUND )
 endif()
 
 #
-# Optional Directx SDK (for DirectInput game pad support).
+# Optional ASSIMP - used for model loading plugin.
+option( JAG3D_USE_ASSIMP "If set, build the ASSIMP-based model loading plugin." ON )
+if( JAG3D_USE_ASSIMP )
+    find_package( ASSIMP REQUIRED )
+endif()
+
+#
+# Optional Directx SDK - for DirectInput game pad support.
 set( DIRECTINPUT_ROOT_DIR "" CACHE PATH "DirectInput installation directory" )
 option( DIRECTINPUT_ARCH_x64 "Select for 64-bit target architectures, unselect for 32-bit." ON )
 find_package( DirectInput )
