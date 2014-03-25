@@ -104,7 +104,24 @@ void Assimp2Jag::initData()
         // Tangents
         // Bitangents
         // Colors
+
         // Texcoords
+        for( unsigned int tcIdx=0; tcIdx < AI_MAX_NUMBER_OF_TEXTURECOORDS; ++tcIdx )
+        {
+            aiVector3D* aitc( currentMesh->mTextureCoords[ tcIdx ] );
+            if( aitc == NULL )
+                continue;
+
+            ArrayInfo info( get3fData( aitc, currentMesh->mNumVertices ) );
+            jag::draw::BufferObjectPtr bop( new jag::draw::BufferObject( GL_ARRAY_BUFFER, info._buffer ) );
+            vao->addVertexArrayCommand( bop, jag::draw::VertexArrayObject::TexCoord );
+
+            std::ostringstream ostr;
+            ostr << _texCoordAttribName << tcIdx;
+            jag::draw::VertexAttribPtr attrib( new jag::draw::VertexAttrib(
+                ostr.str(), info._componentsPerElement, info._type, GL_FALSE, 0, 0 ) );
+            vao->addVertexArrayCommand( attrib, jag::draw::VertexArrayObject::Normal );
+        }
 
         // Faces
         ArrayInfo info( getUIntFaceData( currentMesh ) );
@@ -117,6 +134,25 @@ void Assimp2Jag::initData()
         // Bones
         // Name
         // Animations
+    }
+
+    // Convert aiScene meterials
+    std::ostringstream ostr;
+    ostr << "Num Materials: " << _aiScene.mNumMaterials;
+    JAG3D_INFO_STATIC( _logName, ostr.str() );
+
+    for( unsigned int idx=0; idx < _aiScene.mNumMaterials; idx++ )
+    {
+        aiMaterial* material( _aiScene.mMaterials[ idx ] );
+    }
+
+    // Convert all embedded aiScene textures to JAG textures
+    if( _aiScene.mNumTextures > 0 )
+    {
+        JAG3D_WARNING_STATIC( _logName, "Unprocessed embedded textures." );
+    }
+    for( unsigned int idx=0; idx < _aiScene.mNumTextures; idx++ )
+    {
     }
 }
 
@@ -134,10 +170,10 @@ jag::sg::NodePtr Assimp2Jag::traverse( const aiNode* aiNode )
         parent->addChild( node );
         jag::draw::CommandMapPtr& commands( node->getOrCreateCommandMap() );
 
+        node->setTransform( asGMTLMatrix( aiNode->mTransformation ) );
+
         commands->insert( _vao[ meshIdx ] );
         node->addDrawable( _draw[ meshIdx ] );
-
-        node->setTransform( asGMTLMatrix( aiNode->mTransformation ) );
     }
 
     for( unsigned int idx=0; idx < aiNode->mNumChildren; idx++ )
