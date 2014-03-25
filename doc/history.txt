@@ -4,6 +4,9 @@
 
 
 \section vPending Pending Release
+
+- Added Open Asset Import Library (ASSIMP) model loading plugin.
+
 <hr>
 
 
