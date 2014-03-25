@@ -33,6 +33,7 @@
 #include <osg/PrimitiveSet>
 
 #include <map>
+#include <string>
 
 
 namespace osg {
