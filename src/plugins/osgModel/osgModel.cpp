@@ -50,6 +50,8 @@ using namespace jag::disk;
 
 /** \class OSGModelRW
 \brief OSG-based model data loader.
+
+\logname jag.disk.rw.osgModel
 */
 class OSGModelRW : public ReaderWriter
 {
@@ -110,7 +112,7 @@ protected:
 /**@}*/
 
 
-// Register the ShaderRW class with the PluginManager.
+// Register the OSGModelRW class with the PluginManager.
 // This macro declares a static object initialized when the plugin is loaded.
 JAG3D_REGISTER_READERWRITER(
     osgModel,           // Plugin library name.
