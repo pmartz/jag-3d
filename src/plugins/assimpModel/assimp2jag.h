@@ -25,7 +25,6 @@
 
 #include <jag/base/Config.h>
 #include <jag/disk/ReaderWriter.h>
-#include <jag/disk/Options.h>
 #include <jag/sg/Node.h>
 #include <jag/draw/Drawable.h>
 #include <jag/draw/VertexArrayObject.h>
@@ -88,8 +87,6 @@ protected:
     std::string _vertexAttribName;
     std::string _normalAttribName;
     std::string _texCoordAttribName;
-
-    jag::disk::OptionsPtr _options;
 };
 
 
