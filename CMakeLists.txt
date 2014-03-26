@@ -110,7 +110,7 @@ endif()
 set( JAG3D_OSGIMAGE_PLUGIN_SUPPORT )
 set( JAG3D_OSGMODEL_PLUGIN_SUPPORT )
 if( OSG_FOUND )
-    set( JAG3D_OSGIMAGE_PLUGIN_SUPPORT bmp gif jpg jpeg png rgb rgba tif tiff )
+    set( JAG3D_OSGIMAGE_PLUGIN_SUPPORT bmp gif jpg jpeg png rgb rgba tga tif tiff )
     set( JAG3D_OSGMODEL_PLUGIN_SUPPORT 3ds flt obj osg ive osgt osgb )
 endif()
 
