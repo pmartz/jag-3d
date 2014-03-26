@@ -25,9 +25,11 @@
 
 #include <jag/base/Config.h>
 #include <jag/disk/ReaderWriter.h>
+#include <jag/disk/Options.h>
 #include <jag/sg/Node.h>
 #include <jag/draw/Drawable.h>
 #include <jag/draw/VertexArrayObject.h>
+#include <jag/draw/Texture.h>
 #include <jag/draw/CommandMap.h>
 
 #include <assimp/scene.h>
@@ -60,6 +62,7 @@ protected:
     ArrayInfo get3fData( const aiVector3D* data, const unsigned int size ) const;
     ArrayInfo getUIntFaceData( const struct aiMesh* mesh ) const;
     static gmtl::Matrix44d asGMTLMatrix( aiMatrix4x4 m );
+    static jag::draw::TexturePtr loadTexture( const std::string& fileName );
 
 
     const aiScene& _aiScene;
@@ -70,9 +73,23 @@ protected:
     jag::draw::VertexArrayObjectVec _vao;
     jag::draw::DrawableVec _draw;
 
+    struct TexInfo {
+        TexInfo( const GLuint index, jag::draw::TexturePtr& tex )
+          : _index( index ),
+            _tex( tex )
+        {}
+        GLuint _index;
+        jag::draw::TexturePtr _tex;
+    };
+    typedef std::vector< TexInfo > TexInfoVec;
+    typedef std::vector< TexInfoVec > TexInfoVecs;
+    TexInfoVecs _texInfo;
+
     std::string _vertexAttribName;
     std::string _normalAttribName;
     std::string _texCoordAttribName;
+
+    jag::disk::OptionsPtr _options;
 };
 
 
