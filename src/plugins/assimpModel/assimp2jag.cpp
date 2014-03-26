@@ -22,9 +22,11 @@
 #include "assimp2jag.h"
 
 #include <jag/disk/ReaderWriter.h>
+#include <jag/disk/ReadWrite.h>
 #include <jag/sg/Node.h>
 #include <jag/draw/Drawable.h>
 #include <jag/draw/VertexAttrib.h>
+#include <jag/draw/Texture.h>
 #include <jag/base/LogMacros.h>
 
 #include <assimp/scene.h>
@@ -37,7 +39,8 @@ Assimp2Jag::Assimp2Jag( const aiScene* aiScene, const jag::disk::Options* option
     _aiScene( *aiScene ),
     _vertexAttribName( "vertex" ),
     _normalAttribName( "normal" ),
-    _texCoordAttribName( "texcoord" )
+    _texCoordAttribName( "texcoord" ),
+    _options( new jag::disk::Options( *options ) )
 {
     JAG3D_TRACE_STATIC( _logName, "Assimp2Jag::Assimp2Jag" );
 }
@@ -66,6 +69,7 @@ void Assimp2Jag::initData()
     // mesh index.
     _vao.resize( _aiScene.mNumMeshes );
     _draw.resize( _aiScene.mNumMeshes );
+    _texInfo.resize( _aiScene.mNumMaterials );
     for( unsigned int idx=0; idx < _aiScene.mNumMeshes; idx++ )
     {
         JAG3D_TRACE_STATIC( _logName, "\tmesh" );
@@ -151,6 +155,7 @@ void Assimp2Jag::initData()
     for( unsigned int idx=0; idx < _aiScene.mNumMaterials; idx++ )
     {
         aiMaterial* material( _aiScene.mMaterials[ idx ] );
+        TexInfoVec& textures( _texInfo[ idx ] );
 
         for( unsigned int texType=0; texType < aiTextureType_UNKNOWN; texType++ )
         {
@@ -171,11 +176,19 @@ void Assimp2Jag::initData()
                     NULL, NULL, NULL, NULL ) != aiReturn_SUCCESS )
                 continue;
 
+            std::string texFileName( path.data );
             std::ostringstream ostr;
             ostr << nTex;
             JAG3D_INFO_STATIC( _logName, "\tFound texture " +
                 std::string( ostr.str() ) + ": " +
-                std::string( path.data ) );
+                texFileName );
+
+            jag::draw::TexturePtr tex( loadTexture( texFileName ) );
+            if( tex == NULL )
+                continue;
+
+            TexInfo texInfo( nTex, tex );
+            textures.push_back( texInfo );
         }
     }
 
@@ -279,4 +292,17 @@ gmtl::Matrix44d Assimp2Jag::asGMTLMatrix( aiMatrix4x4 m )
         (double)m.c1, (double)m.c2, (double)m.c3, (double)m.c4,
         (double)m.d1, (double)m.d2, (double)m.d3, (double)m.d4 );
     return( retVal );
+}
+jag::draw::TexturePtr Assimp2Jag::loadTexture( const std::string& fileName )
+{
+    jag::draw::TexturePtr tex;
+    boost::any anyTemp( jag::disk::read( fileName ) );
+    try {
+        tex = boost::any_cast< jag::draw::TexturePtr >( anyTemp );
+    }
+    catch( boost::bad_any_cast bac )
+    {
+        bac.what();
+    }
+    return( tex );
 }

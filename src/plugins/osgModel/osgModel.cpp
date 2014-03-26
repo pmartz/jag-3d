@@ -26,8 +26,6 @@
 #include <jag/base/LogMacros.h>
 
 #include <Poco/ClassLibrary.h>
-#include <Poco/Path.h>
-#include <Poco/String.h>
 
 #include "osg2jag.h"
 
