@@ -39,8 +39,7 @@ Assimp2Jag::Assimp2Jag( const aiScene* aiScene, const jag::disk::Options* option
     _aiScene( *aiScene ),
     _vertexAttribName( "vertex" ),
     _normalAttribName( "normal" ),
-    _texCoordAttribName( "texcoord" ),
-    _options( new jag::disk::Options( *options ) )
+    _texCoordAttribName( "texcoord" )
 {
     JAG3D_TRACE_STATIC( _logName, "Assimp2Jag::Assimp2Jag" );
 }
