@@ -59,7 +59,7 @@ public:
     {}
     virtual ~JagModel() {}
 
-    virtual bool parseOptions( boost::program_options::variables_map& vm );
+    virtual bool parseOptions( bpo::variables_map& vm );
 
     virtual bool startup( const unsigned int numContexts );
     virtual bool init();
@@ -87,6 +87,8 @@ protected:
     bool _drawBound;
     jag::draw::ProgramPtr _boundProgram;
 
+    bool _tex;
+
     double _moveRate;
 };
 
@@ -95,7 +97,8 @@ DemoInterface* DemoInterface::create( bpo::options_description& desc )
 {
     desc.add_options()
         ( "bound", "Render draw graph Node bounds." )
-        ( "file,f", bpo::value< std::string >(), "Model to load. Default: cow.osg" );
+        ( "file,f", bpo::value< std::string >(), "Model to load. Default: cow.osg" )
+        ( "tex", "Use texture map fragment shader." );
 
     return( new JagModel );
 }
@@ -106,6 +109,8 @@ bool JagModel::parseOptions( bpo::variables_map& vm )
         _fileName = vm[ "file" ].as< std::string >();
 
     _drawBound = ( vm.count( "bound" ) > 0 );
+
+    _tex = ( vm.count( "tex" ) > 0 );
 
     return( true );
 }
@@ -147,8 +152,10 @@ bool JagModel::startup( const unsigned int numContexts )
     jag::util::BufferAggregationVisitor bav( _root );
 
 
-    jag::draw::ShaderPtr vs( DemoInterface::readShaderUtil( "jagmodel.vert" ) );
-    jag::draw::ShaderPtr fs( DemoInterface::readShaderUtil( "jagmodel.frag" ) );
+    jag::draw::ShaderPtr vs( DemoInterface::readShaderUtil(
+        _tex ? "jagmodel-tx.vert" : "jagmodel.vert" ) );
+    jag::draw::ShaderPtr fs( DemoInterface::readShaderUtil( 
+        _tex ? "jagmodel-tx.frag" : "jagmodel.frag" ) );
 
     jag::draw::ProgramPtr prog;
     prog = jag::draw::ProgramPtr( new jag::draw::Program );
@@ -368,4 +375,5 @@ Command line options:
 \li --no-ms Disable multisampling
 \li --file,-f Model to load.
 \li --bound Rendering draw graph Node bound outlines.
+\li --tex Use a fragment shader that supports texture mapping.
 */
