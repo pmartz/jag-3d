@@ -112,6 +112,13 @@ void Assimp2Jag::initData()
             if( aitc == NULL )
                 continue;
 
+            {
+                std::ostringstream ostr;
+                ostr << tcIdx;
+                JAG3D_INFO_STATIC( _logName, "\tTexCoords for unit " +
+                    std::string( ostr.str() ) );
+            }
+
             ArrayInfo info( get3fData( aitc, currentMesh->mNumVertices ) );
             jag::draw::BufferObjectPtr bop( new jag::draw::BufferObject( GL_ARRAY_BUFFER, info._buffer ) );
             vao->addVertexArrayCommand( bop, jag::draw::VertexArrayObject::TexCoord );
@@ -144,6 +151,32 @@ void Assimp2Jag::initData()
     for( unsigned int idx=0; idx < _aiScene.mNumMaterials; idx++ )
     {
         aiMaterial* material( _aiScene.mMaterials[ idx ] );
+
+        for( unsigned int texType=0; texType < aiTextureType_UNKNOWN; texType++ )
+        {
+            const unsigned int num( material->GetTextureCount( aiTextureType( texType ) ) );
+            if( num > 0 )
+            {
+                std::ostringstream ostr;
+                ostr << "\tFound " << num << " textures of type " << texType;
+                JAG3D_INFO_STATIC( _logName, std::string( ostr.str() ) );
+            }
+        }
+
+        aiString path;
+        const unsigned int texCount( material->GetTextureCount( aiTextureType_DIFFUSE ) );
+        for( unsigned int nTex=0; nTex < texCount; nTex++ )
+        {
+            if( material->GetTexture( aiTextureType_DIFFUSE, nTex, &path,
+                    NULL, NULL, NULL, NULL ) != aiReturn_SUCCESS )
+                continue;
+
+            std::ostringstream ostr;
+            ostr << nTex;
+            JAG3D_INFO_STATIC( _logName, "\tFound texture " +
+                std::string( ostr.str() ) + ": " +
+                std::string( path.data ) );
+        }
     }
 
     // Convert all embedded aiScene textures to JAG textures
@@ -151,9 +184,11 @@ void Assimp2Jag::initData()
     {
         JAG3D_WARNING_STATIC( _logName, "Unprocessed embedded textures." );
     }
+    /*
     for( unsigned int idx=0; idx < _aiScene.mNumTextures; idx++ )
     {
     }
+    */
 }
 
 jag::sg::NodePtr Assimp2Jag::traverse( const aiNode* aiNode )
