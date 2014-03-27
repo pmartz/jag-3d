@@ -124,6 +124,11 @@ option( JAG3D_USE_ASSIMP "If set, build the ASSIMP-based model loading plugin." 
 if( JAG3D_USE_ASSIMP )
     find_package( ASSIMP REQUIRED )
 endif()
+set( JAG3D_ASSIMPMODEL_PLUGIN_SUPPORT )
+if( ASSIMP_FOUND )
+    set( JAG3D_ASSIMPMODEL_PLUGIN_SUPPORT
+        3d 3ds ac ase blend dae dxf irrmesh lwo lxo m3 md3 md5 mdl ms3d obj off ply q3d scn smd stl terx xgl xml )
+endif()
 
 #
 # Optional Directx SDK - for DirectInput game pad support.

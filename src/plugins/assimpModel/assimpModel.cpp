@@ -36,6 +36,7 @@
 #include <assimp/version.h>
 
 #include "assimp2jag.h"
+#include "pluginSupport.h"
 
 #include <sstream>
 
@@ -68,33 +69,7 @@ public:
     virtual bool supportsExtension( const std::string& extension )
     {
         const std::string allLower( Poco::toLower( extension ) );
-        if( allLower == "dae" ) return( true );
-        if( allLower == "blend" ) return( true );
-        if( allLower == "3ds" ) return( true );
-        if( allLower == "ase" ) return( true );
-        if( allLower == "obj" ) return( true );
-        if( allLower == "xgl" ) return( true );
-        if( allLower == "ply" ) return( true );
-        if( allLower == "dxf" ) return( true );
-        if( allLower == "lwo" ) return( true );
-        if( allLower == "lxo" ) return( true );
-        if( allLower == "stl" ) return( true );
-        if( allLower == "x" ) return( true );
-        if( allLower == "ac" ) return( true );
-        if( allLower == "ms3d" ) return( true );
-        if( allLower == "scn" ) return( true );
-        if( allLower == "xml" ) return( true );
-        if( allLower == "irrmesh" ) return( true );
-        if( allLower == "mdl" ) return( true );
-        if( allLower == "md3" ) return( true );
-        if( allLower == "md5" ) return( true );
-        if( allLower == "smd" ) return( true );
-        if( allLower == "m3" ) return( true );
-        if( allLower == "3d" ) return( true );
-        if( allLower == "q3d" ) return( true );
-        if( allLower == "off" ) return( true );
-        if( allLower == "ter" ) return( true );
-        return( false );
+        return( assimpModelExtensionSupported( allLower ) );
     }
 
 
@@ -106,6 +81,9 @@ public:
                 aiGetVersionRevision() << ", 0x" << std::hex << aiGetCompileFlags();
             JAG3D_INFO_STATIC( _logName, std::string( "Using ASSIMP v" ) +
                 std::string( ostr.str() ) );
+            JAG3D_INFO_STATIC( _logName, 
+                std::string( "\tosgModel configured with " ) +
+                assimpModelExtensionString() );
         }
 
 
