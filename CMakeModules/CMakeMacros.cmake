@@ -35,9 +35,9 @@ endmacro()
 #   _pluginList - Input, list of plugins (jpeg;OpenFlight;rgb;<etc>)
 #   _outCode - Output, USE_OSGPLUGIN(<ext>) for each plugin
 macro( _createOSGPluginReferendeCode _outCode _pluginList )
-    set( ${_outCode} "#include <osgDB/Registry>" )
+    set( ${_outCode} "#ifdef OSG_LIBRARY_STATIC\n" )
+    set( ${_outCode} "${${_outCode}}#include <osgDB/Registry>\n" )
     foreach( _plug ${${_pluginList}} )
-        set( ${_outCode} "${${_outCode}}\n" )
         if( ${_plug} STREQUAL "osg" )
             set( ${_outCode} "${${_outCode}}USE_OSGPLUGIN(${_plug})\n" )
             set( ${_outCode} "${${_outCode}}USE_DOTOSGWRAPPER_LIBRARY(${_plug})" )
@@ -47,7 +47,9 @@ macro( _createOSGPluginReferendeCode _outCode _pluginList )
         else()
             set( ${_outCode} "${${_outCode}}USE_OSGPLUGIN(${_plug})" )
         endif()
+        set( ${_outCode} "${${_outCode}}\n" )
     endforeach()
+    set( ${_outCode} "${${_outCode}}#endif" )
 endmacro()
 #
 # _createOSGPluginLibraries
@@ -66,11 +68,13 @@ macro( _createOSGPluginLibraries _outLibs _pluginList )
         endif()
     endforeach()
 endmacro()
+
+
 #
-# _createOSGExtensionSupportedCode
+# _createExtensionSupportedCode
 #   _pluginList - Input, list of extensions (jpg;flt;rgba;<etc>)
 #   _outCode - Output, code to return true if 'ext' is in list, false otherwise.
-macro( _createOSGExtensionSupportedCode _outCode _extList )
+macro( _createExtensionSupportedCode _outCode _extList )
     foreach( _plug ${${_extList}} )
         if( ${_outCode} )
             set( ${_outCode} "${${_outCode}}\n" )

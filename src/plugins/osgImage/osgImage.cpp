@@ -36,7 +36,7 @@
 #include <osg/Image>
 #include <osg/Version>
 
-#include "osgSupport.h"
+#include "pluginSupport.h"
 
 #include <boost/any.hpp>
 #include <fstream>

@@ -34,7 +34,7 @@
 #include <osg/Node>
 #include <osg/Version>
 
-#include "osgSupport.h"
+#include "pluginSupport.h"
 
 #include <fstream>
 
