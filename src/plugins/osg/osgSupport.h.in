@@ -31,7 +31,6 @@
 #define __PLUGINS_${_pluginName}_OSG_SUPPORT_H__ 1
 
 
-#include <osgDB/Registry>
 #include <string>
 
 
