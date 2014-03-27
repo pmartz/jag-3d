@@ -1,6 +1,6 @@
 
 macro( _abufferExecutable _category _exeName )
-    set( _localExeName "${_exeName}-freeglut" )
+    set( _localExeName "${_exeName}-fg" )
 
     unset( _sources )
     unset( _includesAndLibs )
