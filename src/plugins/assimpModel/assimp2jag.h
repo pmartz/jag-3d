@@ -61,7 +61,7 @@ protected:
     ArrayInfo get3fData( const aiVector3D* data, const unsigned int size ) const;
     ArrayInfo getUIntFaceData( const struct aiMesh* mesh ) const;
     static gmtl::Matrix44d asGMTLMatrix( aiMatrix4x4 m );
-    static jag::draw::TexturePtr loadTexture( const std::string& fileName );
+    jag::draw::TexturePtr loadTexture( const std::string& fileName );
 
 
     const aiScene& _aiScene;
@@ -71,6 +71,7 @@ protected:
 
     jag::draw::VertexArrayObjectVec _vao;
     jag::draw::DrawableVec _draw;
+    jag::base::UIntVec _materials;
 
     struct TexInfo {
         TexInfo( const GLuint index, jag::draw::TexturePtr& tex )
