@@ -27,6 +27,7 @@
 #include <jag/draw/Drawable.h>
 #include <jag/draw/VertexAttrib.h>
 #include <jag/draw/Texture.h>
+#include <jag/draw/Uniform.h>
 #include <jag/base/LogMacros.h>
 
 #include <assimp/scene.h>
@@ -68,7 +69,7 @@ void Assimp2Jag::initData()
     // mesh index.
     _vao.resize( _aiScene.mNumMeshes );
     _draw.resize( _aiScene.mNumMeshes );
-    _texInfo.resize( _aiScene.mNumMaterials );
+    _materials.resize( _aiScene.mNumMeshes );
     for( unsigned int idx=0; idx < _aiScene.mNumMeshes; idx++ )
     {
         JAG3D_TRACE_STATIC( _logName, "\tmesh" );
@@ -80,6 +81,9 @@ void Assimp2Jag::initData()
 
         jag::draw::DrawablePtr& draw( _draw[ idx ] );
         draw.reset( new jag::draw::Drawable() );
+
+        // Save the material index
+        _materials[ idx ] = currentMesh->mMaterialIndex;
 
         // Vertices
         {
@@ -147,10 +151,13 @@ void Assimp2Jag::initData()
     }
 
     // Convert aiScene meterials
-    std::ostringstream ostr;
-    ostr << "Num Materials: " << _aiScene.mNumMaterials;
-    JAG3D_INFO_STATIC( _logName, ostr.str() );
+    {
+        std::ostringstream ostr;
+        ostr << "Num Materials: " << _aiScene.mNumMaterials;
+        JAG3D_INFO_STATIC( _logName, ostr.str() );
+    }
 
+    _texInfo.resize( _aiScene.mNumMaterials );
     for( unsigned int idx=0; idx < _aiScene.mNumMaterials; idx++ )
     {
         aiMaterial* material( _aiScene.mMaterials[ idx ] );
@@ -183,6 +190,7 @@ void Assimp2Jag::initData()
                 texFileName );
 
             jag::draw::TexturePtr tex( loadTexture( texFileName ) );
+            JAG3D_INFO_STATIC( _logName, "\tReturned texture" );
             if( tex == NULL )
                 continue;
 
@@ -221,6 +229,29 @@ jag::sg::NodePtr Assimp2Jag::traverse( const aiNode* aiNode )
 
         commands->insert( _vao[ meshIdx ] );
         node->addDrawable( _draw[ meshIdx ] );
+
+        TexInfoVec& textures( _texInfo[ _materials[ meshIdx ] ] );
+
+        std::ostringstream ostr;
+        ostr << "meshIdx: " << meshIdx << ", mat index: " << _materials[ meshIdx ]
+        << ", textures: " << textures.size();
+        JAG3D_DEBUG_STATIC( _logName, ostr.str() );
+
+        for( unsigned int tIdx=0; tIdx < textures.size(); tIdx++ )
+        {
+            JAG3D_INFO_STATIC( _logName, "Processing a texture" );
+            TexInfo& texInfo( textures[ tIdx ] );
+
+            jag::draw::TextureSetPtr texSet( new jag::draw::TextureSet() );
+            (*texSet)[ GL_TEXTURE0 + texInfo._index ] = texInfo._tex;
+            commands->insert( texSet );
+
+            jag::draw::UniformSetPtr usp( new jag::draw::UniformSet() );
+            jag::draw::UniformPtr uni( new jag::draw::Uniform(
+                "texture0", GL_SAMPLER_2D, texInfo._index ) );
+            usp->insert( uni );
+            commands->insert( usp );
+        }
     }
 
     for( unsigned int idx=0; idx < aiNode->mNumChildren; idx++ )
@@ -294,14 +325,20 @@ gmtl::Matrix44d Assimp2Jag::asGMTLMatrix( aiMatrix4x4 m )
 }
 jag::draw::TexturePtr Assimp2Jag::loadTexture( const std::string& fileName )
 {
-    jag::draw::TexturePtr tex;
+    jag::draw::ImagePtr image;
     boost::any anyTemp( jag::disk::read( fileName ) );
     try {
-        tex = boost::any_cast< jag::draw::TexturePtr >( anyTemp );
+        image = boost::any_cast< jag::draw::ImagePtr >( anyTemp );
     }
     catch( boost::bad_any_cast bac )
     {
-        bac.what();
+        JAG3D_ERROR_STATIC( _logName, std::string( bac.what() ) );
+        return( jag::draw::TexturePtr( (jag::draw::Texture*)NULL ) );
     }
+
+    jag::draw::TexturePtr tex( new jag::draw::Texture( GL_TEXTURE_2D, image,
+        jag::draw::SamplerPtr( new jag::draw::Sampler() ) ) );
+    tex->getSampler()->getSamplerState()->_minFilter = GL_LINEAR;
+
     return( tex );
 }
