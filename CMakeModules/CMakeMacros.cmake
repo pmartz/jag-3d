@@ -172,7 +172,11 @@ macro( _addNonWindowedExecutable _category _exeName )
 endmacro()
 
 macro( _addFreeglutExecutable _category _exeName )
-    set( _localExeName "${_exeName}-freeglut" )
+    if( JAG3D_ENABLE_WINDOW_SYSTEM_SUFFIXES )
+        set( _localExeName "${_exeName}-fg" )
+    else()
+        set( _localExeName "${_exeName}" )
+    endif()
 
     unset( _sources )
     unset( _includesAndLibs )
@@ -218,7 +222,11 @@ macro( _addFreeglutExecutable _category _exeName )
 endmacro()
 
 macro( _addQtExecutable _category _exeName )
-    set( _localExeName "${_exeName}-qt" )
+    if( JAG3D_ENABLE_WINDOW_SYSTEM_SUFFIXES )
+        set( _localExeName "${_exeName}-qt" )
+    else()
+        set( _localExeName "${_exeName}" )
+    endif()
 
     QT4_WRAP_CPP( _mocFiles
         ${PROJECT_SOURCE_DIR}/src/demoSupport/qtGlWidget.h
@@ -274,7 +282,11 @@ macro( _addQtExecutable _category _exeName )
 endmacro()
 
 macro( _addVrjExecutable _category _exeName )
-    set( _localExeName "${_exeName}-vrj" )
+    if( JAG3D_ENABLE_WINDOW_SYSTEM_SUFFIXES )
+        set( _localExeName "${_exeName}-vrj" )
+    else()
+        set( _localExeName "${_exeName}" )
+    endif()
 
     unset( _sources )
     unset( _includesAndLibs )

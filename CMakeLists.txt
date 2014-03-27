@@ -71,6 +71,10 @@ if( JAG3D_USE_VRJ )
 endif()
 
 #
+#   Append window system name suffix to executables?
+option( JAG3D_ENABLE_WINDOW_SYSTEM_SUFFIXES "If enabled, executable names are suffices with the window system (-fg, -qt, or -vrj)" on )
+
+#
 # Required dependencies:
 #   OpenGL
 find_package( OpenGL REQUIRED )
