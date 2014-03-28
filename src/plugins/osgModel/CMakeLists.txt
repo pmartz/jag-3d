@@ -9,8 +9,8 @@ set( _pluginExtensions ${JAG3D_OSGMODEL_PLUGIN_SUPPORT} )
 _extensionsToOSGPlugins( _pluginList _pluginExtensions )
 _createOSGPluginReferendeCode( _pluginOSGExtensionRefs _pluginList )
 _createExtensionSupportedCode( _pluginExtensionSupported _pluginExtensions )
-configure_file( "${PROJECT_SOURCE_DIR}/src/plugins/common/pluginSupport.h.in"
-    "${PROJECT_SOURCE_DIR}/src/plugins/osgModel/pluginSupport.h" )
+configure_file( ${PROJECT_SOURCE_DIR}/src/plugins/common/pluginSupport.h.in
+    ${CMAKE_CURRENT_SOURCE_DIR}/pluginSupport.h )
 
 
 _addPlugin( ${_libName}
