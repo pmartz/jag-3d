@@ -154,6 +154,7 @@ endmacro()
 
 macro( _addNonWindowedExecutable _category _exeName )
     add_executable( ${_exeName} ${ARGN} )
+    # Append debug postfix to executables.
     set_property( TARGET ${_exeName} PROPERTY DEBUG_OUTPUT_NAME "${_exeName}${CMAKE_DEBUG_POSTFIX}" )
 
     include_directories(
@@ -196,6 +197,7 @@ macro( _addFreeglutExecutable _category _exeName )
         ${PROJECT_SOURCE_DIR}/src/demoSupport/freeglutSupport.cpp
         ${_sources}
     )
+    # Append debug postfix to executables.
     set_property( TARGET ${_localExeName} PROPERTY DEBUG_OUTPUT_NAME "${_localExeName}${CMAKE_DEBUG_POSTFIX}" )
 
     unset( _allIncludes )
@@ -252,6 +254,7 @@ macro( _addQtExecutable _category _exeName )
         ${_mocFiles}
         ${_sources}
     )
+    # Append debug postfix to executables.
     set_property( TARGET ${_localExeName} PROPERTY DEBUG_OUTPUT_NAME "${_localExeName}${CMAKE_DEBUG_POSTFIX}" )
 
     unset( _allIncludes )
@@ -306,6 +309,7 @@ macro( _addVrjExecutable _category _exeName )
         ${PROJECT_SOURCE_DIR}/src/demoSupport/vrjSupport.cpp
         ${_sources}
     )
+    # Append debug postfix to executables.
     set_property( TARGET ${_localExeName} PROPERTY DEBUG_OUTPUT_NAME "${_localExeName}${CMAKE_DEBUG_POSTFIX}" )
 
     unset( _allIncludes )
@@ -421,45 +425,6 @@ macro( _addPluginInfo _name )
 endmacro()
 
 
-
-
-
-if( WIN32 )
-    set( CMAKE_DEBUG_POSTFIX d )
-endif()
-
-
-set( _requiredDependencyIncludes
-    ${POCO_INCLUDE_DIR}
-    ${Boost_INCLUDE_DIR}
-    ${GMTL_INCLUDE_DIR}
-    ${GL3_INCLUDE_DIR}
-    ${OPENGL_INCLUDE_DIR}
-)
-set( _projectIncludes
-    ${PROJECT_SOURCE_DIR}/src
-)
-
-set( _requiredDependencyLibraries
-    ${POCO_LIBRARIES}
-    ${Boost_LIBRARIES}
-    ${OPENGL_gl_LIBRARY}
-)
-if(APPLE)
-    list(APPEND _requiredDependencyLibraries
-        ${COREFOUNDATION_LIBRARY}
-    )
-endif(APPLE)
-
-set( _projectLibraries
-    jagMx
-    jagUtil
-    jagSG
-    jagDraw
-    jagDisk
-    jagBase
-)
-
 macro( _findOSGPlugins )
     set( _pluginDir "osgPlugins-${OPENSCENEGRAPH_VERSION}" )
     get_filename_component( _path ${OSG_LIBRARY} PATH )
@@ -526,19 +491,11 @@ macro( _findOSGPlugins )
     endif()
 endmacro()
 
-unset( _exeStaticLibs )
-if( NOT BUILD_SHARED_LIBS )
-    set( _exeStaticLibs jagp-shader jagp-text )
-    if( OSG_FOUND )
-        list( APPEND _exeStaticLibs jagp-osgImage )
-        list( APPEND _exeStaticLibs jagp-osgModel )
-        if( JAG3D_USE_OSG STREQUAL "static" )
-            _findOSGPlugins()
-            list( APPEND _exeStaticLibs ${OSG_PLUGIN_LIBRARIES} )
-            list( APPEND _exeStaticLibs ${OSG_LIBRARIES} )
-        endif()
+
+macro( _zeroPad _input _output )
+    if( ${${_input}} LESS 10 )
+        set( ${_output} "0${${_input}}" )
+    else()
+        set( ${_output} "${${_input}}" )
     endif()
-    if( DIRECTINPUT_FOUND )
-        list( APPEND _exeStaticLibs ${DIRECTINPUT_LIBRARIES} )
-    endif()
-endif()
+endmacro()
