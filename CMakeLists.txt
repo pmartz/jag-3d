@@ -1,25 +1,21 @@
 cmake_minimum_required( VERSION 2.8.5 )
 project( Jag3D )
 
-macro( zeroPad _input _output )
-    if( ${${_input}} LESS 10 )
-        set( ${_output} "0${${_input}}" )
-    else()
-        set( ${_output} "${${_input}}" )
-    endif()
-endmacro()
+set_property( GLOBAL PROPERTY USE_FOLDERS ON )
+
+set( CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/CMakeModules ${CMAKE_MODULE_PATH} )
+
+include( CMakeMacros )
+
 
 set( JAG3D_MAJOR_VERSION 0 )
 set( JAG3D_MINOR_VERSION 1 )
 set( JAG3D_SUB_VERSION 15 )
-zeroPad( JAG3D_MINOR_VERSION __minorPad )
-zeroPad( JAG3D_SUB_VERSION __patchPad )
+_zeroPad( JAG3D_MINOR_VERSION __minorPad )
+_zeroPad( JAG3D_SUB_VERSION __patchPad )
 set( JAG3D_VERSION ${JAG3D_MAJOR_VERSION}.${__minorPad}.${__patchPad} )
 
 
-set( CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/CMakeModules;${CMAKE_MODULE_PATH}" )
-
-set_property( GLOBAL PROPERTY USE_FOLDERS ON )
 
 
 set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin )
@@ -41,6 +37,9 @@ if( WIN32 AND MSVC )
     if( JAG3D_WIN32_USE_MP )
         set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP" )
     endif()
+
+    # Common debug postfix for Windows.
+    set( CMAKE_DEBUG_POSTFIX d )
 endif()
 
 if( UNIX )
@@ -197,7 +196,59 @@ else()
 endif()
 
 
-include( CMakeMacros )
+
+
+
+
+set( _requiredDependencyIncludes
+    ${POCO_INCLUDE_DIR}
+    ${Boost_INCLUDE_DIR}
+    ${GMTL_INCLUDE_DIR}
+    ${GL3_INCLUDE_DIR}
+    ${OPENGL_INCLUDE_DIR}
+)
+set( _projectIncludes
+    ${PROJECT_SOURCE_DIR}/src
+)
+
+set( _requiredDependencyLibraries
+    ${POCO_LIBRARIES}
+    ${Boost_LIBRARIES}
+    ${OPENGL_gl_LIBRARY}
+)
+if(APPLE)
+    list(APPEND _requiredDependencyLibraries
+        ${COREFOUNDATION_LIBRARY}
+    )
+endif(APPLE)
+
+set( _projectLibraries
+    jagMx
+    jagUtil
+    jagSG
+    jagDraw
+    jagDisk
+    jagBase
+)
+
+
+unset( _exeStaticLibs )
+if( NOT BUILD_SHARED_LIBS )
+    set( _exeStaticLibs jagp-shader jagp-text )
+    if( OSG_FOUND )
+        list( APPEND _exeStaticLibs jagp-osgImage )
+        list( APPEND _exeStaticLibs jagp-osgModel )
+        if( JAG3D_USE_OSG STREQUAL "static" )
+            _findOSGPlugins()
+            list( APPEND _exeStaticLibs ${OSG_PLUGIN_LIBRARIES} )
+            list( APPEND _exeStaticLibs ${OSG_LIBRARIES} )
+        endif()
+    endif()
+    if( DIRECTINPUT_FOUND )
+        list( APPEND _exeStaticLibs ${DIRECTINPUT_LIBRARIES} )
+    endif()
+endif()
+
 
 
 option( JAG3D_BUILD_PLUGINS "Enable to build plugins" ON )
