@@ -6,6 +6,7 @@
 \section vPending Pending Release
 
 - Added Open Asset Import Library (ASSIMP) model loading plugin.
+- Improved plugins with CMake-generated headers and .jagpi files.
 
 <hr>
 
