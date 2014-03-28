@@ -1,6 +1,10 @@
 
 macro( _abufferExecutable _category _exeName )
-    set( _localExeName "${_exeName}-fg" )
+    if( JAG3D_ENABLE_WINDOW_SYSTEM_SUFFIXES )
+        set( _localExeName "${_exeName}-fg" )
+    else()
+        set( _localExeName "${_exeName}" )
+    endif()
 
     unset( _sources )
     unset( _includesAndLibs )
