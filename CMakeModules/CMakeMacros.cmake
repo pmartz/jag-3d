@@ -1,10 +1,13 @@
 
-# These macros are used by the OSG-based image and model plugins
-# to generate C++ code that is used in the osgSupport.h header file.
 #
 # _extensionsToOSGPlugins
+#
+# Specifically for the OSG-based plugins. Takes a list of extensions
+# and returns a list of OSG plugin names.
+#
 #   _extList - Input, list of extensions (jpeg;jpg;flt;rgba;rgb;<etc>)
 #   _outPlugins - Output, list of plugins (jpeg;OpenFlight;rgb;<etc>)
+#
 macro( _extensionsToOSGPlugins _outPlugins _extList )
     set( _processed )
     foreach( _plug ${${_extList}} )
@@ -30,10 +33,18 @@ macro( _extensionsToOSGPlugins _outPlugins _extList )
         endif()
     endforeach()
 endmacro()
+
+
 #
 # _createOSGPluginReferendeCode
+#
+# For use by the OSG-based plugins when generating the pluginSupport.h file.
+# From a list of plugins, return a string of code that invokes plugin static
+# initializers.
+#
 #   _pluginList - Input, list of plugins (jpeg;OpenFlight;rgb;<etc>)
 #   _outCode - Output, USE_OSGPLUGIN(<ext>) for each plugin
+#
 macro( _createOSGPluginReferendeCode _outCode _pluginList )
     set( ${_outCode} "#ifdef OSG_LIBRARY_STATIC\n" )
     set( ${_outCode} "${${_outCode}}#include <osgDB/Registry>\n" )
@@ -51,10 +62,18 @@ macro( _createOSGPluginReferendeCode _outCode _pluginList )
     endforeach()
     set( ${_outCode} "${${_outCode}}#endif" )
 endmacro()
+
+
 #
 # _createOSGPluginLibraries
+#
+# From a list of plugins, generate a list of library names to link against.
+# JAG executables that use the OSG-based plugins must link against these
+# libraries for static builds.
+#
 #   _pluginList - Input, list of plugins (jpeg;OpenFlight;rgb;<etc>)
 #   _outLibs - Output, list of libraries (osgdb_jpeg;osgdb_OpenFlight;osgdb_rgb;<etc>)
+#
 macro( _createOSGPluginLibraries _outLibs _pluginList )
     foreach( _plugOrig ${${_pluginList}} )
         string( TOLOWER ${_plugOrig} _plug )
@@ -72,8 +91,14 @@ endmacro()
 
 #
 # _createExtensionSupportedCode
+#
+# From a list of extensions, generate a string of code to return true
+# for an extension name match, and false otherwise. Used to generate the
+# pluginSupport.h header file.
+#
 #   _pluginList - Input, list of extensions (jpg;flt;rgba;<etc>)
 #   _outCode - Output, code to return true if 'ext' is in list, false otherwise.
+#
 macro( _createExtensionSupportedCode _outCode _extList )
     foreach( _plug ${${_extList}} )
         if( ${_outCode} )
@@ -88,6 +113,9 @@ macro( _createExtensionSupportedCode _outCode _extList )
 endmacro()
 
 
+#
+# _splitList
+#
 # Given an input token _tokenIn, return all the elements
 # in ARGN preceding _tokenIn in _list0out, and all the elements
 # following _tokenIn in _list1out. If _tokenIn is not present in _listIn,
@@ -110,6 +138,9 @@ macro( _splitList _tokenIn _list0out _list1out )
 endmacro()
 
 
+#
+# _subList
+#
 # Given two input token delimiters, _tokenStart and _tokenEnd, return
 # all the elements in ARGN between the delimiters in _subListOut.
 # If _tokenStart is the empty string (""), _subListOut will contain all
@@ -137,7 +168,11 @@ macro( _subList _tokenStart _tokenEnd _subListOut )
 endmacro()
 
 
-# Support installing non-app executables into the share/jag3d/bin directory.
+#
+# _exeInstall
+#
+# Installs non-app executables into bin and share/Jag3D/bin directories.
+# Category "App" goes into bin, and all other executables go into share/Jag3D/bin.
 #
 macro( _exeInstall _category _exeName )
     if( ${_category} STREQUAL "App" )
@@ -152,6 +187,12 @@ macro( _exeInstall _category _exeName )
 endmacro()
 
 
+#
+# _addNonWindowedExecutable
+# 
+# add_executable() wrapper for all executables that do not require
+# linking with a window system API.
+#
 macro( _addNonWindowedExecutable _category _exeName )
     add_executable( ${_exeName} ${ARGN} )
     # Append debug postfix to executables.
@@ -175,6 +216,12 @@ macro( _addNonWindowedExecutable _category _exeName )
     set_property( TARGET ${_exeName} PROPERTY FOLDER "${_category}")
 endmacro()
 
+
+#
+# _addFreeglutExecutable
+#
+# add_executable() wrapper for executables that use FreeGlut.
+#
 macro( _addFreeglutExecutable _category _exeName )
     if( JAG3D_ENABLE_WINDOW_SYSTEM_SUFFIXES )
         set( _localExeName "${_exeName}-fg" )
@@ -226,6 +273,11 @@ macro( _addFreeglutExecutable _category _exeName )
     set_property( TARGET ${_localExeName} PROPERTY FOLDER "${_category}/FreeGlut")
 endmacro()
 
+#
+# _addQtExecutable
+#
+# add_executable() wrapper for executables that use Qt.
+#
 macro( _addQtExecutable _category _exeName )
     if( JAG3D_ENABLE_WINDOW_SYSTEM_SUFFIXES )
         set( _localExeName "${_exeName}-qt" )
@@ -287,6 +339,12 @@ macro( _addQtExecutable _category _exeName )
     set_property( TARGET ${_localExeName} PROPERTY FOLDER "${_category}/Qt")
 endmacro()
 
+
+#
+# _addVrjExecutable
+#
+# add_executable() wrapper for executables that use VR-Juggler.
+#
 macro( _addVrjExecutable _category _exeName )
     if( JAG3D_ENABLE_WINDOW_SYSTEM_SUFFIXES )
         set( _localExeName "${_exeName}-vrj" )
@@ -340,6 +398,15 @@ macro( _addVrjExecutable _category _exeName )
     set_property( TARGET ${_localExeName} PROPERTY FOLDER "${_category}/VRJ")
 endmacro()
 
+
+#
+# _addExecutable
+#
+# For executables that use a windowing system API. Executable will
+# be built for each enabled window system API. A window system is
+# "enabled" if the JAG3D_USE_<name> CMake variable is ON, and the
+# window system dependency is found by CMake.
+#
 macro( _addExecutable _category _exeName )
     if( Freeglut_FOUND AND JAG3D_USE_FREEGLUT )
         _addFreeglutExecutable( ${_category} ${_exeName} ${ARGN} )
@@ -353,7 +420,12 @@ macro( _addExecutable _category _exeName )
 endmacro()
 
 
-
+#
+# _addLibraryInternal
+#
+# Wrapper for add_library().
+# CMake script common to both libraries and plugins.
+#
 macro( _addLibraryInternal _category _type _libName )
     _subList( "" JAG_LIBRARIES _sources ${ARGN} )
     _subList( JAG_LIBRARIES ADDITIONAL_INCLUDES _jagLibs ${ARGN} )
@@ -384,12 +456,24 @@ macro( _addLibraryInternal _category _type _libName )
     include( ModuleInstall REQUIRED )
 endmacro()
 
+
+#
+# _addLibrary
+#
+# Add a core JAG library.
+#
 macro( _addLibrary _libName )
     _addLibraryInternal( Lib SHARED ${_libName} ${ARGN} )
     set_target_properties( ${_libName} PROPERTIES VERSION ${JAG3D_VERSION} )
     set_target_properties( ${_libName} PROPERTIES SOVERSION ${JAG3D_VERSION} )
 endmacro()
 
+
+#
+# _addPlugin
+#
+# Add a JAG plugin library.
+#
 macro( _addPlugin _libName )
     _addLibraryInternal( Plugin MODULE ${_libName} ${ARGN} )
 
@@ -397,6 +481,9 @@ macro( _addPlugin _libName )
 endmacro()
 
 
+#
+# _addPluginInfo
+#
 # Supports jag3d plugin info (.jagpi) files, which must reside in the
 # same directory as the plugin shared libraries / DLLs. This means
 # they must be installed into the lib directory (bin on Windows), but also
@@ -425,6 +512,22 @@ macro( _addPluginInfo _name )
 endmacro()
 
 
+#
+# _findOSGPlugins
+#
+# The CMake stock "FindOSG.cmake" script does not find OSG plugins,
+# which renders it inadequate for linking against static OSG. This
+# macros finds the OSG plugins required by the OSG-based model and image
+# loaders.
+#
+# Prerquisites:
+# - OSG is already found (OSG_LIBRARY is set to valid path/filename).
+# - JAG3D_OSGMODEL_PLUGIN_SUPPORT and JAG3D_OSGIMAGE_PLUGIN_SUPPORT
+#   are set to CMake lists of extensions.
+#
+# Return:
+# - OSG_PLUGIN_LIBRARIES list of plugin libraries and their dependencies.
+#
 macro( _findOSGPlugins )
     set( _pluginDir "osgPlugins-${OPENSCENEGRAPH_VERSION}" )
     get_filename_component( _path ${OSG_LIBRARY} PATH )
@@ -492,6 +595,12 @@ macro( _findOSGPlugins )
 endmacro()
 
 
+#
+# _zeroPad
+#
+# Assumes the input string is a number. If necessary, the
+# number is 0-padded to two digits.
+#
 macro( _zeroPad _input _output )
     if( ${${_input}} LESS 10 )
         set( ${_output} "0${${_input}}" )
