@@ -23,4 +23,4 @@ Name = ${pluginName}
 : alone, or both "Name" and "Description" to resolve name
 : ambiguity.
 
-Description = "${pluginDescription}"
+Description = ${pluginDescription}

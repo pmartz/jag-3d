@@ -1,8 +1,4 @@
 
-# Required for ModuleInstall.cmake
-set( _libName jagp-osgImage )
-
-
 # Configure the pluginSupport.h header file.
 set( _pluginName osgImage )
 set( _pluginExtensions ${JAG3D_OSGIMAGE_PLUGIN_SUPPORT} )
@@ -12,6 +8,14 @@ _createExtensionSupportedCode( _pluginExtensionSupported _pluginExtensions )
 configure_file( ${PROJECT_SOURCE_DIR}/src/plugins/common/pluginSupport.h.in
     ${CMAKE_CURRENT_SOURCE_DIR}/pluginSupport.h )
 
+# Configure the jagp-<name>.jagpi file for this plugin.
+_createPluginInfo( ${_pluginName}
+    "OSG-based image read/write."
+    JAG3D_OSGIMAGE_PLUGIN_SUPPORT )
+
+
+# Required for ModuleInstall.cmake
+set( _libName jagp-${_pluginName} )
 
 _addPlugin( ${_libName}
     osgImage.cpp
@@ -23,5 +27,3 @@ _addPlugin( ${_libName}
     ADDITIONAL_LIBRARIES
         ${OSG_LIBRARIES}
 )
-
-_addPluginInfo( jagp-osgImage.jagpi )
