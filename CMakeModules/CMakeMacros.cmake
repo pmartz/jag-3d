@@ -482,38 +482,16 @@ endmacro()
 
 
 #
-# _addPluginInfo
+# _createPluginInfo
 #
-# Supports jag3d plugin info (.jagpi) files, which must reside in the
+# Creates a jag3d plugin info (.jagpi) file from a template, based on
+# the given parameters. Copies it into the build tree and adds it to the
+# install target. The jagpi file must reside in the
 # same directory as the plugin shared libraries / DLLs. This means
 # they must be installed into the lib directory (bin on Windows), but also
 # they must be copied into the CMake output build tree per config type.
 #
-macro( _addPluginInfo _name )
-    if( BUILD_SHARED_LIBS )
-        if( WIN32 )
-            set( _pluginLoc bin )
-        else()
-            set( _pluginLoc lib )
-        endif()
-
-        # Copy .jagpi file to development lib (or bin) directories.
-        # NOTE this is done during CMake config.
-        foreach( _configDir ${CMAKE_CONFIGURATION_TYPES} )
-            configure_file( ${_name}
-                ${PROJECT_BINARY_DIR}/${_pluginLoc}/${_configDir}/${_name} COPYONLY )
-        endforeach()
-
-        # Install .jagpi file to destination directory.
-        install( FILES ${_name}
-            DESTINATION ${_pluginLoc}
-        )
-    endif()
-endmacro()
 macro( _createPluginInfo name description extensions )
-message( STATUS "Name: ${name}" )
-message( STATUS "Desc: ${description}" )
-message( STATUS "Ext: ${extensions}" )
     set( pluginName ${name} )
     set( pluginDescription ${description} )
     set( pluginExtensions ${${extensions}} )
