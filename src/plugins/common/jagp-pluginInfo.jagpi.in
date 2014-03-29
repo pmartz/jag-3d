@@ -8,14 +8,14 @@
 : ReaderWriter, list all extensions here. Separate extensions
 : with a semicolon, and do not include periods.
 
-Extensions = ${_pluginExtensions}
+Extensions = ${pluginExtensions}
 
 
 
 : Name string. Apps reference this when specifying plugins
 : to load. Not necessarily the same as the plugin file name.
 
-Name = ${_pluginName}
+Name = ${pluginName}
 
 
 
@@ -23,4 +23,4 @@ Name = ${_pluginName}
 : alone, or both "Name" and "Description" to resolve name
 : ambiguity.
 
-Description = ${_pluginDescription}
+Description = "${pluginDescription}"

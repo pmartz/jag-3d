@@ -1,3 +1,8 @@
+#
+# Jag3D top-level CMakeLists.txt
+# http://jag-3d.googlecode.com
+#
+
 cmake_minimum_required( VERSION 2.8.5 )
 project( Jag3D )
 
