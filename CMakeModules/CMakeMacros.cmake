@@ -510,6 +510,43 @@ macro( _addPluginInfo _name )
         )
     endif()
 endmacro()
+macro( _createPluginInfo name description extensions )
+message( STATUS "Name: ${name}" )
+message( STATUS "Desc: ${description}" )
+message( STATUS "Ext: ${extensions}" )
+    set( pluginName ${name} )
+    set( pluginDescription ${description} )
+    set( pluginExtensions ${${extensions}} )
+    if( BUILD_SHARED_LIBS )
+        if( WIN32 )
+            set( _pluginLoc bin )
+        else()
+            set( _pluginLoc lib )
+        endif()
+
+        set( _srcFile ${PROJECT_SOURCE_DIR}/src/plugins/common/jagp-pluginInfo.jagpi.in )
+        set( _destFileName jagp-${pluginName}.jagpi )
+        set( _buildTreeLoc ${PROJECT_BINARY_DIR}/${_pluginLoc}/${_configDir} )
+
+        # Configure the .jagpi template file once, into the current source dir.
+        configure_file( ${_srcFile}
+            ${CMAKE_CURRENT_SOURCE_DIR}/${_destFileName} )
+        
+
+        # Copy .jagpi file to development lib (or bin) directories.
+        # Note this is a copy-only operation.
+        # NOTE this is done during CMake config.
+        foreach( _configDir ${CMAKE_CONFIGURATION_TYPES} )
+            configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/${_destFileName}
+                ${_buildTreeLoc} COPYONLY )
+        endforeach()
+
+        # Install .jagpi file to destination directory.
+        install( FILES ${CMAKE_CURRENT_SOURCE_DIR}/${_destFileName}
+            DESTINATION ${_pluginLoc}
+        )
+    endif()
+endmacro()
 
 
 #

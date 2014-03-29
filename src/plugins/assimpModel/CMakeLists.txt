@@ -11,6 +11,10 @@ _createExtensionSupportedCode( _pluginExtensionSupported _pluginExtensions )
 configure_file( ${PROJECT_SOURCE_DIR}/src/plugins/common/pluginSupport.h.in
     ${CMAKE_CURRENT_SOURCE_DIR}/pluginSupport.h )
 
+_createPluginInfo( ${_pluginName}
+    "ASSIMP-based model loader"
+    JAG3D_ASSIMPMODEL_PLUGIN_SUPPORT )
+
 
 _addPlugin( ${_libName}
     assimpModel.cpp
@@ -24,5 +28,3 @@ _addPlugin( ${_libName}
     ADDITIONAL_LIBRARIES
         ${ASSIMP_LIBRARIES}
 )
-
-_addPluginInfo( jagp-assimpModel.jagpi )
