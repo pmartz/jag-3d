@@ -96,7 +96,7 @@ endmacro()
 # for an extension name match, and false otherwise. Used to generate the
 # pluginSupport.h header file.
 #
-#   _pluginList - Input, list of extensions (jpg;flt;rgba;<etc>)
+#   _extList - Input, list of extensions (jpg;flt;rgba;<etc>)
 #   _outCode - Output, code to return true if 'ext' is in list, false otherwise.
 #
 macro( _createExtensionSupportedCode _outCode _extList )
@@ -482,6 +482,29 @@ endmacro()
 
 
 #
+# _createPluginSupportH
+#
+# Creates a pluginSupport.h file from template, based on the given
+# parameters:
+#
+#   name - Unique within JAG (such as assimpModel, osgImage, etc).
+#   osgStaticCode - For OSG-based plugins. Code to reference OSG plugin static initializers.
+#   extensions - CMake list of supported extendions.
+#
+macro( _createPluginSupportH name osgStaticCode extensions )
+    set( pluginName ${name} )
+    set( pluginOSGExtensionRefs ${${osgStaticCode}} )
+    set( pluginExtensions ${${extensions}} )
+
+    # Generate "is this supported?" code from list of extensions.
+    _createExtensionSupportedCode( pluginExtensionSupported ${extensions} )
+
+    configure_file( ${PROJECT_SOURCE_DIR}/src/plugins/common/pluginSupport.h.in
+        ${CMAKE_CURRENT_SOURCE_DIR}/pluginSupport.h )
+endmacro()
+
+
+#
 # _createPluginInfo
 #
 # Creates a jag3d plugin info (.jagpi) file from a template, based on
@@ -492,10 +515,11 @@ endmacro()
 # they must be copied into the CMake output build tree per config type.
 #
 macro( _createPluginInfo name description extensions )
-    set( pluginName ${name} )
-    set( pluginDescription ${description} )
-    set( pluginExtensions ${${extensions}} )
     if( BUILD_SHARED_LIBS )
+        set( pluginName ${name} )
+        set( pluginDescription ${description} )
+        set( pluginExtensions ${${extensions}} )
+
         if( WIN32 )
             set( _pluginLoc bin )
         else()
