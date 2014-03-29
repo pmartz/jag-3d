@@ -1,11 +1,10 @@
 
-# Configure the pluginSupport.h header file.
-set( _pluginOSGExtensionRefs )
 set( _pluginName assimpModel )
-set( _pluginExtensions ${JAG3D_ASSIMPMODEL_PLUGIN_SUPPORT} )
-_createExtensionSupportedCode( _pluginExtensionSupported _pluginExtensions )
-configure_file( ${PROJECT_SOURCE_DIR}/src/plugins/common/pluginSupport.h.in
-    ${CMAKE_CURRENT_SOURCE_DIR}/pluginSupport.h )
+
+# Configure the pluginSupport.h header file.
+_createPluginSupportH( ${_pluginName}
+    ""
+    JAG3D_ASSIMPMODEL_PLUGIN_SUPPORT )
 
 # Configure the jagp-<name>.jagpi file for this plugin.
 _createPluginInfo( ${_pluginName}

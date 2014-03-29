@@ -1,12 +1,13 @@
 
 # Configure the pluginSupport.h header file.
 set( _pluginName osgImage )
-set( _pluginExtensions ${JAG3D_OSGIMAGE_PLUGIN_SUPPORT} )
-_extensionsToOSGPlugins( _pluginList _pluginExtensions )
-_createOSGPluginReferendeCode( _pluginOSGExtensionRefs _pluginList )
-_createExtensionSupportedCode( _pluginExtensionSupported _pluginExtensions )
-configure_file( ${PROJECT_SOURCE_DIR}/src/plugins/common/pluginSupport.h.in
-    ${CMAKE_CURRENT_SOURCE_DIR}/pluginSupport.h )
+
+# Configure the pluginSupport.h header file.
+_extensionsToOSGPlugins( _pluginList JAG3D_OSGIMAGE_PLUGIN_SUPPORT )
+_createOSGPluginReferendeCode( OSGExtensionRefs _pluginList )
+_createPluginSupportH( ${_pluginName}
+    OSGExtensionRefs
+    JAG3D_OSGIMAGE_PLUGIN_SUPPORT )
 
 # Configure the jagp-<name>.jagpi file for this plugin.
 _createPluginInfo( ${_pluginName}

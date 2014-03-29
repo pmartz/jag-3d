@@ -27,31 +27,32 @@
 // DO NOT EDIT
 
 
-#ifndef __PLUGINS_${_pluginName}_PLUGIN_SUPPORT_H__
-#define __PLUGINS_${_pluginName}_PLUGIN_SUPPORT_H__ 1
+#ifndef __PLUGINS_${pluginName}_PLUGIN_SUPPORT_H__
+#define __PLUGINS_${pluginName}_PLUGIN_SUPPORT_H__ 1
 
 
 #include <string>
 
 
-// Code in this header file is controlled by:
+// Code in this header file is controlled by CMake variables:
 //   JAG3D_OSGIMAGE_PLUGIN_SUPPORT (for the jagp-osgImage plugin)
 //   JAG3D_OSGMODEL_PLUGIN_SUPPORT (for the jagp-osgModel plugin)
+//   JAG3D_ASSIMPMODEL_PLUGIN_SUPPORT (for the jagp-assimpModel plugin)
 
 
-${_pluginOSGExtensionRefs}
+${pluginOSGExtensionRefs}
 
 
-static bool ${_pluginName}ExtensionSupported( const std::string ext )
+static bool ${pluginName}ExtensionSupported( const std::string ext )
 {
-${_pluginExtensionSupported}
+${pluginExtensionSupported}
 }
 
-static std::string ${_pluginName}ExtensionString()
+static std::string ${pluginName}ExtensionString()
 {
-    return( "${_pluginExtensions}" );
+    return( "${pluginExtensions}" );
 }
 
 
-// __PLUGINS_${_pluginName}_PLUGIN_SUPPORT_H__
+// __PLUGINS_${pluginName}_PLUGIN_SUPPORT_H__
 #endif
