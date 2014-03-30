@@ -32,19 +32,18 @@
 
 
 // Controlled by CMake variable BUILD_SHARED_LIBS
-@JAG3D_STATIC_DEFINITION@
+#cmakedefine JAG3D_STATIC
+#cmakedefine JAG3D_ENABLE_ERROR_CHECKS
+#cmakedefine JAG3D_ENABLE_LOGGING
+#cmakedefine JAG3D_ENABLE_PROFILING
+#cmakedefine JAG3D_USE_GL3W
+#cmakedefine JAG3D_USE_GL3W_AUTOGENERATE
+// Controlled by CMake variable JAG3D_USE_OSG
+#cmakedefine JAG3D_USE_OPENSCENEGRAPH
+#cmakedefine JAG3D_USE_ASSIMP
+// Will be defined if optional DirectX dependency was found.
+#cmakedefine JAG3D_USE_DIRECTINPUT
 
-// Controlled by CMake variable JAG3D_ENABLE_ERROR_CHECKS
-@JAG3D_ERROR_ENABLE_DEFINITION@
-
-// Controlled by CMake variable JAG3D_ENABLE_LOGGING
-@JAG3D_LOG_ENABLE_DEFINITION@
-
-// Controlled by CMake variable JAG3D_ENABLE_PROFILING
-@JAG3D_PROFILE_ENABLE_DEFINITION@
-
-// Controlled by CMake variable JAG3D_USE_GL3W
-@JAG3D_USE_GL3W_DEFINITION@
 
 // __JAGBASE_CONFIG_H__
 #endif
