@@ -110,7 +110,7 @@ protected:
     ImagePtr convertFromOsgImage( osg::Image* osgImage ) const
     {
         if( osgImage == NULL )
-            return( ImagePtr( NULL ) );
+            return( ImagePtr( (Image*)NULL ) );
 
         const unsigned int size( osgImage->getTotalSizeInBytes() );
         osgImage->setAllocationMode( osg::Image::NO_DELETE );
