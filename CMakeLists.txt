@@ -111,7 +111,14 @@ endif()
 #   Pulldown menu for cmake-gui.
 set_property( CACHE JAG3D_USE_OSG PROPERTY STRINGS "dynamic" "static" "none" )
 #   Must be at top level for static links.
+
 include( FindOSGHelper )
+
+set( JAG3D_USE_OPENSCENEGRAPH )
+if( NOT JAG3D_USE_OSG STREQUAL "none" )
+    # For jag/base/Config.h
+    set( JAG3D_USE_OPENSCENEGRAPH TRUE )
+endif()
 if( OSG_FOUND AND ( JAG3D_USE_OSG STREQUAL "static" ) )
     # Controls how OSG header files define exports.
     add_definitions( -DOSG_LIBRARY_STATIC )
@@ -141,7 +148,9 @@ endif()
 set( DIRECTINPUT_ROOT_DIR "" CACHE PATH "DirectInput installation directory" )
 option( DIRECTINPUT_ARCH_x64 "Select for 64-bit target architectures, unselect for 32-bit." ON )
 find_package( DirectInput )
+set( JAG3D_USE_DIRECTINPUT )
 if( DIRECTINPUT_FOUND )
+    set( JAG3D_USE_DIRECTINPUT TRUE )
     add_definitions( -DDIRECTINPUT_ENABLED )
 endif()
 
@@ -185,46 +194,23 @@ else()
     option( JAG3D_USE_GL3W "If set, use gl3w (GL3/4 replacement for GLEW). Otherwise, assume native GL3/4 support." OFF )
 endif()
 if( JAG3D_USE_GL3W )
-    set( JAG3D_USE_GL3W_DEFINITION "#define JAG3D_USE_GL3W 1" )
-
     option( JAG3D_USE_GL3W_AUTOGENERATE "If set, gl3w source will be automatically regenerated as needed." OFF )
     if( JAG3D_USE_GL3W_AUTOGENERATE )
         find_package( PythonInterp REQUIRED )
     endif()
-else()
-    set( JAG3D_USE_GL3W_DEFINITION "#undef JAG3D_USE_GL3W" )
 endif()
 
 
-# See src/jagBase/Config.h.in
 option( JAG3D_ENABLE_ERROR_CHECKS "If set, Jag3D enables internal OpenGL error checking." ON )
-if( JAG3D_ENABLE_ERROR_CHECKS )
-    set( JAG3D_ERROR_ENABLE_DEFINITION "#define JAG3D_ENABLE_ERROR_CHECKS 1" )
-else()
-    set( JAG3D_ERROR_ENABLE_DEFINITION "#undef JAG3D_ENABLE_ERROR_CHECKS" )
-endif()
 
-# See src/jagBase/Config.h.in
 option( JAG3D_ENABLE_LOGGING "If set, Jag3D enables console and/or log file writes." ON )
-if( JAG3D_ENABLE_LOGGING )
-    set( JAG3D_LOG_ENABLE_DEFINITION "#define JAG3D_ENABLE_LOGGING 1" )
-else()
-    set( JAG3D_LOG_ENABLE_DEFINITION "#undef JAG3D_ENABLE_LOGGING" )
-endif()
 
-# See src/jagBase/Config.h.in
 option( JAG3D_ENABLE_PROFILING "If set, Jag3D enables profiling." OFF )
-if( JAG3D_ENABLE_PROFILING )
-    set( JAG3D_PROFILE_ENABLE_DEFINITION "#define JAG3D_ENABLE_PROFILING 1" )
-else()
-    set( JAG3D_PROFILE_ENABLE_DEFINITION "#undef JAG3D_ENABLE_PROFILING" )
-endif()
 
+set( JAG3D_STATIC )
 option( BUILD_SHARED_LIBS "Set to ON to build JAG3D for dynamic linking. Use OFF for static." ON )
-if( BUILD_SHARED_LIBS )
-    set( JAG3D_STATIC_DEFINITION "#undef JAG3D_STATIC" )
-else()
-    set( JAG3D_STATIC_DEFINITION "#define JAG3D_STATIC 1" )
+if( NOT BUILD_SHARED_LIBS )
+    set( JAG3D_STATIC TRUE )
 endif()
 
 
