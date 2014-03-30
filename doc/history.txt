@@ -1,0 +1,116 @@
+/**
+
+\page JagRevisionHistory JAG Revision History
+
+
+\section vPending Pending Release
+
+- Added Open Asset Import Library (ASSIMP) model loading plugin.
+- Improved plugins with CMake-generated headers and .jagpi files.
+
+<hr>
+
+
+\section v00115 v0.01.15
+
+<small>Released 22 Mar 2014.</small>
+
+- Support for .osg, .osgt, and .osgb file formats through static linked OSG.
+
+<hr>
+
+
+\section v00114 v0.01.14
+
+<small>Released 20 Mar 2014.</small>
+
+- Fixes for static linking.
+- Limited support for static JAG linked with static OSG.
+
+<hr>
+
+
+\section v00113 v0.01.13
+
+<small>Released 10 Mar 2014.</small>
+
+- Fix doc/doxyfile.cmake to reflect source code reorg (issue 32).
+- Changes to enable static build.
+  - If JAG is built statically, JAG3D_STATIC is defined in jag/base/Config.h.
+  - Allow linking with Boost static libs.
+  - Fixes for indeterminate order of static initialization:
+    - Init on first use for jag::base::Log.
+    - Init on first use for jag::disk::PluginManager.
+    - Plugins can not derive from jag::base::LogBase.
+  - Add JAG3D_REFERENCE_PLUGIN() macros to reference plugins at link time.
+  - Plugin rename: \b image-osg to \b osgImage.
+  - Plugin rename: \b model-osg to \b osgModel.
+
+<hr>
+
+
+\section v00112 v0.01.12
+
+<small>Released 13 Feb 2014.</small>
+
+- Fix for issue 32, specifically for VRJ demo support code.
+- Updated FindGL2.cmake to favor glcorearb.h.
+- Added a command graph to cache CommandMap accumulations.
+- Apple LLVM 5.0 (xcode 5.0) support
+- Revision history reformatted for Doxygen.
+
+<hr>
+
+
+\section v00111 v0.01.11
+
+<small>Released 7 Dec 2013.</small>
+
+- GL3W compatibility solution. If you do not autogenerate gl3w.c/.h source files, default ones will be automatically supplied.
+- Fix for issue 32: source code repo and namespace reorgaization.
+- jagDraw::Node and NodeContainer name change to DrawNode and DrawNodeContainer.
+- jagDraw::DrawablePrep name change to Command.
+
+<hr>
+
+
+\section v00110 v0.01.10
+
+<small>Released 6 Dec 2013</small>
+
+- NodeContainer caches jagDraw::Nodes.
+- Optimization to OSG model loader to reduce scene graph size.
+- Fix for incorrect clipping issue.
+- Added program parameter support.
+- Optional rendering of draw graph node bounds.
+
+<hr>
+
+
+\section v00102 v0.01.02
+
+<small>Released 19 Nov 2013</small>
+
+- Adopt zlib license.
+- Dynamic data in VAO is now supported. VAO re-specifies buffer object data if all or part of the buffer object is dirty.
+
+<hr>
+
+
+\section v00101 v0.01.01
+
+<small>Released 9 Nov 2013</small>
+
+- Adopt MIT license.
+
+<hr>
+
+
+\section v00100 v0.01.00
+
+<small>dmall>Released 4 Nov 2013</small>
+
+- First significant release.
+- License is LGPL.
+
+*/

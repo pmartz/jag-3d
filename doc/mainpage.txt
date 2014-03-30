@@ -1,0 +1,392 @@
+/**
+
+\mainpage Jag3D: A 3D Rendering Toolkit
+
+\ref JagBuild "Building Jag3D"<br>
+\ref JagRun "Running Jag3D"<br>
+\ref JagCommits "Mercurial (Hg) Guidelines for Jag3D Commits"<br>
+\ref JagRevisionHistory "Revision History"
+
+<hr>
+
+
+\section JagOverview Overview
+
+\a JAG is a \ref JagSpecification "specification" for an OpenGL-based rendering toolkit.
+\a Jag3D is a sample implementation of the JAG specifiction.
+You are reading Doxygen documentation generated from the Jag3D source. This documentation
+also comprises the JAG specification itself.
+
+Jag3D consists of the following components:
+\li \ref jagBase "jagBase": Logging, pointer, version, math, and other shared components.
+\li \ref jagDisk "jagDisk": File loading interface.
+\li \ref jagDraw "jagDraw": OpenGL-based rendering module, supporting multiple rendering contexts
+and retained mode rendering.
+\li \ref jagMx "jagMx": Matrix manipulation and input device utilities.
+\li \ref jagSG "jagSG": Scene graph support.
+\li \ref jagUtil "jagUtil": Optional utilities.
+\li \ref Plugins "Plugins": Support for a variety of data file formats.
+\li \ref Apps "Apps": JAG-based application software.
+\li \ref Examples "Examples": Examples of typical usage.
+\li \ref Tests "Tests": Images-based tests.
+\li \ref UnitTests "Unit Tests": Regression test suite.
+
+
+\subsection jagBase
+
+\li \link jagBase::Transform Utility for model, view, and projection matrices \endlink
+\li \ref jagVersion "Version ytilities"
+\li \ref jagBaseLogging "Message logging ytilities"
+\li \link jagBase::MultiCallback Base class for multiple callback pattern \endlink
+\li \link jagBase::UserDataOwner Base class for classes containing  user-specified data \endlink
+\li \ref jagBaseProfile "Profiling utilities"
+
+
+\subsection jagDisk
+
+This module provides a plugin infrastructure to support writing and loading
+data to and from various formats. The architecture is inspired by OpenSceneGraph's
+analogous system, but uses Poco for platform-independent plugin loading.
+
+\li \ref PluginSupport "Plugin Interface and Utilities"
+
+
+\subsection jagDraw
+
+This module contains host-side data store and multi-context support
+for many OpenGL commands. It also contains draw graph elements and
+support classes.
+
+This is the only module that executes OpenGL commands. All jagDraw
+OpenGL code is compatible with an OpenGL v4.0 core profile / forward
+compatible (GL4cpfc) context. (Note that Jag3D currently supports OSX 10.7,
+which is OpenGL 3.2 core profile, but this support is likely to be dropped as
+soon as OSX moves forward with a more current OpenGL version.)
+
+\li \ref jagVersion "OpenGL version queries"
+\li \ref OpenGLAbstraction "OpenGL abstraction support (image data, contexts, per-context data, object IDs, framebuffer attachable, etc.)"
+\li \ref jagDrawError "OpenGL errors"
+\li \ref jagDrawBound "Bounding volume management"
+\li \ref jagDrawDrawGraph "Draw graph data structure"
+\li \link jagDraw::DrawCommand OpenGL drawing commands \endlink
+\li \ref jagDrawGLCommands "OpenGL commands (program, texture, framebuffer, uniform, etc.)"
+\li \ref jagDrawVertexData "Vertex data and vertex attributes"
+\li \ref jagDrawDataStore "Geometry and OpenGL Command data storage"
+
+
+\subsection jagMx
+
+This module supports view and projection matrix manipulation.
+It also provides gamepad abstraction for driving a view matrix,
+and a DirectX-based gamepad implementation
+
+\li \link jagMx::MxCore View and projection matrix control \endlink
+\li \ref jagMxGamepad "Gamepad device support"
+\li \ref jagMxUtil "Matrix and viewing utilities"
+
+
+\subsection jagSG
+
+This module provides scene graph functionality layered on top of jagDraw and
+jagBase. Scene graphs can be created programmatically, or by using a jagDisk
+plugin to create a scene graph from a loaded model file.
+
+To draw data stored in a scene graph, convert it to a draw graph with the
+jagSG::CollectionVisitor. Then call jagDraw::DrawGraph::execute(), or traverse
+the draw graph explicitly and execute() its contents.
+
+\li \ref jagSGSceneGraph "Scene graph node and traversal"
+\li \ref jagSGCollection "Collection: converting scene graph to draw graph"
+\li \link jagSG::IntersectVisitor Intersection testing \endlink
+\li \link jagSG::ExecuteVisitor (Deprecated) Immediate mode traverse-and-draw \endlink
+
+
+\subsection jagUtil
+
+Contains a variety of optimization and effects utilities.
+
+\li \link jagUtil::ABuffer Support for the a-buffer order independent transparency algorithm \endlink
+\li \link jagUtil::Blur Support for 2-pass screen space separable blur \endlink
+\li \link jagUtil::BufferAggregationVisitor Aggregate multiple buffer objects to reduce bind calls \endlink
+\li \link jagUtil::DrawGraphCountVisitor Count objects in a draw graph \endlink
+\li \link jagUtil::QuadNode A convenience specialization of jagDraw::Node for drawing screen space quads \endlink
+\li \link jagUtil::ResetBoundsVisitor Cause all bounding volumes to be recomputed \endlink
+\li \ref jagUtilShapes "Rudimentary shape rendering (plane, sphere, cylinder, etc.)"
+
+
+\subsection Plugins
+
+Plugins provide support for loading and exporting different types of data.
+
+\li \ref PluginSupport "Plugin Interface and Utilities"
+\li \link AssimpModelRW ASSIMP-based model data support \endlink
+\li \link OSGImageRW OSG-based image data support \endlink
+\li \link OSGModelRW OSG-based model data support \endlink
+\li \link ShaderRW Text file shader source support \endlink
+\li \link TextDump Debug dump to text file \endlink
+
+
+\subsection Apps
+
+\li \ref appJagInfo
+
+
+\subsection Examples
+
+\li \ref exampleJagABuffer
+\li \ref exampleJagABufferJag
+\li \ref exampleJagModel
+\li \ref exampleJagRTT
+
+
+\subsection Tests
+
+A set of test programs that create images. In a future release,
+image-based regression testing will be added. For now, the tests
+must be verified visually.
+
+
+\subsection UnitTests
+
+A set of CTest regression tests that verify JAG functionality.
+To run the tests in Visual Studio, right-click on the RUN_TESTS
+target and select Build. For Linux makefile builds, type the following:
+\code
+make tests
+\endcode
+
+
+\section ProjectRoadmap Upcoming Work and Project Notes
+
+The current release is v0.01.15, released 22 March, 2014.
+
+For inclusion in v0.02.00 (date TBD):
+- Tuning to improve performance of collection and draw traversals.
+  - Possible rewrite of the jagDraw::CommandMap class.
+- Source repo and namespace re-organization (this is <a href="https://code.google.com/p/jag-3d/issues/detail?id=32">issue 32</a>).
+- Features and bug fixes for GIS and CAD applications.
+- Open Asset Import model loading plugin.
+
+For inclusion in v0.03.00 (date TBD):
+- OpenGL resource management (this is <a href="https://code.google.com/p/jag-3d/issues/detail?id=3">issue 3</a>).
+- Features and bug fixes for GIS and CAD applications.
+
+Beyond v0.04.00:
+- Vertex array objects and uniform blocks need to track changes. Uniform blocks, in particular, always copy their values into the block.
+- See jagDraw::Uniform documentation for potential optimizations and use cases that Jag3D should support.
+- Design for cache misses: avoid-cache-misses.pdf.
+- Add software mipmap generation. Hardware support for this is unavailable in GL4cpfc.
+
+
+\section JagBuild Building Jag3D
+
+\subsection BuildSource Get the Source Code
+
+The source code is in a Google Code Mercurial repository:
+\code
+hg clone http://SkewMatrix@code.google.com/p/jag-3d/ 
+\endcode
+
+\subsection BuildDependencies Dependencies
+
+Your development system must support building OpenGL 4.0 (3.2 on OSX) applications.
+This means Jag3D requires GL/glcorearb.h somewhere on your
+development system.
+
+For OpenGL 3/4 on Windows,
+Jag3D uses the gl3w toolkit, so this means you'll need to download glcorearb.h from the
+<a href=http://www.opengl.org/registry/>OpenGL Extension Registry</a>. Or, for your
+convenience, one is supplied in src/gl3w/GL/glcorearb.h.
+
+Unfortunately, gl3w
+has adopted the current paradagm:
+\code
+#include <GL/glcorearb.h>
+\endcode
+but OSG still uses the old paradigm:
+\code
+#include <GL3/gl3.h>
+\endcode
+In order to use the optional OSG dependency, you'll need to create
+a stub gl3.h header like this:
+\code
+#ifdef GL3_PROTOTYPES
+#  define GLCOREARB_PROTOTYPES 1 // for old glcorearb.h
+#  define GL_GLEXT_PROTOTYPES 1  // for new glcorearb.h
+#endif
+
+#include <GL/glcorearb.h>
+\endcode
+Name this file gl3.h and place it in a directory named GL3 somewhere on your development system,
+preferably as a sibling to the GL directory that contains glcorearb.h (so that they can both
+use the same include path. Then \ref BuildCMake "point CMake at the directory containing both GL and GL3".
+
+Jag3D has the following required dependencies:
+\li <a href=http://pocoproject.org/download/index.html>Poco</a> developer release v1.5.1 or newer. Get the "Basic Edition".
+\li <a href=http://www.boost.org/users/download/>Boost</a> v1.48_0 or newer. Some libraries are required.
+\li <a href=http://sourceforge.net/projects/ggt/>Generic Graphics Toolkit (GMTL)</a> svn trunk r1286 or newer.
+
+Jag3D has the following optional dependencies:
+\li <a href=http://www.openscenegraph.org/projects/osg>OpenSceneGraph (OSG)</a> v3.1.3 or newer.
+Must be built for GL3 compatibility.
+\li <a href=http://www.stack.nl/~dimitri/doxygen/download.html >Doxygen</a>.
+\li Microsoft DirectX SDK (for gamepad support).
+\li Python (for regenerating gl3w.c and gl3w.h).
+
+Furthermore, in order to run any of the examples, you'll need one or more
+windowing toolkits. Jag3D's build infrastructure currently supports the
+following windowing toolkits:
+\li <a href=http://freeglut.sourceforge.net/>Freeglut</a> v2.8.0 or newer.
+\li <a href=http://code.google.com/p/vrjuggler/source/checkout>VRJuggler</a> git main trunk.
+\li <a href=http://qt-project.org/downloads>Qt</a> v4.8.3.
+
+Instructions for building OSG for GL3 compatibility can be found in the
+OSG source tree: examples/osgsimplegl3/osgsimplegl3.cpp. Read the comment block at
+the bottom of the source file.
+
+\subsection BuildCMake Configuring CMake to Create Jag3D Project Files
+
+Jag3D requires CMake v2.8.5 or newer.
+
+The following CMake variables will probably need to be set in order to find the dependencies:
+\li GL3_ROOT Set this to the parent of the GL3 directory containing the gl3.h header.
+\li BOOST_ROOT
+\li GMTL_INCLUDE_DIR
+\li Poco_ROOT
+\li POCO_STATIC Create as a BOOL and set to true, if you are using static Poco libraries.
+\li Freeglut_ROOT_PATH
+\li FREEGLUT_STATIC Create as a BOOL and set to true, if you are using static freeglut libraries.
+\li DIRECTINPUT_ROOT_DIR
+
+Finding VRJuggler in CMake requires flagpoll.
+VRJuggler has an external dependency on CppDOM, so you will also
+need to set CPPDOM_ROOT_DIR as a CMake variable.
+For finding VRJuggler at runtime, set VJ_BASE_DIR in your environment.
+
+Jag3D uses a helper macro to aid in finding OSG. Use the OSGInstallType pulldown menu
+in cmake-gui to select the OSG installation type. Click Configure, then supply any
+additional information required.
+
+Jag3D uses CMake's built-in scripts for finding Boost and Qt. See those
+scripts for help with finding those dependencies.
+
+The variables JAG3D_USE_FREEGLUT, JAG3D_USE_VRJ, and JAG3D_USE_QT control how the tests are built.
+These variables may be set to ON or OFF in any combination. If a variable is ON, the corresponding
+windowing toolkit must be found in CMake. Examples and tests for a particular windowing toolkit
+will be built only if the corresponding CMake variable is ON, and the windowing toolkit is
+found during CMake configuration.
+
+The variable JAG3D_USE_GL3W must be ON for Windows builds and OFF for all other platforms.
+
+\subsection BuildGl3w Generating gl3w.c and gl3w.h
+
+Jag3D includes a modified version of the gl3w Python script to auto-generate
+the gl3w.c and gl3w.h jagDraw module source files. If you are building with both
+JAG3D_USE_GL3W and JAG3D_USE_GL3W_AUTOGENERATE selected in CMake, and you have Python installed on your system,
+then the gl3w.c and gl3w.h files will aitomatically be regenerated during build
+if either glcorearb.h or jagDraw/glExtensions.h have been modified.
+
+If you don't have Python, unselect JAG3D_USE_GL3W_AUTOGENERATE. Cmake will copy Default
+gl3w.c and gl3w.h files. However, for compatibility, you must use the supplied
+src/gl3w/GL/glcorearb.h file, rather than downloading the current one from the
+OpenGL Extension Registry.
+
+To add gl3w support for a new extension, simply copy that extension definition
+from the OpenGL registry's glext.h, into jagDraw/glExtensions.h, then rebuild.
+The project files will invoke Python with the gl3w_gen.py script to parse the
+OpenGL headers and generate jagDraw/gl3w.c and jagDraw/gl3w.h.
+
+\subsection BuildBuilding Build Jag3D
+
+After CMake is completely configured, build the entire project. For Windows, enter
+Visual Studio and do a batch build. For Unix/Linix/OSX makefiles, use the \c make command.
+
+
+\section JagRun Running Jag3D
+
+After a successful build, you should be able to perform a simple test by executing the
+\c drawable test. The name of the executable will have the windowing toolkit appended. For
+example, \c drawable-freeglut, \c drawable-vrj, or \c drawable-qt.
+
+If you have checked the CMake variable JAG3D_BUILD_UNITTESTS, you can also run the test
+suite. If using Visual Studio in Windows, right-click RUN_TESTS and select Build. If
+using Makefiles, issue this command:
+\code
+make tests
+\endcode
+
+Other examples and tests require you to set environment variables:
+\li JAG3D_PLUGIN_PATH should be set to the directory containing Jag3D's plugin libraries
+(their library names have a\c jagpi- prefix). The same directory should also contain the
+corresponding \c .jagpi files.
+\li JAG3D_DATA_PATH should be set to a list of directories containing data files, such
+as the \c data directory in the Jag3D source tree.
+
+If you have built Jag3D with the optional OSG dependency, you can test loading
+and rendering models using the OSG plugin:
+\code
+jagmodel-freeglut -f dumptruck.osg
+\endcode
+
+For running any VRJuggler executable, specify a VRJ configuration file:
+\code
+jagmodel-vrj --jconf simstandalone.jconf -f dumptruck.osg
+\endcode
+VRJuggler configuration files are in the share\vrjuggler\data\configFiles
+folder of your VRJuggler install directory.
+
+With the \c simstandalone.jconf file, use the numeric keypad to navigate in
+interactive examples and tests. Here are a few commands:
+\li 8 - moves forward
+\li 2 - moves back
+\li 4 - moves left
+\li 6 - moves right
+\li 9 - moves up
+\li 7 - moves down
+\li 6 + ctrl - rot right
+\li 4 + ctrl - rot left
+\li 8 + ctrl - rot up
+\li 2 + ctrl - rot down
+\li 7 + ctrl - rot ccw
+\li 9 + ctrl - rot cw
+
+
+\section JagCommits Mercurial (Hg) Guidelines for Jag3D Commits
+
+Before making modifications to JAG, please review
+\ref SpecSubmissions "the submissions requirements".
+
+To make changes to the Jag3D project, you should first clone
+<a href="https://code.google.com/p/jag-3d/source/checkout">
+the Google Code repo</a> to your local development system.
+
+Please submit all changes as bundled changesets that have already been
+merged with the current Google Code repo tip. Bundled changesets preserve
+your local revision history and automatically credit you as the author
+of the modifications.
+
+Here are general rules you should follow for Jag3D development:
+-# Make changes and commit to your local repo. You might need
+to do this multiple times.
+-# Before you submit your changes, pull the latest from the
+Google Code repo and merge with your local repo. (For extended
+development, you might want to do this frequently to stay current
+and avoid the pain of a single massive merge.)
+-# Don't forget to commit your merge to your local repo.
+-# Create a changeset that starts at your first commit and ends
+at the tip of your repo. Using hg command line:
+\code
+hg bundle -r <first-commit-rev#>
+\endcode
+Using TortoiseHg, right click on the first commit, then select
+Export -> Bundle Rev and Descendants... from the context menu.
+-# <a href="https://code.google.com/p/jag-3d/issues/list">
+Open an issue</a> and attach the bundled changeset, or email it
+to someone with commit access. After approval, your changeset
+will be unbundled into the Google Code repo.
+
+It doesn't matter if your bundle contains revisions that are already
+in the Google Code repo. Mercurial is smart enough to deal with
+this correctly.
+
+*/
