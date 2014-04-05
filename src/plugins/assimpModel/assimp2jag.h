@@ -61,6 +61,7 @@ protected:
     ArrayInfo get3fData( const aiVector3D* data, const unsigned int size ) const;
     ArrayInfo getUIntFaceData( const struct aiMesh* mesh ) const;
     static gmtl::Matrix44d asGMTLMatrix( aiMatrix4x4 m );
+    static GLenum asGLPrimitiveType( const unsigned int aiPrimitiveType );
     jag::draw::TexturePtr loadTexture( const std::string& fileName );
 
 
