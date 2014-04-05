@@ -94,6 +94,10 @@ void Assimp2Jag::initData()
             jag::draw::VertexAttribPtr attrib( new jag::draw::VertexAttrib(
                 _vertexAttribName, info._componentsPerElement, info._type, GL_FALSE, 0, 0 ) );
             vao->addVertexArrayCommand( attrib, jag::draw::VertexArrayObject::Vertex );
+
+            std::ostringstream ostr;
+            ostr << info._numElements;
+            JAG3D_INFO_STATIC( _logName, "Vertex array size (#verts): " + ostr.str() );
         }
 
         // Normals
@@ -141,9 +145,17 @@ void Assimp2Jag::initData()
         ArrayInfo info( getUIntFaceData( currentMesh ) );
         jag::draw::BufferObjectPtr bop( new jag::draw::BufferObject( GL_ELEMENT_ARRAY_BUFFER, info._buffer ) );
 
+        GLenum primType( asGLPrimitiveType( currentMesh->mPrimitiveTypes ) );
         jag::draw::DrawElementsPtr drawcom( new jag::draw::DrawElements(
-            GL_TRIANGLES, info._numElements, GL_UNSIGNED_INT, NULL, bop ) );
+            primType, info._numElements, GL_UNSIGNED_INT, NULL, bop ) );
         draw->addDrawCommand( drawcom );
+
+        {
+            std::ostringstream ostr;
+            ostr << std::hex << primType;
+            JAG3D_INFO_STATIC( _logName, "\tPrimitive type 0x" +
+                std::string( ostr.str() ) );
+        }
 
         // Bones
         // Name
@@ -288,26 +300,35 @@ Assimp2Jag::ArrayInfo Assimp2Jag::get3fData( const aiVector3D* data, const unsig
 Assimp2Jag::ArrayInfo Assimp2Jag::getUIntFaceData( const struct aiMesh* mesh ) const
 {
     ArrayInfo info;
-
     info._type = GL_UNSIGNED_INT;
-    info._numElements = mesh->mNumFaces * 3;
     info._componentsPerElement = 1;
+    {
+        unsigned int count( 0 );
+        for( unsigned int faceIdx=0; faceIdx < mesh->mNumFaces; ++faceIdx )
+        {
+            const struct aiFace& face = mesh->mFaces[ faceIdx ];
+            count += face.mNumIndices;
+        }
+        info._numElements = count;
+    }
+
+    {
+        std::ostringstream ostr;
+        ostr << "getUIntFaceData: mNumFaces " << mesh->mNumFaces <<
+            ", total indices " << info._numElements;
+        JAG3D_INFO_STATIC( _logName, ostr.str() );
+    }
 
     jag::draw::GLuintVec out;
     out.resize( info._numElements );
-    unsigned int count( 0 );
 
-    for( unsigned int faceIdx=0; faceIdx < mesh->mNumFaces; ++faceIdx )
+    for( unsigned int faceIdx=0, count=0;
+        faceIdx < mesh->mNumFaces; ++faceIdx )
     {
         const struct aiFace& face = mesh->mFaces[ faceIdx ];
-        if( face.mNumIndices != 3 )
-            JAG3D_ERROR_STATIC( _logName, "Unexpected number of face indices." );
-                
         for( unsigned int idx=0; idx < face.mNumIndices; ++idx )
             out[ count++ ] = face.mIndices[ idx ];
     }
-    if( count != info._numElements )
-        JAG3D_ERROR_STATIC( _logName, "Unexpected total index count." );
 
     jag::base::BufferPtr bp( new jag::base::Buffer( info._numElements * sizeof( GLuint ), (void*)&out[0] ) );
     info._buffer = bp;
@@ -322,6 +343,26 @@ gmtl::Matrix44d Assimp2Jag::asGMTLMatrix( aiMatrix4x4 m )
         (double)m.c1, (double)m.c2, (double)m.c3, (double)m.c4,
         (double)m.d1, (double)m.d2, (double)m.d3, (double)m.d4 );
     return( retVal );
+}
+GLenum Assimp2Jag::asGLPrimitiveType( const unsigned int aiPrimitiveType )
+{
+    switch( aiPrimitiveType )
+    {
+    case aiPrimitiveType_POINT:
+        return( GL_POINTS );
+        break;
+    case aiPrimitiveType_LINE:
+        return( GL_LINES );
+        break;
+    case aiPrimitiveType_TRIANGLE:
+        return( GL_TRIANGLES );
+        break;
+    case aiPrimitiveType_POLYGON:
+    default:
+        std::cerr << "Assimp2Jag::asGLPrimitiveType: Unsupported type " << std::hex << aiPrimitiveType << std::dec << std::endl;
+        return( GL_POINTS );
+        break;
+    }
 }
 jag::draw::TexturePtr Assimp2Jag::loadTexture( const std::string& fileName )
 {

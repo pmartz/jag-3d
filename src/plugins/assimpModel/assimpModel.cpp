@@ -94,7 +94,7 @@ public:
 
         Assimp::Importer importer;
         const aiScene* aiScene( importer.ReadFile( fileName.c_str(),
-            aiProcess_Triangulate ) );
+            /*aiProcess_Triangulate |*/ aiProcess_SortByPType ) );
         if( aiScene == NULL )
         {
             JAG3D_INFO_STATIC( _logName, "Unable to create aiScene. ASSIMP error:" );
