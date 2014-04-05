@@ -5,10 +5,10 @@ if( BUILD_SHARED_LIBS )
 endif()
 
 configure_file( "Version.h.in"
-    "${PROJECT_SOURCE_DIR}/src/jag/base/Version.h" @ONLY )
+    "${PROJECT_SOURCE_DIR}/src/jag/base/Version.h" )
 
 configure_file( "Config.h.in"
-    "${PROJECT_SOURCE_DIR}/src/jag/base/Config.h" @ONLY )
+    "${PROJECT_SOURCE_DIR}/src/jag/base/Config.h" )
 
 
 set( _jagBaseHeaderFiles

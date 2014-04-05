@@ -61,7 +61,12 @@ public:
     AssimpModelRW()
       : _logName( "jag.disk.rw.ai" )
     {
-        Assimp::DefaultLogger::create( "", Assimp::Logger::NORMAL, aiDefaultLogStream_STDOUT );
+        if( Poco::Logger::get( _logName ).information() )
+        {
+            // If the log level for this plugin is more verbost than the
+            // 'info' level, create the assimp logger.
+            Assimp::DefaultLogger::create( "", Assimp::Logger::NORMAL, aiDefaultLogStream_STDOUT );
+        }
     }
     virtual ~AssimpModelRW()
     {}
