@@ -124,12 +124,8 @@ if( OSG_FOUND AND ( JAG3D_USE_OSG STREQUAL "static" ) )
     add_definitions( -DOSG_LIBRARY_STATIC )
 endif()
 #   Set defaults for OSG support in osgModel and osgImage loader.
-set( JAG3D_OSGIMAGE_PLUGIN_SUPPORT )
-set( JAG3D_OSGMODEL_PLUGIN_SUPPORT )
-if( OSG_FOUND )
-    set( JAG3D_OSGIMAGE_PLUGIN_SUPPORT bmp gif jpg jpeg png rgb rgba tga tif tiff )
-    set( JAG3D_OSGMODEL_PLUGIN_SUPPORT 3ds flt obj osg ive osgt osgb )
-endif()
+set( JAG3D_OSGIMAGE_PLUGIN_SUPPORT "bmp;gif;jpg;jpeg;png;rgb;rgba;tga;tif;tiff" CACHE STRING "List of osgImage plugin supported extensions" )
+set( JAG3D_OSGMODEL_PLUGIN_SUPPORT "3ds;flt;obj;osg;ive;osgt;osgb;ply" CACHE STRING "List of osgModel plugin supported extensions" )
 
 #
 # Optional ASSIMP - used for model loading plugin.
@@ -137,11 +133,9 @@ option( JAG3D_USE_ASSIMP "If set, build the ASSIMP-based model loading plugin." 
 if( JAG3D_USE_ASSIMP )
     find_package( ASSIMP REQUIRED )
 endif()
-set( JAG3D_ASSIMPMODEL_PLUGIN_SUPPORT )
-if( ASSIMP_FOUND )
-    set( JAG3D_ASSIMPMODEL_PLUGIN_SUPPORT
-        3d 3ds ac ase blend dae dxf irrmesh lwo lxo m3 md3 md5 mdl ms3d obj off ply q3d scn smd stl terx xgl xml )
-endif()
+set( JAG3D_ASSIMPMODEL_PLUGIN_SUPPORT
+    "3d;3ds;ac;ase;blend;dae;dxf;irrmesh;lwo;lxo;m3;md3;md5;mdl;ms3d;obj;off;ply;q3d;scn;smd;stl;terx;xgl;xml"
+    CACHE STRING "List of osgImage plugin supported extensions" )
 
 #
 # Optional Directx SDK - for DirectInput game pad support.
