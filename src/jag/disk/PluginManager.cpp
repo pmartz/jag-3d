@@ -173,6 +173,35 @@ void PluginManager::internalInit()
     if( !_paths.empty() )
         loadConfigFiles();
 
+    // Check for environment variable to specify the default plugin priority list.
+    {
+        std::string priorities;
+        try {
+            priorities = Poco::Environment::get( "JAG3D_PLUGIN_PRIORITIES" );
+        } catch (...) {}
+
+        jag::base::StringVec priorityVec;
+        while( !priorities.empty() )
+        {
+            // A comma-separated list of plugin names.
+            size_t commaPos( priorities.find_first_of( ',' ) );
+            std::string pluginName;
+            if( commaPos != std::string::npos )
+            {
+                pluginName = priorities.substr( 0, commaPos );
+                priorities = priorities.substr( commaPos+1 );
+            }
+            else
+            {
+                pluginName = priorities;
+                priorities = "";
+            }
+            priorityVec.push_back( pluginName );
+        }
+        if( !( priorityVec.empty() ) )
+            setDefaultPluginPriorities( priorityVec );
+    }
+
     _initState = Initialized;
 }
 
@@ -391,6 +420,51 @@ void PluginManager::loadConfigFiles()
             JAG3D_DEBUG_STATIC( _logName, "\tPlugin desc: " + pi._description );
         }
     }
+}
+
+const ReaderWriterInfoVec PluginManager::getPrioritizedReaderWriters( const jag::base::StringVec* plugins )
+{
+    internalInit();
+
+    JAG3D_TRACE_STATIC( _logName, "Entering getPrioritizedReaderWriters()." );
+
+    const jag::base::StringVec* localPlugins( ( plugins == NULL ) ? &_pluginPriorities : plugins );
+
+    ReaderWriterInfoVec rws;
+
+    // Make sure they're all loaded.
+    BOOST_FOREACH( const std::string& pluginName, *localPlugins )
+    {
+        // Load it, if necessary.
+        BOOST_FOREACH( PluginInfo& pi, _pluginInfo )
+        {
+            if( pi._name == pluginName )
+            {
+                if( !( pi._loaded ) )
+                {
+                    JAG3D_TRACE_STATIC( _logName, "\tLoading new plugin: " + pi._name );
+                    loadPlugin( &pi );
+                }
+                break;
+            }
+        }
+
+        // Copy the matching ReaderWriters onto the prioritized list.
+        BOOST_FOREACH( const ReaderWriterInfo& rwInfo, _rwInfo )
+        {
+            if( rwInfo._pluginName == pluginName )
+                rws.push_back( rwInfo );
+        }
+    }
+
+    JAG3D_TRACE_STATIC( _logName, "Exiting getPrioritizedReaderWriters()." );
+    return( rws );
+}
+void PluginManager::setDefaultPluginPriorities( const jag::base::StringVec& plugins )
+{
+    internalInit();
+
+    _pluginPriorities = plugins;
 }
 
 PluginManager::PluginInfo* PluginManager::getActivelyLoadingPlugin()
