@@ -30,6 +30,8 @@
 #include <Poco/Path.h>
 #include <string>
 #include <set>
+#include <vector>
+#include <list>
 
 
 namespace jag {
@@ -61,6 +63,7 @@ struct JAGDISK_EXPORT ReaderWriterInfo
     friend bool operator<( const ReaderWriterInfo& lhs, const ReaderWriterInfo& rhs );
 };
 typedef std::vector< ReaderWriterInfo > ReaderWriterInfoVec;
+typedef std::list< ReaderWriterInfo* > ReaderWriterInfoList;
 
 bool operator<( const ReaderWriterInfo& lhs, const ReaderWriterInfo& rhs );
 
@@ -116,12 +119,12 @@ capability can be added as future work.
 During a read or write operation (jag/disk/ReadWrite.cpp), the PluginManager provides
 a list of loaded ReaderWriters, and each is attempted in turn to fulfill the read or
 write request. By default, the list of ReaderWriters is in an indeterminate order.
-Applications can control the order by setting a gloval plugin priority, or by specifying
-a plugin priority in jag::disk::Options. The global plugin priority can be set with an
-environment variable, JAG3D_PLUGIN_PRIORITIES, which is a comma-separated list of plugin
-names (minus the \c jagp- prefix, such as osgModel, assimpModel, osgImage, shader, text,
-etc.). Alternately, the application can set the global plugin priority with a call to
-setDefaultPluginPriorities(const jag::base::StringVec&).
+Applications can control the order by setting a gloval plugin preference list with an
+environment variable, JAG3D_PLUGIN_PREFERENCE, which is a comma-separated list of plugin
+names (minus the \c jagp- prefix, such as "osgModel,assimpModel,osgImage,shader,text").
+Alternately, the application can set the global plugin preference list with a call to
+setDefaultPluginPreference(const jag::base::StringVec&).
+\envvar JAG3D_PLUGIN_PREFERENCE
 */
 class JAGDISK_EXPORT PluginManager
 {
@@ -197,6 +200,8 @@ public:
 
     /** \brief Load all specified plugins. */
     bool loadPlugins( PluginInfoPtrVec& plugins );
+    /** \brief Load names plugins. Plugins must already be on _pluginInfo vec. */
+    bool loadPlugins( const jag::base::StringVec& plugins );
     /** \brief Load a single plugin. */
     bool loadPlugin( PluginInfo* pi );
 
@@ -204,6 +209,12 @@ public:
     PluginInfoPtrVec getPluginsForExtension( const std::string& extension );
 
 
+    /** \brief Return a list of ReaderWriters sorted by the default plugin preference.
+    \details Returns a list of loaded ReaderWriters sorted in priority order from
+    the default plugin preferences. This function loads a plugin if it appears in the
+    plugin preferences list and isn't already loaded. Initially, the default plugin
+    preference list is empty, and ReaderWriters are in an indeterminate order. Set
+    the default plugin preference list with setDefaultPluginPreference(). */
     const ReaderWriterInfoVec& getLoadedReaderWriters() const;
 
 
@@ -217,24 +228,18 @@ public:
     avoids issues with indetermnate order of static initialization. */
     void addStaticReaderWriter( const ReaderWriterInfo& rwInfo );
 
-    /** \brief Return a list of ReaderWriters sorted by the specified plugin priority.
-    \details Returns a list of loaded ReaderWriters sorted in priority order from
-    the specified list of plugins. This function loads a plugin if it appears in the
-    \c plugins list and isn't already loaded. If \c plugins is NULL, the default priority
-    is used. By default, the default plugin priority list is empty, and ReaderWriters
-    are in an indeterminate order. Set the default plugin priority list with
-    setDefaultPluginPriorities(). */
-    const ReaderWriterInfoVec getPrioritizedReaderWriters( const jag::base::StringVec* plugins=NULL );
-
-    /* \brief Set the default plugin priority list.
-    \details By default, the plugin priority list is empty, and read/write operations
+    /* \brief Set the default plugin preference list.
+    \details By default, the plugin preference list is empty, and read/write operations
     attempt to use ReaderWriters in an indeterminate order. This function changes that
     default behavior so that ReaderWriters are attempted in the order specified by
     \c plugins. This is particularly useful when more than one plugin supports the
     same extension.
-    \envvar JAG3D_PLUGIN_PRIORITIES
     */
-    void setDefaultPluginPriorities( const jag::base::StringVec& plugins );
+    void setDefaultPluginPreference( const jag::base::StringVec& plugins );
+
+    /** \brief Sort the list of ReaderWriters by the list of preferred plugins.
+    */
+    static void sortReaderWriters( ReaderWriterInfoVec& rwInfo, const jag::base::StringVec& plugins );
 
     /** \brief Returns the plugin name of the most recently loaded plugin.
     \details This function is not inteded for direct application use, but is public
@@ -269,9 +274,9 @@ protected:
     // Not used by static-linked plugins.
     PluginInfoVec _pluginInfo;
 
-    // Default plugin priorities. ReaderWriters from plugins in this vector
+    // Default plugin preference. ReaderWriters from plugins in this vector
     // are tried in priority order to fulfill read and write operations.
-    jag::base::StringVec _pluginPriorities;
+    jag::base::StringVec _pluginPreference;
 
     // For dynamic loading, list of ReaderWriter-derived class instances that
     // have been dynamically loaded. For static-linked plugins, the list of

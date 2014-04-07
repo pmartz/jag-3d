@@ -9,6 +9,9 @@
 - Improved plugins with CMake-generated headers and .jagpi files.
 - Specify jagmodel shader files with --vs, --gs, --fs.
 - Add shaders for point rendering, data/jagmodel_pt.vert and .frag.
+- Allow customizable plugin preferences to prefer one plugin over another.
+This can be set programmatically with jag::disk::PluginManager::setDefaultPluginPreference()
+or at runtime with the JAG3D_PLUGIN_PREFERENCE environment variable.
 
 <hr>
 
