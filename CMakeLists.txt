@@ -179,6 +179,7 @@ endif()
 # Link with Boost dynamic libs...
 if( BOOST_ALL_DYN_LINK )
     add_definitions( -DBOOST_ALL_DYN_LINK )
+    set( USE_BOOST_DEFINITION "add_definitions( -DBOOST_ALL_DYN_LINK )" )
 endif()
 
 # Use GL3W for OpenGL function pointers...
