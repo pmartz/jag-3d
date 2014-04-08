@@ -145,9 +145,12 @@ void GLWidget::mousePressEvent( QMouseEvent* e )
     _lastX = e->pos().x();
     _lastY = e->pos().y();
 
-    _leftDrag = ( e->button() == Qt::LeftButton );
-    _middleDrag = ( e->button() == Qt::MiddleButton );
-    _rightDrag = ( e->button() == Qt::RightButton );
+    if( e->button() == Qt::LeftButton )
+        _leftDrag = true;
+    if( e->button() == Qt::MiddleButton )
+        _middleDrag = true;
+    if( e->button() == Qt::RightButton )
+        _rightDrag = true;
 }
 void GLWidget::mouseMoveEvent( QMouseEvent* e )
 {
