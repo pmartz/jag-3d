@@ -14,7 +14,7 @@ include( CMakeMacros )
 # Define JAG version. Used to configure_file jag/base/Version.h.
 set( JAG3D_MAJOR_VERSION 0 )
 set( JAG3D_MINOR_VERSION 1 )
-set( JAG3D_SUB_VERSION 15 )
+set( JAG3D_SUB_VERSION 16 )
 _zeroPad( JAG3D_MINOR_VERSION __minorPad )
 _zeroPad( JAG3D_SUB_VERSION __patchPad )
 set( JAG3D_VERSION ${JAG3D_MAJOR_VERSION}.${__minorPad}.${__patchPad} )
