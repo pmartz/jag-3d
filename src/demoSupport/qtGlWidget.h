@@ -38,6 +38,9 @@ protected:
     virtual void paintGL();
 
     virtual void keyPressEvent( QKeyEvent* e );
+    virtual void mousePressEvent( QMouseEvent* e );
+    virtual void mouseMoveEvent( QMouseEvent* e );
+    virtual void mouseReleaseEvent( QMouseEvent* e );
 };
 
 #endif // GLWIDGET_H
