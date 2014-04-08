@@ -5,13 +5,21 @@
 
 \section vPending Pending Release
 
+<hr>
+
+
+\section v00116 v0.01.16
+
+<small>Released 8 Apr 2014.</small>
+
 - Added Open Asset Import Library (ASSIMP) model loading plugin.
-- Improved plugins with CMake-generated headers and .jagpi files.
-- Specify jagmodel shader files with --vs, --gs, --fs.
-- Add shaders for point rendering, data/jagmodel_pt.vert and .frag.
 - Allow customizable plugin preferences to prefer one plugin over another.
 This can be set programmatically with jag::disk::PluginManager::setDefaultPluginPreference()
 or at runtime with the JAG3D_PLUGIN_PREFERENCE environment variable.
+- Qt-based demos now support jagMx trackball, as freeglut-based demos have already been doing.
+- Improved plugins with CMake-generated headers and .jagpi files.
+- Specify jagmodel shader files with --vs, --gs, --fs.
+- Add shaders for point rendering, data/jagmodel_pt.vert and .frag.
 
 <hr>
 
