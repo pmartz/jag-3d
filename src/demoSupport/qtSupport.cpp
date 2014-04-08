@@ -81,6 +81,12 @@ void GLWidget::paintGL()
 
 void GLWidget::resizeGL( int w, int h )
 {
+    jag::draw::ContextSupport* cs( jag::draw::ContextSupport::instance() );
+    const jag::draw::platformContextID pCtxId = reinterpret_cast< const jag::draw::platformContextID >( context() );
+    jag::draw::jagDrawContextID contextID = cs->getJagContextID( pCtxId );
+
+    cs->setActiveContext( contextID );
+
     glViewport( 0, 0, w, h );
     di->getCollectionVisitor().setViewport( 0, 0, w, h );
     di->reshape( w, h );
@@ -101,6 +107,19 @@ void GLWidget::keyPressEvent( QKeyEvent* e )
         QGLWidget::keyPressEvent( e );
     }
 }
+void GLWidget::mousePressEvent( QMouseEvent* e )
+{
+    //std::cout << "press" << std::endl;
+}
+void GLWidget::mouseMoveEvent( QMouseEvent* e )
+{
+    //std::cout << "drag" << std::endl;
+}
+void GLWidget::mouseReleaseEvent( QMouseEvent* e )
+{
+    //std::cout << "release" << std::endl;
+}
+
 
 
 // Support for linking statically
