@@ -103,6 +103,14 @@ public:
     NULL is returned. */
     ImagePtr getImage( const GLenum cubeTarget=GL_NONE ) const;
 
+    /** \brief Update the osg::draw::Image data from the OpenGL texture object.
+    \details This function is a convenience wrapper around glGetTexImage()
+    that stores the returned data in the attached jag::draw::Image object.
+    If no Image is attached, one is allocated and attached. The attached Image
+    allocates memory to hold the returned data, with format, type, dimensions, etc.
+    modified in accordance with that of the texture object. */
+    bool uploadImage( const GLenum cubeTarget=GL_NONE );
+
     /** \brief TBD
     \details TBD Sampler should be orthogonal to Texture and should be in SamplerSet. */
     void setSampler( SamplerPtr sampler );

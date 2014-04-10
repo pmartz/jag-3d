@@ -21,6 +21,9 @@
 
 #include <jag/draw/Image.h>
 #include <jag/draw/PixelStore.h>
+#include <jag/base/LogMacros.h>
+
+#include <sstream>
 
 
 namespace jag {
@@ -87,8 +90,31 @@ void Image::set( const GLint level, const GLenum internalFormat,
     _border = border;
     _format = format;
     _type = type;
-    _data = data;
+
+    if( data != NULL )
+    {
+        _data = data;
+    }
+    else
+    {
+        allocate();
+    }
 }
+void Image::allocate()
+{
+    const int numBytes( computeDataSize() );
+    switch( _allocMode )
+    {
+    case Image::USE_MALLOC_FREE:
+        _data = (unsigned char*)( malloc( numBytes ) );
+        break;
+    case Image::NO_DELETE:
+    case Image::USE_NEW_DELETE:
+        _data = new unsigned char[ numBytes ];
+        break;
+    }
+}
+
 void Image::get( GLint& level, GLenum& internalFormat,
     GLsizei& width, GLsizei& height, GLsizei& depth,
     GLint& border, GLenum& format, GLenum& type,
@@ -145,6 +171,51 @@ void Image::setPixelStore( PixelStorePtr pixelStore )
 PixelStorePtr Image::getPixelStore()
 {
     return( _pixelStore );
+}
+
+
+unsigned int Image::computeDataSize()
+{
+    return( _width * _height * _depth * computePixelSize() );
+}
+unsigned int Image::computePixelSize()
+{
+    unsigned int bytesPerComponent( 1 );
+    unsigned int componentsPerPixel( 4 );
+
+    switch( _type )
+    {
+    case GL_UNSIGNED_BYTE:
+        bytesPerComponent = 1;
+        break;
+    case GL_FLOAT:
+        bytesPerComponent = 4;
+        break;
+    default:
+        {
+            std::ostringstream ostr;
+            ostr << std::hex << "0x" << _type;
+            JAG3D_WARNING( "Unsupported image type in computePixelSize: " + ostr.str() );
+        }
+    }
+
+    switch( _format )
+    {
+    case GL_RGB:
+        componentsPerPixel = 3;
+        break;
+    case GL_RGBA:
+        componentsPerPixel = 4;
+        break;
+    default:
+        {
+            std::ostringstream ostr;
+            ostr << std::hex << "0x" << _format;
+            JAG3D_WARNING( "Unsupported image format in computePixelSize: " + ostr.str() );
+        }
+    }
+
+    return( bytesPerComponent * componentsPerPixel );
 }
 
 
