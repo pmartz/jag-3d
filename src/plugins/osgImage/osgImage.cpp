@@ -97,6 +97,8 @@ public:
     {
         JAG3D_INFO_STATIC( _logName,
             std::string( "Using OSG v" ) + std::string( osgGetVersion() ) );
+        JAG3D_INFO_STATIC( _logName,
+            std::string( "\tosgImage configured with " ) + osgImageExtensionString() );
 
         osg::ref_ptr< osg::Image > osgImage( convertToOsgImage( (Image*)data ) );
         return( osgDB::writeImageFile( *osgImage, fileName ) );
@@ -171,7 +173,29 @@ protected:
 
     osg::Image* convertToOsgImage( Image* jagImage ) const
     {
-        return( NULL );
+        if( jagImage == NULL )
+            return( (osg::Image*)NULL );
+
+        GLint level;
+        GLenum internalFormat;
+        GLsizei w, h, d;
+        GLint border;
+        GLenum format, type;
+        unsigned char* data;
+        jagImage->get( level, internalFormat,
+            w, h, d,
+            border, format, type,
+            &data );
+
+
+        osg::ref_ptr< osg::Image > osgImage( new osg::Image() );
+        osgImage->setImage( w, h, d,
+                      (GLint) internalFormat,
+                      format, type,
+                      data,
+                      osg::Image::USE_NEW_DELETE );
+
+        return( osgImage.release() );
     }
 };
 
