@@ -55,7 +55,7 @@ public:
     } AllocationMode;
 
     /** \brief TBD
-    \details TBD */
+    \details Default value is USE_NEW_DELETE. */
     void setAllocationMode( const AllocationMode mode ) { _allocMode = mode; }
     AllocationMode getAllocationMode() const { return( _allocMode ); }
 

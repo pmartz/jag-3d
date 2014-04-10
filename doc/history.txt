@@ -5,6 +5,8 @@
 
 \section vPending Pending Release
 
+- osgImage plugin supports write() method (Export to image files).
+
 <hr>
 
 
@@ -16,7 +18,7 @@
 - Allow customizable plugin preferences to prefer one plugin over another.
 This can be set programmatically with jag::disk::PluginManager::setDefaultPluginPreference()
 or at runtime with the JAG3D_PLUGIN_PREFERENCE environment variable.
-- Qt-based demos now support jagMx trackball, as freeglut-based demos have already been doing.
+- Qt-based demos now support mouse interaction via jagMx trackball, as freeglut-based demos have already been doing.
 - Improved plugins with CMake-generated headers and .jagpi files.
 - Specify jagmodel shader files with --vs, --gs, --fs.
 - Add shaders for point rendering, data/jagmodel_pt.vert and .frag.
