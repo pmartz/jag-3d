@@ -166,6 +166,37 @@ ImagePtr Texture::getImage( const GLenum cubeTarget ) const
 
     return( ImagePtr( (Image*)NULL ) );
 }
+bool Texture::uploadImage( const GLenum cubeTarget )
+{
+    int index( 0 );
+    if( cubeTarget == GL_NONE )
+    {
+        _image.resize( 1 );
+    }
+    else
+    {
+        _image.resize( 6 );
+        index = (int)cubeTarget - (int)GL_TEXTURE_CUBE_MAP_POSITIVE_X;
+    }
+    if( _image[ index ] == NULL )
+    {
+        _image[ index ] = ImagePtr( ( new Image() ) );
+    }
+
+    ImagePtr image( _image[ index ] );
+
+
+    // If the image has a pixel store object, send the pixel
+    // store parameters to OpenGL.
+    if( image->getPixelStore() != NULL )
+        // TBD support for pixel unpack buffer objects.
+        image->getPixelStore()->unpack();
+
+    glGetTexImage( _target, 0, image->getFormat(), image->getType(),
+        image->getData() );
+
+    return( false );
+}
 
 void Texture::setSampler( SamplerPtr sampler )
 {
