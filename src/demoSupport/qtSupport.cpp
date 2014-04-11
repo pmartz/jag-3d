@@ -31,6 +31,7 @@
 #include <QGLFormat>
 #include <QCoreApplication>
 #include <QKeyEvent>
+#include <QMouseEvent>
 
 #include <boost/program_options/options_description.hpp>
 #include <boost/program_options/variables_map.hpp>
@@ -115,7 +116,10 @@ void GLWidget::keyPressEvent( QKeyEvent* e )
         break;
 
     default:
-        QGLWidget::keyPressEvent( e );
+        if( di->keyCommand( (int) e->key() ) )
+            update( rect() );
+        else
+            QGLWidget::keyPressEvent( e );
     }
 }
 
