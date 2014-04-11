@@ -101,6 +101,12 @@ public:
             std::string( "\tosgImage configured with " ) + osgImageExtensionString() );
 
         osg::ref_ptr< osg::Image > osgImage( convertToOsgImage( (Image*)data ) );
+        if( osgImage == NULL )
+        {
+            JAG3D_ERROR_STATIC( _logName, std::string( "Can't write file " ) + fileName );
+            return( false );
+        }
+
         return( osgDB::writeImageFile( *osgImage, fileName ) );
     }
     virtual bool write( std::ostream& oStr, const void* data, const Options* /*options*/ ) const
@@ -193,7 +199,7 @@ protected:
                       (GLint) internalFormat,
                       format, type,
                       data,
-                      osg::Image::USE_NEW_DELETE );
+                      osg::Image::NO_DELETE );
 
         return( osgImage.release() );
     }
