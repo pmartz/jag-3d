@@ -135,7 +135,10 @@ public:
     unsigned int computeDataSize();
     /** \brief TBD
     \details TBD */
-    unsigned int computePixelSize();
+    static unsigned int bytesPerPixel( const GLenum format, const GLenum type );
+    /** \brief TBD
+    \details TBD */
+    static unsigned int componentsPerPixel( const GLenum format );
 
 protected:
     GLint _level;
