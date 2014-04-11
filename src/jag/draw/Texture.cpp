@@ -189,8 +189,8 @@ bool Texture::uploadImage( const GLenum cubeTarget )
     // If the image has a pixel store object, send the pixel
     // store parameters to OpenGL.
     if( image->getPixelStore() != NULL )
-        // TBD support for pixel unpack buffer objects.
-        image->getPixelStore()->unpack();
+        // TBD support for pixel pack buffer objects.
+        image->getPixelStore()->pack();
 
     glGetTexImage( _target, 0, image->getFormat(), image->getType(),
         image->getData() );

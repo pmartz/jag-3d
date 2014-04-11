@@ -176,8 +176,11 @@ PixelStorePtr Image::getPixelStore()
 
 unsigned int Image::computeDataSize()
 {
-    return( _width * _height * _depth *
-        bytesPerPixel( _format, _type ) );
+    if( _compressed )
+        return( _imageSize );
+    else
+        return( _width * _height * _depth *
+            bytesPerPixel( _format, _type ) );
 }
 unsigned int Image::bytesPerPixel( const GLenum format, const GLenum type )
 {
