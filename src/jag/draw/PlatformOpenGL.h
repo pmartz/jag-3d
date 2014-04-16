@@ -33,7 +33,14 @@
 #    define GL_GLEXT_PROTOTYPES
 #  endif
 #  if defined( __APPLE__)
-#    include<OpenGL/gl3.h>
+#    ifndef JAG3D_USE_GLES3
+#      include<OpenGL/gl3.h>
+#    else
+#      include <OpenGLES/ES3/gl.h>
+       typedef GLfloat GLdouble;
+       typedef GLclampf GLclampd;
+#define GL_TEXTURE_BUFFER 0x8C2A
+#    endif
 #  elif defined( USE_EGL )
 #    include <EGL/egl.h>
 #    include <EGL/eglext.h>

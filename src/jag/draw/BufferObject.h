@@ -287,8 +287,7 @@ public:
 
 typedef jag::base::ptr< jag::draw::PixelUnpackBuffer >::shared_ptr PixelUnpackBufferPtr;
 typedef std::vector< PixelUnpackBufferPtr > PixelUnpackBufferVec;
-
-
+    
 /**
 \details One class for each buffer bind target. \gl{table 2.8}.
 */

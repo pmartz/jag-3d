@@ -109,6 +109,7 @@ GLenum Texture::getTarget() const
 }
 bool Texture::isProxy() const
 {
+#ifndef JAG3D_USE_GLES3
     return( ( _target == GL_PROXY_TEXTURE_1D ) ||
         ( _target == GL_PROXY_TEXTURE_2D ) ||
         ( _target == GL_PROXY_TEXTURE_3D ) ||
@@ -121,6 +122,9 @@ bool Texture::isProxy() const
 #endif
         ( _target == GL_PROXY_TEXTURE_2D_MULTISAMPLE ) ||
         ( _target == GL_PROXY_TEXTURE_2D_MULTISAMPLE_ARRAY ) );
+#else
+    return false;
+#endif
 }
 
 
@@ -273,7 +277,11 @@ void Texture::attachToFBO( const jag::draw::jagDrawContextID contextID, const GL
         }
     }
 
+#ifndef JAG3D_USE_GLES3
     glFramebufferTexture( _fboTarget, attachment, texID, _fboTextureLevel );
+#else
+    glFramebufferTexture2D( _fboTarget, attachment, GL_TEXTURE_2D, texID, _fboTextureLevel );
+#endif
 
     JAG3D_ERROR_CHECK( "Texture::attachToFBO()" );
 }
@@ -312,8 +320,11 @@ void Texture::internalSpecifyTexImage( const unsigned int contextID )
 
     if( !( _image.empty() ) )
     {
-        if( ( _target != GL_TEXTURE_CUBE_MAP ) &&
-            ( _target != GL_PROXY_TEXTURE_CUBE_MAP ) )
+        if( ( _target != GL_TEXTURE_CUBE_MAP )
+#ifndef JAG3D_USE_GLES3
+           && ( _target != GL_PROXY_TEXTURE_CUBE_MAP )
+#endif
+           )
         {
             internalSpecifyTexImage( _target, _image[ 0 ] );
         }
@@ -337,8 +348,10 @@ void Texture::internalSpecifyTexImage( const unsigned int contextID )
     }
     else if( _target == GL_TEXTURE_BUFFER )
     {
+#ifndef JAG3D_USE_GLES3
         if( _textureBuffer != NULL )
             glTexBuffer( _target, _bufferFormat, _textureBuffer->getID( contextID ) );
+#endif
     }
 
     _dirty[ contextID ] = false;
@@ -372,6 +385,7 @@ void Texture::internalSpecifyTexImage( const GLenum target, ImagePtr image )
 
     switch( target )
     {
+#ifndef JAG3D_USE_GLES3
     case GL_TEXTURE_1D:
     case GL_PROXY_TEXTURE_1D:
         if( compressed )
@@ -387,18 +401,23 @@ void Texture::internalSpecifyTexImage( const GLenum target, ImagePtr image )
         {
             JAG3D_WARNING( "internalSpecifyTexImage(): OpenGL prohibits compressed GL_TEXTURE_RECTANGLE textures." );
         }
+#endif
         // No 'break': Intentional fall-through.
     case GL_TEXTURE_2D:
+#ifndef JAG3D_USE_GLES3
     case GL_TEXTURE_1D_ARRAY:
+#endif
     case GL_TEXTURE_CUBE_MAP_POSITIVE_X:
     case GL_TEXTURE_CUBE_MAP_NEGATIVE_X:
     case GL_TEXTURE_CUBE_MAP_POSITIVE_Y:
     case GL_TEXTURE_CUBE_MAP_NEGATIVE_Y:
     case GL_TEXTURE_CUBE_MAP_POSITIVE_Z:
     case GL_TEXTURE_CUBE_MAP_NEGATIVE_Z:
+#ifndef JAG3D_USE_GLES3
     case GL_PROXY_TEXTURE_2D:
     case GL_PROXY_TEXTURE_1D_ARRAY:
     case GL_PROXY_TEXTURE_RECTANGLE:
+#endif
         if( compressed )
             glCompressedTexImage2D( target, level, internalFormat,
                 width, height, border, imageSize, data );
@@ -406,7 +425,7 @@ void Texture::internalSpecifyTexImage( const GLenum target, ImagePtr image )
             glTexImage2D( target, level, internalFormat,
                 width, height, border, format, type, data );
         break;
-
+#ifndef JAG3D_USE_GLES3
     case GL_TEXTURE_3D:
     case GL_TEXTURE_2D_ARRAY:
 #ifdef GL_VERSION_4_0
@@ -416,6 +435,7 @@ void Texture::internalSpecifyTexImage( const GLenum target, ImagePtr image )
     case GL_PROXY_TEXTURE_2D_ARRAY:
 #ifdef GL_VERSION_4_0
     case GL_PROXY_TEXTURE_CUBE_MAP_ARRAY:
+#endif
 #endif
         if( compressed )
             glCompressedTexImage3D( target, level, internalFormat,
@@ -452,18 +472,24 @@ void Texture::determineBindQuery()
 {
     switch( _target )
     {
+#ifndef JAG3D_USE_GLES3
     case GL_TEXTURE_1D: _bindQuery = GL_TEXTURE_BINDING_1D; break;
+#endif
     case GL_TEXTURE_2D: _bindQuery = GL_TEXTURE_BINDING_2D; break;
     case GL_TEXTURE_3D: _bindQuery = GL_TEXTURE_BINDING_3D; break;
+#ifndef JAG3D_USE_GLES3
     case GL_TEXTURE_1D_ARRAY: _bindQuery = GL_TEXTURE_BINDING_1D_ARRAY; break;
+#endif
     case GL_TEXTURE_2D_ARRAY: _bindQuery = GL_TEXTURE_BINDING_2D_ARRAY; break;
 #ifdef GL_VERSION_4_0
     case GL_TEXTURE_CUBE_MAP_ARRAY: _bindQuery = GL_TEXTURE_BINDING_CUBE_MAP_ARRAY; break;
 #endif
+#ifndef JAG3D_USE_GLES3
     case GL_TEXTURE_RECTANGLE: _bindQuery = GL_TEXTURE_BINDING_RECTANGLE; break;
     case GL_TEXTURE_BUFFER: _bindQuery = GL_TEXTURE_BINDING_BUFFER; break;
     case GL_TEXTURE_2D_MULTISAMPLE: _bindQuery = GL_TEXTURE_BINDING_2D_MULTISAMPLE; break;
     case GL_TEXTURE_2D_MULTISAMPLE_ARRAY: _bindQuery = GL_TEXTURE_BINDING_2D_MULTISAMPLE_ARRAY; break;
+#endif
     default:
         // Not queriable. Proxy texture?
         _bindQuery = GL_NONE;

@@ -445,7 +445,11 @@ bool Program::link( unsigned int contextID )
                 {
                     if( blockIdx == idx )
                     {
+#ifndef JAG3D_USE_GLES3
                         glGetActiveUniformName( id, namedBlockUniformIndices[ uidx ], maxLength, NULL, buf );
+#else
+                        //GLES3 TODO, how to get uniform name?
+#endif
                         std::string nubName( buf );
                         if( nubName.find_last_of( '[' ) != nubName.npos )
                         {

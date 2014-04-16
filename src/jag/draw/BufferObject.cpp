@@ -201,7 +201,11 @@ GLbyte* BufferObject::map( const GLenum access )
     const GLuint id( getID( contextID ) );
 
     glBindBuffer( _target, id );
+#ifndef JAG3D_USE_GLES3
     GLbyte* addr = (GLbyte*)( glMapBuffer( _target, access ) );
+#else
+    GLbyte* addr = (GLbyte*)( glMapBufferRange( _target, 0, _buffer->getSize(), access) );
+#endif
     glBindBuffer( _target, 0 );
     return( addr );
 }

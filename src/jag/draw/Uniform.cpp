@@ -394,47 +394,53 @@ void Uniform::setType( const GLenum type )
 
     _type = type;
     _isSampler = (
-        ( _type == GL_SAMPLER_1D ) ||
         ( _type == GL_SAMPLER_2D ) ||
         ( _type == GL_SAMPLER_3D ) ||
         ( _type == GL_SAMPLER_CUBE ) ||
-        ( _type == GL_SAMPLER_1D_SHADOW ) ||
         ( _type == GL_SAMPLER_2D_SHADOW ) ||
-        ( _type == GL_SAMPLER_1D_ARRAY ) ||
         ( _type == GL_SAMPLER_2D_ARRAY ) ||
-        ( _type == GL_SAMPLER_1D_ARRAY_SHADOW ) ||
         ( _type == GL_SAMPLER_2D_ARRAY_SHADOW ) ||
         ( _type == GL_SAMPLER_CUBE_SHADOW ) ||
+#ifndef JAG3D_USE_GLES3
+        ( _type == GL_SAMPLER_1D_SHADOW ) ||
+        ( _type == GL_SAMPLER_1D ) ||
+        ( _type == GL_SAMPLER_1D_ARRAY ) ||
+        ( _type == GL_SAMPLER_1D_ARRAY_SHADOW ) ||
         ( _type == GL_SAMPLER_2D_RECT ) ||
         ( _type == GL_SAMPLER_2D_RECT_SHADOW ) ||
         ( _type == GL_SAMPLER_BUFFER ) ||
         ( _type == GL_SAMPLER_2D_MULTISAMPLE ) ||
         ( _type == GL_SAMPLER_2D_MULTISAMPLE_ARRAY ) ||
-
+#endif
+                  
 #ifdef GL_VERSION_4_0
         ( _type == GL_SAMPLER_BINDING ) ||
 #endif
 
-        ( _type == GL_INT_SAMPLER_1D ) ||
         ( _type == GL_INT_SAMPLER_2D ) ||
         ( _type == GL_INT_SAMPLER_3D ) ||
         ( _type == GL_INT_SAMPLER_CUBE ) ||
-        ( _type == GL_INT_SAMPLER_1D_ARRAY ) ||
         ( _type == GL_INT_SAMPLER_2D_ARRAY ) ||
+        ( _type == GL_UNSIGNED_INT_SAMPLER_2D ) ||
+        ( _type == GL_UNSIGNED_INT_SAMPLER_3D ) ||
+        ( _type == GL_UNSIGNED_INT_SAMPLER_CUBE ) ||
+        ( _type == GL_UNSIGNED_INT_SAMPLER_2D_ARRAY )
+#ifndef JAG3D_USE_GLES3
+        ||
+        ( _type == GL_INT_SAMPLER_1D ) ||
+        ( _type == GL_INT_SAMPLER_1D_ARRAY ) ||
         ( _type == GL_INT_SAMPLER_2D_RECT ) ||
         ( _type == GL_INT_SAMPLER_BUFFER ) ||
         ( _type == GL_INT_SAMPLER_2D_MULTISAMPLE ) ||
         ( _type == GL_INT_SAMPLER_2D_MULTISAMPLE_ARRAY ) ||
         ( _type == GL_UNSIGNED_INT_SAMPLER_1D ) ||
-        ( _type == GL_UNSIGNED_INT_SAMPLER_2D ) ||
-        ( _type == GL_UNSIGNED_INT_SAMPLER_3D ) ||
-        ( _type == GL_UNSIGNED_INT_SAMPLER_CUBE ) ||
         ( _type == GL_UNSIGNED_INT_SAMPLER_1D_ARRAY ) ||
-        ( _type == GL_UNSIGNED_INT_SAMPLER_2D_ARRAY ) ||
         ( _type == GL_UNSIGNED_INT_SAMPLER_2D_RECT ) ||
         ( _type == GL_UNSIGNED_INT_SAMPLER_BUFFER ) ||
         ( _type == GL_UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE ) ||
         ( _type == GL_UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE_ARRAY )
+#endif
+
 #ifdef GL_VERSION_4_0
         ||
         ( _type == GL_SAMPLER_CUBE_MAP_ARRAY ) ||

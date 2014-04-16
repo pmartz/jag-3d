@@ -155,7 +155,9 @@ public:
         case GL_UNSIGNED_INT: bytesPerElement = sizeof( GLuint ); break;
         case GL_HALF_FLOAT: bytesPerElement = sizeof( GLhalf ); break;
         case GL_FLOAT: bytesPerElement = sizeof( GLfloat ); break;
+#ifndef JAG3D_USE_GLES3
         case GL_DOUBLE: bytesPerElement = sizeof( GLdouble ); break;
+#endif
         default:
             // TBD;
             bytesPerElement = 1;

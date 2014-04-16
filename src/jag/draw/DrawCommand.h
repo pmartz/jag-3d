@@ -795,7 +795,9 @@ public:
 
     virtual void execute( DrawInfo& drawInfo )
     {
+#ifndef JAG3D_USE_GLES3
         glMultiDrawArrays( _mode, &_firstVec[ 0 ], &_countVec[ 0 ], _primcount );
+#endif
     }
 
     virtual int getIndex( const unsigned int counter ) const
@@ -1142,7 +1144,9 @@ public:
     {
         if( _elementBuffer != NULL )
             _elementBuffer->execute( drawInfo );
+#ifndef JAG3D_USE_GLES3
         glMultiDrawElements( _mode, &_countVec[ 0 ], _type, (const GLvoid**)( &_indicesVec[ 0 ] ), _primcount );
+#endif
     }
 };
 
@@ -1278,7 +1282,9 @@ public:
     {
         if( _elementBuffer != NULL )
             _elementBuffer->execute( drawInfo );
+#ifndef JAG3D_USE_GLES3
         glDrawElementsBaseVertex( _mode, _count, _type, _indices, _baseVertex );
+#endif
     }
 };
 
@@ -1348,7 +1354,9 @@ public:
     {
         if( _elementBuffer != NULL )
             _elementBuffer->execute( drawInfo );
+#ifndef JAG3D_USE_GLES3
         glDrawRangeElementsBaseVertex( _mode, _start, _end, _count, _type, _indices, _baseVertex );
+#endif
     }
 };
 
@@ -1416,7 +1424,9 @@ public:
     {
         if( _elementBuffer != NULL )
             _elementBuffer->execute( drawInfo );
+#ifndef JAG3D_USE_GLES3
         glDrawElementsInstancedBaseVertex( _mode, _count, _type, _indices, _primcount, _baseVertex );
+#endif
     }
 };
 
@@ -1630,8 +1640,10 @@ public:
     {
         if( _elementBuffer != NULL )
             _elementBuffer->execute( drawInfo );
+#ifndef JAG3D_USE_GLES3
         glMultiDrawElementsBaseVertex( _mode, &_countVec[ 0 ], _type, (const GLvoid**)( &_indicesVec[ 0 ] ),
             _primcount, &_basevertices[ 0 ] );
+#endif
     }
 
 protected:
@@ -1687,6 +1699,7 @@ public:
 
     virtual void execute( DrawInfo& )
     {
+#ifndef JAG3D_USE_GLES3
         if( _enable )
         {
             glEnable( GL_PRIMITIVE_RESTART );
@@ -1696,6 +1709,7 @@ public:
         {
             glDisable( GL_PRIMITIVE_RESTART );
         }
+#endif
     }
 
     void setEnable( bool enable=true ) { _enable = enable; }

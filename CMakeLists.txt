@@ -26,6 +26,7 @@ set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin )
 set( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} )
 set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib )
 
+option(JAG3D_USE_GLES3 "Build with GLES 3 Support" ON)
 
 if( WIN32 AND MSVC )
     # Disable warnings
@@ -46,6 +47,25 @@ endif()
 if(UNIX)
     #SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=gnu++0x")
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+endif()
+
+if(APPLE)
+    option( JAG3D_TARGET_IOS "Build for iOS device" ON)
+    if(JAG3D_TARGET_IOS)
+        set( IOS_SDK 7.0)
+        set( IOS_MIN_SDK 7.0)
+        set( IOS_DEVROOT "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer")
+        set( IOS_SDKROOT "${IOS_DEVROOT}/SDKs/iPhoneOS${IOS_SDK}.sdk")
+
+        set( CMAKE_OSX_ARCHITECTURES "armv7;armv7s;arm64" CACHE STRING "Build architectures for iOS" FORCE)
+        set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -miphoneos-version-min=${IOS_MIN_SDK} -pipe -no-cpp-precomp" CACHE STRING "Flags used by the compiler during all build types." FORCE)
+
+        #here we set the specific iphone sdk version. We can only set either device or simulator sdk. So if you want both you currently have to have two seperate projects
+        set( CMAKE_OSX_SYSROOT "${IOS_SDKROOT}" CACHE STRING "System root for iOS" FORCE)
+        #hack, force link to opengles
+        #set( CMAKE_EXE_LINKER_FLAGS "-framework Foundation -framework OpenGLES”)
+        include( FindPkgMacros )
+    endif()
 endif()
 
 #
@@ -74,8 +94,13 @@ if( JAG3D_USE_VRJ )
 endif()
 
 #   Required dependencies:
-find_package( OpenGL REQUIRED )
-find_package( GL3 REQUIRED )
+if( JAG3D_USE_GLES3 )
+    find_package( OpenGLES3 REQUIRED )
+    #find_package( AGL, REQUIRED )
+else()
+    find_package( OpenGL REQUIRED )
+    find_package( GL3 REQUIRED )
+endif()
 find_package( Boost 1.44.0 REQUIRED ${_boostComponents} )
 include( FindPOCOHelper )
 # include( FindGGTHelper )
@@ -112,7 +137,7 @@ POCOFinder()
 #
 # Eventually, this will be included only in the src/plugins/CMakeLists.txt.
 # For now, do it here, so that the jagload test can leverage it.
-include( FindOSGHelper )
+#include( FindOSGHelper )
 
 # find the optional Directx SDK (for DirectInput game pad support).
 set( DIRECTINPUT_ROOT_DIR "" CACHE PATH "DirectInput installation directory" )
@@ -149,6 +174,12 @@ if( JAG3D_USE_GL3W )
     endif()
 else()
     set( JAG3D_USE_GL3W_DEFINITION "#undef JAG3D_USE_GL3W" )
+endif()
+
+if( JAG3D_USE_GLES3 )
+    set( JAG3D_USE_GLES3_DEFINITION "#define JAG3D_USE_GLES3 1" )
+else()
+    set( JAG3D_USE_GLES3_DEFINITION "#undef JAG3D_USE_GLES3" )
 endif()
 
 

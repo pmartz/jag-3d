@@ -88,7 +88,11 @@ void Framebuffer::execute( DrawInfo& drawInfo )
 
     // TBD need better support for this.
     if( id == 0 )
+    {
+#ifndef JAG3D_USE_GLES3
         glDrawBuffer( GL_BACK );
+#endif
+    }
     else
     {
         std::vector<GLenum> buffers;

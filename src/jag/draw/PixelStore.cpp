@@ -56,25 +56,29 @@ PixelStore::~PixelStore()
 
 void PixelStore::pack()
 {
-    glPixelStorei( GL_PACK_SWAP_BYTES, (GLint)_swapBytes );
-    glPixelStorei( GL_PACK_LSB_FIRST, (GLint)_lsbFirst );
     glPixelStorei( GL_PACK_ROW_LENGTH, _rowLength );
     glPixelStorei( GL_PACK_SKIP_ROWS, _skipRows );
     glPixelStorei( GL_PACK_SKIP_PIXELS, _skipPixels );
     glPixelStorei( GL_PACK_ALIGNMENT, _alignment );
+#ifndef JAG3D_USE_GLES3
+    glPixelStorei( GL_PACK_SWAP_BYTES, (GLint)_swapBytes );
+    glPixelStorei( GL_PACK_LSB_FIRST, (GLint)_lsbFirst );
     glPixelStorei( GL_PACK_IMAGE_HEIGHT, _imageHeight );
     glPixelStorei( GL_PACK_SKIP_IMAGES, _skipImages );
+#endif
 }
 void PixelStore::unpack()
 {
-    glPixelStorei( GL_UNPACK_SWAP_BYTES, (GLint)_swapBytes );
-    glPixelStorei( GL_UNPACK_LSB_FIRST, (GLint)_lsbFirst );
     glPixelStorei( GL_UNPACK_ROW_LENGTH, _rowLength );
     glPixelStorei( GL_UNPACK_SKIP_ROWS, _skipRows );
     glPixelStorei( GL_UNPACK_SKIP_PIXELS, _skipPixels );
     glPixelStorei( GL_UNPACK_ALIGNMENT, _alignment );
+#ifndef JAG3D_USE_GLES3
+    glPixelStorei( GL_UNPACK_SWAP_BYTES, (GLint)_swapBytes );
+    glPixelStorei( GL_UNPACK_LSB_FIRST, (GLint)_lsbFirst );
     glPixelStorei( GL_UNPACK_IMAGE_HEIGHT, _imageHeight );
     glPixelStorei( GL_UNPACK_SKIP_IMAGES, _skipImages );
+#endif
 }
 
 

@@ -153,11 +153,13 @@ void Sampler::executeTexture( const GLenum target )
         glTexParameteri( target, GL_TEXTURE_MIN_FILTER, state._minFilter );
         glTexParameteri( target, GL_TEXTURE_MAG_FILTER, state._magFilter );
 
-        glTexParameterfv( target, GL_TEXTURE_BORDER_COLOR, state._borderColor );
-
         glTexParameterf( target, GL_TEXTURE_MIN_LOD, state._minLOD );
         glTexParameterf( target, GL_TEXTURE_MAX_LOD, state._maxLOD );
+#ifndef JAG3D_USE_GLES3
         glTexParameteri( target, GL_TEXTURE_LOD_BIAS, state._lodBias );
+        
+        glTexParameterfv( target, GL_TEXTURE_BORDER_COLOR, state._borderColor );
+#endif
 
         glTexParameteri( target, GL_TEXTURE_COMPARE_MODE, state._compareMode );
         glTexParameteri( target, GL_TEXTURE_COMPARE_FUNC, state._compareFunc );

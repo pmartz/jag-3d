@@ -114,6 +114,7 @@ void Drawable::computeBound( BoundPtr& bound, const jag::draw::CommandMap& comma
             for( pointIter = vac.begin(); pointIter != vac.end(); ++pointIter )
                 bound->expand( *pointIter );
         }
+#ifndef JAG3D_USE_GLES3
         else if( vertType == IntEnum( 3, GL_DOUBLE ) )
         {
             VertexAttribContainer< gmtl::Point3d > vac( bop, verts, dcp );
@@ -121,6 +122,7 @@ void Drawable::computeBound( BoundPtr& bound, const jag::draw::CommandMap& comma
             for( pointIter = vac.begin(); pointIter != vac.end(); ++pointIter )
                 bound->expand( *pointIter );
         }
+#endif
         else
         {
             std::ostringstream ostr;

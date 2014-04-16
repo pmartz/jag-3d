@@ -43,5 +43,8 @@
 // Controlled by CMake variable JAG3D_USE_GL3W
 @JAG3D_USE_GL3W_DEFINITION@
 
+// Controlled by CMake variable JAG3D_USE_GLES3
+@JAG3D_USE_GLES3_DEFINITION@
+
 // __JAGBASE_CONFIG_H__
 #endif
