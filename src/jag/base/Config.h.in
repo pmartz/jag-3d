@@ -38,15 +38,13 @@
 #cmakedefine JAG3D_ENABLE_PROFILING
 #cmakedefine JAG3D_USE_GL3W
 #cmakedefine JAG3D_USE_GL3W_AUTOGENERATE
+#cmakedefine JAG3D_USE_GLES3
 // Controlled by CMake variable JAG3D_USE_OSG
 #cmakedefine JAG3D_USE_OPENSCENEGRAPH
 #cmakedefine JAG3D_USE_ASSIMP
 // Will be defined if optional DirectX dependency was found.
 #cmakedefine JAG3D_USE_DIRECTINPUT
 
-
-// Controlled by CMake variable JAG3D_USE_GLES3
-@JAG3D_USE_GLES3_DEFINITION@
 
 // __JAGBASE_CONFIG_H__
 #endif
