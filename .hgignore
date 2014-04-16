@@ -1,7 +1,16 @@
+syntax: glob
 bld
-bld-vs10-32
 build
 src/jag/base/Version.h
-syntax: glob
 src/jag/base/Config.h
 src/gl3w/gl3w_gen.py
+src\plugins\assimpModel\pluginSupport.h
+src\plugins\osgImage\pluginSupport.h
+src\plugins\osgModel\pluginSupport.h
+src\plugins\assimpModel\jagp-assimpModel.jagpi
+src\plugins\osgImage\jagp-osgImage.jagpi
+src\plugins\osgModel\jagp-osgModel.jagpi
+src\plugins\shader\jagp-shader.jagpi
+src\plugins\text\jagp-text.jagpi
+src\jag\draw\gl3w.c
+src\jag\draw\gl3w.h

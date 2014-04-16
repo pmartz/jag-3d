@@ -24,7 +24,7 @@ Jag3D consists of the following components:
 and retained mode rendering.
 \li \ref jagMx "jagMx": Matrix manipulation and input device utilities.
 \li \ref jagSG "jagSG": Scene graph support.
-\li \ref jagUtil "jagUtil": Optional utinities.
+\li \ref jagUtil "jagUtil": Optional utilities.
 \li \ref Plugins "Plugins": Support for a variety of data file formats.
 \li \ref Apps "Apps": JAG-based application software.
 \li \ref Examples "Examples": Examples of typical usage.
@@ -119,6 +119,7 @@ Contains a variety of optimization and effects utilities.
 Plugins provide support for loading and exporting different types of data.
 
 \li \ref PluginSupport "Plugin Interface and Utilities"
+\li \link AssimpModelRW ASSIMP-based model data support \endlink
 \li \link OSGImageRW OSG-based image data support \endlink
 \li \link OSGModelRW OSG-based model data support \endlink
 \li \link ShaderRW Text file shader source support \endlink
@@ -157,26 +158,24 @@ make tests
 
 \section ProjectRoadmap Upcoming Work and Project Notes
 
-The current release is v0.01.00, released 4 November, 2013.
+The current release is v0.01.15, released 22 March, 2014.
 
 For inclusion in v0.02.00 (date TBD):
 - Tuning to improve performance of collection and draw traversals.
   - Possible rewrite of the jagDraw::CommandMap class.
 - Source repo and namespace re-organization (this is <a href="https://code.google.com/p/jag-3d/issues/detail?id=32">issue 32</a>).
 - Features and bug fixes for GIS and CAD applications.
+- Open Asset Import model loading plugin.
 
 For inclusion in v0.03.00 (date TBD):
 - OpenGL resource management (this is <a href="https://code.google.com/p/jag-3d/issues/detail?id=3">issue 3</a>).
 - Features and bug fixes for GIS and CAD applications.
 
-Beyond v0.03.00:
-\li Open Asset Import model loading plugin.
-\li Vertex array objects and uniform blocks need to track changes. Uniform blocks,
-in particular, always copy their values into the block.
-\li See jagDraw::Uniform documentation for potential optimizations and use cases
-that Jag3D should support.
-\li Design for cache misses: avoid-cache-misses.pdf.
-\li Add software mipmap generation. Hardware support for this is unavailable in GL4cpfc.
+Beyond v0.04.00:
+- Vertex array objects and uniform blocks need to track changes. Uniform blocks, in particular, always copy their values into the block.
+- See jagDraw::Uniform documentation for potential optimizations and use cases that Jag3D should support.
+- Design for cache misses: avoid-cache-misses.pdf.
+- Add software mipmap generation. Hardware support for this is unavailable in GL4cpfc.
 
 
 \section JagBuild Building Jag3D
@@ -228,7 +227,7 @@ Jag3D has the following required dependencies:
 \li <a href=http://sourceforge.net/projects/ggt/>Generic Graphics Toolkit (GMTL)</a> svn trunk r1286 or newer.
 
 Jag3D has the following optional dependencies:
-\li <a href=http://www.openscenegraph.org/projects/osg>OpenSceneGraph (OSG)</a> v3.0.1 or newer (v3.1.3 recommended).
+\li <a href=http://www.openscenegraph.org/projects/osg>OpenSceneGraph (OSG)</a> v3.1.3 or newer.
 Must be built for GL3 compatibility.
 \li <a href=http://www.stack.nl/~dimitri/doxygen/download.html >Doxygen</a>.
 \li Microsoft DirectX SDK (for gamepad support).
@@ -240,8 +239,6 @@ following windowing toolkits:
 \li <a href=http://freeglut.sourceforge.net/>Freeglut</a> v2.8.0 or newer.
 \li <a href=http://code.google.com/p/vrjuggler/source/checkout>VRJuggler</a> git main trunk.
 \li <a href=http://qt-project.org/downloads>Qt</a> v4.8.3.
-
-Poco and Boost must be built as shared libraries / DLLs in order for Jag3D to work correctly.
 
 Instructions for building OSG for GL3 compatibility can be found in the
 OSG source tree: examples/osgsimplegl3/osgsimplegl3.cpp. Read the comment block at
@@ -256,6 +253,7 @@ The following CMake variables will probably need to be set in order to find the 
 \li BOOST_ROOT
 \li GMTL_INCLUDE_DIR
 \li Poco_ROOT
+\li POCO_STATIC Create as a BOOL and set to true, if you are using static Poco libraries.
 \li Freeglut_ROOT_PATH
 \li FREEGLUT_STATIC Create as a BOOL and set to true, if you are using static freeglut libraries.
 \li DIRECTINPUT_ROOT_DIR

@@ -19,6 +19,7 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
+#include <jag/base/Config.h>
 #include <jag/disk/PluginManager.h>
 #include <jag/disk/ReaderWriter.h>
 #include <Poco/ClassLibrary.h>
@@ -34,6 +35,8 @@
 #include <osgDB/WriteFile>
 #include <osg/Image>
 #include <osg/Version>
+
+#include "pluginSupport.h"
 
 #include <boost/any.hpp>
 #include <fstream>
@@ -52,9 +55,11 @@ using namespace jag::draw;
 */
 class OSGImageRW : public ReaderWriter
 {
+    std::string _logName;
+
 public:
     OSGImageRW()
-      : ReaderWriter( "osg-image" )
+      : _logName( "jag.disk.rw.osgImage" )
     {}
     virtual ~OSGImageRW()
     {}
@@ -62,27 +67,20 @@ public:
     virtual bool supportsExtension( const std::string& extension )
     {
         const std::string allLower( Poco::toLower( extension ) );
-        return( ( extension == "gif" ) ||
-            ( extension == "jpg" ) ||
-            ( extension == "jpeg" ) ||
-            ( extension == "tif" ) ||
-            ( extension == "tiff" ) ||
-            ( extension == "bmp" ) ||
-            ( extension == "png" ) ||
-            ( extension == "rgb" ) ||
-            ( extension == "rgba" )
-            );
+        return( osgImageExtensionSupported( allLower ) );
     }
 
     virtual ReadStatus read( const std::string& fileName, const Options* /*options*/ ) const
     {
-        JAG3D_INFO(
+        JAG3D_INFO_STATIC( _logName,
             std::string( "Using OSG v" ) + std::string( osgGetVersion() ) );
+        JAG3D_INFO_STATIC( _logName,
+            std::string( "\tosgImage configured with " ) + osgImageExtensionString() );
 
         osg::ref_ptr< osg::Image > osgImage( osgDB::readImageFile( fileName ) );
         if( osgImage == NULL )
         {
-            JAG3D_ERROR( std::string( "Can't load file " ) + fileName );
+            JAG3D_ERROR_STATIC( _logName, std::string( "Can't load file " ) + fileName );
             return( ReadStatus() );
         }
 
@@ -97,10 +95,18 @@ public:
 
     virtual bool write( const std::string& fileName, const void* data, const Options* /*options*/ ) const
     {
-        JAG3D_INFO(
+        JAG3D_INFO_STATIC( _logName,
             std::string( "Using OSG v" ) + std::string( osgGetVersion() ) );
+        JAG3D_INFO_STATIC( _logName,
+            std::string( "\tosgImage configured with " ) + osgImageExtensionString() );
 
         osg::ref_ptr< osg::Image > osgImage( convertToOsgImage( (Image*)data ) );
+        if( osgImage == NULL )
+        {
+            JAG3D_ERROR_STATIC( _logName, std::string( "Can't write file " ) + fileName );
+            return( false );
+        }
+
         return( osgDB::writeImageFile( *osgImage, fileName ) );
     }
     virtual bool write( std::ostream& oStr, const void* data, const Options* /*options*/ ) const
@@ -112,7 +118,7 @@ protected:
     ImagePtr convertFromOsgImage( osg::Image* osgImage ) const
     {
         if( osgImage == NULL )
-            return( ImagePtr( NULL ) );
+            return( ImagePtr( (Image*)NULL ) );
 
         const unsigned int size( osgImage->getTotalSizeInBytes() );
         osgImage->setAllocationMode( osg::Image::NO_DELETE );
@@ -173,7 +179,29 @@ protected:
 
     osg::Image* convertToOsgImage( Image* jagImage ) const
     {
-        return( NULL );
+        if( jagImage == NULL )
+            return( (osg::Image*)NULL );
+
+        GLint level;
+        GLenum internalFormat;
+        GLsizei w, h, d;
+        GLint border;
+        GLenum format, type;
+        unsigned char* data;
+        jagImage->get( level, internalFormat,
+            w, h, d,
+            border, format, type,
+            &data );
+
+
+        osg::ref_ptr< osg::Image > osgImage( new osg::Image() );
+        osgImage->setImage( w, h, d,
+                      (GLint) internalFormat,
+                      format, type,
+                      data,
+                      osg::Image::NO_DELETE );
+
+        return( osgImage.release() );
     }
 };
 
@@ -182,16 +210,21 @@ protected:
 
 // Register the ShaderRW class with the PluginManager.
 // This macro declares a static object initialized when the plugin is loaded.
-REGISTER_READERWRITER(
+JAG3D_REGISTER_READERWRITER(
+    osgImage,           // Plugin library name.
     new OSGImageRW(),   // Create an instance of ImageRW.
     OSGImageRW,         // Class name -- NOT a string.
-    "ReaderWriter",   // Base class name as a string.
+    "ReaderWriter",     // Base class name as a string.
     "Read and write images to disk using OSG dependency."  // Description text.
 );
 
+
+#ifndef JAG3D_STATIC
 
 // Poco ClassLibrary manifest registration. Add a POCO_EXPORT_CLASS
 // for each ReaderWriter class in the plugin.
 POCO_BEGIN_MANIFEST( ReaderWriter )
     POCO_EXPORT_CLASS( OSGImageRW )
 POCO_END_MANIFEST
+
+#endif

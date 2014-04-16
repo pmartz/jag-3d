@@ -1,7 +1,11 @@
-
-set( _osgComponents
+set( _osgComponents )
+if( ${JAG3D_USE_OSG} STREQUAL "static" )
+    set( _osgComponents osgTerrain osgFX osgVolume )
+endif()
+list( APPEND _osgComponents
     osgGA osgText osgViewer osgSim osgDB osgUtil osg OpenThreads
 )
+
 
 # Macro to force the stock FindOpenSceneGraph.cmake script to
 # search again for OSG.
@@ -15,7 +19,15 @@ macro( unFindOSG )
         unset( "${currentLib}_LIBRARY" CACHE )
         unset( "${currentLib}_LIBRARY_DEBUG" CACHE )
     endforeach() 
+    unset( "OSG_FOUND" CACHE )
 endmacro( unFindOSG )
+
+
+if( JAG3D_USE_OSG STREQUAL "none" )
+    unFindOSG()
+    return()
+endif()
+
 
 
 # What type of OSG should we look for? This is a combo box
@@ -122,7 +134,7 @@ set( CMAKE_LIBRARY_PATH
 
 set( OpenSceneGraph_DEBUG 0 )
 set( OpenSceneGraph_MARK_AS_ADVANCED 1 )
-find_package( OpenSceneGraph 2.6.1 REQUIRED COMPONENTS ${_osgComponents} )
+find_package( OpenSceneGraph 3.1.3 REQUIRED COMPONENTS ${_osgComponents} )
 if( OSG_FOUND )
     foreach( currentLibIn ${_osgComponents} )
         string( TOUPPER ${currentLibIn} currentLib )

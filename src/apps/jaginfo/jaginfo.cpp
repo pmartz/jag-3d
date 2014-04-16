@@ -127,6 +127,9 @@ void SceneGraphCountVisitor::visit( jag::sg::Node& node )
 }
 
 
+// Support for linking statically
+JAG3D_REFERENCE_PLUGIN( osgImage );
+JAG3D_REFERENCE_PLUGIN( osgModel );
 
 int main( int argc, char** argv )
 {

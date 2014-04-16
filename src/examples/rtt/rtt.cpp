@@ -57,7 +57,8 @@ public:
         _fileName( "cow.osg" ),
         _moveRate( 1. ),
         _width( 800 ),
-        _height( 600 )
+        _height( 600 ),
+        _screenshotMode( false )
     {}
     virtual ~RTTExample() {}
 
@@ -94,6 +95,7 @@ protected:
     jag::draw::FramebufferPtr _rttFBO;
     jag::draw::TexturePtr _colorBuffer;
     int _width, _height;
+    bool _screenshotMode;
 
     unsigned int _maxContexts;
 };
@@ -102,7 +104,8 @@ protected:
 DemoInterface* DemoInterface::create( bpo::options_description& desc )
 {
     desc.add_options()
-        ( "file,f", bpo::value< std::string >(), "Model to load. Default: cow.osg" );
+        ( "file,f", bpo::value< std::string >(), "Model to load. Default: cow.osg" )
+        ( "screenshot", "Render one frame and save output image to out.png." );
 
     return( new RTTExample );
 }
@@ -111,6 +114,7 @@ bool RTTExample::parseOptions( bpo::variables_map& vm )
 {
     if( vm.count( "file" ) > 0 )
         _fileName = vm[ "file" ].as< std::string >();
+    _screenshotMode = ( vm.count( "screenshot" ) > 0 );
     return( true );
 }
 
@@ -397,6 +401,14 @@ bool RTTExample::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj
 #endif
 
     glFlush();
+
+    if( _screenshotMode )
+    {
+        _colorBuffer->execute( drawInfo );
+        _colorBuffer->uploadImage();
+        jag::disk::write( "out.png", (const void*)( _colorBuffer->getImage().get() ) );
+        exit( 0 );
+    }
 
     JAG3D_ERROR_CHECK( "jagmodel display()" );
 

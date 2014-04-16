@@ -54,6 +54,18 @@ class JAGBASE_EXPORT Log
 public:
     static Log* instance();
 
+    /** \brief Perform internal initializetion.
+    \details Checks environment variables for user specified changes to the default
+    log file name, log message destination, and global/module priority, and sets
+    them in Poco's log system.
+
+    Note that this work can't be done in the Log() constructor with a static due
+    to an order of static initialization issue. internalInit() must call into
+    Poco::Logger, which itself uses a static mutex. The order of intialization of
+    Poco's static mutex and a static Log() constructor is indeterminate. Therefore,
+    this work must be done in internalInit(). */
+    void internalInit();
+
 
     /** \brief Sets the default log file name.
     \details By default, the default log file name is "jag3d.log". You can change this
@@ -130,7 +142,13 @@ public:
 protected:
     Log();
     ~Log();
-    static Log* _s_instance;
+
+    enum {
+        Uninitialized = 0,
+        Initializing = 1,
+        Initialized = 2
+    };
+    int _initState;
 
     std::string _logFileName;
 

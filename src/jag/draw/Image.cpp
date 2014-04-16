@@ -21,6 +21,9 @@
 
 #include <jag/draw/Image.h>
 #include <jag/draw/PixelStore.h>
+#include <jag/base/LogMacros.h>
+
+#include <sstream>
 
 
 namespace jag {
@@ -87,8 +90,31 @@ void Image::set( const GLint level, const GLenum internalFormat,
     _border = border;
     _format = format;
     _type = type;
-    _data = data;
+
+    if( data != NULL )
+    {
+        _data = data;
+    }
+    else
+    {
+        allocate();
+    }
 }
+void Image::allocate()
+{
+    const int numBytes( computeDataSize() );
+    switch( _allocMode )
+    {
+    case Image::USE_MALLOC_FREE:
+        _data = (unsigned char*)( malloc( numBytes ) );
+        break;
+    case Image::NO_DELETE:
+    case Image::USE_NEW_DELETE:
+        _data = new unsigned char[ numBytes ];
+        break;
+    }
+}
+
 void Image::get( GLint& level, GLenum& internalFormat,
     GLsizei& width, GLsizei& height, GLsizei& depth,
     GLint& border, GLenum& format, GLenum& type,
@@ -147,6 +173,118 @@ PixelStorePtr Image::getPixelStore()
     return( _pixelStore );
 }
 
+
+unsigned int Image::computeDataSize()
+{
+    if( _compressed )
+        return( _imageSize );
+    else
+        return( _width * _height * _depth *
+            bytesPerPixel( _format, _type ) );
+}
+unsigned int Image::bytesPerPixel( const GLenum format, const GLenum type )
+{
+    const unsigned int numComponents( componentsPerPixel( format ) );
+
+    // OpenGL 4.1 spec table 3.2
+    switch( type )
+    {
+    case GL_UNSIGNED_BYTE:
+        return( sizeof( GLubyte ) * numComponents );
+        break;
+    case GL_UNSIGNED_BYTE_3_3_2:
+    case GL_UNSIGNED_BYTE_2_3_3_REV:
+        return( sizeof( GLubyte ) );
+        break;
+    case GL_BYTE:
+        return( sizeof( GLbyte ) * numComponents );
+        break;
+    case GL_UNSIGNED_SHORT:
+        return( sizeof( GLushort ) * numComponents );
+        break;
+    case GL_UNSIGNED_SHORT_5_6_5:
+    case GL_UNSIGNED_SHORT_5_6_5_REV:
+    case GL_UNSIGNED_SHORT_4_4_4_4:
+    case GL_UNSIGNED_SHORT_4_4_4_4_REV:
+    case GL_UNSIGNED_SHORT_5_5_5_1:
+    case GL_UNSIGNED_SHORT_1_5_5_5_REV:
+        return( sizeof( GLushort ) );
+        break;
+    case GL_SHORT:
+        return( sizeof( GLshort ) * numComponents );
+        break;
+    case GL_UNSIGNED_INT:
+        return( sizeof( GLuint ) * numComponents );
+        break;
+    case GL_UNSIGNED_INT_8_8_8_8:
+    case GL_UNSIGNED_INT_8_8_8_8_REV:
+    case GL_UNSIGNED_INT_10_10_10_2:
+    case GL_UNSIGNED_INT_2_10_10_10_REV:
+    case GL_UNSIGNED_INT_24_8:
+    case GL_UNSIGNED_INT_10F_11F_11F_REV:
+    case GL_UNSIGNED_INT_5_9_9_9_REV:
+        return( sizeof( GLuint ) );
+        break;
+    case GL_INT:
+        return( sizeof( GLint ) * numComponents );
+        break;
+    case GL_HALF_FLOAT:
+        return( sizeof( GLhalf ) * numComponents );
+        break;
+    case GL_FLOAT:
+        return( sizeof( GLfloat ) * numComponents );
+        break;
+    case GL_FLOAT_32_UNSIGNED_INT_24_8_REV:
+    default:
+        {
+            std::ostringstream ostr;
+            ostr << std::hex << "0x" << type;
+            JAG3D_WARNING_STATIC( "jag.draw.image", "Unsupported image type in computePixelSize: " + ostr.str() );
+            return( sizeof( GLuint ) * numComponents );
+        }
+    }
+}
+unsigned int Image::componentsPerPixel( const GLenum format )
+{
+    // OpenGL 4.1 spec table 3.3
+    switch( format )
+    {
+    case GL_STENCIL_INDEX:
+    case GL_DEPTH_COMPONENT:
+    case GL_RED:
+    case GL_GREEN:
+    case GL_BLUE:
+    case GL_RED_INTEGER:
+    case GL_GREEN_INTEGER:
+    case GL_BLUE_INTEGER:
+        return( 1 );
+        break;
+    case GL_DEPTH_STENCIL:
+    case GL_RG:
+    case GL_RG_INTEGER:
+        return( 2 );
+        break;
+    case GL_RGB:
+    case GL_BGR:
+    case GL_RGB_INTEGER:
+    case GL_BGR_INTEGER:
+        return( 3 );
+        break;
+    case GL_RGBA:
+    case GL_BGRA:
+    case GL_RGBA_INTEGER:
+    case GL_BGRA_INTEGER:
+        return( 4 );
+        break;
+    default:
+        {
+            std::ostringstream ostr;
+            ostr << std::hex << "0x" << format;
+            JAG3D_WARNING_STATIC( "jag.draw.image", "Unsupported image format in componentsPerPixel: " + ostr.str() );
+            return( 4 );
+        }
+    }
+}
 
 
 // namespace jag::draw::

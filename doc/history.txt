@@ -5,6 +5,71 @@
 
 \section vPending Pending Release
 
+- osgImage plugin supports write() method (Export to image files).
+
+<hr>
+
+
+\section v00116 v0.01.16
+
+<small>Released 8 Apr 2014.</small>
+
+- Added Open Asset Import Library (ASSIMP) model loading plugin.
+- Allow customizable plugin preferences to prefer one plugin over another.
+This can be set programmatically with jag::disk::PluginManager::setDefaultPluginPreference()
+or at runtime with the JAG3D_PLUGIN_PREFERENCE environment variable.
+- Qt-based demos now support mouse interaction via jagMx trackball, as freeglut-based demos have already been doing.
+- Improved plugins with CMake-generated headers and .jagpi files.
+- Specify jagmodel shader files with --vs, --gs, --fs.
+- Add shaders for point rendering, data/jagmodel_pt.vert and .frag.
+
+<hr>
+
+
+\section v00115 v0.01.15
+
+<small>Released 22 Mar 2014.</small>
+
+- Support for .osg, .osgt, and .osgb file formats through static linked OSG.
+
+<hr>
+
+
+\section v00114 v0.01.14
+
+<small>Released 20 Mar 2014.</small>
+
+- Fixes for static linking.
+- Limited support for static JAG linked with static OSG.
+
+<hr>
+
+
+\section v00113 v0.01.13
+
+<small>Released 10 Mar 2014.</small>
+
+- Fix doc/doxyfile.cmake to reflect source code reorg (issue 32).
+- Changes to enable static build.
+  - If JAG is built statically, JAG3D_STATIC is defined in jag/base/Config.h.
+  - Allow linking with Boost static libs.
+  - Fixes for indeterminate order of static initialization:
+    - Init on first use for jag::base::Log.
+    - Init on first use for jag::disk::PluginManager.
+    - Plugins can not derive from jag::base::LogBase.
+  - Add JAG3D_REFERENCE_PLUGIN() macros to reference plugins at link time.
+  - Plugin rename: \b image-osg to \b osgImage.
+  - Plugin rename: \b model-osg to \b osgModel.
+
+<hr>
+
+
+\section v00112 v0.01.12
+
+<small>Released 13 Feb 2014.</small>
+
+- Fix for issue 32, specifically for VRJ demo support code.
+- Updated FindGL2.cmake to favor glcorearb.h.
 - Added a command graph to cache CommandMap accumulations.
 - Apple LLVM 5.0 (xcode 5.0) support
 - Revision history reformatted for Doxygen.

@@ -41,9 +41,9 @@ namespace base {
 /** \addtogroup jagVersion Version Utilities */
 /*@{*/
 
-#define JAG3D_MAJOR_VERSION @JAG3D_MAJOR_VERSION@
-#define JAG3D_MINOR_VERSION @JAG3D_MINOR_VERSION@
-#define JAG3D_SUB_VERSION @JAG3D_SUB_VERSION@
+#define JAG3D_MAJOR_VERSION ${JAG3D_MAJOR_VERSION}
+#define JAG3D_MINOR_VERSION ${JAG3D_MINOR_VERSION}
+#define JAG3D_SUB_VERSION ${JAG3D_SUB_VERSION}
 
 /** \brief Jag3D version number as an integer
 

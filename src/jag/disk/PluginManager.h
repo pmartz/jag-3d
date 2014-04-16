@@ -25,12 +25,13 @@
 
 #include <jag/disk/Export.h>
 #include <jag/disk/ReaderWriter.h>
-#include <jag/base/LogBase.h>
 #include <jag/base/types.h>
 
 #include <Poco/Path.h>
 #include <string>
 #include <set>
+#include <vector>
+#include <list>
 
 
 namespace jag {
@@ -41,16 +42,18 @@ namespace disk {
 */
 /**@{*/
 
+
 /** \class ReaderWriterInfo PluginManager.h <jag/disk/PluginManager.h>
 \brief A collection of information for classes exported from a plugin.
 \details Plugins create an instance of ReaderWriterInfo for each class (ReaderWriterInfo-derived class)
 exported by the plugin. The constructor automatically registers all information with the PluginManager
 singleton, using PluginManager::addReaderWriter().
-\see REGISTER_READERWRITER
+\see JAG3D_REGISTER_READERWRITER
 */
 struct JAGDISK_EXPORT ReaderWriterInfo
 {
-    ReaderWriterInfo( ReaderWriterPtr instance, const std::string& className,
+    ReaderWriterInfo( ReaderWriterPtr instance, const std::string& pluginName,
+            const std::string& className,
             const std::string& baseClassName, const std::string& description );
 
     std::string _pluginName;
@@ -60,21 +63,27 @@ struct JAGDISK_EXPORT ReaderWriterInfo
     friend bool operator<( const ReaderWriterInfo& lhs, const ReaderWriterInfo& rhs );
 };
 typedef std::vector< ReaderWriterInfo > ReaderWriterInfoVec;
+typedef std::list< ReaderWriterInfo* > ReaderWriterInfoList;
 
 bool operator<( const ReaderWriterInfo& lhs, const ReaderWriterInfo& rhs );
 
 
 /** \def REGISTER_READERWRITER
 \brief Convenience CPP macro for plugin class registration.
-\details Plugins use this macro once for every exporter class they contain.
+\details Plugins use this macro once for every exported class they contain.
 The macro declares a static instance of type ReaderWriterInfo. Static instances
 are initialized immediately following plugin (shared libraries) load, which
 causes each exported class to immediately register itself with the PluginManager.
 See PluginManager::addReaderWriter(), which is invoked by the ReaderWriterInfo
-constructor. */
-#define REGISTER_READERWRITER(_instance,_className,_baseClassName,_description) \
+constructor.
+
+For static linking, this macro defines a function jagp_<plugin>, such as jagp_shader
+or jagp_text. Client code can statically link with a plugin library using the
+JAG3D_REFERENCE_PLUGIN macro, which calls this function. */
+#define JAG3D_REGISTER_READERWRITER(_plugin,_instance,_className,_baseClassName,_description) \
+extern "C" void jagp_##_plugin( void ) {} \
 static ReaderWriterInfo staticRWRegistration_##_className( \
-    ReaderWriterPtr( _instance ), #_className, _baseClassName, _description )
+    ReaderWriterPtr( _instance ), #_plugin, #_className, _baseClassName, _description )
 
 
 
@@ -105,8 +114,19 @@ when the plugin is loaded.
 
 To create an instance of a plugin class object, applications call createOperation().
 Currently, there is no way to query the list of classes contained in a plugin, but this
-capability can be added as future work. */
-class JAGDISK_EXPORT PluginManager : protected jag::base::LogBase
+capability can be added as future work.
+
+During a read or write operation (jag/disk/ReadWrite.cpp), the PluginManager provides
+a list of loaded ReaderWriters, and each is attempted in turn to fulfill the read or
+write request. By default, the list of ReaderWriters is in an indeterminate order.
+Applications can control the order by setting a gloval plugin preference list with an
+environment variable, JAG3D_PLUGIN_PREFERENCE, which is a comma-separated list of plugin
+names (minus the \c jagp- prefix, such as "osgModel,assimpModel,osgImage,shader,text").
+Alternately, the application can set the global plugin preference list with a call to
+setDefaultPluginPreference(const jag::base::StringVec&).
+\envvar JAG3D_PLUGIN_PREFERENCE
+*/
+class JAGDISK_EXPORT PluginManager
 {
 public:
     typedef enum {
@@ -147,6 +167,14 @@ public:
     void loadConfigFiles();
 
 
+    /** \struct PluginInfo PluginManager.h <jag/disk/PluginManager.h>
+    \brief Information about a dynamic linked plugin, collected from a .jagpi file.
+    \details loadConfigFiles() creates a PluginInfo struct for each
+    .jagpi file that it finds. They are stored in the _pluginInfo vector.
+    If a plugin in this vector can support a read or write operation,
+    PluginManager loads that plugin as needed, and its contained
+    ReaderWriter-derived class instances are stored in the _rwInfo vec.
+    */
     struct PluginInfo
     {
         PluginInfo( const std::string& name=std::string( "" ) )
@@ -172,6 +200,8 @@ public:
 
     /** \brief Load all specified plugins. */
     bool loadPlugins( PluginInfoPtrVec& plugins );
+    /** \brief Load names plugins. Plugins must already be on _pluginInfo vec. */
+    bool loadPlugins( const jag::base::StringVec& plugins );
     /** \brief Load a single plugin. */
     bool loadPlugin( PluginInfo* pi );
 
@@ -179,6 +209,12 @@ public:
     PluginInfoPtrVec getPluginsForExtension( const std::string& extension );
 
 
+    /** \brief Return a list of ReaderWriters sorted by the default plugin preference.
+    \details Returns a list of loaded ReaderWriters sorted in priority order from
+    the default plugin preferences. This function loads a plugin if it appears in the
+    plugin preferences list and isn't already loaded. Initially, the default plugin
+    preference list is empty, and ReaderWriters are in an indeterminate order. Set
+    the default plugin preference list with setDefaultPluginPreference(). */
     const ReaderWriterInfoVec& getLoadedReaderWriters() const;
 
 
@@ -187,6 +223,23 @@ public:
     This function is primarily used by the ReaderWriterInfo constructor, and indirectly
     by the REFISTER_OPERATION convenience macro for registration of plugin Operations. */
     void addReaderWriter( const ReaderWriterInfo& rwInfo );
+    /** \brief Adds an ReaderWriterInfo record to the list of registered operations.
+    \details Same as addReaderWriter, but does not invoke internalInit() and therefore
+    avoids issues with indetermnate order of static initialization. */
+    void addStaticReaderWriter( const ReaderWriterInfo& rwInfo );
+
+    /* \brief Set the default plugin preference list.
+    \details By default, the plugin preference list is empty, and read/write operations
+    attempt to use ReaderWriters in an indeterminate order. This function changes that
+    default behavior so that ReaderWriters are attempted in the order specified by
+    \c plugins. This is particularly useful when more than one plugin supports the
+    same extension.
+    */
+    void setDefaultPluginPreference( const jag::base::StringVec& plugins );
+
+    /** \brief Sort the list of ReaderWriters by the list of preferred plugins.
+    */
+    static void sortReaderWriters( ReaderWriterInfoVec& rwInfo, const jag::base::StringVec& plugins );
 
     /** \brief Returns the plugin name of the most recently loaded plugin.
     \details This function is not inteded for direct application use, but is public
@@ -196,18 +249,44 @@ public:
     functions immediately prior to actually loading the plugin. When the load occurs, 
     plugin static initializers invoke addReaderWriter(), which calls getActivelyLoadingPlugin()
     and associates all newly registered plugin operations with the actively loading plugin. */
-    PluginInfo* getActivelyLoadingPlugin() { return( _activelyLoadingPlugin ); }
+    PluginInfo* getActivelyLoadingPlugin();
 
 
 protected:
     PluginManager( const int initFlags );
+    void internalInit();
+
+    enum {
+        Uninitialized = 0,
+        Initializing = 1,
+        Initialized = 2
+    };
+    int _initState;
+
+    int _initFlags;
 
     PluginInfo* _activelyLoadingPlugin;
 
     Poco::Path::StringVec _paths;
+
+    // For dynamic loading, info collected from all the .jagpi files
+    // that were found during PluginManager::loadConfigFiles().
+    // Not used by static-linked plugins.
     PluginInfoVec _pluginInfo;
 
+    // Default plugin preference. ReaderWriters from plugins in this vector
+    // are tried in priority order to fulfill read and write operations.
+    jag::base::StringVec _pluginPreference;
+
+    // For dynamic loading, list of ReaderWriter-derived class instances that
+    // have been dynamically loaded. For static-linked plugins, the list of
+    // static-linked ReaderWriters.
     ReaderWriterInfoVec _rwInfo;
+
+    // PluginManager can't use jag::base::LogBase due to indeterminate
+    // order of static initialization issue, so a separate _logName is
+    // required for use with the JAG3D_<priority>_STATIC log macros.
+    std::string _logName;
 };
 
 bool operator<( const PluginManager::PluginInfo& lhs, const PluginManager::PluginInfo& rhs );

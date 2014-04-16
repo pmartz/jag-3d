@@ -21,10 +21,10 @@
 
 
 #include <demoSupport/DemoInterface.h>
-#include <jagBase/gmtlSupport.h>
-#include <jagBase/Profile.h>
-#include <jagDraw/PlatformOpenGL.h>
-#include <jagDraw/ContextSupport.h>
+#include <jag/base/gmtlSupport.h>
+#include <jag/base/Profile.h>
+#include <jag/draw/PlatformOpenGL.h>
+#include <jag/draw/ContextSupport.h>
 
 #include <vrj/Kernel/Kernel.h>
 #include <vrj/vrjConfig.h>
@@ -104,10 +104,10 @@ void JagDemoApp::contextInit()
         dynamic_cast< vrj::opengl::DrawManager* >( getDrawManager() ) );
     const int ctx( gl_manager->getCurrentContext() );
 
-    const jagDraw::platformContextID pCtxId( static_cast<
-        const jagDraw::platformContextID >( ctx ) );
-    jagDraw::ContextSupport* cs( jagDraw::ContextSupport::instance() );
-    jagDraw::jagDrawContextID contextID( cs->registerContext( pCtxId ) );
+    const jag::draw::platformContextID pCtxId( static_cast<
+        const jag::draw::platformContextID >( ctx ) );
+    jag::draw::ContextSupport* cs( jag::draw::ContextSupport::instance() );
+    jag::draw::jagDrawContextID contextID( cs->registerContext( pCtxId ) );
 
     cs->setActiveContext( contextID );
     cs->initContext();
@@ -136,10 +136,10 @@ void JagDemoApp::draw()
 
     const int ctx( gl_manager->getCurrentContext() );
 
-    const jagDraw::platformContextID pCtxId( static_cast<
-        const jagDraw::platformContextID >( ctx ) );
-    jagDraw::ContextSupport* cs( jagDraw::ContextSupport::instance() );
-    jagDraw::jagDrawContextID contextID( cs->getJagContextID( pCtxId ) );
+    const jag::draw::platformContextID pCtxId( static_cast<
+        const jag::draw::platformContextID >( ctx ) );
+    jag::draw::ContextSupport* cs( jag::draw::ContextSupport::instance() );
+    jag::draw::jagDrawContextID contextID( cs->getJagContextID( pCtxId ) );
 
     cs->setActiveContext( contextID );
 
@@ -171,19 +171,26 @@ void JagDemoApp::draw()
 
     // VRJ does its own drawing, so we need to tell Jag that some
     // commands have been issued. I.e., we need to "dirty state".
-    jagDraw::DrawInfo& drawInfo( _di->getDrawInfo( contextID ) );
-    drawInfo._current.clear( jagDraw::Command::Program_t );
-    drawInfo._current.clear( jagDraw::Command::VertexArrayObject_t );
+    jag::draw::DrawInfo& drawInfo( _di->getDrawInfo( contextID ) );
+    drawInfo._current.clear( jag::draw::Command::Program_t );
+    drawInfo._current.clear( jag::draw::Command::VertexArrayObject_t );
 
     gmtl::Matrix44d viewd;
     gmtl::convert( viewd, project->getViewMatrix() );
     _di->frame( viewd, proj );
 
 #ifdef JAG3D_ENABLE_PROFILING
-    jagBase::ProfileManager::instance()->dumpAll();
-    jagBase::ProfileManager::instance()->reset();
+    jag::base::ProfileManager::instance()->dumpAll();
+    jag::base::ProfileManager::instance()->reset();
 #endif
 }
+
+
+// Support for linking statically
+JAG3D_REFERENCE_PLUGIN( osgImage );
+JAG3D_REFERENCE_PLUGIN( osgModel );
+JAG3D_REFERENCE_PLUGIN( shader );
+JAG3D_REFERENCE_PLUGIN( text );
 
 
 

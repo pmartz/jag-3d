@@ -45,7 +45,7 @@ DEFINE_TYPE_ARRAYS(gmtl::Matrix44d,Matrix44d);
 // (they would fail in, e.g., std::vector<bool>).
 DEFINE_TYPE_ARRAYS(unsigned char,Bool);
 DEFINE_TYPE_ARRAYS(unsigned char,UChar);
-DEFINE_TYPE_ARRAYS(unsigned int,UIhar);
+DEFINE_TYPE_ARRAYS(unsigned int,UInt);
 DEFINE_TYPE_ARRAYS(float,Float);
 DEFINE_TYPE_ARRAYS(double,Double);
 DEFINE_TYPE_ARRAYS(std::string,String);

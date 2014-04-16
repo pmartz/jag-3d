@@ -170,7 +170,7 @@ protected:
         } \
         catch( boost::bad_any_cast bac ) \
         { \
-            bac.what(); \
+            std::cerr << bac.what(); \
         } \
         if( _RESULT == NULL ) \
         { \

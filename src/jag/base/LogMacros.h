@@ -24,6 +24,7 @@
 
 
 #include <jag/base/Config.h>
+#include <jag/base/Log.h>
 #include <Poco/Logger.h>
 #include <Poco/LogStream.h>
 
@@ -165,10 +166,14 @@ JAG3D_ENABLE_LOGGING is controlled using CMake.
 #  define __JAG3D_LOG_STATIC( prio, name, msg )
 #else
 #  define __JAG3D_LOG( prio, msg ) \
-    if( _logger.prio() ) \
-        (*_logStream).prio() << ( msg ) << std::endl;
+    { \
+        jag::base::Log::instance()->internalInit(); \
+        if( _logger.prio() ) \
+            (*_logStream).prio() << ( msg ) << std::endl; \
+    }
 #  define __JAG3D_LOG_STATIC( prio, name, msg ) \
     { \
+        jag::base::Log::instance()->internalInit(); \
         Poco::Logger& logger = Poco::Logger::get( name ); \
         if( logger.prio() ) \
         { \
