@@ -1,0 +1,7 @@
+bld
+bld-vs10-32
+build
+src/jag/base/Version.h
+syntax: glob
+src/jag/base/Config.h
+src/gl3w/gl3w_gen.py
