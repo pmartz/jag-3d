@@ -27,29 +27,38 @@
 #include <jag/base/Config.h>
 
 #if defined( JAG3D_USE_GL3W )
+
+   // GL3W filles in OpenGL function points and is primarily for Windows.
 #  include <jag/draw/gl3w.h>
-#else
+
+#elif( defined( __APPLE__ ) && defined( JAG3D_USE_GLES3 ) )
+
+   // GL ES 3 on iOS build.
 #  ifndef GL_GLEXT_PROTOTYPES
 #    define GL_GLEXT_PROTOTYPES
 #  endif
-#  if defined( __APPLE__)
-#    ifndef JAG3D_USE_GLES3
-#      include<OpenGL/gl3.h>
-#    else
-#      include <OpenGLES/ES3/gl.h>
-       typedef GLfloat GLdouble;
-       typedef GLclampf GLclampd;
-#define GL_TEXTURE_BUFFER 0x8C2A
-#    endif
-#  elif defined( USE_EGL )
-#    include <EGL/egl.h>
-#    include <EGL/eglext.h>
-#    include <GLES2/gl2.h>
-#    include <GLES2/gl2ext.h>
-#  else
-#    define GL3_PROTOTYPES 1
-#    include <GL/gl3.h>
+#  include <OpenGLES/ES3/gl.h>
+   typedef GLfloat GLdouble;
+   typedef GLclampf GLclampd;
+#  define GL_TEXTURE_BUFFER 0x8C2A
+
+#elif defined( __APPLE__ )
+
+   // OSX
+#  ifndef GL_GLEXT_PROTOTYPES
+#    define GL_GLEXT_PROTOTYPES
 #  endif
+#  include<OpenGL/gl3.h>
+
+#else
+
+   // Linux, etc.
+#  ifndef GL_GLEXT_PROTOTYPES
+#    define GL_GLEXT_PROTOTYPES
+#  endif
+#  define GL3_PROTOTYPES 1
+#  include <GL/gl3.h>
+
 #endif
 
 
