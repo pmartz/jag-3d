@@ -25,7 +25,6 @@ set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin )
 set( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} )
 set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib )
 
-option(JAG3D_USE_GLES3 "Build with GLES 3 Support" ON)
 
 if( WIN32 AND MSVC )
     # Use folders in Visual Studio. This will cause warnings in VS Express,
@@ -57,20 +56,22 @@ if( UNIX )
     set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11" )
 endif()
 
-if(APPLE)
-    option( JAG3D_TARGET_IOS "Build for iOS device" ON)
-    if(JAG3D_TARGET_IOS)
-        set( IOS_SDK 7.0)
-        set( IOS_MIN_SDK 7.0)
-        set( IOS_DEVROOT "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer")
-        set( IOS_SDKROOT "${IOS_DEVROOT}/SDKs/iPhoneOS${IOS_SDK}.sdk")
+option( JAG3D_USE_GLES3 "Build with GLES 3 Support" OFF )
 
-        set( CMAKE_OSX_ARCHITECTURES "armv7;armv7s;arm64" CACHE STRING "Build architectures for iOS" FORCE)
-        set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -miphoneos-version-min=${IOS_MIN_SDK} -pipe -no-cpp-precomp" CACHE STRING "Flags used by the compiler during all build types." FORCE)
+if( APPLE )
+    option( JAG3D_TARGET_IOS "Build for iOS device" OFF )
+    if( JAG3D_TARGET_IOS )
+        set( IOS_SDK 7.0 )
+        set( IOS_MIN_SDK 7.0 )
+        set( IOS_DEVROOT "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer" )
+        set( IOS_SDKROOT "${IOS_DEVROOT}/SDKs/iPhoneOS${IOS_SDK}.sdk" )
 
-        #here we set the specific iphone sdk version. We can only set either device or simulator sdk. So if you want both you currently have to have two seperate projects
-        set( CMAKE_OSX_SYSROOT "${IOS_SDKROOT}" CACHE STRING "System root for iOS" FORCE)
-        #hack, force link to opengles
+        set( CMAKE_OSX_ARCHITECTURES "armv7;armv7s;arm64" CACHE STRING "Build architectures for iOS" FORCE )
+        set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -miphoneos-version-min=${IOS_MIN_SDK} -pipe -no-cpp-precomp" CACHE STRING "Flags used by the compiler during all build types." FORCE )
+
+        # Here we set the specific iphone sdk version. We can only set either device or simulator sdk. So if you want both you currently have to have two seperate projects
+        set( CMAKE_OSX_SYSROOT "${IOS_SDKROOT}" CACHE STRING "System root for iOS" FORCE )
+        # Hack, force link to opengles
         #set( CMAKE_EXE_LINKER_FLAGS "-framework Foundation -framework OpenGLES”)
         include( FindPkgMacros )
     endif()
@@ -131,9 +132,9 @@ else()
 endif()
 find_package( Boost 1.44.0 REQUIRED ${_boostComponents} )
 include( FindPOCOHelper )
-# include( FindGGTHelper )
 if( NOT GMTL_FOUND )
     find_package( GMTL REQUIRED )
+endif()
 #
 # Optional OSG - Used for model and image loading plugins
 if( NOT JAG3D_USE_OSG )
@@ -225,12 +226,6 @@ if( JAG3D_USE_GL3W )
     if( JAG3D_USE_GL3W_AUTOGENERATE )
         find_package( PythonInterp REQUIRED )
     endif()
-endif()
-
-if( JAG3D_USE_GLES3 )
-    set( JAG3D_USE_GLES3_DEFINITION "#define JAG3D_USE_GLES3 1" )
-else()
-    set( JAG3D_USE_GLES3_DEFINITION "#undef JAG3D_USE_GLES3" )
 endif()
 
 option( JAG3D_ENABLE_ERROR_CHECKS "If set, Jag3D enables internal OpenGL error checking." ON )

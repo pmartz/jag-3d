@@ -5,7 +5,8 @@
 
 \section vPending Pending Release
 
-- osgImage plugin supports write() method (Export to image files).
+- Build for OpenGL ES v3.0 and iOS (submitted by Thomas Hogarth).
+- osgImage plugin supports write() method (export to image files).
 
 <hr>
 
