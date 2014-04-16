@@ -19,14 +19,13 @@
  
  *************** <auto-copyright.rb END do not edit this line> ***************/
 
+#include <jag/base/Config.h>
 #include <jag/disk/PluginManager.h>
 #include <jag/disk/ReaderWriter.h>
 #include <jag/sg/Node.h>
 #include <jag/base/LogMacros.h>
 
 #include <Poco/ClassLibrary.h>
-#include <Poco/Path.h>
-#include <Poco/String.h>
 
 #include "osg2jag.h"
 
@@ -34,6 +33,8 @@
 #include <osgDB/WriteFile>
 #include <osg/Node>
 #include <osg/Version>
+
+#include "pluginSupport.h"
 
 #include <fstream>
 
@@ -47,12 +48,16 @@ using namespace jag::disk;
 
 /** \class OSGModelRW
 \brief OSG-based model data loader.
+
+\logname jag.disk.rw.osgModel
 */
 class OSGModelRW : public ReaderWriter
 {
+    std::string _logName;
+
 public:
     OSGModelRW()
-      : ReaderWriter( "osg-model" )
+      : _logName( "jag.disk.rw.osgModel" )
     {}
     virtual ~OSGModelRW()
     {}
@@ -60,21 +65,15 @@ public:
     virtual bool supportsExtension( const std::string& extension )
     {
         const std::string allLower( Poco::toLower( extension ) );
-        return( ( extension == "gif" ) ||
-            ( extension == "osg" ) ||
-            ( extension == "osgt" ) ||
-            ( extension == "ive" ) ||
-            ( extension == "osgb" ) ||
-            ( extension == "flt" ) ||
-            ( extension == "3ds" ) ||
-            ( extension == "obj" )
-            );
+        return( osgModelExtensionSupported( allLower ) );
     }
 
     virtual ReadStatus read( const std::string& fileName, const Options* options ) const
     {
-        JAG3D_INFO(
+        JAG3D_INFO_STATIC( _logName,
             std::string( "Using OSG v" ) + std::string( osgGetVersion() ) );
+        JAG3D_INFO_STATIC( _logName,
+            std::string( "\tosgModel configured with " ) + osgModelExtensionString() );
 
         osg::ref_ptr< osg::Node > osgNode( osgDB::readNodeFile( fileName ) );
         if( !( osgNode.valid() ) )
@@ -111,18 +110,23 @@ protected:
 /**@}*/
 
 
-// Register the ShaderRW class with the PluginManager.
+// Register the OSGModelRW class with the PluginManager.
 // This macro declares a static object initialized when the plugin is loaded.
-REGISTER_READERWRITER(
+JAG3D_REGISTER_READERWRITER(
+    osgModel,           // Plugin library name.
     new OSGModelRW(),   // Create an instance of ModelRW.
     OSGModelRW,         // Class name -- NOT a string.
-    "ReaderWriter",   // Base class name as a string.
+    "ReaderWriter",     // Base class name as a string.
     "Read and write models to disk using OSG dependency."  // Description text.
 );
 
+
+#ifndef JAG3D_STATIC
 
 // Poco ClassLibrary manifest registration. Add a POCO_EXPORT_CLASS
 // for each ReaderWriter class in the plugin.
 POCO_BEGIN_MANIFEST( ReaderWriter )
     POCO_EXPORT_CLASS( OSGModelRW )
 POCO_END_MANIFEST
+
+#endif

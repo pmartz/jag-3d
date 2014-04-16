@@ -145,23 +145,24 @@ foreach( lib ${_requestedComponents} )
         PATHS ${Poco_ROOT} ENV Poco_ROOT
         PATH_SUFFIXES lib lib64
     )
-    if( NOT POCO_${lib}_LIBRARY )
-        message( WARNING "Could not find Poco component library ${lib}" )
-    else()
-        list( APPEND POCO_LIBRARIES "optimized" ${POCO_${lib}_LIBRARY} )
-        mark_as_advanced( POCO_${lib}_LIBRARY )
-    endif()
-
     find_library( POCO_${lib}_LIBRARY_DEBUG
         NAMES ${lib}${_crtDebugSuffix}
             Poco${lib}${_crtDebugSuffix}
         PATHS ${Poco_ROOT} ENV Poco_ROOT
         PATH_SUFFIXES lib lib64
     )
-    if( NOT POCO_${lib}_LIBRARY_DEBUG )
-        message( WARNING "Could not find Poco component Debug library ${lib}" )
+
+    if( NOT POCO_${lib}_LIBRARY )
+        message( WARNING "Could not find Poco component library ${lib}" )
     else()
-        list( APPEND POCO_LIBRARIES "debug" ${POCO_${lib}_LIBRARY_DEBUG} )
+        if( POCO_${lib}_LIBRARY_DEBUG AND
+                ( NOT POCO_${lib}_LIBRARY_DEBUG STREQUAL POCO_${lib}_LIBRARY ) )
+            list( APPEND POCO_LIBRARIES "optimized" ${POCO_${lib}_LIBRARY} )
+            list( APPEND POCO_LIBRARIES "debug" ${POCO_${lib}_LIBRARY_DEBUG} )
+        else()
+            list( APPEND POCO_LIBRARIES ${POCO_${lib}_LIBRARY} )
+        endif()
+        mark_as_advanced( POCO_${lib}_LIBRARY )
         mark_as_advanced( POCO_${lib}_LIBRARY_DEBUG )
     endif()
 endforeach()

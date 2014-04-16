@@ -21,13 +21,17 @@
 
 #include <demoSupport/DemoInterface.h>
 #include <jag/draw/ContextSupport.h>
+#include <jag/base/types.h>
 #include <jag/base/Profile.h>
+#include <jag/mx/MxCore.h>
+#include <jag/mx/MxUtils.h>
 
 #include <demoSupport/qtGlWidget.h>
 #include <QApplication>
 #include <QGLFormat>
 #include <QCoreApplication>
 #include <QKeyEvent>
+#include <QMouseEvent>
 
 #include <boost/program_options/options_description.hpp>
 #include <boost/program_options/variables_map.hpp>
@@ -42,6 +46,11 @@ namespace bpo = boost::program_options;
 
 
 DemoInterface* di( NULL );
+
+int _lastX, _lastY;
+float _lastNX, _lastNY;
+jag::base::UIntVec _width, _height;
+static bool _leftDrag( false ), _middleDrag( false ), _rightDrag( false );
 
 
 GLWidget::GLWidget( const QGLFormat& format, QWidget* parent )
@@ -81,6 +90,15 @@ void GLWidget::paintGL()
 
 void GLWidget::resizeGL( int w, int h )
 {
+    jag::draw::ContextSupport* cs( jag::draw::ContextSupport::instance() );
+    const jag::draw::platformContextID pCtxId = reinterpret_cast< const jag::draw::platformContextID >( context() );
+    jag::draw::jagDrawContextID contextID = cs->getJagContextID( pCtxId );
+
+    cs->setActiveContext( contextID );
+
+    _width[ contextID ] = w;
+    _height[ contextID ] = h;
+
     glViewport( 0, 0, w, h );
     di->getCollectionVisitor().setViewport( 0, 0, w, h );
     di->reshape( w, h );
@@ -98,9 +116,130 @@ void GLWidget::keyPressEvent( QKeyEvent* e )
         break;
 
     default:
-        QGLWidget::keyPressEvent( e );
+        if( di->keyCommand( (int) e->key() ) )
+            update( rect() );
+        else
+            QGLWidget::keyPressEvent( e );
     }
 }
+
+
+void normXY( float& normX, float& normY, const int x, const int y, const int width, const int height )
+{
+    // Given a width x height window, convert pixel coords x and y
+    // to normalized coords in the range -1 to 1. Invert Y so that
+    // -1 is at the window bottom.
+    const float halfW( (float)width * .5f );
+    const float halfH( (float)height * .5f );
+
+    normX = ( (float)x - halfW ) / halfW;
+    normY = -( (float)y - halfH ) / halfH;
+}
+
+void GLWidget::mousePressEvent( QMouseEvent* e )
+{
+    jag::draw::ContextSupport* cs( jag::draw::ContextSupport::instance() );
+    const jag::draw::platformContextID pCtxId = reinterpret_cast< const jag::draw::platformContextID >( context() );
+    jag::draw::jagDrawContextID contextID = cs->getJagContextID( pCtxId );
+
+    const int width( _width[ contextID ] );
+    const int height( _height[ contextID ] );
+
+    normXY( _lastNX, _lastNY, e->pos().x(), e->pos().y(), width, height );
+    _lastX = e->pos().x();
+    _lastY = e->pos().y();
+
+    if( e->button() == Qt::LeftButton )
+        _leftDrag = true;
+    if( e->button() == Qt::MiddleButton )
+        _middleDrag = true;
+    if( e->button() == Qt::RightButton )
+        _rightDrag = true;
+}
+void GLWidget::mouseMoveEvent( QMouseEvent* e )
+{
+    if( !_leftDrag && !_middleDrag && !_rightDrag )
+        return;
+
+    jag::draw::ContextSupport* cs( jag::draw::ContextSupport::instance() );
+    const jag::draw::platformContextID pCtxId = reinterpret_cast< const jag::draw::platformContextID >( context() );
+    jag::draw::jagDrawContextID contextID = cs->getJagContextID( pCtxId );
+
+    jag::mx::MxCorePtr mxCore( di->getMxCore( contextID ) );
+    if( mxCore == NULL )
+        return;
+
+    const int width( _width[ contextID ] );
+    const int height( _height[ contextID ] );
+
+    float nx, ny;
+    normXY( nx, ny, e->pos().x(), e->pos().y(), width, height );
+    const float deltaX( nx - _lastNX );
+    const float deltaY( ny - _lastNY );
+
+    if( _middleDrag || ( _leftDrag && _rightDrag ) )
+    {
+        if( ( deltaX == 0.f ) && ( deltaY == 0.f ) )
+            // Then we're really not dragging...
+            return;
+
+        gmtl::Planed panPlane( -( mxCore->getDir() ), 0. );
+        gmtl::Vec3d panDelta( jag::mx::pan( mxCore.get(), panPlane, deltaX, deltaY ) );
+        mxCore->moveLiteral( -panDelta );
+    }
+    else if( _rightDrag )
+    {
+        if( deltaY == 0.f )
+            // Then we're really not dragging...
+            return;
+
+        mxCore->moveOrbit( deltaY );
+    }
+    else if( _leftDrag )
+    {
+        if( ( deltaX == 0.f ) && ( deltaY == 0.f ) )
+            // Then we're really not dragging...
+            return;
+
+        double angle;
+        gmtl::Vec3d axis;
+        jag::mx::computeTrackball( angle, axis,
+            gmtl::Vec2d( _lastNX, _lastNY ), gmtl::Vec2d( deltaX, deltaY ),
+            mxCore->getOrientationMatrix() );
+
+        mxCore->rotateOrbit( angle, axis );
+    }
+
+    _lastNX = nx;
+    _lastNY = ny;
+
+    update( rect() );
+    // Need a way to update all windows, like GLUT does:
+    /*
+    if( di->mouseMotionRedrawsAllWindows() )
+        for( unsigned int idx=0; idx<_nWin; ++idx )
+            glutPostWindowRedisplay( idx+1 );
+    else
+        glutPostRedisplay();
+        */
+}
+void GLWidget::mouseReleaseEvent( QMouseEvent* e )
+{
+    if( e->button() == Qt::LeftButton )
+        _leftDrag = false;
+    if( e->button() == Qt::MiddleButton )
+        _middleDrag = false;
+    if( e->button() == Qt::RightButton )
+        _rightDrag = false;
+}
+
+
+
+// Support for linking statically
+JAG3D_REFERENCE_PLUGIN( osgImage );
+JAG3D_REFERENCE_PLUGIN( osgModel );
+JAG3D_REFERENCE_PLUGIN( shader );
+JAG3D_REFERENCE_PLUGIN( text );
 
 
 
@@ -142,6 +281,8 @@ int main( int argc, char** argv )
     int nwin( di->defaultNumWindows() );
     if( vm.count( "nwin" ) > 0 )
         nwin = vm[ "nwin" ].as< int >();
+    _width.resize( nwin );
+    _height.resize( nwin );
 
     if( winsize.size() != 2 )
         winsize = di->defaultWinSize();

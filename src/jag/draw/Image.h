@@ -55,26 +55,54 @@ public:
     } AllocationMode;
 
     /** \brief TBD
-    \details TBD */
+    \details Default value is USE_NEW_DELETE. */
     void setAllocationMode( const AllocationMode mode ) { _allocMode = mode; }
     AllocationMode getAllocationMode() const { return( _allocMode ); }
 
     /** \brief TBD
-    \details TBD */
+    \details If \c data is NULL, this function sets all values then
+    implicitly calls allocate(). */
     void set( const GLint level, const GLenum internalFormat,
         const GLsizei width, const GLsizei height, const GLsizei depth,
         const GLint border, const GLenum format, const GLenum type,
-        unsigned char* data );
+        unsigned char* data=NULL );
+    /** \brief TBD
+    \details Allocate enough memory to hold a block of pixels sized according
+    to current member variable values. */
+    void allocate();
+
     /** \brief TBD
     \details TBD */
     void get( GLint& level, GLenum& internalFormat,
         GLsizei& width, GLsizei& height, GLsizei& depth,
         GLint& border, GLenum& format, GLenum& type,
         unsigned char** data );
-
-    void getDims(GLsizei& width, GLsizei& height) {
+    /** \brief TBD
+    \details TBD */
+    GLenum getInternalFormat() const { return( _internalFormat ); }
+    /** \brief TBD
+    \details TBD */
+    GLenum getFormat() const { return( _format ); }
+    /** \brief TBD
+    \details TBD */
+    GLenum getType() const { return( _type ); }
+    /** \brief TBD
+    \details TBD */
+    unsigned char* getData() const { return( _data ); }
+    /** \brief TBD
+    \details TBD */
+    void getDims( GLsizei& width, GLsizei& height )
+    {
         width = _width;
         height = _height;
+    }
+    /** \brief TBD
+    \details TBD */
+    void getDims( GLsizei& width, GLsizei& height, GLsizei& depth )
+    {
+        width = _width;
+        height = _height;
+        depth = _depth;
     }
 
     /** \brief TBD
@@ -100,6 +128,17 @@ public:
     /** \brief TBD
     \details TBD */
     PixelStorePtr getPixelStore();
+
+
+    /** \brief TBD
+    \details TBD */
+    unsigned int computeDataSize();
+    /** \brief TBD
+    \details TBD */
+    static unsigned int bytesPerPixel( const GLenum format, const GLenum type );
+    /** \brief TBD
+    \details TBD */
+    static unsigned int componentsPerPixel( const GLenum format );
 
 protected:
     GLint _level;

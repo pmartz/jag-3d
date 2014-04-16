@@ -54,12 +54,15 @@ public:
     JagModel()
       : DemoInterface( "jag.ex.jagmodel" ),
         _fileName( "cow.osg" ),
+        _vertName( "jagmodel.vert" ),
+        _geomName( "" ),
+        _fragName( "jagmodel.frag" ),
         _drawBound( false ),
         _moveRate( 1. )
     {}
     virtual ~JagModel() {}
 
-    virtual bool parseOptions( boost::program_options::variables_map& vm );
+    virtual bool parseOptions( bpo::variables_map& vm );
 
     virtual bool startup( const unsigned int numContexts );
     virtual bool init();
@@ -84,6 +87,8 @@ protected:
 
     jag::sg::NodePtr _root;
 
+    std::string _vertName, _geomName, _fragName;
+
     bool _drawBound;
     jag::draw::ProgramPtr _boundProgram;
 
@@ -95,7 +100,10 @@ DemoInterface* DemoInterface::create( bpo::options_description& desc )
 {
     desc.add_options()
         ( "bound", "Render draw graph Node bounds." )
-        ( "file,f", bpo::value< std::string >(), "Model to load. Default: cow.osg" );
+        ( "file,f", bpo::value< std::string >(), "Model to load. Default: cow.osg" )
+        ( "vs", bpo::value< std::string >(), "Specify a vertex shader. Default is jagmodel.vert." )
+        ( "gs", bpo::value< std::string >(), "Specify a geometry shader." )
+        ( "fs", bpo::value< std::string >(), "Specify a fragment shader. Default is jagmodel.frag." );
 
     return( new JagModel );
 }
@@ -107,6 +115,13 @@ bool JagModel::parseOptions( bpo::variables_map& vm )
 
     _drawBound = ( vm.count( "bound" ) > 0 );
 
+    if( vm.count( "vs" ) > 0 )
+        _vertName = vm[ "vs" ].as< std::string >();
+    if( vm.count( "gs" ) > 0 )
+        _geomName = vm[ "gs" ].as< std::string >();
+    if( vm.count( "fs" ) > 0 )
+        _fragName = vm[ "fs" ].as< std::string >();
+
     return( true );
 }
 
@@ -114,7 +129,10 @@ bool JagModel::startup( const unsigned int numContexts )
 {
     DemoInterface::startup( numContexts );
 
-    JAG3D_INFO_STATIC( _logName, _fileName );
+    JAG3D_INFO_STATIC( _logName, "File name: " + _fileName );
+    JAG3D_INFO_STATIC( _logName, "Vert shader: " + _vertName );
+    JAG3D_INFO_STATIC( _logName, "Geom shader: " + _geomName );
+    JAG3D_INFO_STATIC( _logName, "Frag shader: " + _fragName );
 
     if( _fileName.empty() )
     {
@@ -147,13 +165,19 @@ bool JagModel::startup( const unsigned int numContexts )
     jag::util::BufferAggregationVisitor bav( _root );
 
 
-    jag::draw::ShaderPtr vs( DemoInterface::readShaderUtil( "jagmodel.vert" ) );
-    jag::draw::ShaderPtr fs( DemoInterface::readShaderUtil( "jagmodel.frag" ) );
+    jag::draw::ShaderPtr vs( DemoInterface::readShaderUtil( _vertName ) );
+    jag::draw::ShaderPtr fs( DemoInterface::readShaderUtil( _fragName ) );
+    jag::draw::ShaderPtr gs( (jag::draw::Shader*) NULL );
+    if( !( _geomName.empty() ) )
+        gs = DemoInterface::readShaderUtil( _geomName );
+
 
     jag::draw::ProgramPtr prog;
     prog = jag::draw::ProgramPtr( new jag::draw::Program );
     prog->attachShader( vs );
     prog->attachShader( fs );
+    if( gs != NULL )
+        prog->attachShader( gs );
 
     jag::draw::CommandMapPtr commands( _root->getOrCreateCommandMap() );
     commands->insert( prog );
@@ -368,4 +392,7 @@ Command line options:
 \li --no-ms Disable multisampling
 \li --file,-f Model to load.
 \li --bound Rendering draw graph Node bound outlines.
+\li --vs Specify a vertex shader.
+\li --gs Specify a gwomwtry shader.
+\li --fs Specify a fragment shader.
 */

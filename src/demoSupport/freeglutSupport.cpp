@@ -21,6 +21,7 @@
 
 #include <demoSupport/DemoInterface.h>
 #include <jag/draw/ContextSupport.h>
+#include <jag/base/types.h>
 #include <jag/base/Profile.h>
 #include <jag/mx/MxCore.h>
 #include <jag/mx/MxUtils.h>
@@ -48,8 +49,7 @@ DemoInterface* di( NULL );
 
 int _lastX, _lastY;
 float _lastNX, _lastNY;
-typedef std::vector< int > IntVec;
-IntVec _width, _height;
+jag::base::UIntVec _width, _height;
 static bool _leftDrag( false ), _middleDrag( false ), _rightDrag( false );
 unsigned int _nWin;
 
@@ -236,6 +236,14 @@ void motion( int x, int y )
     else
         glutPostRedisplay();
 }
+
+
+// Support for linking statically
+JAG3D_REFERENCE_PLUGIN( osgImage );
+JAG3D_REFERENCE_PLUGIN( osgModel );
+JAG3D_REFERENCE_PLUGIN( shader );
+JAG3D_REFERENCE_PLUGIN( text );
+
 
 
 int main( int argc, char* argv[] )

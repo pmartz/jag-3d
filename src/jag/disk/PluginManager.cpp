@@ -44,18 +44,31 @@ namespace jag {
 namespace disk {
 
 
-ReaderWriterInfo::ReaderWriterInfo( ReaderWriterPtr instance, const std::string& className,
+ReaderWriterInfo::ReaderWriterInfo( ReaderWriterPtr instance, const std::string& pluginName,
+            const std::string& className,
             const std::string& baseClassName, const std::string& description )
-  : _className( className ),
+  : _pluginName( pluginName ),
+    _className( className ),
     _baseClassName( baseClassName ),
     _description( description ),
     _rwInstance( instance )
 {
+#ifdef JAG3D_STATIC
+
+    // Use special method for adding static ReaderWriters so that
+    // we don't invoke PluginManager::internalInit() and create issues
+    // with indeterminate order of static initialization.
+    PluginManager::instance()->addStaticReaderWriter( *this );
+
+#else
+
     PluginManager::PluginInfo* pi( PluginManager::instance()->getActivelyLoadingPlugin() );
     _pluginName = pi->_name;
     pi->_readerWriters.push_back( instance );
 
     PluginManager::instance()->addReaderWriter( *this );
+
+#endif
 }
 
 bool operator<( const ReaderWriterInfo& lhs, const ReaderWriterInfo& rhs )
@@ -91,22 +104,35 @@ PluginManager* PluginManager::instance( const int initFlags )
 }
 
 PluginManager::PluginManager( const int initFlags )
-  : LogBase( "jag.disk.plugmgr" ),
-    _activelyLoadingPlugin( NULL )
+  : _initState( Uninitialized ),
+    _initFlags( initFlags ),
+    _activelyLoadingPlugin( NULL ),
+    _logName( "jag.disk.plugmgr" )
 {
-    if( initFlags != 0 )
+}
+PluginManager::~PluginManager()
+{
+}
+
+void PluginManager::internalInit()
+{
+    if( _initState != Uninitialized )
+        return;
+    _initState = Initializing;
+
+    if( _initFlags != 0 )
     {
-        JAG3D_TRACE( "Constructor: Plugin search path includes: " );
+        JAG3D_TRACE_STATIC( _logName, "Constructor: Plugin search path includes: " );
     }
 
-    if( ( initFlags & USE_CURRENT_DIRECTORY ) != 0 )
+    if( ( _initFlags & USE_CURRENT_DIRECTORY ) != 0 )
     {
-        JAG3D_TRACE( "\tCurrent directory" );
+        JAG3D_TRACE_STATIC( _logName, "\tCurrent directory" );
         addPath( Poco::Path::current(), false );
     }
-    if( ( initFlags & USE_JAG3D_PLUGIN_PATH_ENV_VAR ) != 0 )
+    if( ( _initFlags & USE_JAG3D_PLUGIN_PATH_ENV_VAR ) != 0 )
     {
-        JAG3D_TRACE( "\tJAG3D_PLUGIN_PATH env var" );
+        JAG3D_TRACE_STATIC( _logName, "\tJAG3D_PLUGIN_PATH env var" );
         std::string paths;
         try {
             paths = Poco::Environment::get( "JAG3D_PLUGIN_PATH" );
@@ -114,9 +140,9 @@ PluginManager::PluginManager( const int initFlags )
         if( !paths.empty() )
             addPaths( paths, false );
     }
-    if( ( initFlags & USE_SYSTEM_PATH ) != 0 )
+    if( ( _initFlags & USE_SYSTEM_PATH ) != 0 )
     {
-        JAG3D_TRACE( "\tPATH env var" );
+        JAG3D_TRACE_STATIC( _logName, "\tPATH env var" );
         std::string paths;
         try {
             paths = Poco::Environment::get( "PATH" );
@@ -124,9 +150,9 @@ PluginManager::PluginManager( const int initFlags )
         if( !paths.empty() )
             addPaths( paths, false );
     }
-    if( ( initFlags & USE_LD_LIBRARY_PATH ) != 0 )
+    if( ( _initFlags & USE_LD_LIBRARY_PATH ) != 0 )
     {
-        JAG3D_TRACE( "\tLD_LIBRARY_PATH env var" );
+        JAG3D_TRACE_STATIC( _logName, "\tLD_LIBRARY_PATH env var" );
         std::string paths;
         try {
             paths = Poco::Environment::get( "LD_LIBRARY_PATH" );
@@ -135,15 +161,54 @@ PluginManager::PluginManager( const int initFlags )
             addPaths( paths, false );
     }
 
+    if( !( _rwInfo.empty() ) )
+    {
+        JAG3D_INFO_STATIC( _logName, "internalInit(): Already loaded (static):" );
+        BOOST_FOREACH( const ReaderWriterInfo& rw, _rwInfo )
+        {
+            JAG3D_INFO_STATIC( _logName, "\t" + rw._className + ", " + rw._description );
+        }
+    }
+
     if( !_paths.empty() )
         loadConfigFiles();
-}
-PluginManager::~PluginManager()
-{
+
+    // Check for environment variable to specify the default plugin priority list.
+    {
+        std::string priorities;
+        try {
+            priorities = Poco::Environment::get( "JAG3D_PLUGIN_PREFERENCE" );
+        } catch (...) {}
+
+        jag::base::StringVec priorityVec;
+        while( !priorities.empty() )
+        {
+            // A comma-separated list of plugin names.
+            size_t commaPos( priorities.find_first_of( ',' ) );
+            std::string pluginName;
+            if( commaPos != std::string::npos )
+            {
+                pluginName = priorities.substr( 0, commaPos );
+                priorities = priorities.substr( commaPos+1 );
+            }
+            else
+            {
+                pluginName = priorities;
+                priorities = "";
+            }
+            priorityVec.push_back( pluginName );
+        }
+        if( !( priorityVec.empty() ) )
+            setDefaultPluginPreference( priorityVec );
+    }
+
+    _initState = Initialized;
 }
 
 void PluginManager::addPath( const std::string& path, const bool loadConfigs )
 {
+    internalInit();
+
     _paths.push_back( path );
     if( loadConfigs )
         loadConfigFiles();
@@ -152,6 +217,8 @@ void PluginManager::addPaths( const std::string& paths, const bool loadConfigs )
 {
     if( paths.empty() )
         return;
+
+    internalInit();
 
     const char sep( Poco::Path::pathSeparator() );
     std::string::size_type start( 0 ), end( paths.find( sep ) );
@@ -170,12 +237,16 @@ void PluginManager::addPaths( const std::string& paths, const bool loadConfigs )
 }
 void PluginManager::clearPaths()
 {
+    internalInit();
+
     _paths.clear();
 }
 
 
 bool PluginManager::loadPlugins( PluginInfoPtrVec& plugins )
 {
+    internalInit();
+
     BOOST_FOREACH( PluginInfo* pi, plugins )
     {
         if( pi->_loaded )
@@ -188,9 +259,37 @@ bool PluginManager::loadPlugins( PluginInfoPtrVec& plugins )
 
     return( true );
 }
+bool PluginManager::loadPlugins( const jag::base::StringVec& plugins )
+{
+    internalInit();
 
+    BOOST_FOREACH( const std::string& pluginName, plugins )
+    {
+        BOOST_FOREACH( PluginInfo& pi, _pluginInfo )
+        {
+            // Find the PluginInfo corresponding to the named plugin.
+            if( pi._name != pluginName )
+                continue;
+
+            // If its already loaded, skip it and proceed to next one.
+            if( pi._loaded )
+                break;
+
+            JAG3D_TRACE_STATIC( _logName, "\tLoading new plugin: " + pi._name );
+            if( !( loadPlugin( &pi ) ) )
+                // Abort.
+                return( false );
+
+            // Break out of PluginInfo look and go to next pluginName.
+            break;
+        }
+    }
+    return( true );
+}
 bool PluginManager::loadPlugin( PluginInfo* pi )
 {
+    internalInit();
+
     _activelyLoadingPlugin = pi;
 
     const Poco::Path& lib( pi->_path );
@@ -200,12 +299,12 @@ bool PluginManager::loadPlugin( PluginInfo* pi )
     try {
         loader.loadLibrary( lib.toString() );
     } catch( Poco::LibraryLoadException lle ) {
-        JAG3D_ERROR( "Can't load \"" + lib.toString() + "\":" );
-        JAG3D_ERROR( "\tCaught Poco::LibraryLoadException." );
-        JAG3D_ERROR( "\tMessage: " + lle.message() );
+        JAG3D_ERROR_STATIC( _logName, "Can't load \"" + lib.toString() + "\":" );
+        JAG3D_ERROR_STATIC( _logName, "\tCaught Poco::LibraryLoadException." );
+        JAG3D_ERROR_STATIC( _logName, "\tMessage: " + lle.message() );
         return( false );
     } catch( ... ) {
-        JAG3D_ERROR( "Can't load \"" + lib.toString() + "\": unknown exception." );
+        JAG3D_ERROR_STATIC( _logName, "Can't load \"" + lib.toString() + "\": unknown exception." );
         return( false );
     }
 
@@ -215,6 +314,8 @@ bool PluginManager::loadPlugin( PluginInfo* pi )
 
 PluginManager::PluginInfoPtrVec PluginManager::getPluginsForExtension( const std::string& extension )
 {
+    internalInit();
+
     PluginInfoPtrVec plugins;
 
     BOOST_FOREACH( PluginInfo& pi, _pluginInfo )
@@ -232,11 +333,20 @@ PluginManager::PluginInfoPtrVec PluginManager::getPluginsForExtension( const std
 
 const ReaderWriterInfoVec& PluginManager::getLoadedReaderWriters() const
 {
+    PluginManager* nonConstThis( const_cast< PluginManager* >( this ) );
+    nonConstThis->internalInit();
+
     return( _rwInfo );
 }
 
 
 void PluginManager::addReaderWriter( const ReaderWriterInfo& rwInfo )
+{
+    internalInit();
+
+    _rwInfo.push_back( rwInfo );
+}
+void PluginManager::addStaticReaderWriter( const ReaderWriterInfo& rwInfo )
 {
     _rwInfo.push_back( rwInfo );
 }
@@ -244,6 +354,8 @@ void PluginManager::addReaderWriter( const ReaderWriterInfo& rwInfo )
 
 void PluginManager::loadConfigFiles()
 {
+    internalInit();
+
     typedef std::set< std::string > StringSet;
 
     _pluginInfo.clear();
@@ -260,7 +372,7 @@ void PluginManager::loadConfigFiles()
         Poco::Glob::glob( path, stringSet, Poco::Glob::GLOB_DOT_SPECIAL );
         BOOST_FOREACH( StringSet::value_type jagpiFileName, stringSet )
         {
-            JAG3D_DEBUG( "Found plugin info file: " + jagpiFileName );
+            JAG3D_DEBUG_STATIC( _logName, "Found plugin info file: " + jagpiFileName );
 
             std::string extensions;
             Poco::AutoPtr< IniFileConfiguration > conf( new IniFileConfiguration( jagpiFileName ) );
@@ -272,9 +384,25 @@ void PluginManager::loadConfigFiles()
             }
             catch( ... )
             {
-                JAG3D_WARNING( "\tNot one of our .jagpi files, or badly formed .jagpi file." );
+                JAG3D_WARNING_STATIC( _logName, "\tNot one of our .jagpi files, or badly formed .jagpi file." );
                 continue;
             }
+
+            // Don't load plugins that have already been loaded.
+            // This could happen 
+            bool skipPlugin( false );
+            BOOST_FOREACH( const ReaderWriterInfo& rwInfo, _rwInfo )
+            {
+                if( rwInfo._pluginName == pi._name )
+                {
+                    // Plugin is already loaded.
+                    JAG3D_INFO_STATIC( _logName, "\tPlugin " + pi._name + " already loaded." );
+                    skipPlugin = true;
+                    break;
+                }
+            }
+            if( skipPlugin )
+                continue;
 
             // Parse the extensions string into a vector of individual strings.
             while( !( extensions.empty() ) )
@@ -313,11 +441,74 @@ void PluginManager::loadConfigFiles()
 
             _pluginInfo.push_back( pi );
 
-            JAG3D_DEBUG( "\tLocation: " + pi._path.toString() );
-            JAG3D_DEBUG( "\tPlugin name: " + pi._name );
-            JAG3D_DEBUG( "\tPlugin desc: " + pi._description );
+            JAG3D_DEBUG_STATIC( _logName, "\tLocation: " + pi._path.toString() );
+            JAG3D_DEBUG_STATIC( _logName, "\tPlugin name: " + pi._name );
+            JAG3D_DEBUG_STATIC( _logName, "\tPlugin desc: " + pi._description );
         }
     }
+}
+
+void PluginManager::sortReaderWriters( ReaderWriterInfoVec& rwInfo, const jag::base::StringVec& plugins )
+{
+    // Copy the ReaderWriters into a vector, then make a list
+    // of the ReaderWriter addresses into that vector. We will delete
+    // entries from the list during the sort.
+    ReaderWriterInfoVec origRW( rwInfo );
+    ReaderWriterInfoList rwList;
+    for( unsigned int idx=0; idx < origRW.size(); ++idx )
+        rwList.push_back( &( origRW[ idx ] ) );
+
+    // Clear wrInfo. We'll put sorted entries into this vector.
+    rwInfo.clear();
+
+    BOOST_FOREACH( const std::string& pluginName, plugins )
+    {
+        // Find each ReaderWriters from the plugin with name 'pluginName'.
+        // Pull it off of the rwList and stick it into rwInfo.
+        // Load it, if necessary.
+        ReaderWriterInfoList::iterator itr;
+        for( itr = rwList.begin(); itr != rwList.end(); )
+        {
+            if( (*itr)->_pluginName == pluginName )
+            {
+                rwInfo.push_back( **itr );
+                itr = rwList.erase( itr );
+            }
+            else
+                ++itr;
+        }
+    }
+
+    // Add any ReaderWriters remaining on rwList to
+    // the twInfo vector.
+    ReaderWriterInfoList::iterator itr;
+    for( itr = rwList.begin(); itr != rwList.end(); ++itr )
+        rwInfo.push_back( **itr );
+}
+void PluginManager::setDefaultPluginPreference( const jag::base::StringVec& plugins )
+{
+    if( plugins.empty() )
+        return;
+
+    internalInit();
+
+    JAG3D_INFO_STATIC( _logName, "Setting plugin preferences:" );
+    BOOST_FOREACH( const std::string& name, plugins )
+    {
+        JAG3D_INFO_STATIC( _logName, "\t" + name );
+    }
+
+    loadPlugins( plugins );
+    sortReaderWriters( _rwInfo, plugins );
+
+    // TBD We probably don't even need to store this.
+    _pluginPreference = plugins;
+}
+
+PluginManager::PluginInfo* PluginManager::getActivelyLoadingPlugin()
+{
+    internalInit();
+    return( _activelyLoadingPlugin );
 }
 
 

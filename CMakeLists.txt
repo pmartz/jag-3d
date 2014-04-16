@@ -1,27 +1,26 @@
+#
+# Jag3D top-level CMakeLists.txt
+# http://jag-3d.googlecode.com
+#
+
 cmake_minimum_required( VERSION 2.8.5 )
 project( Jag3D )
 
-macro( zeroPad _input _output )
-    if( ${${_input}} LESS 10 )
-        set( ${_output} "0${${_input}}" )
-    else()
-        set( ${_output} "${${_input}}" )
-    endif()
-endmacro()
+# Define project-specific macros.
+set( CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/CMakeModules ${CMAKE_MODULE_PATH} )
+include( CMakeMacros )
 
+
+# Define JAG version. Used to configure_file jag/base/Version.h.
 set( JAG3D_MAJOR_VERSION 0 )
 set( JAG3D_MINOR_VERSION 1 )
-set( JAG3D_SUB_VERSION 11 )
-zeroPad( JAG3D_MINOR_VERSION __minorPad )
-zeroPad( JAG3D_SUB_VERSION __patchPad )
+set( JAG3D_SUB_VERSION 16 )
+_zeroPad( JAG3D_MINOR_VERSION __minorPad )
+_zeroPad( JAG3D_SUB_VERSION __patchPad )
 set( JAG3D_VERSION ${JAG3D_MAJOR_VERSION}.${__minorPad}.${__patchPad} )
 
 
-set( CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/CMakeModules;${CMAKE_MODULE_PATH}" )
-
-set_property( GLOBAL PROPERTY USE_FOLDERS ON )
-
-
+# Installation directories
 set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin )
 set( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} )
 set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib )
@@ -29,7 +28,11 @@ set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib )
 option(JAG3D_USE_GLES3 "Build with GLES 3 Support" ON)
 
 if( WIN32 AND MSVC )
-    # Disable warnings
+    # Use folders in Visual Studio. This will cause warnings in VS Express,
+    # but there is no way to differentiate between VS SKUs in CMake.
+    set_property( GLOBAL PROPERTY USE_FOLDERS ON )
+
+    # Global warning disable.
     # C4251: <membervar> : class <classX> needs to have dll-interface to be used by clients of class <classY>
     # C4275: non dll-interface class <classX> used as base for dll-interface class <classY>
     foreach( warning 4251 4275 )
@@ -42,11 +45,16 @@ if( WIN32 AND MSVC )
     if( JAG3D_WIN32_USE_MP )
         set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP" )
     endif()
+
+    # Common debug postfix for Windows.
+    set( CMAKE_DEBUG_POSTFIX d )
 endif()
 
-if(UNIX)
-    #SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=gnu++0x")
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+if( UNIX )
+    #set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=gnu++0x" )
+
+    # Turn on C++ 2011 support.
+    set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11" )
 endif()
 
 if(APPLE)
@@ -70,19 +78,37 @@ endif()
 
 #
 # Dependencies
-
-set( _boostComponents )
-list( APPEND _boostComponents thread )
-list( APPEND _boostComponents program_options )
-list( APPEND _boostComponents date_time )
-list( APPEND _boostComponents chrono )
-list( APPEND _boostComponents system )
+#
 
 #
-#   At least one windowing API is required for demos/tests/examples:
+# Required dependencies:
+#   OpenGL
+find_package( OpenGL REQUIRED )
+#   GL3 header file
+find_package( GL3 REQUIRED )
+#   Boost
+set( _boostComponents thread program_options date_time chrono system )
+find_package( Boost 1.44.0 REQUIRED ${_boostComponents} )
+#   Poco
+include( FindPOCOHelper )
+POCOMenuSetup()
+POCOFinder()
+if( APPLE )
+    find_library(COREFOUNDATION_LIBRARY CoreFoundation)
+    mark_as_advanced(COREFOUNDATION_LIBRARY)
+endif()
+#   GMTL / GGT
+if( NOT GMTL_FOUND )
+    find_package( GMTL REQUIRED )
+endif()
+
+#
+#   Window system - At least one is required for demos/tests/examples:
 option( JAG3D_USE_FREEGLUT "If set and freeglut is found, Jag3D builds windowed executables with freeglut." ON )
 if( JAG3D_USE_FREEGLUT )
     include( FindFreeglutHelper )
+    FreeglutMenuSetup()
+    FreeglutFinder()
 endif()
 option( JAG3D_USE_QT "If set and Qt is found, Jag3D builds windowed executables with Qt." ON )
 if( JAG3D_USE_QT )
@@ -92,6 +118,8 @@ option( JAG3D_USE_VRJ "If set and VR Juggler is found, Jag3D builds windowed exe
 if( JAG3D_USE_VRJ )
     find_package( VRJuggler-OpenGL 3.0 )
 endif()
+#   Append window system name suffix to executables?
+option( JAG3D_ENABLE_WINDOW_SYSTEM_SUFFIXES "If enabled, executable names are suffices with the window system (-fg, -qt, or -vrj)" on )
 
 #   Required dependencies:
 if( JAG3D_USE_GLES3 )
@@ -106,140 +134,55 @@ include( FindPOCOHelper )
 # include( FindGGTHelper )
 if( NOT GMTL_FOUND )
     find_package( GMTL REQUIRED )
+#
+# Optional OSG - Used for model and image loading plugins
+if( NOT JAG3D_USE_OSG )
+    # By default, use dynamic-linked OSG. Set to 'none' to disable all use of OSG.
+    set( JAG3D_USE_OSG "dynamic" CACHE STRING "Set to 'dynamic' or 'static' for OSG-based plugins, or set to 'none' to not build OSG-based plugins." )
 endif()
+#   Pulldown menu for cmake-gui.
+set_property( CACHE JAG3D_USE_OSG PROPERTY STRINGS "dynamic" "static" "none" )
+#   Must be at top level for static links.
 
-if(APPLE)
-    find_library(COREFOUNDATION_LIBRARY CoreFoundation)
-    mark_as_advanced(COREFOUNDATION_LIBRARY)
-endif(APPLE)
+include( FindOSGHelper )
 
-
-if( JAG3D_USE_FREEGLUT )
-    FreeglutMenuSetup()
+set( JAG3D_USE_OPENSCENEGRAPH )
+if( NOT JAG3D_USE_OSG STREQUAL "none" )
+    # For jag/base/Config.h
+    set( JAG3D_USE_OPENSCENEGRAPH TRUE )
 endif()
-# if( JAG3D_USE_VRJ )
-#     CppDOMMenuSetup()
-#     VrjMenuSetup()
-# endif()
-# GGTMenuSetup()
-POCOMenuSetup()
-
-if( JAG3D_USE_FREEGLUT )
-    FreeglutFinder()
+if( OSG_FOUND AND ( JAG3D_USE_OSG STREQUAL "static" ) )
+    # Controls how OSG header files define exports.
+    add_definitions( -DOSG_LIBRARY_STATIC )
 endif()
-# if( JAG3D_USE_VRJ )
-#     CppDOMFinder()
-#     VrjFinder()
-# endif()
-# GGTFinder()
-POCOFinder()
+#   Set defaults for OSG support in osgModel and osgImage loader.
+set( JAG3D_OSGIMAGE_PLUGIN_SUPPORT "bmp;gif;jpg;jpeg;png;rgb;rgba;tga;tif;tiff" CACHE STRING "List of osgImage plugin supported extensions" )
+set( JAG3D_OSGMODEL_PLUGIN_SUPPORT "3ds;flt;obj;osg;ive;osgt;osgb;ply" CACHE STRING "List of osgModel plugin supported extensions" )
 
 #
-# Eventually, this will be included only in the src/plugins/CMakeLists.txt.
-# For now, do it here, so that the jagload test can leverage it.
-#include( FindOSGHelper )
+# Optional ASSIMP - used for model loading plugin.
+option( JAG3D_USE_ASSIMP "If set, build the ASSIMP-based model loading plugin." ON )
+if( JAG3D_USE_ASSIMP )
+    find_package( ASSIMP REQUIRED )
+endif()
+set( JAG3D_ASSIMPMODEL_PLUGIN_SUPPORT
+    "3d;3ds;ac;ase;blend;dae;dxf;irrmesh;lwo;lxo;m3;md3;md5;mdl;ms3d;obj;off;ply;q3d;scn;smd;stl;terx;xgl;xml"
+    CACHE STRING "List of osgImage plugin supported extensions" )
 
-# find the optional Directx SDK (for DirectInput game pad support).
+#
+# Optional Directx SDK - for DirectInput game pad support.
 set( DIRECTINPUT_ROOT_DIR "" CACHE PATH "DirectInput installation directory" )
 option( DIRECTINPUT_ARCH_x64 "Select for 64-bit target architectures, unselect for 32-bit." ON )
 find_package( DirectInput )
-
+set( JAG3D_USE_DIRECTINPUT )
 if( DIRECTINPUT_FOUND )
+    set( JAG3D_USE_DIRECTINPUT TRUE )
     add_definitions( -DDIRECTINPUT_ENABLED )
 endif()
 
-
-if( QT_FOUND )
-    include( ${QT_USE_FILE} )
-else()
-    if( JAG3D_USE_QT AND QT_QMAKE_EXECUTABLE AND NOT QT4_QGLOBAL_H_FILE )
-        message( STATUS "Qt was not found because the qglobal.h file was not found." )
-    endif()
-endif()
-
-# Must use Boost as dynamic libs.
-add_definitions( -DBOOST_ALL_DYN_LINK )
-
-if( WIN32 )
-    option( JAG3D_USE_GL3W "If set, use gl3w (GL3/4 replacement for GLEW). Otherwise, assume native GL3/4 support." ON )
-else()
-    option( JAG3D_USE_GL3W "If set, use gl3w (GL3/4 replacement for GLEW). Otherwise, assume native GL3/4 support." OFF )
-endif()
-if( JAG3D_USE_GL3W )
-    set( JAG3D_USE_GL3W_DEFINITION "#define JAG3D_USE_GL3W 1" )
-
-    option( JAG3D_USE_GL3W_AUTOGENERATE "If set, gl3w source will be automatically regenerated as needed." OFF )
-    if( JAG3D_USE_GL3W_AUTOGENERATE )
-        find_package( PythonInterp REQUIRED )
-    endif()
-else()
-    set( JAG3D_USE_GL3W_DEFINITION "#undef JAG3D_USE_GL3W" )
-endif()
-
-if( JAG3D_USE_GLES3 )
-    set( JAG3D_USE_GLES3_DEFINITION "#define JAG3D_USE_GLES3 1" )
-else()
-    set( JAG3D_USE_GLES3_DEFINITION "#undef JAG3D_USE_GLES3" )
-endif()
-
-
-# See src/jagBase/Config.h.in
-option( JAG3D_ENABLE_ERROR_CHECKS "If set, Jag3D enables internal OpenGL error checking." ON )
-if( JAG3D_ENABLE_ERROR_CHECKS )
-    set( JAG3D_ERROR_ENABLE_DEFINITION "#define JAG3D_ENABLE_ERROR_CHECKS 1" )
-else()
-    set( JAG3D_ERROR_ENABLE_DEFINITION "#undef JAG3D_ENABLE_ERROR_CHECKS" )
-endif()
-
-# See src/jagBase/Config.h.in
-option( JAG3D_ENABLE_LOGGING "If set, Jag3D enables console and/or log file writes." ON )
-if( JAG3D_ENABLE_LOGGING )
-    set( JAG3D_LOG_ENABLE_DEFINITION "#define JAG3D_ENABLE_LOGGING 1" )
-else()
-    set( JAG3D_LOG_ENABLE_DEFINITION "#undef JAG3D_ENABLE_LOGGING" )
-endif()
-
-# See src/jagBase/Config.h.in
-option( JAG3D_ENABLE_PROFILING "If set, Jag3D enables profiling." OFF )
-if( JAG3D_ENABLE_PROFILING )
-    set( JAG3D_PROFILE_ENABLE_DEFINITION "#define JAG3D_ENABLE_PROFILING 1" )
-else()
-    set( JAG3D_PROFILE_ENABLE_DEFINITION "#undef JAG3D_ENABLE_PROFILING" )
-endif()
-
-option( BUILD_SHARED_LIBS "Set to ON to build JAG3D for dynamic linking. Use OFF for static." ON )
-if( NOT BUILD_SHARED_LIBS )
-    add_definitions( -DJAG3D_STATIC )
-endif()
-
-
-include( CMakeMacros )
-
-
-option( JAG3D_BUILD_PLUGINS "Enable to build plugins" ON )
-option( JAG3D_BUILD_TESTS "Enable to build test code" ON )
-option( JAG3D_BUILD_UNITTESTS "Enable to build unit test code" OFF )
-option( JAG3D_BUILD_APPS "Enable to build applications" ON )
-option( JAG3D_BUILD_EXAMPLES "Enable to build example code" ON )
-
-if( JAG3D_BUILD_UNITTESTS )
-    # CMake kludge: enable_testing() must be in source directory root.
-    enable_testing()
-endif()
-
-
-add_subdirectory( src )
-
-
-option( JAG3D_INSTALL_DATA "Enable to add the data directory to the install target" OFF )
-if( JAG3D_INSTALL_DATA )
-    add_subdirectory( data )
-endif()
-
-
-
 #
-# Doxygen
+# Optional Doxygen, for documentation.
+# add a custom target to build documentation.
 option( JAG3D_DOCUMENTATION "Enable to create build target for Doxygen documentation." OFF )
 mark_as_advanced( CLEAR JAG3D_DOCUMENTATION )
 if( JAG3D_DOCUMENTATION )
@@ -259,7 +202,141 @@ if( JAG3D_DOCUMENTATION )
 #    add_subdirectory( doc/images )
 endif()
 
-#install pdb files for release with debug info builds
+
+# Use Qt...
+if( QT_FOUND )
+    include( ${QT_USE_FILE} )
+endif()
+
+# Link with Boost dynamic libs...
+if( BOOST_ALL_DYN_LINK )
+    add_definitions( -DBOOST_ALL_DYN_LINK )
+    set( USE_BOOST_DEFINITION "add_definitions( -DBOOST_ALL_DYN_LINK )" )
+endif()
+
+# Use GL3W for OpenGL function pointers...
+if( WIN32 )
+    option( JAG3D_USE_GL3W "If set, use gl3w (GL3/4 replacement for GLEW). Otherwise, assume native GL3/4 support." ON )
+else()
+    option( JAG3D_USE_GL3W "If set, use gl3w (GL3/4 replacement for GLEW). Otherwise, assume native GL3/4 support." OFF )
+endif()
+if( JAG3D_USE_GL3W )
+    option( JAG3D_USE_GL3W_AUTOGENERATE "If set, gl3w source will be automatically regenerated as needed." OFF )
+    if( JAG3D_USE_GL3W_AUTOGENERATE )
+        find_package( PythonInterp REQUIRED )
+    endif()
+endif()
+
+if( JAG3D_USE_GLES3 )
+    set( JAG3D_USE_GLES3_DEFINITION "#define JAG3D_USE_GLES3 1" )
+else()
+    set( JAG3D_USE_GLES3_DEFINITION "#undef JAG3D_USE_GLES3" )
+endif()
+
+option( JAG3D_ENABLE_ERROR_CHECKS "If set, Jag3D enables internal OpenGL error checking." ON )
+
+option( JAG3D_ENABLE_LOGGING "If set, Jag3D enables console and/or log file writes." ON )
+
+option( JAG3D_ENABLE_PROFILING "If set, Jag3D enables profiling." OFF )
+
+set( JAG3D_STATIC )
+option( BUILD_SHARED_LIBS "Set to ON to build JAG3D for dynamic linking. Use OFF for static." ON )
+if( NOT BUILD_SHARED_LIBS )
+    set( JAG3D_STATIC TRUE )
+endif()
+
+
+#
+# Define include directories and libraries for compiling
+# and linking. These are referenced by the macros in
+# CMakeMacros.cmake for creating executables and libraries.
+#
+
+set( _requiredDependencyIncludes
+    ${POCO_INCLUDE_DIR}
+    ${Boost_INCLUDE_DIR}
+    ${GMTL_INCLUDE_DIR}
+    ${GL3_INCLUDE_DIR}
+    ${OPENGL_INCLUDE_DIR}
+)
+
+set( _projectIncludes
+    ${PROJECT_SOURCE_DIR}/src
+)
+
+set( _requiredDependencyLibraries
+    ${POCO_LIBRARIES}
+    ${Boost_LIBRARIES}
+    ${OPENGL_gl_LIBRARY}
+)
+if( APPLE )
+    list( APPEND _requiredDependencyLibraries
+        ${COREFOUNDATION_LIBRARY}
+    )
+endif()
+
+set( _projectLibraries
+    jagMx
+    jagUtil
+    jagSG
+    jagDraw
+    jagDisk
+    jagBase
+)
+
+unset( _exeStaticLibs )
+if( NOT BUILD_SHARED_LIBS )
+    # If building static, all executables must link again
+    # all jag plugins.
+    set( _exeStaticLibs jagp-shader jagp-text )
+    if( ASSIMP_FOUND )
+        list( APPEND _exeStaticLibs jagp-assimpModel )
+    endif()
+    if( OSG_FOUND )
+        list( APPEND _exeStaticLibs jagp-osgImage )
+        list( APPEND _exeStaticLibs jagp-osgModel )
+        if( JAG3D_USE_OSG STREQUAL "static" )
+            # OSG was also built static. Link against all OSG plugins.
+            _findOSGPlugins()
+            list( APPEND _exeStaticLibs ${OSG_PLUGIN_LIBRARIES} )
+            list( APPEND _exeStaticLibs ${OSG_LIBRARIES} )
+        endif()
+    endif()
+    if( DIRECTINPUT_FOUND )
+        list( APPEND _exeStaticLibs ${DIRECTINPUT_LIBRARIES} )
+    endif()
+endif()
+
+
+#
+# Options to control what to build.
+option( JAG3D_BUILD_PLUGINS "Enable to build plugins" ON )
+option( JAG3D_BUILD_TESTS "Enable to build test code" ON )
+option( JAG3D_BUILD_UNITTESTS "Enable to build unit test code" OFF )
+option( JAG3D_BUILD_APPS "Enable to build applications" ON )
+option( JAG3D_BUILD_EXAMPLES "Enable to build example code" ON )
+
+if( JAG3D_BUILD_UNITTESTS )
+    # CMake kludge: enable_testing() must be in source directory root.
+    enable_testing()
+endif()
+
+
+
+#
+# Recursively process the src directory to add all library,
+# plugin, and executable targets.
+add_subdirectory( src )
+
+# If installing data, also add the data directory.
+option( JAG3D_INSTALL_DATA "Enable to add the data directory to the install target" OFF )
+if( JAG3D_INSTALL_DATA )
+    add_subdirectory( data )
+endif()
+
+
+#
+# Install pdb files for Debug and RelWithDebInfo builds
 if( MSVC )
     install(
         DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/\${CMAKE_INSTALL_CONFIG_NAME}/
@@ -270,13 +347,12 @@ if( MSVC )
     )
 endif()
 
-
+#
 # Install the CMake find script
 install( FILES "extra/Findjag3d.cmake"
     DESTINATION "share/${CMAKE_PROJECT_NAME}/extra"
     COMPONENT libjag3d
 )
-
 
 #
 # Create and install all of the auto find tools
@@ -317,7 +393,6 @@ install( FILES
     ${CMAKE_CURRENT_BINARY_DIR}/lib/jag3dConfigVersion.cmake
     ${CMAKE_CURRENT_BINARY_DIR}/lib/Usejag3d.cmake
     DESTINATION lib )
-
 
 #
 # Setup the fpc auto detection files

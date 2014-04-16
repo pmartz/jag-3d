@@ -130,12 +130,12 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 # configuration options related to the input files
 #---------------------------------------------------------------------------
-INPUT                  = "${PROJECT_SOURCE_DIR}/src/jagBase" \
-                         "${PROJECT_SOURCE_DIR}/src/jagDisk" \
-                         "${PROJECT_SOURCE_DIR}/src/jagDraw" \
-                         "${PROJECT_SOURCE_DIR}/src/jagMx" \
-                         "${PROJECT_SOURCE_DIR}/src/jagSG" \
-                         "${PROJECT_SOURCE_DIR}/src/jagUtil" \
+INPUT                  = "${PROJECT_SOURCE_DIR}/src/jag/base" \
+                         "${PROJECT_SOURCE_DIR}/src/jag/disk" \
+                         "${PROJECT_SOURCE_DIR}/src/jag/draw" \
+                         "${PROJECT_SOURCE_DIR}/src/jag/mx" \
+                         "${PROJECT_SOURCE_DIR}/src/jag/sg" \
+                         "${PROJECT_SOURCE_DIR}/src/jag/util" \
                          "${PROJECT_SOURCE_DIR}/src/plugins" \
                          "${PROJECT_SOURCE_DIR}/src/apps" \
                          "${PROJECT_SOURCE_DIR}/src/examples" \
