@@ -250,6 +250,8 @@ size_t VertexArrayObject::combine( const VertexArrayObject& rhs )
 
     // First, check for consistent buffer sizes and establish the
     // return value.
+    if( _commands.size() != rhs._commands.size() )
+        return( 0 );
     size_t elementCount( 0 );
     size_t lastBufferSizeBytes( 0 );
     for( size_t idx = 0; idx < _commands.size(); ++idx )
