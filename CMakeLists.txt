@@ -84,9 +84,13 @@ endif()
 #
 # Required dependencies:
 #   OpenGL
-find_package( OpenGL REQUIRED )
-#   GL3 header file
-find_package( GL3 REQUIRED )
+if( JAG3D_USE_GLES3 )
+    find_package( OpenGLES3 REQUIRED )
+    # find_package( AGL, REQUIRED )
+else()
+    find_package( OpenGL REQUIRED )
+    find_package( GL3 REQUIRED )
+endif()
 #   Boost
 set( _boostComponents thread program_options date_time chrono system )
 find_package( Boost 1.44.0 REQUIRED ${_boostComponents} )
@@ -122,19 +126,6 @@ endif()
 #   Append window system name suffix to executables?
 option( JAG3D_ENABLE_WINDOW_SYSTEM_SUFFIXES "If enabled, executable names are suffices with the window system (-fg, -qt, or -vrj)" on )
 
-#   Required dependencies:
-if( JAG3D_USE_GLES3 )
-    find_package( OpenGLES3 REQUIRED )
-    #find_package( AGL, REQUIRED )
-else()
-    find_package( OpenGL REQUIRED )
-    find_package( GL3 REQUIRED )
-endif()
-find_package( Boost 1.44.0 REQUIRED ${_boostComponents} )
-include( FindPOCOHelper )
-if( NOT GMTL_FOUND )
-    find_package( GMTL REQUIRED )
-endif()
 #
 # Optional OSG - Used for model and image loading plugins
 if( NOT JAG3D_USE_OSG )
