@@ -28,6 +28,7 @@
 #include <jag/base/LogBase.h>
 #include <jag/base/ptr.h>
 #include <string>
+#include <vector>
 
 //#define USE_POSIX_TIME 1
 #define USE_CHRONO 1

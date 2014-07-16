@@ -25,7 +25,6 @@
 
 #include <boost/foreach.hpp>
 
-#include <vector>
 #include <sstream>
 
 
@@ -224,14 +223,14 @@ void ProfileDump::visit( ProfileNodePtr node )
                 const double childTime( AS_DBL_MS(child->_totalTime) );
                 const double percent( ( myTime > 0.) ? childTime / myTime * 100. : 0. );
                 runningTotal += childTime;
-                logstream.information()<< indent.str() << idx << " - " <<
+                logstream.information() << indent.str() << idx << " - " <<
                     child->_name << ": " <<
                     childTime << "ms (" <<
                     percent << "%)" << std::endl;
             }
             const double unprofiled( myTime - runningTotal );
             const double percent( ( myTime > 0.) ? unprofiled / myTime * 100. : 0. );
-            logstream.information()<< indent.str() <<
+            logstream.information() << indent.str() <<
                 "Unprofiled: " <<
                 unprofiled << "ms (" <<
                 percent << "%)" << std::endl;
